@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+
+    <style>
+
+        body
+        {
+            height: 100%;
+        }
+
+    </style>
+
+    <script type="text/javascript" language="javascript" src="js/AppHarness.js"></script>
+
+    <script type="text/javascript">
+
+
+        window.onload = function ()
+        {
+            var harness = new away.AppHarness();
+
+            //---------------------------------------------------------------------------
+            // Test - AGLSL
+            //---------------------------------------------------------------------------
+
+            harness.addSeperator( 'AGLSL' );
+            harness.addTest( 'AGLSL.AssemblerTest'     ,  'aglsl.AssemblerTest'      , 'js/AssemblerTest.js'     , 'aglsl/AssemblerTest.ts'  );
+
+            //---------------------------------------------------------------------------
+            // Test - Utils
+            //---------------------------------------------------------------------------
+
+            harness.addSeperator( 'Utils' );
+            harness.addTest( 'Utils.MipMapTest'                 , 'tests.utils.MipMapTest'                  , 'js/MipMapTest.js'                 , 'away/utils/MipMapTest.ts'  );
+            harness.addTest( '(Console) Utils.ByteArrayTest'    , 'tests.utils.ByteArrayTest'               , 'js/ByteArrayTest.js'              , 'away/utils/ByteArrayTest.ts'  );
+            harness.addTest( '(Console) Utils.IDUtilTest '      , 'tests.utils.IDUtilTest'                  , 'js/IDUtilTest.js'                 , 'away/utils/IDUtilTest.ts'  );
+            harness.addTest( '(Console) Utils.RAF '             , 'tests.utils.RequestAnimationFrameTest'   , 'js/RequestAnimationFrameTest.js'  , 'away/utils/RequestAnimationFrameTest.ts'  );
+            harness.addTest( '(Console) Utils.TimerTest'        , 'tests.utils.TimerTest'                   , 'js/TimerTest.js'                  , 'away/utils/TimerTest.ts'  );
+
+            //---------------------------------------------------------------------------
+            // Test - Textures
+            //---------------------------------------------------------------------------
+
+            harness.addSeperator( 'Textures' );
+            harness.addTest( '(Console) Textures.BitmapTextureTest'                 , 'tests.textures.BitmapTextureTest'            , 'js/BitmapTextureTest.js'              , 'away/textures/BitmapTextureTest.ts'  );
+            harness.addTest( '(Console) Textures.HTMLImageElementTextureTest'       , 'tests.textures.HTMLImageElementTextureTest'  , 'js/HTMLImageElementTextureTest.js'    , 'away/textures/HTMLImageElementTextureTest.ts'  );
+
+            //---------------------------------------------------------------------------
+            // Test - Net
+            //---------------------------------------------------------------------------
+
+            harness.addSeperator( 'Net' );
+            harness.addTest( 'Net.URLLoader'       , 'tests.net.LoaderTest'  , 'js/URLLoaderTests.js' , 'away/net/URLLoaderTests.ts'  );
+
+            //---------------------------------------------------------------------------
+            // Test - Managers
+            //---------------------------------------------------------------------------
+
+            harness.addSeperator( 'Managers' );
+            harness.addTest( '(Console) tests.managers.ManagersTest' ,  'tests.managers.ManagersTest'  , 'js/ManagersTest.js' , 'away/managers/ManagersTest.ts'  );
+
+            //---------------------------------------------------------------------------
+            // Test - Loaders
+            //---------------------------------------------------------------------------
+
+            harness.addSeperator( 'Loaders' );
+            harness.addTest( '(Console) Loaders.AssetLoaderTest'    ,  'tests.loaders.AssetLoaderTest'  , 'js/AssetLoaderTest.js'    , 'away/loaders/AssetLoaderTest.ts'  );
+            harness.addTest( 'Loaders.IMGLoaderTest'                ,  'tests.loaders.IMGLoaderTest'    , 'js/IMGLoaderTest.js'      , 'away/loaders/IMGLoaderTest.ts'  );
+
+            //---------------------------------------------------------------------------
+            // Test - Library
+            //---------------------------------------------------------------------------
+
+            harness.addSeperator( 'Library' );
+            harness.addTest( 'Library.AssetLibraryTest'     ,  'tests.library.AssetLibraryTest'  , 'js/AssetLibraryTest.js'  , 'away/library/AssetLibraryTest.ts'  );
+
+            //---------------------------------------------------------------------------
+            // Test - Geom
+            //---------------------------------------------------------------------------
+
+            harness.addSeperator( 'Geom' );
+            harness.addTest( '(Console) Geom.ColorUtils'          ,  'tests.geom.ColorUtils'      , 'js/ColorUtils.js'     , 'away/geom/ColorUtils.ts'  );
+            harness.addTest( '(Console) Geom.MatrixTest'          ,  'tests.geom.MatrixTest'      , 'js/MatrixTest.js'     , 'away/geom/MatrixTest.ts'  );
+            harness.addTest( '(Console) Geom.VextMat3DTests'      ,  'tests.geom.VextMat3DTests'  , 'js/VextMat3DTests.js' , 'away/geom/VextMat3DTests.ts'  );
+
+            //---------------------------------------------------------------------------
+            // Test - Events
+            //---------------------------------------------------------------------------
+
+            harness.addSeperator( 'Events' );
+            harness.addTest( '(Console) Events'      ,  'tests.events.EDTest'      , 'js/EDTest.js'     , 'away/events/EDTest.ts'  );
+
+            //---------------------------------------------------------------------------
+            // Test - Display
+            //---------------------------------------------------------------------------
+
+            harness.addSeperator( 'Display' );
+            harness.addTest( 'Display.BitmapDataTest'  ,  'tests.display.BitmapDataTest'      , 'js/BitmapDataTest.js'     , 'away/display/BitmapDataTest.ts'  );
+
+            //---------------------------------------------------------------------------
+            // Load a default
+            harness.load( 'aglsl.AssemblerTest', 'js/AssemblerTest.js'     , 'aglsl/AssemblerTest.ts'  );
+            harness.start(); // Start
+
+        }
+
+
+    </script>
+</head>
+
+</head>
+<body>
+
+</body>
+</html>

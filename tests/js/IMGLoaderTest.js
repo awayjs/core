@@ -1,8 +1,9 @@
+///<reference path="../../build/AME.next.d.ts" />
 var tests;
 (function (tests) {
-    ///<reference path="../../../build/Away3D.next.d.ts" />
-    //<reference path="../../../src/Away3D.ts" />
     (function (loaders) {
+        var Delegate = away.utils.Delegate;
+
         var IMGLoaderTest = (function () {
             function IMGLoaderTest() {
                 //-----------------------------------------------------------------------------------------------
@@ -11,8 +12,8 @@ var tests;
                 var pngURLrq = new away.net.URLRequest('assets/2.png');
 
                 this.pngLoader = new away.net.IMGLoader();
-                this.pngLoader.addEventListener(away.events.Event.COMPLETE, this.pngLoaderComplete, this);
-                this.pngLoader.addEventListener(away.events.IOErrorEvent.IO_ERROR, this.ioError, this);
+                this.pngLoader.addEventListener(away.events.Event.COMPLETE, Delegate.create(this, this.pngLoaderComplete));
+                this.pngLoader.addEventListener(away.events.IOErrorEvent.IO_ERROR, Delegate.create(this, this.ioError));
                 this.pngLoader.load(pngURLrq);
 
                 //-----------------------------------------------------------------------------------------------
@@ -22,8 +23,8 @@ var tests;
 
                 this.jpgLoader = new away.net.IMGLoader();
                 this.jpgLoader.crossOrigin = 'anonymous';
-                this.jpgLoader.addEventListener(away.events.Event.COMPLETE, this.jpgLoaderComplete, this);
-                this.jpgLoader.addEventListener(away.events.IOErrorEvent.IO_ERROR, this.ioError, this);
+                this.jpgLoader.addEventListener(away.events.Event.COMPLETE, Delegate.create(this, this.jpgLoaderComplete));
+                this.jpgLoader.addEventListener(away.events.IOErrorEvent.IO_ERROR, Delegate.create(this, this.ioError));
                 this.jpgLoader.load(jpgURLrq);
 
                 //-----------------------------------------------------------------------------------------------
@@ -32,8 +33,8 @@ var tests;
                 var notURLrq = new away.net.URLRequest('assets/data.txt');
 
                 this.noAnImageLoader = new away.net.IMGLoader();
-                this.noAnImageLoader.addEventListener(away.events.Event.COMPLETE, this.noAnImageLoaderComplete, this);
-                this.noAnImageLoader.addEventListener(away.events.IOErrorEvent.IO_ERROR, this.ioError, this);
+                this.noAnImageLoader.addEventListener(away.events.Event.COMPLETE, Delegate.create(this, this.noAnImageLoaderComplete));
+                this.noAnImageLoader.addEventListener(away.events.IOErrorEvent.IO_ERROR, Delegate.create(this, this.ioError));
                 this.noAnImageLoader.load(notURLrq);
 
                 //-----------------------------------------------------------------------------------------------
@@ -42,8 +43,8 @@ var tests;
                 var wrongURLrq = new away.net.URLRequest('assets/iDontExist.png');
 
                 this.wrongURLLoader = new away.net.IMGLoader();
-                this.wrongURLLoader.addEventListener(away.events.Event.COMPLETE, this.wrongURLLoaderComplete, this);
-                this.wrongURLLoader.addEventListener(away.events.IOErrorEvent.IO_ERROR, this.ioError, this);
+                this.wrongURLLoader.addEventListener(away.events.Event.COMPLETE, Delegate.create(this, this.wrongURLLoaderComplete));
+                this.wrongURLLoader.addEventListener(away.events.IOErrorEvent.IO_ERROR, Delegate.create(this, this.ioError));
                 this.wrongURLLoader.load(wrongURLrq);
             }
             IMGLoaderTest.prototype.pngLoaderComplete = function (e) {

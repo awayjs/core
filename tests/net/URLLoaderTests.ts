@@ -2,6 +2,7 @@
 
 module tests.net
 {
+	import Delegate				= away.utils.Delegate;
 
     export class LoaderTest //extends away.events.EventDispatcher
     {
@@ -33,8 +34,8 @@ module tests.net
                 req.method          = away.net.URLRequestMethod.POST;
                 req.data            = urlVars;
 
-            this.urlLoaderPostURLVars.addEventListener( away.events.Event.COMPLETE , this.postURLTestComplete , this );
-            this.urlLoaderPostURLVars.addEventListener( away.events.IOErrorEvent.IO_ERROR, this.ioError, this );
+            this.urlLoaderPostURLVars.addEventListener( away.events.Event.COMPLETE , Delegate.create(this, this.postURLTestComplete) );
+            this.urlLoaderPostURLVars.addEventListener( away.events.IOErrorEvent.IO_ERROR, Delegate.create(this, this.ioError) );
             this.urlLoaderPostURLVars.load( req );
 
             //---------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -45,9 +46,9 @@ module tests.net
 
             this.urlLoaderGetCSV                    = new away.net.URLLoader();
             this.urlLoaderGetCSV.dataFormat         = away.net.URLLoaderDataFormat.TEXT;
-            this.urlLoaderGetCSV.addEventListener( away.events.Event.COMPLETE , this.getCsvComplete , this );
-            this.urlLoaderGetCSV.addEventListener( away.events.Event.OPEN, this.getCsvOpen , this );
-            this.urlLoaderGetCSV.addEventListener( away.events.IOErrorEvent.IO_ERROR, this.ioError, this );
+            this.urlLoaderGetCSV.addEventListener( away.events.Event.COMPLETE , Delegate.create(this, this.getCsvComplete ) );
+            this.urlLoaderGetCSV.addEventListener( away.events.Event.OPEN, Delegate.create(this, this.getCsvOpen ) );
+            this.urlLoaderGetCSV.addEventListener( away.events.IOErrorEvent.IO_ERROR, Delegate.create(this, this.ioError) );
             this.urlLoaderGetCSV.load( csrReq );
 
             //---------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -58,9 +59,9 @@ module tests.net
 
             this.urlLoaderErrorTest                    = new away.net.URLLoader();
             this.urlLoaderErrorTest.dataFormat         = away.net.URLLoaderDataFormat.TEXT;
-            this.urlLoaderErrorTest.addEventListener( away.events.Event.COMPLETE , this.errorComplete , this );
-            this.urlLoaderErrorTest.addEventListener( away.events.IOErrorEvent.IO_ERROR, this.ioError, this );
-            this.urlLoaderErrorTest.addEventListener( away.events.HTTPStatusEvent.HTTP_STATUS, this.httpStatusChange, this );
+            this.urlLoaderErrorTest.addEventListener( away.events.Event.COMPLETE , Delegate.create(this, this.errorComplete ) );
+            this.urlLoaderErrorTest.addEventListener( away.events.IOErrorEvent.IO_ERROR, Delegate.create(this, this.ioError) );
+            this.urlLoaderErrorTest.addEventListener( away.events.HTTPStatusEvent.HTTP_STATUS, Delegate.create(this, this.httpStatusChange) );
             this.urlLoaderErrorTest.load( errorReq );
 
             //---------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -71,8 +72,8 @@ module tests.net
 
             this.urlLoaderGetURLVars                    = new away.net.URLLoader();
             this.urlLoaderGetURLVars.dataFormat         = away.net.URLLoaderDataFormat.VARIABLES;
-            this.urlLoaderGetURLVars.addEventListener( away.events.IOErrorEvent.IO_ERROR, this.ioError, this );
-            this.urlLoaderGetURLVars.addEventListener( away.events.Event.COMPLETE , this.getURLVarsComplete , this );
+            this.urlLoaderGetURLVars.addEventListener( away.events.IOErrorEvent.IO_ERROR, Delegate.create(this, this.ioError) );
+            this.urlLoaderGetURLVars.addEventListener( away.events.Event.COMPLETE , Delegate.create(this, this.getURLVarsComplete ) );
             this.urlLoaderGetURLVars.load( csrReq );
 
             //---------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -83,8 +84,8 @@ module tests.net
 
             this.urlLoaderBinary                    = new away.net.URLLoader(  );
             this.urlLoaderBinary.dataFormat         = away.net.URLLoaderDataFormat.BINARY;
-            this.urlLoaderBinary.addEventListener( away.events.IOErrorEvent.IO_ERROR, this.ioError, this );
-            this.urlLoaderBinary.addEventListener( away.events.Event.COMPLETE , this.binFileLoaded , this );
+            this.urlLoaderBinary.addEventListener( away.events.IOErrorEvent.IO_ERROR, Delegate.create(this, this.ioError) );
+            this.urlLoaderBinary.addEventListener( away.events.Event.COMPLETE , Delegate.create(this, this.binFileLoaded ) );
             this.urlLoaderBinary.load( binReq );
 
             //---------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -95,7 +96,7 @@ module tests.net
 
             this.urlLoaderBlob                    = new away.net.URLLoader(  );
             this.urlLoaderBlob.dataFormat         = away.net.URLLoaderDataFormat.BLOB;
-            this.urlLoaderBlob.addEventListener( away.events.Event.COMPLETE , this.blobFileLoaded , this );
+            this.urlLoaderBlob.addEventListener( away.events.Event.COMPLETE , Delegate.create(this, this.blobFileLoaded ) );
             this.urlLoaderBlob.load( blobReq );
 
             //---------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -106,7 +107,7 @@ module tests.net
 
             this.urlLoaderArrb                    = new away.net.URLLoader(  );
             this.urlLoaderArrb.dataFormat         = away.net.URLLoaderDataFormat.ARRAY_BUFFER;
-            this.urlLoaderArrb.addEventListener( away.events.Event.COMPLETE , this.arrayBufferLoaded , this );
+            this.urlLoaderArrb.addEventListener( away.events.Event.COMPLETE , Delegate.create(this, this.arrayBufferLoaded ) );
             this.urlLoaderArrb.load( arrBReq );
 
         }

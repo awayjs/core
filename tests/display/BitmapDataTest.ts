@@ -1,6 +1,8 @@
 ///<reference path="../../build/AME.next.d.ts" />
 
-module tests.display {
+module tests.display
+{
+	import Delegate				= away.utils.Delegate;
 
     export class BitmapDataTest
     {
@@ -22,8 +24,8 @@ module tests.display {
             this.urlRequest = new away.net.URLRequest( 'assets/256x256.png');
             this.imgLoader  = new away.net.IMGLoader();
             this.imgLoader.load( this.urlRequest );
-            this.imgLoader.addEventListener( away.events.Event.COMPLETE , this.imgLoaded , this );
-            this.imgLoader.addEventListener( away.events.IOErrorEvent.IO_ERROR, this.imgLoadedError , this );
+            this.imgLoader.addEventListener( away.events.Event.COMPLETE , Delegate.create(this, this.imgLoaded) );
+            this.imgLoader.addEventListener( away.events.IOErrorEvent.IO_ERROR, Delegate.create(this, this.imgLoadedError) );
 
             //---------------------------------------
             // BitmapData Object - 1

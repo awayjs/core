@@ -198,6 +198,8 @@ var parsers;
 var tests;
 (function (tests) {
     (function (library) {
+        var Delegate = away.utils.Delegate;
+
         var AssetLibraryTest = (function () {
             function AssetLibraryTest() {
                 this.height = 0;
@@ -218,12 +220,12 @@ var tests;
                 // AssetLibrary - Debug / Test
                 // away.library.AssetLibrary.addEventListener(away.events.AssetEvent.ASSET_COMPLETE , this.onAssetComplete, this );
                 this.token = away.library.AssetLibrary.load(new away.net.URLRequest('assets/JSNParserTest.json'));
-                this.token.addEventListener(away.events.LoaderEvent.RESOURCE_COMPLETE, this.onResourceComplete, this);
-                this.token.addEventListener(away.events.AssetEvent.ASSET_COMPLETE, this.onAssetComplete, this);
+                this.token.addEventListener(away.events.LoaderEvent.RESOURCE_COMPLETE, Delegate.create(this, this.onResourceComplete));
+                this.token.addEventListener(away.events.AssetEvent.ASSET_COMPLETE, Delegate.create(this, this.onAssetComplete));
 
                 this.token = away.library.AssetLibrary.load(new away.net.URLRequest('assets/1024x1024.png'));
-                this.token.addEventListener(away.events.LoaderEvent.RESOURCE_COMPLETE, this.onResourceComplete, this);
-                this.token.addEventListener(away.events.AssetEvent.ASSET_COMPLETE, this.onAssetComplete, this);
+                this.token.addEventListener(away.events.LoaderEvent.RESOURCE_COMPLETE, Delegate.create(this, this.onResourceComplete));
+                this.token.addEventListener(away.events.AssetEvent.ASSET_COMPLETE, Delegate.create(this, this.onAssetComplete));
             }
             AssetLibraryTest.prototype.onAssetComplete = function (e) {
                 console.log('------------------------------------------------------------------------------');

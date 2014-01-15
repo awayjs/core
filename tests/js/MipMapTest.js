@@ -1,7 +1,9 @@
+///<reference path="../../build/AME.next.d.ts" />
 var tests;
 (function (tests) {
-    ///<reference path="../../../build/Away3D.next.d.ts" />
     (function (utils) {
+        var Delegate = away.utils.Delegate;
+
         var MipMapTest = (function () {
             function MipMapTest() {
                 var _this = this;
@@ -12,7 +14,7 @@ var tests;
                 var mipUrlRequest = new away.net.URLRequest('assets/1024x1024.png');
                 this.mipLoader = new away.net.IMGLoader();
                 this.mipLoader.load(mipUrlRequest);
-                this.mipLoader.addEventListener(away.events.Event.COMPLETE, this.mipImgLoaded, this);
+                this.mipLoader.addEventListener(away.events.Event.COMPLETE, Delegate.create(this, this.mipImgLoaded));
 
                 document.onmousedown = function (e) {
                     return _this.onMouseDown(e);

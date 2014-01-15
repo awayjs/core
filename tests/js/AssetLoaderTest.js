@@ -198,6 +198,8 @@ var parsers;
 var tests;
 (function (tests) {
     (function (net) {
+        var Delegate = away.utils.Delegate;
+
         var AssetLoaderTest = (function () {
             function AssetLoaderTest() {
                 //---------------------------------------------------------------------------------------------------------------------
@@ -213,8 +215,8 @@ var tests;
                 urlRq = new away.net.URLRequest('assets/1024x1024.png');
                 token = this.alImage.load(urlRq);
 
-                token.addEventListener(away.events.AssetEvent.ASSET_COMPLETE, this.onAssetComplete, this);
-                token.addEventListener(away.events.AssetEvent.TEXTURE_SIZE_ERROR, this.onTextureSizeError, this);
+                token.addEventListener(away.events.AssetEvent.ASSET_COMPLETE, Delegate.create(this, this.onAssetComplete));
+                token.addEventListener(away.events.AssetEvent.TEXTURE_SIZE_ERROR, Delegate.create(this, this.onTextureSizeError));
 
                 //---------------------------------------------------------------------------------------------------------------------
                 // LOAD A SINGLE IMAGE - With wrong dimensions
@@ -222,8 +224,8 @@ var tests;
                 urlRq = new away.net.URLRequest('assets/2.png');
                 token = this.alErrorImage.load(urlRq);
 
-                token.addEventListener(away.events.AssetEvent.ASSET_COMPLETE, this.onAssetComplete, this);
-                token.addEventListener(away.events.AssetEvent.TEXTURE_SIZE_ERROR, this.onTextureSizeError, this);
+                token.addEventListener(away.events.AssetEvent.ASSET_COMPLETE, Delegate.create(this, this.onAssetComplete));
+                token.addEventListener(away.events.AssetEvent.TEXTURE_SIZE_ERROR, Delegate.create(this, this.onTextureSizeError));
 
                 //---------------------------------------------------------------------------------------------------------------------
                 // LOAD WITH A JSON PARSER
@@ -231,11 +233,11 @@ var tests;
                 urlRq = new away.net.URLRequest('assets/JSNParserTest.json');
                 token = this.alJson.load(urlRq);
 
-                token.addEventListener(away.events.AssetEvent.ASSET_COMPLETE, this.onAssetComplete, this);
-                token.addEventListener(away.events.AssetEvent.TEXTURE_SIZE_ERROR, this.onTextureSizeError, this);
-                token.addEventListener(away.events.ParserEvent.PARSE_COMPLETE, this.onParseComplete, this);
+                token.addEventListener(away.events.AssetEvent.ASSET_COMPLETE, Delegate.create(this, this.onAssetComplete));
+                token.addEventListener(away.events.AssetEvent.TEXTURE_SIZE_ERROR, Delegate.create(this, this.onTextureSizeError));
+                token.addEventListener(away.events.ParserEvent.PARSE_COMPLETE, Delegate.create(this, this.onParseComplete));
 
-                token.addEventListener(away.events.LoaderEvent.DEPENDENCY_COMPLETE, this.onDependencyComplete, this);
+                token.addEventListener(away.events.LoaderEvent.DEPENDENCY_COMPLETE, Delegate.create(this, this.onDependencyComplete));
             }
             AssetLoaderTest.prototype.onDependencyComplete = function (e) {
                 console.log('--------------------------------------------------------------------------------');

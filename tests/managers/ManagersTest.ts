@@ -2,6 +2,7 @@
 
 module tests.managers
 {
+	import Delegate				= away.utils.Delegate;
 
     export class ManagersTest
     {
@@ -22,9 +23,9 @@ module tests.managers
             var manager : away.managers.StageGLManager = away.managers.StageGLManager.getInstance( this.stage );
 
             this.sProxy = manager.getStageGLProxy( 0 );
-            this.sProxy.addEventListener( away.events.StageGLEvent.CONTEXT3D_CREATED , this.onContextCreated , this );
-            this.sProxy.addEventListener( away.events.StageGLEvent.CONTEXT3D_RECREATED, this.onContextReCreated , this );
-            this.sProxy.addEventListener( away.events.StageGLEvent.CONTEXT3D_DISPOSED, this.onContextDisposed , this );
+            this.sProxy.addEventListener( away.events.StageGLEvent.CONTEXTGL_CREATED , Delegate.create(this, this.onContextCreated) );
+            this.sProxy.addEventListener( away.events.StageGLEvent.CONTEXTGL_RECREATED, Delegate.create(this, this.onContextReCreated) );
+            this.sProxy.addEventListener( away.events.StageGLEvent.CONTEXTGL_DISPOSED, Delegate.create(this, this.onContextDisposed) );
 
             this.rttBfrA = away.managers.RTTBufferManager.getInstance( this.sProxy )
             this.rttBfrB = away.managers.RTTBufferManager.getInstance( this.sProxy )

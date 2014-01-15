@@ -1,16 +1,18 @@
+///<reference path="../../build/AME.next.d.ts" />
 var tests;
 (function (tests) {
-    ///<reference path="../../../build/Away3D.next.d.ts" />
     (function (utils) {
+        var Delegate = away.utils.Delegate;
+
         var TimerTest = (function () {
             function TimerTest() {
                 this.oneSecondTimer = new away.utils.Timer(1000);
-                this.oneSecondTimer.addEventListener(away.events.TimerEvent.TIMER, this.onSecTimerEvent, this);
+                this.oneSecondTimer.addEventListener(away.events.TimerEvent.TIMER, Delegate.create(this, this.onSecTimerEvent));
                 this.oneSecondTimer.start();
 
                 this.repeatTenTimes = new away.utils.Timer(100, 10);
-                this.repeatTenTimes.addEventListener(away.events.TimerEvent.TIMER, this.repeatTenTimesEvent, this);
-                this.repeatTenTimes.addEventListener(away.events.TimerEvent.TIMER_COMPLETE, this.repeatTenTimesComplete, this);
+                this.repeatTenTimes.addEventListener(away.events.TimerEvent.TIMER, Delegate.create(this, this.repeatTenTimesEvent));
+                this.repeatTenTimes.addEventListener(away.events.TimerEvent.TIMER_COMPLETE, Delegate.create(this, this.repeatTenTimesComplete));
                 this.repeatTenTimes.start();
             }
             TimerTest.prototype.repeatTenTimesEvent = function (e) {

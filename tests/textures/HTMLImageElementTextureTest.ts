@@ -2,6 +2,7 @@
 
 module tests.textures
 {
+	import Delegate				= away.utils.Delegate;
 
     export class HTMLImageElementTextureTest
     {
@@ -19,7 +20,7 @@ module tests.textures
             var mipUrlRequest = new away.net.URLRequest( 'assets/1024x1024.png');
             this.mipLoader  = new away.net.IMGLoader();
             this.mipLoader.load( mipUrlRequest );
-            this.mipLoader.addEventListener( away.events.Event.COMPLETE , this.mipImgLoaded , this );
+            this.mipLoader.addEventListener( away.events.Event.COMPLETE , Delegate.create(this, this.mipImgLoaded) );
 
         }
 

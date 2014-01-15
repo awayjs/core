@@ -1,6 +1,8 @@
 ///<reference path="../../build/AME.next.d.ts" />
 
-module tests.events {
+module tests.events
+{
+	import Delegate				= away.utils.Delegate;
 
     export class EDTest extends away.events.EventDispatcher
     {
@@ -11,9 +13,9 @@ module tests.events {
             super();
 
             console.log( 'Before addEventListener: ' , this.hasEventListener( away.events.Event.COMPLETE  ) ) ;
-            this.addEventListener( away.events.Event.COMPLETE , this.onComplete , this );
+            this.addEventListener( away.events.Event.COMPLETE , Delegate.create(this, this.onComplete) );
             console.log( 'After addEventListener: ' , this.hasEventListener( away.events.Event.COMPLETE  ) ) ;
-            this.removeEventListener( away.events.Event.COMPLETE , this.onComplete , this );
+            this.removeEventListener( away.events.Event.COMPLETE , Delegate.create(this, this.onComplete) );
             console.log( 'After removeEventListener: ' , this.hasEventListener( away.events.Event.COMPLETE  ) )  ;
 
         }

@@ -2,6 +2,8 @@
 var tests;
 (function (tests) {
     (function (textures) {
+        var Delegate = away.utils.Delegate;
+
         var HTMLImageElementTextureTest = (function () {
             function HTMLImageElementTextureTest() {
                 //---------------------------------------
@@ -9,7 +11,7 @@ var tests;
                 var mipUrlRequest = new away.net.URLRequest('assets/1024x1024.png');
                 this.mipLoader = new away.net.IMGLoader();
                 this.mipLoader.load(mipUrlRequest);
-                this.mipLoader.addEventListener(away.events.Event.COMPLETE, this.mipImgLoaded, this);
+                this.mipLoader.addEventListener(away.events.Event.COMPLETE, Delegate.create(this, this.mipImgLoaded));
             }
             HTMLImageElementTextureTest.prototype.mipImgLoaded = function (e) {
                 var stage = new away.display.Stage();

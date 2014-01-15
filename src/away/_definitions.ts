@@ -134,6 +134,7 @@
 ///<reference path="utils/ColorUtils.ts"/>
 ///<reference path="utils/CSS.ts" />
 ///<reference path="utils/Debug.ts"/>
+///<reference path="utils/Delegate.ts"/>
 ///<reference path="utils/getTimer.ts" />
 ///<reference path="utils/RequestAnimationFrame.ts"/>
 ///<reference path="utils/TextureUtils.ts" />

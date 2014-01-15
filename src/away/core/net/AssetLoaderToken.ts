@@ -222,20 +222,20 @@ module away.net
 			this._iLoader = loader;
 		}
 
-		public addEventListener(type:string, listener:Function, target:Object)
+		public addEventListener(type:string, listener:Function)
 		{
-			this._iLoader.addEventListener(type, listener, target);
+			this._iLoader.addEventListener(type, listener);
 		}
 
 
-		public removeEventListener(type:string, listener:Function, target:Object)
+		public removeEventListener(type:string, listener:Function)
 		{
-			this._iLoader.removeEventListener(type, listener, target);
+			this._iLoader.removeEventListener(type, listener);
 		}
 
-		public hasEventListener(type:string, listener:Function = null, target:Object = null):boolean
+		public hasEventListener(type:string, listener:Function = null):boolean
 		{
-			return this._iLoader.hasEventListener(type, listener, target);
+			return this._iLoader.hasEventListener(type, listener);
 		}
 
 		/*

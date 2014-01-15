@@ -132,17 +132,17 @@ module away.library
 		/**
 		 * Short-hand for addEventListener() method on default asset library bundle.
 		 */
-		public static addEventListener(type:string, listener:Function, target:Object)
+		public static addEventListener(type:string, listener:Function)
 		{
-			away.library.AssetLibrary.getBundle().addEventListener(type, listener, target);
+			away.library.AssetLibrary.getBundle().addEventListener(type, listener);
 		}
 
 		/**
 		 * Short-hand for removeEventListener() method on default asset library bundle.
 		 */
-		public static removeEventListener(type:string, listener:Function, target:Object)
+		public static removeEventListener(type:string, listener:Function)
 		{
-			away.library.AssetLibrary.getBundle().removeEventListener(type, listener, target);
+			away.library.AssetLibrary.getBundle().removeEventListener(type, listener);
 		}
 
 		/**

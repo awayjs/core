@@ -62,7 +62,7 @@ module away.display
 
 				var canvas:HTMLCanvasElement = this.createHTMLCanvasElement();
 				var stageGL:away.display.StageGL = new away.display.StageGL(canvas);
-				stageGL.addEventListener(away.events.Event.CONTEXTGL_CREATE, this.onContextCreated, this);
+				stageGL.addEventListener(away.events.Event.CONTEXTGL_CREATE, away.utils.Delegate.create(this, this.onContextCreated));
 
 				this.stageGLs.push(stageGL);
 

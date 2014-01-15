@@ -29,6 +29,7 @@ module away.parsers
 		private _data:any;
 		private _frameLimit:number;
 		private _lastFrameTime:number;
+		private _pOnIntervalDelegate:Function;
 
 		//----------------------------------------------------------------------------------------------------------------------------------------------------------------
 		// TODO: add error checking for the following ( could cause a problem if this function is not implemented )
@@ -99,6 +100,8 @@ module away.parsers
 			this._materialMode = 0;
 			this._dataFormat = format;
 			this._dependencies = new Array<ResourceDependency>();
+
+			this._pOnIntervalDelegate = away.utils.Delegate.create(this, this._pOnInterval);
 		}
 
 		/**
@@ -351,7 +354,7 @@ module away.parsers
 		public _pDieWithError(message:string = 'Unknown parsing error'):void
 		{
 			if (this._timer) {
-				this._timer.removeEventListener(away.events.TimerEvent.TIMER, this._pOnInterval, this);
+				this._timer.removeEventListener(away.events.TimerEvent.TIMER, this._pOnIntervalDelegate);
 				this._timer.stop();
 				this._timer = null;
 			}
@@ -411,7 +414,7 @@ module away.parsers
 
 			this._frameLimit = frameLimit;
 			this._timer = new away.utils.Timer(this._frameLimit, 0);
-			this._timer.addEventListener(away.events.TimerEvent.TIMER, this._pOnInterval, this);
+			this._timer.addEventListener(away.events.TimerEvent.TIMER, this._pOnIntervalDelegate);
 			this._timer.start();
 
 		}
@@ -425,7 +428,7 @@ module away.parsers
 			//console.log( 'ParserBase._pFinishParsing');
 
 			if (this._timer) {
-				this._timer.removeEventListener(away.events.TimerEvent.TIMER, this._pOnInterval, this);
+				this._timer.removeEventListener(away.events.TimerEvent.TIMER, this._pOnIntervalDelegate);
 				this._timer.stop();
 			}
 

@@ -20,6 +20,15 @@ module away.library
 		private _loadingSessionsGarbage:away.net.AssetLoader[] = new Array<away.net.AssetLoader>();
 		private _gcTimeoutIID:number;
 
+		private _onAssetRenameDelegate:Function;
+		private _onAssetConflictResolvedDelegate:Function;
+		private _onResourceRetrievedDelegate:Function;
+		private _onDependencyRetrievedDelegate:Function;
+		private _onTextureSizeErrorDelegate:Function;
+		private _onAssetCompleteDelegate:Function;
+		private _onDependencyRetrievingErrorDelegate:Function;
+		private _onDependencyRetrievingParseErrorDelegate:Function;
+
 		/**
 		 * Creates a new <code>AssetLibraryBundle</code> object.
 		 *
@@ -37,6 +46,15 @@ module away.library
 
 			this.conflictStrategy = away.library.ConflictStrategy.IGNORE.create();
 			this.conflictPrecedence = away.library.ConflictPrecedence.FAVOR_NEW;
+
+			this._onAssetRenameDelegate = away.utils.Delegate.create(this, this.onAssetRename);
+			this._onAssetConflictResolvedDelegate = away.utils.Delegate.create(this, this.onAssetConflictResolved);
+			this._onResourceRetrievedDelegate = away.utils.Delegate.create(this, this.onResourceRetrieved);
+			this._onDependencyRetrievedDelegate = away.utils.Delegate.create(this, this.onDependencyRetrieved);
+			this._onTextureSizeErrorDelegate = away.utils.Delegate.create(this, this.onTextureSizeError);
+			this._onAssetCompleteDelegate = away.utils.Delegate.create(this, this.onAssetComplete);
+			this._onDependencyRetrievingErrorDelegate = away.utils.Delegate.create(this, this.onDependencyRetrievingError);
+			this._onDependencyRetrievingParseErrorDelegate = away.utils.Delegate.create(this, this.onDependencyRetrievingParseError);
 		}
 
 		/**
@@ -250,8 +268,8 @@ module away.library
 
 			this._assetDictionary[ns][asset.name] = asset;
 
-			asset.addEventListener(away.events.AssetEvent.ASSET_RENAME, this.onAssetRename, this);
-			asset.addEventListener(away.events.AssetEvent.ASSET_CONFLICT_RESOLVED, this.onAssetConflictResolved, this);
+			asset.addEventListener(away.events.AssetEvent.ASSET_RENAME, this._onAssetRenameDelegate);
+			asset.addEventListener(away.events.AssetEvent.ASSET_CONFLICT_RESOLVED, this._onAssetConflictResolvedDelegate);
 		}
 
 		/**
@@ -268,8 +286,8 @@ module away.library
 
 			this.removeAssetFromDict(asset);
 
-			asset.removeEventListener(away.events.AssetEvent.ASSET_RENAME, this.onAssetRename, this);
-			asset.removeEventListener(away.events.AssetEvent.ASSET_CONFLICT_RESOLVED, this.onAssetConflictResolved, this);
+			asset.removeEventListener(away.events.AssetEvent.ASSET_RENAME, this._onAssetRenameDelegate);
+			asset.removeEventListener(away.events.AssetEvent.ASSET_CONFLICT_RESOLVED, this._onAssetConflictResolvedDelegate);
 
 			idx = this._assets.indexOf(asset);
 			if (idx >= 0) {
@@ -464,10 +482,10 @@ module away.library
 
 			this._loadingSessions.push(loader);
 
-			loader.addEventListener(away.events.LoaderEvent.RESOURCE_COMPLETE, this.onResourceRetrieved, this);
-			loader.addEventListener(away.events.LoaderEvent.DEPENDENCY_COMPLETE, this.onDependencyRetrieved, this);
-			loader.addEventListener(away.events.AssetEvent.TEXTURE_SIZE_ERROR, this.onTextureSizeError, this);
-			loader.addEventListener(away.events.AssetEvent.ASSET_COMPLETE, this.onAssetComplete, this);
+			loader.addEventListener(away.events.LoaderEvent.RESOURCE_COMPLETE, this._onResourceRetrievedDelegate);
+			loader.addEventListener(away.events.LoaderEvent.DEPENDENCY_COMPLETE, this._onDependencyRetrievedDelegate);
+			loader.addEventListener(away.events.AssetEvent.TEXTURE_SIZE_ERROR, this._onTextureSizeErrorDelegate);
+			loader.addEventListener(away.events.AssetEvent.ASSET_COMPLETE, this._onAssetCompleteDelegate);
 
 			// Error are handled separately (see documentation for addErrorHandler)
 			loader._iAddErrorHandler(this.onDependencyRetrievingError);
@@ -517,10 +535,10 @@ module away.library
 
 			this._loadingSessions.push(loader);
 
-			loader.addEventListener(away.events.LoaderEvent.RESOURCE_COMPLETE, this.onResourceRetrieved, this);
-			loader.addEventListener(away.events.LoaderEvent.DEPENDENCY_COMPLETE, this.onDependencyRetrieved, this);
-			loader.addEventListener(away.events.AssetEvent.TEXTURE_SIZE_ERROR, this.onTextureSizeError, this);
-			loader.addEventListener(away.events.AssetEvent.ASSET_COMPLETE, this.onAssetComplete, this);
+			loader.addEventListener(away.events.LoaderEvent.RESOURCE_COMPLETE, this._onResourceRetrievedDelegate);
+			loader.addEventListener(away.events.LoaderEvent.DEPENDENCY_COMPLETE, this._onDependencyRetrievedDelegate);
+			loader.addEventListener(away.events.AssetEvent.TEXTURE_SIZE_ERROR, this._onTextureSizeErrorDelegate);
+			loader.addEventListener(away.events.AssetEvent.ASSET_COMPLETE, this._onAssetCompleteDelegate);
 
 			// Error are handled separately (see documentation for addErrorHandler)
 			loader._iAddErrorHandler(this.onDependencyRetrievingError);
@@ -570,7 +588,7 @@ module away.library
 		 */
 		private onDependencyRetrievingError(event:away.events.LoaderEvent):boolean
 		{
-			if (this.hasEventListener(away.events.LoaderEvent.LOAD_ERROR, this.onDependencyRetrievingError, this)) {
+			if (this.hasEventListener(away.events.LoaderEvent.LOAD_ERROR, this._onDependencyRetrievingErrorDelegate)) {
 
 				this.dispatchEvent(event);
 				return true;
@@ -588,7 +606,7 @@ module away.library
 		 */
 		private onDependencyRetrievingParseError(event:away.events.ParserEvent):boolean
 		{
-			if (this.hasEventListener(away.events.ParserEvent.PARSE_ERROR, this.onDependencyRetrievingParseError, this)) {
+			if (this.hasEventListener(away.events.ParserEvent.PARSE_ERROR, this._onDependencyRetrievingParseErrorDelegate)) {
 
 				this.dispatchEvent(event);
 				return true;
@@ -664,11 +682,11 @@ module away.library
 		private killLoadingSession(loader:away.net.AssetLoader)
 		{
 
-			loader.removeEventListener(away.events.LoaderEvent.LOAD_ERROR, this.onDependencyRetrievingError, this);
-			loader.removeEventListener(away.events.LoaderEvent.RESOURCE_COMPLETE, this.onResourceRetrieved, this);
-			loader.removeEventListener(away.events.LoaderEvent.DEPENDENCY_COMPLETE, this.onDependencyRetrieved, this);
-			loader.removeEventListener(away.events.AssetEvent.TEXTURE_SIZE_ERROR, this.onTextureSizeError, this);
-			loader.removeEventListener(away.events.AssetEvent.ASSET_COMPLETE, this.onAssetComplete, this);
+			loader.removeEventListener(away.events.LoaderEvent.LOAD_ERROR, this._onDependencyRetrievingErrorDelegate);
+			loader.removeEventListener(away.events.LoaderEvent.RESOURCE_COMPLETE, this._onResourceRetrievedDelegate);
+			loader.removeEventListener(away.events.LoaderEvent.DEPENDENCY_COMPLETE, this._onDependencyRetrievedDelegate);
+			loader.removeEventListener(away.events.AssetEvent.TEXTURE_SIZE_ERROR, this._onTextureSizeErrorDelegate);
+			loader.removeEventListener(away.events.AssetEvent.ASSET_COMPLETE, this._onAssetCompleteDelegate);
 			loader.stop();
 
 		}

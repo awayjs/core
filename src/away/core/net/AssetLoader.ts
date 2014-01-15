@@ -230,6 +230,13 @@ module away.net
 		private _loadingDependency:away.parsers.ResourceDependency;
 		private _namespace:string;
 
+		private _onReadyForDependenciesDelegate:Function;
+		private _onRetrievalCompleteDelegate:Function;
+		private _onRetrievalFailedDelegate:Function;
+		private _onTextureSizeErrorDelegate:Function;
+		private _onAssetCompleteDelegate:Function;
+		private _onParserErrorDelegate:Function;
+
 		/**
 		 * Returns the base dependency of the loader
 		 */
@@ -248,6 +255,13 @@ module away.net
 			this._stack = new Array<away.parsers.ResourceDependency>();
 			this._errorHandlers = new Array<Function>();
 			this._parseErrorHandlers = new Array<Function>();
+
+			this._onReadyForDependenciesDelegate = away.utils.Delegate.create(this, this.onReadyForDependencies);
+			this._onRetrievalCompleteDelegate = away.utils.Delegate.create(this, this.onRetrievalComplete);
+			this._onRetrievalFailedDelegate = away.utils.Delegate.create(this, this.onRetrievalFailed);
+			this._onTextureSizeErrorDelegate = away.utils.Delegate.create(this, this.onTextureSizeError);
+			this._onAssetCompleteDelegate = away.utils.Delegate.create(this, this.onAssetComplete);
+			this._onParserErrorDelegate = away.utils.Delegate.create(this, this.onParserError);
 		}
 
 		/**
@@ -724,24 +738,24 @@ module away.net
 
 		private addEventListeners(loader:SingleFileLoader)
 		{
-			loader.addEventListener(away.events.LoaderEvent.DEPENDENCY_COMPLETE, this.onRetrievalComplete, this);
-			loader.addEventListener(away.events.LoaderEvent.LOAD_ERROR, this.onRetrievalFailed, this);
-			loader.addEventListener(away.events.AssetEvent.TEXTURE_SIZE_ERROR, this.onTextureSizeError, this);
-			loader.addEventListener(away.events.AssetEvent.ASSET_COMPLETE, this.onAssetComplete, this);
+			loader.addEventListener(away.events.ParserEvent.READY_FOR_DEPENDENCIES, this._onReadyForDependenciesDelegate);
+			loader.addEventListener(away.events.LoaderEvent.DEPENDENCY_COMPLETE, this._onRetrievalCompleteDelegate);
+			loader.addEventListener(away.events.LoaderEvent.LOAD_ERROR, this._onRetrievalFailedDelegate);
+			loader.addEventListener(away.events.AssetEvent.TEXTURE_SIZE_ERROR, this._onTextureSizeErrorDelegate);
+			loader.addEventListener(away.events.AssetEvent.ASSET_COMPLETE, this._onAssetCompleteDelegate);
 
-			loader.addEventListener(away.events.ParserEvent.READY_FOR_DEPENDENCIES, this.onReadyForDependencies, this);
-			loader.addEventListener(away.events.ParserEvent.PARSE_ERROR, this.onParserError, this);
+			loader.addEventListener(away.events.ParserEvent.PARSE_ERROR, this._onParserErrorDelegate);
 		}
 
 		private removeEventListeners(loader:SingleFileLoader)
 		{
-			loader.removeEventListener(away.events.ParserEvent.READY_FOR_DEPENDENCIES, this.onReadyForDependencies, this);
-			loader.removeEventListener(away.events.LoaderEvent.DEPENDENCY_COMPLETE, this.onRetrievalComplete, this);
-			loader.removeEventListener(away.events.LoaderEvent.LOAD_ERROR, this.onRetrievalFailed, this);
-			loader.removeEventListener(away.events.AssetEvent.TEXTURE_SIZE_ERROR, this.onTextureSizeError, this);
-			loader.removeEventListener(away.events.AssetEvent.ASSET_COMPLETE, this.onAssetComplete, this);
+			loader.removeEventListener(away.events.ParserEvent.READY_FOR_DEPENDENCIES, this._onReadyForDependenciesDelegate);
+			loader.removeEventListener(away.events.LoaderEvent.DEPENDENCY_COMPLETE, this._onRetrievalCompleteDelegate);
+			loader.removeEventListener(away.events.LoaderEvent.LOAD_ERROR, this._onRetrievalFailedDelegate);
+			loader.removeEventListener(away.events.AssetEvent.TEXTURE_SIZE_ERROR, this._onTextureSizeErrorDelegate);
+			loader.removeEventListener(away.events.AssetEvent.ASSET_COMPLETE, this._onAssetCompleteDelegate);
 
-			loader.removeEventListener(away.events.ParserEvent.PARSE_ERROR, this.onParserError, this);
+			loader.removeEventListener(away.events.ParserEvent.PARSE_ERROR, this._onParserErrorDelegate);
 		}
 
 		public stop()

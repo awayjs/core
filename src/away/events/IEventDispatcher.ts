@@ -19,18 +19,16 @@ module away.events
 		 * @method addEventListener
 		 * @param {String} Name of event to add a listener for
 		 * @param {Function} Callback function
-		 * @param {Object} Target object listener is added to
 		 */
-		addEventListener(type:string, listener:Function, target:Object);
+		addEventListener(type:string, listener:Function);
 
 		/**
 		 * Remove an event listener
 		 * @method removeEventListener
 		 * @param {String} Name of event to remove a listener for
 		 * @param {Function} Callback function
-		 * @param {Object} Target object listener is added to
 		 */
-		removeEventListener (type:string, listener:Function, target:Object);
+		removeEventListener (type:string, listener:Function);
 
 		/**
 		 * Dispatch an event
@@ -46,9 +44,6 @@ module away.events
 		 * @param {Function} Callback function
 		 * @param {Object} Target object listener is added to
 		 */
-
-		//todo: hasEventListener - relax check by not requiring target in param
-
-		hasEventListener(type:string, listener?:Function, target?:Object) : boolean;
+		hasEventListener(type:string, listener?:Function) : boolean;
 	}
 }

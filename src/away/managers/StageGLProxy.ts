@@ -64,6 +64,7 @@ module away.managers
 		private _bufferClear:boolean;
 		//private _mouse3DManager:away.managers.Mouse3DManager;
 		//private _touch3DManager:Touch3DManager; //TODO: imeplement dependency Touch3DManager
+		private _onContextGLUpdateDelegate:Function;
 
 		private notifyViewportUpdated()
 		{
@@ -133,11 +134,12 @@ module away.managers
 			this._viewPort = new away.geom.Rectangle();
 			this._enableDepthAndStencil = true;
 
+			//create the closure delegate for the context update listener
+			this._onContextGLUpdateDelegate = away.utils.Delegate.create(this, this.onContextGLUpdate);
+
 			// whatever happens, be sure this has highest priority
-			this._stageGL.addEventListener(away.events.Event.CONTEXTGL_CREATE, this.onContextGLUpdate, this);//, false, 1000, false);
+			this._stageGL.addEventListener(away.events.Event.CONTEXTGL_CREATE, this._onContextGLUpdateDelegate);//, false, 1000, false);
 			this.requestContext(forceSoftware, this.profile);
-
-
 		}
 
 		public get profile():string
@@ -151,7 +153,7 @@ module away.managers
 		public dispose()
 		{
 			this._stageGLManager.iRemoveStageGLProxy(this);
-			this._stageGL.removeEventListener(away.events.Event.CONTEXTGL_CREATE, this.onContextGLUpdate, this);
+			this._stageGL.removeEventListener(away.events.Event.CONTEXTGL_CREATE, this._onContextGLUpdateDelegate);
 			this.freeContextGL();
 			this._stageGL = null;
 			this._stageGLManager = null;
@@ -281,9 +283,9 @@ module away.managers
 		 * @param useWeakReference Determines whether the reference to the listener is strong or weak. A strong reference (the default) prevents your listener from being garbage-collected. A weak reference does not.
 		 */
 			//public override function addEventListener(type:string, listener, useCapture:boolean = false, priority:number = 0, useWeakReference:boolean = false)
-		public addEventListener(type:string, listener:Function, target:Object)
+		public addEventListener(type:string, listener:Function)
 		{
-			super.addEventListener(type, listener, target);//useCapture, priority, useWeakReference);
+			super.addEventListener(type, listener);//useCapture, priority, useWeakReference);
 
 			//away.Debug.throwPIR( 'StageGLProxy' , 'addEventListener' ,  'EnterFrame, ExitFrame');
 
@@ -311,10 +313,10 @@ module away.managers
 		 * @param listener The listener object to remove.
 		 * @param useCapture Specifies whether the listener was registered for the capture phase or the target and bubbling phases. If the listener was registered for both the capture phase and the target and bubbling phases, two calls to removeEventListener() are required to remove both, one call with useCapture() set to true, and another call with useCapture() set to false.
 		 */
-		public removeEventListener(type:string, listener:Function, target:Object)
+		public removeEventListener(type:string, listener:Function)
 			//public override function removeEventListener(type:string, listener, useCapture:boolean = false)
 		{
-			super.removeEventListener(type, listener, target);
+			super.removeEventListener(type, listener);
 
 			//away.Debug.throwPIR( 'StageGLProxy' , 'removeEventListener' ,  'EnterFrame, ExitFrame');
 

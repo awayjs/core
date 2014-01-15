@@ -23,6 +23,15 @@ module away.net
 		private _materialMode:number;
 		private _data:any;
 
+		private _handleUrlLoaderCompleteDelegate:Function;
+		private _handleUrlLoaderErrorDelegate:Function;
+
+		private _onReadyForDependenciesDelegate:Function;
+		private _onParseCompleteDelegate:Function;
+		private _onParseErrorDelegate:Function;
+		private _onTextureSizeErrorDelegate:Function;
+		private _onAssetCompleteDelegate:Function;
+
 		// Static
 
 		// Image parser only parser that is added by default, to save file size.
@@ -48,6 +57,16 @@ module away.net
 			super();
 			this._materialMode = materialMode;
 			this._assets = new Array<away.library.IAsset>();
+
+			this._handleUrlLoaderCompleteDelegate = away.utils.Delegate.create(this, this.handleUrlLoaderComplete);
+			this._handleUrlLoaderErrorDelegate = away.utils.Delegate.create(this, this.handleUrlLoaderError);
+
+			this._onReadyForDependenciesDelegate = away.utils.Delegate.create(this, this.onReadyForDependencies);
+			this._onParseCompleteDelegate = away.utils.Delegate.create(this, this.onParseComplete);
+			this._onParseErrorDelegate = away.utils.Delegate.create(this, this.onParseError);
+			this._onTextureSizeErrorDelegate = away.utils.Delegate.create(this, this.onTextureSizeError);
+			this._onAssetCompleteDelegate = away.utils.Delegate.create(this, this.onAssetComplete);
+
 		}
 
 		// Get / Set
@@ -146,8 +165,8 @@ module away.net
 
 			var loader:ISingleFileTSLoader = this.getLoader(loaderType);
 			loader.dataFormat = dataFormat;
-			loader.addEventListener(away.events.Event.COMPLETE, this.handleUrlLoaderComplete, this);
-			loader.addEventListener(away.events.IOErrorEvent.IO_ERROR, this.handleUrlLoaderError, this);
+			loader.addEventListener(away.events.Event.COMPLETE, this._handleUrlLoaderCompleteDelegate);
+			loader.addEventListener(away.events.IOErrorEvent.IO_ERROR, this._handleUrlLoaderErrorDelegate);
 			loader.load(urlRequest);
 
 		}
@@ -283,8 +302,8 @@ module away.net
 		 */
 		private removeListeners(urlLoader:ISingleFileTSLoader):void
 		{
-			urlLoader.removeEventListener(away.events.Event.COMPLETE, this.handleUrlLoaderComplete, this);
-			urlLoader.removeEventListener(away.events.IOErrorEvent.IO_ERROR, this.handleUrlLoaderError, this);
+			urlLoader.removeEventListener(away.events.Event.COMPLETE, this._handleUrlLoaderCompleteDelegate);
+			urlLoader.removeEventListener(away.events.IOErrorEvent.IO_ERROR, this._handleUrlLoaderErrorDelegate);
 		}
 
 		// Events
@@ -337,11 +356,11 @@ module away.net
 
 			if (this._parser) {
 
-				this._parser.addEventListener(away.events.ParserEvent.READY_FOR_DEPENDENCIES, this.onReadyForDependencies, this);
-				this._parser.addEventListener(away.events.ParserEvent.PARSE_ERROR, this.onParseError, this);
-				this._parser.addEventListener(away.events.ParserEvent.PARSE_COMPLETE, this.onParseComplete, this);
-				this._parser.addEventListener(away.events.AssetEvent.TEXTURE_SIZE_ERROR, this.onTextureSizeError, this);
-				this._parser.addEventListener(away.events.AssetEvent.ASSET_COMPLETE, this.onAssetComplete, this);
+				this._parser.addEventListener(away.events.ParserEvent.READY_FOR_DEPENDENCIES, this._onReadyForDependenciesDelegate);
+				this._parser.addEventListener(away.events.ParserEvent.PARSE_COMPLETE, this._onParseCompleteDelegate);
+				this._parser.addEventListener(away.events.ParserEvent.PARSE_ERROR, this._onParseErrorDelegate);
+				this._parser.addEventListener(away.events.AssetEvent.TEXTURE_SIZE_ERROR, this._onTextureSizeErrorDelegate);
+				this._parser.addEventListener(away.events.AssetEvent.ASSET_COMPLETE, this._onAssetCompleteDelegate);
 
 				if (this._req && this._req.url) {
 					this._parser._iFileName = this._req.url;
@@ -395,11 +414,11 @@ module away.net
 
 			this.dispatchEvent(new away.events.LoaderEvent(away.events.LoaderEvent.DEPENDENCY_COMPLETE, this.url, this._assets));//dispatch in front of removing listeners to allow any remaining asset events to propagate
 
-			this._parser.removeEventListener(away.events.ParserEvent.READY_FOR_DEPENDENCIES, this.onReadyForDependencies, this);
-			this._parser.removeEventListener(away.events.ParserEvent.PARSE_COMPLETE, this.onParseComplete, this);
-			this._parser.removeEventListener(away.events.ParserEvent.PARSE_ERROR, this.onParseError, this);
-			this._parser.removeEventListener(away.events.AssetEvent.TEXTURE_SIZE_ERROR, this.onTextureSizeError, this);
-			this._parser.removeEventListener(away.events.AssetEvent.ASSET_COMPLETE, this.onAssetComplete, this);
+			this._parser.removeEventListener(away.events.ParserEvent.READY_FOR_DEPENDENCIES, this._onReadyForDependenciesDelegate);
+			this._parser.removeEventListener(away.events.ParserEvent.PARSE_COMPLETE, this._onParseCompleteDelegate);
+			this._parser.removeEventListener(away.events.ParserEvent.PARSE_ERROR, this._onParseErrorDelegate);
+			this._parser.removeEventListener(away.events.AssetEvent.TEXTURE_SIZE_ERROR, this._onTextureSizeErrorDelegate);
+			this._parser.removeEventListener(away.events.AssetEvent.ASSET_COMPLETE, this._onAssetCompleteDelegate);
 
 		}
 

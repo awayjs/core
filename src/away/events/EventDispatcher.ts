@@ -23,9 +23,8 @@ module away.events
 		 * @method addEventListener
 		 * @param {String} Name of event to add a listener for
 		 * @param {Function} Callback function
-		 * @param {Object} Target object listener is added to
 		 */
-		public addEventListener(type:string, listener:Function, target:Object)
+		public addEventListener(type:string, listener:Function)
 		{
 
 			if (this.listeners[ type ] === undefined) {
@@ -34,12 +33,11 @@ module away.events
 
 			}
 
-			if (this.getEventListenerIndex(type, listener, target) === -1) {
+			if (this.getEventListenerIndex(type, listener) === -1) {
 
 				var d:EventData = new EventData();
 				d.listener = listener;
 				d.type = type;
-				d.target = target;
 
 				this.listeners[ type ].push(d);
 
@@ -52,12 +50,11 @@ module away.events
 		 * @method removeEventListener
 		 * @param {String} Name of event to remove a listener for
 		 * @param {Function} Callback function
-		 * @param {Object} Target object listener is added to
 		 */
-		public removeEventListener(type:string, listener:Function, target:Object)
+		public removeEventListener(type:string, listener:Function)
 		{
 
-			var index:number = this.getEventListenerIndex(type, listener, target);
+			var index:number = this.getEventListenerIndex(type, listener);
 
 			if (index !== -1) {
 
@@ -87,7 +84,7 @@ module away.events
 				for (var i = 0, l = this.lFncLength; i < l; i++) {
 
 					eventData = listenerArray[i];
-					eventData.listener.call(eventData.target, event);
+					eventData["listener"](event);
 
 				}
 			}
@@ -99,9 +96,8 @@ module away.events
 		 * @method getEventListenerIndex
 		 * @param {String} Name of event to remove a listener for
 		 * @param {Function} Callback function
-		 * @param {Object} Target object listener is added to
 		 */
-		private getEventListenerIndex(type:string, listener:Function, target:Object):number
+		private getEventListenerIndex(type:string, listener:Function):number
 		{
 
 			if (this.listeners[ type ] !== undefined) {
@@ -114,7 +110,7 @@ module away.events
 
 					d = a[c];
 
-					if (target == d.target && listener == d.listener) {
+					if (listener == d.listener) {
 
 						return c;
 
@@ -134,17 +130,13 @@ module away.events
 		 * @method hasListener
 		 * @param {String} Name of event to remove a listener for
 		 * @param {Function} Callback function
-		 * @param {Object} Target object listener is added to
 		 */
-
-			//todo: hasEventListener - relax check by not requiring target in param
-
-		public hasEventListener(type:string, listener?:Function, target?:Object):boolean
+		public hasEventListener(type:string, listener?:Function):boolean
 		{
 
-			if (this.listeners != null && target != null) {
+			if (this.listeners != null) {
 
-				return ( this.getEventListenerIndex(type, listener, target) !== -1 );
+				return ( this.getEventListenerIndex(type, listener) !== -1 );
 
 			} else {
 
@@ -173,7 +165,6 @@ module away.events
 	{
 
 		public listener:Function;
-		public target:Object;
 		public type:string;
 
 	}

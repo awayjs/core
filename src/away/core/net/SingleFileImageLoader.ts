@@ -9,10 +9,16 @@ module away.net
 		private _loader:away.net.IMGLoader;
 		private _data:any;
 		private _dataFormat:string; // Not used in this implementation
+		private _onLoadCompleteDelegate:Function;
+		private _onLoadErrorDelegate:Function;
 
 		constructor()
 		{
 			super();
+
+			this._onLoadCompleteDelegate = away.utils.Delegate.create(this, this.onLoadComplete);
+			this._onLoadErrorDelegate = away.utils.Delegate.create(this, this.onLoadError);
+
 			this.initLoader();
 		}
 
@@ -70,8 +76,8 @@ module away.net
 		{
 			if (!this._loader) {
 				this._loader = new away.net.IMGLoader();
-				this._loader.addEventListener(away.events.Event.COMPLETE, this.onLoadComplete, this);
-				this._loader.addEventListener(away.events.IOErrorEvent.IO_ERROR, this.onLoadError, this);
+				this._loader.addEventListener(away.events.Event.COMPLETE, this._onLoadCompleteDelegate);
+				this._loader.addEventListener(away.events.IOErrorEvent.IO_ERROR, this._onLoadErrorDelegate);
 			}
 		}
 
@@ -82,8 +88,8 @@ module away.net
 		{
 			if (this._loader) {
 				this._loader.dispose();
-				this._loader.removeEventListener(away.events.Event.COMPLETE, this.onLoadComplete, this);
-				this._loader.removeEventListener(away.events.IOErrorEvent.IO_ERROR, this.onLoadError, this);
+				this._loader.removeEventListener(away.events.Event.COMPLETE, this._onLoadCompleteDelegate);
+				this._loader.removeEventListener(away.events.IOErrorEvent.IO_ERROR, this._onLoadErrorDelegate);
 				this._loader = null
 			}
 		}

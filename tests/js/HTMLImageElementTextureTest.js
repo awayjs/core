@@ -14,17 +14,17 @@ var tests;
                 this.mipLoader.addEventListener(away.events.Event.COMPLETE, Delegate.create(this, this.mipImgLoaded));
             }
             HTMLImageElementTextureTest.prototype.mipImgLoaded = function (e) {
-                var stage = new away.display.Stage();
-                var stage3D = stage.getStageGLAt(0);
-                var context3D = new away.displayGL.ContextGL(stage3D.canvas);
+                var stageGLManager = away.managers.StageGLManager.getInstance();
+                var stage3D = stageGLManager.getStageGLAt(0);
+                var context3D = new away.gl.ContextGL(stage3D.canvas);
                 var loader = e.target;
 
                 console.log('away.events.Event.COMPLETE', loader);
 
-                this.texture = new away.displayGL.Texture(context3D._gl, loader.width, loader.height);
+                this.texture = new away.gl.Texture(context3D._gl, loader.width, loader.height);
                 this.target = new away.textures.HTMLImageElementTexture(loader.image, false);
 
-                console.log('away.display3D.Texture - Created', this.texture);
+                console.log('away.base3D.Texture - Created', this.texture);
                 console.log('away.textures.HTMLImageElementTexture - Created', this.target);
 
                 away.textures.MipmapGenerator.generateHTMLImageElementMipMaps(this.target.htmlImageElement, this.texture);

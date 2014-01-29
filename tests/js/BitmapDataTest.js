@@ -1,8 +1,9 @@
+///<reference path="../../build/AME.next.d.ts" />
 var tests;
 (function (tests) {
-    ///<reference path="../../../build/Away3D.next.d.ts" />
-    //<reference path="../../../src/Away3D.ts" />
-    (function (display) {
+    (function (base) {
+        var Delegate = away.utils.Delegate;
+
         var BitmapDataTest = (function () {
             function BitmapDataTest() {
                 var _this = this;
@@ -14,35 +15,35 @@ var tests;
                 this.urlRequest = new away.net.URLRequest('assets/256x256.png');
                 this.imgLoader = new away.net.IMGLoader();
                 this.imgLoader.load(this.urlRequest);
-                this.imgLoader.addEventListener(away.events.Event.COMPLETE, this.imgLoaded, this);
-                this.imgLoader.addEventListener(away.events.IOErrorEvent.IO_ERROR, this.imgLoadedError, this);
+                this.imgLoader.addEventListener(away.events.Event.COMPLETE, Delegate.create(this, this.imgLoaded));
+                this.imgLoader.addEventListener(away.events.IOErrorEvent.IO_ERROR, Delegate.create(this, this.imgLoadedError));
 
                 //---------------------------------------
                 // BitmapData Object - 1
-                this.bitmapData = new away.display.BitmapData(256, 256, transparent, initcolour);
+                this.bitmapData = new away.base.BitmapData(256, 256, transparent, initcolour);
                 document.body.appendChild(this.bitmapData.canvas);
 
                 //---------------------------------------
                 // BitmapData Object - 2
-                this.bitmapDataB = new away.display.BitmapData(256, 256, transparent, initcolour);
+                this.bitmapDataB = new away.base.BitmapData(256, 256, transparent, initcolour);
                 this.bitmapDataB.canvas.style.position = 'absolute';
                 this.bitmapDataB.canvas.style.left = '540px';
                 document.body.appendChild(this.bitmapDataB.canvas);
 
                 //---------------------------------------
                 // BitmapData - setPixel test
-                console['time']("bitmapdata");
+                console['time']("bitmapdata"); // start setPixel operation benchmark ( TypeScript does not support console.time - so hacking it in ) .
 
                 this.bitmapDataB.lock();
 
                 for (var i = 0; i < 10000; i++) {
                     var x = Math.random() * this.bitmapDataB.width | 0;
                     var y = Math.random() * this.bitmapDataB.height | 0;
-                    this.bitmapDataB.setPixel(x, y, Math.random() * 0xffFFFFFF);
+                    this.bitmapDataB.setPixel(x, y, Math.random() * 0xffFFFFFF); // 255 opaque
                 }
 
                 this.bitmapDataB.unlock();
-                console['timeEnd']("bitmapdata");
+                console['timeEnd']("bitmapdata"); // benchmark the setPixel operation
 
                 document.onmousedown = function (e) {
                     return _this.onMouseDown(e);
@@ -51,7 +52,7 @@ var tests;
             BitmapDataTest.prototype.onMouseDown = function (e) {
                 if (this.bitmapData.width === 512) {
                     if (this.imgLoader.loaded) {
-                        this.bitmapDataB.lock();
+                        this.bitmapDataB.lock(); // Lock bitmap - speeds up setPixelOperations
 
                         //---------------------------------------
                         // Resize BitmapData
@@ -73,10 +74,10 @@ var tests;
                         for (var d = 0; d < 1000; d++) {
                             var x = Math.random() * this.bitmapDataB.width | 0;
                             var y = Math.random() * this.bitmapDataB.height | 0;
-                            this.bitmapDataB.setPixel(x, y, Math.random() * 0xFFFFFFFF);
+                            this.bitmapDataB.setPixel(x, y, Math.random() * 0xFFFFFFFF); // 255 opaque
                         }
 
-                        this.bitmapDataB.unlock();
+                        this.bitmapDataB.unlock(); // Unlock bitmapdata
                     } else {
                         //---------------------------------------
                         // image is not loaded - fill bitmapdata with red
@@ -91,7 +92,7 @@ var tests;
 
                     this.bitmapData.width = 512;
                     this.bitmapData.height = 512;
-                    this.bitmapData.fillRect(this.bitmapData.rect, 0xffff0000);
+                    this.bitmapData.fillRect(this.bitmapData.rect, 0xffff0000); // fill it RED
 
                     for (var d = 0; d < 1000; d++) {
                         var x = Math.random() * this.bitmapData.width | 0;
@@ -107,7 +108,7 @@ var tests;
                     targetRect.width = targetRect.width / 2;
                     targetRect.height = targetRect.height / 2;
 
-                    this.bitmapDataB.copyPixels(this.bitmapData, this.bitmapDataB.rect, targetRect);
+                    this.bitmapDataB.copyPixels(this.bitmapData, this.bitmapDataB.rect, targetRect); // copy first bitmapdata object into the second one
                 }
 
                 var m = new away.geom.Matrix(.5, .08, .08, .5, this.imgLoader.width / 2, this.imgLoader.height / 2);
@@ -136,8 +137,8 @@ var tests;
             };
             return BitmapDataTest;
         })();
-        display.BitmapDataTest = BitmapDataTest;
-    })(tests.display || (tests.display = {}));
-    var display = tests.display;
+        base.BitmapDataTest = BitmapDataTest;
+    })(tests.base || (tests.base = {}));
+    var base = tests.base;
 })(tests || (tests = {}));
 //# sourceMappingURL=BitmapDataTest.js.map

@@ -16,9 +16,9 @@ module away.textures
 		}
 
 		//@override
-		public pCreateTexture(context:away.displayGL.ContextGL):away.displayGL.TextureBase
+		public pCreateTexture(context:away.gl.ContextGL):away.gl.TextureBase
 		{
-			return context.createCubeTexture(this.width, away.displayGL.ContextGLTextureFormat.BGRA, false);
+			return context.createCubeTexture(this.width, away.gl.ContextGLTextureFormat.BGRA, false);
 		}
 	}
 }

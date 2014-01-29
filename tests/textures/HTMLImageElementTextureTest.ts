@@ -9,7 +9,7 @@ module tests.textures
 
         private mipLoader       : away.net.IMGLoader;
         private target          : away.textures.HTMLImageElementTexture;
-        private texture         : away.displayGL.Texture;
+        private texture         : away.gl.Texture;
 
         constructor()
         {
@@ -27,20 +27,20 @@ module tests.textures
         private mipImgLoaded( e )
         {
 
-            var stage       : away.display.Stage        = new away.display.Stage();
-            var stage3D     : away.display.StageGL      = stage.getStageGLAt( 0 );
-            var context3D   : away.displayGL.ContextGL  = new away.displayGL.ContextGL( stage3D.canvas );
+            var stageGLManager       : away.managers.StageGLManager        = away.managers.StageGLManager.getInstance();
+            var stage3D     : away.base.StageGL      = stageGLManager.getStageGLAt( 0 );
+            var context3D   : away.gl.ContextGL  = new away.gl.ContextGL( stage3D.canvas );
             var loader      : away.net.IMGLoader        = <away.net.IMGLoader > e.target;
 
             console.log( 'away.events.Event.COMPLETE' , loader );
 
-            this.texture    = new away.displayGL.Texture( context3D._gl , loader.width , loader.height );
+            this.texture    = new away.gl.Texture( context3D._gl , loader.width , loader.height );
             this.target     = new away.textures.HTMLImageElementTexture( loader.image , false );
 
-            console.log( 'away.display3D.Texture - Created' , this.texture );
+            console.log( 'away.base3D.Texture - Created' , this.texture );
             console.log( 'away.textures.HTMLImageElementTexture - Created' , this.target );
 
-            away.textures.MipmapGenerator.generateHTMLImageElementMipMaps( this.target.htmlImageElement , <away.displayGL.TextureBase> this.texture );
+            away.textures.MipmapGenerator.generateHTMLImageElementMipMaps( this.target.htmlImageElement , <away.gl.TextureBase> this.texture );
 
         }
 

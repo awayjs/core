@@ -5,11 +5,11 @@ module away.textures
 
 	export class TextureProxyBase extends away.library.NamedAssetBase implements away.library.IAsset
 	{
-		private _format:string = away.displayGL.ContextGLTextureFormat.BGRA;
-		private _hasMipmaps:boolean = false;
+		public _pFormat:string = away.gl.ContextGLTextureFormat.BGRA;
+		public _pHasMipmaps:boolean = false;
 
-		private _textures:away.displayGL.TextureBase[];
-		private _dirty:away.displayGL.ContextGL[];
+		private _textures:away.gl.TextureBase[];
+		private _dirty:away.gl.ContextGL[];
 
 		public _pWidth:number;
 		public _pHeight:number;
@@ -19,8 +19,8 @@ module away.textures
 
 			super();
 
-			this._textures = new Array<away.displayGL.TextureBase>(8);//_textures = new Vector.<TextureBase>(8);
-			this._dirty = new Array<away.displayGL.ContextGL>(8);//_dirty = new Vector.<ContextGL>(8);
+			this._textures = new Array<away.gl.TextureBase>(8);//_textures = new Vector.<TextureBase>(8);
+			this._dirty = new Array<away.gl.ContextGL>(8);//_dirty = new Vector.<ContextGL>(8);
 
 		}
 
@@ -30,7 +30,7 @@ module away.textures
 		 */
 		public get hasMipMaps():boolean
 		{
-			return this._hasMipmaps;
+			return this._pHasMipmaps;
 		}
 
 		/**
@@ -39,7 +39,7 @@ module away.textures
 		 */
 		public get format():string
 		{
-			return this._format;
+			return this._pFormat;
 		}
 
 		/**
@@ -69,13 +69,13 @@ module away.textures
 			return this._pHeight;
 		}
 
-		public getTextureForStageGL(stageGLProxy:away.managers.StageGLProxy):away.displayGL.TextureBase
+		public getTextureForStageGL(stageGL:away.base.StageGL):away.gl.TextureBase
 		{
-			var contextIndex:number = stageGLProxy._iStageGLIndex;
+			var contextIndex:number = stageGL._iStageGLIndex;
 
-			var tex:away.displayGL.TextureBase = this._textures[contextIndex];
+			var tex:away.gl.TextureBase = this._textures[contextIndex];
 
-			var context:away.displayGL.ContextGL = stageGLProxy._iContextGL;//_contextGL;
+			var context:away.gl.ContextGL = stageGL.contextGL;
 
 			if (!tex || this._dirty[contextIndex] != context) {
 
@@ -93,7 +93,7 @@ module away.textures
 		 * @param texture
 		 * @private
 		 */
-		public pUploadContent(texture:away.displayGL.TextureBase):void
+		public pUploadContent(texture:away.gl.TextureBase)
 		{
 
 			throw new away.errors.AbstractMethodError();
@@ -106,7 +106,7 @@ module away.textures
 		 * @param height
 		 * @private
 		 */
-		public pSetSize(width:number, height:number):void
+		public pSetSize(width:number, height:number)
 		{
 
 			if (this._pWidth != width || this._pHeight != height) {
@@ -140,7 +140,7 @@ module away.textures
 		 */
 		public pInvalidateSize():void
 		{
-			var tex:away.displayGL.TextureBase;
+			var tex:away.gl.TextureBase;
 			for (var i:number = 0; i < 8; ++i) {
 
 				tex = this._textures[i];
@@ -162,7 +162,7 @@ module away.textures
 		 * @param context
 		 * @private
 		 */
-		public pCreateTexture(context:away.displayGL.ContextGL):away.displayGL.TextureBase
+		public pCreateTexture(context:away.gl.ContextGL):away.gl.TextureBase
 		{
 			throw new away.errors.AbstractMethodError();
 		}

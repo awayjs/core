@@ -4,7 +4,7 @@ module away.managers
 {
 	//import away.arcane;
 
-	//import flash.display.Stage;
+	//import flash.base.Stage;
 	//import flash.utils.Dictionary;
 
 	//use namespace arcane;
@@ -13,34 +13,32 @@ module away.managers
 	 * The StageGLManager class provides a multiton object that handles management for StageGL objects. StageGL objects
 	 * should not be requested directly, but are exposed by a StageGLProxy.
 	 *
-	 * @see away.core.managers.StageGLProxy
+	 * @see away.base.StageGLProxy
 	 */
-	export class StageGLManager
+	export class StageGLManager extends away.events.EventDispatcher
 	{
+		private static STAGEGL_MAX_QUANTITY:number = 8;
+		private _stageGLs:Array<away.base.StageGL>;
+
 		//private static _instances:Object;
-		private static _instances:StageGLManagerInstanceData[];
-		private static _stageProxies:away.managers.StageGLProxy[];//.<StageGLProxy>;
-		private static _numStageProxies:number = 0;
-
-		private _stage:away.display.Stage;
-
+		private static _instance:StageGLManager;
+		private static _numStageGLs:number = 0;
+		private _onContextCreatedDelegate:Function;
 		/**
 		 * Creates a new StageGLManager class.
 		 * @param stage The Stage object that contains the StageGL objects to be managed.
 		 * @private
 		 */
-		constructor(stage:away.display.Stage, StageGLManagerSingletonEnforcer:StageGLManagerSingletonEnforcer)
+		constructor(StageGLManagerSingletonEnforcer:StageGLManagerSingletonEnforcer)
 		{
-			if (!StageGLManagerSingletonEnforcer) {
+			super();
+
+			if (!StageGLManagerSingletonEnforcer)
 				throw new Error("This class is a multiton and cannot be instantiated manually. Use StageGLManager.getInstance instead.");
-			}
 
-			this._stage = stage;
+			this._stageGLs = new Array<away.base.StageGL>(StageGLManager.STAGEGL_MAX_QUANTITY);
 
-			if (!StageGLManager._stageProxies) {
-				StageGLManager._stageProxies = new Array<away.managers.StageGLProxy>(this._stage.stageGLs.length);//, true);
-			}
-
+			this._onContextCreatedDelegate = away.utils.Delegate.create(this, this.onContextCreated);
 		}
 
 		/**
@@ -48,171 +46,118 @@ module away.managers
 		 * @param stage The Stage object that contains the StageGL objects to be managed.
 		 * @return The StageGLManager instance for the given Stage object.
 		 */
-		public static getInstance(stage:away.display.Stage):away.managers.StageGLManager
+		public static getInstance():StageGLManager
 		{
+			if (this._instance == null)
+				this._instance = new StageGLManager(new StageGLManagerSingletonEnforcer());
 
-			var stage3dManager:away.managers.StageGLManager = StageGLManager.getStageGLManagerByStageRef(stage);
-
-			if (stage3dManager == null) {
-
-				stage3dManager = new away.managers.StageGLManager(stage, new StageGLManagerSingletonEnforcer());
-
-				var stageInstanceData:StageGLManagerInstanceData = new StageGLManagerInstanceData();
-				stageInstanceData.stage = stage;
-				stageInstanceData.stageGLManager = stage3dManager;
-
-				StageGLManager._instances.push(stageInstanceData);
-
-			}
-
-			return stage3dManager;
+			return this._instance;
 
 		}
 
 		/**
+		 * Requests the StageGL for the given index.
 		 *
-		 * @param stage
-		 * @returns {  away.managers.StageGLManager }
-		 * @constructor
-		 */
-		private static getStageGLManagerByStageRef(stage:away.display.Stage):away.managers.StageGLManager
-		{
-
-			if (StageGLManager._instances == null) {
-
-				StageGLManager._instances = new Array<StageGLManagerInstanceData>();
-
-			}
-
-			var l:number = StageGLManager._instances.length;
-			var s:StageGLManagerInstanceData;
-
-			for (var c:number = 0; c < l; c++) {
-
-				s = StageGLManager._instances[c];
-
-				if (s.stage == stage) {
-
-					return s.stageGLManager;
-
-				}
-
-
-			}
-
-			return null;
-
-		}
-
-		/**
-		 * Requests the StageGLProxy for the given index.
 		 * @param index The index of the requested StageGL.
 		 * @param forceSoftware Whether to force software mode even if hardware acceleration is available.
 		 * @param profile The compatibility profile, an enumeration of ContextGLProfile
-		 * @return The StageGLProxy for the given index.
+		 * @return The StageGL for the given index.
 		 */
-		public getStageGLProxy(index:number, forceSoftware:boolean = false, profile:string = "baseline"):away.managers.StageGLProxy
+		public getStageGLAt(index:number, forceSoftware:boolean = false, profile:string = "baseline"):away.base.StageGL
 		{
-			if (!StageGLManager._stageProxies[index]) {
+			if (index < 0 || index >= StageGLManager.STAGEGL_MAX_QUANTITY)
+				throw new away.errors.ArgumentError("Index is out of bounds [0.." + StageGLManager.STAGEGL_MAX_QUANTITY + "]");
 
-				StageGLManager._numStageProxies++;
-				StageGLManager._stageProxies[index] = new away.managers.StageGLProxy(index, this._stage.stageGLs[index], this, forceSoftware, profile);
+			if (!this._stageGLs[index]) {
+				StageGLManager._numStageGLs++;
 
+				var canvas:HTMLCanvasElement = document.createElement("canvas");
+				var stageGL:away.base.StageGL = this._stageGLs[index] = new away.base.StageGL(canvas, index, this, forceSoftware, profile);
+				stageGL.addEventListener(away.events.StageGLEvent.CONTEXTGL_CREATED, this._onContextCreatedDelegate);
+				stageGL.requestContext(true, forceSoftware, profile);
 			}
 
-			return StageGLManager._stageProxies[index];
+			return stageGL;
 		}
 
 		/**
-		 * Removes a StageGLProxy from the manager.
-		 * @param stageGLProxy
+		 * Removes a StageGL from the manager.
+		 * @param stageGL
 		 * @private
 		 */
-		public iRemoveStageGLProxy(stageGLProxy:away.managers.StageGLProxy)
+		public iRemoveStageGL(stageGL:away.base.StageGL)
 		{
-			StageGLManager._numStageProxies--;
-			StageGLManager._stageProxies[ stageGLProxy._iStageGLIndex ] = null;
+			StageGLManager._numStageGLs--;
+
+			stageGL.removeEventListener(away.events.StageGLEvent.CONTEXTGL_CREATED, this._onContextCreatedDelegate);
+
+			this._stageGLs[ stageGL._iStageGLIndex ] = null;
 		}
 
 		/**
-		 * Get the next available stageGLProxy. An error is thrown if there are no StageGLProxies available
+		 * Get the next available stageGL. An error is thrown if there are no StageGLProxies available
 		 * @param forceSoftware Whether to force software mode even if hardware acceleration is available.
 		 * @param profile The compatibility profile, an enumeration of ContextGLProfile
-		 * @return The allocated stageGLProxy
+		 * @return The allocated stageGL
 		 */
-		public getFreeStageGLProxy(forceSoftware:boolean = false, profile:string = "baseline"):StageGLProxy
+		public getFreeStageGL(forceSoftware:boolean = false, profile:string = "baseline"):away.base.StageGL
 		{
 			var i:number = 0;
-			var len:number = StageGLManager._stageProxies.length;
+			var len:number = this._stageGLs.length;
 
 			//console.log( StageGLManager._stageProxies );
 
 			while (i < len) {
-
-				if (!StageGLManager._stageProxies[i]) {
-
-					this.getStageGLProxy(i, forceSoftware, profile);
-
-					StageGLManager._stageProxies[i].width = this._stage.stageWidth;
-					StageGLManager._stageProxies[i].height = this._stage.stageHeight;
-
-					return StageGLManager._stageProxies[i];
-
-				}
+				if (!this._stageGLs[i])
+					return this.getStageGLAt(i, forceSoftware, profile);
 
 				++i;
-
 			}
 
-			throw new Error("Too many StageGL instances used!");
 			return null;
-
 		}
 
 		/**
-		 * Checks if a new stageGLProxy can be created and managed by the class.
-		 * @return true if there is one slot free for a new stageGLProxy
+		 * Checks if a new stageGL can be created and managed by the class.
+		 * @return true if there is one slot free for a new stageGL
 		 */
-		public get hasFreeStageGLProxy():boolean
+		public get hasFreeStageGL():boolean
 		{
-			return StageGLManager._numStageProxies < StageGLManager._stageProxies.length? true : false;
+			return StageGLManager._numStageGLs < StageGLManager.STAGEGL_MAX_QUANTITY? true : false;
 		}
 
 		/**
-		 * Returns the amount of stageGLProxy objects that can be created and managed by the class
+		 * Returns the amount of stageGL objects that can be created and managed by the class
 		 * @return the amount of free slots
 		 */
-		public get numProxySlotsFree():number
+		public get numSlotsFree():number
 		{
-			return StageGLManager._stageProxies.length - StageGLManager._numStageProxies;
+			return StageGLManager.STAGEGL_MAX_QUANTITY - StageGLManager._numStageGLs;
 		}
 
 		/**
-		 * Returns the amount of StageGLProxy objects currently managed by the class.
+		 * Returns the amount of StageGL objects currently managed by the class.
 		 * @return the amount of slots used
 		 */
-		public get numProxySlotsUsed():number
+		public get numSlotsUsed():number
 		{
-			return StageGLManager._numStageProxies;
+			return StageGLManager._numStageGLs;
 		}
 
 		/**
-		 * Returns the maximum amount of StageGLProxy objects that can be managed by the class
-		 * @return the maximum amount of StageGLProxy objects that can be managed by the class
+		 * The maximum amount of StageGL objects that can be managed by the class
 		 */
-		public get numProxySlotsTotal():number
+		public get numSlotsTotal():number
 		{
-			return StageGLManager._stageProxies.length;
+			return this._stageGLs.length;
+		}
+
+		private onContextCreated(e:away.events.Event):void
+		{
+			var stageGL:away.base.StageGL = <away.base.StageGL> e.target;
+			document.body.appendChild(stageGL.canvas)
 		}
 	}
-}
-
-class StageGLManagerInstanceData
-{
-
-	public stage:away.display.Stage;
-	public stageGLManager:away.managers.StageGLManager;
-
 }
 
 class StageGLManagerSingletonEnforcer

@@ -13,11 +13,11 @@ module aglsl
 			var vertCompiler:aglsl.AGLSLCompiler = new aglsl.AGLSLCompiler();
 			var fragCompiler:aglsl.AGLSLCompiler = new aglsl.AGLSLCompiler();
 			
-			console.log( vertCompiler.compile( away.displayGL.ContextGLProgramType.VERTEX, vertSource ) );
+			console.log( vertCompiler.compile( away.gl.ContextGLProgramType.VERTEX, vertSource ) );
 			
 			console.log( "\n" );
 			
-			console.log( fragCompiler.compile( away.displayGL.ContextGLProgramType.FRAGMENT, fragSource ) );
+			console.log( fragCompiler.compile( away.gl.ContextGLProgramType.FRAGMENT, fragSource ) );
 			
 		}
 	}

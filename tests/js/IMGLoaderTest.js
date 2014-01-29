@@ -1,7 +1,7 @@
 ///<reference path="../../build/AME.next.d.ts" />
 var tests;
 (function (tests) {
-    (function (loaders) {
+    (function (net) {
         var Delegate = away.utils.Delegate;
 
         var IMGLoaderTest = (function () {
@@ -85,8 +85,8 @@ var tests;
             };
             return IMGLoaderTest;
         })();
-        loaders.IMGLoaderTest = IMGLoaderTest;
-    })(tests.loaders || (tests.loaders = {}));
-    var loaders = tests.loaders;
+        net.IMGLoaderTest = IMGLoaderTest;
+    })(tests.net || (tests.net = {}));
+    var net = tests.net;
 })(tests || (tests = {}));
 //# sourceMappingURL=IMGLoaderTest.js.map

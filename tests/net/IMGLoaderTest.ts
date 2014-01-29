@@ -1,6 +1,6 @@
 ///<reference path="../../build/AME.next.d.ts" />
 
-module tests.loaders
+module tests.net
 {
 	import Delegate				= away.utils.Delegate;
 

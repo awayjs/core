@@ -108,7 +108,7 @@ module away.parsers
 		 * Validates a bitmapData loaded before assigning to a default BitmapMaterial
 		 */
 
-		public isBitmapDataValid(bitmapData:away.display.BitmapData):boolean
+		public isBitmapDataValid(bitmapData:away.base.BitmapData):boolean
 		{
 			var isValid:boolean = away.utils.TextureUtils.isBitmapDataValid(bitmapData);
 

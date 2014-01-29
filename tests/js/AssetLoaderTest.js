@@ -198,46 +198,52 @@ var parsers;
 var tests;
 (function (tests) {
     (function (net) {
+        var AssetEvent = away.events.AssetEvent;
+        var LoaderEvent = away.events.LoaderEvent;
+        var ParserEvent = away.events.ParserEvent;
+        var AssetLoader = away.net.AssetLoader;
+        var AssetLoaderToken = away.net.AssetLoaderToken;
+        var URLRequest = away.net.URLRequest;
         var Delegate = away.utils.Delegate;
 
         var AssetLoaderTest = (function () {
             function AssetLoaderTest() {
                 //---------------------------------------------------------------------------------------------------------------------
                 // Enable Custom Parser ( JSON file format with multiple texture dependencies )
-                away.net.AssetLoader.enableParser(parsers.JSONTextureParser);
+                AssetLoader.enableParser(parsers.JSONTextureParser);
 
                 var token;
                 var urlRq;
 
                 //---------------------------------------------------------------------------------------------------------------------
                 // LOAD A SINGLE IMAGE
-                this.alImage = new away.net.AssetLoader();
-                urlRq = new away.net.URLRequest('assets/1024x1024.png');
+                this.alImage = new AssetLoader();
+                urlRq = new URLRequest('assets/1024x1024.png');
                 token = this.alImage.load(urlRq);
 
-                token.addEventListener(away.events.AssetEvent.ASSET_COMPLETE, Delegate.create(this, this.onAssetComplete));
-                token.addEventListener(away.events.AssetEvent.TEXTURE_SIZE_ERROR, Delegate.create(this, this.onTextureSizeError));
+                token.addEventListener(AssetEvent.ASSET_COMPLETE, Delegate.create(this, this.onAssetComplete));
+                token.addEventListener(AssetEvent.TEXTURE_SIZE_ERROR, Delegate.create(this, this.onTextureSizeError));
 
                 //---------------------------------------------------------------------------------------------------------------------
                 // LOAD A SINGLE IMAGE - With wrong dimensions
-                this.alErrorImage = new away.net.AssetLoader();
-                urlRq = new away.net.URLRequest('assets/2.png');
+                this.alErrorImage = new AssetLoader();
+                urlRq = new URLRequest('assets/2.png');
                 token = this.alErrorImage.load(urlRq);
 
-                token.addEventListener(away.events.AssetEvent.ASSET_COMPLETE, Delegate.create(this, this.onAssetComplete));
-                token.addEventListener(away.events.AssetEvent.TEXTURE_SIZE_ERROR, Delegate.create(this, this.onTextureSizeError));
+                token.addEventListener(AssetEvent.ASSET_COMPLETE, Delegate.create(this, this.onAssetComplete));
+                token.addEventListener(AssetEvent.TEXTURE_SIZE_ERROR, Delegate.create(this, this.onTextureSizeError));
 
                 //---------------------------------------------------------------------------------------------------------------------
                 // LOAD WITH A JSON PARSER
-                this.alJson = new away.net.AssetLoader();
-                urlRq = new away.net.URLRequest('assets/JSNParserTest.json');
+                this.alJson = new AssetLoader();
+                urlRq = new URLRequest('assets/JSNParserTest.json');
                 token = this.alJson.load(urlRq);
 
-                token.addEventListener(away.events.AssetEvent.ASSET_COMPLETE, Delegate.create(this, this.onAssetComplete));
-                token.addEventListener(away.events.AssetEvent.TEXTURE_SIZE_ERROR, Delegate.create(this, this.onTextureSizeError));
-                token.addEventListener(away.events.ParserEvent.PARSE_COMPLETE, Delegate.create(this, this.onParseComplete));
+                token.addEventListener(AssetEvent.ASSET_COMPLETE, Delegate.create(this, this.onAssetComplete));
+                token.addEventListener(AssetEvent.TEXTURE_SIZE_ERROR, Delegate.create(this, this.onTextureSizeError));
+                token.addEventListener(ParserEvent.PARSE_COMPLETE, Delegate.create(this, this.onParseComplete));
 
-                token.addEventListener(away.events.LoaderEvent.DEPENDENCY_COMPLETE, Delegate.create(this, this.onDependencyComplete));
+                token.addEventListener(LoaderEvent.DEPENDENCY_COMPLETE, Delegate.create(this, this.onDependencyComplete));
             }
             AssetLoaderTest.prototype.onDependencyComplete = function (e) {
                 console.log('--------------------------------------------------------------------------------');

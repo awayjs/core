@@ -7,11 +7,11 @@ module away.managers
 	{
 		private static _instances:RTTBufferManagerVO[];
 
-		private _renderToTextureVertexBuffer:away.displayGL.VertexBuffer;
-		private _renderToScreenVertexBuffer:away.displayGL.VertexBuffer;
+		private _renderToTextureVertexBuffer:away.gl.VertexBuffer;
+		private _renderToScreenVertexBuffer:away.gl.VertexBuffer;
 
-		private _indexBuffer:away.displayGL.IndexBuffer;
-		private _stageGLProxy:away.managers.StageGLProxy;
+		private _indexBuffer:away.gl.IndexBuffer;
+		private _stageGL:away.base.StageGL;
 		private _viewWidth:number = -1;
 		private _viewHeight:number = -1;
 		private _textureWidth:number = -1;
@@ -22,7 +22,7 @@ module away.managers
 		private _textureRatioX:number;
 		private _textureRatioY:number;
 
-		constructor(se:SingletonEnforcer, stageGLProxy:away.managers.StageGLProxy)
+		constructor(se:SingletonEnforcer, stageGL:away.base.StageGL)
 		{
 
 			super();
@@ -36,14 +36,14 @@ module away.managers
 
 			this._renderToTextureRect = new away.geom.Rectangle();
 
-			this._stageGLProxy = stageGLProxy;
+			this._stageGL = stageGL;
 
 		}
 
-		public static getInstance(stageGLProxy:away.managers.StageGLProxy):RTTBufferManager
+		public static getInstance(stageGL:away.base.StageGL):RTTBufferManager
 		{
-			if (!stageGLProxy)
-				throw new Error("stageGLProxy key cannot be null!");
+			if (!stageGL)
+				throw new Error("stageGL key cannot be null!");
 
 			if (RTTBufferManager._instances == null) {
 
@@ -51,15 +51,15 @@ module away.managers
 			}
 
 
-			var rttBufferManager:RTTBufferManager = RTTBufferManager.getRTTBufferManagerFromStageGLProxy(stageGLProxy);
+			var rttBufferManager:RTTBufferManager = RTTBufferManager.getRTTBufferManagerFromStageGL(stageGL);
 
 			if (rttBufferManager == null) {
 
-				rttBufferManager = new away.managers.RTTBufferManager(new SingletonEnforcer(), stageGLProxy);
+				rttBufferManager = new away.managers.RTTBufferManager(new SingletonEnforcer(), stageGL);
 
 				var vo:RTTBufferManagerVO = new RTTBufferManagerVO();
 
-				vo.stage3dProxy = stageGLProxy;
+				vo.stage3d = stageGL;
 				vo.rttbfm = rttBufferManager;
 
 				RTTBufferManager._instances.push(vo);
@@ -70,7 +70,7 @@ module away.managers
 
 		}
 
-		private static getRTTBufferManagerFromStageGLProxy(stageGLProxy:away.managers.StageGLProxy):RTTBufferManager
+		private static getRTTBufferManagerFromStageGL(stageGL:away.base.StageGL):RTTBufferManager
 		{
 
 			var l:number = RTTBufferManager._instances.length;
@@ -80,7 +80,7 @@ module away.managers
 
 				r = RTTBufferManager._instances[ c ];
 
-				if (r.stage3dProxy === stageGLProxy) {
+				if (r.stage3d === stageGL) {
 
 					return r.rttbfm;
 
@@ -92,7 +92,7 @@ module away.managers
 
 		}
 
-		private static deleteRTTBufferManager(stageGLProxy:StageGLProxy):void
+		private static deleteRTTBufferManager(stageGL:away.base.StageGL):void
 		{
 
 			var l:number = RTTBufferManager._instances.length;
@@ -102,7 +102,7 @@ module away.managers
 
 				r = RTTBufferManager._instances[ c ];
 
-				if (r.stage3dProxy === stageGLProxy) {
+				if (r.stage3d === stageGL) {
 
 					RTTBufferManager._instances.splice(c, 1);
 					return;
@@ -209,7 +209,7 @@ module away.managers
 
 		}
 
-		public get renderToTextureVertexBuffer():away.displayGL.VertexBuffer
+		public get renderToTextureVertexBuffer():away.gl.VertexBuffer
 		{
 
 			if (this._buffersInvalid) {
@@ -221,7 +221,7 @@ module away.managers
 			return this._renderToTextureVertexBuffer;
 		}
 
-		public get renderToScreenVertexBuffer():away.displayGL.VertexBuffer
+		public get renderToScreenVertexBuffer():away.gl.VertexBuffer
 		{
 
 			if (this._buffersInvalid) {
@@ -234,7 +234,7 @@ module away.managers
 
 		}
 
-		public get indexBuffer():away.displayGL.IndexBuffer
+		public get indexBuffer():away.gl.IndexBuffer
 		{
 			return this._indexBuffer;
 		}
@@ -264,7 +264,7 @@ module away.managers
 		public dispose()
 		{
 
-			RTTBufferManager.deleteRTTBufferManager(this._stageGLProxy);
+			RTTBufferManager.deleteRTTBufferManager(this._stageGL);
 
 			if (this._indexBuffer) {
 
@@ -283,7 +283,7 @@ module away.managers
 		// needs to be stored per view of course
 		private updateRTTBuffers()
 		{
-			var context:away.displayGL.ContextGL = this._stageGLProxy._iContextGL;
+			var context:away.gl.ContextGL = this._stageGL.contextGL;
 			var textureVerts:number[];
 			var screenVerts:number[];
 
@@ -335,16 +335,9 @@ module away.managers
 
 class RTTBufferManagerVO
 {
+	public stage3d:away.base.StageGL;
 
-	constructor()
-	{
-
-
-	}
-
-	public stage3dProxy:away.managers.StageGLProxy;
 	public rttbfm:away.managers.RTTBufferManager;
-
 }
 
 class SingletonEnforcer

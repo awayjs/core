@@ -453,6 +453,7 @@ interface WebGLRenderingContext {
 	texImage2D(target : number, level : number, internalformat : number, format : number, type : number, image : HTMLImageElement) : void;
 	texImage2D(target : number, level : number, internalformat : number, format : number, type : number, canvas : HTMLCanvasElement) : void;
 	texImage2D(target : number, level : number, internalformat : number, format : number, type : number, video : HTMLVideoElement) : void;
+	compressedTexImage2D(target : number, level : number, internalFormat : number, width : number, height : number, border : number, data : Uint8Array);
 	texParameterf(target : number, pname : number, param : number) : void;
 	texParameteri(target : number, pname : number, param : number) : void;
 	texSubImage2D(target : number, level : number, xoffset : number, yoffset : number, width : number, height : number, format : number, type : number, pixels : ArrayBufferView) : void;

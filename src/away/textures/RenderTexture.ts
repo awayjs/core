@@ -56,19 +56,19 @@ module away.textures
 			this.pSetSize(this._pWidth, value);
 		}
 
-		public pUploadContent(texture:away.displayGL.TextureBase)
+		public pUploadContent(texture:away.gl.TextureBase)
 		{
 			// fake data, to complete texture for sampling
-			var bmp:away.display.BitmapData = new away.display.BitmapData(this.width, this.height, false, 0xff0000);
-			//(<away.displayGL.Texture> texture).uploadFromBitmapData(bmp, 0);
+			var bmp:away.base.BitmapData = new away.base.BitmapData(this.width, this.height, false, 0xff0000);
+			//(<away.gl.Texture> texture).uploadFromBitmapData(bmp, 0);
 			//away.materials.MipmapGenerator.generateMipMaps(bmp, texture);
-			(<away.displayGL.Texture>texture).generateFromRenderBuffer(bmp);
+			(<away.gl.Texture>texture).generateFromRenderBuffer(bmp);
 			bmp.dispose();
 		}
 
-		public pCreateTexture(context:away.displayGL.ContextGL):away.displayGL.TextureBase
+		public pCreateTexture(context:away.gl.ContextGL):away.gl.TextureBase
 		{
-			return context.createTexture(this.width, this.height, away.displayGL.ContextGLTextureFormat.BGRA, true);
+			return context.createTexture(this.width, this.height, away.gl.ContextGLTextureFormat.BGRA, true);
 		}
 	}
 }

@@ -15,7 +15,6 @@ module away.events
 
 
 		public static RESIZE:string = "resize";
-		public static CONTEXTGL_CREATE:string = "contextGLCreate";
 		public static ERROR:string = "error";
 		public static CHANGE:string = "change";
 

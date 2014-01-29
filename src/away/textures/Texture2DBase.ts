@@ -13,9 +13,9 @@ module away.textures
 			super();
 		}
 
-		public pCreateTexture(context:away.displayGL.ContextGL):away.displayGL.TextureBase
+		public pCreateTexture(context:away.gl.ContextGL):away.gl.TextureBase
 		{
-			return context.createTexture(this.width, this.height, away.displayGL.ContextGLTextureFormat.BGRA, false);
+			return context.createTexture(this.width, this.height, away.gl.ContextGLTextureFormat.BGRA, false);
 		}
 	}
 }

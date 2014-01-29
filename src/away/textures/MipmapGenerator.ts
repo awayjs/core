@@ -2,10 +2,10 @@
 
 module away.textures
 {
-	//import flash.display.*;
-	//import flash.displayGL.textures.CubeTexture;
-	//import flash.displayGL.textures.Texture;
-	//import flash.displayGL.textures.TextureBase;
+	//import flash.base.*;
+	//import flash.gl.textures.CubeTexture;
+	//import flash.gl.textures.Texture;
+	//import flash.gl.textures.TextureBase;
 	//import flash.geom.*;
 
 	/**
@@ -15,7 +15,7 @@ module away.textures
 	{
 		private static _matrix:away.geom.Matrix = new away.geom.Matrix();
 		private static _rect:away.geom.Rectangle = new away.geom.Rectangle();
-		private static _source:away.display.BitmapData;//= new away.display.BitmapData();
+		private static _source:away.base.BitmapData;//= new away.base.BitmapData();
 
 		/**
 		 * Uploads a BitmapData with mip maps to a target Texture object.
@@ -24,13 +24,13 @@ module away.textures
 		 * @param mipmap An optional mip map holder to avoids creating new instances for fe animated materials.
 		 * @param alpha Indicate whether or not the uploaded bitmapData is transparent.
 		 */
-		public static generateHTMLImageElementMipMaps(source:HTMLImageElement, target:away.displayGL.TextureBase, mipmap:away.display.BitmapData = null, alpha:boolean = false, side:number = -1)
+		public static generateHTMLImageElementMipMaps(source:HTMLImageElement, target:away.gl.TextureBase, mipmap:away.base.BitmapData = null, alpha:boolean = false, side:number = -1)
 		{
 
 			MipmapGenerator._rect.width = source.width;
 			MipmapGenerator._rect.height = source.height;
 
-			MipmapGenerator._source = new away.display.BitmapData(source.width, source.height, alpha);
+			MipmapGenerator._source = new away.base.BitmapData(source.width, source.height, alpha);
 			MipmapGenerator._source.drawImage(source, MipmapGenerator._rect, MipmapGenerator._rect);
 
 			MipmapGenerator.generateMipMaps(MipmapGenerator._source, target, mipmap);
@@ -48,7 +48,7 @@ module away.textures
 		 * @param mipmap An optional mip map holder to avoids creating new instances for fe animated materials.
 		 * @param alpha Indicate whether or not the uploaded bitmapData is transparent.
 		 */
-		public static generateMipMaps(source:away.display.BitmapData, target:away.displayGL.TextureBase, mipmap:away.display.BitmapData = null, alpha:boolean = false, side:number = -1)
+		public static generateMipMaps(source:away.base.BitmapData, target:away.gl.TextureBase, mipmap:away.base.BitmapData = null, alpha:boolean = false, side:number = -1)
 		{
 			var w:number = source.width;
 			var h:number = source.height;
@@ -57,15 +57,13 @@ module away.textures
 
 			if (!mipmap) {
 
-				mipmap = new away.display.BitmapData(w, h, alpha);
+				mipmap = new away.base.BitmapData(w, h, alpha);
 
 
 			}
 
 			MipmapGenerator._rect.width = w;
 			MipmapGenerator._rect.height = h;
-
-			var tx:away.displayGL.Texture;
 
 			while (w >= 1 || h >= 1) {
 
@@ -82,15 +80,10 @@ module away.textures
 				mipmap.height = MipmapGenerator._rect.height;
 				mipmap.copyPixels(source, source.rect, MipmapGenerator._rect);
 
-				//console.log( target instanceof away.displayGL.Texture , mipmap.width , mipmap.height );
-
-				if (target instanceof away.displayGL.Texture) {
-					tx = <away.displayGL.Texture> target;
-					tx.uploadFromBitmapData(mipmap, i++);
+				if (target instanceof away.gl.Texture) {
+					(<away.gl.Texture> target).uploadFromBitmapData(mipmap, i++);
 				} else {
-					away.Debug.throwPIR('MipMapGenerator', 'generateMipMaps', 'Dependency: CubeTexture');
-					// TODO: implement cube texture upload;
-					//CubeTexture(target).uploadFromBitmapData(mipmap, side, i++);
+					(<away.gl.CubeTexture> target).uploadFromBitmapData(mipmap, side, i++);
 				}
 
 				w >>= 1;

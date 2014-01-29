@@ -8,8 +8,8 @@ module tests.utils
     {
 
         private mipLoader       : away.net.IMGLoader;
-        private sourceBitmap    : away.display.BitmapData;
-        private mipMap          : away.display.BitmapData;
+        private sourceBitmap    : away.base.BitmapData;
+        private mipMap          : away.base.BitmapData;
         private _rect           : away.geom.Rectangle = new away.geom.Rectangle();
         private _matrix         : away.geom.Matrix = new away.geom.Matrix();
         private w               : number;
@@ -37,7 +37,7 @@ module tests.utils
 
             var loader : away.net.IMGLoader             = <away.net.IMGLoader > e.target;
 
-            this.sourceBitmap                        = new away.display.BitmapData( 1024 , 1024 , true , 0xff0000 );
+            this.sourceBitmap                        = new away.base.BitmapData( 1024 , 1024 , true , 0xff0000 );
             this.sourceBitmap.drawImage( loader.image , this.sourceBitmap.rect , this.sourceBitmap.rect );
             this.sourceBitmap.canvas.style.position  = 'absolute';
             this.sourceBitmap.canvas.style.left      = '0px';
@@ -45,7 +45,7 @@ module tests.utils
 
             //document.body.appendChild( this.sourceBitmap.canvas );
 
-            this.mipMap = new away.display.BitmapData( 1024 , 1024 , true , 0xff0000 );
+            this.mipMap = new away.base.BitmapData( 1024 , 1024 , true , 0xff0000 );
             this.mipMap.canvas.style.position  = 'absolute';
             this.mipMap.canvas.style.left      = '0px';
             this.mipMap.canvas.style.top       = '0px';
@@ -70,7 +70,7 @@ module tests.utils
 
 
 
-        public generateMipMap( source : away.display.BitmapData , mipmap : away.display.BitmapData = null, alpha:boolean = false, side:number = -1)
+        public generateMipMap( source : away.base.BitmapData , mipmap : away.base.BitmapData = null, alpha:boolean = false, side:number = -1)
         {
 
             var c : number = this.w;

@@ -25,14 +25,14 @@ var tests;
 
                 var loader = e.target;
 
-                this.sourceBitmap = new away.display.BitmapData(1024, 1024, true, 0xff0000);
+                this.sourceBitmap = new away.base.BitmapData(1024, 1024, true, 0xff0000);
                 this.sourceBitmap.drawImage(loader.image, this.sourceBitmap.rect, this.sourceBitmap.rect);
                 this.sourceBitmap.canvas.style.position = 'absolute';
                 this.sourceBitmap.canvas.style.left = '0px';
                 this.sourceBitmap.canvas.style.top = '1030px';
 
                 //document.body.appendChild( this.sourceBitmap.canvas );
-                this.mipMap = new away.display.BitmapData(1024, 1024, true, 0xff0000);
+                this.mipMap = new away.base.BitmapData(1024, 1024, true, 0xff0000);
                 this.mipMap.canvas.style.position = 'absolute';
                 this.mipMap.canvas.style.left = '0px';
                 this.mipMap.canvas.style.top = '0px';

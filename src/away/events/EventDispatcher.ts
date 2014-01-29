@@ -14,9 +14,7 @@ module away.events
 	 */
 	export class EventDispatcher
 	{
-
-		private listeners:Object[] = new Array<Object>();
-		private lFncLength:number;
+		private listeners:Array<Array<Function>> = new Array<Array<Function>>();
 
 		/**
 		 * Add an event listener
@@ -26,23 +24,11 @@ module away.events
 		 */
 		public addEventListener(type:string, listener:Function)
 		{
+			if (this.listeners[ type ] === undefined)
+				this.listeners[ type ] = new Array<Function>();
 
-			if (this.listeners[ type ] === undefined) {
-
-				this.listeners[ type ] = new Array<EventData>();
-
-			}
-
-			if (this.getEventListenerIndex(type, listener) === -1) {
-
-				var d:EventData = new EventData();
-				d.listener = listener;
-				d.type = type;
-
-				this.listeners[ type ].push(d);
-
-			}
-
+			if (this.getEventListenerIndex(type, listener) === -1)
+				this.listeners[ type ].push(listener);
 		}
 
 		/**
@@ -53,15 +39,10 @@ module away.events
 		 */
 		public removeEventListener(type:string, listener:Function)
 		{
-
 			var index:number = this.getEventListenerIndex(type, listener);
 
-			if (index !== -1) {
-
+			if (index !== -1)
 				this.listeners[ type ].splice(index, 1);
-
-			}
-
 		}
 
 		/**
@@ -71,24 +52,16 @@ module away.events
 		 */
 		public dispatchEvent(event:Event)
 		{
-
-			var listenerArray:Array<EventData> = this.listeners[ event.type ];
+			var listenerArray:Array<Function> = this.listeners[ event.type ];
 
 			if (listenerArray !== undefined) {
+				var l:number = listenerArray.length;
 
-				this.lFncLength = listenerArray.length;
 				event.target = this;
 
-				var eventData:EventData;
-
-				for (var i = 0, l = this.lFncLength; i < l; i++) {
-
-					eventData = listenerArray[i];
-					eventData["listener"](event);
-
-				}
+				for (var i:number = 0; i < l; i++)
+					listenerArray[i](event);
 			}
-
 		}
 
 		/**
@@ -99,30 +72,16 @@ module away.events
 		 */
 		private getEventListenerIndex(type:string, listener:Function):number
 		{
-
 			if (this.listeners[ type ] !== undefined) {
-
-				var a:Array<EventData> = this.listeners[ type ];
+				var a:Array<Function> = this.listeners[ type ];
 				var l:number = a.length;
-				var d:EventData;
 
-				for (var c:number = 0; c < l; c++) {
-
-					d = a[c];
-
-					if (listener == d.listener) {
-
-						return c;
-
-					}
-
-				}
-
-
+				for (var i:number = 0; i < l; i++)
+					if (listener == a[i])
+						return i;
 			}
 
 			return -1;
-
 		}
 
 		/**
@@ -133,40 +92,16 @@ module away.events
 		 */
 		public hasEventListener(type:string, listener?:Function):boolean
 		{
-
 			if (this.listeners != null) {
-
 				return ( this.getEventListenerIndex(type, listener) !== -1 );
-
 			} else {
-
-				if (this.listeners[ type ] !== undefined) {
-
-					var a:Array<EventData> = this.listeners[ type ];
-					return ( a.length > 0 );
-
-				}
+				if (this.listeners[ type ] !== undefined)
+					return ( this.listeners[ type ].length > 0 );
 
 				return false;
-
-
 			}
 
 			return false;
-
 		}
-
-
 	}
-	/**
-	 * Event listener data container
-	 */
-	class EventData
-	{
-
-		public listener:Function;
-		public type:string;
-
-	}
-
 }

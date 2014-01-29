@@ -19,12 +19,12 @@ var tests;
 
                 console.log('away.events.Event.COMPLETE', loader);
 
-                this.bitmapData = new away.display.BitmapData(loader.width, loader.height);
+                this.bitmapData = new away.base.BitmapData(loader.width, loader.height);
                 this.bitmapData.drawImage(this.mipLoader.image, rect, rect);
 
                 this.target = new away.textures.BitmapTexture(this.bitmapData, true); //new away.textures.HTMLImageElementTexture( loader.image , false );
 
-                away.Debug.log('away.display.BitmapData', this.bitmapData);
+                away.Debug.log('away.base.BitmapData', this.bitmapData);
                 away.Debug.log('away.textures.BitmapTexture', this.target);
             };
             return BitmapTextureTest;

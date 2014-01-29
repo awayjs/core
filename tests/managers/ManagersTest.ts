@@ -6,9 +6,7 @@ module tests.managers
 
     export class ManagersTest
     {
-
-        private stage       : away.display.Stage;
-        private sProxy      : away.managers.StageGLProxy;
+        private stageGL      : away.base.StageGL;
 
         private rttBfrA     : away.managers.RTTBufferManager;
         private rttBfrB     : away.managers.RTTBufferManager;
@@ -18,17 +16,15 @@ module tests.managers
 
             away.Debug.THROW_ERRORS = false;
 
-            this.stage = new away.display.Stage();
+            var manager : away.managers.StageGLManager = away.managers.StageGLManager.getInstance();
 
-            var manager : away.managers.StageGLManager = away.managers.StageGLManager.getInstance( this.stage );
+            this.stageGL = manager.getStageGLAt( 0 );
+            this.stageGL.addEventListener( away.events.StageGLEvent.CONTEXTGL_CREATED , Delegate.create(this, this.onContextCreated) );
+            this.stageGL.addEventListener( away.events.StageGLEvent.CONTEXTGL_RECREATED, Delegate.create(this, this.onContextReCreated) );
+            this.stageGL.addEventListener( away.events.StageGLEvent.CONTEXTGL_DISPOSED, Delegate.create(this, this.onContextDisposed) );
 
-            this.sProxy = manager.getStageGLProxy( 0 );
-            this.sProxy.addEventListener( away.events.StageGLEvent.CONTEXTGL_CREATED , Delegate.create(this, this.onContextCreated) );
-            this.sProxy.addEventListener( away.events.StageGLEvent.CONTEXTGL_RECREATED, Delegate.create(this, this.onContextReCreated) );
-            this.sProxy.addEventListener( away.events.StageGLEvent.CONTEXTGL_DISPOSED, Delegate.create(this, this.onContextDisposed) );
-
-            this.rttBfrA = away.managers.RTTBufferManager.getInstance( this.sProxy )
-            this.rttBfrB = away.managers.RTTBufferManager.getInstance( this.sProxy )
+            this.rttBfrA = away.managers.RTTBufferManager.getInstance( this.stageGL )
+            this.rttBfrB = away.managers.RTTBufferManager.getInstance( this.stageGL )
 
             console.log( 'this.rttBfrA' , this.rttBfrA );
             console.log( 'this.rttBfrB' , this.rttBfrB );

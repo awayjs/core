@@ -8,11 +8,11 @@ module away.textures
 		private static _mipMaps = [];
 		private static _mipMapUses = [];
 
-		private _bitmapData:away.display.BitmapData;
-		private _mipMapHolder:away.display.BitmapData;
+		private _bitmapData:away.base.BitmapData;
+		private _mipMapHolder:away.base.BitmapData;
 		private _generateMipmaps:boolean;
 
-		constructor(bitmapData:away.display.BitmapData, generateMipmaps:boolean = true)
+		constructor(bitmapData:away.base.BitmapData, generateMipmaps:boolean = true)
 		{
 			super();
 
@@ -20,14 +20,14 @@ module away.textures
 			this._generateMipmaps = generateMipmaps;
 		}
 
-		public get bitmapData():away.display.BitmapData
+		public get bitmapData():away.base.BitmapData
 		{
 
 			return this._bitmapData;
 
 		}
 
-		public set bitmapData(value:away.display.BitmapData)
+		public set bitmapData(value:away.base.BitmapData)
 		{
 
 			if (value == this._bitmapData) {
@@ -57,7 +57,7 @@ module away.textures
 
 		}
 
-		public pUploadContent(texture:away.displayGL.TextureBase)
+		public pUploadContent(texture:away.gl.TextureBase)
 		{
 
 			if (this._generateMipmaps) {
@@ -66,7 +66,7 @@ module away.textures
 
 			} else {
 
-				var tx:away.displayGL.Texture = <any> texture;
+				var tx:away.gl.Texture = <any> texture;
 				tx.uploadFromBitmapData(this._bitmapData, 0);
 
 			}
@@ -102,7 +102,7 @@ module away.textures
 
 			if (!BitmapTexture._mipMaps[newW][newH]) {
 
-				this._mipMapHolder = BitmapTexture._mipMaps[newW][newH] = new away.display.BitmapData(newW, newH, true);
+				this._mipMapHolder = BitmapTexture._mipMaps[newW][newH] = new away.base.BitmapData(newW, newH, true);
 				BitmapTexture._mipMapUses[newW][newH] = 1;
 
 			} else {

@@ -53,150 +53,6 @@ module away.net
 	 */
 	//[Event(name="parseError", type="away3d.events.ParserEvent")]
 
-
-	/**
-	 * Dispatched when a skybox asset has been costructed from a ressource.
-	 *
-	 * @eventType away.events.AssetEvent
-	 */
-	//[Event(name="skyboxComplete", type="away3d.events.AssetEvent")]
-
-	/**
-	 * Dispatched when a camera3d asset has been costructed from a ressource.
-	 *
-	 * @eventType away.events.AssetEvent
-	 */
-	//[Event(name="cameraComplete", type="away3d.events.AssetEvent")]
-
-	/**
-	 * Dispatched when a mesh asset has been costructed from a ressource.
-	 *
-	 * @eventType away.events.AssetEvent
-	 */
-	//[Event(name="meshComplete", type="away3d.events.AssetEvent")]
-
-	/**
-	 * Dispatched when a geometry asset has been constructed from a resource.
-	 *
-	 * @eventType away.events.AssetEvent
-	 */
-	//[Event(name="geometryComplete", type="away3d.events.AssetEvent")]
-
-	/**
-	 * Dispatched when a skeleton asset has been constructed from a resource.
-	 *
-	 * @eventType away.events.AssetEvent
-	 */
-	//[Event(name="skeletonComplete", type="away3d.events.AssetEvent")]
-
-	/**
-	 * Dispatched when a skeleton pose asset has been constructed from a resource.
-	 *
-	 * @eventType away.events.AssetEvent
-	 */
-	//[Event(name="skeletonPoseComplete", type="away3d.events.AssetEvent")]
-
-	/**
-	 * Dispatched when a container asset has been constructed from a resource.
-	 *
-	 * @eventType away.events.AssetEvent
-	 */
-	//[Event(name="containerComplete", type="away3d.events.AssetEvent")]
-
-	/**
-	 * Dispatched when a texture asset has been constructed from a resource.
-	 *
-	 * @eventType away.events.AssetEvent
-	 */
-	//[Event(name="textureComplete", type="away3d.events.AssetEvent")]
-
-	/**
-	 * Dispatched when a texture projector asset has been constructed from a resource.
-	 *
-	 * @eventType away.events.AssetEvent
-	 */
-	//[Event(name="textureProjectorComplete", type="away3d.events.AssetEvent")]
-
-
-	/**
-	 * Dispatched when a material asset has been constructed from a resource.
-	 *
-	 * @eventType away.events.AssetEvent
-	 */
-	//[Event(name="materialComplete", type="away3d.events.AssetEvent")]
-
-
-	/**
-	 * Dispatched when a animator asset has been constructed from a resource.
-	 *
-	 * @eventType away.events.AssetEvent
-	 */
-	//[Event(name="animatorComplete", type="away3d.events.AssetEvent")]
-
-
-	/**
-	 * Dispatched when an animation set has been constructed from a group of animation state resources.
-	 *
-	 * @eventType away.events.AssetEvent
-	 */
-	//[Event(name="animationSetComplete", type="away3d.events.AssetEvent")]
-
-
-	/**
-	 * Dispatched when an animation state has been constructed from a group of animation node resources.
-	 *
-	 * @eventType away.events.AssetEvent
-	 */
-	//[Event(name="animationStateComplete", type="away3d.events.AssetEvent")]
-
-
-	/**
-	 * Dispatched when an animation node has been constructed from a resource.
-	 *
-	 * @eventType away.events.AssetEvent
-	 */
-	//[Event(name="animationNodeComplete", type="away3d.events.AssetEvent")]
-
-
-	/**
-	 * Dispatched when an animation state transition has been constructed from a group of animation node resources.
-	 *
-	 * @eventType away.events.AssetEvent
-	 */
-	//[Event(name="stateTransitionComplete", type="away3d.events.AssetEvent")]
-
-
-	/**
-	 * Dispatched when an light asset has been constructed from a resources.
-	 *
-	 * @eventType away.events.AssetEvent
-	 */
-	//[Event(name="lightComplete", type="away3d.events.AssetEvent")]
-
-
-	/**
-	 * Dispatched when an light picker asset has been constructed from a resources.
-	 *
-	 * @eventType away.events.AssetEvent
-	 */
-	//[Event(name="lightPickerComplete", type="away3d.events.AssetEvent")]
-
-
-	/**
-	 * Dispatched when an effect method asset has been constructed from a resources.
-	 *
-	 * @eventType away.events.AssetEvent
-	 */
-	//[Event(name="effectMethodComplete", type="away3d.events.AssetEvent")]
-
-
-	/**
-	 * Dispatched when an shadow map method asset has been constructed from a resources.
-	 *
-	 * @eventType away.events.AssetEvent
-	 */
-	//[Event(name="shadowMapMethodComplete", type="away3d.events.AssetEvent")]
-
 	/**
 	 * Dispatched when an image asset dimensions are not a power of 2
 	 *
@@ -213,19 +69,18 @@ module away.net
 	 * events. To store assets and make them available at any point from any module in an application,
 	 * use the AssetLibrary to load and manage assets.
 	 *
-	 * @see away.loading.Loader3D
-	 * @see away.loading.AssetLibrary
+	 * @see away.library.AssetLibrary
 	 */
 	export class AssetLoader extends away.events.EventDispatcher
 	{
-		private _context:away.net.AssetLoaderContext;
-		private _token:away.net.AssetLoaderToken;
+		private _context:AssetLoaderContext;
+		private _token:AssetLoaderToken;
 		private _uri:string;
 
-		private _errorHandlers:Function[];//Vector.<Function>;
-		private _parseErrorHandlers:Function[];//Vector.<Function>;
+		private _errorHandlers:Array<Function>;
+		private _parseErrorHandlers:Array<Function>;
 
-		private _stack:away.parsers.ResourceDependency[];//Vector.<ResourceDependency>;
+		private _stack:Array<away.parsers.ResourceDependency>;
 		private _baseDependency:away.parsers.ResourceDependency;
 		private _loadingDependency:away.parsers.ResourceDependency;
 		private _namespace:string;
@@ -276,7 +131,7 @@ module away.net
 		 */
 		public static enableParser(parserClass)
 		{
-			away.net.SingleFileLoader.enableParser(parserClass);
+			SingleFileLoader.enableParser(parserClass);
 		}
 
 		/**
@@ -291,9 +146,7 @@ module away.net
 
 		public static enableParsers(parserClasses:Object[])
 		{
-
-			away.net.SingleFileLoader.enableParsers(parserClasses);
-
+			SingleFileLoader.enableParsers(parserClasses);
 		}
 
 		/**
@@ -304,11 +157,10 @@ module away.net
 		 * @param ns An optional namespace string under which the file is to be loaded, allowing the differentiation of two resources with identical assets
 		 * @param parser An optional parser object for translating the loaded data into a usable resource. If not provided, AssetLoader will attempt to auto-detect the file type.
 		 */
-		public load(req:away.net.URLRequest, context:away.net.AssetLoaderContext = null, ns:string = null, parser:away.parsers.ParserBase = null):away.net.AssetLoaderToken
+		public load(req:URLRequest, context:AssetLoaderContext = null, ns:string = null, parser:away.parsers.ParserBase = null):AssetLoaderToken
 		{
 			if (!this._token) {
-
-				this._token = new away.net.AssetLoaderToken(this);
+				this._token = new AssetLoaderToken(this);
 
 				this._uri = req.url = req.url.replace(/\\/g, "/");
 				this._context = context;
@@ -332,10 +184,10 @@ module away.net
 		 * @param ns An optional namespace string under which the file is to be loaded, allowing the differentiation of two resources with identical assets
 		 * @param parser An optional parser object for translating the loaded data into a usable resource. If not provided, AssetLoader will attempt to auto-detect the file type.
 		 */
-		public loadData(data:any, id:string, context:away.net.AssetLoaderContext = null, ns:string = null, parser:away.parsers.ParserBase = null):away.net.AssetLoaderToken
+		public loadData(data:any, id:string, context:AssetLoaderContext = null, ns:string = null, parser:away.parsers.ParserBase = null):AssetLoaderToken
 		{
 			if (!this._token) {
-				this._token = new away.net.AssetLoaderToken(this);
+				this._token = new AssetLoaderToken(this);
 
 				this._uri = id;
 				this._context = context;
@@ -376,17 +228,13 @@ module away.net
 
 				this._loadingDependency = this._stack.pop();
 
-				if (prev._iSuccess) {
-
+				if (prev._iSuccess)
 					prev.resolve();
-
-				}
 
 				this.retrieveNext(parser);
 
 			} else {
 				this.dispatchEvent(new away.events.LoaderEvent(away.events.LoaderEvent.RESOURCE_COMPLETE, this._uri, this._baseDependency.assets));
-
 			}
 
 		}
@@ -400,26 +248,19 @@ module away.net
 			var data:any;
 			var matMode:number = 0;
 
-			if (this._context && this._context.materialMode != 0) {
-
+			if (this._context && this._context.materialMode != 0)
 				matMode = this._context.materialMode;
 
-			}
-
 			this._loadingDependency = dependency;
-			this._loadingDependency._iLoader = new away.net.SingleFileLoader(matMode);
+			this._loadingDependency._iLoader = new SingleFileLoader(matMode);
 
 			this.addEventListeners(this._loadingDependency._iLoader);
 
 			// Get already loaded (or mapped) data if available
 			data = this._loadingDependency.data;
 
-			if (this._context && this._loadingDependency.request && this._context._iHasDataForUrl(this._loadingDependency.request.url)) {
-
+			if (this._context && this._loadingDependency.request && this._context._iHasDataForUrl(this._loadingDependency.request.url))
 				data = this._context._iGetDataForUrl(this._loadingDependency.request.url);
-
-			}
-
 
 			if (data) {
 				if (this._loadingDependency.retrieveAsRawData) {
@@ -434,40 +275,26 @@ module away.net
 					this.retrieveNext();
 
 				} else {
-
 					this._loadingDependency._iLoader.parseData(data, parser, this._loadingDependency.request);
-
 				}
 
 			} else {
 				// Resolve URL and start loading
 				dependency.request.url = this.resolveDependencyUrl(dependency);
 				this._loadingDependency._iLoader.load(dependency.request, parser, this._loadingDependency.retrieveAsRawData);
-
 			}
 		}
 
 		private joinUrl(base:string, end:string):string
 		{
-			if (end.charAt(0) == '/') {
-
+			if (end.charAt(0) == '/')
 				end = end.substr(1);
 
-			}
-
-
-			if (base.length == 0) {
-
+			if (base.length == 0)
 				return end;
 
-			}
-
-
-			if (base.charAt(base.length - 1) == '/') {
-
+			if (base.charAt(base.length - 1) == '/')
 				base = base.substr(0, base.length - 1);
-
-			}
 
 			return base.concat('/', end);
 
@@ -486,11 +313,8 @@ module away.net
 			// This is the "base" dependency, i.e. the actual requested asset.
 			// We will not try to resolve this since the user can probably be 
 			// thrusted to know this URL better than our automatic resolver. :)
-			if (url == this._uri) {
-
+			if (url == this._uri)
 				return url;
-
-			}
 
 
 			// Absolute URL? Check if starts with slash or a URL
@@ -526,18 +350,13 @@ module away.net
 
 		private retrieveLoaderDependencies(loader:SingleFileLoader)
 		{
-			if (!this._loadingDependency) {
-				//loader.parser = null;
-				//loader = null;
+			if (!this._loadingDependency)
 				return;
-			}
+
 			var i:number, len:number = loader.dependencies.length;
 
-			for (i = 0; i < len; i++) {
-
+			for (i = 0; i < len; i++)
 				this._loadingDependency.dependencies[i] = loader.dependencies[i];
-
-			}
 
 
 			// Since more dependencies might be added eventually, empty this
@@ -557,30 +376,22 @@ module away.net
 		{
 			var handled:boolean;
 			var isDependency:boolean = (this._loadingDependency != this._baseDependency);
-			var loader:SingleFileLoader = <away.net.SingleFileLoader> event.target;//TODO: keep on eye on this one
+			var loader:SingleFileLoader = <SingleFileLoader> event.target;//TODO: keep on eye on this one
 
 			this.removeEventListeners(loader);
 
 			event = new away.events.LoaderEvent(away.events.LoaderEvent.LOAD_ERROR, this._uri, this._baseDependency.assets, isDependency, event.message);
 
-			// TODO: JS / AS3 Change - debug this code with a fine tooth combe
-
-			//if (this.hasEventListener( away.events.LoaderEvent.LOAD_ERROR , this )) {
-			this.dispatchEvent(event);
-			handled = true;
-			//} else {
-
-			// TO - Away - Consider not doing this even when AssetLoader does
-			// have it's own LOAD_ERROR listener
-			var i:number, len:number = this._errorHandlers.length;
-			for (i = 0; i < len; i++) {
-				var handlerFunction = this._errorHandlers[i];
-
-				handled = handled || <boolean> handlerFunction(event);
-
+			if (this.hasEventListener( away.events.LoaderEvent.LOAD_ERROR )) {
+				this.dispatchEvent(event);
+				handled = true;
+			} else {
+				// TODO: Consider not doing this even when AssetLoader does have it's own LOAD_ERROR listener
+				var i:number, len:number = this._errorHandlers.length;
+				for (i = 0; i < len; i++)
+					if (!handled)
+						handled = <boolean> this._errorHandlers[i](event);
 			}
-
-			//}
 
 			if (handled) {
 
@@ -602,7 +413,6 @@ module away.net
 				// Error event was not handled by listeners directly on AssetLoader or
 				// on any of the subscribed loaders (in the list of error handlers.)
 				throw new away.errors.Error(event.message);
-
 			}
 		}
 
@@ -616,30 +426,24 @@ module away.net
 
 			var isDependency:boolean = (this._loadingDependency != this._baseDependency);
 
-			var loader:SingleFileLoader = <away.net.SingleFileLoader>event.target;
+			var loader:SingleFileLoader = <SingleFileLoader>event.target;
 
 			this.removeEventListeners(loader);
 
 			event = new away.events.ParserEvent(away.events.ParserEvent.PARSE_ERROR, event.message);
 
-			// TODO: keep on eye on this / debug - JS / AS3 Change
+			if (this.hasEventListener(away.events.ParserEvent.PARSE_ERROR)) {
+				this.dispatchEvent(event);
+				handled = true;
+			} else {
+				// TODO: Consider not doing this even when AssetLoader does
+				// have it's own LOAD_ERROR listener
+				var i:number, len:number = this._parseErrorHandlers.length;
 
-			//if (this.hasEventListener(away.events.ParserEvent.PARSE_ERROR)) {
-			this.dispatchEvent(event);
-			handled = true;
-			//} else {
-			// TODO: Consider not doing this even when AssetLoader does
-			// have it's own LOAD_ERROR listener
-			var i:number, len:number = this._parseErrorHandlers.length;
-
-			for (i = 0; i < len; i++) {
-				var handlerFunction = this._parseErrorHandlers[i];
-
-				handled = handled || <boolean> handlerFunction(event);
-
-				//handled ||= Boolean(handlerFunction(event));
+				for (i = 0; i < len; i++)
+					if (!handled)
+						handled = <boolean> this._parseErrorHandlers[i](event);
 			}
-			//}
 
 			if (handled) {
 				this.dispose();
@@ -647,7 +451,7 @@ module away.net
 			} else {
 				// Error event was not handled by listeners directly on AssetLoader or
 				// on any of the subscribed loaders (in the list of error handlers.)
-				throw new Error(event.message);
+				throw new away.errors.Error(event.message);
 			}
 		}
 
@@ -660,39 +464,25 @@ module away.net
 				// Add loaded asset to list of assets retrieved as part
 				// of the current dependency. This list will be inspected
 				// by the parent parser when dependency is resolved
-				if (this._loadingDependency) {
-
+				if (this._loadingDependency)
 					this._loadingDependency.assets.push(event.asset);
-
-				}
 
 				event.asset.resetAssetPath(event.asset.name, this._namespace);
 
 			}
 
-			//console.log( 'AssetLoader.onAssetComplete suppresAssetEvents:' , this._loadingDependency.suppresAssetEvents , event );
-
-			if (!this._loadingDependency.suppresAssetEvents) {
-
+			if (!this._loadingDependency.suppresAssetEvents)
 				this.dispatchEvent(event.clone());
-
-			}
-
 		}
 
 		private onReadyForDependencies(event:away.events.ParserEvent)
 		{
-			var loader:SingleFileLoader = <away.net.SingleFileLoader> event.target; // was event.currentTarget / TODO: AS3 <> JS functionality change - keep on eye on this
+			var loader:SingleFileLoader = <SingleFileLoader> event.target; // was event.currentTarget / TODO: AS3 <> JS functionality change - keep on eye on this
 
-			if (this._context && !this._context.includeDependencies) {
-
+			if (this._context && !this._context.includeDependencies)
 				loader.parser._iResumeParsingAfterDependencies();
-			} else {
-
+			else
 				this.retrieveLoaderDependencies(loader);
-
-			}
-
 		}
 
 		/**
@@ -701,7 +491,7 @@ module away.net
 		 */
 		private onRetrievalComplete(event:away.events.LoaderEvent)
 		{
-			var loader:SingleFileLoader = <away.net.SingleFileLoader> event.target;
+			var loader:SingleFileLoader = <SingleFileLoader> event.target;
 			//var loader:SingleFileLoader = SingleFileLoader(event.target);
 
 			// Resolve this dependency
@@ -713,16 +503,10 @@ module away.net
 
 			// Retrieve any last dependencies remaining on this loader, or
 			// if none exists, just move on.
-			if (loader.dependencies.length && (!this._context || this._context.includeDependencies)) { //context may be null
-
+			if (loader.dependencies.length && (!this._context || this._context.includeDependencies))//context may be null
 				this.retrieveLoaderDependencies(loader);
-
-			} else {
-
+			else
 				this.retrieveNext();
-
-			}
-
 		}
 
 		/**
@@ -733,7 +517,6 @@ module away.net
 		{
 			event.asset.name = this._loadingDependency.resolveName(event.asset);
 			this.dispatchEvent(event);
-
 		}
 
 		private addEventListeners(loader:SingleFileLoader)
@@ -771,11 +554,8 @@ module away.net
 			this._token = null;
 			this._stack = null;
 
-			if (this._loadingDependency && this._loadingDependency._iLoader) {
-
+			if (this._loadingDependency && this._loadingDependency._iLoader)
 				this.removeEventListeners(this._loadingDependency._iLoader);
-
-			}
 
 			this._loadingDependency = null;
 
@@ -795,26 +575,14 @@ module away.net
 
 		public _iAddParseErrorHandler(handler)
 		{
-
-			if (this._parseErrorHandlers.indexOf(handler) < 0) {
-
+			if (this._parseErrorHandlers.indexOf(handler) < 0)
 				this._parseErrorHandlers.push(handler);
-
-			}
-
-
 		}
 
 		public _iAddErrorHandler(handler)
 		{
-
-			if (this._errorHandlers.indexOf(handler) < 0) {
-
+			if (this._errorHandlers.indexOf(handler) < 0)
 				this._errorHandlers.push(handler);
-
-			}
-
-
 		}
 	}
 }

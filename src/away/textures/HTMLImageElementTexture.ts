@@ -10,7 +10,7 @@ module away.textures
 
 		private _htmlImageElement:HTMLImageElement;
 		private _generateMipmaps:boolean;
-		private _mipMapHolder:away.display.BitmapData;
+		private _mipMapHolder:away.base.BitmapData;
 
 		constructor(htmlImageElement:HTMLImageElement, generateMipmaps:boolean = true)
 		{
@@ -52,7 +52,7 @@ module away.textures
 
 		}
 
-		public pUploadContent(texture:away.displayGL.TextureBase)
+		public pUploadContent(texture:away.gl.TextureBase)
 		{
 
 			if (this._generateMipmaps) {
@@ -61,7 +61,7 @@ module away.textures
 
 			} else {
 
-				var tx:away.displayGL.Texture = <any> texture;
+				var tx:away.gl.Texture = <any> texture;
 				tx.uploadFromHTMLImageElement(this._htmlImageElement, 0);
 
 			}
@@ -95,7 +95,7 @@ module away.textures
 
 			if (!HTMLImageElementTexture._mipMaps[newW][newH]) {
 
-				this._mipMapHolder = HTMLImageElementTexture._mipMaps[newW][newH] = new away.display.BitmapData(newW, newH, true);
+				this._mipMapHolder = HTMLImageElementTexture._mipMaps[newW][newH] = new away.base.BitmapData(newW, newH, true);
 				HTMLImageElementTexture._mipMapUses[newW][newH] = 1;
 
 			} else {

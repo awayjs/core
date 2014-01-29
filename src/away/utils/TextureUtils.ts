@@ -1,13 +1,13 @@
 ///<reference path="../_definitions.ts"/>
 module away.utils
 {
-	//import flash.display.BitmapData;
+	//import flash.base.BitmapData;
 
 	export class TextureUtils
 	{
 		private static MAX_SIZE:number = 2048;
 
-		public static isBitmapDataValid(bitmapData:away.display.BitmapData):boolean
+		public static isBitmapDataValid(bitmapData:away.base.BitmapData):boolean
 		{
 			if (bitmapData == null) {
 

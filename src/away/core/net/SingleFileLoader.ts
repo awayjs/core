@@ -202,7 +202,6 @@ module away.net
 		/**
 		 * A list of dependencies that need to be loaded and resolved for the loaded object.
 		 */
-
 		public get dependencies():away.parsers.ResourceDependency[]
 		{
 			return this._parser? this._parser.dependencies : new Array<away.parsers.ResourceDependency>();

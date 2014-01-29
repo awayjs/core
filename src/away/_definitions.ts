@@ -55,33 +55,33 @@
 ///<reference path="core/library/AssetLibraryBundle.ts"/>
 ///<reference path="core/library/AssetLibrary.ts" />
 
-///<reference path="core/display/BitmapData.ts"/>
-///<reference path="core/display/BitmapDataChannel.ts"/>
-///<reference path="core/display/BlendMode.ts"/>
-///<reference path="core/display/StageGL.ts" />
-///<reference path="core/display/Stage.ts"/>
+///<reference path="core/base/BitmapData.ts"/>
+///<reference path="core/base/BitmapDataChannel.ts"/>
+///<reference path="core/base/BlendMode.ts"/>
+///<reference path="core/base/StageGL.ts" />
+///<reference path="core/base/Stage.ts"/>
 
-///<reference path="core/displayGL/ContextGLClearMask.ts"/>
-///<reference path="core/displayGL/VertexBuffer.ts"/>
-///<reference path="core/displayGL/IndexBuffer.ts"/>
-///<reference path="core/displayGL/Program.ts"/>
-///<reference path="core/displayGL/SamplerState.ts"/>
-///<reference path="core/displayGL/ContextGLTextureFormat.ts"/>
-///<reference path="core/displayGL/TextureBase.ts"/>
-///<reference path="core/displayGL/Texture.ts" />
-///<reference path="core/displayGL/CubeTexture.ts" />
-///<reference path="core/displayGL/ContextGLTriangleFace.ts"/>
-///<reference path="core/displayGL/ContextGLVertexBufferFormat.ts"/>
-///<reference path="core/displayGL/ContextGLProgramType.ts"/>
-///<reference path="core/displayGL/ContextGLBlendFactor.ts"/>
-///<reference path="core/displayGL/ContextGLCompareMode.ts"/>
-///<reference path="core/displayGL/ContextGLMipFilter.ts"/>
-///<reference path="core/displayGL/ContextGLProfile.ts"/>
-///<reference path="core/displayGL/ContextGLStencilAction.ts"/>
-///<reference path="core/displayGL/ContextGLTextureFilter.ts"/>
-///<reference path="core/displayGL/ContextGLWrapMode.ts"/>
-///<reference path="core/displayGL/ContextGL.ts" />
-///<reference path="core/displayGL/AGLSLContextGL.ts" />
+///<reference path="core/gl/ContextGLClearMask.ts"/>
+///<reference path="core/gl/VertexBuffer.ts"/>
+///<reference path="core/gl/IndexBuffer.ts"/>
+///<reference path="core/gl/Program.ts"/>
+///<reference path="core/gl/SamplerState.ts"/>
+///<reference path="core/gl/ContextGLTextureFormat.ts"/>
+///<reference path="core/gl/TextureBase.ts"/>
+///<reference path="core/gl/Texture.ts" />
+///<reference path="core/gl/CubeTexture.ts" />
+///<reference path="core/gl/ContextGLTriangleFace.ts"/>
+///<reference path="core/gl/ContextGLVertexBufferFormat.ts"/>
+///<reference path="core/gl/ContextGLProgramType.ts"/>
+///<reference path="core/gl/ContextGLBlendFactor.ts"/>
+///<reference path="core/gl/ContextGLCompareMode.ts"/>
+///<reference path="core/gl/ContextGLMipFilter.ts"/>
+///<reference path="core/gl/ContextGLProfile.ts"/>
+///<reference path="core/gl/ContextGLStencilAction.ts"/>
+///<reference path="core/gl/ContextGLTextureFilter.ts"/>
+///<reference path="core/gl/ContextGLWrapMode.ts"/>
+///<reference path="core/gl/ContextGL.ts" />
+///<reference path="core/gl/AGLSLContextGL.ts" />
 
 ///<reference path="core/geom/ColorTransform.ts"/>
 ///<reference path="core/geom/Matrix.ts" />
@@ -115,18 +115,7 @@
 ///<reference path="core/ui/Keyboard.ts"/>
 
 ///<reference path="managers/RTTBufferManager.ts"/>
-///<reference path="managers/StageGLProxy.ts"/>
 ///<reference path="managers/StageGLManager.ts"/>
-
-///<reference path="textures/TextureProxyBase.ts" />
-///<reference path="textures/Texture2DBase.ts" />
-///<reference path="textures/HTMLImageElementTexture.ts" />
-///<reference path="textures/BitmapTexture.ts" />
-///<reference path="textures/CubeTextureBase.ts" />
-///<reference path="textures/RenderTexture.ts" />
-///<reference path="textures/HTMLImageElementCubeTexture.ts" />
-///<reference path="textures/BitmapCubeTexture.ts" />
-///<reference path="textures/MipmapGenerator.ts" />
 
 ///<reference path="utils/ByteArrayBase.ts"/>
 ///<reference path="utils/ByteArray.ts"/>
@@ -139,6 +128,19 @@
 ///<reference path="utils/RequestAnimationFrame.ts"/>
 ///<reference path="utils/TextureUtils.ts" />
 ///<reference path="utils/Timer.ts" />
+
+///<reference path="textures/TextureProxyBase.ts" />
+///<reference path="textures/Texture2DBase.ts" />
+///<reference path="textures/CubeTextureBase.ts" />
+///<reference path="textures/ATFData.ts" />
+///<reference path="textures/ATFCubeTexture.ts" />
+///<reference path="textures/ATFTexture.ts" />
+///<reference path="textures/HTMLImageElementTexture.ts" />
+///<reference path="textures/BitmapTexture.ts" />
+///<reference path="textures/RenderTexture.ts" />
+///<reference path="textures/HTMLImageElementCubeTexture.ts" />
+///<reference path="textures/BitmapCubeTexture.ts" />
+///<reference path="textures/MipmapGenerator.ts" />
 
 ///<reference path="../aglsl/Sampler.ts"/>
 ///<reference path="../aglsl/Token.ts"/>

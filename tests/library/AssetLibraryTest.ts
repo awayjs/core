@@ -3,6 +3,13 @@
 
 module tests.library
 {
+	import AssetEvent			= away.events.AssetEvent;
+	import LoaderEvent			= away.events.LoaderEvent;
+	import ParserEvent			= away.events.ParserEvent;
+	import AssetLibrary			= away.library.AssetLibrary;
+	import AssetLoader			= away.net.AssetLoader;
+	import AssetLoaderToken		= away.net.AssetLoaderToken;
+	import URLRequest			= away.net.URLRequest;
 	import Delegate				= away.utils.Delegate;
 
     export class AssetLibraryTest //extends away.events.EventDispatcher
@@ -10,8 +17,7 @@ module tests.library
 
         private height : number = 0;
 
-        private token : away.net.AssetLoaderToken;
-        private alb     : away.library.AssetLibraryBundle;
+        private token : AssetLoaderToken;
         constructor()
         {
 
@@ -24,26 +30,13 @@ module tests.library
 
             }
 
-            away.library.AssetLibrary.enableParser( parsers.JSONTextureParser) ;
+            AssetLibrary.enableParser( parsers.JSONTextureParser) ;
 
-            //------------------------------------------------------------------------------------------------------------------
-            // AssetLibraryBundle - Debug / Test
-
-            //this.alb = away.library.AssetLibraryBundle.getInstance();
-            //this.token = this.alb.load( new away.net.URLRequest('URLLoaderTestData/JSNParserTest.json') );
-            //this.token.addEventListener( away.events.LoaderEvent.RESOURCE_COMPLETE , this.onResourceComplete , this );
-
-            //------------------------------------------------------------------------------------------------------------------
-            // AssetLibrary - Debug / Test
-
-           // away.library.AssetLibrary.addEventListener(away.events.AssetEvent.ASSET_COMPLETE , this.onAssetComplete, this );
-
-
-            this.token = away.library.AssetLibrary.load(new away.net.URLRequest('assets/JSNParserTest.json') );
+            this.token = AssetLibrary.load(new URLRequest('assets/JSNParserTest.json') );
             this.token.addEventListener( away.events.LoaderEvent.RESOURCE_COMPLETE , Delegate.create(this, this.onResourceComplete) );
             this.token.addEventListener(away.events.AssetEvent.ASSET_COMPLETE , Delegate.create(this, this.onAssetComplete) );
 
-            this.token = away.library.AssetLibrary.load(new away.net.URLRequest('assets/1024x1024.png') );
+            this.token = AssetLibrary.load(new URLRequest('assets/1024x1024.png') );
             this.token.addEventListener( away.events.LoaderEvent.RESOURCE_COMPLETE , Delegate.create(this, this.onResourceComplete) );
             this.token.addEventListener(away.events.AssetEvent.ASSET_COMPLETE , Delegate.create(this, this.onAssetComplete) );
 
@@ -53,10 +46,10 @@ module tests.library
         {
 
             console.log( '------------------------------------------------------------------------------');
-            console.log( 'away.events.AssetEvent.ASSET_COMPLETE' , away.library.AssetLibrary.getAsset(e.asset.name) );
+            console.log( 'away.events.AssetEvent.ASSET_COMPLETE' , AssetLibrary.getAsset(e.asset.name) );
             console.log( '------------------------------------------------------------------------------');
 
-            var htmlImageElementTexture : away.textures.HTMLImageElementTexture = <away.textures.HTMLImageElementTexture> away.library.AssetLibrary.getAsset(e.asset.name);
+            var htmlImageElementTexture : away.textures.HTMLImageElementTexture = <away.textures.HTMLImageElementTexture> AssetLibrary.getAsset(e.asset.name);
 
             document.body.appendChild( htmlImageElementTexture.htmlImageElement );
 
@@ -70,7 +63,7 @@ module tests.library
         public onResourceComplete ( e : away.events.LoaderEvent )
         {
 
-            var loader : away.net.AssetLoader = <away.net.AssetLoader> e.target;
+            var loader : AssetLoader = <AssetLoader> e.target;
 
             console.log( '------------------------------------------------------------------------------');
             console.log( 'away.events.LoaderEvent.RESOURCE_COMPLETE' , e  );

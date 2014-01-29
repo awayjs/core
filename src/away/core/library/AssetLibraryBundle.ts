@@ -11,13 +11,13 @@ module away.library
 	 */
 	export class AssetLibraryBundle extends away.events.EventDispatcher
 	{
-		private _loadingSessions:away.net.AssetLoader[];//Vector.<AssetLoader>;
-		private _strategy:away.library.ConflictStrategyBase;
+		private _loadingSessions:Array<away.net.AssetLoader>;
+		private _strategy:ConflictStrategyBase;
 		private _strategyPreference:string;
-		private _assets:away.library.IAsset[];//Vector.<IAsset>;
+		private _assets:Array<IAsset>;
 		private _assetDictionary:Object;
 		private _assetDictDirty:boolean;
-		private _loadingSessionsGarbage:away.net.AssetLoader[] = new Array<away.net.AssetLoader>();
+		private _loadingSessionsGarbage:Array<away.net.AssetLoader> = new Array<away.net.AssetLoader>();
 		private _gcTimeoutIID:number;
 
 		private _onAssetRenameDelegate:Function;
@@ -38,14 +38,12 @@ module away.library
 		{
 			super();
 
-			//me = me;
-
-			this._assets = new Array<away.library.IAsset>();//new Vector.<IAsset>;
+			this._assets = new Array<IAsset>();//new Vector.<IAsset>;
 			this._assetDictionary = new Object();
 			this._loadingSessions = new Array<away.net.AssetLoader>();
 
-			this.conflictStrategy = away.library.ConflictStrategy.IGNORE.create();
-			this.conflictPrecedence = away.library.ConflictPrecedence.FAVOR_NEW;
+			this.conflictStrategy = ConflictStrategy.IGNORE.create();
+			this.conflictPrecedence = ConflictPrecedence.FAVOR_NEW;
 
 			this._onAssetRenameDelegate = away.utils.Delegate.create(this, this.onAssetRename);
 			this._onAssetConflictResolvedDelegate = away.utils.Delegate.create(this, this.onAssetConflictResolved);
@@ -68,21 +66,13 @@ module away.library
 		 */
 		public static getInstance(key:string = 'default'):AssetLibraryBundle
 		{
-			if (!key) {
-
+			if (!key)
 				key = 'default';
 
-			}
+			if (!AssetLibrary._iInstances.hasOwnProperty(key))
+				AssetLibrary._iInstances[key] = new AssetLibraryBundle(new AssetLibraryBundleSingletonEnforcer());
 
-
-			if (!away.library.AssetLibrary._iInstances.hasOwnProperty(key)) {
-
-				away.library.AssetLibrary._iInstances[key] = new away.library.AssetLibraryBundle(new AssetLibraryBundleSingletonEnforcer());
-
-			}
-
-
-			return away.library.AssetLibrary._iInstances[key];
+			return AssetLibrary._iInstances[key];
 
 		}
 
@@ -109,22 +99,19 @@ module away.library
 		 * <code>conflictPrecedence</code> property defines which of the two conflicting assets will
 		 * be renamed.
 		 *
-		 * @see away.library.naming.ConflictStrategy
-		 * @see away.library.AssetLibrary.conflictPrecedence
+		 * @see naming.ConflictStrategy
+		 * @see AssetLibrary.conflictPrecedence
 		 */
-		public get conflictStrategy():away.library.ConflictStrategyBase
+		public get conflictStrategy():ConflictStrategyBase
 		{
 			return this._strategy;
 		}
 
-		public set conflictStrategy(val:away.library.ConflictStrategyBase)
+		public set conflictStrategy(val:ConflictStrategyBase)
 		{
 
-			if (!val) {
-
+			if (!val)
 				throw new away.errors.Error('namingStrategy must not be null. To ignore naming, use AssetLibrary.IGNORE');
-
-			}
 
 			this._strategy = val.create();
 
@@ -139,8 +126,8 @@ module away.library
 		 * This property is ignored for conflict strategies that do not actually rename an
 		 * asset automatically, such as ConflictStrategy.IGNORE and ConflictStrategy.THROW_ERROR.
 		 *
-		 * @see away.library.naming.ConflictPrecedence
-		 * @see away.library.naming.ConflictStrategy
+		 * @see away.library.ConflictPrecedence
+		 * @see away.library.ConflictStrategy
 		 */
 		public get conflictPrecedence():string
 		{
@@ -164,11 +151,11 @@ module away.library
 		 * included in the iteration or not. This needs to be a function that takes a single
 		 * parameter of type IAsset and returns a boolean where true means it should be included.
 		 *
-		 * @see away.library.assets.AssetType
+		 * @see away.library.AssetType
 		 */
-		public createIterator(assetTypeFilter:string = null, namespaceFilter:string = null, filterFunc = null):away.library.AssetLibraryIterator
+		public createIterator(assetTypeFilter:string = null, namespaceFilter:string = null, filterFunc = null):AssetLibraryIterator
 		{
-			return new away.library.AssetLibraryIterator(this._assets, assetTypeFilter, namespaceFilter, filterFunc);
+			return new AssetLibraryIterator(this._assets, assetTypeFilter, namespaceFilter, filterFunc);
 		}
 
 		/**
@@ -204,25 +191,14 @@ module away.library
 		{
 			//var asset : IAsset;
 
-			if (this._assetDictDirty) {
-
+			if (this._assetDictDirty)
 				this.rehashAssetDict();
 
-			}
+			if (ns == null)
+				ns = NamedAssetBase.DEFAULT_NAMESPACE;
 
-			//ns ||= NamedAssetBase.DEFAULT_NAMESPACE;
-			if (ns == null) {
-
-				ns = away.library.NamedAssetBase.DEFAULT_NAMESPACE;
-
-			}
-
-
-			if (!this._assetDictionary.hasOwnProperty(ns)) {
-
+			if (!this._assetDictionary.hasOwnProperty(ns))
 				return null;
-
-			}
 
 			return this._assetDictionary[ns][name];
 
@@ -233,38 +209,29 @@ module away.library
 		 * using the method defined by the <code>conflictStrategy</code> and
 		 * <code>conflictPrecedence</code> properties.
 		 */
-		public addAsset(asset:away.library.IAsset)
+		public addAsset(asset:IAsset)
 		{
 			var ns:string;
-			var old:away.library.IAsset;
+			var old:IAsset;
 
 			// Bail if asset has already been added.
-			if (this._assets.indexOf(asset) >= 0) {
-
+			if (this._assets.indexOf(asset) >= 0)
 				return;
-
-			}
 
 			old = this.getAsset(asset.name, asset.assetNamespace);
 			ns = asset.assetNamespace || NamedAssetBase.DEFAULT_NAMESPACE;
 
-			if (old != null) {
-
+			if (old != null)
 				this._strategy.resolveConflict(asset, old, this._assetDictionary[ns], this._strategyPreference);
 
-			}
-
 			//create unique-id (for now this is used in AwayBuilder only
-			asset.id = away.library.IDUtil.createUID();
+			asset.id = IDUtil.createUID();
 
 			// Add it
 			this._assets.push(asset);
 
-			if (!this._assetDictionary.hasOwnProperty(ns)) {
-
+			if (!this._assetDictionary.hasOwnProperty(ns))
 				this._assetDictionary[ns] = new Object();
-
-			}
 
 			this._assetDictionary[ns][asset.name] = asset;
 
@@ -280,7 +247,7 @@ module away.library
 		 * @param asset The asset which should be removed from this library.
 		 * @param dispose Defines whether the assets should also be disposed.
 		 */
-		public removeAsset(asset:away.library.IAsset, dispose:boolean = true)
+		public removeAsset(asset:IAsset, dispose:boolean = true)
 		{
 			var idx:number;
 
@@ -290,18 +257,12 @@ module away.library
 			asset.removeEventListener(away.events.AssetEvent.ASSET_CONFLICT_RESOLVED, this._onAssetConflictResolvedDelegate);
 
 			idx = this._assets.indexOf(asset);
-			if (idx >= 0) {
 
+			if (idx >= 0)
 				this._assets.splice(idx, 1);
 
-			}
-
-			if (dispose) {
-
+			if (dispose)
 				asset.dispose();
-
-			}
-
 		}
 
 		/**
@@ -313,16 +274,13 @@ module away.library
 		 *
 		 * @see away.library.AssetLibrary.removeAsset()
 		 */
-		public removeAssetByName(name:string, ns:string = null, dispose:boolean = true):away.library.IAsset
+		public removeAssetByName(name:string, ns:string = null, dispose:boolean = true):IAsset
 		{
 
-			var asset:away.library.IAsset = this.getAsset(name, ns);
+			var asset:IAsset = this.getAsset(name, ns);
 
-			if (asset) {
-
+			if (asset)
 				this.removeAsset(asset, dispose);
-
-			}
 
 			return asset;
 		}
@@ -336,12 +294,11 @@ module away.library
 		public removeAllAssets(dispose:boolean = true)
 		{
 			if (dispose) {
-				var asset:away.library.IAsset;
+				var asset:IAsset;
 
 				for (var c:number = 0; c < this._assets.length; c++) {
 					asset = this._assets[ c ];
 					asset.dispose();
-
 				}
 				/*
 				 for each (asset in _assets)
@@ -367,18 +324,15 @@ module away.library
 		{
 			var idx:number = 0;
 			var asset:IAsset;
-			var old_assets:away.library.IAsset[];
+			var old_assets:IAsset[];
 
 			// Empty the assets vector after having stored a copy of it.
 			// The copy will be filled with all assets which weren't removed.
 			old_assets = this._assets.concat();
 			this._assets.length = 0;
 
-			if (ns == null) {
-
-				ns = away.library.NamedAssetBase.DEFAULT_NAMESPACE;//ns ||= NamedAssetBase.DEFAULT_NAMESPACE;
-
-			}
+			if (ns == null)
+				ns = NamedAssetBase.DEFAULT_NAMESPACE;
 
 			for (var d:number = 0; d < old_assets.length; d++) {
 				asset = old_assets[d];
@@ -386,11 +340,8 @@ module away.library
 				// Remove from dict if in the supplied namespace. If not,
 				// transfer over to the new vector.
 				if (asset.assetNamespace == ns) {
-					if (dispose) {
-
+					if (dispose)
 						asset.dispose();
-
-					}
 
 					// Remove asset from dictionary, but don't try to auto-remove
 					// the namespace, which will trigger an unnecessarily expensive
@@ -398,12 +349,8 @@ module away.library
 					// will be empty when loop finishes.
 					this.removeAssetFromDict(asset, false);
 				} else {
-
 					this._assets[idx++] = asset;
-
 				}
-
-
 			}
 
 			/*
@@ -426,26 +373,18 @@ module away.library
 			 */
 
 			// Remove empty namespace
-			if (this._assetDictionary.hasOwnProperty(ns)) {
-
+			if (this._assetDictionary.hasOwnProperty(ns))
 				delete this._assetDictionary[ns];
-
-			}
-
 		}
 
-		private removeAssetFromDict(asset:away.library.IAsset, autoRemoveEmptyNamespace:boolean = true)
+		private removeAssetFromDict(asset:IAsset, autoRemoveEmptyNamespace:boolean = true)
 		{
-			if (this._assetDictDirty) {
+			if (this._assetDictDirty)
 				this.rehashAssetDict();
-			}
-
 
 			if (this._assetDictionary.hasOwnProperty(asset.assetNamespace)) {
-				if (this._assetDictionary[asset.assetNamespace].hasOwnProperty(asset.name)) {
+				if (this._assetDictionary[asset.assetNamespace].hasOwnProperty(asset.name))
 					delete this._assetDictionary[asset.assetNamespace][asset.name];
-				}
-
 
 				if (autoRemoveEmptyNamespace) {
 
@@ -457,12 +396,8 @@ module away.library
 						break;
 					}
 
-					if (empty) {
-
+					if (empty)
 						delete this._assetDictionary[asset.assetNamespace];
-
-					}
-
 				}
 			}
 		}
@@ -474,11 +409,8 @@ module away.library
 		{
 			var loader:away.net.AssetLoader = new away.net.AssetLoader();
 
-			if (!this._loadingSessions) {
-
+			if (!this._loadingSessions)
 				this._loadingSessions = new Array<away.net.AssetLoader>();
-
-			}
 
 			this._loadingSessions.push(loader);
 
@@ -488,8 +420,8 @@ module away.library
 			loader.addEventListener(away.events.AssetEvent.ASSET_COMPLETE, this._onAssetCompleteDelegate);
 
 			// Error are handled separately (see documentation for addErrorHandler)
-			loader._iAddErrorHandler(this.onDependencyRetrievingError);
-			loader._iAddParseErrorHandler(this.onDependencyRetrievingParseError);
+			loader._iAddErrorHandler(this._onDependencyRetrievingErrorDelegate);
+			loader._iAddParseErrorHandler(this._onDependencyRetrievingParseErrorDelegate);
 
 			return loader.load(req, context, ns, parser);
 		}
@@ -498,19 +430,13 @@ module away.library
 		{
 			var i:number;
 
-			if (!this._loadingSessions) {
-
+			if (!this._loadingSessions)
 				this._loadingSessions = new Array<away.net.AssetLoader>();
-
-			}
 
 			var length:number = this._loadingSessions.length;
 
-			for (i = 0; i < length; i++) {
-
+			for (i = 0; i < length; i++)
 				this.killLoadingSession(this._loadingSessions[i]);
-
-			}
 
 			this._loadingSessions = null;
 		}
@@ -527,11 +453,8 @@ module away.library
 		{
 			var loader:away.net.AssetLoader = new away.net.AssetLoader();
 
-			if (!this._loadingSessions) {
-
+			if (!this._loadingSessions)
 				this._loadingSessions = new Array<away.net.AssetLoader>();
-
-			}
 
 			this._loadingSessions.push(loader);
 
@@ -541,8 +464,8 @@ module away.library
 			loader.addEventListener(away.events.AssetEvent.ASSET_COMPLETE, this._onAssetCompleteDelegate);
 
 			// Error are handled separately (see documentation for addErrorHandler)
-			loader._iAddErrorHandler(this.onDependencyRetrievingError);
-			loader._iAddParseErrorHandler(this.onDependencyRetrievingParseError);
+			loader._iAddErrorHandler(this._onDependencyRetrievingErrorDelegate);
+			loader._iAddParseErrorHandler(this._onDependencyRetrievingParseErrorDelegate);
 
 			return loader.loadData(data, '', context, ns, parser);
 		}
@@ -556,14 +479,10 @@ module away.library
 			var l:number = this._assets.length;
 
 			for (var c:number = 0; c < l; c++) {
-
 				asset = this._assets[c];
 
-				if (!this._assetDictionary.hasOwnProperty(asset.assetNamespace)) {
-
+				if (!this._assetDictionary.hasOwnProperty(asset.assetNamespace))
 					this._assetDictionary[asset.assetNamespace] = {};
-
-				}
 
 				this._assetDictionary[asset.assetNamespace][asset.name] = asset;
 
@@ -588,17 +507,12 @@ module away.library
 		 */
 		private onDependencyRetrievingError(event:away.events.LoaderEvent):boolean
 		{
-			if (this.hasEventListener(away.events.LoaderEvent.LOAD_ERROR, this._onDependencyRetrievingErrorDelegate)) {
-
+			if (this.hasEventListener(away.events.LoaderEvent.LOAD_ERROR)) {
 				this.dispatchEvent(event);
 				return true;
-
 			} else {
-
 				return false;
-
 			}
-
 		}
 
 		/**
@@ -606,30 +520,19 @@ module away.library
 		 */
 		private onDependencyRetrievingParseError(event:away.events.ParserEvent):boolean
 		{
-			if (this.hasEventListener(away.events.ParserEvent.PARSE_ERROR, this._onDependencyRetrievingParseErrorDelegate)) {
-
+			if (this.hasEventListener(away.events.ParserEvent.PARSE_ERROR)) {
 				this.dispatchEvent(event);
 				return true;
-
 			} else {
-
 				return false;
-
 			}
-
 		}
 
 		private onAssetComplete(event:away.events.AssetEvent)
 		{
-
-			//console.log( 'AssetLibraryBundle.onAssetComplete ' , event );
-
 			// Only add asset to library the first time.
-			if (event.type == away.events.AssetEvent.ASSET_COMPLETE) {
-
+			if (event.type == away.events.AssetEvent.ASSET_COMPLETE)
 				this.addAsset(event.asset);
-
-			}
 
 			this.dispatchEvent(event.clone());
 
@@ -645,7 +548,6 @@ module away.library
 		 */
 		private onResourceRetrieved(event:away.events.LoaderEvent)
 		{
-
 			var loader:away.net.AssetLoader = <away.net.AssetLoader> event.target;
 
 			this.dispatchEvent(event.clone());
@@ -664,14 +566,11 @@ module away.library
 
 		private loadingSessionGC():void
 		{
-
 			var loader:away.net.AssetLoader;
 
 			while (this._loadingSessionsGarbage.length > 0) {
-
 				loader = this._loadingSessionsGarbage.pop();
 				this.killLoadingSession(loader);
-
 			}
 
 			clearTimeout(this._gcTimeoutIID);
@@ -681,8 +580,6 @@ module away.library
 
 		private killLoadingSession(loader:away.net.AssetLoader)
 		{
-
-			loader.removeEventListener(away.events.LoaderEvent.LOAD_ERROR, this._onDependencyRetrievingErrorDelegate);
 			loader.removeEventListener(away.events.LoaderEvent.RESOURCE_COMPLETE, this._onResourceRetrievedDelegate);
 			loader.removeEventListener(away.events.LoaderEvent.DEPENDENCY_COMPLETE, this._onDependencyRetrievedDelegate);
 			loader.removeEventListener(away.events.AssetEvent.TEXTURE_SIZE_ERROR, this._onTextureSizeErrorDelegate);
@@ -709,26 +606,19 @@ module away.library
 
 		private onAssetRename(ev:away.events.AssetEvent)
 		{
-			var asset:away.library.IAsset = <away.library.IAsset > ev.target;// TODO: was ev.currentTarget - watch this var
-			var old:away.library.IAsset = this.getAsset(asset.assetNamespace, asset.name);
+			var asset:IAsset = <IAsset > ev.target;// TODO: was ev.currentTarget - watch this var
+			var old:IAsset = this.getAsset(asset.assetNamespace, asset.name);
 
 			if (old != null) {
-
 				this._strategy.resolveConflict(asset, old, this._assetDictionary[asset.assetNamespace], this._strategyPreference);
-
 			} else {
 				var dict:Object = this._assetDictionary[ev.asset.assetNamespace];
 
-				if (dict == null) {
-
+				if (dict == null)
 					return;
-
-				}
-
 
 				dict[ev.assetPrevName] = null;
 				dict[ev.asset.name] = ev.asset;
-
 			}
 		}
 
@@ -736,7 +626,6 @@ module away.library
 		{
 			this.dispatchEvent(ev.clone());
 		}
-
 	}
 }
 

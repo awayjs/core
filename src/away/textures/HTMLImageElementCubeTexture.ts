@@ -127,7 +127,7 @@ module away.textures
 				throw new Error("Invalid bitmapData: Width and height must be power of 2 and cannot exceed 2048");
 		}
 
-		public pUploadContent(texture:away.displayGL.TextureBase):void
+		public pUploadContent(texture:away.gl.TextureBase):void
 		{
 			for (var i:number = 0; i < 6; ++i) {
 				if (this._useMipMaps) {
@@ -136,7 +136,7 @@ module away.textures
 
 				} else {
 
-					var tx:away.displayGL.CubeTexture = <any> texture;
+					var tx:away.gl.CubeTexture = <any> texture;
 					tx.uploadFromHTMLImageElement(this._bitmapDatas[i], i, 0);
 
 				}

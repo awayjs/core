@@ -27,7 +27,7 @@ module away.parsers
 		 */
 		constructor()
 		{
-			super(away.parsers.ParserDataFormat.PLAIN_TEXT, away.parsers.ParserLoaderType.URL_LOADER);
+			super(away.net.URLLoaderDataFormat.TEXT);
 		}
 
 		/**
@@ -115,7 +115,7 @@ module away.parsers
 
 					for (var c:number = 0; c < data.length; c++) {
 						rec = data[c];
-						this._imgDependencyDictionary[rec.id] = this._pAddDependency(rec.id, new away.net.URLRequest(rec.image.toString()), true);
+						this._imgDependencyDictionary[rec.id] = this._pAddDependency(rec.id, new away.net.URLRequest(rec.image.toString()));
 					}
 
 					if (!this._validateCubeData()) {
@@ -148,7 +148,7 @@ module away.parsers
 			var dependency:away.parsers.ResourceDependency = <away.parsers.ResourceDependency> this._imgDependencyDictionary[ name ];
 
 			if (dependency) {
-				return <HTMLImageElement> dependency.data;
+				return <HTMLImageElement> (<away.textures.HTMLImageElementTexture> dependency.assets[0]).htmlImageElement;
 			}
 
 			return null;

@@ -59,17 +59,6 @@ module tests.net
             token.addEventListener( AssetEvent.TEXTURE_SIZE_ERROR, Delegate.create(this, this.onTextureSizeError) );
             token.addEventListener( ParserEvent.PARSE_COMPLETE, Delegate.create(this, this.onParseComplete) );
 
-            token.addEventListener( LoaderEvent.DEPENDENCY_COMPLETE, Delegate.create(this, this.onDependencyComplete) );
-
-        }
-
-        public onDependencyComplete ( e : LoaderEvent ) : void
-        {
-
-            console.log( '--------------------------------------------------------------------------------');
-            console.log( 'AssetLoaderTest.onDependencyComplete' , e );
-            console.log( '--------------------------------------------------------------------------------');
-
         }
 
         public onParseComplete ( e : ParserEvent ) : void

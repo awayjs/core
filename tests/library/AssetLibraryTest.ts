@@ -21,15 +21,6 @@ module tests.library
         constructor()
         {
 
-            var len = 10;
-
-            for (var i : number = len-1; i >= 0; i--)
-            {
-
-                console.log( i );
-
-            }
-
             AssetLibrary.enableParser( parsers.JSONTextureParser) ;
 
             this.token = AssetLibrary.load(new URLRequest('assets/JSNParserTest.json') );

@@ -7,11 +7,11 @@ module away.events
 	export class Event
 	{
 
-		public static COMPLETE:string = 'Event_Complete';
-		public static OPEN:string = 'Event_Open';
+		public static COMPLETE:string = 'complete';
+		public static OPEN:string = 'open';
 
-		public static ENTER_FRAME:string = 'enterframe';
-		public static EXIT_FRAME:string = 'exitframe';
+		public static ENTER_FRAME:string = 'enterFrame';
+		public static EXIT_FRAME:string = 'exitFrame';
 
 
 		public static RESIZE:string = "resize";

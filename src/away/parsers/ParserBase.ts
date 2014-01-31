@@ -59,7 +59,6 @@ module away.parsers
 		 }
 		 */
 		private _dependencies:ResourceDependency[];//Vector.<ResourceDependency>;
-		private _loaderType:string = away.parsers.ParserLoaderType.URL_LOADER; // Default loader is URLLoader
 		private _parsingPaused:boolean;
 		private _parsingComplete:boolean;
 		private _parsingFailure:boolean;
@@ -82,20 +81,12 @@ module away.parsers
 		/**
 		 * Creates a new ParserBase object
 		 * @param format The data format of the file data to be parsed. Can be either <code>ParserDataFormat.BINARY</code> or <code>ParserDataFormat.PLAIN_TEXT</code>, and should be provided by the concrete subtype.
-		 * @param loaderType The type of loader required by the parser
 		 *
 		 * @see away.loading.parsers.ParserDataFormat
 		 */
-		constructor(format:string, loaderType:string = null)
+		constructor(format:string)
 		{
-
 			super();
-
-			if (loaderType) {
-
-				this._loaderType = loaderType;
-
-			}
 
 			this._materialMode = 0;
 			this._dataFormat = format;
@@ -150,29 +141,13 @@ module away.parsers
 			return this._materialMode;
 		}
 
-		public get loaderType():string
-		{
-
-			return this._loaderType;
-
-		}
-
-		public set loaderType(value:string)
-		{
-
-			this._loaderType = value;
-
-		}
-
 		public get data():any
 		{
-
 			return this._data;
-
 		}
 
 		/**
-		 * The data format of the file data to be parsed. Can be either <code>ParserDataFormat.BINARY</code> or <code>ParserDataFormat.PLAIN_TEXT</code>.
+		 * The data format of the file data to be parsed. Options are <code>URLLoaderDataFormat.BINARY</code>, <code>URLLoaderDataFormat.ARRAY_BUFFER</code>, <code>URLLoaderDataFormat.BLOB</code>, <code>URLLoaderDataFormat.VARIABLES</code> or <code>URLLoaderDataFormat.TEXT</code>.
 		 */
 		public get dataFormat():string
 		{
@@ -212,9 +187,7 @@ module away.parsers
 		 */
 		public _iResolveDependency(resourceDependency:ResourceDependency):void
 		{
-
 			throw new away.errors.AbstractMethodError();
-
 		}
 
 		/**
@@ -241,11 +214,8 @@ module away.parsers
 		{
 			this._parsingPaused = false;
 
-			if (this._timer) {
-
+			if (this._timer)
 				this._timer.start();
-
-			}
 		}
 
 		public _pFinalizeAsset(asset:away.library.IAsset, name:string = null):void
@@ -253,11 +223,9 @@ module away.parsers
 			var type_event:string;
 			var type_name:string;
 
-			if (name != null) {
-
+			if (name != null)
 				asset.name = name;
 
-			}
 
 			switch (asset.assetType) {
 				case away.library.AssetType.LIGHT_PICKER:
@@ -327,9 +295,6 @@ module away.parsers
 					throw new away.errors.Error('Unhandled asset type ' + asset.assetType + '. Report as bug!');
 					break;
 			}
-			;
-
-			//console.log( 'ParserBase' , '_pFinalizeAsset.type_event: ' ,  type_event );
 
 			// If the asset has no name, give it
 			// a per-type default name.
@@ -346,9 +311,7 @@ module away.parsers
 		 */
 		public _pProceedParsing():boolean
 		{
-
 			throw new away.errors.AbstractMethodError();
-			return true;
 		}
 
 		public _pDieWithError(message:string = 'Unknown parsing error'):void
@@ -364,7 +327,7 @@ module away.parsers
 
 		public _pAddDependency(id:string, req:away.net.URLRequest, retrieveAsRawData:boolean = false, data:any = null, suppressErrorEvents:boolean = false):ResourceDependency
 		{
-			var dependency:ResourceDependency = new away.parsers.ResourceDependency(id, req, data, this, retrieveAsRawData, suppressErrorEvents);
+			var dependency:ResourceDependency = new away.parsers.ResourceDependency(id, req, data, null, this, retrieveAsRawData, suppressErrorEvents);
 			this._dependencies.push(dependency);
 
 			return dependency;
@@ -372,9 +335,8 @@ module away.parsers
 
 		public _pPauseAndRetrieveDependencies():void
 		{
-			if (this._timer) {
+			if (this._timer)
 				this._timer.stop();
-			}
 
 			this._parsingPaused = true;
 			this.dispatchEvent(new away.events.ParserEvent(away.events.ParserEvent.READY_FOR_DEPENDENCIES));
@@ -386,9 +348,7 @@ module away.parsers
 		 */
 		public _pHasTime():boolean
 		{
-
 			return ((away.utils.getTimer() - this._lastFrameTime) < this._frameLimit);
-
 		}
 
 		/**
@@ -398,11 +358,8 @@ module away.parsers
 		{
 			this._lastFrameTime = away.utils.getTimer();
 
-			if (this._pProceedParsing() && !this._parsingFailure) {
-
+			if (this._pProceedParsing() && !this._parsingFailure)
 				this._pFinishParsing();
-
-			}
 		}
 
 		/**
@@ -411,12 +368,10 @@ module away.parsers
 		 */
 		private startParsing(frameLimit:number):void
 		{
-
 			this._frameLimit = frameLimit;
 			this._timer = new away.utils.Timer(this._frameLimit, 0);
 			this._timer.addEventListener(away.events.TimerEvent.TIMER, this._pOnIntervalDelegate);
 			this._timer.start();
-
 		}
 
 		/**
@@ -424,9 +379,6 @@ module away.parsers
 		 */
 		public _pFinishParsing():void
 		{
-
-			//console.log( 'ParserBase._pFinishParsing');
-
 			if (this._timer) {
 				this._timer.removeEventListener(away.events.TimerEvent.TIMER, this._pOnIntervalDelegate);
 				this._timer.stop();
@@ -436,7 +388,6 @@ module away.parsers
 			this._parsingComplete = true;
 
 			this.dispatchEvent(new away.events.ParserEvent(away.events.ParserEvent.PARSE_COMPLETE));
-
 		}
 
 		/**
@@ -456,12 +407,8 @@ module away.parsers
 		 */
 		public _pGetByteData():away.utils.ByteArray
 		{
-
 			return away.parsers.ParserUtils.toByteArray(this._data);
-
 		}
-
 	}
-
 }
 

@@ -13,10 +13,11 @@ var tests;
                 //---------------------------------------
                 // Load a PNG
                 this.urlRequest = new away.net.URLRequest('assets/256x256.png');
-                this.imgLoader = new away.net.IMGLoader();
-                this.imgLoader.load(this.urlRequest);
-                this.imgLoader.addEventListener(away.events.Event.COMPLETE, Delegate.create(this, this.imgLoaded));
-                this.imgLoader.addEventListener(away.events.IOErrorEvent.IO_ERROR, Delegate.create(this, this.imgLoadedError));
+                this.urlLoader = new away.net.URLLoader();
+                this.urlLoader.dataFormat = away.net.URLLoaderDataFormat.BLOB;
+                this.urlLoader.load(this.urlRequest);
+                this.urlLoader.addEventListener(away.events.Event.COMPLETE, Delegate.create(this, this.imgLoaded));
+                this.urlLoader.addEventListener(away.events.IOErrorEvent.IO_ERROR, Delegate.create(this, this.imgLoadedError));
 
                 //---------------------------------------
                 // BitmapData Object - 1
@@ -51,7 +52,7 @@ var tests;
             }
             BitmapDataTest.prototype.onMouseDown = function (e) {
                 if (this.bitmapData.width === 512) {
-                    if (this.imgLoader.loaded) {
+                    if (this.image.complete) {
                         this.bitmapDataB.lock(); // Lock bitmap - speeds up setPixelOperations
 
                         //---------------------------------------
@@ -61,8 +62,8 @@ var tests;
 
                         //---------------------------------------
                         // copy loaded image to first BitmapData
-                        var rect = new away.geom.Rectangle(0, 0, this.imgLoader.width, this.imgLoader.height);
-                        this.bitmapData.drawImage(this.imgLoader.image, rect, rect);
+                        var rect = new away.geom.Rectangle(0, 0, this.image.width, this.image.height);
+                        this.bitmapData.drawImage(this.image, rect, rect);
 
                         //---------------------------------------
                         // copy image into second bitmap data ( and scale it up 2X )
@@ -111,7 +112,7 @@ var tests;
                     this.bitmapDataB.copyPixels(this.bitmapData, this.bitmapDataB.rect, targetRect); // copy first bitmapdata object into the second one
                 }
 
-                var m = new away.geom.Matrix(.5, .08, .08, .5, this.imgLoader.width / 2, this.imgLoader.height / 2);
+                var m = new away.geom.Matrix(.5, .08, .08, .5, this.image.width / 2, this.image.height / 2);
                 this.bitmapData.draw(this.bitmapData, m);
 
                 this.bitmapData.setPixel32(0, 0, 0xccff0000);
@@ -130,9 +131,18 @@ var tests;
             };
 
             BitmapDataTest.prototype.imgLoaded = function (e) {
-                this.bitmapData.drawImage(this.imgLoader.image, new away.geom.Rectangle(0, 0, this.imgLoader.width, this.imgLoader.height), new away.geom.Rectangle(0, 0, this.imgLoader.width / 2, this.imgLoader.height / 2));
+                var _this = this;
+                var loader = e.target;
+                this.image = away.parsers.ParserUtils.blobToImage(loader.data);
+                this.image.onload = function (event) {
+                    return _this.onImageLoad(event);
+                };
+            };
 
-                var m = new away.geom.Matrix(.5, .08, .08, .5, this.imgLoader.width / 2, this.imgLoader.height / 2);
+            BitmapDataTest.prototype.onImageLoad = function (event) {
+                this.bitmapData.drawImage(this.image, new away.geom.Rectangle(0, 0, this.image.width, this.image.height), new away.geom.Rectangle(0, 0, this.image.width / 2, this.image.height / 2));
+
+                var m = new away.geom.Matrix(.5, .08, .08, .5, this.image.width / 2, this.image.height / 2);
                 this.bitmapData.draw(this.bitmapData, m);
             };
             return BitmapDataTest;

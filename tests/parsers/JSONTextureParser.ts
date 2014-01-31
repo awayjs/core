@@ -31,7 +31,7 @@ module parsers
 		constructor()
 		{
 
-			super( away.parsers.ParserDataFormat.PLAIN_TEXT , away.parsers.ParserLoaderType.URL_LOADER );
+			super( away.parsers.ParserDataFormat.PLAIN_TEXT );
 
             this._loadedTextures = new Array<away.textures.Texture2DBase>();
             this._state = this.STATE_PARSE_DATA;

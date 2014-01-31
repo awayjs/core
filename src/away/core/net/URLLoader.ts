@@ -2,95 +2,57 @@
 module away.net
 {
 
-	// TODO: implement / test cross domain policy
-
+	/**
+	 * The URLLoader is used to load a single file, as part of a resource.
+	 *
+	 * While URLLoader can be used directly, e.g. to create a third-party asset
+	 * management system, it's recommended to use any of the classes Loader3D, AssetLoader
+	 * and AssetLibrary instead in most cases.
+	 *
+	 * @see AssetLoader
+	 * @see away.library.AssetLibrary
+	 */
 	export class URLLoader extends away.events.EventDispatcher
 	{
-
 		private _XHR:XMLHttpRequest;
 		private _bytesLoaded:number = 0;
 		private _bytesTotal:number = 0;
-		private _data:any;
 		private _dataFormat:string = away.net.URLLoaderDataFormat.TEXT;
-		private _request:away.net.URLRequest;
 		private _loadError:boolean = false;
 
+		private _request:URLRequest;
+		private _data:any;
+
+		private _loadStartEvent:away.events.Event;
+		private _loadErrorEvent:away.events.IOErrorEvent;
+		private _loadCompleteEvent:away.events.Event;
+		private _progressEvent:away.events.ProgressEvent;
+
+		/**
+		 * Creates a new URLLoader object.
+		 */
 		constructor()
 		{
-
 			super();
-
-		}
-
-		// Public
-
-		/**
-		 *
-		 * @param request {away.net.URLRequest}
-		 */
-		public load(request:away.net.URLRequest):void
-		{
-
-			this.initXHR();
-			this._request = request;
-
-			if (request.method === away.net.URLRequestMethod.POST) {
-
-				this.postRequest(request);
-
-
-			} else {
-
-				this.getRequest(request);
-
-			}
-
 		}
 
 		/**
 		 *
 		 */
-		public close():void
+		public get url():string
 		{
 
-			this._XHR.abort();
-			this.disposeXHR();
-
+			return this._request? this._request.url : '';
 		}
 
 		/**
 		 *
 		 */
-		public dispose():void
+		public get data():any
 		{
-
-			if (this._XHR) {
-
-				this._XHR.abort();
-
-			}
-
-			this.disposeXHR();
-
-			this._data = null;
-			this._dataFormat = null;
-			this._bytesLoaded = null;
-			this._bytesTotal = null;
-
-			/*
-			 if( this._request )
-			 {
-
-			 this._request.dispose();
-
-			 }
-			 */
-
-			this._request = null;
-
+			return this._data;
 		}
 
-		// Get / Set
 
 		/**
 		 *
@@ -102,40 +64,12 @@ module away.net
 		 */
 		public set dataFormat(format:string)
 		{
-
-			if (format === away.net.URLLoaderDataFormat.BLOB || format === away.net.URLLoaderDataFormat.ARRAY_BUFFER || format === away.net.URLLoaderDataFormat.BINARY || format === away.net.URLLoaderDataFormat.TEXT || format === away.net.URLLoaderDataFormat.VARIABLES) {
-
-				this._dataFormat = format;
-
-			} else {
-
-				throw new away.errors.Error('URLLoader error: incompatible dataFormat');
-
-			}
-
+			this._dataFormat = format;
 		}
 
-		/**
-		 *
-		 * @returns {string}
-		 *      away.net.URLLoaderDataFormat
-		 */
 		public get dataFormat():string
 		{
-
 			return this._dataFormat;
-
-		}
-
-		/**
-		 *
-		 * @returns {*}
-		 */
-		public get data():any
-		{
-
-			return this._data;
-
 		}
 
 		/**
@@ -144,9 +78,7 @@ module away.net
 		 */
 		public get bytesLoaded():number
 		{
-
 			return this._bytesLoaded;
-
 		}
 
 		/**
@@ -155,23 +87,50 @@ module away.net
 		 */
 		public get bytesTotal():number
 		{
-
 			return this._bytesTotal;
+		}
 
+		/**
+		 * Load a resource from a file.
+		 *
+		 * @param request The URLRequest object containing the URL of the object to be loaded.
+		 */
+		public load(request:URLRequest):void
+		{
+			this._request = request;
+
+			this.initXHR();
+
+			if (request.method === away.net.URLRequestMethod.POST)
+				this.postRequest(request);
+			else
+				this.getRequest(request);
 		}
 
 		/**
 		 *
-		 * @returns {away.net.URLRequest}
 		 */
-		public get request():away.net.URLRequest
+		public close():void
 		{
-
-			return this._request;
-
+			this._XHR.abort();
+			this.disposeXHR();
 		}
 
-		// Private
+		/**
+		 *
+		 */
+		public dispose():void
+		{
+			if (this._XHR)
+				this._XHR.abort();
+
+			this.disposeXHR();
+
+			this._data = null;
+			this._dataFormat = null;
+			this._bytesLoaded = null;
+			this._bytesTotal = null;
+		}
 
 		/**
 		 *
@@ -180,34 +139,23 @@ module away.net
 		 */
 		private setResponseType(xhr:XMLHttpRequest, responseType:string):void
 		{
-
 			switch (responseType) {
-
 				case away.net.URLLoaderDataFormat.ARRAY_BUFFER:
 				case away.net.URLLoaderDataFormat.BLOB:
 				case away.net.URLLoaderDataFormat.TEXT:
-
 					xhr.responseType = responseType;
-
 					break;
 
 				case away.net.URLLoaderDataFormat.VARIABLES:
-
 					xhr.responseType = away.net.URLLoaderDataFormat.TEXT;
-
 					break;
-
 
 				case away.net.URLLoaderDataFormat.BINARY:
-
 					xhr.responseType = '';
-
 					break;
 
-
+				default:
 			}
-
-
 		}
 
 		/**
@@ -216,19 +164,13 @@ module away.net
 		 */
 		private getRequest(request:away.net.URLRequest):void
 		{
-
 			try {
-
 				this._XHR.open(request.method, request.url, request.async);
 				this.setResponseType(this._XHR, this._dataFormat);
 				this._XHR.send(); // No data to send
-
 			} catch (e /* <XMLHttpRequestException> */) {
-
 				this.handleXmlHttpRequestException(e);
-
 			}
-
 		}
 
 		/**
@@ -237,50 +179,30 @@ module away.net
 		 */
 		private postRequest(request:away.net.URLRequest):void
 		{
-
 			this._loadError = false;
 
 			this._XHR.open(request.method, request.url, request.async);
 
 			if (request.data != null) {
-
 				if (request.data instanceof away.net.URLVariables) {
-
 					var urlVars:away.net.URLVariables = <away.net.URLVariables> request.data;
 
 					try {
-
 						this._XHR.responseType = 'text';
 						this._XHR.send(urlVars.formData);
-
-
 					} catch (e /* <XMLHttpRequestException> */) {
-
 						this.handleXmlHttpRequestException(e);
-
 					}
-
 				} else {
-
 					this.setResponseType(this._XHR, this._dataFormat);
 
-					if (request.data) {
-
+					if (request.data)
 						this._XHR.send(request.data); // TODO: Test
-
-					} else {
-
+					else
 						this._XHR.send(); // no data to send
-
-					}
-
-
 				}
-
 			} else {
-
 				this._XHR.send(); // No data to send
-
 			}
 
 		}
@@ -289,9 +211,8 @@ module away.net
 		 *
 		 * @param error {XMLHttpRequestException}
 		 */
-		private handleXmlHttpRequestException(error /* <XMLHttpRequestException> */):void
+		private handleXmlHttpRequestException(error:any /* <XMLHttpRequestException> */):void
 		{
-
 			switch (error.code) {
 
 			/******************************************************************************************************************************************************************************************************
@@ -302,15 +223,9 @@ module away.net
 			 ******************************************************************************************************************************************************************************************************/
 
 				case 101:
-
 					// Note: onLoadError event throws IO_ERROR event - this case is already Covered
-
 					break;
-
-
 			}
-
-
 		}
 
 		/**
@@ -318,9 +233,7 @@ module away.net
 		 */
 		private initXHR()
 		{
-
 			if (!this._XHR) {
-
 				this._XHR = new XMLHttpRequest();
 
 				this._XHR.onloadstart = (event) => this.onLoadStart(event);                 // loadstart	        - When the request starts.
@@ -331,9 +244,7 @@ module away.net
 				this._XHR.ontimeout = (event) => this.onTimeOut(event);                     // timeout	            - When the author specified timeout has passed before the request could complete.
 				this._XHR.onloadend = (event) => this.onLoadEnd(event);                     // loadend	            - When the request has completed, regardless of whether or not it was successful.
 				this._XHR.onreadystatechange = (event) => this.onReadyStateChange(event);   // onreadystatechange   - When XHR state changes
-
 			}
-
 		}
 
 		/**
@@ -341,9 +252,7 @@ module away.net
 		 */
 		private disposeXHR()
 		{
-
 			if (this._XHR !== null) {
-
 				this._XHR.onloadstart = null;
 				this._XHR.onprogress = null;
 				this._XHR.onabort = null;
@@ -352,9 +261,7 @@ module away.net
 				this._XHR.ontimeout = null;
 				this._XHR.onloadend = null;
 				this._XHR = null;
-
 			}
-
 		}
 
 		/**
@@ -363,21 +270,16 @@ module away.net
 		 */
 		public decodeURLVariables(source:string):Object
 		{
-
 			var result:Object = new Object();
 
 			source = source.split("+").join(" ");
 
 			var tokens, re = /[?&]?([^=]+)=([^&]*)/g;
 
-			while (tokens = re.exec(source)) {
-
+			while (tokens = re.exec(source))
 				result[decodeURIComponent(tokens[1])] = decodeURIComponent(tokens[2]);
 
-			}
-
 			return result;
-
 		}
 
 		// XMLHttpRequest - Event Handlers
@@ -389,18 +291,17 @@ module away.net
 		private onReadyStateChange(event)
 		{
 			if (this._XHR.readyState == 4) {
-
 				if (this._XHR.status == 404) {
-
 					this._loadError = true;
-					this.dispatchEvent(new away.events.IOErrorEvent(away.events.IOErrorEvent.IO_ERROR));
 
+					if (!this._loadErrorEvent)
+						this._loadErrorEvent = new away.events.IOErrorEvent(away.events.IOErrorEvent.IO_ERROR);
+
+					this.dispatchEvent(this._loadErrorEvent);
 				}
 
 				this.dispatchEvent(new away.events.HTTPStatusEvent(away.events.HTTPStatusEvent.HTTP_STATUS, this._XHR.status));
-
 			}
-
 		}
 
 		/**
@@ -409,9 +310,8 @@ module away.net
 		 */
 		private onLoadEnd(event)
 		{
-
-			if (this._loadError === true) return;
-
+			if (this._loadError === true)
+				return;
 		}
 
 		/**
@@ -420,9 +320,7 @@ module away.net
 		 */
 		private onTimeOut(event)
 		{
-
 			//TODO: Timeout not currently implemented ( also not part of AS3 API )
-
 		}
 
 		/**
@@ -431,9 +329,7 @@ module away.net
 		 */
 		private onAbort(event)
 		{
-
 			// TODO: investigate whether this needs to be an IOError
-
 		}
 
 		/**
@@ -442,15 +338,13 @@ module away.net
 		 */
 		private onProgress(event)
 		{
+			if (!this._progressEvent)
+				this._progressEvent = new away.events.ProgressEvent(away.events.ProgressEvent.PROGRESS);
 
-			this._bytesTotal = event.total;
-			this._bytesLoaded = event.loaded;
+			this._progressEvent.bytesTotal = event.total;
+			this._progressEvent.bytesLoaded = event.loaded;
 
-			var progressEvent:away.events.ProgressEvent = new away.events.ProgressEvent(away.events.ProgressEvent.PROGRESS);
-			progressEvent.bytesLoaded = this._bytesLoaded;
-			progressEvent.bytesTotal = this._bytesTotal;
-			this.dispatchEvent(progressEvent);
-
+			this.dispatchEvent(this._progressEvent);
 		}
 
 		/**
@@ -459,9 +353,10 @@ module away.net
 		 */
 		private onLoadStart(event)
 		{
+			if (!this._loadStartEvent)
+				this._loadStartEvent = new away.events.Event(away.events.Event.OPEN);
 
-			this.dispatchEvent(new away.events.Event(away.events.Event.OPEN));
-
+			this.dispatchEvent(this._loadStartEvent);
 		}
 
 		/**
@@ -470,43 +365,33 @@ module away.net
 		 */
 		private onLoadComplete(event)
 		{
-
-			if (this._loadError === true) return;
-
-			// TODO: Assert received data format
+			if (this._loadError === true)
+				return;
 
 			switch (this._dataFormat) {
-
 				case away.net.URLLoaderDataFormat.TEXT:
-
 					this._data = this._XHR.responseText;
-
 					break;
 
 				case away.net.URLLoaderDataFormat.VARIABLES:
-
 					this._data = this.decodeURLVariables(this._XHR.responseText);
-
 					break;
 
 				case away.net.URLLoaderDataFormat.BLOB:
 				case away.net.URLLoaderDataFormat.ARRAY_BUFFER:
 				case away.net.URLLoaderDataFormat.BINARY:
-
 					this._data = this._XHR.response;
-
 					break;
 
 				default:
-
 					this._data = this._XHR.responseText;
-
 					break;
-
 			}
 
-			this.dispatchEvent(new away.events.Event(away.events.Event.COMPLETE));
+			if (!this._loadCompleteEvent)
+				this._loadCompleteEvent = new away.events.Event(away.events.Event.COMPLETE);
 
+			this.dispatchEvent(this._loadCompleteEvent);
 		}
 
 		/**
@@ -515,13 +400,12 @@ module away.net
 		 */
 		private onLoadError(event)
 		{
-
 			this._loadError = true;
-			this.dispatchEvent(new away.events.IOErrorEvent(away.events.IOErrorEvent.IO_ERROR));
 
+			if (!this._loadErrorEvent)
+				this._loadErrorEvent = new away.events.IOErrorEvent(away.events.IOErrorEvent.IO_ERROR);
+
+			this.dispatchEvent(this._loadErrorEvent);
 		}
-
-
 	}
-
 }

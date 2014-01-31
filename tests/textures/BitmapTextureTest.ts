@@ -8,7 +8,7 @@ module tests.textures
     export class BitmapTextureTest
     {
 
-        private mipLoader       : away.net.IMGLoader;
+        private mipLoader       : away.net.URLLoader;
         private bitmapData      : away.base.BitmapData;
         private target          : away.textures.BitmapTexture;
         private texture         : away.gl.Texture;
@@ -20,7 +20,8 @@ module tests.textures
             // Load a PNG
 
             var mipUrlRequest = new away.net.URLRequest( 'assets/1024x1024.png');
-            this.mipLoader  = new away.net.IMGLoader();
+            this.mipLoader  = new away.net.URLLoader();
+			this.mipLoader.dataFormat = away.net.URLLoaderDataFormat.BLOB;
             this.mipLoader.load( mipUrlRequest );
             this.mipLoader.addEventListener( away.events.Event.COMPLETE , Delegate.create(this, this.mipImgLoaded) );
 
@@ -29,13 +30,21 @@ module tests.textures
         private mipImgLoaded( e )
         {
 
-            var loader  : away.net.IMGLoader        = <away.net.IMGLoader > e.target;
-            var rect    : away.geom.Rectangle       = new away.geom.Rectangle( 0 , 0 , this.mipLoader.width , this.mipLoader.height );
+            var loader  : away.net.URLLoader        = <away.net.URLLoader > e.target;
+			var image : HTMLImageElement = away.parsers.ParserUtils.blobToImage(loader.data);
+			image.onload = ( event ) => this.onImageLoad( event );
+		}
 
-            console.log( 'away.events.Event.COMPLETE' , loader );
+		private onImageLoad (event)
+		{
+			var image : HTMLImageElement = <HTMLImageElement> event.target;
 
-            this.bitmapData                         = new away.base.BitmapData( loader.width , loader.height );
-            this.bitmapData.drawImage( this.mipLoader.image , rect ,  rect );
+            var rect    : away.geom.Rectangle       = new away.geom.Rectangle( 0 , 0 , image.width , image.height );
+
+            console.log( 'away.events.Event.COMPLETE' , image );
+
+            this.bitmapData                         = new away.base.BitmapData( image.width , image.height );
+            this.bitmapData.drawImage( image , rect ,  rect );
 
             this.target                             = new away.textures.BitmapTexture( this.bitmapData , true );//new away.textures.HTMLImageElementTexture( loader.image , false );
 

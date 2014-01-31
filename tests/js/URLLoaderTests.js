@@ -149,7 +149,7 @@ var tests;
 
             LoaderTest.prototype.ioError = function (event) {
                 var loader = event.target;
-                console.log('LoaderTest.ioError', loader.request.url);
+                console.log('LoaderTest.ioError', loader.url);
             };
 
             LoaderTest.prototype.errorComplete = function (event) {

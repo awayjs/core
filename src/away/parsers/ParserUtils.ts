@@ -35,6 +35,23 @@ module away.parsers
 		}
 
 		/**
+		 * Converts an Blob to an Image - returns an HTMLImageElement
+		 *
+		 * @param image data as a Blob
+		 *
+		 * @return HTMLImageElement
+		 *
+		 */
+		public static blobToImage(data:Blob):HTMLImageElement
+		{
+			var URLObj:URL = window['URL'] || window['webkitURL'];
+			var src = URLObj.createObjectURL(data);
+			var img:HTMLImageElement = <HTMLImageElement> new Image();
+			img.src = src;
+
+			return img;
+		}
+		/**
 		 * Returns a object as ByteArray, if possible.
 		 *
 		 * @param data The object to return as ByteArray

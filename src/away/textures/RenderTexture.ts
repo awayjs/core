@@ -22,14 +22,14 @@ module away.textures
 
 		public set width(value:number)
 		{
-			if (value == this._pWidth) {
+			if (value == this._pWidth)
 				return;
-			}
 
 			if (!away.utils.TextureUtils.isDimensionValid(value))
 				throw new Error("Invalid size: Width and height must be power of 2 and cannot exceed 2048");
 
 			this.invalidateContent();
+
 			this.pSetSize(value, this._pHeight);
 		}
 
@@ -44,13 +44,11 @@ module away.textures
 
 		public set height(value:number)
 		{
-			if (value == this._pHeight) {
+			if (value == this._pHeight)
 				return;
-			}
 
-			if (!away.utils.TextureUtils.isDimensionValid(value)) {
+			if (!away.utils.TextureUtils.isDimensionValid(value))
 				throw new Error("Invalid size: Width and height must be power of 2 and cannot exceed 2048");
-			}
 
 			this.invalidateContent();
 			this.pSetSize(this._pWidth, value);

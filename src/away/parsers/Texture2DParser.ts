@@ -4,11 +4,11 @@ module away.parsers
 {
 
 	/**
-	 * ImageParser provides a "parser" for natively supported image types (jpg, png). While it simply loads bytes into
+	 * Texture2DParser provides a "parser" for natively supported image types (jpg, png). While it simply loads bytes into
 	 * a loader object, it wraps it in a BitmapDataResource so resource management can happen consistently without
 	 * exception cases.
 	 */
-	export class ImageParser extends ParserBase
+	export class Texture2DParser extends ParserBase
 	{
 		//private var _byteData         : ByteArray;
 		private _startedParsing:boolean;
@@ -16,15 +16,13 @@ module away.parsers
 		//private var _loader           : Loader;
 
 		/**
-		 * Creates a new ImageParser object.
+		 * Creates a new Texture2DParser object.
 		 * @param uri The url or id of the data or file to be parsed.
 		 * @param extra The holder for extra contextual data that the parser might need.
 		 */
 		constructor()
 		{
-
-			super(ParserDataFormat.IMAGE, ParserLoaderType.IMG_LOADER);
-
+			super(away.net.URLLoaderDataFormat.TEXT);
 		}
 
 		/**
@@ -37,7 +35,7 @@ module away.parsers
 		{
 
 			extension = extension.toLowerCase();
-			return extension == "jpg" || extension == "jpeg" || extension == "png" || extension == "gif";//|| extension == "bmp";//|| extension == "atf";
+			return extension == "tex";
 
 		}
 

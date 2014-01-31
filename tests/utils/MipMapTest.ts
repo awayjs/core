@@ -7,7 +7,7 @@ module tests.utils
     export class MipMapTest
     {
 
-        private mipLoader       : away.net.IMGLoader;
+        private mipLoader       : away.net.URLLoader;
         private sourceBitmap    : away.base.BitmapData;
         private mipMap          : away.base.BitmapData;
         private _rect           : away.geom.Rectangle = new away.geom.Rectangle();
@@ -22,7 +22,8 @@ module tests.utils
             // Load a PNG
 
             var mipUrlRequest = new away.net.URLRequest( 'assets/1024x1024.png');
-            this.mipLoader  = new away.net.IMGLoader();
+            this.mipLoader  = new away.net.URLLoader();
+			this.mipLoader.dataFormat = away.net.URLLoaderDataFormat.BLOB;
             this.mipLoader.load( mipUrlRequest );
             this.mipLoader.addEventListener( away.events.Event.COMPLETE , Delegate.create(this, this.mipImgLoaded) );
 
@@ -33,12 +34,18 @@ module tests.utils
         private mipImgLoaded( e )
         {
 
+			var loader  : away.net.URLLoader        = <away.net.URLLoader > e.target;
+			var image : HTMLImageElement = away.parsers.ParserUtils.blobToImage(loader.data);
+			image.onload = ( event ) => this.onImageLoad( event );
+		}
+
+		private onImageLoad (event)
+		{
+			var image : HTMLImageElement = <HTMLImageElement> event.target;
             alert( 'Each click will generate a level of MipMap');
 
-            var loader : away.net.IMGLoader             = <away.net.IMGLoader > e.target;
-
             this.sourceBitmap                        = new away.base.BitmapData( 1024 , 1024 , true , 0xff0000 );
-            this.sourceBitmap.drawImage( loader.image , this.sourceBitmap.rect , this.sourceBitmap.rect );
+            this.sourceBitmap.drawImage( image , this.sourceBitmap.rect , this.sourceBitmap.rect );
             this.sourceBitmap.canvas.style.position  = 'absolute';
             this.sourceBitmap.canvas.style.left      = '0px';
             this.sourceBitmap.canvas.style.top       = '1030px';

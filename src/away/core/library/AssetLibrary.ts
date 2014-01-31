@@ -43,7 +43,7 @@ module away.library
 		 */
 		public static enableParser(parserClass)
 		{
-			away.net.SingleFileLoader.enableParser(parserClass);
+			away.net.AssetLoader.enableParser(parserClass);
 		}
 
 		/**
@@ -51,7 +51,7 @@ module away.library
 		 */
 		public static enableParsers(parserClasses:Object[])
 		{
-			away.net.SingleFileLoader.enableParsers(parserClasses);
+			away.net.AssetLoader.enableParsers(parserClasses);
 		}
 
 		/**

@@ -21,7 +21,7 @@ var parsers;
         * @param extra The holder for extra contextual data that the parser might need.
         */
         function JSONTextureParser() {
-            _super.call(this, away.parsers.ParserDataFormat.PLAIN_TEXT, away.parsers.ParserLoaderType.URL_LOADER);
+            _super.call(this, away.parsers.ParserDataFormat.PLAIN_TEXT);
             //private var _byteData         : ByteArray;
             this.STATE_PARSE_DATA = 0;
             this.STATE_LOAD_IMAGES = 1;
@@ -198,41 +198,34 @@ var parsers;
 var tests;
 (function (tests) {
     (function (library) {
+        var AssetEvent = away.events.AssetEvent;
+        var LoaderEvent = away.events.LoaderEvent;
+        var ParserEvent = away.events.ParserEvent;
+        var AssetLibrary = away.library.AssetLibrary;
+        var AssetLoader = away.net.AssetLoader;
+        var AssetLoaderToken = away.net.AssetLoaderToken;
+        var URLRequest = away.net.URLRequest;
         var Delegate = away.utils.Delegate;
 
         var AssetLibraryTest = (function () {
             function AssetLibraryTest() {
                 this.height = 0;
-                var len = 10;
+                AssetLibrary.enableParser(parsers.JSONTextureParser);
 
-                for (var i = len - 1; i >= 0; i--) {
-                    console.log(i);
-                }
-
-                away.library.AssetLibrary.enableParser(parsers.JSONTextureParser);
-
-                //------------------------------------------------------------------------------------------------------------------
-                // AssetLibraryBundle - Debug / Test
-                //this.alb = away.library.AssetLibraryBundle.getInstance();
-                //this.token = this.alb.load( new away.net.URLRequest('URLLoaderTestData/JSNParserTest.json') );
-                //this.token.addEventListener( away.events.LoaderEvent.RESOURCE_COMPLETE , this.onResourceComplete , this );
-                //------------------------------------------------------------------------------------------------------------------
-                // AssetLibrary - Debug / Test
-                // away.library.AssetLibrary.addEventListener(away.events.AssetEvent.ASSET_COMPLETE , this.onAssetComplete, this );
-                this.token = away.library.AssetLibrary.load(new away.net.URLRequest('assets/JSNParserTest.json'));
+                this.token = AssetLibrary.load(new URLRequest('assets/JSNParserTest.json'));
                 this.token.addEventListener(away.events.LoaderEvent.RESOURCE_COMPLETE, Delegate.create(this, this.onResourceComplete));
                 this.token.addEventListener(away.events.AssetEvent.ASSET_COMPLETE, Delegate.create(this, this.onAssetComplete));
 
-                this.token = away.library.AssetLibrary.load(new away.net.URLRequest('assets/1024x1024.png'));
+                this.token = AssetLibrary.load(new URLRequest('assets/1024x1024.png'));
                 this.token.addEventListener(away.events.LoaderEvent.RESOURCE_COMPLETE, Delegate.create(this, this.onResourceComplete));
                 this.token.addEventListener(away.events.AssetEvent.ASSET_COMPLETE, Delegate.create(this, this.onAssetComplete));
             }
             AssetLibraryTest.prototype.onAssetComplete = function (e) {
                 console.log('------------------------------------------------------------------------------');
-                console.log('away.events.AssetEvent.ASSET_COMPLETE', away.library.AssetLibrary.getAsset(e.asset.name));
+                console.log('away.events.AssetEvent.ASSET_COMPLETE', AssetLibrary.getAsset(e.asset.name));
                 console.log('------------------------------------------------------------------------------');
 
-                var htmlImageElementTexture = away.library.AssetLibrary.getAsset(e.asset.name);
+                var htmlImageElementTexture = AssetLibrary.getAsset(e.asset.name);
 
                 document.body.appendChild(htmlImageElementTexture.htmlImageElement);
 

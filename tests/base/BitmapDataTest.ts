@@ -9,8 +9,9 @@ module tests.base
 
         private bitmapData  : away.base.BitmapData;
         private bitmapDataB : away.base.BitmapData;
-        private imgLoader   : away.net.IMGLoader;
+        private urlLoader   : away.net.URLLoader;
         private urlRequest  : away.net.URLRequest;
+		private image:HTMLImageElement;
 
         constructor()
         {
@@ -22,10 +23,11 @@ module tests.base
             // Load a PNG
 
             this.urlRequest = new away.net.URLRequest( 'assets/256x256.png');
-            this.imgLoader  = new away.net.IMGLoader();
-            this.imgLoader.load( this.urlRequest );
-            this.imgLoader.addEventListener( away.events.Event.COMPLETE , Delegate.create(this, this.imgLoaded) );
-            this.imgLoader.addEventListener( away.events.IOErrorEvent.IO_ERROR, Delegate.create(this, this.imgLoadedError) );
+            this.urlLoader  = new away.net.URLLoader();
+			this.urlLoader.dataFormat = away.net.URLLoaderDataFormat.BLOB;
+            this.urlLoader.load( this.urlRequest );
+            this.urlLoader.addEventListener( away.events.Event.COMPLETE , Delegate.create(this, this.imgLoaded) );
+            this.urlLoader.addEventListener( away.events.IOErrorEvent.IO_ERROR, Delegate.create(this, this.imgLoadedError) );
 
             //---------------------------------------
             // BitmapData Object - 1
@@ -67,7 +69,7 @@ module tests.base
             if ( this.bitmapData.width === 512 ) // Test to toggle resize of bitmapData
             {
 
-                if ( this.imgLoader.loaded ) // If image is loaded copy that to the BitmapData object
+                if ( this.image.complete ) // If image is loaded copy that to the BitmapData object
                 {
 
                     this.bitmapDataB.lock(); // Lock bitmap - speeds up setPixelOperations
@@ -81,8 +83,8 @@ module tests.base
                     //---------------------------------------
                     // copy loaded image to first BitmapData
 
-                    var rect : away.geom.Rectangle = new away.geom.Rectangle( 0 , 0 , this.imgLoader.width , this.imgLoader.height );
-                    this.bitmapData.drawImage( this.imgLoader.image , rect ,  rect );
+                    var rect : away.geom.Rectangle = new away.geom.Rectangle( 0 , 0 , this.image.width , this.image.height );
+                    this.bitmapData.drawImage( this.image , rect ,  rect );
 
                     //---------------------------------------
                     // copy image into second bitmap data ( and scale it up 2X )
@@ -152,7 +154,7 @@ module tests.base
 
             }
 
-            var m : away.geom.Matrix = new away.geom.Matrix(.5, .08 , .08 ,.5 , this.imgLoader.width / 2 , this.imgLoader.height / 2);
+            var m : away.geom.Matrix = new away.geom.Matrix(.5, .08 , .08 ,.5 , this.image.width / 2 , this.image.height / 2);
             this.bitmapData.draw( this.bitmapData , m );
 
             this.bitmapData.setPixel32(0, 0, 0xccff0000 ) ;
@@ -179,9 +181,16 @@ module tests.base
         private imgLoaded( e : away.events.Event )
         {
 
-            this.bitmapData.drawImage( this.imgLoader.image , new away.geom.Rectangle( 0 , 0 , this.imgLoader.width , this.imgLoader.height ) ,new away.geom.Rectangle( 0 , 0 , this.imgLoader.width  / 2, this.imgLoader.height / 2 ));
+			var loader  : away.net.URLLoader        = <away.net.URLLoader > e.target;
+			this.image = away.parsers.ParserUtils.blobToImage(loader.data);
+			this.image.onload = ( event ) => this.onImageLoad( event );
+		}
 
-            var m : away.geom.Matrix = new away.geom.Matrix(.5, .08 , .08 ,.5 , this.imgLoader.width / 2 , this.imgLoader.height / 2);
+		private onImageLoad (event)
+		{
+            this.bitmapData.drawImage( this.image , new away.geom.Rectangle( 0 , 0 , this.image.width , this.image.height ) ,new away.geom.Rectangle( 0 , 0 , this.image.width  / 2, this.image.height / 2 ));
+
+            var m : away.geom.Matrix = new away.geom.Matrix(.5, .08 , .08 ,.5 , this.image.width / 2 , this.image.height / 2);
             this.bitmapData.draw( this.bitmapData , m );
 
         }

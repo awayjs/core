@@ -26,7 +26,6 @@ module away.textures
 		 */
 		public static generateHTMLImageElementMipMaps(source:HTMLImageElement, target:away.gl.TextureBase, mipmap:away.base.BitmapData = null, alpha:boolean = false, side:number = -1)
 		{
-
 			MipmapGenerator._rect.width = source.width;
 			MipmapGenerator._rect.height = source.height;
 
@@ -37,8 +36,6 @@ module away.textures
 
 			MipmapGenerator._source.dispose();
 			MipmapGenerator._source = null;
-
-
 		}
 
 		/**
@@ -55,23 +52,16 @@ module away.textures
 			var regen:boolean = mipmap != null;
 			var i:number;
 
-			if (!mipmap) {
-
+			if (!mipmap)
 				mipmap = new away.base.BitmapData(w, h, alpha);
-
-
-			}
 
 			MipmapGenerator._rect.width = w;
 			MipmapGenerator._rect.height = h;
 
 			while (w >= 1 || h >= 1) {
 
-				if (alpha) {
-
+				if (alpha)
 					mipmap.fillRect(MipmapGenerator._rect, 0);
-
-				}
 
 				MipmapGenerator._matrix.a = MipmapGenerator._rect.width/source.width;
 				MipmapGenerator._matrix.d = MipmapGenerator._rect.height/source.height;
@@ -80,11 +70,10 @@ module away.textures
 				mipmap.height = MipmapGenerator._rect.height;
 				mipmap.copyPixels(source, source.rect, MipmapGenerator._rect);
 
-				if (target instanceof away.gl.Texture) {
+				if (target instanceof away.gl.Texture)
 					(<away.gl.Texture> target).uploadFromBitmapData(mipmap, i++);
-				} else {
+				else
 					(<away.gl.CubeTexture> target).uploadFromBitmapData(mipmap, side, i++);
-				}
 
 				w >>= 1;
 				h >>= 1;
@@ -93,12 +82,8 @@ module away.textures
 				MipmapGenerator._rect.height = h > 1? h : 1;
 			}
 
-			if (!regen) {
-
+			if (!regen)
 				mipmap.dispose();
-
-			}
-
 		}
 	}
 }

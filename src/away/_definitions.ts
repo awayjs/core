@@ -34,10 +34,10 @@
 ///<reference path="events/StageGLEvent.ts"/>
 
 ///<reference path="parsers/ParserBase.ts" />
+///<reference path="parsers/BitmapParser.ts" />
 ///<reference path="parsers/CubeTextureParser.ts" />
-///<reference path="parsers/ImageParser.ts" />
+///<reference path="parsers/Texture2DParser.ts" />
 ///<reference path="parsers/ParserDataFormat.ts" />
-///<reference path="parsers/ParserLoaderType.ts" />
 ///<reference path="parsers/ParserUtils.ts" />
 ///<reference path="parsers/ResourceDependency.ts" />
 
@@ -59,7 +59,7 @@
 ///<reference path="core/base/BitmapDataChannel.ts"/>
 ///<reference path="core/base/BlendMode.ts"/>
 ///<reference path="core/base/StageGL.ts" />
-///<reference path="core/base/Stage.ts"/>
+///<reference path="containers/Stage.ts"/>
 
 ///<reference path="core/gl/ContextGLClearMask.ts"/>
 ///<reference path="core/gl/VertexBuffer.ts"/>
@@ -101,12 +101,7 @@
 ///<reference path="core/net/AssetLoaderContext.ts"/>
 ///<reference path="core/net/AssetLoader.ts" />
 ///<reference path="core/net/AssetLoaderToken.ts" />
-///<reference path="core/net/ISingleFileTSLoader.ts" />
-///<reference path="core/net/SingleFileLoader.ts"/>
-///<reference path="core/net/SingleFileImageLoader.ts" />
-///<reference path="core/net/SingleFileURLLoader.ts" />
 ///<reference path="core/net/URLRequest.ts" />
-///<reference path="core/net/IMGLoader.ts" />
 ///<reference path="core/net/URLLoaderDataFormat.ts" />
 ///<reference path="core/net/URLRequestMethod.ts" />
 ///<reference path="core/net/URLLoader.ts" />

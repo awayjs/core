@@ -2,8 +2,6 @@
 
 module away.library
 {
-
-
 	/**
 	 * AssetLibraryBundle enforces a multiton pattern and is not intended to be instanced directly.
 	 * Its purpose is to create a container for 3D data management, both before and after parsing.
@@ -22,12 +20,11 @@ module away.library
 
 		private _onAssetRenameDelegate:Function;
 		private _onAssetConflictResolvedDelegate:Function;
-		private _onResourceRetrievedDelegate:Function;
-		private _onDependencyRetrievedDelegate:Function;
+		private _onResourceCompleteDelegate:Function;
 		private _onTextureSizeErrorDelegate:Function;
 		private _onAssetCompleteDelegate:Function;
-		private _onDependencyRetrievingErrorDelegate:Function;
-		private _onDependencyRetrievingParseErrorDelegate:Function;
+		private _onLoadErrorDelegate:Function;
+		private _onParseErrorDelegate:Function;
 
 		/**
 		 * Creates a new <code>AssetLibraryBundle</code> object.
@@ -47,12 +44,11 @@ module away.library
 
 			this._onAssetRenameDelegate = away.utils.Delegate.create(this, this.onAssetRename);
 			this._onAssetConflictResolvedDelegate = away.utils.Delegate.create(this, this.onAssetConflictResolved);
-			this._onResourceRetrievedDelegate = away.utils.Delegate.create(this, this.onResourceRetrieved);
-			this._onDependencyRetrievedDelegate = away.utils.Delegate.create(this, this.onDependencyRetrieved);
+			this._onResourceCompleteDelegate = away.utils.Delegate.create(this, this.onResourceComplete);
 			this._onTextureSizeErrorDelegate = away.utils.Delegate.create(this, this.onTextureSizeError);
 			this._onAssetCompleteDelegate = away.utils.Delegate.create(this, this.onAssetComplete);
-			this._onDependencyRetrievingErrorDelegate = away.utils.Delegate.create(this, this.onDependencyRetrievingError);
-			this._onDependencyRetrievingParseErrorDelegate = away.utils.Delegate.create(this, this.onDependencyRetrievingParseError);
+			this._onLoadErrorDelegate = away.utils.Delegate.create(this, this.onLoadError);
+			this._onParseErrorDelegate = away.utils.Delegate.create(this, this.onParseError);
 		}
 
 		/**
@@ -81,7 +77,7 @@ module away.library
 		 */
 		public enableParser(parserClass:Object)
 		{
-			away.net.SingleFileLoader.enableParser(parserClass);
+			away.net.AssetLoader.enableParser(parserClass);
 		}
 
 		/**
@@ -89,7 +85,7 @@ module away.library
 		 */
 		public enableParsers(parserClasses:Object[])
 		{
-			away.net.SingleFileLoader.enableParsers(parserClasses);
+			away.net.AssetLoader.enableParsers(parserClasses);
 		}
 
 		/**
@@ -165,10 +161,26 @@ module away.library
 		 * @param context An optional context object providing additional parameters for loading
 		 * @param ns An optional namespace string under which the file is to be loaded, allowing the differentiation of two resources with identical assets
 		 * @param parser An optional parser object for translating the loaded data into a usable resource. If not provided, AssetLoader will attempt to auto-detect the file type.
+		 * @return A handle to the retrieved resource.
 		 */
 		public load(req:away.net.URLRequest, context:away.net.AssetLoaderContext = null, ns:string = null, parser:away.parsers.ParserBase = null):away.net.AssetLoaderToken
 		{
-			return this.loadResource(req, context, ns, parser);
+			var loader:away.net.AssetLoader = new away.net.AssetLoader();
+
+			if (!this._loadingSessions)
+				this._loadingSessions = new Array<away.net.AssetLoader>();
+
+			this._loadingSessions.push(loader);
+
+			loader.addEventListener(away.events.LoaderEvent.RESOURCE_COMPLETE, this._onResourceCompleteDelegate);
+			loader.addEventListener(away.events.AssetEvent.TEXTURE_SIZE_ERROR, this._onTextureSizeErrorDelegate);
+			loader.addEventListener(away.events.AssetEvent.ASSET_COMPLETE, this._onAssetCompleteDelegate);
+
+			// Error are handled separately (see documentation for addErrorHandler)
+			loader._iAddErrorHandler(this._onLoadErrorDelegate);
+			loader._iAddParseErrorHandler(this._onParseErrorDelegate);
+
+			return loader.load(req, context, ns, parser);
 		}
 
 		/**
@@ -178,10 +190,26 @@ module away.library
 		 * @param context An optional context object providing additional parameters for loading
 		 * @param ns An optional namespace string under which the file is to be loaded, allowing the differentiation of two resources with identical assets
 		 * @param parser An optional parser object for translating the loaded data into a usable resource. If not provided, AssetLoader will attempt to auto-detect the file type.
+		 * @return A handle to the retrieved resource.
 		 */
 		public loadData(data:any, context:away.net.AssetLoaderContext = null, ns:string = null, parser:away.parsers.ParserBase = null):away.net.AssetLoaderToken
 		{
-			return this.parseResource(data, context, ns, parser);
+			var loader:away.net.AssetLoader = new away.net.AssetLoader();
+
+			if (!this._loadingSessions)
+				this._loadingSessions = new Array<away.net.AssetLoader>();
+
+			this._loadingSessions.push(loader);
+
+			loader.addEventListener(away.events.LoaderEvent.RESOURCE_COMPLETE, this._onResourceCompleteDelegate);
+			loader.addEventListener(away.events.AssetEvent.TEXTURE_SIZE_ERROR, this._onTextureSizeErrorDelegate);
+			loader.addEventListener(away.events.AssetEvent.ASSET_COMPLETE, this._onAssetCompleteDelegate);
+
+			// Error are handled separately (see documentation for addErrorHandler)
+			loader._iAddErrorHandler(this._onLoadErrorDelegate);
+			loader._iAddParseErrorHandler(this._onParseErrorDelegate);
+
+			return loader.loadData(data, '', context, ns, parser);
 		}
 
 		/**
@@ -402,30 +430,6 @@ module away.library
 			}
 		}
 
-		/**
-		 * Loads a yet unloaded resource file from the given url.
-		 */
-		private loadResource(req:away.net.URLRequest, context:away.net.AssetLoaderContext = null, ns:string = null, parser:away.parsers.ParserBase = null):away.net.AssetLoaderToken
-		{
-			var loader:away.net.AssetLoader = new away.net.AssetLoader();
-
-			if (!this._loadingSessions)
-				this._loadingSessions = new Array<away.net.AssetLoader>();
-
-			this._loadingSessions.push(loader);
-
-			loader.addEventListener(away.events.LoaderEvent.RESOURCE_COMPLETE, this._onResourceRetrievedDelegate);
-			loader.addEventListener(away.events.LoaderEvent.DEPENDENCY_COMPLETE, this._onDependencyRetrievedDelegate);
-			loader.addEventListener(away.events.AssetEvent.TEXTURE_SIZE_ERROR, this._onTextureSizeErrorDelegate);
-			loader.addEventListener(away.events.AssetEvent.ASSET_COMPLETE, this._onAssetCompleteDelegate);
-
-			// Error are handled separately (see documentation for addErrorHandler)
-			loader._iAddErrorHandler(this._onDependencyRetrievingErrorDelegate);
-			loader._iAddParseErrorHandler(this._onDependencyRetrievingParseErrorDelegate);
-
-			return loader.load(req, context, ns, parser);
-		}
-
 		public stopAllLoadingSessions()
 		{
 			var i:number;
@@ -439,35 +443,6 @@ module away.library
 				this.killLoadingSession(this._loadingSessions[i]);
 
 			this._loadingSessions = null;
-		}
-
-		/**
-		 * Retrieves an unloaded resource parsed from the given data.
-		 * @param data The data to be parsed.
-		 * @param id The id that will be assigned to the resource. This can later also be used by the getResource method.
-		 * @param ignoreDependencies Indicates whether or not dependencies should be ignored or loaded.
-		 * @param parser An optional parser object that will translate the data into a usable resource.
-		 * @return A handle to the retrieved resource.
-		 */
-		private parseResource(data:any, context:away.net.AssetLoaderContext = null, ns:string = null, parser:away.parsers.ParserBase = null):away.net.AssetLoaderToken
-		{
-			var loader:away.net.AssetLoader = new away.net.AssetLoader();
-
-			if (!this._loadingSessions)
-				this._loadingSessions = new Array<away.net.AssetLoader>();
-
-			this._loadingSessions.push(loader);
-
-			loader.addEventListener(away.events.LoaderEvent.RESOURCE_COMPLETE, this._onResourceRetrievedDelegate);
-			loader.addEventListener(away.events.LoaderEvent.DEPENDENCY_COMPLETE, this._onDependencyRetrievedDelegate);
-			loader.addEventListener(away.events.AssetEvent.TEXTURE_SIZE_ERROR, this._onTextureSizeErrorDelegate);
-			loader.addEventListener(away.events.AssetEvent.ASSET_COMPLETE, this._onAssetCompleteDelegate);
-
-			// Error are handled separately (see documentation for addErrorHandler)
-			loader._iAddErrorHandler(this._onDependencyRetrievingErrorDelegate);
-			loader._iAddParseErrorHandler(this._onDependencyRetrievingParseErrorDelegate);
-
-			return loader.loadData(data, '', context, ns, parser);
 		}
 
 		private rehashAssetDict()
@@ -493,21 +468,11 @@ module away.library
 		}
 
 		/**
-		 * Called when a dependency was retrieved.
+		 * Called when a an error occurs during loading.
 		 */
-		private onDependencyRetrieved(event:away.events.LoaderEvent)
+		private onLoadError(event:away.events.IOErrorEvent):boolean
 		{
-			//if (hasEventListener(LoaderEvent.DEPENDENCY_COMPLETE))
-			this.dispatchEvent(event);
-
-		}
-
-		/**
-		 * Called when a an error occurs during dependency retrieving.
-		 */
-		private onDependencyRetrievingError(event:away.events.LoaderEvent):boolean
-		{
-			if (this.hasEventListener(away.events.LoaderEvent.LOAD_ERROR)) {
+			if (this.hasEventListener(away.events.IOErrorEvent.IO_ERROR)) {
 				this.dispatchEvent(event);
 				return true;
 			} else {
@@ -518,7 +483,7 @@ module away.library
 		/**
 		 * Called when a an error occurs during parsing.
 		 */
-		private onDependencyRetrievingParseError(event:away.events.ParserEvent):boolean
+		private onParseError(event:away.events.ParserEvent):boolean
 		{
 			if (this.hasEventListener(away.events.ParserEvent.PARSE_ERROR)) {
 				this.dispatchEvent(event);
@@ -534,23 +499,23 @@ module away.library
 			if (event.type == away.events.AssetEvent.ASSET_COMPLETE)
 				this.addAsset(event.asset);
 
-			this.dispatchEvent(event.clone());
+			this.dispatchEvent(event);
 
 		}
 
 		private onTextureSizeError(event:away.events.AssetEvent)
 		{
-			this.dispatchEvent(event.clone());
+			this.dispatchEvent(event);
 		}
 
 		/**
 		 * Called when the resource and all of its dependencies was retrieved.
 		 */
-		private onResourceRetrieved(event:away.events.LoaderEvent)
+		private onResourceComplete(event:away.events.LoaderEvent)
 		{
 			var loader:away.net.AssetLoader = <away.net.AssetLoader> event.target;
 
-			this.dispatchEvent(event.clone());
+			this.dispatchEvent(event);
 
 			var index:number = this._loadingSessions.indexOf(loader);
 			this._loadingSessions.splice(index, 1);
@@ -580,8 +545,7 @@ module away.library
 
 		private killLoadingSession(loader:away.net.AssetLoader)
 		{
-			loader.removeEventListener(away.events.LoaderEvent.RESOURCE_COMPLETE, this._onResourceRetrievedDelegate);
-			loader.removeEventListener(away.events.LoaderEvent.DEPENDENCY_COMPLETE, this._onDependencyRetrievedDelegate);
+			loader.removeEventListener(away.events.LoaderEvent.RESOURCE_COMPLETE, this._onResourceCompleteDelegate);
 			loader.removeEventListener(away.events.AssetEvent.TEXTURE_SIZE_ERROR, this._onTextureSizeErrorDelegate);
 			loader.removeEventListener(away.events.AssetEvent.ASSET_COMPLETE, this._onAssetCompleteDelegate);
 			loader.stop();

@@ -202,7 +202,7 @@ module tests.net
         {
 
             var loader : away.net.URLLoader = <away.net.URLLoader> event.target;
-            console.log( 'LoaderTest.ioError' , loader.request.url );
+            console.log( 'LoaderTest.ioError' , loader.url );
 
         }
 

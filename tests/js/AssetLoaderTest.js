@@ -21,7 +21,7 @@ var parsers;
         * @param extra The holder for extra contextual data that the parser might need.
         */
         function JSONTextureParser() {
-            _super.call(this, away.parsers.ParserDataFormat.PLAIN_TEXT, away.parsers.ParserLoaderType.URL_LOADER);
+            _super.call(this, away.parsers.ParserDataFormat.PLAIN_TEXT);
             //private var _byteData         : ByteArray;
             this.STATE_PARSE_DATA = 0;
             this.STATE_LOAD_IMAGES = 1;
@@ -242,15 +242,7 @@ var tests;
                 token.addEventListener(AssetEvent.ASSET_COMPLETE, Delegate.create(this, this.onAssetComplete));
                 token.addEventListener(AssetEvent.TEXTURE_SIZE_ERROR, Delegate.create(this, this.onTextureSizeError));
                 token.addEventListener(ParserEvent.PARSE_COMPLETE, Delegate.create(this, this.onParseComplete));
-
-                token.addEventListener(LoaderEvent.DEPENDENCY_COMPLETE, Delegate.create(this, this.onDependencyComplete));
             }
-            AssetLoaderTest.prototype.onDependencyComplete = function (e) {
-                console.log('--------------------------------------------------------------------------------');
-                console.log('AssetLoaderTest.onDependencyComplete', e);
-                console.log('--------------------------------------------------------------------------------');
-            };
-
             AssetLoaderTest.prototype.onParseComplete = function (e) {
                 console.log('--------------------------------------------------------------------------------');
                 console.log('AssetLoaderTest.onParseComplete', e);

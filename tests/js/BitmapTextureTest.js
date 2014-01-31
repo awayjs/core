@@ -9,18 +9,29 @@ var tests;
                 //---------------------------------------
                 // Load a PNG
                 var mipUrlRequest = new away.net.URLRequest('assets/1024x1024.png');
-                this.mipLoader = new away.net.IMGLoader();
+                this.mipLoader = new away.net.URLLoader();
+                this.mipLoader.dataFormat = away.net.URLLoaderDataFormat.BLOB;
                 this.mipLoader.load(mipUrlRequest);
                 this.mipLoader.addEventListener(away.events.Event.COMPLETE, Delegate.create(this, this.mipImgLoaded));
             }
             BitmapTextureTest.prototype.mipImgLoaded = function (e) {
+                var _this = this;
                 var loader = e.target;
-                var rect = new away.geom.Rectangle(0, 0, this.mipLoader.width, this.mipLoader.height);
+                var image = away.parsers.ParserUtils.blobToImage(loader.data);
+                image.onload = function (event) {
+                    return _this.onImageLoad(event);
+                };
+            };
 
-                console.log('away.events.Event.COMPLETE', loader);
+            BitmapTextureTest.prototype.onImageLoad = function (event) {
+                var image = event.target;
 
-                this.bitmapData = new away.base.BitmapData(loader.width, loader.height);
-                this.bitmapData.drawImage(this.mipLoader.image, rect, rect);
+                var rect = new away.geom.Rectangle(0, 0, image.width, image.height);
+
+                console.log('away.events.Event.COMPLETE', image);
+
+                this.bitmapData = new away.base.BitmapData(image.width, image.height);
+                this.bitmapData.drawImage(image, rect, rect);
 
                 this.target = new away.textures.BitmapTexture(this.bitmapData, true); //new away.textures.HTMLImageElementTexture( loader.image , false );
 

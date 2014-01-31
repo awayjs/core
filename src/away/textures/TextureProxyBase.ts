@@ -2,7 +2,6 @@
 
 module away.textures
 {
-
 	export class TextureProxyBase extends away.library.NamedAssetBase implements away.library.IAsset
 	{
 		public _pFormat:string = away.gl.ContextGLTextureFormat.BGRA;
@@ -16,12 +15,10 @@ module away.textures
 
 		constructor()
 		{
-
 			super();
 
 			this._textures = new Array<away.gl.TextureBase>(8);//_textures = new Vector.<TextureBase>(8);
 			this._dirty = new Array<away.gl.ContextGL>(8);//_dirty = new Vector.<ContextGL>(8);
-
 		}
 
 		/**
@@ -95,9 +92,7 @@ module away.textures
 		 */
 		public pUploadContent(texture:away.gl.TextureBase)
 		{
-
 			throw new away.errors.AbstractMethodError();
-
 		}
 
 		/**
@@ -108,12 +103,8 @@ module away.textures
 		 */
 		public pSetSize(width:number, height:number)
 		{
-
-			if (this._pWidth != width || this._pHeight != height) {
-
+			if (this._pWidth != width || this._pHeight != height)
 				this.pInvalidateSize();
-
-			}
 
 			this._pWidth = width;
 			this._pHeight = height;
@@ -125,13 +116,8 @@ module away.textures
 		 */
 		public invalidateContent():void
 		{
-
-			for (var i:number = 0; i < 8; ++i) {
-
+			for (var i:number = 0; i < 8; ++i)
 				this._dirty[i] = null;
-
-			}
-
 		}
 
 		/**
@@ -150,11 +136,8 @@ module away.textures
 
 					this._textures[i] = null;
 					this._dirty[i] = null;
-
 				}
-
 			}
-
 		}
 
 		/**
@@ -172,16 +155,9 @@ module away.textures
 		 */
 		public dispose()
 		{
-			for (var i:number = 0; i < 8; ++i) {
-
-				if (this._textures[i]) {
-
+			for (var i:number = 0; i < 8; ++i)
+				if (this._textures[i])
 					this._textures[i].dispose();
-				}
-
-			}
-
 		}
-
 	}
 }

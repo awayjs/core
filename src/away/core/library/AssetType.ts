@@ -11,6 +11,7 @@ module away.library
 		public static SKELETON:string = 'skeleton';
 		public static SKELETON_POSE:string = 'skeletonPose';
 		public static CONTAINER:string = 'container';
+		public static BITMAP:string = 'bitmap';
 		public static TEXTURE:string = 'texture';
 		public static TEXTURE_PROJECTOR:string = 'textureProjector';
 		public static MATERIAL:string = 'material';

@@ -12,7 +12,8 @@ var tests;
                 //---------------------------------------
                 // Load a PNG
                 var mipUrlRequest = new away.net.URLRequest('assets/1024x1024.png');
-                this.mipLoader = new away.net.IMGLoader();
+                this.mipLoader = new away.net.URLLoader();
+                this.mipLoader.dataFormat = away.net.URLLoaderDataFormat.BLOB;
                 this.mipLoader.load(mipUrlRequest);
                 this.mipLoader.addEventListener(away.events.Event.COMPLETE, Delegate.create(this, this.mipImgLoaded));
 
@@ -21,12 +22,20 @@ var tests;
                 };
             }
             MipMapTest.prototype.mipImgLoaded = function (e) {
+                var _this = this;
+                var loader = e.target;
+                var image = away.parsers.ParserUtils.blobToImage(loader.data);
+                image.onload = function (event) {
+                    return _this.onImageLoad(event);
+                };
+            };
+
+            MipMapTest.prototype.onImageLoad = function (event) {
+                var image = event.target;
                 alert('Each click will generate a level of MipMap');
 
-                var loader = e.target;
-
                 this.sourceBitmap = new away.base.BitmapData(1024, 1024, true, 0xff0000);
-                this.sourceBitmap.drawImage(loader.image, this.sourceBitmap.rect, this.sourceBitmap.rect);
+                this.sourceBitmap.drawImage(image, this.sourceBitmap.rect, this.sourceBitmap.rect);
                 this.sourceBitmap.canvas.style.position = 'absolute';
                 this.sourceBitmap.canvas.style.left = '0px';
                 this.sourceBitmap.canvas.style.top = '1030px';

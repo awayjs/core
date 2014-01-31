@@ -2,10 +2,6 @@
 
 module away.textures
 {
-
-
-	//use namespace arcane;
-
 	export class Texture2DBase extends away.textures.TextureProxyBase
 	{
 		constructor()

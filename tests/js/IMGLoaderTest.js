@@ -4,14 +4,15 @@ var tests;
     (function (net) {
         var Delegate = away.utils.Delegate;
 
-        var IMGLoaderTest = (function () {
-            function IMGLoaderTest() {
+        var URLLoaderTest = (function () {
+            function URLLoaderTest() {
                 //-----------------------------------------------------------------------------------------------
                 // load a png
                 //-----------------------------------------------------------------------------------------------
                 var pngURLrq = new away.net.URLRequest('assets/2.png');
 
-                this.pngLoader = new away.net.IMGLoader();
+                this.pngLoader = new away.net.URLLoader();
+                this.pngLoader.dataFormat = away.net.URLLoaderDataFormat.BLOB;
                 this.pngLoader.addEventListener(away.events.Event.COMPLETE, Delegate.create(this, this.pngLoaderComplete));
                 this.pngLoader.addEventListener(away.events.IOErrorEvent.IO_ERROR, Delegate.create(this, this.ioError));
                 this.pngLoader.load(pngURLrq);
@@ -21,8 +22,8 @@ var tests;
                 //-----------------------------------------------------------------------------------------------
                 var jpgURLrq = new away.net.URLRequest('assets/1.jpg');
 
-                this.jpgLoader = new away.net.IMGLoader();
-                this.jpgLoader.crossOrigin = 'anonymous';
+                this.jpgLoader = new away.net.URLLoader();
+                this.jpgLoader.dataFormat = away.net.URLLoaderDataFormat.BLOB;
                 this.jpgLoader.addEventListener(away.events.Event.COMPLETE, Delegate.create(this, this.jpgLoaderComplete));
                 this.jpgLoader.addEventListener(away.events.IOErrorEvent.IO_ERROR, Delegate.create(this, this.ioError));
                 this.jpgLoader.load(jpgURLrq);
@@ -32,7 +33,8 @@ var tests;
                 //-----------------------------------------------------------------------------------------------
                 var notURLrq = new away.net.URLRequest('assets/data.txt');
 
-                this.noAnImageLoader = new away.net.IMGLoader();
+                this.noAnImageLoader = new away.net.URLLoader();
+                this.noAnImageLoader.dataFormat = away.net.URLLoaderDataFormat.BLOB;
                 this.noAnImageLoader.addEventListener(away.events.Event.COMPLETE, Delegate.create(this, this.noAnImageLoaderComplete));
                 this.noAnImageLoader.addEventListener(away.events.IOErrorEvent.IO_ERROR, Delegate.create(this, this.ioError));
                 this.noAnImageLoader.load(notURLrq);
@@ -42,50 +44,51 @@ var tests;
                 //-----------------------------------------------------------------------------------------------
                 var wrongURLrq = new away.net.URLRequest('assets/iDontExist.png');
 
-                this.wrongURLLoader = new away.net.IMGLoader();
+                this.wrongURLLoader = new away.net.URLLoader();
+                this.wrongURLLoader.dataFormat = away.net.URLLoaderDataFormat.BLOB;
                 this.wrongURLLoader.addEventListener(away.events.Event.COMPLETE, Delegate.create(this, this.wrongURLLoaderComplete));
                 this.wrongURLLoader.addEventListener(away.events.IOErrorEvent.IO_ERROR, Delegate.create(this, this.ioError));
                 this.wrongURLLoader.load(wrongURLrq);
             }
-            IMGLoaderTest.prototype.pngLoaderComplete = function (e) {
+            URLLoaderTest.prototype.pngLoaderComplete = function (e) {
                 this.logSuccessfullLoad(e);
 
                 var imgLoader = e.target;
-                document.body.appendChild(imgLoader.image);
+                document.body.appendChild(away.parsers.ParserUtils.blobToImage(imgLoader.data));
             };
 
-            IMGLoaderTest.prototype.jpgLoaderComplete = function (e) {
+            URLLoaderTest.prototype.jpgLoaderComplete = function (e) {
                 this.logSuccessfullLoad(e);
 
                 var imgLoader = e.target;
-                document.body.appendChild(imgLoader.image);
+                document.body.appendChild(away.parsers.ParserUtils.blobToImage(imgLoader.data));
             };
 
-            IMGLoaderTest.prototype.noAnImageLoaderComplete = function (e) {
+            URLLoaderTest.prototype.noAnImageLoaderComplete = function (e) {
                 this.logSuccessfullLoad(e);
             };
 
-            IMGLoaderTest.prototype.wrongURLLoaderComplete = function (e) {
+            URLLoaderTest.prototype.wrongURLLoaderComplete = function (e) {
                 this.logSuccessfullLoad(e);
             };
 
-            IMGLoaderTest.prototype.logSuccessfullLoad = function (e) {
+            URLLoaderTest.prototype.logSuccessfullLoad = function (e) {
                 var imgLoader = e.target;
-                console.log('IMG.Event.Complete', imgLoader.request.url);
+                console.log('IMG.Event.Complete', imgLoader.url);
             };
 
-            IMGLoaderTest.prototype.ioError = function (e) {
+            URLLoaderTest.prototype.ioError = function (e) {
                 var imgLoader = e.target;
-                console.log('ioError', imgLoader.request.url);
+                console.log('ioError', imgLoader.url);
             };
 
-            IMGLoaderTest.prototype.abortError = function (e) {
+            URLLoaderTest.prototype.abortError = function (e) {
                 var imgLoader = e.target;
-                console.log('abortError', imgLoader.request.url);
+                console.log('abortError', imgLoader.url);
             };
-            return IMGLoaderTest;
+            return URLLoaderTest;
         })();
-        net.IMGLoaderTest = IMGLoaderTest;
+        net.URLLoaderTest = URLLoaderTest;
     })(tests.net || (tests.net = {}));
     var net = tests.net;
 })(tests || (tests = {}));

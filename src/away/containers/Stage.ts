@@ -1,5 +1,5 @@
 ///<reference path="../_definitions.ts"/>
-module away.base
+module away.containers
 {
 
 	export class Stage extends away.events.EventDispatcher

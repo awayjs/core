@@ -20,6 +20,7 @@
 ///<reference path="errors/PartialImplementationError.ts" />
 ///<reference path="errors/AbstractMethodError.ts" />
 ///<reference path="errors/DocumentError.ts" />
+///<reference path="errors/RangeError.ts" />
 
 ///<reference path="events/Event.ts" />
 ///<reference path="events/EventDispatcher.ts" />
@@ -58,8 +59,21 @@
 ///<reference path="core/base/BitmapData.ts"/>
 ///<reference path="core/base/BitmapDataChannel.ts"/>
 ///<reference path="core/base/BlendMode.ts"/>
+///<reference path="core/base/CapsStyle"/>
+///<reference path="core/base/DisplayObject.ts" />
+///<reference path="core/base/GradientType.ts" />
+///<reference path="core/base/Graphics.ts" />
+///<reference path="core/base/GraphicsPathWinding.ts" />
+///<reference path="core/base/IBitmapDrawable.ts" />
+///<reference path="core/base/IGraphicsData.ts" />
+///<reference path="core/base/InterpolationMethod.ts" />
+///<reference path="core/base/JointStyle.ts" />
+///<reference path="core/base/LineScaleMode.ts" />
+///<reference path="core/base/LoaderInfo.ts" />
+///<reference path="core/base/PixelSnapping.ts" />
+///<reference path="core/base/SpreadMethod.ts" />
 ///<reference path="core/base/StageGL.ts" />
-///<reference path="containers/Stage.ts"/>
+///<reference path="core/base/TriangleCulling.ts" />
 
 ///<reference path="core/gl/ContextGLClearMask.ts"/>
 ///<reference path="core/gl/VertexBuffer.ts"/>
@@ -87,8 +101,10 @@
 ///<reference path="core/geom/Matrix.ts" />
 ///<reference path="core/geom/Matrix3D.ts" />
 ///<reference path="core/geom/Orientation3D.ts" />
+///<reference path="core/geom/PerspectiveProjection.ts" />
 ///<reference path="core/geom/Point.ts" />
 ///<reference path="core/geom/Rectangle.ts" />
+///<reference path="core/geom/Transform.ts" />
 ///<reference path="core/geom/Vector3D.ts" />
 
 ///<reference path="core/geom/MathConsts.ts" />
@@ -107,7 +123,24 @@
 ///<reference path="core/net/URLLoader.ts" />
 ///<reference path="core/net/URLVariables.ts" />
 
+///<reference path="core/text/AntiAliasType.ts"/>
+///<reference path="core/text/GridFitType.ts"/>
+///<reference path="core/text/TextFieldAutoSize.ts"/>
+///<reference path="core/text/TextFieldType.ts"/>
+///<reference path="core/text/TextFormat.ts"/>
+///<reference path="core/text/TextFormatAlign.ts"/>
+///<reference path="core/text/TextInteractionMode.ts"/>
+///<reference path="core/text/TextLineMetrics.ts"/>
+
 ///<reference path="core/ui/Keyboard.ts"/>
+
+///<reference path="containers/DisplayObjectContainer.ts" />
+///<reference path="containers/Loader.ts" />
+///<reference path="containers/Stage.ts" />
+
+///<reference path="entities/Bitmap.ts" />
+///<reference path="entities/Shape.ts" />
+///<reference path="entities/Textfield.ts" />
 
 ///<reference path="managers/RTTBufferManager.ts"/>
 ///<reference path="managers/StageGLManager.ts"/>

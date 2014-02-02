@@ -5,20 +5,20 @@ module away.errors
 
 
 	/**
-	 * AbstractMethodError is thrown when an abstract method is called. The method in question should be overridden
-	 * by a concrete subclass.
+	 * RangeError is thrown when an index is accessed out of range of the number of
+	 * available indices on an Array.
 	 */
-	export class ArgumentError extends away.errors.Error
+	export class RangeError extends away.errors.Error
 	{
 		/**
-		 * Create a new ArgumentError.
+		 * Create a new RangeError.
 		 *
 		 * @param message An optional message to override the default error message.
 		 * @param id The id of the error.
 		 */
 		constructor(message:string = null, id:number = 0)
 		{
-			super(message || "ArgumentError", id);
+			super(message || "RangeError", id);
 		}
 	}
 }

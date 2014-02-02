@@ -2,8 +2,6 @@
 
 module away.library
 {
-	//import flash.events.IEventDispatcher;
-
 	export interface IAsset extends away.events.IEventDispatcher
 	{
 

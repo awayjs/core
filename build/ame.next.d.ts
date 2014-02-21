@@ -47,6 +47,11 @@ declare module away.errors {
     }
 }
 declare module away.errors {
+    class CastError extends errors.Error {
+        constructor(message: string);
+    }
+}
+declare module away.errors {
     /**
     * AbstractMethodError is thrown when an abstract method is called. The method in question should be overridden
     * by a concrete subclass.
@@ -128,6 +133,76 @@ declare module away.events {
         public clone(): Event;
     }
 }
+declare module away.events {
+    /**
+    * @class away.events.AssetEvent
+    */
+    class AssetEvent extends events.Event {
+        /**
+        *
+        */
+        static ASSET_COMPLETE: string;
+        /**
+        *
+        */
+        static ASSET_RENAME: string;
+        /**
+        *
+        */
+        static ASSET_CONFLICT_RESOLVED: string;
+        /**
+        *
+        */
+        static TEXTURE_SIZE_ERROR: string;
+        private _asset;
+        private _prevName;
+        /**
+        *
+        */
+        constructor(type: string, asset?: away.library.IAsset, prevName?: string);
+        /**
+        *
+        */
+        public asset : away.library.IAsset;
+        /**
+        *
+        */
+        public assetPrevName : string;
+        /**
+        *
+        */
+        public clone(): events.Event;
+    }
+}
+/**
+* @module away.events
+*/
+declare module away.events {
+    /**
+    * @class away.events.CameraEvent
+    */
+    class CameraEvent extends events.Event {
+        static LENS_CHANGED: string;
+        private _camera;
+        constructor(type: string, camera: away.entities.Camera);
+        public camera : away.entities.Camera;
+    }
+}
+/**
+* @module away.events
+*/
+declare module away.events {
+    class DisplayObjectEvent extends events.Event {
+        static VISIBLITY_UPDATED: string;
+        static SCENETRANSFORM_CHANGED: string;
+        static SCENE_CHANGED: string;
+        static POSITION_CHANGED: string;
+        static ROTATION_CHANGED: string;
+        static SCALE_CHANGED: string;
+        public object: away.base.DisplayObject;
+        constructor(type: string, object: away.base.DisplayObject);
+    }
+}
 /**
 * @module away.events
 */
@@ -174,6 +249,16 @@ declare module away.events {
         * @param {Function} Callback function
         */
         public hasEventListener(type: string, listener?: Function): boolean;
+    }
+}
+declare module away.events {
+    /**
+    * @class away.events.HTTPStatusEvent
+    */
+    class HTTPStatusEvent extends events.Event {
+        static HTTP_STATUS: string;
+        public status: number;
+        constructor(type: string, status?: number);
     }
 }
 /**
@@ -226,14 +311,49 @@ declare module away.events {
         constructor(type: string);
     }
 }
+/**
+* @module away.events
+*/
 declare module away.events {
-    /**
-    * @class away.events.HTTPStatusEvent
-    */
-    class HTTPStatusEvent extends events.Event {
-        static HTTP_STATUS: string;
-        public status: number;
-        constructor(type: string, status?: number);
+    class ProjectionEvent extends events.Event {
+        static MATRIX_CHANGED: string;
+        private _projection;
+        constructor(type: string, projection: away.projections.ProjectionBase);
+        public projection : away.projections.ProjectionBase;
+    }
+}
+/**
+* @module away.events
+*/
+declare module away.events {
+    class LoaderEvent extends events.Event {
+        /**
+        * Dispatched when a resource and all of its dependencies is retrieved.
+        */
+        static RESOURCE_COMPLETE: string;
+        private _url;
+        private _assets;
+        /**
+        * Create a new LoaderEvent object.
+        *
+        * @param type The event type.
+        * @param url The url of the loaded resource.
+        * @param assets The assets of the loaded resource.
+        */
+        constructor(type: string, url?: string, assets?: away.library.IAsset[]);
+        /**
+        * The url of the loaded resource.
+        */
+        public url : string;
+        /**
+        * The error string on loadError.
+        */
+        public assets : away.library.IAsset[];
+        /**
+        * Clones the current event.
+        * @return An exact duplicate of the current event.
+        */
+        public clone(): events.Event;
     }
 }
 /**
@@ -280,85 +400,34 @@ declare module away.events {
 * @module away.events
 */
 declare module away.events {
-    class LoaderEvent extends events.Event {
-        /**
-        * Dispatched when a resource and all of its dependencies is retrieved.
-        */
-        static RESOURCE_COMPLETE: string;
-        private _url;
-        private _assets;
-        /**
-        * Create a new LoaderEvent object.
-        *
-        * @param type The event type.
-        * @param url The url of the loaded resource.
-        * @param assets The assets of the loaded resource.
-        */
-        constructor(type: string, url?: string, assets?: away.library.IAsset[]);
-        /**
-        * The url of the loaded resource.
-        */
-        public url : string;
-        /**
-        * The error string on loadError.
-        */
-        public assets : away.library.IAsset[];
-        /**
-        * Clones the current event.
-        * @return An exact duplicate of the current event.
-        */
-        public clone(): events.Event;
-    }
-}
-declare module away.events {
-    /**
-    * @class away.events.AssetEvent
-    */
-    class AssetEvent extends events.Event {
-        /**
-        *
-        */
-        static ASSET_COMPLETE: string;
-        /**
-        *
-        */
-        static ASSET_RENAME: string;
-        /**
-        *
-        */
-        static ASSET_CONFLICT_RESOLVED: string;
-        /**
-        *
-        */
-        static TEXTURE_SIZE_ERROR: string;
-        private _asset;
-        private _prevName;
-        /**
-        *
-        */
-        constructor(type: string, asset?: away.library.IAsset, prevName?: string);
-        /**
-        *
-        */
-        public asset : away.library.IAsset;
-        /**
-        *
-        */
-        public assetPrevName : string;
-        /**
-        *
-        */
-        public clone(): events.Event;
+    class RendererEvent extends events.Event {
+        static VIEWPORT_UPDATED: string;
+        static SCISSOR_UPDATED: string;
+        constructor(type: string);
     }
 }
 /**
 * @module away.events
 */
 declare module away.events {
-    class TimerEvent extends events.Event {
-        static TIMER: string;
-        static TIMER_COMPLETE: string;
-        constructor(type: string);
+    class SceneEvent extends events.Event {
+        /**
+        *
+        */
+        static ADDED_TO_SCENE: string;
+        /**
+        *
+        */
+        static REMOVED_FROM_SCENE: string;
+        /**
+        *
+        */
+        static PARTITION_CHANGED: string;
+        /**
+        *
+        */
+        public displayObject: away.base.DisplayObject;
+        constructor(type: string, displayObject: away.base.DisplayObject);
     }
 }
 /**
@@ -371,6 +440,224 @@ declare module away.events {
         static CONTEXTGL_RECREATED: string;
         static VIEWPORT_UPDATED: string;
         constructor(type: string);
+    }
+}
+/**
+* @module away.events
+*/
+declare module away.events {
+    class TimerEvent extends events.Event {
+        static TIMER: string;
+        static TIMER_COMPLETE: string;
+        constructor(type: string);
+    }
+}
+declare module away.utils {
+    class ByteArrayBase {
+        public position: number;
+        public length: number;
+        public _mode: string;
+        public Base64Key: string;
+        constructor();
+        public writeByte(b: number): void;
+        public readByte(): number;
+        public writeUnsignedByte(b: number): void;
+        public readUnsignedByte(): number;
+        public writeUnsignedShort(b: number): void;
+        public readUnsignedShort(): number;
+        public writeUnsignedInt(b: number): void;
+        public readUnsignedInt(): number;
+        public writeFloat(b: number): void;
+        public toFloatBits(x: number): void;
+        public readFloat(b: number): void;
+        public fromFloatBits(x: number): void;
+        public getBytesAvailable(): number;
+        public toString(): string;
+        public compareEqual(other: any, count: any): boolean;
+        public writeBase64String(s: string): void;
+        public dumpToConsole(): void;
+        public internalGetBase64String(count: any, getUnsignedByteFunc: any, self: any): string;
+    }
+}
+declare module away.utils {
+    class ByteArray extends utils.ByteArrayBase {
+        public maxlength: number;
+        public arraybytes: any;
+        public unalignedarraybytestemp: any;
+        constructor();
+        public ensureWriteableSpace(n: number): void;
+        public setArrayBuffer(aBuffer: ArrayBuffer): void;
+        public getBytesAvailable(): number;
+        public ensureSpace(n: number): void;
+        public writeByte(b: number): void;
+        public readByte(): number;
+        public readBytes(bytes: ByteArray, offset?: number, length?: number): void;
+        public writeUnsignedByte(b: number): void;
+        public readUnsignedByte(): number;
+        public writeUnsignedShort(b: number): void;
+        public readUTFBytes(len: number): string;
+        public readInt(): number;
+        public readShort(): number;
+        public readDouble(): number;
+        public readUnsignedShort(): number;
+        public writeUnsignedInt(b: number): void;
+        public readUnsignedInt(): number;
+        public writeFloat(b: number): void;
+        public readFloat(): number;
+    }
+}
+declare module away.utils {
+    class ByteArrayBuffer extends utils.ByteArrayBase {
+        public _bytes: number[];
+        constructor();
+        public writeByte(b: number): void;
+        public readByte(): number;
+        public writeUnsignedByte(b: number): void;
+        public readUnsignedByte(): number;
+        public writeUnsignedShort(b: number): void;
+        public readUnsignedShort(): number;
+        public writeUnsignedInt(b: number): void;
+        public readUnsignedInt(): number;
+        public writeFloat(b: number): void;
+        public toFloatBits(x: number): number;
+        public readFloat(b: number): number;
+        public fromFloatBits(x: number): number;
+    }
+}
+declare module away.utils {
+    class ColorUtils {
+        static float32ColorToARGB(float32Color: number): number[];
+        private static componentToHex(c);
+        static RGBToHexString(argb: number[]): string;
+        static ARGBToHexString(argb: number[]): string;
+    }
+}
+declare module away.utils {
+    /**
+    * Helper class for casting assets to usable objects
+    */
+    class Cast {
+        private static _colorNames;
+        private static _hexChars;
+        private static _notClasses;
+        private static _classes;
+        static string(data: any): string;
+        static byteArray(data: any): utils.ByteArray;
+        private static isHex(str);
+        static tryColor(data: any): number;
+        static color(data: any): number;
+        static tryClass(name: string): any;
+        static bitmapData(data: any): away.base.BitmapData;
+        static bitmapTexture(data: any): away.textures.BitmapTexture;
+    }
+}
+declare module away.utils {
+    class CSS {
+        static setCanvasSize(canvas: HTMLCanvasElement, width: number, height: number): void;
+        static setCanvasWidth(canvas: HTMLCanvasElement, width: number): void;
+        static setCanvasHeight(canvas: HTMLCanvasElement, height: number): void;
+        static setCanvasX(canvas: HTMLCanvasElement, x: number): void;
+        static setCanvasY(canvas: HTMLCanvasElement, y: number): void;
+        static getCanvasVisibility(canvas: HTMLCanvasElement): boolean;
+        static setCanvasVisibility(canvas: HTMLCanvasElement, visible: boolean): void;
+        static setCanvasAlpha(canvas: HTMLCanvasElement, alpha: number): void;
+        static setCanvasPosition(canvas: HTMLCanvasElement, x: number, y: number, absolute?: boolean): void;
+    }
+}
+declare module away {
+    class Debug {
+        static THROW_ERRORS: boolean;
+        static ENABLE_LOG: boolean;
+        static LOG_PI_ERRORS: boolean;
+        private static keyword;
+        static breakpoint(): void;
+        static throwPIROnKeyWordOnly(str: string, enable?: boolean): void;
+        static throwPIR(clss: string, fnc: string, msg: string): void;
+        private static logPIR(clss, fnc, msg?);
+        static log(...args: any[]): void;
+    }
+}
+declare module away.utils {
+    class Delegate {
+        private _func;
+        constructor(func?: Function);
+        /**
+        Creates a functions wrapper for the original function so that it runs
+        in the provided context.
+        @parameter obj Context in which to run the function.
+        @paramater func Function to run.
+        */
+        static create(obj: Object, func: Function): Function;
+        public createDelegate(obj: Object): Function;
+    }
+}
+declare module away.utils {
+    function getTimer(): number;
+}
+declare module away.utils {
+    class RequestAnimationFrame {
+        private _callback;
+        private _callbackContext;
+        private _active;
+        private _rafUpdateFunction;
+        private _prevTime;
+        private _dt;
+        private _currentTime;
+        private _argsArray;
+        private _getTimer;
+        constructor(callback: Function, callbackContext: Object);
+        /**
+        *
+        * @param callback
+        * @param callbackContext
+        */
+        public setCallback(callback: Function, callbackContext: Object): void;
+        /**
+        *
+        */
+        public start(): void;
+        /**
+        *
+        */
+        public stop(): void;
+        /**
+        *
+        * @returns {boolean}
+        */
+        public active : boolean;
+        /**
+        *
+        * @private
+        */
+        private _tick();
+    }
+}
+declare module away.utils {
+    class TextureUtils {
+        private static MAX_SIZE;
+        static isBitmapDataValid(bitmapData: away.base.BitmapData): boolean;
+        static isHTMLImageElementValid(image: HTMLImageElement): boolean;
+        static isDimensionValid(d: number): boolean;
+        static isPowerOfTwo(value: number): boolean;
+        static getBestPowerOf2(value: number): number;
+    }
+}
+declare module away.utils {
+    class Timer extends away.events.EventDispatcher {
+        private _delay;
+        private _repeatCount;
+        private _currentCount;
+        private _iid;
+        private _running;
+        constructor(delay: number, repeatCount?: number);
+        public currentCount : number;
+        public delay : number;
+        public repeatCount : number;
+        public reset(): void;
+        public running : boolean;
+        public start(): void;
+        public stop(): void;
+        private tick();
     }
 }
 declare module away.parsers {
@@ -812,23 +1099,29 @@ declare module away.library {
     }
 }
 declare module away.library {
-    class NamedAssetBase extends away.events.EventDispatcher implements library.IAsset {
+    class NamedAssetBase extends away.events.EventDispatcher {
+        static ID_COUNT: number;
         private _originalName;
         private _namespace;
         private _name;
         private _id;
         private _full_path;
-        private _assetType;
         static DEFAULT_NAMESPACE: string;
         constructor(name?: string);
+        /**
+        *
+        */
+        public assetType : string;
         /**
         * The original name used for this asset in the resource (e.g. file) in which
         * it was found. This may not be the same as <code>name</code>, which may
         * have changed due to of a name conflict.
         */
         public originalName : string;
+        /**
+        * A unique id for the asset, used to identify assets in an associative array
+        */
         public id : string;
-        public assetType : string;
         public name : string;
         public dispose(): void;
         public assetNamespace : string;
@@ -840,28 +1133,27 @@ declare module away.library {
 }
 declare module away.library {
     class AssetType {
-        static ENTITY: string;
-        static SKYBOX: string;
-        static CAMERA: string;
-        static SEGMENT_SET: string;
-        static MESH: string;
-        static GEOMETRY: string;
-        static SKELETON: string;
-        static SKELETON_POSE: string;
-        static CONTAINER: string;
-        static BITMAP: string;
-        static TEXTURE: string;
-        static TEXTURE_PROJECTOR: string;
-        static MATERIAL: string;
+        static ANIMATION_NODE: string;
         static ANIMATION_SET: string;
         static ANIMATION_STATE: string;
-        static ANIMATION_NODE: string;
         static ANIMATOR: string;
-        static STATE_TRANSITION: string;
+        static BILLBOARD: string;
+        static CAMERA: string;
+        static CONTAINER: string;
+        static EFFECTS_METHOD: string;
+        static GEOMETRY: string;
         static LIGHT: string;
         static LIGHT_PICKER: string;
+        static MATERIAL: string;
+        static MESH: string;
+        static SEGMENT_SET: string;
         static SHADOW_MAP_METHOD: string;
-        static EFFECTS_METHOD: string;
+        static SKELETON: string;
+        static SKELETON_POSE: string;
+        static SKYBOX: string;
+        static STATE_TRANSITION: string;
+        static TEXTURE: string;
+        static TEXTURE_PROJECTOR: string;
     }
 }
 declare module away.library {
@@ -1299,151 +1591,6 @@ declare module away.library {
 }
 declare class AssetLibrarySingletonEnforcer {
 }
-declare module away.base {
-    /**
-    *
-    */
-    class BitmapData {
-        private _imageCanvas;
-        private _context;
-        private _imageData;
-        private _rect;
-        private _transparent;
-        private _alpha;
-        private _locked;
-        /**
-        *
-        * @param width
-        * @param height
-        * @param transparent
-        * @param fillColor
-        */
-        constructor(width: number, height: number, transparent?: boolean, fillColor?: number);
-        /**
-        *
-        */
-        public dispose(): void;
-        /**
-        *
-        */
-        public lock(): void;
-        /**
-        *
-        */
-        public unlock(): void;
-        /**
-        *
-        * @param x
-        * @param y
-        * @param color
-        */
-        public getPixel(x: any, y: any): number;
-        /**
-        *
-        * @param x
-        * @param y
-        * @param color
-        */
-        public setPixel(x: any, y: any, color: number): void;
-        /**
-        *
-        * @param x
-        * @param y
-        * @param color
-        */
-        public setPixel32(x: any, y: any, color: number): void;
-        public setVector(rect: away.geom.Rectangle, inputVector: number[]): void;
-        /**
-        * Copy an HTMLImageElement or BitmapData object
-        *
-        * @param img {BitmapData} / {HTMLImageElement}
-        * @param sourceRect - source rectange to copy from
-        * @param destRect - destinatoin rectange to copy to
-        */
-        public drawImage(img: BitmapData, sourceRect: away.geom.Rectangle, destRect: away.geom.Rectangle): any;
-        public drawImage(img: HTMLImageElement, sourceRect: away.geom.Rectangle, destRect: away.geom.Rectangle): any;
-        private _drawImage(img, sourceRect, destRect);
-        /**
-        *
-        * @param bmpd
-        * @param sourceRect
-        * @param destRect
-        */
-        public copyPixels(bmpd: BitmapData, sourceRect: away.geom.Rectangle, destRect: away.geom.Rectangle): any;
-        public copyPixels(bmpd: HTMLImageElement, sourceRect: away.geom.Rectangle, destRect: away.geom.Rectangle): any;
-        private _copyPixels(bmpd, sourceRect, destRect);
-        /**
-        *
-        * @param rect
-        * @param color
-        */
-        public fillRect(rect: away.geom.Rectangle, color: number): void;
-        /**
-        *
-        * @param source
-        * @param matrix
-        */
-        public draw(source: BitmapData, matrix?: away.geom.Matrix): any;
-        public draw(source: HTMLImageElement, matrix?: away.geom.Matrix): any;
-        private _draw(source, matrix);
-        public copyChannel(sourceBitmap: BitmapData, sourceRect: away.geom.Rectangle, destPoint: away.geom.Point, sourceChannel: number, destChannel: number): void;
-        public colorTransform(rect: away.geom.Rectangle, colorTransform: away.geom.ColorTransform): void;
-        /**
-        *
-        * @returns {ImageData}
-        */
-        /**
-        *
-        * @param {ImageData}
-        */
-        public imageData : ImageData;
-        /**
-        *
-        * @returns {number}
-        */
-        /**
-        *
-        * @param {number}
-        */
-        public width : number;
-        /**
-        *
-        * @returns {number}
-        */
-        /**
-        *
-        * @param {number}
-        */
-        public height : number;
-        /**
-        *
-        * @param {away.geom.Rectangle}
-        */
-        public rect : away.geom.Rectangle;
-        /**
-        *
-        * @returns {HTMLCanvasElement}
-        */
-        public canvas : HTMLCanvasElement;
-        /**
-        *
-        * @returns {HTMLCanvasElement}
-        */
-        public context : CanvasRenderingContext2D;
-        /**
-        * convert decimal value to Hex
-        */
-        private hexToRGBACSS(d);
-    }
-}
-declare module away.base {
-    class BitmapDataChannel {
-        static ALPHA: number;
-        static BLUE: number;
-        static GREEN: number;
-        static RED: number;
-    }
-}
 /**
 * A class that provides constant values for visual blend mode effects. These
 * constants are used in the following:
@@ -1587,6 +1734,26 @@ declare module away.base {
         */
         static SCREEN: string;
         /**
+        * Uses a shader to define the blend between objects.
+        *
+        * <p>Setting the <code>blendShader</code> property to a Shader instance
+        * automatically sets the display object's <code>blendMode</code> property to
+        * <code>BlendMode.SHADER</code>. If the <code>blendMode</code> property is
+        * set to <code>BlendMode.SHADER</code> without first setting the
+        * <code>blendShader</code> property, the <code>blendMode</code> property is
+        * set to <code>BlendMode.NORMAL</code> instead. If the
+        * <code>blendShader</code> property is set(which sets the
+        * <code>blendMode</code> property to <code>BlendMode.SHADER</code>), then
+        * later the value of the <code>blendMode</code> property is changed, the
+        * blend mode can be reset to use the blend shader simply by setting the
+        * <code>blendMode</code> property to <code>BlendMode.SHADER</code>. The
+        * <code>blendShader</code> property does not need to be set again except to
+        * change the shader that's used to define the blend mode.</p>
+        *
+        * <p>Not supported under GPU rendering.</p>
+        */
+        static SHADER: string;
+        /**
         * Subtracts the values of the constituent colors in the display object from
         * the values of the background color, applying a floor of 0. This setting is
         * commonly used for animating a darkening dissolve between two objects.
@@ -1597,6 +1764,183 @@ declare module away.base {
         * 0xAA = 0x33, 0xA6 - 0x22 = 0x84, and 0x00 - 0x33 < 0x00).</p>
         */
         static SUBTRACT: string;
+    }
+}
+/**
+*/
+declare module away.base {
+    class AlignmentMode {
+        /**
+        *
+        */
+        static REGISTRATION_POINT: string;
+        /**
+        *
+        */
+        static PIVOT_POINT: string;
+    }
+}
+/**
+*/
+declare module away.base {
+    class OrientationMode {
+        /**
+        *
+        */
+        static DEFAULT: string;
+        /**
+        *
+        */
+        static CAMERA_PLANE: string;
+        /**
+        *
+        */
+        static CAMERA_POSITION: string;
+    }
+}
+declare module away.base {
+    /**
+    *
+    */
+    class BitmapData {
+        private _imageCanvas;
+        private _context;
+        private _imageData;
+        private _rect;
+        private _transparent;
+        private _alpha;
+        private _locked;
+        /**
+        *
+        * @param width
+        * @param height
+        * @param transparent
+        * @param fillColor
+        */
+        constructor(width: number, height: number, transparent?: boolean, fillColor?: number);
+        /**
+        *
+        */
+        public dispose(): void;
+        /**
+        *
+        */
+        public lock(): void;
+        /**
+        *
+        */
+        public unlock(): void;
+        /**
+        *
+        * @param x
+        * @param y
+        * @param color
+        */
+        public getPixel(x: any, y: any): number;
+        /**
+        *
+        * @param x
+        * @param y
+        * @param color
+        */
+        public setPixel(x: any, y: any, color: number): void;
+        /**
+        *
+        * @param x
+        * @param y
+        * @param color
+        */
+        public setPixel32(x: any, y: any, color: number): void;
+        public setVector(rect: away.geom.Rectangle, inputVector: number[]): void;
+        /**
+        * Copy an HTMLImageElement or BitmapData object
+        *
+        * @param img {BitmapData} / {HTMLImageElement}
+        * @param sourceRect - source rectange to copy from
+        * @param destRect - destinatoin rectange to copy to
+        */
+        public drawImage(img: BitmapData, sourceRect: away.geom.Rectangle, destRect: away.geom.Rectangle): any;
+        public drawImage(img: HTMLImageElement, sourceRect: away.geom.Rectangle, destRect: away.geom.Rectangle): any;
+        private _drawImage(img, sourceRect, destRect);
+        /**
+        *
+        * @param bmpd
+        * @param sourceRect
+        * @param destRect
+        */
+        public copyPixels(bmpd: BitmapData, sourceRect: away.geom.Rectangle, destRect: away.geom.Rectangle): any;
+        public copyPixels(bmpd: HTMLImageElement, sourceRect: away.geom.Rectangle, destRect: away.geom.Rectangle): any;
+        private _copyPixels(bmpd, sourceRect, destRect);
+        /**
+        *
+        * @param rect
+        * @param color
+        */
+        public fillRect(rect: away.geom.Rectangle, color: number): void;
+        /**
+        *
+        * @param source
+        * @param matrix
+        */
+        public draw(source: BitmapData, matrix?: away.geom.Matrix): any;
+        public draw(source: HTMLImageElement, matrix?: away.geom.Matrix): any;
+        private _draw(source, matrix);
+        public copyChannel(sourceBitmap: BitmapData, sourceRect: away.geom.Rectangle, destPoint: away.geom.Point, sourceChannel: number, destChannel: number): void;
+        public colorTransform(rect: away.geom.Rectangle, colorTransform: away.geom.ColorTransform): void;
+        /**
+        *
+        * @returns {ImageData}
+        */
+        /**
+        *
+        * @param {ImageData}
+        */
+        public imageData : ImageData;
+        /**
+        *
+        * @returns {number}
+        */
+        /**
+        *
+        * @param {number}
+        */
+        public width : number;
+        /**
+        *
+        * @returns {number}
+        */
+        /**
+        *
+        * @param {number}
+        */
+        public height : number;
+        /**
+        *
+        * @param {away.geom.Rectangle}
+        */
+        public rect : away.geom.Rectangle;
+        /**
+        *
+        * @returns {HTMLCanvasElement}
+        */
+        public canvas : HTMLCanvasElement;
+        /**
+        *
+        * @returns {HTMLCanvasElement}
+        */
+        public context : CanvasRenderingContext2D;
+        /**
+        * convert decimal value to Hex
+        */
+        private hexToRGBACSS(d);
+    }
+}
+declare module away.base {
+    class BitmapDataChannel {
+        static ALPHA: number;
+        static BLUE: number;
+        static GREEN: number;
+        static RED: number;
     }
 }
 /**
@@ -1755,14 +2099,81 @@ declare module away.base {
 *                         content is either minimized or obscured. </p>
 */
 declare module away.base {
-    class DisplayObject extends away.events.EventDispatcher implements base.IBitmapDrawable {
+    class DisplayObject extends away.library.NamedAssetBase implements base.IBitmapDrawable {
         private _loaderInfo;
         private _mouseX;
         private _mouseY;
-        private _parent;
         private _root;
-        private _stage;
         private _bounds;
+        private _depth;
+        private _height;
+        private _width;
+        public _pScene: away.containers.Scene;
+        public _pParent: away.containers.DisplayObjectContainer;
+        public _pSceneTransform: away.geom.Matrix3D;
+        public _pSceneTransformDirty: boolean;
+        public _pIsEntity: boolean;
+        private _explicitPartition;
+        public _pImplicitPartition: away.partition.Partition;
+        private _partitionNode;
+        private _sceneTransformChanged;
+        private _scenechanged;
+        private _transform;
+        private _matrix3D;
+        private _matrix3DDirty;
+        private _inverseSceneTransform;
+        private _inverseSceneTransformDirty;
+        private _scenePosition;
+        private _scenePositionDirty;
+        private _explicitVisibility;
+        public _pImplicitVisibility: boolean;
+        private _explicitMouseEnabled;
+        public _pImplicitMouseEnabled: boolean;
+        private _listenToSceneTransformChanged;
+        private _listenToSceneChanged;
+        private _positionDirty;
+        private _rotationDirty;
+        private _scaleDirty;
+        private _positionChanged;
+        private _rotationChanged;
+        private _scaleChanged;
+        private _rotationX;
+        private _rotationY;
+        private _rotationZ;
+        private _eulers;
+        private _flipY;
+        private _listenToPositionChanged;
+        private _listenToRotationChanged;
+        private _listenToScaleChanged;
+        private _zOffset;
+        public _pScaleX: number;
+        public _pScaleY: number;
+        public _pScaleZ: number;
+        private _x;
+        private _y;
+        private _z;
+        private _pivotPoint;
+        private _orientationMatrix;
+        private _pivotZero;
+        private _pivotDirty;
+        private _pos;
+        private _rot;
+        private _sca;
+        private _transformComponents;
+        public _pIgnoreTransform: boolean;
+        private _showBounds;
+        private _boundsIsShown;
+        private _shaderPickingDetails;
+        private _pickingCollisionVO;
+        public _pBounds: away.bounds.BoundingVolumeBase;
+        public _pBoundsInvalid: boolean;
+        private _worldBounds;
+        private _worldBoundsInvalid;
+        private _pickingCollider;
+        /**
+        *
+        */
+        public alignmentMode: string;
         /**
         * Indicates the alpha transparency value of the object specified. Valid
         * values are 0(fully transparent) to 1(fully opaque). The default value is
@@ -1795,6 +2206,10 @@ declare module away.base {
         * object(2) superimposed on another display object(1).</p>
         */
         public blendMode: base.BlendMode;
+        /**
+        *
+        */
+        public bounds : away.bounds.BoundingVolumeBase;
         /**
         * If set to <code>true</code>, NME will use the software renderer to cache
         * an internal bitmap representation of the display object. For native targets,
@@ -1854,25 +2269,60 @@ declare module away.base {
         */
         public cacheAsBitmap: boolean;
         /**
+        *
+        */
+        public castsShadows: boolean;
+        /**
+        * Indicates the depth of the display object, in pixels. The depth is
+        * calculated based on the bounds of the content of the display object. When
+        * you set the <code>depth</code> property, the <code>scaleZ</code> property
+        * is adjusted accordingly, as shown in the following code:
+        *
+        * <p>Except for TextField and Video objects, a display object with no
+        * content (such as an empty sprite) has a depth of 0, even if you try to
+        * set <code>depth</code> to a different value.</p>
+        */
+        public depth : number;
+        /**
+        * Defines the rotation of the 3d object as a <code>Vector3D</code> object containing euler angles for rotation around x, y and z axis.
+        */
+        public eulers : away.geom.Vector3D;
+        /**
+        * An object that can contain any extra data.
+        */
+        public extra: Object;
+        /**
         * Indicates the height of the display object, in pixels. The height is
         * calculated based on the bounds of the content of the display object. When
         * you set the <code>height</code> property, the <code>scaleY</code> property
         * is adjusted accordingly, as shown in the following code:
         *
         * <p>Except for TextField and Video objects, a display object with no
-        * content(such as an empty sprite) has a height of 0, even if you try to
+        * content (such as an empty sprite) has a height of 0, even if you try to
         * set <code>height</code> to a different value.</p>
         */
-        public height: number;
+        public height : number;
         /**
         * Indicates the instance container index of the DisplayObject. The object can be
         * identified in the child list of its parent display object container by
         * calling the <code>getChildByIndex()</code> method of the display object
         * container.
         *
-        * <p>If the DisplayObject has no parent container, index defaults to 0.
+        * <p>If the DisplayObject has no parent container, index defaults to 0.</p>
         */
-        public index: number;
+        public index : number;
+        /**
+        *
+        */
+        public inverseSceneTransform : away.geom.Matrix3D;
+        /**
+        *
+        */
+        public ignoreTransform : boolean;
+        /**
+        *
+        */
+        public isEntity : boolean;
         /**
         * Returns a LoaderInfo object containing information about loading the file
         * to which this display object belongs. The <code>loaderInfo</code> property
@@ -1920,6 +2370,23 @@ declare module away.base {
         */
         public mask: DisplayObject;
         /**
+        * Specifies whether this object receives mouse, or other user input,
+        * messages. The default value is <code>true</code>, which means that by
+        * default any InteractiveObject instance that is on the display list
+        * receives mouse events or other user input events. If
+        * <code>mouseEnabled</code> is set to <code>false</code>, the instance does
+        * not receive any mouse events(or other user input events like keyboard
+        * events). Any children of this instance on the display list are not
+        * affected. To change the <code>mouseEnabled</code> behavior for all
+        * children of an object on the display list, use
+        * <code>flash.display.DisplayObjectContainer.mouseChildren</code>.
+        *
+        * <p> No event is dispatched by setting this property. You must use the
+        * <code>addEventListener()</code> method to create interactive
+        * functionality.</p>
+        */
+        public mouseEnabled : boolean;
+        /**
         * Indicates the x coordinate of the mouse or user input device position, in
         * pixels.
         *
@@ -1947,6 +2414,10 @@ declare module away.base {
         */
         public name: string;
         /**
+        *
+        */
+        public orientationMode: string;
+        /**
         * Indicates the DisplayObjectContainer object that contains this display
         * object. Use the <code>parent</code> property to specify a relative path to
         * display objects that are above the current display object in the display
@@ -1961,6 +2432,22 @@ declare module away.base {
         *                       the <code>Security.allowDomain()</code> method.
         */
         public parent : away.containers.DisplayObjectContainer;
+        /**
+        *
+        */
+        public partition : away.partition.Partition;
+        /**
+        *
+        */
+        public partitionNode : away.partition.EntityNode;
+        /**
+        *
+        */
+        public pickingCollider : away.pick.IPickingCollider;
+        /**
+        * Defines the local point around which the object rotates.
+        */
+        public pivotPoint : away.geom.Vector3D;
         /**
         * For a display object in a loaded SWF file, the <code>root</code> property
         * is the top-most display object in the portion of the display list's tree
@@ -2004,7 +2491,7 @@ declare module away.base {
         * represent counterclockwise rotation. Values outside this range are added
         * to or subtracted from 360 to obtain a value within the range.
         */
-        public rotationX: number;
+        public rotationX : number;
         /**
         * Indicates the y-axis rotation of the DisplayObject instance, in degrees,
         * from its original orientation relative to the 3D parent container. Values
@@ -2012,7 +2499,7 @@ declare module away.base {
         * represent counterclockwise rotation. Values outside this range are added
         * to or subtracted from 360 to obtain a value within the range.
         */
-        public rotationY: number;
+        public rotationY : number;
         /**
         * Indicates the z-axis rotation of the DisplayObject instance, in degrees,
         * from its original orientation relative to the 3D parent container. Values
@@ -2020,7 +2507,7 @@ declare module away.base {
         * represent counterclockwise rotation. Values outside this range are added
         * to or subtracted from 360 to obtain a value within the range.
         */
-        public rotationZ: number;
+        public rotationZ : number;
         /**
         * The current scaling grid that is in effect. If set to <code>null</code>,
         * the entire display object is scaled normally when any scale transformation
@@ -2080,7 +2567,7 @@ declare module away.base {
         * <p>Scaling the local coordinate system changes the <code>x</code> and
         * <code>y</code> property values, which are defined in whole pixels. </p>
         */
-        public scaleX: number;
+        public scaleX : number;
         /**
         * Indicates the vertical scale(percentage) of an object as applied from the
         * registration point of the object. The default registration point is(0,0).
@@ -2089,7 +2576,7 @@ declare module away.base {
         * <p>Scaling the local coordinate system changes the <code>x</code> and
         * <code>y</code> property values, which are defined in whole pixels. </p>
         */
-        public scaleY: number;
+        public scaleY : number;
         /**
         * Indicates the depth scale(percentage) of an object as applied from the
         * registration point of the object. The default registration point is(0,0).
@@ -2099,7 +2586,16 @@ declare module away.base {
         * <code>y</code> and <code>z</code> property values, which are defined in
         * whole pixels. </p>
         */
-        public scaleZ: number;
+        public scaleZ : number;
+        /**
+        *
+        */
+        public scene : away.containers.Scene;
+        /**
+        *
+        */
+        public scenePosition : away.geom.Vector3D;
+        public sceneTransform : away.geom.Matrix3D;
         /**
         * The scroll rectangle bounds of the display object. The display object is
         * cropped to the size defined by the rectangle, and it scrolls within the
@@ -2124,16 +2620,13 @@ declare module away.base {
         */
         public scrollRect: away.geom.Rectangle;
         /**
-        * The Stage of the display object. A Flash runtime application has only one
-        * Stage object. For example, you can create and load multiple display
-        * objects into the display list, and the <code>stage</code> property of each
-        * display object refers to the same Stage object(even if the display object
-        * belongs to a loaded SWF file).
         *
-        * <p>If a display object is not added to the display list, its
-        * <code>stage</code> property is set to <code>null</code>.</p>
         */
-        public stage : away.containers.Stage;
+        public shaderPickingDetails : boolean;
+        /**
+        *
+        */
+        public showBounds : boolean;
         /**
         * An object with properties pertaining to a display object's matrix, color
         * transform, and pixel bounds. The specific properties  -  matrix,
@@ -2172,13 +2665,13 @@ declare module away.base {
         * <p>Note that AIR for TV devices use hardware acceleration, if it is
         * available, for color transforms.</p>
         */
-        public transform: away.geom.Transform;
+        public transform : away.geom.Transform;
         /**
         * Whether or not the display object is visible. Display objects that are not
         * visible are disabled. For example, if <code>visible=false</code> for an
         * InteractiveObject instance, it cannot be clicked.
         */
-        public visible: boolean;
+        public visible : boolean;
         /**
         * Indicates the width of the display object, in pixels. The width is
         * calculated based on the bounds of the content of the display object. When
@@ -2189,7 +2682,11 @@ declare module away.base {
         * content(such as an empty sprite) has a width of 0, even if you try to set
         * <code>width</code> to a different value.</p>
         */
-        public width: number;
+        public width : number;
+        /**
+        *
+        */
+        public worldBounds : away.bounds.BoundingVolumeBase;
         /**
         * Indicates the <i>x</i> coordinate of the DisplayObject instance relative
         * to the local coordinates of the parent DisplayObjectContainer. If the
@@ -2200,7 +2697,7 @@ declare module away.base {
         * rotated 90° counterclockwise. The object's coordinates refer to the
         * registration point position.
         */
-        public x: number;
+        public x : number;
         /**
         * Indicates the <i>y</i> coordinate of the DisplayObject instance relative
         * to the local coordinates of the parent DisplayObjectContainer. If the
@@ -2211,7 +2708,7 @@ declare module away.base {
         * rotated 90° counterclockwise. The object's coordinates refer to the
         * registration point position.
         */
-        public y: number;
+        public y : number;
         /**
         * Indicates the z coordinate position along the z-axis of the DisplayObject
         * instance relative to the 3D parent container. The z property is used for
@@ -2231,7 +2728,31 @@ declare module away.base {
         * <p><code>(x~~cameraFocalLength/cameraRelativeZPosition,
         * y~~cameraFocalLength/cameraRelativeZPosition)</code></p>
         */
-        public z: number;
+        public z : number;
+        /**
+        *
+        */
+        public zOffset : number;
+        /**
+        * Creates a new <code>DisplayObject</code> instance.
+        */
+        constructor();
+        /**
+        *
+        */
+        public addEventListener(type: string, listener: Function): void;
+        /**
+        *
+        */
+        public clone(): DisplayObject;
+        /**
+        *
+        */
+        public dispose(): void;
+        /**
+        * @inheritDoc
+        */
+        public disposeAsset(): void;
         /**
         * Returns a rectangle that defines the area of the display object relative
         * to the coordinate system of the <code>targetCoordinateSpace</code> object.
@@ -2340,6 +2861,10 @@ declare module away.base {
         */
         public hitTestPoint(x: number, y: number, shapeFlag?: boolean): boolean;
         /**
+        * @inheritDoc
+        */
+        public isIntersectingRay(rayPosition: away.geom.Vector3D, rayDirection: away.geom.Vector3D): boolean;
+        /**
         * Converts a three-dimensional point of the three-dimensional display
         * object's(local) coordinates to a two-dimensional point in the Stage
         * (global) coordinates.
@@ -2362,6 +2887,13 @@ declare module away.base {
         *         two-dimensional space.
         */
         public local3DToGlobal(point3d: away.geom.Vector3D): away.geom.Point;
+        /**
+        * Rotates the 3d object around to face a point defined relative to the local coordinates of the parent <code>ObjectContainer3D</code>.
+        *
+        * @param    target        The vector defining the point to be looked at
+        * @param    upAxis        An optional vector used to define the desired up orientation of the 3d object after rotation has occurred
+        */
+        public lookAt(target: away.geom.Vector3D, upAxis?: away.geom.Vector3D): void;
         /**
         * Converts the <code>point</code> object from the display object's(local)
         * coordinates to the Stage(global) coordinates.
@@ -2386,6 +2918,213 @@ declare module away.base {
         * @return A Point object with coordinates relative to the Stage.
         */
         public localToGlobal(point: away.geom.Point): away.geom.Point;
+        /**
+        * Moves the 3d object directly to a point in space
+        *
+        * @param    dx        The amount of movement along the local x axis.
+        * @param    dy        The amount of movement along the local y axis.
+        * @param    dz        The amount of movement along the local z axis.
+        */
+        public moveTo(dx: number, dy: number, dz: number): void;
+        /**
+        * Moves the local point around which the object rotates.
+        *
+        * @param    dx        The amount of movement along the local x axis.
+        * @param    dy        The amount of movement along the local y axis.
+        * @param    dz        The amount of movement along the local z axis.
+        */
+        public movePivot(dx: number, dy: number, dz: number): void;
+        /**
+        * Rotates the 3d object around it's local x-axis
+        *
+        * @param    angle        The amount of rotation in degrees
+        */
+        public pitch(angle: number): void;
+        /**
+        *
+        */
+        public getRenderSceneTransform(camera: away.entities.Camera): away.geom.Matrix3D;
+        /**
+        * Rotates the 3d object around it's local z-axis
+        *
+        * @param    angle        The amount of rotation in degrees
+        */
+        public roll(angle: number): void;
+        /**
+        * Rotates the 3d object around an axis by a defined angle
+        *
+        * @param    axis        The vector defining the axis of rotation
+        * @param    angle        The amount of rotation in degrees
+        */
+        public rotate(axis: away.geom.Vector3D, angle: number): void;
+        /**
+        * Rotates the 3d object directly to a euler angle
+        *
+        * @param    ax        The angle in degrees of the rotation around the x axis.
+        * @param    ay        The angle in degrees of the rotation around the y axis.
+        * @param    az        The angle in degrees of the rotation around the z axis.
+        */
+        public rotateTo(ax: number, ay: number, az: number): void;
+        /**
+        *
+        */
+        public removeEventListener(type: string, listener: Function): void;
+        /**
+        * Moves the 3d object along a vector by a defined length
+        *
+        * @param    axis        The vector defining the axis of movement
+        * @param    distance    The length of the movement
+        */
+        public translate(axis: away.geom.Vector3D, distance: number): void;
+        /**
+        * Moves the 3d object along a vector by a defined length
+        *
+        * @param    axis        The vector defining the axis of movement
+        * @param    distance    The length of the movement
+        */
+        public translateLocal(axis: away.geom.Vector3D, distance: number): void;
+        /**
+        * Rotates the 3d object around it's local y-axis
+        *
+        * @param    angle        The amount of rotation in degrees
+        */
+        public yaw(angle: number): void;
+        /**
+        * @internal
+        */
+        public _iController: away.controllers.ControllerBase;
+        /**
+        * @internal
+        */
+        public _iAssignedPartition : away.partition.Partition;
+        /**
+        * The transformation of the 3d object, relative to the local coordinates of the parent <code>ObjectContainer3D</code>.
+        *
+        * @internal
+        */
+        public _iMatrix3D : away.geom.Matrix3D;
+        /**
+        * @internal
+        */
+        public _iPickingCollisionVO : away.pick.PickingCollisionVO;
+        /**
+        * @internal
+        */
+        public iSetParent(value: away.containers.DisplayObjectContainer): void;
+        /**
+        * @protected
+        */
+        public pCreateDefaultBoundingVolume(): away.bounds.BoundingVolumeBase;
+        /**
+        * @protected
+        */
+        public pCreateEntityPartitionNode(): away.partition.EntityNode;
+        /**
+        * @protected
+        */
+        public pInvalidateBounds(): void;
+        /**
+        * @protected
+        */
+        public pInvalidateSceneTransform(): void;
+        /**
+        * @protected
+        */
+        public pUpdateBounds(): void;
+        /**
+        * @protected
+        */
+        public _pUpdateImplicitMouseEnabled(value: boolean): void;
+        /**
+        * @protected
+        */
+        public _pUpdateImplicitPartition(value: away.partition.Partition): void;
+        /**
+        * @protected
+        */
+        public _pUpdateImplicitVisibility(value: boolean): void;
+        /**
+        * @protected
+        */
+        public _pUpdateMatrix3D(): void;
+        /**
+        * @protected
+        */
+        public pUpdateSceneTransform(): void;
+        /**
+        * @internal
+        */
+        public _iCollidesBefore(shortestCollisionDistance: number, findClosest: boolean): boolean;
+        /**
+        *
+        */
+        public _iInternalUpdate(): void;
+        /**
+        * @internal
+        */
+        public _iIsVisible(): boolean;
+        /**
+        * @internal
+        */
+        public _iIsMouseEnabled(): boolean;
+        /**
+        * @internal
+        */
+        public _iSetScene(value: away.containers.Scene): void;
+        /**
+        * @protected
+        */
+        public _pUpdateScene(value: away.containers.Scene): void;
+        /**
+        * @private
+        */
+        private addBounds();
+        /**
+        * @private
+        */
+        private notifyPositionChanged();
+        /**
+        * @private
+        */
+        private notifyRotationChanged();
+        /**
+        * @private
+        */
+        private notifyScaleChanged();
+        /**
+        * @private
+        */
+        private notifySceneChange();
+        /**
+        * @private
+        */
+        private notifySceneTransformChange();
+        /**
+        * Invalidates the 3D transformation matrix, causing it to be updated upon the next request
+        *
+        * @private
+        */
+        private invalidateMatrix3D();
+        /**
+        * @private
+        */
+        private invalidatePivot();
+        /**
+        * @private
+        */
+        private invalidatePosition();
+        /**
+        * @private
+        */
+        private invalidateRotation();
+        /**
+        * @private
+        */
+        private invalidateScale();
+        /**
+        * @private
+        */
+        private removeBounds();
     }
 }
 /**
@@ -3138,6 +3877,34 @@ declare module away.base {
     }
 }
 /**
+* @module away.base
+*/
+declare module away.base {
+    /**
+    * IMaterialOwner provides an interface for objects that can use materials.
+    *
+    * @interface away.base.IMaterialOwner
+    */
+    interface IMaterialOwner {
+        /**
+        * The animation used by the material to assemble the vertex code.
+        */
+        animator: away.animators.IAnimator;
+        /**
+        * The material with which to render the object.
+        */
+        material: away.materials.IMaterial;
+        /**
+        *
+        */
+        uvTransform: away.geom.UVTransform;
+        /**
+        *
+        */
+        _iSetUVMatrixComponents(offsetU: number, offsetV: number, scaleU: number, scaleV: number, rotationUV: number): any;
+    }
+}
+/**
 * The InterpolationMethod class provides values for the
 * <code>interpolationMethod</code> parameter in the
 * <code>Graphics.beginGradientFill()</code> and
@@ -3672,6 +4439,803 @@ declare module away.base {
         static POSITIVE: string;
     }
 }
+/**
+* @module away.pool
+*/
+declare module away.pool {
+    /**
+    * IRenderable is an interface for classes that are used in the rendering pipeline to render the
+    * contents of a partition
+    *
+    * @class away.render.IRenderable
+    */
+    interface IRenderable {
+        /**
+        *
+        */
+        next: IRenderable;
+        /**
+        *
+        */
+        materialId: number;
+        /**
+        *
+        */
+        renderOrderId: number;
+        /**
+        *
+        */
+        zIndex: number;
+    }
+}
+/**
+* @module away.pool
+*/
+declare module away.pool {
+    /**
+    * @class away.pool.EntityListItem
+    */
+    class EntityListItem {
+        /**
+        *
+        */
+        public entity: away.entities.IEntity;
+        /**
+        *
+        */
+        public next: EntityListItem;
+    }
+}
+/**
+* @module away.pool
+*/
+declare module away.pool {
+    /**
+    * @class away.pool.EntityListItemPool
+    */
+    class EntityListItemPool {
+        private _pool;
+        private _index;
+        private _poolSize;
+        /**
+        *
+        */
+        constructor();
+        /**
+        *
+        */
+        public getItem(): pool.EntityListItem;
+        /**
+        *
+        */
+        public freeAll(): void;
+        public dispose(): void;
+    }
+}
+/**
+* @module away.traverse
+*/
+declare module away.traverse {
+    /**
+    * @class away.traverse.ICollector
+    */
+    interface ICollector {
+        /**
+        *
+        */
+        camera: away.entities.Camera;
+        /**
+        *
+        */
+        renderableSorter: away.sort.IEntitySorter;
+        /**
+        *
+        */
+        scene: away.containers.Scene;
+        /**
+        *
+        */
+        clear(): any;
+        /**
+        *
+        */
+        entityHead: any;
+        /**
+        *
+        * @param node
+        */
+        enterNode(node: away.partition.NodeBase): boolean;
+        /**
+        *
+        * @param entity
+        */
+        applyEntity(entity: away.entities.IEntity): any;
+        /**
+        *
+        */
+        sortRenderables(): any;
+        /**
+        * //TODO
+        *
+        * @param entity
+        * @param shortestCollisionDistance
+        * @param findClosest
+        * @returns {boolean}
+        *
+        * @internal
+        */
+        _iCollidesBefore(entity: away.entities.IEntity, shortestCollisionDistance: number, findClosest: boolean): boolean;
+    }
+}
+/**
+* @module away.traverse
+*/
+declare module away.traverse {
+    /**
+    * @class away.traverse.EntityCollector
+    */
+    class CSSEntityCollector implements traverse.ICollector {
+        private static _billboardRenderablePool;
+        public scene: away.containers.Scene;
+        public _iEntryPoint: away.geom.Vector3D;
+        public _renderableHead: away.render.CSSRenderableBase;
+        private _entityHead;
+        public _pEntityListItemPool: away.pool.EntityListItemPool;
+        public _pNumEntities: number;
+        public _pNumLights: number;
+        public _pNumMouseEnableds: number;
+        public _pCamera: away.entities.Camera;
+        private _numDirectionalLights;
+        private _numPointLights;
+        private _numLightProbes;
+        public _pCameraForward: away.geom.Vector3D;
+        private _customCullPlanes;
+        private _cullPlanes;
+        private _numCullPlanes;
+        /**
+        *
+        */
+        public renderableSorter: away.sort.IEntitySorter;
+        constructor();
+        /**
+        *
+        */
+        public camera : away.entities.Camera;
+        /**
+        *
+        */
+        public cullPlanes : away.geom.Plane3D[];
+        /**
+        *
+        */
+        public numMouseEnableds : number;
+        /**
+        *
+        */
+        public entityHead : away.pool.EntityListItem;
+        public entryPoint : away.geom.Vector3D;
+        /**
+        *
+        */
+        public renderableHead : away.render.CSSRenderableBase;
+        /**
+        *
+        */
+        public clear(): void;
+        /**
+        *
+        */
+        public enterNode(node: away.partition.NodeBase): boolean;
+        public sortRenderables(): void;
+        /**
+        *
+        */
+        public applyEntity(entity: away.entities.IEntity): void;
+        /**
+        * Cleans up any data at the end of a frame.
+        */
+        public cleanUp(): void;
+        /**
+        *
+        * @param billboard
+        * @private
+        */
+        private applyBillboard(billboard);
+        /**
+        *
+        * @param renderable
+        * @private
+        */
+        private applyRenderable(renderable);
+        /**
+        * //TODO
+        *
+        * @param entity
+        * @param shortestCollisionDistance
+        * @param findClosest
+        * @returns {boolean}
+        *
+        * @internal
+        */
+        public _iCollidesBefore(entity: away.entities.IEntity, shortestCollisionDistance: number, findClosest: boolean): boolean;
+    }
+}
+/**
+* @module away.partition
+*/
+declare module away.partition {
+    /**
+    * @class away.partition.NodeBase
+    */
+    class NodeBase {
+        public _iParent: NodeBase;
+        public _pChildNodes: NodeBase[];
+        public _pNumChildNodes: number;
+        public _pDebugPrimitive: away.entities.IEntity;
+        public _iNumEntities: number;
+        public _iCollectionMark: number;
+        /**
+        *
+        */
+        public showDebugBounds : boolean;
+        /**
+        *
+        */
+        public parent : NodeBase;
+        /**
+        *
+        * @protected
+        */
+        public _pNumEntities : number;
+        /**
+        *
+        */
+        constructor();
+        /**
+        *
+        * @param planes
+        * @param numPlanes
+        * @returns {boolean}
+        * @internal
+        */
+        public isInFrustum(planes: away.geom.Plane3D[], numPlanes: number): boolean;
+        /**
+        *
+        * @param rayPosition
+        * @param rayDirection
+        * @returns {boolean}
+        */
+        public isIntersectingRay(rayPosition: away.geom.Vector3D, rayDirection: away.geom.Vector3D): boolean;
+        /**
+        *
+        * @returns {boolean}
+        */
+        public isCastingShadow(): boolean;
+        /**
+        *
+        * @param entity
+        * @returns {away.partition.NodeBase}
+        */
+        public findPartitionForEntity(entity: away.entities.IEntity): NodeBase;
+        /**
+        *
+        * @param traverser
+        */
+        public acceptTraverser(traverser: away.traverse.ICollector): void;
+        /**
+        *
+        * @protected
+        */
+        public pCreateDebugBounds(): away.entities.IEntity;
+        /**
+        *
+        * @param node
+        * @internal
+        */
+        public iAddNode(node: NodeBase): void;
+        /**
+        *
+        * @param node
+        * @internal
+        */
+        public iRemoveNode(node: NodeBase): void;
+    }
+}
+/**
+* @module away.partition
+*/
+declare module away.partition {
+    /**
+    * @class away.partition.NullNode
+    */
+    class NullNode {
+        constructor();
+    }
+}
+/**
+* @module away.partition
+*/
+declare module away.partition {
+    /**
+    * @class away.partition.Partition
+    */
+    class Partition {
+        public _rootNode: partition.NodeBase;
+        private _updatesMade;
+        private _updateQueue;
+        constructor(rootNode: partition.NodeBase);
+        public rootNode : partition.NodeBase;
+        public traverse(traverser: away.traverse.ICollector): void;
+        public iMarkForUpdate(entity: away.entities.IEntity): void;
+        public iRemoveEntity(entity: away.entities.IEntity): void;
+        private updateEntities();
+    }
+}
+/**
+* @module away.partition
+*/
+declare module away.partition {
+    /**
+    * @class away.partition.EntityNode
+    */
+    class EntityNode extends partition.NodeBase {
+        private _entity;
+        public _iUpdateQueueNext: EntityNode;
+        constructor(entity: away.entities.IEntity);
+        public entity : away.entities.IEntity;
+        public removeFromParent(): void;
+        /**
+        *
+        * @returns {boolean}
+        */
+        public isCastingShadow(): boolean;
+        /**
+        *
+        * @param planes
+        * @param numPlanes
+        * @returns {boolean}
+        */
+        public isInFrustum(planes: away.geom.Plane3D[], numPlanes: number): boolean;
+        /**
+        * @inheritDoc
+        */
+        public acceptTraverser(traverser: away.traverse.ICollector): void;
+        /**
+        * @inheritDoc
+        */
+        public isIntersectingRay(rayPosition: away.geom.Vector3D, rayDirection: away.geom.Vector3D): boolean;
+    }
+}
+/**
+* @module away.partition
+*/
+declare module away.partition {
+    /**
+    * @class away.partition.CameraNode
+    */
+    class CameraNode extends partition.EntityNode {
+        constructor(camera: away.entities.IEntity);
+        /**
+        * @inheritDoc
+        */
+        public acceptTraverser(traverser: away.traverse.ICollector): void;
+    }
+}
+/**
+* @module away.pick
+*/
+declare module away.pick {
+    /**
+    * Provides an interface for picking colliders that can be assigned to individual entities in a scene for specific picking behaviour.
+    * Used with the <code>RaycastPicker</code> picking object.
+    *
+    * @see away.entities.Entity#pickingCollider
+    * @see away.pick.RaycastPicker
+    *
+    * @interface away.pick.IPickingCollider
+    */
+    interface IPickingCollider {
+        /**
+        * Sets the position and direction of a picking ray in local coordinates to the entity.
+        *
+        * @param localDirection The position vector in local coordinates
+        * @param localPosition The direction vector in local coordinates
+        */
+        setLocalRay(localPosition: away.geom.Vector3D, localDirection: away.geom.Vector3D): any;
+    }
+}
+/**
+* @module away.pick
+*/
+declare module away.pick {
+    /**
+    * Provides an interface for picking objects that can pick 3d objects from a view or scene.
+    *
+    * @interface away.pick.IPicker
+    */
+    interface IPicker {
+        /**
+        * Gets the collision object from the screen coordinates of the picking ray.
+        *
+        * @param x The x coordinate of the picking ray in screen-space.
+        * @param y The y coordinate of the picking ray in screen-space.
+        * @param view The view on which the picking object acts.
+        */
+        getViewCollision(x: number, y: number, view: away.containers.View): pick.PickingCollisionVO;
+        /**
+        * Gets the collision object from the scene position and direction of the picking ray.
+        *
+        * @param position The position of the picking ray in scene-space.
+        * @param direction The direction of the picking ray in scene-space.
+        * @param scene The scene on which the picking object acts.
+        */
+        getSceneCollision(position: away.geom.Vector3D, direction: away.geom.Vector3D, scene: away.containers.Scene): pick.PickingCollisionVO;
+        /**
+        * Determines whether the picker takes account of the mouseEnabled properties of entities. Defaults to true.
+        */
+        onlyMouseEnabled: boolean;
+        /**
+        * Disposes memory used by the IPicker object
+        */
+        dispose(): any;
+    }
+}
+/**
+* @module away.pick
+*/
+declare module away.pick {
+    /**
+    * Value object for a picking collision returned by a picking collider. Created as unique objects on display objects
+    *
+    * @see away.base.DisplayObject#pickingCollisionVO
+    * @see away.core.pick.IPickingCollider
+    *
+    * @class away.pick.PickingCollisionVO
+    */
+    class PickingCollisionVO {
+        /**
+        * The display object to which this collision object belongs.
+        */
+        public displayObject: away.base.DisplayObject;
+        /**
+        * The local position of the collision on the entity's surface.
+        */
+        public localPosition: away.geom.Vector3D;
+        /**
+        * The local normal vector at the position of the collision.
+        */
+        public localNormal: away.geom.Vector3D;
+        /**
+        * The uv coordinate at the position of the collision.
+        */
+        public uv: away.geom.Point;
+        /**
+        * The index of the face where the event took pl ace.
+        */
+        public index: number;
+        /**
+        * The starting position of the colliding ray in local coordinates.
+        */
+        public localRayPosition: away.geom.Vector3D;
+        /**
+        * The direction of the colliding ray in local coordinates.
+        */
+        public localRayDirection: away.geom.Vector3D;
+        /**
+        * The starting position of the colliding ray in scene coordinates.
+        */
+        public rayPosition: away.geom.Vector3D;
+        /**
+        * The direction of the colliding ray in scene coordinates.
+        */
+        public rayDirection: away.geom.Vector3D;
+        /**
+        * Determines if the ray position is contained within the entity bounds.
+        *
+        * @see away3d.entities.Entity#bounds
+        */
+        public rayOriginIsInsideBounds: boolean;
+        /**
+        * The distance along the ray from the starting position to the calculated intersection entry point with the entity.
+        */
+        public rayEntryDistance: number;
+        /**
+        * The material ownwer associated with a collision.
+        */
+        public materialOwner: away.base.IMaterialOwner;
+        /**
+        * Creates a new <code>PickingCollisionVO</code> object.
+        *
+        * @param entity The entity to which this collision object belongs.
+        */
+        constructor(displayObject: away.base.DisplayObject);
+    }
+}
+/**
+* @module away.render
+*/
+declare module away.render {
+    /**
+    * IRenderer is an interface for classes that are used in the rendering pipeline to render the
+    * contents of a partition
+    *
+    * @class away.render.IRenderer
+    */
+    interface IRenderer extends away.events.IEventDispatcher {
+        x: number;
+        y: number;
+        width: number;
+        height: number;
+        viewPort: away.geom.Rectangle;
+        scissorRect: away.geom.Rectangle;
+        dispose(): any;
+        render(entityCollector: away.traverse.ICollector): any;
+        /**
+        * @internal
+        */
+        _iBackgroundR: number;
+        /**
+        * @internal
+        */
+        _iBackgroundG: number;
+        /**
+        * @internal
+        */
+        _iBackgroundB: number;
+        /**
+        * @internal
+        */
+        _iBackgroundAlpha: number;
+        /**
+        * @internal
+        */
+        _iCreateEntityCollector(): away.traverse.ICollector;
+    }
+}
+/**
+* @module away.data
+*/
+declare module away.render {
+    /**
+    * @class away.pool.RenderableListItem
+    */
+    class CSSRenderableBase implements away.pool.IRenderable {
+        /**
+        *
+        */
+        public next: CSSRenderableBase;
+        /**
+        *
+        */
+        public materialId: number;
+        /**
+        *
+        */
+        public renderOrderId: number;
+        /**
+        *
+        */
+        public zIndex: number;
+        /**
+        *
+        */
+        public cascaded: boolean;
+        /**
+        *
+        */
+        public renderSceneTransform: away.geom.Matrix3D;
+        /**
+        *
+        */
+        public sourceEntity: away.entities.IEntity;
+        /**
+        *
+        */
+        public material: away.materials.CSSMaterialBase;
+        /**
+        *
+        */
+        public animator: away.animators.IAnimator;
+        /**
+        *
+        */
+        public htmlElement: HTMLElement;
+        /**
+        *
+        * @param sourceEntity
+        * @param material
+        * @param animator
+        */
+        constructor(sourceEntity: away.entities.IEntity, material: away.materials.CSSMaterialBase, animator: away.animators.IAnimator);
+    }
+}
+/**
+* @module away.data
+*/
+declare module away.render {
+    /**
+    * @class away.pool.RenderableListItem
+    */
+    class CSSBillboardRenderable extends render.CSSRenderableBase {
+        constructor(sourceEntity: away.entities.IEntity, material: away.materials.CSSMaterialBase, animator: away.animators.IAnimator);
+    }
+}
+/**
+* @module away.render
+*/
+declare module away.render {
+    /**
+    * RendererBase forms an abstract base class for classes that are used in the rendering pipeline to render the
+    * contents of a partition
+    *
+    * @class away.render.RendererBase
+    */
+    class CSSRendererBase extends away.events.EventDispatcher implements render.IRenderer {
+        public _pContext: HTMLDivElement;
+        private _backgroundR;
+        private _backgroundG;
+        private _backgroundB;
+        private _backgroundAlpha;
+        private _viewportDirty;
+        private _scissorDirty;
+        private _pBackBufferInvalid;
+        private _width;
+        private _height;
+        private _localPos;
+        private _globalPos;
+        public _pScissorRect: away.geom.Rectangle;
+        private _viewPort;
+        private _scissorUpdated;
+        private _viewPortUpdated;
+        /**
+        * Creates a new RendererBase object.
+        */
+        constructor(renderToTexture?: boolean, forceSoftware?: boolean, profile?: string);
+        public _iCreateEntityCollector(): away.traverse.ICollector;
+        /**
+        * A viewPort rectangle equivalent of the StageGL size and position.
+        */
+        public viewPort : away.geom.Rectangle;
+        /**
+        * A scissor rectangle equivalent of the view size and position.
+        */
+        public scissorRect : away.geom.Rectangle;
+        /**
+        *
+        */
+        public x : number;
+        /**
+        *
+        */
+        public y : number;
+        /**
+        *
+        */
+        public width : number;
+        /**
+        *
+        */
+        public height : number;
+        /**
+        * The background color's red component, used when clearing.
+        *
+        * @private
+        */
+        public _iBackgroundR : number;
+        /**
+        * The background color's green component, used when clearing.
+        *
+        * @private
+        */
+        public _iBackgroundG : number;
+        /**
+        * The background color's blue component, used when clearing.
+        *
+        * @private
+        */
+        public _iBackgroundB : number;
+        /**
+        * Disposes the resources used by the RendererBase.
+        */
+        public dispose(): void;
+        public render(entityCollector: away.traverse.ICollector): void;
+        /**
+        * Renders the potentially visible geometry to the back buffer or texture.
+        * @param entityCollector The EntityCollector object containing the potentially visible geometry.
+        * @param scissorRect
+        */
+        public _iRender(entityCollector: away.traverse.CSSEntityCollector, scissorRect?: away.geom.Rectangle): void;
+        /**
+        * Renders the potentially visible geometry to the back buffer or texture. Only executed if everything is set up.
+        * @param entityCollector The EntityCollector object containing the potentially visible geometry.
+        * @param scissorRect
+        */
+        public pExecuteRender(entityCollector: away.traverse.CSSEntityCollector, scissorRect?: away.geom.Rectangle): void;
+        /**
+        * Updates the backbuffer properties.
+        */
+        public pUpdateBackBuffer(): void;
+        /**
+        * Performs the actual drawing of dom objects to the target.
+        *
+        * @param entityCollector The EntityCollector object containing the potentially visible dom objects.
+        */
+        public pDraw(entityCollector: away.traverse.CSSEntityCollector): void;
+        public _iBackgroundAlpha : number;
+        /**
+        * @private
+        */
+        private notifyScissorUpdate();
+        /**
+        * @private
+        */
+        private notifyViewportUpdate();
+        /**
+        *
+        */
+        private updateGlobalPos();
+    }
+}
+/**
+* @module away.render
+*/
+declare module away.render {
+    /**
+    * The DefaultRenderer class provides the default rendering method. It renders the scene graph objects using the
+    * materials assigned to them.
+    *
+    * @class away.render.DefaultRenderer
+    */
+    class CSSDefaultRenderer extends render.CSSRendererBase {
+        private _activeMaterial;
+        private _skyboxProjection;
+        private _transform;
+        /**
+        * Creates a new CSSDefaultRenderer object.
+        */
+        constructor();
+        /**
+        * @inheritDoc
+        */
+        public pDraw(entityCollector: away.traverse.CSSEntityCollector): void;
+        /**
+        * Draw the skybox if present.
+        * @param entityCollector The EntityCollector containing all potentially visible information.
+        */
+        private drawSkyBox(entityCollector);
+        /**
+        * Draw a list of renderables.
+        * @param renderables The renderables to draw.
+        * @param entityCollector The EntityCollector containing all potentially visible information.
+        */
+        private drawRenderables(item, entityCollector);
+        public dispose(): void;
+    }
+}
+/**
+* @module away.sort
+*/
+declare module away.sort {
+    /**
+    * @interface away.sort.IEntitySorter
+    */
+    interface IEntitySorter {
+        sortBlendedRenderables(head: away.pool.IRenderable): away.pool.IRenderable;
+        sortOpaqueRenderables(head: away.pool.IRenderable): away.pool.IRenderable;
+    }
+}
+/**
+* @module away.sort
+*/
+declare module away.sort {
+    /**
+    * @class away.sort.RenderableMergeSort
+    */
+    class RenderableMergeSort implements sort.IEntitySorter {
+        public sortBlendedRenderables(head: away.pool.IRenderable): away.pool.IRenderable;
+        public sortOpaqueRenderables(head: away.pool.IRenderable): away.pool.IRenderable;
+    }
+}
 declare module away.gl {
     class ContextGLClearMask {
         static COLOR: number;
@@ -3923,6 +5487,368 @@ declare module away.gl {
         public setProgramConstantsFromMatrix(programType: string, firstRegister: number, matrix: away.geom.Matrix3D, transposedMatrix?: boolean): void;
         public drawTriangles(indexBuffer: gl.IndexBuffer, firstIndex?: number, numTriangles?: number): void;
         public setCulling(triangleFaceToCull: string): void;
+    }
+}
+/**
+* A Box object is an area defined by its position, as indicated by its
+* top-left-front corner point(<i>x</i>, <i>y</i>, <i>z</i>) and by its width,
+* height and depth.
+*
+*
+* <p>The <code>x</code>, <code>y</code>, <code>z</code>, <code>width</code>,
+* <code>height</code> <code>depth</code> properties of the Box class are
+* independent of each other; changing the value of one property has no effect
+* on the others. However, the <code>right</code>, <code>bottom</code> and
+* <code>back</code> properties are integrally related to those six
+* properties. For example, if you change the value of the <code>right</code>
+* property, the value of the <code>width</code> property changes; if you
+* change the <code>bottom</code> property, the value of the
+* <code>height</code> property changes. </p>
+*
+* <p>The following methods and properties use Box objects:</p>
+*
+* <ul>
+*   <li>The <code>bounds</code> property of the DisplayObject class</li>
+* </ul>
+*
+* <p>You can use the <code>new Box()</code> constructor to create a
+* Box object.</p>
+*
+* <p><b>Note:</b> The Box class does not define a cubic Shape
+* display object.
+*/
+declare module away.geom {
+    class Box {
+        private _depth;
+        private _height;
+        private _size;
+        private _bottomRightBack;
+        private _topLeftFront;
+        private _width;
+        /**
+        * The height of the box, in pixels. Changing the <code>height</code> value
+        * of a Box object has no effect on the <code>x</code>, <code>y</code>,
+        * <code>z</code>, <code>depth</code> and <code>width</code> properties.
+        */
+        public height: number;
+        /**
+        * The width of the box, in pixels. Changing the <code>width</code> value
+        * of a Box object has no effect on the <code>x</code>, <code>y</code>,
+        * <code>z</code>, <code>depth</code> and <code>height</code> properties.
+        */
+        public width: number;
+        /**
+        * The deoth of the box, in pixels. Changing the <code>depth</code> value
+        * of a Box object has no effect on the <code>x</code>, <code>y</code>,
+        * <code>z</code>, <code>width</code> and <code>height</code> properties.
+        */
+        public depth: number;
+        /**
+        * The <i>x</i> coordinate of the top-left-front corner of the box.
+        * Changing the value of the <code>x</code> property of a Box object has no
+        * effect on the <code>y</code>, <code>z</code>, <code>width</code>,
+        * <code>height</code> and <code>depth</code> properties.
+        *
+        * <p>The value of the <code>x</code> property is equal to the value of the
+        * <code>left</code> property.</p>
+        */
+        public x: number;
+        /**
+        * The <i>y</i> coordinate of the top-left-front corner of the box.
+        * Changing the value of the <code>y</code> property of a Box object has no
+        * effect on the <code>x</code>, <code>z</code>, <code>width</code>,
+        * <code>height</code> and <code>depth</code> properties.
+        *
+        * <p>The value of the <code>y</code> property is equal to the value of the
+        * <code>top</code> property.</p>
+        */
+        public y: number;
+        /**
+        * The <i>y</i> coordinate of the top-left-front corner of the box.
+        * Changing the value of the <code>z</code> property of a Box object has no
+        * effect on the <code>x</code>, <code>y</code>, <code>width</code>,
+        * <code>height</code> and <code>depth</code> properties.
+        *
+        * <p>The value of the <code>z</code> property is equal to the value of the
+        * <code>front</code> property.</p>
+        */
+        public z: number;
+        /**
+        * The sum of the <code>z</code> and <code>height</code> properties.
+        */
+        public back : number;
+        /**
+        * The sum of the <code>y</code> and <code>height</code> properties.
+        */
+        public bottom : number;
+        /**
+        * The location of the Box object's bottom-right corner, determined by the
+        * values of the <code>right</code> and <code>bottom</code> properties.
+        */
+        public bottomRightBack : geom.Vector3D;
+        /**
+        * The <i>z</i> coordinate of the top-left-front corner of the box. Changing
+        * the <code>front</code> property of a Box object has no effect on the
+        * <code>x</code>, <code>y</code>, <code>width</code> and <code>height</code>
+        * properties. However it does affect the <code>depth</code> property,
+        * whereas changing the <code>z</code> value does <i>not</i> affect the
+        * <code>depth</code> property.
+        *
+        * <p>The value of the <code>left</code> property is equal to the value of
+        * the <code>x</code> property.</p>
+        */
+        public front : number;
+        /**
+        * The <i>x</i> coordinate of the top-left corner of the box. Changing the
+        * <code>left</code> property of a Box object has no effect on the
+        * <code>y</code> and <code>height</code> properties. However it does affect
+        * the <code>width</code> property, whereas changing the <code>x</code> value
+        * does <i>not</i> affect the <code>width</code> property.
+        *
+        * <p>The value of the <code>left</code> property is equal to the value of
+        * the <code>x</code> property.</p>
+        */
+        public left : number;
+        /**
+        * The sum of the <code>x</code> and <code>width</code> properties.
+        */
+        public right : number;
+        /**
+        * The size of the Box object, expressed as a Vector3D object with the
+        * values of the <code>width</code>, <code>height</code> and
+        * <code>depth</code> properties.
+        */
+        public size : geom.Vector3D;
+        /**
+        * The <i>y</i> coordinate of the top-left-front corner of the box. Changing
+        * the <code>top</code> property of a Box object has no effect on the
+        * <code>x</code> and <code>width</code> properties. However it does affect
+        * the <code>height</code> property, whereas changing the <code>y</code>
+        * value does <i>not</i> affect the <code>height</code> property.
+        *
+        * <p>The value of the <code>top</code> property is equal to the value of the
+        * <code>y</code> property.</p>
+        */
+        public top : number;
+        /**
+        * The location of the Box object's top-left-front corner, determined by the
+        * <i>x</i>, <i>y</i> and <i>z</i> coordinates of the point.
+        */
+        public topLeftFront : geom.Vector3D;
+        /**
+        * Creates a new Box object with the top-left-front corner specified by the
+        * <code>x</code>, <code>y</code> and <code>z</code> parameters and with the
+        * specified <code>width</code>, <code>height</code> and <code>depth</code>
+        * parameters. If you call this public without parameters, a box with
+        * <code>x</code>, <code>y</code>, <code>z</code>, <code>width</code>,
+        * <code>height</code> and <code>depth</code> properties set to 0 is created.
+        *
+        * @param x      The <i>x</i> coordinate of the top-left-front corner of the
+        *               box.
+        * @param y      The <i>y</i> coordinate of the top-left-front corner of the
+        *               box.
+        * @param z      The <i>z</i> coordinate of the top-left-front corner of the
+        *               box.
+        * @param width  The width of the box, in pixels.
+        * @param height The height of the box, in pixels.
+        * @param depth The depth of the box, in pixels.
+        */
+        constructor(x?: number, y?: number, z?: number, width?: number, height?: number, depth?: number);
+        /**
+        * Returns a new Box object with the same values for the <code>x</code>,
+        * <code>y</code>, <code>z</code>, <code>width</code>, <code>height</code>
+        * and <code>depth</code> properties as the original Box object.
+        *
+        * @return A new Box object with the same values for the <code>x</code>,
+        *         <code>y</code>, <code>z</code>, <code>width</code>,
+        *         <code>height</code> and <code>depth</code> properties as the
+        *         original Box object.
+        */
+        public clone(): Box;
+        /**
+        * Determines whether the specified position is contained within the cubic
+        * region defined by this Box object.
+        *
+        * @param x The <i>x</i> coordinate(horizontal component) of the position.
+        * @param y The <i>y</i> coordinate(vertical component) of the position.
+        * @param z The <i>z</i> coordinate(longitudinal component) of the position.
+        * @return A value of <code>true</code> if the Box object contains the
+        *         specified position; otherwise <code>false</code>.
+        */
+        public contains(x: number, y: number, z: number): boolean;
+        /**
+        * Determines whether the specified position is contained within the cubic
+        * region defined by this Box object. This method is similar to the
+        * <code>Box.contains()</code> method, except that it takes a Vector3D
+        * object as a parameter.
+        *
+        * @param position The position, as represented by its <i>x</i>, <i>y</i> and
+        *                 <i>z</i> coordinates.
+        * @return A value of <code>true</code> if the Box object contains the
+        *         specified position; otherwise <code>false</code>.
+        */
+        public containsPoint(position: geom.Vector3D): boolean;
+        /**
+        * Determines whether the Box object specified by the <code>box</code>
+        * parameter is contained within this Box object. A Box object is said to
+        * contain another if the second Box object falls entirely within the
+        * boundaries of the first.
+        *
+        * @param box The Box object being checked.
+        * @return A value of <code>true</code> if the Box object that you specify
+        *         is contained by this Box object; otherwise <code>false</code>.
+        */
+        public containsRect(box: Box): boolean;
+        /**
+        * Copies all of box data from the source Box object into the calling
+        * Box object.
+        *
+        * @param sourceBox The Box object from which to copy the data.
+        */
+        public copyFrom(sourceBox: Box): void;
+        /**
+        * Determines whether the object specified in the <code>toCompare</code>
+        * parameter is equal to this Box object. This method compares the
+        * <code>x</code>, <code>y</code>, <code>z</code>, <code>width</code>,
+        * <code>height</code> and <code>depth</code> properties of an object against
+        * the same properties of this Box object.
+        *
+        * @param toCompare The box to compare to this Box object.
+        * @return A value of <code>true</code> if the object has exactly the same
+        *         values for the <code>x</code>, <code>y</code>, <code>z</code>,
+        *         <code>width</code>, <code>height</code> and <code>depth</code>
+        *         properties as this Box object; otherwise <code>false</code>.
+        */
+        public equals(toCompare: Box): boolean;
+        /**
+        * Increases the size of the Box object by the specified amounts, in
+        * pixels. The center point of the Box object stays the same, and its
+        * size increases to the left and right by the <code>dx</code> value, to
+        * the top and the bottom by the <code>dy</code> value, and to
+        * the front and the back by the <code>dz</code> value.
+        *
+        * @param dx The value to be added to the left and the right of the Box
+        *           object. The following equation is used to calculate the new
+        *           width and position of the box:
+        * @param dy The value to be added to the top and the bottom of the Box
+        *           object. The following equation is used to calculate the new
+        *           height and position of the box:
+        * @param dz The value to be added to the front and the back of the Box
+        *           object. The following equation is used to calculate the new
+        *           depth and position of the box:
+        */
+        public inflate(dx: number, dy: number, dz: number): void;
+        /**
+        * Increases the size of the Box object. This method is similar to the
+        * <code>Box.inflate()</code> method except it takes a Vector3D object as
+        * a parameter.
+        *
+        * <p>The following two code examples give the same result:</p>
+        *
+        * @param delta The <code>x</code> property of this Vector3D object is used to
+        *              increase the horizontal dimension of the Box object.
+        *              The <code>y</code> property is used to increase the vertical
+        *              dimension of the Box object.
+        *              The <code>z</code> property is used to increase the
+        *              longitudinal dimension of the Box object.
+        */
+        public inflatePoint(delta: geom.Vector3D): void;
+        /**
+        * If the Box object specified in the <code>toIntersect</code> parameter
+        * intersects with this Box object, returns the area of intersection
+        * as a Box object. If the boxes do not intersect, this method returns an
+        * empty Box object with its properties set to 0.
+        *
+        * @param toIntersect The Box object to compare against to see if it
+        *                    intersects with this Box object.
+        * @return A Box object that equals the area of intersection. If the
+        *         boxes do not intersect, this method returns an empty Box
+        *         object; that is, a box with its <code>x</code>, <code>y</code>,
+        *         <code>z</code>, <code>width</code>,  <code>height</code>, and
+        *         <code>depth</code> properties set to 0.
+        */
+        public intersection(toIntersect: Box): Box;
+        /**
+        * Determines whether the object specified in the <code>toIntersect</code>
+        * parameter intersects with this Box object. This method checks the
+        * <code>x</code>, <code>y</code>, <code>z</code>, <code>width</code>,
+        * <code>height</code>, and <code>depth</code> properties of the specified
+        * Box object to see if it intersects with this Box object.
+        *
+        * @param toIntersect The Box object to compare against this Box object.
+        * @return A value of <code>true</code> if the specified object intersects
+        *         with this Box object; otherwise <code>false</code>.
+        */
+        public intersects(toIntersect: Box): boolean;
+        /**
+        * Determines whether or not this Box object is empty.
+        *
+        * @return A value of <code>true</code> if the Box object's width, height or
+        *         depth is less than or equal to 0; otherwise <code>false</code>.
+        */
+        public isEmpty(): boolean;
+        /**
+        * Adjusts the location of the Box object, as determined by its
+        * top-left-front corner, by the specified amounts.
+        *
+        * @param dx Moves the <i>x</i> value of the Box object by this amount.
+        * @param dy Moves the <i>y</i> value of the Box object by this amount.
+        * @param dz Moves the <i>z</i> value of the Box object by this amount.
+        */
+        public offset(dx: number, dy: number, dz: number): void;
+        /**
+        * Adjusts the location of the Box object using a Vector3D object as a
+        * parameter. This method is similar to the <code>Box.offset()</code>
+        * method, except that it takes a Vector3D object as a parameter.
+        *
+        * @param position A Vector3D object to use to offset this Box object.
+        */
+        public offsetPosition(position: geom.Vector3D): void;
+        /**
+        * Sets all of the Box object's properties to 0. A Box object is empty if its
+        * width, height or depth is less than or equal to 0.
+        *
+        * <p> This method sets the values of the <code>x</code>, <code>y</code>,
+        * <code>z</code>, <code>width</code>, <code>height</code>, and
+        * <code>depth</code> properties to 0.</p>
+        *
+        */
+        public setEmpty(): void;
+        /**
+        * Sets the members of Box to the specified values
+        *
+        * @param xa      The <i>x</i> coordinate of the top-left-front corner of the
+        *                box.
+        * @param ya      The <i>y</i> coordinate of the top-left-front corner of the
+        *                box.
+        * @param yz      The <i>z</i> coordinate of the top-left-front corner of the
+        *                box.
+        * @param widtha  The width of the box, in pixels.
+        * @param heighta The height of the box, in pixels.
+        * @param deptha  The depth of the box, in pixels.
+        */
+        public setTo(xa: number, ya: number, za: number, widtha: number, heighta: number, deptha: number): void;
+        /**
+        * Builds and returns a string that lists the horizontal, vertical and
+        * longitudinal positions and the width, height and depth of the Box object.
+        *
+        * @return A string listing the value of each of the following properties of
+        *         the Box object: <code>x</code>, <code>y</code>, <code>z</code>,
+        *         <code>width</code>, <code>height</code>, and <code>depth</code>.
+        */
+        public toString(): string;
+        /**
+        * Adds two boxes together to create a new Box object, by filling
+        * in the horizontal, vertical and longitudinal space between the two boxes.
+        *
+        * <p><b>Note:</b> The <code>union()</code> method ignores boxes with
+        * <code>0</code> as the height, width or depth value, such as: <code>var
+        * box2:Box = new Box(300,300,300,50,50,0);</code></p>
+        *
+        * @param toUnion A Box object to add to this Box object.
+        * @return A new Box object that is the union of the two boxes.
+        */
+        public union(toUnion: Box): Box;
     }
 }
 /**
@@ -4195,9 +6121,9 @@ declare module away.geom {
         * source matrixes, first copy the source matrix by using the
         * <code>clone()</code> method, as shown in the Class Examples section.</p>
         *
-        * @param m The matrix to be concatenated to the source matrix.
+        * @param matrix The matrix to be concatenated to the source matrix.
         */
-        public concat(m: Matrix): void;
+        public concat(matrix: Matrix): void;
         /**
         * Copies a Vector3D object into specific column of the calling Matrix3D
         * object.
@@ -4320,17 +6246,17 @@ declare module away.geom {
         * Performs the opposite transformation of the original matrix. You can apply
         * an inverted matrix to an object to undo the transformation performed when
         * applying the original matrix.
-        *
         */
         public invert(): void;
         /**
         * Returns a new Matrix object that is a clone of this matrix, with an exact
         * copy of the contained object.
+        *
         * @param matrix The matrix for which you want to get the result of the matrix
-        *              transformation.
+        *               transformation.
         * @return A Matrix object.
         */
-        public multiply(m: Matrix): Matrix;
+        public multiply(matrix: Matrix): Matrix;
         /**
         * Applies a rotation transformation to the Matrix object.
         *
@@ -4355,7 +6281,7 @@ declare module away.geom {
         * @param sx A multiplier used to scale the object along the <i>x</i> axis.
         * @param sy A multiplier used to scale the object along the <i>y</i> axis.
         */
-        public scale(x: number, y: number): void;
+        public scale(sx: number, sy: number): void;
         /**
         * Sets the members of Matrix to the specified values.
         *
@@ -4398,7 +6324,7 @@ declare module away.geom {
         *           pixels.
         * @param dy The amount of movement down along the <i>y</i> axis, in pixels.
         */
-        public translate(x: number, y: number): void;
+        public translate(dx: number, dy: number): void;
     }
 }
 declare module away.geom {
@@ -4610,7 +6536,7 @@ declare module away.geom {
         * for a small angle, a display object moving down the z axis appears
         * to stay near the same size and moves little.</p>
         *
-        * <p>A value close to 180 degrees results in a fisheye lens effect:
+        * <p>A value close to 180 degrees results in a fisheye projection effect:
         * positions with a z value smaller than 0 are magnified, while
         * positions with a z value larger than 0 are minimized. With a large
         * angle, a display object moving down the z axis appears to change
@@ -5195,6 +7121,11 @@ declare module away.geom {
         private _concatenatedColorTransform;
         private _concatenatedMatrix;
         private _pixelBounds;
+        public _position: geom.Vector3D;
+        /**
+        *
+        */
+        public backVector : geom.Vector3D;
         /**
         * A ColorTransform object containing values that universally adjust the
         * colors in the display object.
@@ -5223,6 +7154,18 @@ declare module away.geom {
         */
         public concatenatedMatrix : geom.Matrix;
         /**
+        *
+        */
+        public downVector : geom.Vector3D;
+        /**
+        *
+        */
+        public forwardVector : geom.Vector3D;
+        /**
+        *
+        */
+        public leftVector : geom.Vector3D;
+        /**
         * A Matrix object containing values that alter the scaling, rotation, and
         * translation of the display object.
         *
@@ -5247,7 +7190,7 @@ declare module away.geom {
         * value(not <code>null</code>), the <code>matrix</code> property is
         * <code>null</code>.</p>
         */
-        public matrix3D: geom.Matrix3D;
+        public matrix3D : geom.Matrix3D;
         /**
         * Provides access to the PerspectiveProjection object of a three-dimensional
         * display object. The PerspectiveProjection object can be used to modify the
@@ -5263,6 +7206,26 @@ declare module away.geom {
         * object on the stage.
         */
         public pixelBounds : geom.Rectangle;
+        /**
+        * Defines the position of the 3d object, relative to the local coordinates of the parent <code>ObjectContainer3D</code>.
+        */
+        public position : geom.Vector3D;
+        /**
+        *
+        */
+        public rightVector : geom.Vector3D;
+        /**
+        * Defines the rotation of the 3d object, relative to the local coordinates of the parent <code>ObjectContainer3D</code>.
+        */
+        public rotation : geom.Vector3D;
+        /**
+        * Defines the scale of the 3d object, relative to the local coordinates of the parent <code>ObjectContainer3D</code>.
+        */
+        public scale : geom.Vector3D;
+        /**
+        *
+        */
+        public upVector : geom.Vector3D;
         constructor(displayObject: away.base.DisplayObject);
         /**
         * Returns a Matrix3D object, which can transform the space of a specified
@@ -5283,6 +7246,83 @@ declare module away.geom {
         *         object space.
         */
         public getRelativeMatrix3D(relativeTo: away.base.DisplayObject): geom.Matrix3D;
+        /**
+        * Moves the 3d object forwards along it's local z axis
+        *
+        * @param    distance    The length of the movement
+        */
+        public moveForward(distance: number): void;
+        /**
+        * Moves the 3d object backwards along it's local z axis
+        *
+        * @param    distance    The length of the movement
+        */
+        public moveBackward(distance: number): void;
+        /**
+        * Moves the 3d object backwards along it's local x axis
+        *
+        * @param    distance    The length of the movement
+        */
+        public moveLeft(distance: number): void;
+        /**
+        * Moves the 3d object forwards along it's local x axis
+        *
+        * @param    distance    The length of the movement
+        */
+        public moveRight(distance: number): void;
+        /**
+        * Moves the 3d object forwards along it's local y axis
+        *
+        * @param    distance    The length of the movement
+        */
+        public moveUp(distance: number): void;
+        /**
+        * Moves the 3d object backwards along it's local y axis
+        *
+        * @param    distance    The length of the movement
+        */
+        public moveDown(distance: number): void;
+    }
+}
+declare module away.geom {
+    class UVTransform {
+        private _materialOwner;
+        private _uvMatrix;
+        private _uvMatrixDirty;
+        private _rotationUV;
+        private _scaleU;
+        private _scaleV;
+        private _offsetU;
+        private _offsetV;
+        /**
+        *
+        */
+        public offsetU : number;
+        /**
+        *
+        */
+        public offsetV : number;
+        /**
+        *
+        */
+        public rotationUV : number;
+        /**
+        *
+        */
+        public scaleU : number;
+        /**
+        *
+        */
+        public scaleV : number;
+        /**
+        *
+        */
+        public matrix : geom.Matrix;
+        constructor(materialOwner: away.base.IMaterialOwner);
+        /**
+        * @private
+        */
+        private updateUVMatrix();
     }
 }
 /**
@@ -7710,10 +9750,14 @@ declare module away.ui {
 * <i>ActionScript 3.0 Developer's Guide</i>.</p>
 */
 declare module away.containers {
-    class DisplayObjectContainer extends away.base.DisplayObject {
-        private _numChildren;
-        private _indexedChildren;
-        private _namedChildren;
+    class DisplayObjectContainer extends away.base.DisplayObject implements away.library.IAsset {
+        private _mouseChildren;
+        private _children;
+        public _iIsRoot: boolean;
+        /**
+        *
+        */
+        public assetType : string;
         /**
         * Determines whether or not the children of the object are mouse, or user
         * input device, enabled. If an object is enabled, a user can interact with
@@ -7735,7 +9779,7 @@ declare module away.containers {
         * <code>addEventListener()</code> method to create interactive
         * functionality.</p>
         */
-        public mouseChildren: boolean;
+        public mouseChildren : boolean;
         /**
         * Returns the number of children of this object.
         */
@@ -7826,6 +9870,11 @@ declare module away.containers {
         *              list.
         */
         public addChildAt(child: away.base.DisplayObject, index: number): away.base.DisplayObject;
+        public addChildren(...childarray: away.base.DisplayObject[]): void;
+        /**
+        *
+        */
+        public clone(): away.base.DisplayObject;
         /**
         * Determines whether the specified display object is a child of the
         * DisplayObjectContainer instance or the instance itself. The search
@@ -7840,6 +9889,10 @@ declare module away.containers {
         */
         public contains(child: away.base.DisplayObject): boolean;
         /**
+        *
+        */
+        public disposeWithChildren(): void;
+        /**
         * Returns the child display object instance that exists at the specified
         * index.
         *
@@ -7847,10 +9900,6 @@ declare module away.containers {
         * @return The child display object at the specified index position.
         * @throws RangeError    Throws if the index does not exist in the child
         *                       list.
-        * @throws SecurityError This child display object belongs to a sandbox to
-        *                       which you do not have access. You can avoid this
-        *                       situation by having the child movie call
-        *                       <code>Security.allowDomain()</code>.
         */
         public getChildAt(index: number): away.base.DisplayObject;
         /**
@@ -7866,10 +9915,6 @@ declare module away.containers {
         *
         * @param name The name of the child to return.
         * @return The child display object with the specified name.
-        * @throws SecurityError This child display object belongs to a sandbox to
-        *                       which you do not have access. You can avoid this
-        *                       situation by having the child movie call the
-        *                       <code>Security.allowDomain()</code> method.
         */
         public getChildByName(name: string): away.base.DisplayObject;
         /**
@@ -8011,487 +10056,191 @@ declare module away.containers {
         * @throws RangeError If either index does not exist in the child list.
         */
         public swapChildrenAt(index1: number, index2: number): void;
+        /**
+        * @protected
+        */
+        public pInvalidateSceneTransform(): void;
+        /**
+        * @protected
+        */
+        public _pUpdateScene(value: containers.Scene): void;
+        /**
+        * @protected
+        */
+        public _pUpdateImplicitMouseEnabled(value: boolean): void;
+        /**
+        * @protected
+        */
+        public _pUpdateImplicitVisibility(value: boolean): void;
+        /**
+        * @protected
+        */
+        public _pUpdateImplicitPartition(value: away.partition.Partition): void;
+        /**
+        * @private
+        *
+        * @param child
+        */
+        private removeChildInternal(child);
+    }
+}
+declare module away.entities {
+    interface IEntity extends away.library.IAsset {
+        x: number;
+        y: number;
+        z: number;
+        rotationX: number;
+        rotationY: number;
+        rotationZ: number;
+        scaleX: number;
+        scaleY: number;
+        scaleZ: number;
+        /**
+        *
+        */
+        bounds: away.bounds.BoundingVolumeBase;
+        /**
+        *
+        */
+        castsShadows: boolean;
+        /**
+        *
+        */
+        inverseSceneTransform: away.geom.Matrix3D;
+        /**
+        *
+        */
+        partitionNode: away.partition.EntityNode;
+        /**
+        *
+        */
+        pickingCollider: away.pick.IPickingCollider;
+        /**
+        *
+        */
+        transform: away.geom.Transform;
+        /**
+        *
+        */
+        scene: away.containers.Scene;
+        /**
+        *
+        */
+        scenePosition: away.geom.Vector3D;
+        /**
+        *
+        */
+        sceneTransform: away.geom.Matrix3D;
+        /**
+        *
+        */
+        worldBounds: away.bounds.BoundingVolumeBase;
+        /**
+        *
+        */
+        zOffset: number;
+        /**
+        *
+        */
+        isIntersectingRay(rayPosition: away.geom.Vector3D, rayDirection: away.geom.Vector3D): boolean;
+        /**
+        *
+        *
+        * @param target
+        * @param upAxis
+        */
+        lookAt(target: away.geom.Vector3D, upAxis?: away.geom.Vector3D): any;
+        /**
+        * @internal
+        */
+        _iPickingCollisionVO: away.pick.PickingCollisionVO;
+        /**
+        * @internal
+        */
+        _iController: away.controllers.ControllerBase;
+        /**
+        * @internal
+        */
+        _iAssignedPartition: away.partition.Partition;
+        /**
+        * @internal
+        */
+        _iCollidesBefore(shortestCollisionDistance: number, findClosest: boolean): boolean;
+        /**
+        * @internal
+        */
+        _iIsMouseEnabled(): boolean;
+        /**
+        * @internal
+        */
+        _iIsVisible(): boolean;
+        _iInternalUpdate(): any;
+        /**
+        * The transformation matrix that transforms from model to world space, adapted with any special operations needed to render.
+        * For example, assuring certain alignedness which is not inherent in the scene transform. By default, this would
+        * return the scene transform.
+        */
+        getRenderSceneTransform(camera: entities.Camera): away.geom.Matrix3D;
     }
 }
 /**
-* The Loader class is used to load SWF files or image(JPG, PNG, or GIF)
-* files. Use the <code>load()</code> method to initiate loading. The loaded
-* display object is added as a child of the Loader object.
-*
-* <p>Use the URLLoader class to load text or binary data.</p>
-*
-* <p>The Loader class overrides the following methods that it inherits,
-* because a Loader object can only have one child display object - the
-* display object that it loads. Calling the following methods throws an
-* exception: <code>addChild()</code>, <code>addChildAt()</code>,
-* <code>removeChild()</code>, <code>removeChildAt()</code>, and
-* <code>setChildIndex()</code>. To remove a loaded display object, you must
-* remove the <i>Loader</i> object from its parent DisplayObjectContainer
-* child array. </p>
-*
-* <p><b>Note:</b> The ActionScript 2.0 MovieClipLoader and LoadVars classes
-* are not used in ActionScript 3.0. The Loader and URLLoader classes replace
-* them.</p>
-*
-* <p>When you use the Loader class, consider the Flash Player and Adobe AIR
-* security model: </p>
-*
-* <ul>
-*   <li>You can load content from any accessible source. </li>
-*   <li>Loading is not allowed if the calling SWF file is in a network
-* sandbox and the file to be loaded is local. </li>
-*   <li>If the loaded content is a SWF file written with ActionScript 3.0, it
-* cannot be cross-scripted by a SWF file in another security sandbox unless
-* that cross-scripting arrangement was approved through a call to the
-* <code>System.allowDomain()</code> or the
-* <code>System.allowInsecureDomain()</code> method in the loaded content
-* file.</li>
-*   <li>If the loaded content is an AVM1 SWF file(written using ActionScript
-* 1.0 or 2.0), it cannot be cross-scripted by an AVM2 SWF file(written using
-* ActionScript 3.0). However, you can communicate between the two SWF files
-* by using the LocalConnection class.</li>
-*   <li>If the loaded content is an image, its data cannot be accessed by a
-* SWF file outside of the security sandbox, unless the domain of that SWF
-* file was included in a URL policy file at the origin domain of the
-* image.</li>
-*   <li>Movie clips in the local-with-file-system sandbox cannot script movie
-* clips in the local-with-networking sandbox, and the reverse is also
-* prevented. </li>
-*   <li>You cannot connect to commonly reserved ports. For a complete list of
-* blocked ports, see "Restricting Networking APIs" in the <i>ActionScript 3.0
-* Developer's Guide</i>. </li>
-* </ul>
-*
-* <p>However, in AIR, content in the <code>application</code> security
-* sandbox(content installed with the AIR application) are not restricted by
-* these security limitations.</p>
-*
-* <p>For more information related to security, see the Flash Player Developer
-* Center Topic: <a href="http://www.adobe.com/go/devnet_security_en"
-* scope="external">Security</a>.</p>
-*
-* <p>When loading a SWF file from an untrusted source(such as a domain other
-* than that of the Loader object's root SWF file), you may want to define a
-* mask for the Loader object, to prevent the loaded content(which is a child
-* of the Loader object) from drawing to portions of the Stage outside of that
-* mask, as shown in the following code:</p>
-*/
-declare module away.containers {
-    class Loader extends containers.DisplayObjectContainer {
-        private _content;
-        private _contentLoaderInfo;
-        /**
-        * Contains the root display object of the SWF file or image(JPG, PNG, or
-        * GIF) file that was loaded by using the <code>load()</code> or
-        * <code>loadBytes()</code> methods.
-        *
-        * @throws SecurityError The loaded SWF file or image file belongs to a
-        *                       security sandbox to which you do not have access.
-        *                       For a loaded SWF file, you can avoid this situation
-        *                       by having the file call the
-        *                       <code>Security.allowDomain()</code> method or by
-        *                       having the loading file specify a
-        *                       <code>loaderContext</code> parameter with its
-        *                       <code>securityDomain</code> property set to
-        *                       <code>SecurityDomain.currentDomain</code> when you
-        *                       call the <code>load()</code> or
-        *                       <code>loadBytes()</code> method.
-        */
-        public content : away.base.DisplayObject;
-        /**
-        * Returns a LoaderInfo object corresponding to the object being loaded.
-        * LoaderInfo objects are shared between the Loader object and the loaded
-        * content object. The LoaderInfo object supplies loading progress
-        * information and statistics about the loaded file.
-        *
-        * <p>Events related to the load are dispatched by the LoaderInfo object
-        * referenced by the <code>contentLoaderInfo</code> property of the Loader
-        * object. The <code>contentLoaderInfo</code> property is set to a valid
-        * LoaderInfo object, even before the content is loaded, so that you can add
-        * event listeners to the object prior to the load.</p>
-        *
-        * <p>To detect uncaught errors that happen in a loaded SWF, use the
-        * <code>Loader.uncaughtErrorEvents</code> property, not the
-        * <code>Loader.contentLoaderInfo.uncaughtErrorEvents</code> property.</p>
-        */
-        public contentLoaderInfo : away.base.LoaderInfo;
-        /**
-        * Creates a Loader object that you can use to load files, such as SWF, JPEG,
-        * GIF, or PNG files. Call the <code>load()</code> method to load the asset
-        * as a child of the Loader instance. You can then add the Loader object to
-        * the display list(for instance, by using the <code>addChild()</code>
-        * method of a DisplayObjectContainer instance). The asset appears on the
-        * Stage as it loads.
-        *
-        * <p>You can also use a Loader instance "offlist," that is without adding it
-        * to a display object container on the display list. In this mode, the
-        * Loader instance might be used to load a SWF file that contains additional
-        * modules of an application. </p>
-        *
-        * <p>To detect when the SWF file is finished loading, you can use the events
-        * of the LoaderInfo object associated with the
-        * <code>contentLoaderInfo</code> property of the Loader object. At that
-        * point, the code in the module SWF file can be executed to initialize and
-        * start the module. In the offlist mode, a Loader instance might also be
-        * used to load a SWF file that contains components or media assets. Again,
-        * you can use the LoaderInfo object event notifications to detect when the
-        * components are finished loading. At that point, the application can start
-        * using the components and media assets in the library of the SWF file by
-        * instantiating the ActionScript 3.0 classes that represent those components
-        * and assets.</p>
-        *
-        * <p>To determine the status of a Loader object, monitor the following
-        * events that the LoaderInfo object associated with the
-        * <code>contentLoaderInfo</code> property of the Loader object:</p>
-        *
-        * <ul>
-        *   <li>The <code>open</code> event is dispatched when loading begins.</li>
-        *   <li>The <code>ioError</code> or <code>securityError</code> event is
-        * dispatched if the file cannot be loaded or if an error occured during the
-        * load process. </li>
-        *   <li>The <code>progress</code> event fires continuously while the file is
-        * being loaded.</li>
-        *   <li>The <code>complete</code> event is dispatched when a file completes
-        * downloading, but before the loaded movie clip's methods and properties are
-        * available. </li>
-        *   <li>The <code>init</code> event is dispatched after the properties and
-        * methods of the loaded SWF file are accessible, so you can begin
-        * manipulating the loaded SWF file. This event is dispatched before the
-        * <code>complete</code> handler. In streaming SWF files, the
-        * <code>init</code> event can occur significantly earlier than the
-        * <code>complete</code> event. For most purposes, use the <code>init</code>
-        * handler.</li>
-        * </ul>
-        */
-        constructor();
-        /**
-        * Cancels a <code>load()</code> method operation that is currently in
-        * progress for the Loader instance.
-        *
-        */
-        public close(): void;
-        /**
-        * Loads a SWF, JPEG, progressive JPEG, unanimated GIF, or PNG file into an
-        * object that is a child of this Loader object. If you load an animated GIF
-        * file, only the first frame is displayed. As the Loader object can contain
-        * only a single child, issuing a subsequent <code>load()</code> request
-        * terminates the previous request, if still pending, and commences a new
-        * load.
-        *
-        * <p><b>Note</b>: In AIR 1.5 and Flash Player 10, the maximum size for a
-        * loaded image is 8,191 pixels in width or height, and the total number of
-        * pixels cannot exceed 16,777,215 pixels.(So, if an loaded image is 8,191
-        * pixels wide, it can only be 2,048 pixels high.) In Flash Player 9 and
-        * earlier and AIR 1.1 and earlier, the limitation is 2,880 pixels in height
-        * and 2,880 pixels in width.</p>
-        *
-        * <p>A SWF file or image loaded into a Loader object inherits the position,
-        * rotation, and scale properties of the parent display objects of the Loader
-        * object. </p>
-        *
-        * <p>Use the <code>unload()</code> method to remove movies or images loaded
-        * with this method, or to cancel a load operation that is in progress.</p>
-        *
-        * <p>You can prevent a SWF file from using this method by setting the
-        * <code>allowNetworking</code> parameter of the the <code>object</code> and
-        * <code>embed</code> tags in the HTML page that contains the SWF
-        * content.</p>
-        *
-        * <p>When you use this method, consider the Flash Player security model,
-        * which is described in the Loader class description. </p>
-        *
-        * <p> In Flash Player 10 and later, if you use a multipart Content-Type(for
-        * example "multipart/form-data") that contains an upload(indicated by a
-        * "filename" parameter in a "content-disposition" header within the POST
-        * body), the POST operation is subject to the security rules applied to
-        * uploads:</p>
-        *
-        * <ul>
-        *   <li>The POST operation must be performed in response to a user-initiated
-        * action, such as a mouse click or key press.</li>
-        *   <li>If the POST operation is cross-domain(the POST target is not on the
-        * same server as the SWF file that is sending the POST request), the target
-        * server must provide a URL policy file that permits cross-domain
-        * access.</li>
-        * </ul>
-        *
-        * <p>Also, for any multipart Content-Type, the syntax must be valid
-        * (according to the RFC2046 standard). If the syntax appears to be invalid,
-        * the POST operation is subject to the security rules applied to
-        * uploads.</p>
-        *
-        * <p>For more information related to security, see the Flash Player
-        * Developer Center Topic: <a
-        * href="http://www.adobe.com/go/devnet_security_en"
-        * scope="external">Security</a>.</p>
-        *
-        * @param request The absolute or relative URL of the SWF, JPEG, GIF, or PNG
-        *                file to be loaded. A relative path must be relative to the
-        *                main SWF file. Absolute URLs must include the protocol
-        *                reference, such as http:// or file:///. Filenames cannot
-        *                include disk drive specifications.
-        * @param context A LoaderContext object, which has properties that define
-        *                the following:
-        *                <ul>
-        *                  <li>Whether or not to check for the existence of a policy
-        *                file upon loading the object</li>
-        *                  <li>The ApplicationDomain for the loaded object</li>
-        *                  <li>The SecurityDomain for the loaded object</li>
-        *                  <li>The ImageDecodingPolicy for the loaded image
-        *                object</li>
-        *                </ul>
-        *
-        *                <p>If the <code>context</code> parameter is not specified
-        *                or refers to a null object, the loaded content remains in
-        *                its own security domain.</p>
-        *
-        *                <p>For complete details, see the description of the
-        *                properties in the <a
-        *                href="../system/LoaderContext.html">LoaderContext</a>
-        *                class.</p>
-        * @throws IOError               The <code>digest</code> property of the
-        *                               <code>request</code> object is not
-        *                               <code>null</code>. You should only set the
-        *                               <code>digest</code> property of a URLRequest
-        *                               object when calling the
-        *                               <code>URLLoader.load()</code> method when
-        *                               loading a SWZ file(an Adobe platform
-        *                               component).
-        * @throws IllegalOperationError If the <code>requestedContentParent</code>
-        *                               property of the <code>context</code>
-        *                               parameter is a <code>Loader</code>.
-        * @throws IllegalOperationError If the <code>LoaderContext.parameters</code>
-        *                               parameter is set to non-null and has some
-        *                               values which are not Strings.
-        * @throws SecurityError         The value of
-        *                               <code>LoaderContext.securityDomain</code>
-        *                               must be either <code>null</code> or
-        *                               <code>SecurityDomain.currentDomain</code>.
-        *                               This reflects the fact that you can only
-        *                               place the loaded media in its natural
-        *                               security sandbox or your own(the latter
-        *                               requires a policy file).
-        * @throws SecurityError         Local SWF files may not set
-        *                               LoaderContext.securityDomain to anything
-        *                               other than <code>null</code>. It is not
-        *                               permitted to import non-local media into a
-        *                               local sandbox, or to place other local media
-        *                               in anything other than its natural sandbox.
-        * @throws SecurityError         You cannot connect to commonly reserved
-        *                               ports. For a complete list of blocked ports,
-        *                               see "Restricting Networking APIs" in the
-        *                               <i>ActionScript 3.0 Developer's Guide</i>.
-        * @throws SecurityError         If the <code>applicationDomain</code> or
-        *                               <code>securityDomain</code> properties of
-        *                               the <code>context</code> parameter are from
-        *                               a disallowed domain.
-        * @throws SecurityError         If a local SWF file is attempting to use the
-        *                               <code>securityDomain</code> property of the
-        *                               <code>context</code> parameter.
-        * @event asyncError    Dispatched by the <code>contentLoaderInfo</code>
-        *                      object if the
-        *                      <code>LoaderContext.requestedContentParent</code>
-        *                      property has been specified and it is not possible to
-        *                      add the loaded content as a child to the specified
-        *                      DisplayObjectContainer. This could happen if the
-        *                      loaded content is a
-        *                      <code>flash.display.AVM1Movie</code> or if the
-        *                      <code>addChild()</code> call to the
-        *                      requestedContentParent throws an error.
-        * @event complete      Dispatched by the <code>contentLoaderInfo</code>
-        *                      object when the file has completed loading. The
-        *                      <code>complete</code> event is always dispatched
-        *                      after the <code>init</code> event.
-        * @event httpStatus    Dispatched by the <code>contentLoaderInfo</code>
-        *                      object when a network request is made over HTTP and
-        *                      Flash Player can detect the HTTP status code.
-        * @event init          Dispatched by the <code>contentLoaderInfo</code>
-        *                      object when the properties and methods of the loaded
-        *                      SWF file are accessible. The <code>init</code> event
-        *                      always precedes the <code>complete</code> event.
-        * @event ioError       Dispatched by the <code>contentLoaderInfo</code>
-        *                      object when an input or output error occurs that
-        *                      causes a load operation to fail.
-        * @event open          Dispatched by the <code>contentLoaderInfo</code>
-        *                      object when the loading operation starts.
-        * @event progress      Dispatched by the <code>contentLoaderInfo</code>
-        *                      object as data is received while load operation
-        *                      progresses.
-        * @event securityError Dispatched by the <code>contentLoaderInfo</code>
-        *                      object if a SWF file in the local-with-filesystem
-        *                      sandbox attempts to load content in the
-        *                      local-with-networking sandbox, or vice versa.
-        * @event securityError Dispatched by the <code>contentLoaderInfo</code>
-        *                      object if the
-        *                      <code>LoaderContext.requestedContentParent</code>
-        *                      property has been specified and the security sandbox
-        *                      of the
-        *                      <code>LoaderContext.requestedContentParent</code>
-        *                      does not have access to the loaded SWF.
-        * @event unload        Dispatched by the <code>contentLoaderInfo</code>
-        *                      object when a loaded object is removed.
-        */
-        public load(request: away.net.URLRequest, context?: away.net.AssetLoaderContext): void;
-        /**
-        * Loads from binary data stored in a ByteArray object.
-        *
-        * <p>The <code>loadBytes()</code> method is asynchronous. You must wait for
-        * the "init" event before accessing the properties of a loaded object.</p>
-        *
-        * <p>When you use this method, consider the Flash Player security model,
-        * which is described in the Loader class description. </p>
-        *
-        * @param bytes   A ByteArray object. The contents of the ByteArray can be
-        *                any of the file formats supported by the Loader class: SWF,
-        *                GIF, JPEG, or PNG.
-        * @param context A LoaderContext object. Only the
-        *                <code>applicationDomain</code> property of the
-        *                LoaderContext object applies; the
-        *                <code>checkPolicyFile</code> and
-        *                <code>securityDomain</code> properties of the LoaderContext
-        *                object do not apply.
-        *
-        *                <p>If the <code>context</code> parameter is not specified
-        *                or refers to a null object, the content is loaded into the
-        *                current security domain -  a process referred to as "import
-        *                loading" in Flash Player security documentation.
-        *                Specifically, if the loading SWF file trusts the remote SWF
-        *                by incorporating the remote SWF into its code, then the
-        *                loading SWF can import it directly into its own security
-        *                domain.</p>
-        *
-        *                <p>For more information related to security, see the Flash
-        *                Player Developer Center Topic: <a
-        *                href="http://www.adobe.com/go/devnet_security_en"
-        *                scope="external">Security</a>.</p>
-        * @throws ArgumentError         If the <code>length</code> property of the
-        *                               ByteArray object is not greater than 0.
-        * @throws IllegalOperationError If the <code>checkPolicyFile</code> or
-        *                               <code>securityDomain</code> property of the
-        *                               <code>context</code> parameter are non-null.
-        * @throws IllegalOperationError If the <code>requestedContentParent</code>
-        *                               property of the <code>context</code>
-        *                               parameter is a <code>Loader</code>.
-        * @throws IllegalOperationError If the <code>LoaderContext.parameters</code>
-        *                               parameter is set to non-null and has some
-        *                               values which are not Strings.
-        * @throws SecurityError         If the provided
-        *                               <code>applicationDomain</code> property of
-        *                               the <code>context</code> property is from a
-        *                               disallowed domain.
-        * @throws SecurityError         You cannot connect to commonly reserved
-        *                               ports. For a complete list of blocked ports,
-        *                               see "Restricting Networking APIs" in the
-        *                               <i>ActionScript 3.0 Developer's Guide</i>.
-        * @event asyncError    Dispatched by the <code>contentLoaderInfo</code>
-        *                      object if the
-        *                      <code>LoaderContext.requestedContentParent</code>
-        *                      property has been specified and it is not possible to
-        *                      add the loaded content as a child to the specified
-        *                      DisplayObjectContainer. This could happen if the
-        *                      loaded content is a
-        *                      <code>flash.display.AVM1Movie</code> or if the
-        *                      <code>addChild()</code> call to the
-        *                      requestedContentParent throws an error.
-        * @event complete      Dispatched by the <code>contentLoaderInfo</code>
-        *                      object when the operation is complete. The
-        *                      <code>complete</code> event is always dispatched
-        *                      after the <code>init</code> event.
-        * @event init          Dispatched by the <code>contentLoaderInfo</code>
-        *                      object when the properties and methods of the loaded
-        *                      data are accessible. The <code>init</code> event
-        *                      always precedes the <code>complete</code> event.
-        * @event ioError       Dispatched by the <code>contentLoaderInfo</code>
-        *                      object when the runtime cannot parse the data in the
-        *                      byte array.
-        * @event open          Dispatched by the <code>contentLoaderInfo</code>
-        *                      object when the operation starts.
-        * @event progress      Dispatched by the <code>contentLoaderInfo</code>
-        *                      object as data is transfered in memory.
-        * @event securityError Dispatched by the <code>contentLoaderInfo</code>
-        *                      object if the
-        *                      <code>LoaderContext.requestedContentParent</code>
-        *                      property has been specified and the security sandbox
-        *                      of the
-        *                      <code>LoaderContext.requestedContentParent</code>
-        *                      does not have access to the loaded SWF.
-        * @event unload        Dispatched by the <code>contentLoaderInfo</code>
-        *                      object when a loaded object is removed.
-        */
-        public loadBytes(bytes: away.utils.ByteArray, context?: away.net.AssetLoaderContext): void;
-        /**
-        * Removes a child of this Loader object that was loaded by using the
-        * <code>load()</code> method. The <code>property</code> of the associated
-        * LoaderInfo object is reset to <code>null</code>. The child is not
-        * necessarily destroyed because other objects might have references to it;
-        * however, it is no longer a child of the Loader object.
-        *
-        * <p>As a best practice, before you unload a child SWF file, you should
-        * explicitly close any streams in the child SWF file's objects, such as
-        * LocalConnection, NetConnection, NetStream, and Sound objects. Otherwise,
-        * audio in the child SWF file might continue to play, even though the child
-        * SWF file was unloaded. To close streams in the child SWF file, add an
-        * event listener to the child that listens for the <code>unload</code>
-        * event. When the parent calls <code>Loader.unload()</code>, the
-        * <code>unload</code> event is dispatched to the child. The following code
-        * shows how you might do this:</p>
-        * <pre xml:space="preserve"> public closeAllStreams(evt:Event) {
-        * myNetStream.close(); mySound.close(); myNetConnection.close();
-        * myLocalConnection.close(); }
-        * myMovieClip.loaderInfo.addEventListener(Event.UNLOAD,
-        * closeAllStreams);</pre>
-        *
-        */
-        public unload(): void;
-    }
-}
-declare module away.containers {
-    class Stage extends away.events.EventDispatcher {
-        constructor(width?: number, height?: number);
-    }
-}
-/**
-* The Bitmap class represents display objects that represent bitmap images.
+* The Billboard class represents display objects that represent bitmap images.
 * These can be images that you load with the <code>flash.Assets</code> or
 * <code>flash.display.Loader</code> classes, or they can be images that you
-* create with the <code>Bitmap()</code> constructor.
+* create with the <code>Billboard()</code> constructor.
 *
-* <p>The <code>Bitmap()</code> constructor allows you to create a Bitmap
+* <p>The <code>Billboard()</code> constructor allows you to create a Billboard
 * object that contains a reference to a BitmapData object. After you create a
-* Bitmap object, use the <code>addChild()</code> or <code>addChildAt()</code>
+* Billboard object, use the <code>addChild()</code> or <code>addChildAt()</code>
 * method of the parent DisplayObjectContainer instance to place the bitmap on
 * the display list.</p>
 *
-* <p>A Bitmap object can share its BitmapData reference among several Bitmap
+* <p>A Billboard object can share its BitmapData reference among several Billboard
 * objects, independent of translation or rotation properties. Because you can
-* create multiple Bitmap objects that reference the same BitmapData object,
+* create multiple Billboard objects that reference the same BitmapData object,
 * multiple display objects can use the same complex BitmapData object without
 * incurring the memory overhead of a BitmapData object for each display
 * object instance.</p>
 *
-* <p>A BitmapData object can be drawn to the screen by a Bitmap object in one
+* <p>A BitmapData object can be drawn to the screen by a Billboard object in one
 * of two ways: by using the default hardware renderer with a single hardware surface,
 * or by using the slower software renderer when 3D acceleration is not available.</p>
 *
 * <p>If you would prefer to perform a batch rendering command, rather than using a
-* single surface for each Bitmap object, you can also draw to the screen using the
+* single surface for each Billboard object, you can also draw to the screen using the
 * <code>drawTiles()</code> or <code>drawTriangles()</code> methods which are
 * available to <code>flash.display.Tilesheet</code> and <code>flash.display.Graphics
 * objects.</code></p>
 *
-* <p><b>Note:</b> The Bitmap class is not a subclass of the InteractiveObject
+* <p><b>Note:</b> The Billboard class is not a subclass of the InteractiveObject
 * class, so it cannot dispatch mouse events. However, you can use the
 * <code>addEventListener()</code> method of the display object container that
-* contains the Bitmap object.</p>
+* contains the Billboard object.</p>
 */
 declare module away.entities {
-    class Bitmap extends away.base.DisplayObject {
+    class Billboard extends away.base.DisplayObject implements entities.IEntity, away.base.IMaterialOwner, away.library.IAsset {
+        private _animator;
+        private _bitmapMatrix;
+        private _material;
+        private _uvTransform;
+        /**
+        * Defines the animator of the mesh. Act on the mesh's geometry. Defaults to null
+        */
+        public animator : away.animators.IAnimator;
+        /**
+        *
+        */
+        public assetType : string;
         /**
         * The BitmapData object being referenced.
         */
         public bitmapData: away.base.BitmapData;
         /**
-        * Controls whether or not the Bitmap object is snapped to the nearest pixel.
+        *
+        */
+        public material : away.materials.IMaterial;
+        /**
+        * Controls whether or not the Billboard object is snapped to the nearest pixel.
         * This value is ignored in the native and HTML5 targets.
         * The PixelSnapping class includes possible values:
         * <ul>
@@ -8513,7 +10262,88 @@ declare module away.entities {
         * <code>false</code>, the bitmap is not smoothed when scaled.
         */
         public smoothing: boolean;
-        constructor(bitmapData?: away.base.BitmapData, pixelSnapping?: string, smoothing?: boolean);
+        /**
+        *
+        */
+        public uvTransform : away.geom.UVTransform;
+        constructor(material: away.materials.IMaterial, width: number, height: number, pixelSnapping?: string, smoothing?: boolean);
+        /**
+        * @protected
+        */
+        public pCreateEntityPartitionNode(): away.partition.EntityNode;
+        /**
+        * @protected
+        */
+        public pUpdateBounds(): void;
+        /**
+        * @protected
+        */
+        public pInvalidateBounds(): void;
+        /**
+        * @internal
+        */
+        public _iSetUVMatrixComponents(offsetU: number, offsetV: number, scaleU: number, scaleV: number, rotationUV: number): void;
+    }
+}
+declare module away.entities {
+    class Camera extends away.containers.DisplayObjectContainer implements entities.IEntity {
+        private _viewProjection;
+        private _viewProjectionDirty;
+        private _projection;
+        private _frustumPlanes;
+        private _frustumPlanesDirty;
+        private _onProjectionMatrixChangedDelegate;
+        constructor(projection?: away.projections.ProjectionBase);
+        public pCreateDefaultBoundingVolume(): away.bounds.BoundingVolumeBase;
+        /**
+        * @protected
+        */
+        public pCreateEntityPartitionNode(): away.partition.EntityNode;
+        public assetType : string;
+        private onProjectionMatrixChanged(event);
+        public frustumPlanes : away.geom.Plane3D[];
+        private updateFrustum();
+        /**
+        * @protected
+        */
+        public pInvalidateSceneTransform(): void;
+        /**
+        * @protected
+        */
+        public pUpdateBounds(): void;
+        /**
+        *
+        */
+        public projection : away.projections.ProjectionBase;
+        /**
+        *
+        */
+        public viewProjection : away.geom.Matrix3D;
+        /**
+        * Calculates the ray in scene space from the camera to the given normalized coordinates in screen space.
+        *
+        * @param nX The normalised x coordinate in screen space, -1 corresponds to the left edge of the viewport, 1 to the right.
+        * @param nY The normalised y coordinate in screen space, -1 corresponds to the top edge of the viewport, 1 to the bottom.
+        * @param sZ The z coordinate in screen space, representing the distance into the screen.
+        * @return The ray from the camera to the scene space position of the given screen coordinates.
+        */
+        public getRay(nX: number, nY: number, sZ: number): away.geom.Vector3D;
+        /**
+        * Calculates the normalised position in screen space of the given scene position.
+        *
+        * @param point3d the position vector of the scene coordinates to be projected.
+        * @return The normalised screen position of the given scene coordinates.
+        */
+        public project(point3d: away.geom.Vector3D): away.geom.Vector3D;
+        /**
+        * Calculates the scene position of the given normalized coordinates in screen space.
+        *
+        * @param nX The normalised x coordinate in screen space, -1 corresponds to the left edge of the viewport, 1 to the right.
+        * @param nY The normalised y coordinate in screen space, -1 corresponds to the top edge of the viewport, 1 to the bottom.
+        * @param sZ The z coordinate in screen space, representing the distance into the screen.
+        * @return The scene position of the given screen coordinates.
+        */
+        public unproject(nX: number, nY: number, sZ: number): away.geom.Vector3D;
     }
 }
 /**
@@ -9418,6 +11248,1204 @@ declare module away.entities {
         static isFontCompatible(fontName: string, fontStyle: string): boolean;
     }
 }
+declare module away.projections {
+    class ProjectionBase extends away.events.EventDispatcher {
+        public _pMatrix: away.geom.Matrix3D;
+        public _pScissorRect: away.geom.Rectangle;
+        public _pViewPort: away.geom.Rectangle;
+        public _pNear: number;
+        public _pFar: number;
+        public _pAspectRatio: number;
+        public _pMatrixInvalid: boolean;
+        public _pFrustumCorners: number[];
+        private _unprojection;
+        private _unprojectionInvalid;
+        constructor();
+        public frustumCorners : number[];
+        public matrix : away.geom.Matrix3D;
+        public near : number;
+        public far : number;
+        public project(point3d: away.geom.Vector3D): away.geom.Vector3D;
+        public unprojectionMatrix : away.geom.Matrix3D;
+        public unproject(nX: number, nY: number, sZ: number): away.geom.Vector3D;
+        public clone(): ProjectionBase;
+        public iAspectRatio : number;
+        public pInvalidateMatrix(): void;
+        public pUpdateMatrix(): void;
+        public iUpdateScissorRect(x: number, y: number, width: number, height: number): void;
+        public iUpdateViewport(x: number, y: number, width: number, height: number): void;
+    }
+}
+declare module away.projections {
+    class PerspectiveProjection extends projections.ProjectionBase {
+        private _fieldOfView;
+        private _focalLength;
+        private _focalLengthInv;
+        private _yMax;
+        private _xMax;
+        constructor(fieldOfView?: number);
+        public fieldOfView : number;
+        public focalLength : number;
+        public unproject(nX: number, nY: number, sZ: number): away.geom.Vector3D;
+        public clone(): projections.ProjectionBase;
+        public pUpdateMatrix(): void;
+    }
+}
+declare module away.projections {
+    class FreeMatrixProjection extends projections.ProjectionBase {
+        constructor();
+        public near : number;
+        public far : number;
+        public iAspectRatio : number;
+        public clone(): projections.ProjectionBase;
+        public pUpdateMatrix(): void;
+    }
+}
+declare module away.projections {
+    class OrthographicProjection extends projections.ProjectionBase {
+        private _projectionHeight;
+        private _xMax;
+        private _yMax;
+        constructor(projectionHeight?: number);
+        public projectionHeight : number;
+        public unproject(nX: number, nY: number, sZ: number): away.geom.Vector3D;
+        public clone(): projections.ProjectionBase;
+        public pUpdateMatrix(): void;
+    }
+}
+declare module away.projections {
+    class OrthographicOffCenterProjection extends projections.ProjectionBase {
+        private _minX;
+        private _maxX;
+        private _minY;
+        private _maxY;
+        constructor(minX: number, maxX: number, minY: number, maxY: number);
+        public minX : number;
+        public maxX : number;
+        public minY : number;
+        public maxY : number;
+        public unproject(nX: number, nY: number, sZ: number): away.geom.Vector3D;
+        public clone(): projections.ProjectionBase;
+        public pUpdateMatrix(): void;
+    }
+}
+declare module away.projections {
+    class PerspectiveOffCenterProjection extends projections.ProjectionBase {
+        private _minAngleX;
+        private _minLengthX;
+        private _tanMinX;
+        private _maxAngleX;
+        private _maxLengthX;
+        private _tanMaxX;
+        private _minAngleY;
+        private _minLengthY;
+        private _tanMinY;
+        private _maxAngleY;
+        private _maxLengthY;
+        private _tanMaxY;
+        constructor(minAngleX?: number, maxAngleX?: number, minAngleY?: number, maxAngleY?: number);
+        public minAngleX : number;
+        public maxAngleX : number;
+        public minAngleY : number;
+        public maxAngleY : number;
+        public unproject(nX: number, nY: number, sZ: number): away.geom.Vector3D;
+        public clone(): projections.ProjectionBase;
+        public pUpdateMatrix(): void;
+    }
+}
+declare module away.projections {
+    class ObliqueNearPlaneProjection extends projections.ProjectionBase {
+        private _baseProjection;
+        private _plane;
+        private _onProjectionMatrixChangedDelegate;
+        constructor(baseProjection: projections.ProjectionBase, plane: away.geom.Plane3D);
+        public frustumCorners : number[];
+        public near : number;
+        public far : number;
+        public iAspectRatio : number;
+        public plane : away.geom.Plane3D;
+        public baseProjection : projections.ProjectionBase;
+        private onProjectionMatrixChanged(event);
+        public pUpdateMatrix(): void;
+    }
+}
+/**
+* The Loader class is used to load SWF files or image(JPG, PNG, or GIF)
+* files. Use the <code>load()</code> method to initiate loading. The loaded
+* display object is added as a child of the Loader object.
+*
+* <p>Use the URLLoader class to load text or binary data.</p>
+*
+* <p>The Loader class overrides the following methods that it inherits,
+* because a Loader object can only have one child display object - the
+* display object that it loads. Calling the following methods throws an
+* exception: <code>addChild()</code>, <code>addChildAt()</code>,
+* <code>removeChild()</code>, <code>removeChildAt()</code>, and
+* <code>setChildIndex()</code>. To remove a loaded display object, you must
+* remove the <i>Loader</i> object from its parent DisplayObjectContainer
+* child array. </p>
+*
+* <p><b>Note:</b> The ActionScript 2.0 MovieClipLoader and LoadVars classes
+* are not used in ActionScript 3.0. The Loader and URLLoader classes replace
+* them.</p>
+*
+* <p>When you use the Loader class, consider the Flash Player and Adobe AIR
+* security model: </p>
+*
+* <ul>
+*   <li>You can load content from any accessible source. </li>
+*   <li>Loading is not allowed if the calling SWF file is in a network
+* sandbox and the file to be loaded is local. </li>
+*   <li>If the loaded content is a SWF file written with ActionScript 3.0, it
+* cannot be cross-scripted by a SWF file in another security sandbox unless
+* that cross-scripting arrangement was approved through a call to the
+* <code>System.allowDomain()</code> or the
+* <code>System.allowInsecureDomain()</code> method in the loaded content
+* file.</li>
+*   <li>If the loaded content is an AVM1 SWF file(written using ActionScript
+* 1.0 or 2.0), it cannot be cross-scripted by an AVM2 SWF file(written using
+* ActionScript 3.0). However, you can communicate between the two SWF files
+* by using the LocalConnection class.</li>
+*   <li>If the loaded content is an image, its data cannot be accessed by a
+* SWF file outside of the security sandbox, unless the domain of that SWF
+* file was included in a URL policy file at the origin domain of the
+* image.</li>
+*   <li>Movie clips in the local-with-file-system sandbox cannot script movie
+* clips in the local-with-networking sandbox, and the reverse is also
+* prevented. </li>
+*   <li>You cannot connect to commonly reserved ports. For a complete list of
+* blocked ports, see "Restricting Networking APIs" in the <i>ActionScript 3.0
+* Developer's Guide</i>. </li>
+* </ul>
+*
+* <p>However, in AIR, content in the <code>application</code> security
+* sandbox(content installed with the AIR application) are not restricted by
+* these security limitations.</p>
+*
+* <p>For more information related to security, see the Flash Player Developer
+* Center Topic: <a href="http://www.adobe.com/go/devnet_security_en"
+* scope="external">Security</a>.</p>
+*
+* <p>When loading a SWF file from an untrusted source(such as a domain other
+* than that of the Loader object's root SWF file), you may want to define a
+* mask for the Loader object, to prevent the loaded content(which is a child
+* of the Loader object) from drawing to portions of the Stage outside of that
+* mask, as shown in the following code:</p>
+*/
+declare module away.containers {
+    class Loader extends containers.DisplayObjectContainer {
+        private _content;
+        private _contentLoaderInfo;
+        /**
+        * Contains the root display object of the SWF file or image(JPG, PNG, or
+        * GIF) file that was loaded by using the <code>load()</code> or
+        * <code>loadBytes()</code> methods.
+        *
+        * @throws SecurityError The loaded SWF file or image file belongs to a
+        *                       security sandbox to which you do not have access.
+        *                       For a loaded SWF file, you can avoid this situation
+        *                       by having the file call the
+        *                       <code>Security.allowDomain()</code> method or by
+        *                       having the loading file specify a
+        *                       <code>loaderContext</code> parameter with its
+        *                       <code>securityDomain</code> property set to
+        *                       <code>SecurityDomain.currentDomain</code> when you
+        *                       call the <code>load()</code> or
+        *                       <code>loadBytes()</code> method.
+        */
+        public content : away.base.DisplayObject;
+        /**
+        * Returns a LoaderInfo object corresponding to the object being loaded.
+        * LoaderInfo objects are shared between the Loader object and the loaded
+        * content object. The LoaderInfo object supplies loading progress
+        * information and statistics about the loaded file.
+        *
+        * <p>Events related to the load are dispatched by the LoaderInfo object
+        * referenced by the <code>contentLoaderInfo</code> property of the Loader
+        * object. The <code>contentLoaderInfo</code> property is set to a valid
+        * LoaderInfo object, even before the content is loaded, so that you can add
+        * event listeners to the object prior to the load.</p>
+        *
+        * <p>To detect uncaught errors that happen in a loaded SWF, use the
+        * <code>Loader.uncaughtErrorEvents</code> property, not the
+        * <code>Loader.contentLoaderInfo.uncaughtErrorEvents</code> property.</p>
+        */
+        public contentLoaderInfo : away.base.LoaderInfo;
+        /**
+        * Creates a Loader object that you can use to load files, such as SWF, JPEG,
+        * GIF, or PNG files. Call the <code>load()</code> method to load the asset
+        * as a child of the Loader instance. You can then add the Loader object to
+        * the display list(for instance, by using the <code>addChild()</code>
+        * method of a DisplayObjectContainer instance). The asset appears on the
+        * Stage as it loads.
+        *
+        * <p>You can also use a Loader instance "offlist," that is without adding it
+        * to a display object container on the display list. In this mode, the
+        * Loader instance might be used to load a SWF file that contains additional
+        * modules of an application. </p>
+        *
+        * <p>To detect when the SWF file is finished loading, you can use the events
+        * of the LoaderInfo object associated with the
+        * <code>contentLoaderInfo</code> property of the Loader object. At that
+        * point, the code in the module SWF file can be executed to initialize and
+        * start the module. In the offlist mode, a Loader instance might also be
+        * used to load a SWF file that contains components or media assets. Again,
+        * you can use the LoaderInfo object event notifications to detect when the
+        * components are finished loading. At that point, the application can start
+        * using the components and media assets in the library of the SWF file by
+        * instantiating the ActionScript 3.0 classes that represent those components
+        * and assets.</p>
+        *
+        * <p>To determine the status of a Loader object, monitor the following
+        * events that the LoaderInfo object associated with the
+        * <code>contentLoaderInfo</code> property of the Loader object:</p>
+        *
+        * <ul>
+        *   <li>The <code>open</code> event is dispatched when loading begins.</li>
+        *   <li>The <code>ioError</code> or <code>securityError</code> event is
+        * dispatched if the file cannot be loaded or if an error occured during the
+        * load process. </li>
+        *   <li>The <code>progress</code> event fires continuously while the file is
+        * being loaded.</li>
+        *   <li>The <code>complete</code> event is dispatched when a file completes
+        * downloading, but before the loaded movie clip's methods and properties are
+        * available. </li>
+        *   <li>The <code>init</code> event is dispatched after the properties and
+        * methods of the loaded SWF file are accessible, so you can begin
+        * manipulating the loaded SWF file. This event is dispatched before the
+        * <code>complete</code> handler. In streaming SWF files, the
+        * <code>init</code> event can occur significantly earlier than the
+        * <code>complete</code> event. For most purposes, use the <code>init</code>
+        * handler.</li>
+        * </ul>
+        */
+        constructor();
+        /**
+        * Cancels a <code>load()</code> method operation that is currently in
+        * progress for the Loader instance.
+        *
+        */
+        public close(): void;
+        /**
+        * Loads a SWF, JPEG, progressive JPEG, unanimated GIF, or PNG file into an
+        * object that is a child of this Loader object. If you load an animated GIF
+        * file, only the first frame is displayed. As the Loader object can contain
+        * only a single child, issuing a subsequent <code>load()</code> request
+        * terminates the previous request, if still pending, and commences a new
+        * load.
+        *
+        * <p><b>Note</b>: In AIR 1.5 and Flash Player 10, the maximum size for a
+        * loaded image is 8,191 pixels in width or height, and the total number of
+        * pixels cannot exceed 16,777,215 pixels.(So, if an loaded image is 8,191
+        * pixels wide, it can only be 2,048 pixels high.) In Flash Player 9 and
+        * earlier and AIR 1.1 and earlier, the limitation is 2,880 pixels in height
+        * and 2,880 pixels in width.</p>
+        *
+        * <p>A SWF file or image loaded into a Loader object inherits the position,
+        * rotation, and scale properties of the parent display objects of the Loader
+        * object. </p>
+        *
+        * <p>Use the <code>unload()</code> method to remove movies or images loaded
+        * with this method, or to cancel a load operation that is in progress.</p>
+        *
+        * <p>You can prevent a SWF file from using this method by setting the
+        * <code>allowNetworking</code> parameter of the the <code>object</code> and
+        * <code>embed</code> tags in the HTML page that contains the SWF
+        * content.</p>
+        *
+        * <p>When you use this method, consider the Flash Player security model,
+        * which is described in the Loader class description. </p>
+        *
+        * <p> In Flash Player 10 and later, if you use a multipart Content-Type(for
+        * example "multipart/form-data") that contains an upload(indicated by a
+        * "filename" parameter in a "content-disposition" header within the POST
+        * body), the POST operation is subject to the security rules applied to
+        * uploads:</p>
+        *
+        * <ul>
+        *   <li>The POST operation must be performed in response to a user-initiated
+        * action, such as a mouse click or key press.</li>
+        *   <li>If the POST operation is cross-domain(the POST target is not on the
+        * same server as the SWF file that is sending the POST request), the target
+        * server must provide a URL policy file that permits cross-domain
+        * access.</li>
+        * </ul>
+        *
+        * <p>Also, for any multipart Content-Type, the syntax must be valid
+        * (according to the RFC2046 standard). If the syntax appears to be invalid,
+        * the POST operation is subject to the security rules applied to
+        * uploads.</p>
+        *
+        * <p>For more information related to security, see the Flash Player
+        * Developer Center Topic: <a
+        * href="http://www.adobe.com/go/devnet_security_en"
+        * scope="external">Security</a>.</p>
+        *
+        * @param request The absolute or relative URL of the SWF, JPEG, GIF, or PNG
+        *                file to be loaded. A relative path must be relative to the
+        *                main SWF file. Absolute URLs must include the protocol
+        *                reference, such as http:// or file:///. Filenames cannot
+        *                include disk drive specifications.
+        * @param context A LoaderContext object, which has properties that define
+        *                the following:
+        *                <ul>
+        *                  <li>Whether or not to check for the existence of a policy
+        *                file upon loading the object</li>
+        *                  <li>The ApplicationDomain for the loaded object</li>
+        *                  <li>The SecurityDomain for the loaded object</li>
+        *                  <li>The ImageDecodingPolicy for the loaded image
+        *                object</li>
+        *                </ul>
+        *
+        *                <p>If the <code>context</code> parameter is not specified
+        *                or refers to a null object, the loaded content remains in
+        *                its own security domain.</p>
+        *
+        *                <p>For complete details, see the description of the
+        *                properties in the <a
+        *                href="../system/LoaderContext.html">LoaderContext</a>
+        *                class.</p>
+        * @throws IOError               The <code>digest</code> property of the
+        *                               <code>request</code> object is not
+        *                               <code>null</code>. You should only set the
+        *                               <code>digest</code> property of a URLRequest
+        *                               object when calling the
+        *                               <code>URLLoader.load()</code> method when
+        *                               loading a SWZ file(an Adobe platform
+        *                               component).
+        * @throws IllegalOperationError If the <code>requestedContentParent</code>
+        *                               property of the <code>context</code>
+        *                               parameter is a <code>Loader</code>.
+        * @throws IllegalOperationError If the <code>LoaderContext.parameters</code>
+        *                               parameter is set to non-null and has some
+        *                               values which are not Strings.
+        * @throws SecurityError         The value of
+        *                               <code>LoaderContext.securityDomain</code>
+        *                               must be either <code>null</code> or
+        *                               <code>SecurityDomain.currentDomain</code>.
+        *                               This reflects the fact that you can only
+        *                               place the loaded media in its natural
+        *                               security sandbox or your own(the latter
+        *                               requires a policy file).
+        * @throws SecurityError         Local SWF files may not set
+        *                               LoaderContext.securityDomain to anything
+        *                               other than <code>null</code>. It is not
+        *                               permitted to import non-local media into a
+        *                               local sandbox, or to place other local media
+        *                               in anything other than its natural sandbox.
+        * @throws SecurityError         You cannot connect to commonly reserved
+        *                               ports. For a complete list of blocked ports,
+        *                               see "Restricting Networking APIs" in the
+        *                               <i>ActionScript 3.0 Developer's Guide</i>.
+        * @throws SecurityError         If the <code>applicationDomain</code> or
+        *                               <code>securityDomain</code> properties of
+        *                               the <code>context</code> parameter are from
+        *                               a disallowed domain.
+        * @throws SecurityError         If a local SWF file is attempting to use the
+        *                               <code>securityDomain</code> property of the
+        *                               <code>context</code> parameter.
+        * @event asyncError    Dispatched by the <code>contentLoaderInfo</code>
+        *                      object if the
+        *                      <code>LoaderContext.requestedContentParent</code>
+        *                      property has been specified and it is not possible to
+        *                      add the loaded content as a child to the specified
+        *                      DisplayObjectContainer. This could happen if the
+        *                      loaded content is a
+        *                      <code>flash.display.AVM1Movie</code> or if the
+        *                      <code>addChild()</code> call to the
+        *                      requestedContentParent throws an error.
+        * @event complete      Dispatched by the <code>contentLoaderInfo</code>
+        *                      object when the file has completed loading. The
+        *                      <code>complete</code> event is always dispatched
+        *                      after the <code>init</code> event.
+        * @event httpStatus    Dispatched by the <code>contentLoaderInfo</code>
+        *                      object when a network request is made over HTTP and
+        *                      Flash Player can detect the HTTP status code.
+        * @event init          Dispatched by the <code>contentLoaderInfo</code>
+        *                      object when the properties and methods of the loaded
+        *                      SWF file are accessible. The <code>init</code> event
+        *                      always precedes the <code>complete</code> event.
+        * @event ioError       Dispatched by the <code>contentLoaderInfo</code>
+        *                      object when an input or output error occurs that
+        *                      causes a load operation to fail.
+        * @event open          Dispatched by the <code>contentLoaderInfo</code>
+        *                      object when the loading operation starts.
+        * @event progress      Dispatched by the <code>contentLoaderInfo</code>
+        *                      object as data is received while load operation
+        *                      progresses.
+        * @event securityError Dispatched by the <code>contentLoaderInfo</code>
+        *                      object if a SWF file in the local-with-filesystem
+        *                      sandbox attempts to load content in the
+        *                      local-with-networking sandbox, or vice versa.
+        * @event securityError Dispatched by the <code>contentLoaderInfo</code>
+        *                      object if the
+        *                      <code>LoaderContext.requestedContentParent</code>
+        *                      property has been specified and the security sandbox
+        *                      of the
+        *                      <code>LoaderContext.requestedContentParent</code>
+        *                      does not have access to the loaded SWF.
+        * @event unload        Dispatched by the <code>contentLoaderInfo</code>
+        *                      object when a loaded object is removed.
+        */
+        public load(request: away.net.URLRequest, context?: away.net.AssetLoaderContext): void;
+        /**
+        * Loads from binary data stored in a ByteArray object.
+        *
+        * <p>The <code>loadBytes()</code> method is asynchronous. You must wait for
+        * the "init" event before accessing the properties of a loaded object.</p>
+        *
+        * <p>When you use this method, consider the Flash Player security model,
+        * which is described in the Loader class description. </p>
+        *
+        * @param bytes   A ByteArray object. The contents of the ByteArray can be
+        *                any of the file formats supported by the Loader class: SWF,
+        *                GIF, JPEG, or PNG.
+        * @param context A LoaderContext object. Only the
+        *                <code>applicationDomain</code> property of the
+        *                LoaderContext object applies; the
+        *                <code>checkPolicyFile</code> and
+        *                <code>securityDomain</code> properties of the LoaderContext
+        *                object do not apply.
+        *
+        *                <p>If the <code>context</code> parameter is not specified
+        *                or refers to a null object, the content is loaded into the
+        *                current security domain -  a process referred to as "import
+        *                loading" in Flash Player security documentation.
+        *                Specifically, if the loading SWF file trusts the remote SWF
+        *                by incorporating the remote SWF into its code, then the
+        *                loading SWF can import it directly into its own security
+        *                domain.</p>
+        *
+        *                <p>For more information related to security, see the Flash
+        *                Player Developer Center Topic: <a
+        *                href="http://www.adobe.com/go/devnet_security_en"
+        *                scope="external">Security</a>.</p>
+        * @throws ArgumentError         If the <code>length</code> property of the
+        *                               ByteArray object is not greater than 0.
+        * @throws IllegalOperationError If the <code>checkPolicyFile</code> or
+        *                               <code>securityDomain</code> property of the
+        *                               <code>context</code> parameter are non-null.
+        * @throws IllegalOperationError If the <code>requestedContentParent</code>
+        *                               property of the <code>context</code>
+        *                               parameter is a <code>Loader</code>.
+        * @throws IllegalOperationError If the <code>LoaderContext.parameters</code>
+        *                               parameter is set to non-null and has some
+        *                               values which are not Strings.
+        * @throws SecurityError         If the provided
+        *                               <code>applicationDomain</code> property of
+        *                               the <code>context</code> property is from a
+        *                               disallowed domain.
+        * @throws SecurityError         You cannot connect to commonly reserved
+        *                               ports. For a complete list of blocked ports,
+        *                               see "Restricting Networking APIs" in the
+        *                               <i>ActionScript 3.0 Developer's Guide</i>.
+        * @event asyncError    Dispatched by the <code>contentLoaderInfo</code>
+        *                      object if the
+        *                      <code>LoaderContext.requestedContentParent</code>
+        *                      property has been specified and it is not possible to
+        *                      add the loaded content as a child to the specified
+        *                      DisplayObjectContainer. This could happen if the
+        *                      loaded content is a
+        *                      <code>flash.display.AVM1Movie</code> or if the
+        *                      <code>addChild()</code> call to the
+        *                      requestedContentParent throws an error.
+        * @event complete      Dispatched by the <code>contentLoaderInfo</code>
+        *                      object when the operation is complete. The
+        *                      <code>complete</code> event is always dispatched
+        *                      after the <code>init</code> event.
+        * @event init          Dispatched by the <code>contentLoaderInfo</code>
+        *                      object when the properties and methods of the loaded
+        *                      data are accessible. The <code>init</code> event
+        *                      always precedes the <code>complete</code> event.
+        * @event ioError       Dispatched by the <code>contentLoaderInfo</code>
+        *                      object when the runtime cannot parse the data in the
+        *                      byte array.
+        * @event open          Dispatched by the <code>contentLoaderInfo</code>
+        *                      object when the operation starts.
+        * @event progress      Dispatched by the <code>contentLoaderInfo</code>
+        *                      object as data is transfered in memory.
+        * @event securityError Dispatched by the <code>contentLoaderInfo</code>
+        *                      object if the
+        *                      <code>LoaderContext.requestedContentParent</code>
+        *                      property has been specified and the security sandbox
+        *                      of the
+        *                      <code>LoaderContext.requestedContentParent</code>
+        *                      does not have access to the loaded SWF.
+        * @event unload        Dispatched by the <code>contentLoaderInfo</code>
+        *                      object when a loaded object is removed.
+        */
+        public loadBytes(bytes: away.utils.ByteArray, context?: away.net.AssetLoaderContext): void;
+        /**
+        * Removes a child of this Loader object that was loaded by using the
+        * <code>load()</code> method. The <code>property</code> of the associated
+        * LoaderInfo object is reset to <code>null</code>. The child is not
+        * necessarily destroyed because other objects might have references to it;
+        * however, it is no longer a child of the Loader object.
+        *
+        * <p>As a best practice, before you unload a child SWF file, you should
+        * explicitly close any streams in the child SWF file's objects, such as
+        * LocalConnection, NetConnection, NetStream, and Sound objects. Otherwise,
+        * audio in the child SWF file might continue to play, even though the child
+        * SWF file was unloaded. To close streams in the child SWF file, add an
+        * event listener to the child that listens for the <code>unload</code>
+        * event. When the parent calls <code>Loader.unload()</code>, the
+        * <code>unload</code> event is dispatched to the child. The following code
+        * shows how you might do this:</p>
+        * <pre xml:space="preserve"> public closeAllStreams(evt:Event) {
+        * myNetStream.close(); mySound.close(); myNetConnection.close();
+        * myLocalConnection.close(); }
+        * myMovieClip.loaderInfo.addEventListener(Event.UNLOAD,
+        * closeAllStreams);</pre>
+        *
+        */
+        public unload(): void;
+    }
+}
+declare module away.containers {
+    class Scene extends away.events.EventDispatcher {
+        private _expandedPartitions;
+        private _partitions;
+        public _iSceneGraphRoot: containers.DisplayObjectContainer;
+        public _iCollectionMark: number;
+        constructor();
+        public traversePartitions(traverser: away.traverse.ICollector): void;
+        public partition : away.partition.Partition;
+        public contains(child: away.base.DisplayObject): boolean;
+        public addChild(child: away.base.DisplayObject): away.base.DisplayObject;
+        public removeChild(child: away.base.DisplayObject): void;
+        public removeChildAt(index: number): void;
+        public getChildAt(index: number): away.base.DisplayObject;
+        public numChildren : number;
+        /**
+        * @internal
+        */
+        public iRegisterEntity(displayObject: away.base.DisplayObject): void;
+        /**
+        * @internal
+        */
+        public iRegisterPartition(partition: away.partition.Partition): void;
+        /**
+        * @internal
+        */
+        public iUnregisterEntity(displayObject: away.base.DisplayObject): void;
+        /**
+        * @internal
+        */
+        public iUnregisterPartition(partition: away.partition.Partition): void;
+    }
+}
+declare module away.containers {
+    class View {
+        public _pScene: containers.Scene;
+        public _pCamera: away.entities.Camera;
+        public _pEntityCollector: away.traverse.ICollector;
+        public _pRenderer: away.render.IRenderer;
+        private _aspectRatio;
+        private _width;
+        private _height;
+        private _time;
+        private _deltaTime;
+        private _backgroundColor;
+        private _backgroundAlpha;
+        private _viewportDirty;
+        private _scissorDirty;
+        private _onScenePartitionChangedDelegate;
+        private _onProjectionChangedDelegate;
+        private _onViewportUpdatedDelegate;
+        private _onScissorUpdatedDelegate;
+        constructor(renderer: away.render.IRenderer, scene?: containers.Scene, camera?: away.entities.Camera);
+        /**
+        *
+        * @param e
+        */
+        private onScenePartitionChanged(e);
+        /**
+        *
+        */
+        public renderer : away.render.IRenderer;
+        /**
+        *
+        * @returns {number}
+        */
+        /**
+        *
+        * @param value
+        */
+        public backgroundColor : number;
+        /**
+        *
+        * @returns {number}
+        */
+        /**
+        *
+        * @param value
+        */
+        public backgroundAlpha : number;
+        /**
+        *
+        * @returns {Camera3D}
+        */
+        /**
+        * Set camera that's used to render the scene for this viewport
+        */
+        public camera : away.entities.Camera;
+        /**
+        *
+        * @returns {away.containers.Scene3D}
+        */
+        /**
+        * Set the scene that's used to render for this viewport
+        */
+        public scene : containers.Scene;
+        /**
+        *
+        * @returns {number}
+        */
+        public deltaTime : number;
+        /**
+        *
+        */
+        public width : number;
+        /**
+        *
+        */
+        public height : number;
+        /**
+        *
+        */
+        public x : number;
+        /**
+        *
+        */
+        public y : number;
+        /**
+        *
+        */
+        public visible : boolean;
+        /**
+        *
+        * @returns {number}
+        */
+        public renderedFacesCount : number;
+        /**
+        * Renders the view.
+        */
+        public render(): void;
+        /**
+        *
+        */
+        public pUpdateTime(): void;
+        /**
+        *
+        */
+        public dispose(): void;
+        /**
+        *
+        */
+        public iEntityCollector : away.traverse.ICollector;
+        /**
+        *
+        */
+        private onProjectionChanged(event);
+        /**
+        *
+        */
+        private onViewportUpdated(event);
+        /**
+        *
+        */
+        private onScissorUpdated(event);
+        public project(point3d: away.geom.Vector3D): away.geom.Vector3D;
+        public unproject(sX: number, sY: number, sZ: number): away.geom.Vector3D;
+        public getRay(sX: number, sY: number, sZ: number): away.geom.Vector3D;
+    }
+}
+declare module away.bounds {
+    class BoundingVolumeBase {
+        public _aabb: away.geom.Box;
+        public _pAabbPoints: number[];
+        public _pAabbPointsDirty: boolean;
+        public _pBoundingEntity: away.entities.IEntity;
+        constructor();
+        public aabb : away.geom.Box;
+        public aabbPoints : number[];
+        public boundingEntity : away.entities.IEntity;
+        public nullify(): void;
+        public disposeRenderable(): void;
+        public fromVertices(vertices: number[]): void;
+        public fromSphere(center: away.geom.Vector3D, radius: number): void;
+        public fromExtremes(minX: number, minY: number, minZ: number, maxX: number, maxY: number, maxZ: number): void;
+        public isInFrustum(planes: away.geom.Plane3D[], numPlanes: number): boolean;
+        public overlaps(bounds: BoundingVolumeBase): boolean;
+        public clone(): BoundingVolumeBase;
+        public rayIntersection(position: away.geom.Vector3D, direction: away.geom.Vector3D, targetNormal: away.geom.Vector3D): number;
+        public containsPoint(position: away.geom.Vector3D): boolean;
+        public pUpdateAABBPoints(): void;
+        public pUpdateBoundingEntity(): void;
+        public pCreateBoundingEntity(): away.entities.IEntity;
+        public classifyToPlane(plane: away.geom.Plane3D): number;
+        public transformFrom(bounds: BoundingVolumeBase, matrix: away.geom.Matrix3D): void;
+    }
+}
+declare module away.bounds {
+    class NullBounds extends bounds.BoundingVolumeBase {
+        private _alwaysIn;
+        constructor(alwaysIn?: boolean);
+        public clone(): bounds.BoundingVolumeBase;
+        public pCreateBoundingEntity(): away.entities.IEntity;
+        public isInFrustum(planes: away.geom.Plane3D[], numPlanes: number): boolean;
+        public fromSphere(center: away.geom.Vector3D, radius: number): void;
+        public fromExtremes(minX: number, minY: number, minZ: number, maxX: number, maxY: number, maxZ: number): void;
+        public classifyToPlane(plane: away.geom.Plane3D): number;
+        public transformFrom(bounds: bounds.BoundingVolumeBase, matrix: away.geom.Matrix3D): void;
+    }
+}
+declare module away.bounds {
+    class BoundingSphere extends bounds.BoundingVolumeBase {
+        private _radius;
+        private _centerX;
+        private _centerY;
+        private _centerZ;
+        constructor();
+        public radius : number;
+        public nullify(): void;
+        public isInFrustum(planes: away.geom.Plane3D[], numPlanes: number): boolean;
+        public fromSphere(center: away.geom.Vector3D, radius: number): void;
+        public fromExtremes(minX: number, minY: number, minZ: number, maxX: number, maxY: number, maxZ: number): void;
+        public clone(): bounds.BoundingVolumeBase;
+        public rayIntersection(position: away.geom.Vector3D, direction: away.geom.Vector3D, targetNormal: away.geom.Vector3D): number;
+        public containsPoint(position: away.geom.Vector3D): boolean;
+        public pUpdateBoundingEntity(): void;
+        public pCreateBoundingEntity(): away.entities.IEntity;
+        public classifyToPlane(plane: away.geom.Plane3D): number;
+        public transformFrom(bounds: bounds.BoundingVolumeBase, matrix: away.geom.Matrix3D): void;
+    }
+}
+declare module away.bounds {
+    /**
+    * AxisAlignedBoundingBox represents a bounding box volume that has its planes aligned to the local coordinate axes of the bounded object.
+    * This is useful for most meshes.
+    */
+    class AxisAlignedBoundingBox extends bounds.BoundingVolumeBase {
+        private _centerX;
+        private _centerY;
+        private _centerZ;
+        private _halfExtentsX;
+        private _halfExtentsY;
+        private _halfExtentsZ;
+        /**
+        * Creates a new <code>AxisAlignedBoundingBox</code> object.
+        */
+        constructor();
+        /**
+        * @inheritDoc
+        */
+        public nullify(): void;
+        /**
+        * @inheritDoc
+        */
+        public isInFrustum(planes: away.geom.Plane3D[], numPlanes: number): boolean;
+        public rayIntersection(position: away.geom.Vector3D, direction: away.geom.Vector3D, targetNormal: away.geom.Vector3D): number;
+        /**
+        * @inheritDoc
+        */
+        public containsPoint(position: away.geom.Vector3D): boolean;
+        /**
+        * @inheritDoc
+        */
+        public fromExtremes(minX: number, minY: number, minZ: number, maxX: number, maxY: number, maxZ: number): void;
+        /**
+        * @inheritDoc
+        */
+        public clone(): bounds.BoundingVolumeBase;
+        public halfExtentsX : number;
+        public halfExtentsY : number;
+        public halfExtentsZ : number;
+        /**
+        * Finds the closest point on the bounding volume to another given point. This can be used for maximum error calculations for content within a given bound.
+        * @param point The point for which to find the closest point on the bounding volume
+        * @param target An optional Vector3D to store the result to prevent creating a new object.
+        * @return
+        */
+        public closestPointToPoint(point: away.geom.Vector3D, target?: away.geom.Vector3D): away.geom.Vector3D;
+        public pUpdateBoundingRenderable(): void;
+        public pCreateBoundingEntity(): away.entities.IEntity;
+        public classifyToPlane(plane: away.geom.Plane3D): number;
+        public transformFrom(bounds: bounds.BoundingVolumeBase, matrix: away.geom.Matrix3D): void;
+    }
+}
+declare module away.controllers {
+    class ControllerBase {
+        public _pAutoUpdate: boolean;
+        public _pTargetObject: away.entities.IEntity;
+        constructor(targetObject?: away.entities.IEntity);
+        public pNotifyUpdate(): void;
+        public targetObject : away.entities.IEntity;
+        public autoUpdate : boolean;
+        public update(interpolate?: boolean): void;
+    }
+}
+declare module away.controllers {
+    class LookAtController extends controllers.ControllerBase {
+        public _pLookAtPosition: away.geom.Vector3D;
+        public _pLookAtObject: away.base.DisplayObject;
+        public _pOrigin: away.geom.Vector3D;
+        private _onLookAtObjectChangedDelegate;
+        constructor(targetObject?: away.entities.IEntity, lookAtObject?: away.base.DisplayObject);
+        public lookAtPosition : away.geom.Vector3D;
+        public lookAtObject : away.base.DisplayObject;
+        public update(interpolate?: boolean): void;
+        private onLookAtObjectChanged(event);
+    }
+}
+declare module away.controllers {
+    /**
+    * Extended camera used to hover round a specified target object.
+    *
+    * @see    away3d.containers.View3D
+    */
+    class HoverController extends controllers.LookAtController {
+        public _iCurrentPanAngle: number;
+        public _iCurrentTiltAngle: number;
+        private _panAngle;
+        private _tiltAngle;
+        private _distance;
+        private _minPanAngle;
+        private _maxPanAngle;
+        private _minTiltAngle;
+        private _maxTiltAngle;
+        private _steps;
+        private _yFactor;
+        private _wrapPanAngle;
+        /**
+        * Fractional step taken each time the <code>hover()</code> method is called. Defaults to 8.
+        *
+        * Affects the speed at which the <code>tiltAngle</code> and <code>panAngle</code> resolve to their targets.
+        *
+        * @see    #tiltAngle
+        * @see    #panAngle
+        */
+        public steps : number;
+        /**
+        * Rotation of the camera in degrees around the y axis. Defaults to 0.
+        */
+        public panAngle : number;
+        /**
+        * Elevation angle of the camera in degrees. Defaults to 90.
+        */
+        public tiltAngle : number;
+        /**
+        * Distance between the camera and the specified target. Defaults to 1000.
+        */
+        public distance : number;
+        /**
+        * Minimum bounds for the <code>panAngle</code>. Defaults to -Infinity.
+        *
+        * @see    #panAngle
+        */
+        public minPanAngle : number;
+        /**
+        * Maximum bounds for the <code>panAngle</code>. Defaults to Infinity.
+        *
+        * @see    #panAngle
+        */
+        public maxPanAngle : number;
+        /**
+        * Minimum bounds for the <code>tiltAngle</code>. Defaults to -90.
+        *
+        * @see    #tiltAngle
+        */
+        public minTiltAngle : number;
+        /**
+        * Maximum bounds for the <code>tiltAngle</code>. Defaults to 90.
+        *
+        * @see    #tiltAngle
+        */
+        public maxTiltAngle : number;
+        /**
+        * Fractional difference in distance between the horizontal camera orientation and vertical camera orientation. Defaults to 2.
+        *
+        * @see    #distance
+        */
+        public yFactor : number;
+        /**
+        * Defines whether the value of the pan angle wraps when over 360 degrees or under 0 degrees. Defaults to false.
+        */
+        public wrapPanAngle : boolean;
+        /**
+        * Creates a new <code>HoverController</code> object.
+        */
+        constructor(targetObject?: away.entities.IEntity, lookAtObject?: away.base.DisplayObject, panAngle?: number, tiltAngle?: number, distance?: number, minTiltAngle?: number, maxTiltAngle?: number, minPanAngle?: number, maxPanAngle?: number, steps?: number, yFactor?: number, wrapPanAngle?: boolean);
+        /**
+        * Updates the current tilt angle and pan angle values.
+        *
+        * Values are calculated using the defined <code>tiltAngle</code>, <code>panAngle</code> and <code>steps</code> variables.
+        *
+        * @param interpolate   If the update to a target pan- or tiltAngle is interpolated. Default is true.
+        *
+        * @see    #tiltAngle
+        * @see    #panAngle
+        * @see    #steps
+        */
+        public update(interpolate?: boolean): void;
+    }
+}
+declare module away.controllers {
+    /**
+    * Extended camera used to hover round a specified target object.
+    *
+    * @see    away3d.containers.View3D
+    */
+    class FirstPersonController extends controllers.ControllerBase {
+        public _iCurrentPanAngle: number;
+        public _iCurrentTiltAngle: number;
+        private _panAngle;
+        private _tiltAngle;
+        private _minTiltAngle;
+        private _maxTiltAngle;
+        private _steps;
+        private _walkIncrement;
+        private _strafeIncrement;
+        private _wrapPanAngle;
+        public fly: boolean;
+        /**
+        * Fractional step taken each time the <code>hover()</code> method is called. Defaults to 8.
+        *
+        * Affects the speed at which the <code>tiltAngle</code> and <code>panAngle</code> resolve to their targets.
+        *
+        * @see    #tiltAngle
+        * @see    #panAngle
+        */
+        public steps : number;
+        /**
+        * Rotation of the camera in degrees around the y axis. Defaults to 0.
+        */
+        public panAngle : number;
+        /**
+        * Elevation angle of the camera in degrees. Defaults to 90.
+        */
+        public tiltAngle : number;
+        /**
+        * Minimum bounds for the <code>tiltAngle</code>. Defaults to -90.
+        *
+        * @see    #tiltAngle
+        */
+        public minTiltAngle : number;
+        /**
+        * Maximum bounds for the <code>tiltAngle</code>. Defaults to 90.
+        *
+        * @see    #tiltAngle
+        */
+        public maxTiltAngle : number;
+        /**
+        * Defines whether the value of the pan angle wraps when over 360 degrees or under 0 degrees. Defaults to false.
+        */
+        public wrapPanAngle : boolean;
+        /**
+        * Creates a new <code>HoverController</code> object.
+        */
+        constructor(targetObject?: away.entities.IEntity, panAngle?: number, tiltAngle?: number, minTiltAngle?: number, maxTiltAngle?: number, steps?: number, wrapPanAngle?: boolean);
+        /**
+        * Updates the current tilt angle and pan angle values.
+        *
+        * Values are calculated using the defined <code>tiltAngle</code>, <code>panAngle</code> and <code>steps</code> variables.
+        *
+        * @param interpolate   If the update to a target pan- or tiltAngle is interpolated. Default is true.
+        *
+        * @see    #tiltAngle
+        * @see    #panAngle
+        * @see    #steps
+        */
+        public update(interpolate?: boolean): void;
+        public incrementWalk(val: number): void;
+        public incrementStrafe(val: number): void;
+    }
+}
+declare module away.controllers {
+    /**
+    * Controller used to follow behind an object on the XZ plane, with an optional
+    * elevation (tiltAngle).
+    *
+    * @see    away3d.containers.View3D
+    */
+    class FollowController extends controllers.HoverController {
+        constructor(targetObject?: away.entities.IEntity, lookAtObject?: away.base.DisplayObject, tiltAngle?: number, distance?: number);
+        public update(interpolate?: boolean): void;
+    }
+}
+declare module away.controllers {
+    /**
+    * Uses spring physics to animate the target object towards a position that is
+    * defined as the lookAtTarget object's position plus the vector defined by the
+    * positionOffset property.
+    */
+    class SpringController extends controllers.LookAtController {
+        private _velocity;
+        private _dv;
+        private _stretch;
+        private _force;
+        private _acceleration;
+        private _desiredPosition;
+        /**
+        * Stiffness of the spring, how hard is it to extend. The higher it is, the more "fixed" the cam will be.
+        * A number between 1 and 20 is recommended.
+        */
+        public stiffness: number;
+        /**
+        * Damping is the spring internal friction, or how much it resists the "boinggggg" effect. Too high and you'll lose it!
+        * A number between 1 and 20 is recommended.
+        */
+        public damping: number;
+        /**
+        * Mass of the camera, if over 120 and it'll be very heavy to move.
+        */
+        public mass: number;
+        /**
+        * Offset of spring center from target in target object space, ie: Where the camera should ideally be in the target object space.
+        */
+        public positionOffset: away.geom.Vector3D;
+        constructor(targetObject?: away.entities.IEntity, lookAtObject?: away.base.DisplayObject, stiffness?: number, mass?: number, damping?: number);
+        public update(interpolate?: boolean): void;
+    }
+}
+/**
+* @module away.materials
+*/
+declare module away.materials {
+    /**
+    * @class away.materials.IMaterial
+    */
+    interface IMaterial {
+        /**
+        *
+        *
+        * @param owner
+        */
+        iAddOwner(owner: away.base.IMaterialOwner): any;
+        /**
+        *
+        *
+        * @param owner
+        */
+        iRemoveOwner(owner: away.base.IMaterialOwner): any;
+    }
+}
+declare module away.materials {
+    /**
+    * MaterialBase forms an abstract base class for any material.
+    * A material consists of several passes, each of which constitutes at least one render call. Several passes could
+    * be used for special effects (render lighting for many lights in several passes, render an outline in a separate
+    * pass) or to provide additional render-to-texture passes (rendering diffuse light to texture for texture-space
+    * subsurface scattering, or rendering a depth map for specialized self-shadowing).
+    *
+    * Away3D provides default materials trough SinglePassMaterialBase and MultiPassMaterialBase, which use modular
+    * methods to build the shader code. MaterialBase can be extended to build specific and high-performant custom
+    * shaders, or entire new material frameworks.
+    */
+    class CSSMaterialBase extends away.library.NamedAssetBase implements away.library.IAsset, materials.IMaterial {
+        /**
+        * An object to contain any extra data.
+        */
+        public extra: Object;
+        /**
+        * An id for this material used to sort the renderables by shader program, which reduces Program state changes.
+        *
+        * @private
+        */
+        public _iMaterialId: number;
+        /**
+        * An id for this material used to sort the renderables by shader program, which reduces Program state changes.
+        *
+        * @private
+        */
+        public _iRenderOrderId: number;
+        /**
+        * The same as _renderOrderId, but applied to the depth shader passes.
+        *
+        * @private
+        */
+        public _iDepthPassId: number;
+        private _bothSides;
+        /**
+        * A list of material owners, renderables or custom Entities.
+        */
+        private _owners;
+        public _pBlendMode: string;
+        private _imageElement;
+        private _repeat;
+        private _smooth;
+        private _texture;
+        public imageElement : HTMLImageElement;
+        /**
+        * Indicates whether or not any used textures should be tiled. If set to false, texture samples are clamped to
+        * the texture's borders when the uv coordinates are outside the [0, 1] interval.
+        */
+        public repeat : boolean;
+        /**
+        * Indicates whether or not any used textures should use smoothing.
+        */
+        public smooth : boolean;
+        /**
+        * The texture object to use for the albedo colour.
+        */
+        public texture : away.textures.Texture2DBase;
+        /**
+        * Creates a new MaterialBase object.
+        */
+        constructor(texture?: away.textures.Texture2DBase, smooth?: boolean, repeat?: boolean);
+        /**
+        * @inheritDoc
+        */
+        public assetType : string;
+        /**
+        * Cleans up resources owned by the material, including passes. Textures are not owned by the material since they
+        * could be used by other materials and will not be disposed.
+        */
+        public dispose(): void;
+        /**
+        * Defines whether or not the material should cull triangles facing away from the camera.
+        */
+        public bothSides : boolean;
+        /**
+        * The blend mode to use when drawing this renderable. The following blend modes are supported:
+        * <ul>
+        * <li>BlendMode.NORMAL: No blending, unless the material inherently needs it</li>
+        * <li>BlendMode.LAYER: Force blending. This will draw the object the same as NORMAL, but without writing depth writes.</li>
+        * <li>BlendMode.MULTIPLY</li>
+        * <li>BlendMode.ADD</li>
+        * <li>BlendMode.ALPHA</li>
+        * </ul>
+        */
+        public blendMode : string;
+        /**
+        * Indicates whether or not the material requires alpha blending during rendering.
+        */
+        public requiresBlending : boolean;
+        /**
+        * Mark an IMaterialOwner as owner of this material.
+        * Assures we're not using the same material across renderables with different animations, since the
+        * Programs depend on animation. This method needs to be called when a material is assigned.
+        *
+        * @param owner The IMaterialOwner that had this material assigned
+        *
+        * @private
+        */
+        public iAddOwner(owner: away.base.IMaterialOwner): void;
+        /**
+        * Removes an IMaterialOwner as owner.
+        * @param owner
+        *
+        * @internal
+        */
+        public iRemoveOwner(owner: away.base.IMaterialOwner): void;
+        /**
+        * A list of the IMaterialOwners that use this material
+        *
+        * @internal
+        */
+        public iOwners : away.base.IMaterialOwner[];
+    }
+}
 declare module away.managers {
     class RTTBufferManager extends away.events.EventDispatcher {
         private static _instances;
@@ -9528,193 +12556,33 @@ declare module away.managers {
 }
 declare class StageGLManagerSingletonEnforcer {
 }
-declare module away.utils {
-    class ByteArrayBase {
-        public position: number;
-        public length: number;
-        public _mode: string;
-        public Base64Key: string;
-        constructor();
-        public writeByte(b: number): void;
-        public readByte(): number;
-        public writeUnsignedByte(b: number): void;
-        public readUnsignedByte(): number;
-        public writeUnsignedShort(b: number): void;
-        public readUnsignedShort(): number;
-        public writeUnsignedInt(b: number): void;
-        public readUnsignedInt(): number;
-        public writeFloat(b: number): void;
-        public toFloatBits(x: number): void;
-        public readFloat(b: number): void;
-        public fromFloatBits(x: number): void;
-        public getBytesAvailable(): number;
-        public toString(): string;
-        public compareEqual(other: any, count: any): boolean;
-        public writeBase64String(s: string): void;
-        public dumpToConsole(): void;
-        public internalGetBase64String(count: any, getUnsignedByteFunc: any, self: any): string;
-    }
-}
-declare module away.utils {
-    class ByteArray extends utils.ByteArrayBase {
-        public maxlength: number;
-        public arraybytes: any;
-        public unalignedarraybytestemp: any;
-        constructor();
-        public ensureWriteableSpace(n: number): void;
-        public setArrayBuffer(aBuffer: ArrayBuffer): void;
-        public getBytesAvailable(): number;
-        public ensureSpace(n: number): void;
-        public writeByte(b: number): void;
-        public readByte(): number;
-        public readBytes(bytes: ByteArray, offset?: number, length?: number): void;
-        public writeUnsignedByte(b: number): void;
-        public readUnsignedByte(): number;
-        public writeUnsignedShort(b: number): void;
-        public readUTFBytes(len: number): string;
-        public readInt(): number;
-        public readShort(): number;
-        public readDouble(): number;
-        public readUnsignedShort(): number;
-        public writeUnsignedInt(b: number): void;
-        public readUnsignedInt(): number;
-        public writeFloat(b: number): void;
-        public readFloat(): number;
-    }
-}
-declare module away.utils {
-    class ByteArrayBuffer extends utils.ByteArrayBase {
-        public _bytes: number[];
-        constructor();
-        public writeByte(b: number): void;
-        public readByte(): number;
-        public writeUnsignedByte(b: number): void;
-        public readUnsignedByte(): number;
-        public writeUnsignedShort(b: number): void;
-        public readUnsignedShort(): number;
-        public writeUnsignedInt(b: number): void;
-        public readUnsignedInt(): number;
-        public writeFloat(b: number): void;
-        public toFloatBits(x: number): number;
-        public readFloat(b: number): number;
-        public fromFloatBits(x: number): number;
-    }
-}
-declare module away.utils {
-    class ColorUtils {
-        static float32ColorToARGB(float32Color: number): number[];
-        private static componentToHex(c);
-        static RGBToHexString(argb: number[]): string;
-        static ARGBToHexString(argb: number[]): string;
-    }
-}
-declare module away.utils {
-    class CSS {
-        static setCanvasSize(canvas: HTMLCanvasElement, width: number, height: number): void;
-        static setCanvasWidth(canvas: HTMLCanvasElement, width: number): void;
-        static setCanvasHeight(canvas: HTMLCanvasElement, height: number): void;
-        static setCanvasX(canvas: HTMLCanvasElement, x: number): void;
-        static setCanvasY(canvas: HTMLCanvasElement, y: number): void;
-        static getCanvasVisibility(canvas: HTMLCanvasElement): boolean;
-        static setCanvasVisibility(canvas: HTMLCanvasElement, visible: boolean): void;
-        static setCanvasAlpha(canvas: HTMLCanvasElement, alpha: number): void;
-        static setCanvasPosition(canvas: HTMLCanvasElement, x: number, y: number, absolute?: boolean): void;
-    }
-}
-declare module away {
-    class Debug {
-        static THROW_ERRORS: boolean;
-        static ENABLE_LOG: boolean;
-        static LOG_PI_ERRORS: boolean;
-        private static keyword;
-        static breakpoint(): void;
-        static throwPIROnKeyWordOnly(str: string, enable?: boolean): void;
-        static throwPIR(clss: string, fnc: string, msg: string): void;
-        private static logPIR(clss, fnc, msg?);
-        static log(...args: any[]): void;
-    }
-}
-declare module away.utils {
-    class Delegate {
-        private _func;
-        constructor(func?: Function);
-        /**
-        Creates a functions wrapper for the original function so that it runs
-        in the provided context.
-        @parameter obj Context in which to run the function.
-        @paramater func Function to run.
-        */
-        static create(obj: Object, func: Function): Function;
-        public createDelegate(obj: Object): Function;
-    }
-}
-declare module away.utils {
-    function getTimer(): number;
-}
-declare module away.utils {
-    class RequestAnimationFrame {
-        private _callback;
-        private _callbackContext;
-        private _active;
-        private _rafUpdateFunction;
-        private _prevTime;
-        private _dt;
-        private _currentTime;
-        private _argsArray;
-        private _getTimer;
-        constructor(callback: Function, callbackContext: Object);
-        /**
-        *
-        * @param callback
-        * @param callbackContext
-        */
-        public setCallback(callback: Function, callbackContext: Object): void;
+declare module away.animators {
+    /**
+    * Provides an interface for animator classes that control animation output from a data set subtype of <code>AnimationSetBase</code>.
+    *
+    * @see away.animators.IAnimationSet
+    */
+    interface IAnimator {
         /**
         *
         */
-        public start(): void;
+        clone(): IAnimator;
         /**
         *
         */
-        public stop(): void;
+        dispose(): any;
         /**
-        *
-        * @returns {boolean}
-        */
-        public active : boolean;
-        /**
+        * Used by the entity object to which the animator is applied, registers the owner for internal use.
         *
         * @private
         */
-        private _tick();
-    }
-}
-declare module away.utils {
-    class TextureUtils {
-        private static MAX_SIZE;
-        static isBitmapDataValid(bitmapData: away.base.BitmapData): boolean;
-        static isHTMLImageElementValid(image: HTMLImageElement): boolean;
-        static isDimensionValid(d: number): boolean;
-        static isPowerOfTwo(value: number): boolean;
-        static getBestPowerOf2(value: number): number;
-    }
-}
-declare module away.utils {
-    class Timer extends away.events.EventDispatcher {
-        private _delay;
-        private _repeatCount;
-        private _currentCount;
-        private _iid;
-        private _running;
-        constructor(delay: number, repeatCount?: number);
-        public currentCount : number;
-        public delay : number;
-        public repeatCount : number;
-        public reset(): void;
-        public running : boolean;
-        public start(): void;
-        public stop(): void;
-        private tick();
+        addOwner(mesh: away.entities.IEntity): any;
+        /**
+        * Used by the mesh object from which the animator is removed, unregisters the owner for internal use.
+        *
+        * @private
+        */
+        removeOwner(mesh: away.entities.IEntity): any;
     }
 }
 declare module away.textures {
@@ -9832,7 +12700,7 @@ declare module away.textures {
     }
 }
 declare module away.textures {
-    class HTMLImageElementTexture extends textures.Texture2DBase {
+    class ImageTexture extends textures.Texture2DBase {
         private static _mipMaps;
         private static _mipMapUses;
         private _htmlImageElement;
@@ -9879,7 +12747,7 @@ declare module away.textures {
     }
 }
 declare module away.textures {
-    class HTMLImageElementCubeTexture extends textures.CubeTextureBase {
+    class ImageCubeTexture extends textures.CubeTextureBase {
         private _bitmapDatas;
         private _useMipMaps;
         constructor(posX: HTMLImageElement, negX: HTMLImageElement, posY: HTMLImageElement, negY: HTMLImageElement, posZ: HTMLImageElement, negZ: HTMLImageElement);

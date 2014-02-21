@@ -45,7 +45,7 @@
 
             harness.addSeperator( 'Textures' );
             harness.addTest( '(Console) Textures.BitmapTextureTest'                 , 'tests.textures.BitmapTextureTest'            , 'js/BitmapTextureTest.js'              , 'away/textures/BitmapTextureTest.ts'  );
-            harness.addTest( '(Console) Textures.HTMLImageElementTextureTest'       , 'tests.textures.HTMLImageElementTextureTest'  , 'js/HTMLImageElementTextureTest.js'    , 'away/textures/HTMLImageElementTextureTest.ts'  );
+            harness.addTest( '(Console) Textures.ImageTextureTest'       , 'tests.textures.ImageTextureTest' , 'js/ImageTextureTest.js'    , 'away/textures/ImageTextureTest.ts'  );
 
             //---------------------------------------------------------------------------
             // Test - Net
@@ -68,6 +68,13 @@
             harness.addSeperator( 'Loaders' );
             harness.addTest( '(Console) Loaders.AssetLoaderTest'    ,  'tests.net.AssetLoaderTest'  , 'js/AssetLoaderTest.js'    , 'away/loaders/AssetLoaderTest.ts'  );
             harness.addTest( 'Loaders.IMGLoaderTest'                ,  'tests.net.IMGLoaderTest'    , 'js/IMGLoaderTest.js'      , 'away/loaders/IMGLoaderTest.ts'  );
+
+            //---------------------------------------------------------------------------
+            // Test - Entities
+            //---------------------------------------------------------------------------
+
+            harness.addSeperator( 'Entities' );
+            harness.addTest( 'Entities.BillboardEntityTest'    ,  'tests.entities.BillboardEntityTest'  , 'js/BillboardEntityTest.js'    , 'away/entities/BillboardEntityTest.ts'  );
 
             //---------------------------------------------------------------------------
             // Test - Library

@@ -225,14 +225,14 @@ var tests;
                 console.log('away.events.AssetEvent.ASSET_COMPLETE', AssetLibrary.getAsset(e.asset.name));
                 console.log('------------------------------------------------------------------------------');
 
-                var htmlImageElementTexture = AssetLibrary.getAsset(e.asset.name);
+                var imageTexture = AssetLibrary.getAsset(e.asset.name);
 
-                document.body.appendChild(htmlImageElementTexture.htmlImageElement);
+                document.body.appendChild(imageTexture.htmlImageElement);
 
-                htmlImageElementTexture.htmlImageElement.style.position = 'absolute';
-                htmlImageElementTexture.htmlImageElement.style.top = this.height + 'px';
+                imageTexture.htmlImageElement.style.position = 'absolute';
+                imageTexture.htmlImageElement.style.top = this.height + 'px';
 
-                this.height += (htmlImageElementTexture.htmlImageElement.height + 10);
+                this.height += (imageTexture.htmlImageElement.height + 10);
             };
             AssetLibraryTest.prototype.onResourceComplete = function (e) {
                 var loader = e.target;

@@ -17,22 +17,41 @@
 
 ///<reference path="errors/Error.ts" />
 ///<reference path="errors/ArgumentError.ts" />
+///<reference path="errors/CastError.ts" />
 ///<reference path="errors/PartialImplementationError.ts" />
 ///<reference path="errors/AbstractMethodError.ts" />
 ///<reference path="errors/DocumentError.ts" />
 ///<reference path="errors/RangeError.ts" />
 
 ///<reference path="events/Event.ts" />
+///<reference path="events/AssetEvent.ts" />
+///<reference path="events/CameraEvent.ts" />
+///<reference path="events/DisplayObjectEvent.ts" />
 ///<reference path="events/EventDispatcher.ts" />
+///<reference path="events/HTTPStatusEvent.ts" />
 ///<reference path="events/IEventDispatcher.ts" />
 ///<reference path="events/IOErrorEvent.ts" />
-///<reference path="events/HTTPStatusEvent.ts" />
+///<reference path="events/ProjectionEvent.ts" />
+///<reference path="events/LoaderEvent.ts" />
 ///<reference path="events/ParserEvent.ts" />
 ///<reference path="events/ProgressEvent.ts" />
-///<reference path="events/LoaderEvent.ts" />
-///<reference path="events/AssetEvent.ts" />
-///<reference path="events/TimerEvent.ts" />
+///<reference path="events/RendererEvent.ts" />
+///<reference path="events/SceneEvent.ts"/>
 ///<reference path="events/StageGLEvent.ts"/>
+///<reference path="events/TimerEvent.ts" />
+
+///<reference path="utils/ByteArrayBase.ts"/>
+///<reference path="utils/ByteArray.ts"/>
+///<reference path="utils/ByteArrayBuffer.ts"/>
+///<reference path="utils/ColorUtils.ts"/>
+///<reference path="utils/Cast.ts"/>
+///<reference path="utils/CSS.ts" />
+///<reference path="utils/Debug.ts"/>
+///<reference path="utils/Delegate.ts"/>
+///<reference path="utils/getTimer.ts" />
+///<reference path="utils/RequestAnimationFrame.ts"/>
+///<reference path="utils/TextureUtils.ts" />
+///<reference path="utils/Timer.ts" />
 
 ///<reference path="parsers/ParserBase.ts" />
 ///<reference path="parsers/BitmapParser.ts" />
@@ -56,9 +75,11 @@
 ///<reference path="core/library/AssetLibraryBundle.ts"/>
 ///<reference path="core/library/AssetLibrary.ts" />
 
+///<reference path="core/base/BlendMode.ts"/>
+///<reference path="core/base/AlignmentMode.ts"/>
+///<reference path="core/base/OrientationMode.ts"/>
 ///<reference path="core/base/BitmapData.ts"/>
 ///<reference path="core/base/BitmapDataChannel.ts"/>
-///<reference path="core/base/BlendMode.ts"/>
 ///<reference path="core/base/CapsStyle"/>
 ///<reference path="core/base/DisplayObject.ts" />
 ///<reference path="core/base/GradientType.ts" />
@@ -66,6 +87,7 @@
 ///<reference path="core/base/GraphicsPathWinding.ts" />
 ///<reference path="core/base/IBitmapDrawable.ts" />
 ///<reference path="core/base/IGraphicsData.ts" />
+///<reference path="core/base/IMaterialOwner.ts" />
 ///<reference path="core/base/InterpolationMethod.ts" />
 ///<reference path="core/base/JointStyle.ts" />
 ///<reference path="core/base/LineScaleMode.ts" />
@@ -74,6 +96,32 @@
 ///<reference path="core/base/SpreadMethod.ts" />
 ///<reference path="core/base/StageGL.ts" />
 ///<reference path="core/base/TriangleCulling.ts" />
+
+///<reference path="core/pool/IRenderable.ts"/>
+///<reference path="core/pool/EntityListItem.ts"/>
+///<reference path="core/pool/EntityListItemPool.ts"/>
+
+///<reference path="core/traverse/ICollector.ts" />
+///<reference path="core/traverse/CSSEntityCollector.ts" />
+
+///<reference path="core/partition/NodeBase.ts" />
+///<reference path="core/partition/NullNode.ts" />
+///<reference path="core/partition/Partition.ts" />
+///<reference path="core/partition/EntityNode.ts" />
+///<reference path="core/partition/CameraNode.ts" />
+
+///<reference path="core/pick/IPickingCollider.ts" />
+///<reference path="core/pick/IPicker.ts"/>
+///<reference path="core/pick/PickingCollisionVO.ts"/>
+
+///<reference path="core/render/IRenderer.ts"/>
+///<reference path="core/render/CSSRenderableBase.ts"/>
+///<reference path="core/render/CSSBillboardRenderable.ts"/>
+///<reference path="core/render/CSSRendererBase.ts"/>
+///<reference path="core/render/CSSDefaultRenderer.ts"/>
+
+///<reference path="core/sort/IEntitySorter.ts"/>
+///<reference path="core/sort/RenderableMergeSort.ts"/>
 
 ///<reference path="core/gl/ContextGLClearMask.ts"/>
 ///<reference path="core/gl/VertexBuffer.ts"/>
@@ -97,6 +145,7 @@
 ///<reference path="core/gl/ContextGL.ts" />
 ///<reference path="core/gl/AGLSLContextGL.ts" />
 
+///<reference path="core/geom/Box.ts"/>
 ///<reference path="core/geom/ColorTransform.ts"/>
 ///<reference path="core/geom/Matrix.ts" />
 ///<reference path="core/geom/Matrix3D.ts" />
@@ -105,6 +154,7 @@
 ///<reference path="core/geom/Point.ts" />
 ///<reference path="core/geom/Rectangle.ts" />
 ///<reference path="core/geom/Transform.ts" />
+///<reference path="core/geom/UVTransform.ts" />
 ///<reference path="core/geom/Vector3D.ts" />
 
 ///<reference path="core/geom/MathConsts.ts" />
@@ -135,27 +185,44 @@
 ///<reference path="core/ui/Keyboard.ts"/>
 
 ///<reference path="containers/DisplayObjectContainer.ts" />
-///<reference path="containers/Loader.ts" />
-///<reference path="containers/Stage.ts" />
 
-///<reference path="entities/Bitmap.ts" />
+///<reference path="entities/IEntity.ts" />
+///<reference path="entities/Billboard.ts" />
+///<reference path="entities/Camera.ts" />
 ///<reference path="entities/Shape.ts" />
-///<reference path="entities/Textfield.ts" />
+///<reference path="entities/TextField.ts" />
+
+///<reference path="projections/ProjectionBase.ts" />
+///<reference path="projections/PerspectiveProjection.ts" />
+///<reference path="projections/FreeMatrixProjection.ts" />
+///<reference path="projections/OrthographicProjection.ts" />
+///<reference path="projections/OrthographicOffCenterProjection.ts" />
+///<reference path="projections/PerspectiveOffCenterProjection.ts" />
+///<reference path="projections/ObliqueNearPlaneProjection.ts" />
+
+///<reference path="containers/Loader.ts" />
+///<reference path="containers/Scene.ts" />
+///<reference path="containers/View.ts" />
+
+///<reference path="bounds/BoundingVolumeBase.ts" />
+///<reference path="bounds/NullBounds.ts" />
+///<reference path="bounds/BoundingSphere.ts" />
+///<reference path="bounds/AxisAlignedBoundingBox.ts" />
+
+///<reference path="controllers/ControllerBase.ts"/>
+///<reference path="controllers/LookAtController.ts"/>
+///<reference path="controllers/HoverController.ts"/>
+///<reference path="controllers/FirstPersonController.ts"/>
+///<reference path="controllers/FollowController.ts"/>
+///<reference path="controllers/SpringController.ts"/>
+
+///<reference path="materials/IMaterial.ts"/>
+///<reference path="materials/CSSMaterialBase.ts"/>
 
 ///<reference path="managers/RTTBufferManager.ts"/>
 ///<reference path="managers/StageGLManager.ts"/>
 
-///<reference path="utils/ByteArrayBase.ts"/>
-///<reference path="utils/ByteArray.ts"/>
-///<reference path="utils/ByteArrayBuffer.ts"/>
-///<reference path="utils/ColorUtils.ts"/>
-///<reference path="utils/CSS.ts" />
-///<reference path="utils/Debug.ts"/>
-///<reference path="utils/Delegate.ts"/>
-///<reference path="utils/getTimer.ts" />
-///<reference path="utils/RequestAnimationFrame.ts"/>
-///<reference path="utils/TextureUtils.ts" />
-///<reference path="utils/Timer.ts" />
+///<reference path="animators/IAnimator.ts"/>
 
 ///<reference path="textures/TextureProxyBase.ts" />
 ///<reference path="textures/Texture2DBase.ts" />
@@ -163,10 +230,10 @@
 ///<reference path="textures/ATFData.ts" />
 ///<reference path="textures/ATFCubeTexture.ts" />
 ///<reference path="textures/ATFTexture.ts" />
-///<reference path="textures/HTMLImageElementTexture.ts" />
+///<reference path="textures/ImageTexture.ts" />
 ///<reference path="textures/BitmapTexture.ts" />
 ///<reference path="textures/RenderTexture.ts" />
-///<reference path="textures/HTMLImageElementCubeTexture.ts" />
+///<reference path="textures/ImageCubeTexture.ts" />
 ///<reference path="textures/BitmapCubeTexture.ts" />
 ///<reference path="textures/MipmapGenerator.ts" />
 

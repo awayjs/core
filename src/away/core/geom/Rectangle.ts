@@ -400,7 +400,7 @@ module away.geom
 		 */
 		public intersects(toIntersect:Rectangle):boolean
 		{
-			return ((this.x + this.width > toIntersect.x || this.x < toIntersect.x + toIntersect.width) && (this.y + this.height > toIntersect.y || this.y < toIntersect.y + toIntersect.height));
+			return (this.x + this.width > toIntersect.x && this.x < toIntersect.x + toIntersect.width && this.y + this.height > toIntersect.y && this.y < toIntersect.y + toIntersect.height);
 		}
 
 		/**

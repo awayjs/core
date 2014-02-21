@@ -62,6 +62,18 @@ module away.geom
 		private _concatenatedColorTransform:ColorTransform;
 		private _concatenatedMatrix:Matrix;
 		private _pixelBounds:Rectangle;
+		public _position:away.geom.Vector3D = new away.geom.Vector3D();
+
+		/**
+		 *
+		 */
+		public get backVector():away.geom.Vector3D
+		{
+			var director:away.geom.Vector3D = away.geom.Matrix3DUtils.getForward(this._displayObject._iMatrix3D);
+			director.negate();
+
+			return director;
+		}
 
 		/**
 		 * A ColorTransform object containing values that universally adjust the
@@ -80,7 +92,7 @@ module away.geom
 		 */
 		public get concatenatedColorTransform():ColorTransform
 		{
-			return this._concatenatedColorTransform;
+			return this._concatenatedColorTransform; //TODO
 		}
 	
 		/**
@@ -96,9 +108,39 @@ module away.geom
 		 */
 		public get concatenatedMatrix():Matrix
 		{
-			return this._concatenatedMatrix;
+			return this._concatenatedMatrix; //TODO
 		}
-	
+
+		/**
+		 *
+		 */
+		public get downVector():away.geom.Vector3D
+		{
+			var director:away.geom.Vector3D = away.geom.Matrix3DUtils.getUp(this._displayObject._iMatrix3D);
+			director.negate();
+
+			return director;
+		}
+
+		/**
+		 *
+		 */
+		public get forwardVector():away.geom.Vector3D
+		{
+			return away.geom.Matrix3DUtils.getForward(this._displayObject._iMatrix3D);
+		}
+
+		/**
+		 *
+		 */
+		public get leftVector():away.geom.Vector3D
+		{
+			var director:away.geom.Vector3D = away.geom.Matrix3DUtils.getRight(this._displayObject._iMatrix3D);
+			director.negate();
+
+			return director;
+		}
+
 		/**
 		 * A Matrix object containing values that alter the scaling, rotation, and
 		 * translation of the display object.
@@ -125,7 +167,15 @@ module away.geom
 		 * value(not <code>null</code>), the <code>matrix</code> property is
 		 * <code>null</code>.</p>
 		 */
-		public matrix3D:Matrix3D;
+		public get matrix3D():away.geom.Matrix3D
+		{
+			return this._displayObject._iMatrix3D;
+		}
+
+		public set matrix3D(val:away.geom.Matrix3D)
+		{
+			this._displayObject._iMatrix3D = val;
+		}
 	
 		/**
 		 * Provides access to the PerspectiveProjection object of a three-dimensional
@@ -146,8 +196,68 @@ module away.geom
 		{
 			return this._pixelBounds;
 		}
-		
-		
+
+		/**
+		 * Defines the position of the 3d object, relative to the local coordinates of the parent <code>ObjectContainer3D</code>.
+		 */
+		public get position():away.geom.Vector3D
+		{
+			return this._displayObject._iMatrix3D.position
+		}
+
+		public set position(value:away.geom.Vector3D)
+		{
+			this._displayObject.x = value.x;
+			this._displayObject.y = value.y;
+			this._displayObject.z = value.z;
+		}
+
+		/**
+		 *
+		 */
+		public get rightVector():away.geom.Vector3D
+		{
+			return away.geom.Matrix3DUtils.getRight(this._displayObject._iMatrix3D);
+		}
+
+		/**
+		 * Defines the rotation of the 3d object, relative to the local coordinates of the parent <code>ObjectContainer3D</code>.
+		 */
+		public get rotation():away.geom.Vector3D
+		{
+			return new Vector3D(this._displayObject.rotationX, this._displayObject.rotationY, this._displayObject.rotationZ);
+		}
+
+		public set rotation(value:away.geom.Vector3D)
+		{
+			this._displayObject.rotationX = value.x;
+			this._displayObject.rotationY = value.y;
+			this._displayObject.rotationZ = value.z;
+		}
+
+		/**
+		 * Defines the scale of the 3d object, relative to the local coordinates of the parent <code>ObjectContainer3D</code>.
+		 */
+		public get scale():away.geom.Vector3D
+		{
+			return new Vector3D(this._displayObject.scaleX, this._displayObject.scaleY, this._displayObject.scaleZ);
+		}
+
+		public set scale(value:away.geom.Vector3D)
+		{
+			this._displayObject.scaleX = value.x;
+			this._displayObject.scaleY = value.y;
+			this._displayObject.scaleZ = value.z;
+		}
+
+		/**
+		 *
+		 */
+		public get upVector():away.geom.Vector3D
+		{
+			return away.geom.Matrix3DUtils.getUp(this._displayObject._iMatrix3D);
+		}
+
 		constructor(displayObject:away.base.DisplayObject)
 		{
 			this._displayObject = displayObject;
@@ -174,6 +284,68 @@ module away.geom
 		public getRelativeMatrix3D(relativeTo:away.base.DisplayObject):Matrix3D
 		{
 			return new Matrix3D(); //TODO
+		}
+
+
+		/**
+		 * Moves the 3d object forwards along it's local z axis
+		 *
+		 * @param    distance    The length of the movement
+		 */
+		public moveForward(distance:number)
+		{
+			this._displayObject.translateLocal(away.geom.Vector3D.Z_AXIS, distance);
+		}
+
+		/**
+		 * Moves the 3d object backwards along it's local z axis
+		 *
+		 * @param    distance    The length of the movement
+		 */
+		public moveBackward(distance:number)
+		{
+			this._displayObject.translateLocal(away.geom.Vector3D.Z_AXIS, -distance);
+		}
+
+		/**
+		 * Moves the 3d object backwards along it's local x axis
+		 *
+		 * @param    distance    The length of the movement
+		 */
+
+		public moveLeft(distance:number)
+		{
+			this._displayObject.translateLocal(away.geom.Vector3D.X_AXIS, -distance);
+		}
+
+		/**
+		 * Moves the 3d object forwards along it's local x axis
+		 *
+		 * @param    distance    The length of the movement
+		 */
+		public moveRight(distance:number)
+		{
+			this._displayObject.translateLocal(away.geom.Vector3D.X_AXIS, distance);
+		}
+
+		/**
+		 * Moves the 3d object forwards along it's local y axis
+		 *
+		 * @param    distance    The length of the movement
+		 */
+		public moveUp(distance:number)
+		{
+			this._displayObject.translateLocal(away.geom.Vector3D.Y_AXIS, distance);
+		}
+
+		/**
+		 * Moves the 3d object backwards along it's local y axis
+		 *
+		 * @param    distance    The length of the movement
+		 */
+		public moveDown(distance:number)
+		{
+			this._displayObject.translateLocal(away.geom.Vector3D.Y_AXIS, -distance);
 		}
 	}
 }

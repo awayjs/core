@@ -2,7 +2,7 @@
 
 module away.textures
 {
-	export class HTMLImageElementCubeTexture extends CubeTextureBase
+	export class ImageCubeTexture extends CubeTextureBase
 	{
 
 		private _bitmapDatas:Array<HTMLImageElement>;
@@ -119,7 +119,7 @@ module away.textures
 			this._bitmapDatas[5] = value;
 		}
 
-		private testSize(value:HTMLImageElement):void
+		private testSize(value:HTMLImageElement)
 		{
 			if (value.width != value.height)
 				throw new Error("BitmapData should have equal width and height!");
@@ -127,7 +127,7 @@ module away.textures
 				throw new Error("Invalid bitmapData: Width and height must be power of 2 and cannot exceed 2048");
 		}
 
-		public pUploadContent(texture:away.gl.TextureBase):void
+		public pUploadContent(texture:away.gl.TextureBase)
 		{
 			for (var i:number = 0; i < 6; ++i) {
 				if (this._useMipMaps) {

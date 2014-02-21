@@ -3,7 +3,7 @@
 module away.textures
 {
 
-	export class HTMLImageElementTexture extends away.textures.Texture2DBase
+	export class ImageTexture extends away.textures.Texture2DBase
 	{
 		private static _mipMaps = [];
 		private static _mipMapUses = [];
@@ -86,22 +86,22 @@ module away.textures
 
 			}
 
-			if (!HTMLImageElementTexture._mipMaps[newW]) {
+			if (!ImageTexture._mipMaps[newW]) {
 
-				HTMLImageElementTexture._mipMaps[newW] = [];
-				HTMLImageElementTexture._mipMapUses[newW] = [];
+				ImageTexture._mipMaps[newW] = [];
+				ImageTexture._mipMapUses[newW] = [];
 
 			}
 
-			if (!HTMLImageElementTexture._mipMaps[newW][newH]) {
+			if (!ImageTexture._mipMaps[newW][newH]) {
 
-				this._mipMapHolder = HTMLImageElementTexture._mipMaps[newW][newH] = new away.base.BitmapData(newW, newH, true);
-				HTMLImageElementTexture._mipMapUses[newW][newH] = 1;
+				this._mipMapHolder = ImageTexture._mipMaps[newW][newH] = new away.base.BitmapData(newW, newH, true);
+				ImageTexture._mipMapUses[newW][newH] = 1;
 
 			} else {
 
-				HTMLImageElementTexture._mipMapUses[newW][newH] = HTMLImageElementTexture._mipMapUses[newW][newH] + 1;
-				this._mipMapHolder = HTMLImageElementTexture._mipMaps[newW][newH];
+				ImageTexture._mipMapUses[newW][newH] = ImageTexture._mipMapUses[newW][newH] + 1;
+				this._mipMapHolder = ImageTexture._mipMaps[newW][newH];
 
 			}
 		}
@@ -111,10 +111,10 @@ module away.textures
 			var holderWidth:number = this._mipMapHolder.width;
 			var holderHeight:number = this._mipMapHolder.height;
 
-			if (--HTMLImageElementTexture._mipMapUses[holderWidth][holderHeight] == 0) {
+			if (--ImageTexture._mipMapUses[holderWidth][holderHeight] == 0) {
 
-				HTMLImageElementTexture._mipMaps[holderWidth][holderHeight].dispose();
-				HTMLImageElementTexture._mipMaps[holderWidth][holderHeight] = null;
+				ImageTexture._mipMaps[holderWidth][holderHeight].dispose();
+				ImageTexture._mipMaps[holderWidth][holderHeight] = null;
 
 			}
 		}

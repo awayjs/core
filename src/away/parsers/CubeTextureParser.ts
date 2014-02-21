@@ -87,7 +87,7 @@ module away.parsers
 		public _pProceedParsing():boolean
 		{
 			if (this._imgDependencyDictionary != null) { //all images loaded
-				var asset:away.textures.HTMLImageElementCubeTexture = new away.textures.HTMLImageElementCubeTexture(
+				var asset:away.textures.ImageCubeTexture = new away.textures.ImageCubeTexture(
 
 					this._getHTMLImageElement(CubeTextureParser.posX), this._getHTMLImageElement(CubeTextureParser.negX), this._getHTMLImageElement(CubeTextureParser.posY), this._getHTMLImageElement(CubeTextureParser.negY), this._getHTMLImageElement(CubeTextureParser.posZ), this._getHTMLImageElement(CubeTextureParser.negZ));
 
@@ -148,7 +148,7 @@ module away.parsers
 			var dependency:away.parsers.ResourceDependency = <away.parsers.ResourceDependency> this._imgDependencyDictionary[ name ];
 
 			if (dependency) {
-				return <HTMLImageElement> (<away.textures.HTMLImageElementTexture> dependency.assets[0]).htmlImageElement;
+				return <HTMLImageElement> (<away.textures.ImageTexture> dependency.assets[0]).htmlImageElement;
 			}
 
 			return null;

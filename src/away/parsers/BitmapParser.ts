@@ -93,13 +93,13 @@ module away.parsers
 				return away.parsers.ParserBase.MORE_TO_PARSE;
 			} else if (this._htmlImageElement) {
 				if (away.utils.TextureUtils.isHTMLImageElementValid(this._htmlImageElement)) {
-					asset = <away.textures.Texture2DBase> new away.textures.HTMLImageElementTexture(this._htmlImageElement, false);
+					asset = <away.textures.Texture2DBase> new away.textures.ImageTexture(this._htmlImageElement, false);
 					this._pFinalizeAsset(<away.library.IAsset> asset, this._iFileName);
 				}
 			} else if (this.data instanceof HTMLImageElement) {// Parse HTMLImageElement
 
 				if (away.utils.TextureUtils.isHTMLImageElementValid(<HTMLImageElement> this.data)) {
-					asset = <away.textures.Texture2DBase> new away.textures.HTMLImageElementTexture(<HTMLImageElement> this.data, false);
+					asset = <away.textures.Texture2DBase> new away.textures.ImageTexture(<HTMLImageElement> this.data, false);
 					this._pFinalizeAsset(<away.library.IAsset> asset, this._iFileName);
 				} else {
 					sizeError = true;
@@ -112,7 +112,7 @@ module away.parsers
 				var htmlImageElement:HTMLImageElement = away.parsers.ParserUtils.byteArrayToImage(this.data);
 
 				if (away.utils.TextureUtils.isHTMLImageElementValid(htmlImageElement)) {
-					asset = <away.textures.Texture2DBase> new away.textures.HTMLImageElementTexture(htmlImageElement, false);
+					asset = <away.textures.Texture2DBase> new away.textures.ImageTexture(htmlImageElement, false);
 					this._pFinalizeAsset(<away.library.IAsset> asset, this._iFileName);
 				} else {
 					sizeError = true;

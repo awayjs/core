@@ -18,8 +18,8 @@ module away.base
 		private _canvas:HTMLCanvasElement;
 		private _width:number;
 		private _height:number;
-		private _x:number;
-		private _y:number;
+		private _x:number = 0;
+		private _y:number = 0;
 
 		//private static _frameEventDriver:Shape = new Shape(); // TODO: add frame driver / request animation frame
 
@@ -64,8 +64,9 @@ module away.base
 
 			this._enableDepthAndStencil = true;
 
-			this.x = 0;
-			this.y = 0;
+			away.utils.CSS.setCanvasX(this._canvas, 0);
+			away.utils.CSS.setCanvasY(this._canvas, 0);
+
 			this.visible = true;
 		}
 
@@ -96,7 +97,7 @@ module away.base
 
 			if (this._contextGL) {
 				// Only configure back buffer if width and height have been set,
-				// which they may not have been if View3D.render() has yet to be
+				// which they may not have been if View.render() has yet to be
 				// invoked for the first time.
 				if (this._width && this._height)
 					this._contextGL.configureBackBuffer(this._width, this._height, this._antiAlias, this._enableDepthAndStencil);

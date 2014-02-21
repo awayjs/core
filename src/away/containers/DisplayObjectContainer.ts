@@ -23,11 +23,19 @@
  */
 module away.containers
 {
-	export class DisplayObjectContainer extends away.base.DisplayObject
+	export class DisplayObjectContainer extends away.base.DisplayObject implements away.library.IAsset
 	{
-		private _numChildren:number;
-		private _indexedChildren:Object = new Object();
-		private _namedChildren:Object = new Object();
+		private _mouseChildren:boolean = true;
+		private _children:Array<away.base.DisplayObject> = new Array<away.base.DisplayObject>();
+		public _iIsRoot:boolean;
+
+		/**
+		 *
+		 */
+		public get assetType():string
+		{
+			return away.library.AssetType.CONTAINER;
+		}
 
 		/**
 		 * Determines whether or not the children of the object are mouse, or user
@@ -50,14 +58,27 @@ module away.containers
 		 * <code>addEventListener()</code> method to create interactive
 		 * functionality.</p>
 		 */
-		public mouseChildren:boolean;
+		public get mouseChildren():boolean
+		{
+			return this._mouseChildren;
+		}
+
+		public set mouseChildren(value:boolean)
+		{
+			if (this._mouseChildren == value)
+				return;
+
+			this._mouseChildren = value;
+
+			this._pUpdateImplicitMouseEnabled(this._pParent? this._pParent.mouseChildren : true);
+		}
 
 		/**
 		 * Returns the number of children of this object.
 		 */
 		public get numChildren():number /*int*/
 		{
-			return this._numChildren;
+			return this._children.length;
 		}
 
 		/**
@@ -122,6 +143,17 @@ module away.containers
 		 */
 		public addChild(child:away.base.DisplayObject):away.base.DisplayObject
 		{
+			if (child == null)
+				throw new away.errors.Error("Parameter child cannot be null.");
+
+			//if child already has a parent, remove it.
+			if (child._pParent)
+				child._pParent.removeChildInternal(child);
+
+			child.iSetParent(this);
+
+			this._children.push(child);
+
 			return child;
 		}
 
@@ -160,6 +192,32 @@ module away.containers
 			return child;
 		}
 
+		public addChildren(...childarray:Array<away.base.DisplayObject>)
+		{
+			var len:number = childarray.length;
+			for (var i:number = 0; i <  len; i++)
+				this.addChild(childarray[i]);
+		}
+
+		/**
+		 *
+		 */
+		public clone():away.base.DisplayObject
+		{
+			var clone:away.containers.DisplayObjectContainer = new away.containers.DisplayObjectContainer();
+			clone.pivotPoint = this.pivotPoint;
+			clone._iMatrix3D = this._iMatrix3D;
+			clone.partition = this.partition;
+			clone.name = name;
+
+			var len:number = this._children.length;
+			for (var i:number = 0; i < len; ++i)
+				clone.addChild(this._children[i].clone());
+
+			// todo: implement for all subtypes
+			return clone;
+		}
+
 		/**
 		 * Determines whether the specified display object is a child of the
 		 * DisplayObjectContainer instance or the instance itself. The search
@@ -174,7 +232,18 @@ module away.containers
 		 */
 		public contains(child:away.base.DisplayObject):boolean
 		{
-			return false;
+			return this._children.indexOf(child) >= 0;
+		}
+
+		/**
+		 *
+		 */
+		public disposeWithChildren()
+		{
+			this.dispose();
+
+			while (this.numChildren > 0)
+				this.getChildAt(0).dispose();
 		}
 
 		/**
@@ -185,14 +254,15 @@ module away.containers
 		 * @return The child display object at the specified index position.
 		 * @throws RangeError    Throws if the index does not exist in the child
 		 *                       list.
-		 * @throws SecurityError This child display object belongs to a sandbox to
-		 *                       which you do not have access. You can avoid this
-		 *                       situation by having the child movie call
-		 *                       <code>Security.allowDomain()</code>.
 		 */
 		public getChildAt(index:number /*int*/):away.base.DisplayObject
 		{
-			return <away.base.DisplayObject> this._indexedChildren[index];
+			var child:away.base.DisplayObject = this._children[index];
+
+			if (child == null)
+				throw new away.errors.RangeError("Index does not exist in the child list of the caller");
+
+			return child;
 		}
 
 		/**
@@ -208,14 +278,15 @@ module away.containers
 		 *
 		 * @param name The name of the child to return.
 		 * @return The child display object with the specified name.
-		 * @throws SecurityError This child display object belongs to a sandbox to
-		 *                       which you do not have access. You can avoid this
-		 *                       situation by having the child movie call the
-		 *                       <code>Security.allowDomain()</code> method.
 		 */
 		public getChildByName(name:string):away.base.DisplayObject
 		{
-			return <away.base.DisplayObject> this._namedChildren[name];
+			var len:number = this._children.length;
+			for (var i:number = 0; i < len; ++i)
+				if (this._children[i].name == name)
+					return this._children[i];
+
+			return null;
 		}
 
 		/**
@@ -228,7 +299,12 @@ module away.containers
 		 */
 		public getChildIndex(child:away.base.DisplayObject):number /*int*/
 		{
-			return child.index;
+			var childIndex:number = this._children.indexOf(child);
+
+			if (childIndex == -1)
+				throw new away.errors.ArgumentError("Child parameter is not a child of the caller");
+
+			return childIndex;
 		}
 
 		/**
@@ -276,10 +352,12 @@ module away.containers
 		 */
 		public removeChild(child:away.base.DisplayObject):away.base.DisplayObject
 		{
-			if (this._indexedChildren[child.index] == null)
-				throw new away.errors.ArgumentError("Display object is not a child of the container");
+			if (child == null)
+				throw new away.errors.Error("Parameter child cannot be null");
 
-			this._indexedChildren[child.index] = null;
+			this.removeChildInternal(child);
+
+			child.iSetParent(null);
 
 			return child;
 		}
@@ -308,14 +386,7 @@ module away.containers
 		 */
 		public removeChildAt(index:number /*int*/):away.base.DisplayObject
 		{
-			var child:away.base.DisplayObject = <away.base.DisplayObject> this._indexedChildren[index];
-
-			if (child == null)
-				throw new away.errors.RangeError("No child present at specified index");
-
-			this._indexedChildren[index] = null;
-
-			return child;
+			return this.removeChild(this._children[index]);
 		}
 
 		/**
@@ -336,7 +407,14 @@ module away.containers
 		 */
 		public removeChildren(beginIndex:number /*int*/ = 0, endIndex:number /*int*/ = 2147483647)
 		{
+			if (beginIndex < 0)
+				throw new away.errors.RangeError("beginIndex is out of range of the child list");
 
+			if (endIndex > this._children.length)
+				throw new away.errors.RangeError("endIndex is out of range of the child list");
+
+			for(var i:number /*uint*/ = beginIndex; i < endIndex; i++)
+				this.removeChild(this._children[i]);
 		}
 
 		/**
@@ -369,7 +447,7 @@ module away.containers
 		 */
 		public setChildIndex(child:away.base.DisplayObject, index:number /*int*/)
 		{
-
+			//TODO
 		}
 
 		/**
@@ -384,7 +462,7 @@ module away.containers
 		 */
 		public swapChildren(child1:away.base.DisplayObject, child2:away.base.DisplayObject)
 		{
-
+			//TODO
 		}
 
 		/**
@@ -398,7 +476,79 @@ module away.containers
 		 */
 		public swapChildrenAt(index1:number /*int*/, index2:number /*int*/)
 		{
+			//TODO
+		}
 
+		/**
+		 * @protected
+		 */
+		public pInvalidateSceneTransform()
+		{
+			super.pInvalidateSceneTransform();
+
+			var len:number = this._children.length;
+			for (var i:number = 0; i < len; ++i)
+				this._children[i++].pInvalidateSceneTransform();
+		}
+
+		/**
+		 * @protected
+		 */
+		public _pUpdateScene(value:away.containers.Scene)
+		{
+			super._pUpdateScene(value);
+
+			var len:number = this._children.length;
+			for (var i:number = 0; i < len; ++i)
+				this._children[i]._pUpdateScene(value);
+		}
+
+		/**
+		 * @protected
+		 */
+		public _pUpdateImplicitMouseEnabled(value:boolean)
+		{
+			super._pUpdateImplicitMouseEnabled(value);
+
+			var len:number = this._children.length;
+			for (var i:number = 0; i < len; ++i)
+				this._children[i]._pUpdateImplicitMouseEnabled(this._mouseChildren);
+		}
+
+		/**
+		 * @protected
+		 */
+		public _pUpdateImplicitVisibility(value:boolean)
+		{
+			super._pUpdateImplicitVisibility(value);
+
+			var len:number = this._children.length;
+			for (var i:number = 0; i < len; ++i)
+				this._children[i]._pUpdateImplicitVisibility(this._pImplicitVisibility);
+		}
+
+		/**
+		 * @protected
+		 */
+		public _pUpdateImplicitPartition(value:away.partition.Partition)
+		{
+			super._pUpdateImplicitPartition(value);
+
+			var len:number = this._children.length;
+			for (var i:number = 0; i < len; ++i)
+				this._children[i]._pUpdateImplicitPartition(this._pImplicitPartition);
+		}
+
+		/**
+		 * @private
+		 *
+		 * @param child
+		 */
+		private removeChildInternal(child:away.base.DisplayObject):away.base.DisplayObject
+		{
+			this._children.splice(this.getChildIndex(child), 1);
+
+			return child;
 		}
 	}
 }

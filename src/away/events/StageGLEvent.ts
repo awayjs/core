@@ -9,10 +9,10 @@ module away.events
 
 	export class StageGLEvent extends Event
 	{
-		public static CONTEXTGL_CREATED:string = "ContextGLCreated";
-		public static CONTEXTGL_DISPOSED:string = "ContextGLDisposed";
-		public static CONTEXTGL_RECREATED:string = "ContextGLRecreated";
-		public static VIEWPORT_UPDATED:string = "ViewportUpdated";
+		public static CONTEXTGL_CREATED:string = "contextGLCreated";
+		public static CONTEXTGL_DISPOSED:string = "contextGLDisposed";
+		public static CONTEXTGL_RECREATED:string = "contextGLRecreated";
+		public static VIEWPORT_UPDATED:string = "viewportUpdated";
 
 		constructor(type:string)//, bubbles:boolean = false, cancelable:boolean = false)
 		{

@@ -129,18 +129,99 @@
  *                         display is not rendering. This is the case when the
  *                         content is either minimized or obscured. </p>
  */
-
 module away.base
 {
-	export class DisplayObject extends away.events.EventDispatcher  implements IBitmapDrawable
+	export class DisplayObject extends away.library.NamedAssetBase implements IBitmapDrawable
 	{
 		private _loaderInfo:LoaderInfo;
 		private _mouseX:number;
 		private _mouseY:number;
-		private _parent:away.containers.DisplayObjectContainer;
 		private _root:away.containers.DisplayObjectContainer;
-		private _stage:away.containers.Stage;
 		private _bounds:away.geom.Rectangle;
+		private _depth:number;
+		private _height:number;
+		private _width:number;
+
+		public _pScene:away.containers.Scene;
+		public _pParent:away.containers.DisplayObjectContainer;
+		public _pSceneTransform:away.geom.Matrix3D = new away.geom.Matrix3D();
+		public _pSceneTransformDirty:boolean = true;
+		public _pIsEntity:boolean;
+
+		private _explicitPartition:away.partition.Partition;
+		public _pImplicitPartition:away.partition.Partition;
+		private _partitionNode:away.partition.EntityNode;
+
+		private _sceneTransformChanged:away.events.DisplayObjectEvent;
+		private _scenechanged:away.events.DisplayObjectEvent;
+		private _transform:away.geom.Transform;
+		private _matrix3D:away.geom.Matrix3D = new away.geom.Matrix3D();
+		private _matrix3DDirty:boolean = true;
+
+		private _inverseSceneTransform:away.geom.Matrix3D = new away.geom.Matrix3D();
+		private _inverseSceneTransformDirty:boolean = true;
+		private _scenePosition:away.geom.Vector3D = new away.geom.Vector3D();
+		private _scenePositionDirty:boolean = true;
+		private _explicitVisibility:boolean = true;
+		public _pImplicitVisibility:boolean = true;
+		private _explicitMouseEnabled:boolean = true;
+		public _pImplicitMouseEnabled:boolean = true;
+		private _listenToSceneTransformChanged:boolean;
+		private _listenToSceneChanged:boolean;
+
+		private _positionDirty:boolean = true;
+		private _rotationDirty:boolean = true;
+		private _scaleDirty:boolean = true;
+
+		private _positionChanged:away.events.DisplayObjectEvent;
+		private _rotationChanged:away.events.DisplayObjectEvent;
+		private _scaleChanged:away.events.DisplayObjectEvent;
+
+		private _rotationX:number = 0;
+		private _rotationY:number = 0;
+		private _rotationZ:number = 0;
+		private _eulers:away.geom.Vector3D = new away.geom.Vector3D();
+		private _flipY:away.geom.Matrix3D = new away.geom.Matrix3D();
+
+		private _listenToPositionChanged:boolean;
+		private _listenToRotationChanged:boolean;
+		private _listenToScaleChanged:boolean;
+		private _zOffset:number = 0;
+
+		public _pScaleX:number = 1;
+		public _pScaleY:number = 1;
+		public _pScaleZ:number = 1;
+		private _x:number = 0;
+		private _y:number = 0;
+		private _z:number = 0;
+		private _pivotPoint:away.geom.Vector3D = new away.geom.Vector3D();
+		private _orientationMatrix:away.geom.Matrix3D = new away.geom.Matrix3D();
+		private _pivotZero:boolean = true;
+		private _pivotDirty:boolean = true;
+		private _pos:away.geom.Vector3D = new away.geom.Vector3D();
+		private _rot:away.geom.Vector3D = new away.geom.Vector3D();
+		private _sca:away.geom.Vector3D = new away.geom.Vector3D();
+		private _transformComponents:away.geom.Vector3D[];
+
+		public _pIgnoreTransform:boolean = false;
+
+		private _showBounds:boolean;
+		private _boundsIsShown:boolean;
+		private _shaderPickingDetails:boolean;
+
+		private _pickingCollisionVO:away.pick.PickingCollisionVO;
+
+		public _pBounds:away.bounds.BoundingVolumeBase;
+		public _pBoundsInvalid:boolean = true;
+		private _worldBounds:away.bounds.BoundingVolumeBase;
+		private _worldBoundsInvalid:boolean = true;
+
+		private _pickingCollider:away.pick.IPickingCollider;
+
+		/**
+		 *
+		 */
+		public alignmentMode:string = AlignmentMode.REGISTRATION_POINT;
 
 		/**
 		 * Indicates the alpha transparency value of the object specified. Valid
@@ -175,6 +256,31 @@ module away.base
 		 * object(2) superimposed on another display object(1).</p>
 		 */
 		public blendMode:BlendMode;
+
+		/**
+		 *
+		 */
+		public get bounds():away.bounds.BoundingVolumeBase
+		{
+			if (this._pBoundsInvalid)
+				this.pUpdateBounds();
+
+			return this._pBounds;
+		}
+
+		public set bounds(value:away.bounds.BoundingVolumeBase)
+		{
+			if (this._showBounds)
+				this.removeBounds();
+
+			this._pBounds = value;
+			this._worldBounds = value.clone();
+
+			this.pInvalidateBounds();
+
+			if (this._showBounds)
+				this.addBounds();
+		}
 
 		/**
 		 * If set to <code>true</code>, NME will use the software renderer to cache
@@ -234,6 +340,67 @@ module away.base
 		 * and <i>y</i> position is changed).</p>
 		 */
 		public cacheAsBitmap:boolean;
+
+		/**
+		 *
+		 */
+		public castsShadows:boolean = true;
+
+		/**
+		 * Indicates the depth of the display object, in pixels. The depth is
+		 * calculated based on the bounds of the content of the display object. When
+		 * you set the <code>depth</code> property, the <code>scaleZ</code> property
+		 * is adjusted accordingly, as shown in the following code:
+		 *
+		 * <p>Except for TextField and Video objects, a display object with no
+		 * content (such as an empty sprite) has a depth of 0, even if you try to
+		 * set <code>depth</code> to a different value.</p>
+		 */
+		public get depth():number
+		{
+			if (this._pBoundsInvalid)
+				this.pUpdateBounds();
+
+			return this._depth;
+		}
+
+		public set depth(val:number)
+		{
+			if (this._depth == val)
+				return;
+
+			this._depth == val;
+
+			this._pScaleZ = val/this.bounds.aabb.depth;
+
+			this.invalidateScale();
+		}
+
+		/**
+		 * Defines the rotation of the 3d object as a <code>Vector3D</code> object containing euler angles for rotation around x, y and z axis.
+		 */
+		public get eulers():away.geom.Vector3D
+		{
+			this._eulers.x = this._rotationX*away.geom.MathConsts.RADIANS_TO_DEGREES;
+			this._eulers.y = this._rotationY*away.geom.MathConsts.RADIANS_TO_DEGREES;
+			this._eulers.z = this._rotationZ*away.geom.MathConsts.RADIANS_TO_DEGREES;
+
+			return this._eulers;
+		}
+
+		public set eulers(value:away.geom.Vector3D)
+		{
+			this._rotationX = value.x*away.geom.MathConsts.DEGREES_TO_RADIANS;
+			this._rotationY = value.y*away.geom.MathConsts.DEGREES_TO_RADIANS;
+			this._rotationZ = value.z*away.geom.MathConsts.DEGREES_TO_RADIANS;
+
+			this.invalidateRotation();
+		}
+
+		/**
+		 * An object that can contain any extra data.
+		 */
+		public extra:Object;
 
 		/**
 		 * An indexed array that contains each filter object currently associated
@@ -323,10 +490,28 @@ module away.base
 		 * is adjusted accordingly, as shown in the following code:
 		 *
 		 * <p>Except for TextField and Video objects, a display object with no
-		 * content(such as an empty sprite) has a height of 0, even if you try to
+		 * content (such as an empty sprite) has a height of 0, even if you try to
 		 * set <code>height</code> to a different value.</p>
 		 */
-		public height:number;
+		public get height():number
+		{
+			if (this._pBoundsInvalid)
+				this.pUpdateBounds();
+
+			return this._height;
+		}
+
+		public set height(val:number)
+		{
+			if (this._height == val)
+				return;
+
+			this._height == val;
+
+			this._pScaleY = val/this.bounds.aabb.height;
+
+			this.invalidateScale();
+		}
 
 		/**
 		 * Indicates the instance container index of the DisplayObject. The object can be
@@ -334,10 +519,59 @@ module away.base
 		 * calling the <code>getChildByIndex()</code> method of the display object
 		 * container.
 		 *
-		 * <p>If the DisplayObject has no parent container, index defaults to 0.
+		 * <p>If the DisplayObject has no parent container, index defaults to 0.</p>
 		 */
-		public index:number;
+		public get index():number
+		{
+			if (this._pParent)
+				return this._pParent.getChildIndex(this);
 
+			return 0;
+		}
+
+		/**
+		 *
+		 */
+		public get inverseSceneTransform():away.geom.Matrix3D
+		{
+			if (this._inverseSceneTransformDirty) {
+				this._inverseSceneTransform.copyFrom(this.sceneTransform);
+				this._inverseSceneTransform.invert();
+				this._inverseSceneTransformDirty = false;
+			}
+			return this._inverseSceneTransform;
+		}
+
+		/**
+		 *
+		 */
+		public get ignoreTransform():boolean
+		{
+			return this._pIgnoreTransform;
+		}
+
+		public set ignoreTransform(value:boolean)
+		{
+			if (this._pIgnoreTransform == value)
+				return;
+
+			this._pIgnoreTransform = value;
+
+			if (value) {
+				this._pSceneTransform.identity();
+				this._scenePosition.setTo(0, 0, 0);
+			}
+
+			this.pInvalidateSceneTransform();
+		}
+
+		/**
+		 *
+		 */
+		public get isEntity()
+		{
+			return this._pIsEntity;
+		}
 		/**
 		 * Returns a LoaderInfo object containing information about loading the file
 		 * to which this display object belongs. The <code>loaderInfo</code> property
@@ -390,6 +624,38 @@ module away.base
 		public mask:DisplayObject;
 
 		/**
+		 * Specifies whether this object receives mouse, or other user input,
+		 * messages. The default value is <code>true</code>, which means that by
+		 * default any InteractiveObject instance that is on the display list
+		 * receives mouse events or other user input events. If
+		 * <code>mouseEnabled</code> is set to <code>false</code>, the instance does
+		 * not receive any mouse events(or other user input events like keyboard
+		 * events). Any children of this instance on the display list are not
+		 * affected. To change the <code>mouseEnabled</code> behavior for all
+		 * children of an object on the display list, use
+		 * <code>flash.display.DisplayObjectContainer.mouseChildren</code>.
+		 *
+		 * <p> No event is dispatched by setting this property. You must use the
+		 * <code>addEventListener()</code> method to create interactive
+		 * functionality.</p>
+		 */
+		public get mouseEnabled():boolean
+		{
+			return this._explicitMouseEnabled;
+		}
+
+		public set mouseEnabled(value:boolean)
+		{
+			if (this._explicitMouseEnabled == value)
+				return;
+
+			this._explicitMouseEnabled = value;
+
+			this._pUpdateImplicitMouseEnabled(this._pParent? this._pParent.mouseChildren : true);
+		}
+
+
+		/**
 		 * Indicates the x coordinate of the mouse or user input device position, in
 		 * pixels.
 		 *
@@ -426,6 +692,11 @@ module away.base
 		public name:string;
 
 		/**
+		 *
+		 */
+		public orientationMode:string = OrientationMode.DEFAULT;
+
+		/**
 		 * Indicates the DisplayObjectContainer object that contains this display
 		 * object. Use the <code>parent</code> property to specify a relative path to
 		 * display objects that are above the current display object in the display
@@ -441,7 +712,71 @@ module away.base
 		 */
 		public get parent():away.containers.DisplayObjectContainer
 		{
-			return this._parent;
+			return this._pParent;
+		}
+
+		/**
+		 *
+		 */
+		public get partition():away.partition.Partition
+		{
+			return this._explicitPartition;
+		}
+
+		public set partition(value:away.partition.Partition)
+		{
+			if (this._explicitPartition == value)
+				return;
+
+			if (this._pScene && this._explicitPartition)
+				this._pScene.iUnregisterPartition(this._explicitPartition);
+
+			this._explicitPartition = value;
+
+			if (this._pScene && value)
+				this._pScene.iRegisterPartition(value);
+
+			this._pUpdateImplicitPartition(this._pParent? this._pParent._iAssignedPartition : null);
+		}
+
+		/**
+		 *
+		 */
+		public get partitionNode():away.partition.EntityNode
+		{
+			if (!this._partitionNode)
+				this._partitionNode = this.pCreateEntityPartitionNode();
+
+			return this._partitionNode;
+		}
+
+		/**
+		 *
+		 */
+		public get pickingCollider():away.pick.IPickingCollider
+		{
+			return this._pickingCollider;
+		}
+
+		public set pickingCollider(value:away.pick.IPickingCollider)
+		{
+			this._pickingCollider = value;
+		}
+
+		/**
+		 * Defines the local point around which the object rotates.
+		 */
+		public get pivotPoint():away.geom.Vector3D
+		{
+			return this._pivotPoint;
+		}
+
+
+		public set pivotPoint(pivot:away.geom.Vector3D)
+		{
+			this._pivotPoint = pivot.clone();
+
+			this.invalidatePivot();
 		}
 
 		/**
@@ -492,7 +827,20 @@ module away.base
 		 * represent counterclockwise rotation. Values outside this range are added
 		 * to or subtracted from 360 to obtain a value within the range.
 		 */
-		public rotationX:number;
+		public get rotationX():number
+		{
+			return this._rotationX*away.geom.MathConsts.RADIANS_TO_DEGREES;
+		}
+
+		public set rotationX(val:number)
+		{
+			if (this.rotationX == val)
+				return;
+
+			this._rotationX = val*away.geom.MathConsts.DEGREES_TO_RADIANS;
+
+			this.invalidateRotation();
+		}
 
 		/**
 		 * Indicates the y-axis rotation of the DisplayObject instance, in degrees,
@@ -501,7 +849,20 @@ module away.base
 		 * represent counterclockwise rotation. Values outside this range are added
 		 * to or subtracted from 360 to obtain a value within the range.
 		 */
-		public rotationY:number;
+		public get rotationY():number
+		{
+			return this._rotationY*away.geom.MathConsts.RADIANS_TO_DEGREES;
+		}
+
+		public set rotationY(val:number)
+		{
+			if (this.rotationY == val)
+				return;
+
+			this._rotationY = val*away.geom.MathConsts.DEGREES_TO_RADIANS;
+
+			this.invalidateRotation();
+		}
 
 		/**
 		 * Indicates the z-axis rotation of the DisplayObject instance, in degrees,
@@ -510,7 +871,20 @@ module away.base
 		 * represent counterclockwise rotation. Values outside this range are added
 		 * to or subtracted from 360 to obtain a value within the range.
 		 */
-		public rotationZ:number;
+		public get rotationZ():number
+		{
+			return this._rotationZ*away.geom.MathConsts.RADIANS_TO_DEGREES;
+		}
+
+		public set rotationZ(val:number)
+		{
+			if (this.rotationZ == val)
+				return;
+
+			this._rotationZ = val*away.geom.MathConsts.DEGREES_TO_RADIANS;
+
+			this.invalidateRotation();
+		}
 
 		/**
 		 * The current scaling grid that is in effect. If set to <code>null</code>,
@@ -572,7 +946,20 @@ module away.base
 		 * <p>Scaling the local coordinate system changes the <code>x</code> and
 		 * <code>y</code> property values, which are defined in whole pixels. </p>
 		 */
-		public scaleX:number;
+		public get scaleX():number
+		{
+			return this._pScaleX;
+		}
+
+		public set scaleX(val:number)
+		{
+			if (this._pScaleX == val)
+				return;
+
+			this._pScaleX = val;
+
+			this.invalidateScale();
+		}
 
 		/**
 		 * Indicates the vertical scale(percentage) of an object as applied from the
@@ -582,7 +969,20 @@ module away.base
 		 * <p>Scaling the local coordinate system changes the <code>x</code> and
 		 * <code>y</code> property values, which are defined in whole pixels. </p>
 		 */
-		public scaleY:number;
+		public get scaleY():number
+		{
+			return this._pScaleY;
+		}
+
+		public set scaleY(val:number)
+		{
+			if (this._pScaleY == val)
+				return;
+
+			this._pScaleY = val;
+
+			this.invalidateScale();
+		}
 
 		/**
 		 * Indicates the depth scale(percentage) of an object as applied from the
@@ -593,7 +993,54 @@ module away.base
 		 * <code>y</code> and <code>z</code> property values, which are defined in
 		 * whole pixels. </p>
 		 */
-		public scaleZ:number;
+		public get scaleZ():number
+		{
+			return this._pScaleZ;
+		}
+
+		public set scaleZ(val:number)
+		{
+			if (this._pScaleZ == val)
+				return;
+
+			this._pScaleZ = val;
+
+			this.invalidateScale();
+		}
+
+		/**
+		 *
+		 */
+		public get scene():away.containers.Scene
+		{
+			return this._pScene;
+		}
+
+		/**
+		 *
+		 */
+		public get scenePosition():away.geom.Vector3D
+		{
+			if (this._scenePositionDirty) {
+				if (!this._pivotZero && this.alignmentMode == AlignmentMode.PIVOT_POINT) {
+					this._scenePosition = this.sceneTransform.transformVector(this._pivotPoint);
+					//this._scenePosition.decrementBy(new away.geom.Vector3D(this._pivotPoint.x*this._pScaleX, this._pivotPoint.y*this._pScaleY, this._pivotPoint.z*this._pScaleZ));
+				} else {
+					this.sceneTransform.copyColumnTo(3, this._scenePosition);
+				}
+
+				this._scenePositionDirty = false;
+			}
+			return this._scenePosition;
+		}
+
+		public get sceneTransform():away.geom.Matrix3D
+		{
+			if (this._pSceneTransformDirty)
+				this.pUpdateSceneTransform();
+
+			return this._pSceneTransform;
+		}
 
 		/**
 		 * The scroll rectangle bounds of the display object. The display object is
@@ -620,18 +1067,32 @@ module away.base
 		public scrollRect:away.geom.Rectangle;
 
 		/**
-		 * The Stage of the display object. A Flash runtime application has only one
-		 * Stage object. For example, you can create and load multiple display
-		 * objects into the display list, and the <code>stage</code> property of each
-		 * display object refers to the same Stage object(even if the display object
-		 * belongs to a loaded SWF file).
 		 *
-		 * <p>If a display object is not added to the display list, its
-		 * <code>stage</code> property is set to <code>null</code>.</p>
 		 */
-		public get stage():away.containers.Stage
+		public get shaderPickingDetails():boolean
 		{
-			return this._stage;
+			return this._shaderPickingDetails;
+		}
+
+		/**
+		 *
+		 */
+		public get showBounds():boolean
+		{
+			return this._showBounds;
+		}
+
+		public set showBounds(value:boolean)
+		{
+			if (value == this._showBounds)
+				return;
+
+			this._showBounds = value;
+
+//			if (this._showBounds)
+//				this.addChild(this._pBounds.boundingEntity);
+//			else
+//				this.removeBounds();
 		}
 
 		/**
@@ -672,14 +1133,30 @@ module away.base
 		 * <p>Note that AIR for TV devices use hardware acceleration, if it is
 		 * available, for color transforms.</p>
 		 */
-		public transform:away.geom.Transform;
+		public get transform():away.geom.Transform
+		{
+			return this._transform;
+		}
 
 		/**
 		 * Whether or not the display object is visible. Display objects that are not
 		 * visible are disabled. For example, if <code>visible=false</code> for an
 		 * InteractiveObject instance, it cannot be clicked.
 		 */
-		public visible:boolean;
+		public get visible():boolean
+		{
+			return this._explicitVisibility;
+		}
+
+		public set visible(value:boolean)
+		{
+			if (this._explicitVisibility == value)
+				return;
+
+			this._explicitVisibility = value;
+
+			this._pUpdateImplicitVisibility(this._pParent? this._pParent._iIsVisible() : true);
+		}
 
 		/**
 		 * Indicates the width of the display object, in pixels. The width is
@@ -691,7 +1168,38 @@ module away.base
 		 * content(such as an empty sprite) has a width of 0, even if you try to set
 		 * <code>width</code> to a different value.</p>
 		 */
-		public width:number;
+		public get width():number
+		{
+			if (this._pBoundsInvalid)
+				this.pUpdateBounds();
+
+			return this._width;
+		}
+
+		public set width(val:number)
+		{
+			if (this._width == val)
+				return;
+
+			this._width == val;
+
+			this._pScaleX = val/this.bounds.aabb.width;
+
+			this.invalidateScale();
+		}
+
+		/**
+		 *
+		 */
+		public get worldBounds():away.bounds.BoundingVolumeBase
+		{
+			if (this._worldBoundsInvalid) {
+				this._worldBoundsInvalid = false;
+				this._worldBounds.transformFrom(this.bounds, this.sceneTransform);
+			}
+
+			return this._worldBounds;
+		}
 
 		/**
 		 * Indicates the <i>x</i> coordinate of the DisplayObject instance relative
@@ -703,7 +1211,20 @@ module away.base
 		 * rotated 90° counterclockwise. The object's coordinates refer to the
 		 * registration point position.
 		 */
-		public x:number;
+		public get x():number
+		{
+			return this._x;
+		}
+
+		public set x(val:number)
+		{
+			if (this._x == val)
+				return;
+
+			this._x = val;
+
+			this.invalidatePosition();
+		}
 
 		/**
 		 * Indicates the <i>y</i> coordinate of the DisplayObject instance relative
@@ -715,7 +1236,20 @@ module away.base
 		 * rotated 90° counterclockwise. The object's coordinates refer to the
 		 * registration point position.
 		 */
-		public y:number;
+		public get y():number
+		{
+			return this._y;
+		}
+
+		public set y(val:number)
+		{
+			if (this._y == val)
+				return;
+
+			this._y = val;
+
+			this.invalidatePosition();
+		}
 
 		/**
 		 * Indicates the z coordinate position along the z-axis of the DisplayObject
@@ -736,7 +1270,112 @@ module away.base
 		 * <p><code>(x~~cameraFocalLength/cameraRelativeZPosition,
 		 * y~~cameraFocalLength/cameraRelativeZPosition)</code></p>
 		 */
-		public z:number;
+		public get z():number
+		{
+			return this._z;
+		}
+
+		public set z(val:number)
+		{
+			if (this._z == val)
+				return;
+
+			this._z = val;
+
+			this.invalidatePosition();
+		}
+
+		/**
+		 *
+		 */
+		public get zOffset():number
+		{
+			return this._zOffset;
+		}
+
+		public set zOffset(value:number)
+		{
+			this._zOffset = value;
+		}
+
+		/**
+		 * Creates a new <code>DisplayObject</code> instance.
+		 */
+		constructor()
+		{
+			super();
+
+			// Cached vector of transformation components used when
+			// recomposing the transform matrix in updateTransform()
+
+			this._transformComponents = new Array<away.geom.Vector3D>(3);//_transformComponents = new Vector.<Vector3D>(3, true);
+
+			this._transformComponents[0] = this._pos;
+			this._transformComponents[1] = this._rot;
+			this._transformComponents[2] = this._sca;
+
+			//creation of associated transform object
+			this._transform = new away.geom.Transform(this);
+
+			this._matrix3D.identity();
+
+			this._flipY.appendScale(1, -1, 1);
+
+			this._pBounds = this.pCreateDefaultBoundingVolume();
+
+			this._worldBounds = this.pCreateDefaultBoundingVolume();
+		}
+
+		/**
+		 *
+		 */
+		public addEventListener(type:string, listener:Function)
+		{
+			super.addEventListener(type, listener);//, priority, useWeakReference);
+
+			switch (type) {
+				case away.events.DisplayObjectEvent.POSITION_CHANGED:
+					this._listenToPositionChanged = true;
+					break;
+				case away.events.DisplayObjectEvent.ROTATION_CHANGED:
+					this._listenToRotationChanged = true;
+					break;
+				case away.events.DisplayObjectEvent.SCALE_CHANGED:
+					this._listenToScaleChanged = true;
+					break;
+			}
+		}
+
+		/**
+		 *
+		 */
+		public clone():DisplayObject
+		{
+			var clone:DisplayObject = new DisplayObject();
+			clone.pivotPoint = this.pivotPoint;
+			clone._iMatrix3D = this._iMatrix3D;
+			clone.name = name;
+
+			// todo: implement for all subtypes
+			return clone;
+		}
+
+		/**
+		 *
+		 */
+		public dispose()
+		{
+			if (this.parent)
+				this.parent.removeChild(this);
+		}
+
+		/**
+		 * @inheritDoc
+		 */
+		public disposeAsset()
+		{
+			this.dispose();
+		}
 
 		/**
 		 * Returns a rectangle that defines the area of the display object relative
@@ -870,6 +1509,33 @@ module away.base
 		}
 
 		/**
+		 * @inheritDoc
+		 */
+		public isIntersectingRay(rayPosition:away.geom.Vector3D, rayDirection:away.geom.Vector3D):boolean
+		{
+			var localRayPosition:away.geom.Vector3D = this.inverseSceneTransform.transformVector(rayPosition);
+			var localRayDirection:away.geom.Vector3D = this.inverseSceneTransform.deltaTransformVector(rayDirection);
+			var pickingCollisionVO:away.pick.PickingCollisionVO = this._iPickingCollisionVO;
+
+			if (!pickingCollisionVO.localNormal)
+				pickingCollisionVO.localNormal = new away.geom.Vector3D();
+
+			var rayEntryDistance:number = this.bounds.rayIntersection(localRayPosition, localRayDirection, pickingCollisionVO.localNormal);
+
+			if (rayEntryDistance < 0)
+				return false;
+
+			pickingCollisionVO.rayEntryDistance = rayEntryDistance;
+			pickingCollisionVO.localRayPosition = localRayPosition;
+			pickingCollisionVO.localRayDirection = localRayDirection;
+			pickingCollisionVO.rayPosition = rayPosition;
+			pickingCollisionVO.rayDirection = rayDirection;
+			pickingCollisionVO.rayOriginIsInsideBounds = rayEntryDistance == 0;
+
+			return true;
+		}
+
+		/**
 		 * Converts a three-dimensional point of the three-dimensional display
 		 * object's(local) coordinates to a two-dimensional point in the Stage
 		 * (global) coordinates.
@@ -894,6 +1560,69 @@ module away.base
 		public local3DToGlobal(point3d:away.geom.Vector3D):away.geom.Point
 		{
 			return new away.geom.Point(); //TODO
+		}
+
+		/**
+		 * Rotates the 3d object around to face a point defined relative to the local coordinates of the parent <code>ObjectContainer3D</code>.
+		 *
+		 * @param    target        The vector defining the point to be looked at
+		 * @param    upAxis        An optional vector used to define the desired up orientation of the 3d object after rotation has occurred
+		 */
+		public lookAt(target:away.geom.Vector3D, upAxis:away.geom.Vector3D = null)
+		{
+
+			var yAxis:away.geom.Vector3D;
+			var zAxis:away.geom.Vector3D;
+			var xAxis:away.geom.Vector3D;
+			var raw:Array<number>;
+
+			if (upAxis == null)
+				upAxis = away.geom.Vector3D.Y_AXIS;
+
+			zAxis = target.subtract(this._iMatrix3D.position);
+			zAxis.normalize();
+
+			xAxis = upAxis.crossProduct(zAxis);
+
+			if (xAxis.length < .05) {
+				xAxis.x = upAxis.y;
+				xAxis.y = upAxis.x;
+				xAxis.z = 0;
+				xAxis.normalize();
+			} else {
+				xAxis.normalize();
+			}
+
+
+			yAxis = zAxis.crossProduct(xAxis);
+
+			raw = away.geom.Matrix3DUtils.RAW_DATA_CONTAINER;
+
+			raw[0] = xAxis.x;
+			raw[1] = xAxis.y;
+			raw[2] = xAxis.z;
+			raw[3] = 0;
+
+			raw[4] = yAxis.x;
+			raw[5] = yAxis.y;
+			raw[6] = yAxis.z;
+			raw[7] = 0;
+
+			raw[8] = zAxis.x;
+			raw[9] = zAxis.y;
+			raw[10] = zAxis.z;
+			raw[11] = 0;
+
+			var m:away.geom.Matrix3D = new away.geom.Matrix3D();
+			m.copyRawDataFrom(raw);
+
+			var vec:away.geom.Vector3D = m.decompose()[1];
+
+			this._rotationX = vec.x;
+			this._rotationY = vec.y;
+			this._rotationZ = vec.z;
+
+			this.invalidateRotation();
 		}
 
 		/**
@@ -922,6 +1651,680 @@ module away.base
 		public localToGlobal(point:away.geom.Point):away.geom.Point
 		{
 			return new away.geom.Point(); //TODO
+		}
+
+		/**
+		 * Moves the 3d object directly to a point in space
+		 *
+		 * @param    dx        The amount of movement along the local x axis.
+		 * @param    dy        The amount of movement along the local y axis.
+		 * @param    dz        The amount of movement along the local z axis.
+		 */
+
+		public moveTo(dx:number, dy:number, dz:number)
+		{
+			if (this._x == dx && this._y == dy && this._z == dz)
+				return;
+
+			this._x = dx;
+			this._y = dy;
+			this._z = dz;
+
+			this.invalidatePosition();
+		}
+
+		/**
+		 * Moves the local point around which the object rotates.
+		 *
+		 * @param    dx        The amount of movement along the local x axis.
+		 * @param    dy        The amount of movement along the local y axis.
+		 * @param    dz        The amount of movement along the local z axis.
+		 */
+		public movePivot(dx:number, dy:number, dz:number)
+		{
+			if (this._pivotPoint == null)
+				this._pivotPoint = new away.geom.Vector3D();
+
+			this._pivotPoint.x += dx;
+			this._pivotPoint.y += dy;
+			this._pivotPoint.z += dz;
+
+			this.invalidatePivot();
+		}
+
+		/**
+		 * Rotates the 3d object around it's local x-axis
+		 *
+		 * @param    angle        The amount of rotation in degrees
+		 */
+		public pitch(angle:number)
+		{
+			this.rotate(away.geom.Vector3D.X_AXIS, angle);
+		}
+
+		/**
+		 *
+		 */
+		public getRenderSceneTransform(camera:away.entities.Camera):away.geom.Matrix3D
+		{
+			if (this.orientationMode == OrientationMode.CAMERA_PLANE) {
+				var comps:away.geom.Vector3D[] = camera.sceneTransform.decompose();
+				var scale:away.geom.Vector3D = comps[2];
+				comps[0] = this.scenePosition;
+				scale.x = this._pScaleX;
+				scale.y = this._pScaleY;
+				this._orientationMatrix.recompose(comps);
+
+				//add in case of pivot
+				if (!this._pivotZero && this.alignmentMode == AlignmentMode.PIVOT_POINT)
+					this._orientationMatrix.prependTranslation(-this._pivotPoint.x, -this._pivotPoint.y, -this._pivotPoint.z);
+
+				return this._orientationMatrix;
+			}
+
+			return this.sceneTransform;
+		}
+
+		/**
+		 * Rotates the 3d object around it's local z-axis
+		 *
+		 * @param    angle        The amount of rotation in degrees
+		 */
+		public roll(angle:number)
+		{
+			this.rotate(away.geom.Vector3D.Z_AXIS, angle);
+		}
+
+		/**
+		 * Rotates the 3d object around an axis by a defined angle
+		 *
+		 * @param    axis        The vector defining the axis of rotation
+		 * @param    angle        The amount of rotation in degrees
+		 */
+		public rotate(axis:away.geom.Vector3D, angle:number)
+		{
+			var m:away.geom.Matrix3D = new away.geom.Matrix3D();
+			m.prependRotation(angle, axis);
+
+			var vec:away.geom.Vector3D = m.decompose()[1];
+
+			this._rotationX += vec.x;
+			this._rotationY += vec.y;
+			this._rotationZ += vec.z;
+
+			this.invalidateRotation();
+		}
+
+		/**
+		 * Rotates the 3d object directly to a euler angle
+		 *
+		 * @param    ax        The angle in degrees of the rotation around the x axis.
+		 * @param    ay        The angle in degrees of the rotation around the y axis.
+		 * @param    az        The angle in degrees of the rotation around the z axis.
+		 */
+		public rotateTo(ax:number, ay:number, az:number)
+		{
+			this._rotationX = ax*away.geom.MathConsts.DEGREES_TO_RADIANS;
+			this._rotationY = ay*away.geom.MathConsts.DEGREES_TO_RADIANS;
+			this._rotationZ = az*away.geom.MathConsts.DEGREES_TO_RADIANS;
+
+			this.invalidateRotation();
+		}
+
+		/**
+		 *
+		 */
+		public removeEventListener(type:string, listener:Function)
+		{
+			super.removeEventListener(type, listener);
+
+			if (this.hasEventListener(type, listener))
+				return;
+
+			switch (type) {
+				case away.events.DisplayObjectEvent.POSITION_CHANGED:
+					this._listenToPositionChanged = false;
+					break;
+
+				case away.events.DisplayObjectEvent.ROTATION_CHANGED:
+					this._listenToRotationChanged = false;
+					break;
+
+				case away.events.DisplayObjectEvent.SCALE_CHANGED:
+					this._listenToScaleChanged = false;
+					break;
+			}
+		}
+
+		/**
+		 * Moves the 3d object along a vector by a defined length
+		 *
+		 * @param    axis        The vector defining the axis of movement
+		 * @param    distance    The length of the movement
+		 */
+		public translate(axis:away.geom.Vector3D, distance:number)
+		{
+			var x:number = axis.x, y:number = axis.y, z:number = axis.z;
+			var len:number = distance/Math.sqrt(x*x + y*y + z*z);
+
+			this._x += x*len;
+			this._y += y*len;
+			this._z += z*len;
+
+			this.invalidatePosition();
+		}
+
+		/**
+		 * Moves the 3d object along a vector by a defined length
+		 *
+		 * @param    axis        The vector defining the axis of movement
+		 * @param    distance    The length of the movement
+		 */
+		public translateLocal(axis:away.geom.Vector3D, distance:number)
+		{
+			var x:number = axis.x, y:number = axis.y, z:number = axis.z;
+			var len:number = distance/Math.sqrt(x*x + y*y + z*z);
+
+			this._iMatrix3D.prependTranslation(x*len, y*len, z*len);
+
+			this._matrix3D.copyColumnTo(3, this._pos);
+
+			this._x = this._pos.x;
+			this._y = this._pos.y;
+			this._z = this._pos.z;
+
+			this.invalidatePosition();
+		}
+
+		/**
+		 * Rotates the 3d object around it's local y-axis
+		 *
+		 * @param    angle        The amount of rotation in degrees
+		 */
+		public yaw(angle:number)
+		{
+			this.rotate(away.geom.Vector3D.Y_AXIS, angle);
+		}
+
+		/**
+		 * @internal
+		 */
+		public _iController:away.controllers.ControllerBase;
+
+		/**
+		 * @internal
+		 */
+		public get _iAssignedPartition():away.partition.Partition
+		{
+			return this._pImplicitPartition;
+		}
+
+		/**
+		 * The transformation of the 3d object, relative to the local coordinates of the parent <code>ObjectContainer3D</code>.
+		 *
+		 * @internal
+		 */
+		public get _iMatrix3D():away.geom.Matrix3D
+		{
+			if (this._matrix3DDirty)
+				this._pUpdateMatrix3D();
+
+			return this._matrix3D;
+		}
+
+		public set _iMatrix3D(val:away.geom.Matrix3D)
+		{
+
+			// TODO: From AS3 - Do we still need this in JS ?
+			//ridiculous matrix error
+			/*
+			if (!val.rawData[0]) {
+
+				var raw:number[] = away.geom.Matrix3DUtils.RAW_DATA_CONTAINER;
+				val.copyRawDataTo(raw);
+				raw[0] = this._smallestNumber;
+				val.copyRawDataFrom(raw);
+			}
+			//*/
+			var elements:away.geom.Vector3D[] = val.decompose();
+			var vec:away.geom.Vector3D;
+
+			vec = elements[0];
+
+			if (this._x != vec.x || this._y != vec.y || this._z != vec.z) {
+				this._x = vec.x;
+				this._y = vec.y;
+				this._z = vec.z;
+
+				this.invalidatePosition();
+			}
+
+			vec = elements[1];
+
+			if (this._rotationX != vec.x || this._rotationY != vec.y || this._rotationZ != vec.z) {
+				this._rotationX = vec.x;
+				this._rotationY = vec.y;
+				this._rotationZ = vec.z;
+
+				this.invalidateRotation();
+			}
+
+			vec = elements[2];
+
+			if (this._pScaleX != vec.x || this._pScaleY != vec.y || this._pScaleZ != vec.z) {
+				this._pScaleX = vec.x;
+				this._pScaleY = vec.y;
+				this._pScaleZ = vec.z;
+
+				this.invalidateScale();
+			}
+		}
+
+		/**
+		 * @internal
+		 */
+		public get _iPickingCollisionVO():away.pick.PickingCollisionVO
+		{
+			if (!this._pickingCollisionVO)
+				this._pickingCollisionVO = new away.pick.PickingCollisionVO(this);
+
+			return this._pickingCollisionVO;
+		}
+
+		/**
+		 * @internal
+		 */
+		public iSetParent(value:away.containers.DisplayObjectContainer)
+		{
+			this._pParent = value;
+
+			if (value) {
+				this._pUpdateImplicitMouseEnabled(value.mouseChildren);
+				this._pUpdateImplicitVisibility(value._iIsVisible());
+				this._pUpdateImplicitPartition(value._iAssignedPartition);
+				this._iSetScene(value._pScene);
+			} else {
+				this._pUpdateImplicitMouseEnabled(true);
+				this._pUpdateImplicitVisibility(true);
+				this._pUpdateImplicitPartition(null);
+
+				this._iSetScene(null);
+			}
+		}
+
+		/**
+		 * @protected
+		 */
+		public pCreateDefaultBoundingVolume():away.bounds.BoundingVolumeBase
+		{
+			// point lights should be using sphere bounds
+			// directional lights should be using null bounds
+			return new away.bounds.AxisAlignedBoundingBox();
+		}
+
+		/**
+		 * @protected
+		 */
+		public pCreateEntityPartitionNode():away.partition.EntityNode
+		{
+			throw new away.errors.AbstractMethodError();
+		}
+
+		/**
+		 * @protected
+		 */
+		public pInvalidateBounds()
+		{
+			this._pBoundsInvalid = true;
+			this._worldBoundsInvalid = true;
+		}
+
+		/**
+		 * @protected
+		 */
+		public pInvalidateSceneTransform()
+		{
+			this._pSceneTransformDirty = !this._pIgnoreTransform;
+			this._inverseSceneTransformDirty = !this._pIgnoreTransform;
+			this._scenePositionDirty = !this._pIgnoreTransform;
+
+			this._worldBoundsInvalid = !this._pIgnoreTransform;
+
+			if (this._listenToSceneTransformChanged)
+				this.notifySceneTransformChange();
+		}
+
+		/**
+		 * @protected
+		 */
+		public pUpdateBounds()
+		{
+			this._width = this._pBounds.aabb.width*this._pScaleX;
+			this._height = this._pBounds.aabb.height*this._pScaleY;
+			this._depth = this._pBounds.aabb.depth*this._pScaleZ;
+
+			this._pBoundsInvalid = false;
+		}
+
+		/**
+		 * @protected
+		 */
+		public _pUpdateImplicitMouseEnabled(value:boolean)
+		{
+			this._pImplicitMouseEnabled = this._explicitMouseEnabled && value;
+
+			// If there is a parent and this child does not have a picking collider, use its parent's picking collider.
+			if (this._pImplicitMouseEnabled && this._pParent && !this._pickingCollider)
+				this._pickingCollider =  this._pParent._pickingCollider;
+		}
+
+		/**
+		 * @protected
+		 */
+		public _pUpdateImplicitPartition(value:away.partition.Partition)
+		{
+			// assign parent implicit partition if no explicit one is given
+			this._pImplicitPartition = this._explicitPartition || value;
+		}
+
+		/**
+		 * @protected
+		 */
+		public _pUpdateImplicitVisibility(value:boolean)
+		{
+			this._pImplicitVisibility = this._explicitVisibility && value;
+		}
+
+		/**
+		 * @protected
+		 */
+		public _pUpdateMatrix3D()
+		{
+
+			this._pos.x = this._x;
+			this._pos.y = this._y;
+			this._pos.z = this._z;
+
+			this._rot.x = this._rotationX;
+			this._rot.y = this._rotationY;
+			this._rot.z = this._rotationZ;
+
+			this._sca.x = this._pScaleX;
+			this._sca.y = this._pScaleY;
+			this._sca.z = this._pScaleZ;
+
+			this._matrix3D.recompose(this._transformComponents);
+
+			if (!this._pivotZero) {
+				this._matrix3D.prependTranslation(-this._pivotPoint.x, -this._pivotPoint.y, -this._pivotPoint.z);
+				if (this.alignmentMode != AlignmentMode.PIVOT_POINT)
+					this._matrix3D.appendTranslation(this._pivotPoint.x*this._pScaleX, this._pivotPoint.y*this._pScaleY, this._pivotPoint.z*this._pScaleZ);
+			}
+
+			this._matrix3DDirty = false;
+			this._positionDirty = false;
+			this._rotationDirty = false;
+			this._scaleDirty = false;
+			this._pivotDirty = false;
+		}
+
+		/**
+		 * @protected
+		 */
+		public pUpdateSceneTransform()
+		{
+			if (this._pParent && !this._pParent._iIsRoot) {
+				this._pSceneTransform.copyFrom(this._pParent.sceneTransform);
+				this._pSceneTransform.prepend(this._iMatrix3D);
+			} else {
+				this._pSceneTransform.copyFrom(this._iMatrix3D);
+			}
+
+			this._pSceneTransformDirty = false;
+		}
+
+		/**
+		 * @internal
+		 */
+		public _iCollidesBefore(shortestCollisionDistance:number, findClosest:boolean):boolean
+		{
+			return true;
+		}
+
+		/**
+		 *
+		 */
+		public _iInternalUpdate()
+		{
+			if (this._iController)
+				this._iController.update();
+		}
+
+		/**
+		 * @internal
+		 */
+		public _iIsVisible():boolean
+		{
+			return this._pImplicitVisibility;
+		}
+
+		/**
+		 * @internal
+		 */
+		public _iIsMouseEnabled():boolean
+		{
+			return this._pImplicitMouseEnabled;
+		}
+
+		/**
+		 * @internal
+		 */
+		public _iSetScene(value:away.containers.Scene)
+		{
+			// test to see if we're switching roots while we're already using a scene partition
+			/*
+			if (value == null)
+				this._oldScene = this._pScene;
+
+			if (this._explicitPartition && this._oldScene && this._oldScene != this._pScene)
+				this.partition = null;
+
+			if (value)
+				this._oldScene = null;
+
+			// end of stupid partition test code
+			//*/
+
+			if (this._pScene == value)
+				return;
+
+			this._pUpdateScene(value);
+
+			if (!this._pSceneTransformDirty && !this._pIgnoreTransform)
+				this.pInvalidateSceneTransform();
+		}
+
+		/**
+		 * @protected
+		 */
+		public _pUpdateScene(value:away.containers.Scene)
+		{
+			if (this._pScene) {
+				this._pScene.dispatchEvent(new away.events.SceneEvent(away.events.SceneEvent.REMOVED_FROM_SCENE, this));
+
+				//unregister entity from current scene
+				this._pScene.iUnregisterEntity(this);
+			}
+
+			this._pScene = value;
+
+			if (value) {
+				value.dispatchEvent(new away.events.SceneEvent(away.events.SceneEvent.ADDED_TO_SCENE, this));
+
+				//register entity with new scene
+				value.iRegisterEntity(this);
+			}
+
+			this.notifySceneChange();
+		}
+
+		/**
+		 * @private
+		 */
+		private addBounds()
+		{
+			if (!this._boundsIsShown) {
+				this._boundsIsShown = true;
+//				this.addChild(this._pBounds.boundingEntity);
+			}
+		}
+
+		/**
+		 * @private
+		 */
+		private notifyPositionChanged()
+		{
+			if (!this._positionChanged)
+				this._positionChanged = new away.events.DisplayObjectEvent(away.events.DisplayObjectEvent.POSITION_CHANGED, this);
+
+			this.dispatchEvent(this._positionChanged);
+		}
+
+		/**
+		 * @private
+		 */
+		private notifyRotationChanged()
+		{
+			if (!this._rotationChanged)
+				this._rotationChanged = new away.events.DisplayObjectEvent(away.events.DisplayObjectEvent.ROTATION_CHANGED, this);
+
+			this.dispatchEvent(this._rotationChanged);
+		}
+
+		/**
+		 * @private
+		 */
+		private notifyScaleChanged()
+		{
+			if (!this._scaleChanged)
+				this._scaleChanged = new away.events.DisplayObjectEvent(away.events.DisplayObjectEvent.SCALE_CHANGED, this);
+
+			this.dispatchEvent(this._scaleChanged);
+		}
+
+		/**
+		 * @private
+		 */
+		private notifySceneChange()
+		{
+			if (this._listenToSceneChanged) {
+				if (!this._scenechanged)
+					this._scenechanged = new away.events.DisplayObjectEvent(away.events.DisplayObjectEvent.SCENE_CHANGED, this);
+
+				this.dispatchEvent(this._scenechanged);
+			}
+		}
+
+		/**
+		 * @private
+		 */
+		private notifySceneTransformChange()
+		{
+			if (!this._sceneTransformChanged)
+				this._sceneTransformChanged = new away.events.DisplayObjectEvent(away.events.DisplayObjectEvent.SCENETRANSFORM_CHANGED, this);
+
+			this.dispatchEvent(this._sceneTransformChanged);
+		}
+
+		/**
+		 * Invalidates the 3D transformation matrix, causing it to be updated upon the next request
+		 *
+		 * @private
+		 */
+		private invalidateMatrix3D():void
+		{
+			if (this._matrix3DDirty)
+				return;
+
+			this._matrix3DDirty = true;
+
+			if (!this._pSceneTransformDirty && !this._pIgnoreTransform)
+				this.pInvalidateSceneTransform();
+		}
+
+		/**
+		 * @private
+		 */
+		private invalidatePivot()
+		{
+			this._pivotZero = (this._pivotPoint.x == 0) && (this._pivotPoint.y == 0) && (this._pivotPoint.z == 0);
+
+			if (this._pivotDirty)
+				return;
+
+			this._pivotDirty = true;
+
+			this.invalidateMatrix3D();
+		}
+
+		/**
+		 * @private
+		 */
+		private invalidatePosition()
+		{
+			if (this._positionDirty)
+				return;
+
+			this._positionDirty = true;
+
+			this.invalidateMatrix3D();
+
+			if (this._listenToPositionChanged)
+				this.notifyPositionChanged();
+		}
+
+		/**
+		 * @private
+		 */
+		private invalidateRotation()
+		{
+			if (this._rotationDirty)
+				return;
+
+			this._rotationDirty = true;
+
+			this.invalidateMatrix3D();
+
+			if (this._listenToRotationChanged)
+				this.notifyRotationChanged();
+		}
+
+		/**
+		 * @private
+		 */
+		private invalidateScale()
+		{
+			if (this._scaleDirty)
+				return;
+
+			this._scaleDirty = true;
+
+			this.invalidateMatrix3D();
+
+			if (this._listenToScaleChanged)
+				this.notifyScaleChanged();
+		}
+
+		/**
+		 * @private
+		 */
+		private removeBounds()
+		{
+			if (this._boundsIsShown) {
+				this._boundsIsShown = false;
+//				this.removeChild(this._pBounds.boundingEntity);
+				this._pBounds.disposeRenderable();
+			}
 		}
 	}
 }

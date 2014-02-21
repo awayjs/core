@@ -273,9 +273,6 @@ module away.parsers
 				case away.library.AssetType.SKELETON_POSE:
 					type_name = 'skelpose';
 					break;
-				case away.library.AssetType.ENTITY:
-					type_name = 'entity';
-					break;
 				case away.library.AssetType.SKYBOX:
 					type_name = 'skybox';
 					break;

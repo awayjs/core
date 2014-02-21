@@ -3,20 +3,23 @@
 module away.library
 {
 
-	export class NamedAssetBase extends away.events.EventDispatcher implements away.library.IAsset
+	export class NamedAssetBase extends away.events.EventDispatcher
 	{
+		public static ID_COUNT:number = 0;
+
 		private _originalName:string;
 		private _namespace:string;
 		private _name:string;
 		private _id:string;
 		private _full_path:Array<string>;
-		private _assetType:string;
 
 		public static DEFAULT_NAMESPACE:string = 'default';
 
 		constructor(name:string = null)
 		{
 			super();
+
+			this._id = (NamedAssetBase.ID_COUNT++).toString();
 
 			if (name == null)
 				name = 'null';
@@ -29,6 +32,14 @@ module away.library
 		}
 
 		/**
+		 *
+		 */
+		public get assetType():string
+		{
+			throw new away.errors.AbstractMethodError();
+		}
+
+		/**
 		 * The original name used for this asset in the resource (e.g. file) in which
 		 * it was found. This may not be the same as <code>name</code>, which may
 		 * have changed due to of a name conflict.
@@ -38,24 +49,12 @@ module away.library
 			return this._originalName;
 		}
 
+		/**
+		 * A unique id for the asset, used to identify assets in an associative array
+		 */
 		public get id():string
 		{
 			return this._id;
-		}
-
-		public set id(newID:string)
-		{
-			this._id = newID;
-		}
-
-		public get assetType():string
-		{
-			return this._assetType;
-		}
-
-		public set assetType(type:string)
-		{
-			this._assetType = type;
 		}
 
 		public get name():string
@@ -116,16 +115,11 @@ module away.library
 			}
 
 			this.updateFullPath();
-
 		}
 
 		private updateFullPath():void
 		{
-
 			this._full_path = [ this._namespace, this._name ];
-
 		}
-
 	}
-
 }

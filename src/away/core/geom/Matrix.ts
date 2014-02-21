@@ -153,21 +153,21 @@ module away.geom
 		 * source matrixes, first copy the source matrix by using the
 		 * <code>clone()</code> method, as shown in the Class Examples section.</p>
 		 *
-		 * @param m The matrix to be concatenated to the source matrix.
+		 * @param matrix The matrix to be concatenated to the source matrix.
 		 */
-		public concat(m:Matrix):void
+		public concat(matrix:Matrix):void
 		{
-			var a1 = this.a*m.a + this.b*m.c;
-			this.b = this.a*m.b + this.b*m.d;
+			var a1 = this.a*matrix.a + this.b*matrix.c;
+			this.b = this.a*matrix.b + this.b*matrix.d;
 			this.a = a1;
 
-			var c1 = this.c*m.a + this.d*m.c;
-			this.d = this.c*m.b + this.d*m.d;
+			var c1 = this.c*matrix.a + this.d*matrix.c;
+			this.d = this.c*matrix.b + this.d*matrix.d;
 
 			this.c = c1;
 
-			var tx1 = this.tx*m.a + this.ty*m.c + m.tx;
-			this.ty = this.tx*m.b + this.ty*m.d + m.ty;
+			var tx1 = this.tx*matrix.a + this.ty*matrix.c + matrix.tx;
+			this.ty = this.tx*matrix.b + this.ty*matrix.d + matrix.ty;
 			this.tx = tx1;
 		}
 
@@ -181,24 +181,16 @@ module away.geom
 		public copyColumnFrom(column:number, vector3D:Vector3D):void
 		{
 			if (column > 2) {
-
 				throw "Column " + column + " out of bounds (2)";
-
 			} else if (column == 0) {
-
 				this.a = vector3D.x;
 				this.c = vector3D.y;
-
 			} else if (column == 1) {
-
 				this.b = vector3D.x;
 				this.d = vector3D.y;
-
 			} else {
-
 				this.tx = vector3D.x;
 				this.ty = vector3D.y;
-
 			}
 		}
 
@@ -212,27 +204,19 @@ module away.geom
 		public copyColumnTo(column:number, vector3D:away.geom.Vector3D):void
 		{
 			if (column > 2) {
-
 				throw new away.errors.ArgumentError("ArgumentError, Column " + column + " out of bounds [0, ..., 2]");
-
 			} else if (column == 0) {
-
 				vector3D.x = this.a;
 				vector3D.y = this.c;
 				vector3D.z = 0;
-
 			} else if (column == 1) {
-
 				vector3D.x = this.b;
 				vector3D.y = this.d;
 				vector3D.z = 0;
-
 			} else {
-
 				vector3D.x = this.tx;
 				vector3D.y = this.ty;
 				vector3D.z = 1;
-
 			}
 		}
 
@@ -261,24 +245,16 @@ module away.geom
 		public copyRowFrom(row:number, vector3D:away.geom.Vector3D):void
 		{
 			if (row > 2) {
-
 				throw new away.errors.ArgumentError("ArgumentError, Row " + row + " out of bounds [0, ..., 2]");
-
 			} else if (row == 0) {
-
 				this.a = vector3D.x;
 				this.c = vector3D.y;
-
 			} else if (row == 1) {
-
 				this.b = vector3D.x;
 				this.d = vector3D.y;
-
 			} else {
-
 				this.tx = vector3D.x;
 				this.ty = vector3D.y;
-
 			}
 		}
 
@@ -292,25 +268,17 @@ module away.geom
 		public copyRowTo(row:number, vector3D:away.geom.Vector3D):void
 		{
 			if (row > 2) {
-
 				throw new away.errors.ArgumentError("ArgumentError, Row " + row + " out of bounds [0, ..., 2]");
-
 			} else if (row == 0) {
-
 				vector3D.x = this.a;
 				vector3D.y = this.b;
 				vector3D.z = this.tx;
-
 			} else if (row == 1) {
-
 				vector3D.x = this.c;
 				vector3D.y = this.d;
 				vector3D.z = this.ty;
-
 			} else {
-
 				vector3D.setTo(0, 0, 1);
-
 			}
 		}
 
@@ -380,7 +348,6 @@ module away.geom
 			this.d = height/1638.4;
 
 			if (rotation != 0.0) {
-
 				var cos = Math.cos(rotation);
 				var sin = Math.sin(rotation);
 
@@ -388,11 +355,8 @@ module away.geom
 				this.c = -sin*this.a;
 				this.a *= cos;
 				this.d *= cos;
-
 			} else {
-
 				this.b = this.c = 0;
-
 			}
 
 			this.tx = tx + width/2;
@@ -443,20 +407,16 @@ module away.geom
 		 * Performs the opposite transformation of the original matrix. You can apply
 		 * an inverted matrix to an object to undo the transformation performed when
 		 * applying the original matrix.
-		 *
 		 */
 		public invert():void
 		{
 			var norm = this.a*this.d - this.b*this.c;
 
 			if (norm == 0) {
-
 				this.a = this.b = this.c = this.d = 0;
 				this.tx = -this.tx;
 				this.ty = -this.ty;
-
 			} else {
-
 				norm = 1.0/norm;
 				var a1 = this.d*norm;
 				this.d = this.a*norm;
@@ -467,7 +427,6 @@ module away.geom
 				var tx1 = -this.a*this.tx - this.c*this.ty;
 				this.ty = -this.b*this.tx - this.d*this.ty;
 				this.tx = tx1;
-
 			}
 		}
 
@@ -475,21 +434,22 @@ module away.geom
 		/**
 		 * Returns a new Matrix object that is a clone of this matrix, with an exact
 		 * copy of the contained object.
+		 *
 		 * @param matrix The matrix for which you want to get the result of the matrix
-		 *              transformation.
+		 *               transformation.
 		 * @return A Matrix object.
 		 */
-		public multiply(m:Matrix):Matrix
+		public multiply(matrix:Matrix):Matrix
 		{
 			var result = new Matrix();
 
-			result.a = this.a*m.a + this.b*m.c;
-			result.b = this.a*m.b + this.b*m.d;
-			result.c = this.c*m.a + this.d*m.c;
-			result.d = this.c*m.b + this.d*m.d;
+			result.a = this.a*matrix.a + this.b*matrix.c;
+			result.b = this.a*matrix.b + this.b*matrix.d;
+			result.c = this.c*matrix.a + this.d*matrix.c;
+			result.d = this.c*matrix.b + this.d*matrix.d;
 
-			result.tx = this.tx*m.a + this.ty*m.c + m.tx;
-			result.ty = this.tx*m.b + this.ty*m.d + m.ty;
+			result.tx = this.tx*matrix.a + this.ty*matrix.c + matrix.tx;
+			result.ty = this.tx*matrix.b + this.ty*matrix.d + matrix.ty;
 
 			return result;
 		}
@@ -535,16 +495,16 @@ module away.geom
 		 * @param sx A multiplier used to scale the object along the <i>x</i> axis.
 		 * @param sy A multiplier used to scale the object along the <i>y</i> axis.
 		 */
-		public scale(x:number, y:number):void
+		public scale(sx:number, sy:number):void
 		{
-			this.a *= x;
-			this.b *= y;
+			this.a *= sx;
+			this.b *= sy;
 
-			this.c *= x;
-			this.d *= y;
+			this.c *= sx;
+			this.d *= sy;
 
-			this.tx *= x;
-			this.ty *= y;
+			this.tx *= sx;
+			this.ty *= sy;
 		}
 
 		/**
@@ -606,10 +566,10 @@ module away.geom
 		 *           pixels.
 		 * @param dy The amount of movement down along the <i>y</i> axis, in pixels.
 		 */
-		public translate(x:number, y:number):void
+		public translate(dx:number, dy:number):void
 		{
-			this.tx += x;
-			this.ty += y;
+			this.tx += dx;
+			this.ty += dy;
 		}
 	}
 }

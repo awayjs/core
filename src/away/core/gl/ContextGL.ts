@@ -125,28 +125,26 @@ module away.gl
 		public dispose()
 		{
 			var i:number;
-			for (i = 0; i < this._indexBufferList.length; ++i) {
+			for (i = 0; i < this._indexBufferList.length; ++i)
 				this._indexBufferList[i].dispose();
-			}
+
 			this._indexBufferList = null;
 
-			for (i = 0; i < this._vertexBufferList.length; ++i) {
+			for (i = 0; i < this._vertexBufferList.length; ++i)
 				this._vertexBufferList[i].dispose();
-			}
+
 			this._vertexBufferList = null;
 
-			for (i = 0; i < this._textureList.length; ++i) {
+			for (i = 0; i < this._textureList.length; ++i)
 				this._textureList[i].dispose();
-			}
+
 			this._textureList = null;
 
-			for (i = 0; i < this._programList.length; ++i) {
+			for (i = 0; i < this._programList.length; ++i)
 				this._programList[i].dispose();
-			}
 
-			for (i = 0; i < this._samplerStates.length; ++i) {
+			for (i = 0; i < this._samplerStates.length; ++i)
 				this._samplerStates[i] = null;
-			}
 
 			this._programList = null;
 		}
@@ -185,20 +183,11 @@ module away.gl
 
 		public drawTriangles(indexBuffer:IndexBuffer, firstIndex:number = 0, numTriangles:number = -1)
 		{
-			if (!this._drawing) {
+			if (!this._drawing)
 				throw "Need to clear before drawing if the buffer has not been cleared since the last present() call.";
-			}
-
-			var numIndices:number = 0;
-
-			if (numTriangles == -1) {
-				numIndices = indexBuffer.numIndices;
-			} else {
-				numIndices = numTriangles*3;
-			}
 
 			this._gl.bindBuffer(this._gl.ELEMENT_ARRAY_BUFFER, indexBuffer.glBuffer);
-			this._gl.drawElements(this._gl.TRIANGLES, numIndices, this._gl.UNSIGNED_SHORT, firstIndex);
+			this._gl.drawElements(this._gl.TRIANGLES, (numTriangles == -1)? indexBuffer.numIndices : numTriangles*3, this._gl.UNSIGNED_SHORT, firstIndex);
 		}
 
 		public present()
@@ -438,7 +427,6 @@ module away.gl
 
 		public setGLSLTextureAt(locationName:string, texture:TextureBase, textureIndex:number)
 		{
-
 			if (!texture) {
 				this._gl.activeTexture(this._gl.TEXTURE0 + (textureIndex));
 				this._gl.bindTexture(this._gl.TEXTURE_2D, null);
@@ -526,8 +514,6 @@ module away.gl
 				}
 				//this._gl.bindTexture( this._gl.TEXTURE_CUBE_MAP, null );
 			}
-
-
 		}
 
 		public setSamplerStateAt(sampler:number, wrap:string, filter:string, mipfilter:string):void
@@ -589,7 +575,6 @@ module away.gl
 
 		public setGLSLVertexBufferAt(locationName, buffer:VertexBuffer, bufferOffset:number = 0, format:string = null)
 		{
-
 			//if ( buffer == null )return;
 
 			var location:number = this._currentProgram? this._gl.getAttribLocation(this._currentProgram.glProgram, locationName) : -1;

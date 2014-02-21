@@ -177,7 +177,7 @@ module away.base
 		 *
 		 * <p>Not supported under GPU rendering.</p>
 		 */
-//		public static SHADER:string = "shader";
+		public static SHADER:string = "shader";
 
 		/**
 		 * Subtracts the values of the constituent colors in the display object from

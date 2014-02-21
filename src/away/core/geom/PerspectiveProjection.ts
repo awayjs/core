@@ -77,7 +77,7 @@ module away.geom
 		 * for a small angle, a display object moving down the z axis appears
 		 * to stay near the same size and moves little.</p>
 		 *
-		 * <p>A value close to 180 degrees results in a fisheye lens effect:
+		 * <p>A value close to 180 degrees results in a fisheye projection effect:
 		 * positions with a z value smaller than 0 are magnified, while
 		 * positions with a z value larger than 0 are minimized. With a large
 		 * angle, a display object moving down the z axis appears to change

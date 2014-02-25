@@ -236,6 +236,7 @@
 ///<reference path="textures/ImageCubeTexture.ts" />
 ///<reference path="textures/BitmapCubeTexture.ts" />
 ///<reference path="textures/MipmapGenerator.ts" />
+///<reference path="textures/SpecularBitmapTexture.ts" />
 
 ///<reference path="../aglsl/Sampler.ts"/>
 ///<reference path="../aglsl/Token.ts"/>

@@ -50,7 +50,7 @@ module away.textures
 			var w:number = source.width;
 			var h:number = source.height;
 			var regen:boolean = mipmap != null;
-			var i:number;
+			var i:number = 0;
 
 			if (!mipmap)
 				mipmap = new away.base.BitmapData(w, h, alpha);

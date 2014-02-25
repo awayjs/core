@@ -15,6 +15,12 @@ module away.events
 	export class EventDispatcher
 	{
 		private listeners:Array<Array<Function>> = new Array<Array<Function>>();
+		private target:any;
+
+		constructor(target:any = null)
+		{
+			this.target = target || this;
+		}
 
 		/**
 		 * Add an event listener
@@ -57,7 +63,7 @@ module away.events
 			if (listenerArray !== undefined) {
 				var l:number = listenerArray.length;
 
-				event.target = this;
+				event.target = this.target;
 
 				for (var i:number = 0; i < l; i++)
 					listenerArray[i](event);

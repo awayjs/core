@@ -1,4 +1,4 @@
-///<reference path="../../build/AME.next.d.ts" />
+///<reference path="../../build/awayjs.next.d.ts" />
 var aglsl;
 (function (aglsl) {
     var AGALCompilerTest = (function () {

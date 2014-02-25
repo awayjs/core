@@ -402,7 +402,7 @@
             "namespaces": {}
         },
         "src/away/textures/HTMLImageElementCubeTexture.ts": {
-            "name": "src/away/textures/HTMLImageElementCubeTexture.ts",
+            "name": "src/away/textures/ImageCubeTexture.ts",
             "modules": {},
             "classes": {},
             "fors": {},
@@ -6539,42 +6539,42 @@
             "module": "away.events"
         },
         {
-            "file": "src/away/textures/HTMLImageElementCubeTexture.ts",
+            "file": "src/away/textures/ImageCubeTexture.ts",
             "line": 26,
             "description": "The texture on the cube's right face.",
             "class": "",
             "module": "away.events"
         },
         {
-            "file": "src/away/textures/HTMLImageElementCubeTexture.ts",
+            "file": "src/away/textures/ImageCubeTexture.ts",
             "line": 42,
             "description": "The texture on the cube's left face.",
             "class": "",
             "module": "away.events"
         },
         {
-            "file": "src/away/textures/HTMLImageElementCubeTexture.ts",
+            "file": "src/away/textures/ImageCubeTexture.ts",
             "line": 58,
             "description": "The texture on the cube's top face.",
             "class": "",
             "module": "away.events"
         },
         {
-            "file": "src/away/textures/HTMLImageElementCubeTexture.ts",
+            "file": "src/away/textures/ImageCubeTexture.ts",
             "line": 74,
             "description": "The texture on the cube's bottom face.",
             "class": "",
             "module": "away.events"
         },
         {
-            "file": "src/away/textures/HTMLImageElementCubeTexture.ts",
+            "file": "src/away/textures/ImageCubeTexture.ts",
             "line": 90,
             "description": "The texture on the cube's far face.",
             "class": "",
             "module": "away.events"
         },
         {
-            "file": "src/away/textures/HTMLImageElementCubeTexture.ts",
+            "file": "src/away/textures/ImageCubeTexture.ts",
             "line": 106,
             "description": "The texture on the cube's near face.",
             "class": "",
@@ -9990,27 +9990,27 @@
         },
         {
             "message": "Missing item type\nThe texture on the cube's right face.",
-            "line": " src/away/textures/HTMLImageElementCubeTexture.ts:26"
+            "line": " src/away/textures/ImageCubeTexture.ts:26"
         },
         {
             "message": "Missing item type\nThe texture on the cube's left face.",
-            "line": " src/away/textures/HTMLImageElementCubeTexture.ts:42"
+            "line": " src/away/textures/ImageCubeTexture.ts:42"
         },
         {
             "message": "Missing item type\nThe texture on the cube's top face.",
-            "line": " src/away/textures/HTMLImageElementCubeTexture.ts:58"
+            "line": " src/away/textures/ImageCubeTexture.ts:58"
         },
         {
             "message": "Missing item type\nThe texture on the cube's bottom face.",
-            "line": " src/away/textures/HTMLImageElementCubeTexture.ts:74"
+            "line": " src/away/textures/ImageCubeTexture.ts:74"
         },
         {
             "message": "Missing item type\nThe texture on the cube's far face.",
-            "line": " src/away/textures/HTMLImageElementCubeTexture.ts:90"
+            "line": " src/away/textures/ImageCubeTexture.ts:90"
         },
         {
             "message": "Missing item type\nThe texture on the cube's near face.",
-            "line": " src/away/textures/HTMLImageElementCubeTexture.ts:106"
+            "line": " src/away/textures/ImageCubeTexture.ts:106"
         },
         {
             "message": "Missing item type\nMipmapGenerator is a helper class that uploads BitmapData to a Texture including mipmap levels.",

@@ -1,5 +1,5 @@
-///<reference path="../../build/AME.next.d.ts" />
-//<reference path="../../src/AME.ts" />
+///<reference path="../../build/awayjs.next.d.ts" />
+//<reference path="../../src/awayjs.ts" />
 
 module tests.entities
 {

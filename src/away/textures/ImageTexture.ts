@@ -16,7 +16,7 @@ module away.textures
 		{
 			super();
 
-			this._htmlImageElement = htmlImageElement;
+			this.htmlImageElement = htmlImageElement;
 			this._generateMipmaps = generateMipmaps;
 		}
 

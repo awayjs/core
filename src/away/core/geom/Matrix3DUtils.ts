@@ -13,16 +13,16 @@ module away.geom
 		 * A reference to a Vector to be used as a temporary raw data container, to prevent object creation.
 		 */
 		public static RAW_DATA_CONTAINER:number[] = new Array<number>(16);
-		//public static RAW_DATA_CONTAINER:number[] = new Vector.<Number>(16);
+		//public static RAW_DATA_CONTAINER:number[] = new Array<number>(16);
 
-		public static CALCULATION_MATRIX:away.geom.Matrix3D = new away.geom.Matrix3D();
+		public static CALCULATION_MATRIX:Matrix3D = new Matrix3D();
 
 		/**
 		 * Fills the 3d matrix object with values representing the transformation made by the given quaternion.
 		 *
 		 * @param    quarternion    The quarterion object to convert.
 		 */
-		public static quaternion2matrix(quarternion:Quaternion, m:away.geom.Matrix3D = null):away.geom.Matrix3D
+		public static quaternion2matrix(quarternion:Quaternion, m:Matrix3D = null):Matrix3D
 		{
 			var x:number = quarternion.x;
 			var y:number = quarternion.y;
@@ -41,7 +41,7 @@ module away.geom
 			var zz:number = z*z;
 			var zw:number = z*w;
 
-			var raw:number[] = away.geom.Matrix3DUtils.RAW_DATA_CONTAINER;
+			var raw:number[] = Matrix3DUtils.RAW_DATA_CONTAINER;
 			raw[0] = 1 - 2*(yy + zz);
 			raw[1] = 2*(xy + zw);
 			raw[2] = 2*(xz - yw);
@@ -58,7 +58,7 @@ module away.geom
 				m.copyRawDataFrom(raw);
 				return m;
 			} else
-				return new away.geom.Matrix3D(raw);
+				return new Matrix3D(raw);
 		}
 
 		/**
@@ -67,12 +67,12 @@ module away.geom
 		 * @param    v        [optional] A vector holder to prevent make new Vector3D instance if already exists. Default is null.
 		 * @return            The forward vector
 		 */
-		public static getForward(m:away.geom.Matrix3D, v:away.geom.Vector3D = null):away.geom.Vector3D
+		public static getForward(m:Matrix3D, v:Vector3D = null):Vector3D
 		{
-			//v ||= new away.geom.Vector3D(0.0, 0.0, 0.0);
+			//v ||= new Vector3D(0.0, 0.0, 0.0);
 			if (v === null) {
 
-				v = new away.geom.Vector3D(0.0, 0.0, 0.0);
+				v = new Vector3D(0.0, 0.0, 0.0);
 
 			}
 
@@ -88,13 +88,13 @@ module away.geom
 		 * @param    v        [optional] A vector holder to prevent make new Vector3D instance if already exists. Default is null.
 		 * @return            The up vector
 		 */
-		public static getUp(m:away.geom.Matrix3D, v:away.geom.Vector3D = null):away.geom.Vector3D
+		public static getUp(m:Matrix3D, v:Vector3D = null):Vector3D
 		{
-			//v ||= new away.geom.Vector3D(0.0, 0.0, 0.0);
+			//v ||= new Vector3D(0.0, 0.0, 0.0);
 
 			if (v === null) {
 
-				v = new away.geom.Vector3D(0.0, 0.0, 0.0);
+				v = new Vector3D(0.0, 0.0, 0.0);
 
 			}
 
@@ -110,12 +110,12 @@ module away.geom
 		 * @param    v        [optional] A vector holder to prevent make new Vector3D instance if already exists. Default is null.
 		 * @return            The right vector
 		 */
-		public static getRight(m:away.geom.Matrix3D, v:away.geom.Vector3D = null):away.geom.Vector3D
+		public static getRight(m:Matrix3D, v:Vector3D = null):Vector3D
 		{
 			//v ||= new Vector3D(0.0, 0.0, 0.0);
 			if (v === null) {
 
-				v = new away.geom.Vector3D(0.0, 0.0, 0.0);
+				v = new Vector3D(0.0, 0.0, 0.0);
 
 			}
 
@@ -128,9 +128,9 @@ module away.geom
 		/**
 		 * Returns a boolean value representing whether there is any significant difference between the two given 3d matrices.
 		 */
-		public static compare(m1:away.geom.Matrix3D, m2:away.geom.Matrix3D):boolean
+		public static compare(m1:Matrix3D, m2:Matrix3D):boolean
 		{
-			var r1:number[] = away.geom.Matrix3DUtils.RAW_DATA_CONTAINER;
+			var r1:number[] = Matrix3DUtils.RAW_DATA_CONTAINER;
 			var r2:number[] = m2.rawData;
 			m1.copyRawDataTo(r1);
 
@@ -142,12 +142,12 @@ module away.geom
 			return true;
 		}
 
-		public static lookAt(matrix:away.geom.Matrix3D, pos:away.geom.Vector3D, dir:away.geom.Vector3D, up:away.geom.Vector3D)
+		public static lookAt(matrix:Matrix3D, pos:Vector3D, dir:Vector3D, up:Vector3D)
 		{
-			var dirN:away.geom.Vector3D;
-			var upN:away.geom.Vector3D;
-			var lftN:away.geom.Vector3D;
-			var raw:number[] = away.geom.Matrix3DUtils.RAW_DATA_CONTAINER;
+			var dirN:Vector3D;
+			var upN:Vector3D;
+			var lftN:Vector3D;
+			var raw:number[] = Matrix3DUtils.RAW_DATA_CONTAINER;
 
 			lftN = dir.crossProduct(up);
 			lftN.normalize();
@@ -180,16 +180,13 @@ module away.geom
 			matrix.copyRawDataFrom(raw);
 		}
 
-		public static reflection(plane:away.geom.Plane3D, target:away.geom.Matrix3D = null):away.geom.Matrix3D
+		public static reflection(plane:Plane3D, target:Matrix3D = null):Matrix3D
 		{
-			//target ||= new Matrix3D();
-			if (target === null) {
-
-				target = new away.geom.Matrix3D();
-			}
+			if (target === null)
+				target = new Matrix3D();
 
 			var a:number = plane.a, b:number = plane.b, c:number = plane.c, d:number = plane.d;
-			var rawData:number[] = away.geom.Matrix3DUtils.RAW_DATA_CONTAINER;
+			var rawData:number[] = Matrix3DUtils.RAW_DATA_CONTAINER;
 			var ab2:number = -2*a*b;
 			var ac2:number = -2*a*c;
 			var bc2:number = -2*b*c;
@@ -215,5 +212,105 @@ module away.geom
 			return target;
 		}
 
+
+		public static transformVector(matrix:Matrix3D, vector:Vector3D, result:Vector3D = null):Vector3D
+		{
+			if (!result)
+				result = new Vector3D();
+			
+			var raw:Array<number> = Matrix3DUtils.RAW_DATA_CONTAINER;
+			matrix.copyRawDataTo(raw);
+			var a:number = raw[0];
+			var e:number = raw[1];
+			var i:number = raw[2];
+			var m:number = raw[3];
+			var b:number = raw[4];
+			var f:number = raw[5];
+			var j:number = raw[6];
+			var n:number = raw[7];
+			var c:number = raw[8];
+			var g:number = raw[9];
+			var k:number = raw[10];
+			var o:number = raw[11];
+			var d:number = raw[12];
+			var h:number = raw[13];
+			var l:number = raw[14];
+			var p:number = raw[15];
+	
+			var x:number = vector.x;
+			var y:number = vector.y;
+			var z:number = vector.z;
+			result.x = a * x + b * y + c * z + d;
+			result.y = e * x + f * y + g * z + h;
+			result.z = i * x + j * y + k * z + l;
+			result.w = m * x + n * y + o * z + p;
+			return result;
+		}
+
+		public static deltaTransformVector(matrix:Matrix3D, vector:Vector3D, result:Vector3D = null):Vector3D
+		{
+			if (!result)
+				result = new Vector3D();
+			
+			var raw:Array<number> = Matrix3DUtils.RAW_DATA_CONTAINER;
+			matrix.copyRawDataTo(raw);
+			var a:number = raw[0];
+			var e:number = raw[1];
+			var i:number = raw[2];
+			var m:number = raw[3];
+			var b:number = raw[4];
+			var f:number = raw[5];
+			var j:number = raw[6];
+			var n:number = raw[7];
+			var c:number = raw[8];
+			var g:number = raw[9];
+			var k:number = raw[10];
+			var o:number = raw[11];
+			var x:number = vector.x;
+			var y:number = vector.y;
+			var z:number = vector.z;
+			result.x = a * x + b * y + c * z;
+			result.y = e * x + f * y + g * z;
+			result.z = i * x + j * y + k * z;
+			result.w = m * x + n * y + o * z;
+			return result;
+		}
+
+		public static getTranslation(transform:Matrix3D, result:Vector3D = null):Vector3D
+		{
+			if(!result)
+				result = new Vector3D();
+			
+			transform.copyColumnTo(3, result);
+			return result;
+		}
+
+		public static deltaTransformVectors(matrix:Matrix3D, vin:Array<number>, vout:Array<number>)
+		{
+			var raw:Array<number> = Matrix3DUtils.RAW_DATA_CONTAINER;
+			matrix.copyRawDataTo(raw);
+			var a:number = raw[0];
+			var e:number = raw[1];
+			var i:number = raw[2];
+			var m:number = raw[3];
+			var b:number = raw[4];
+			var f:number = raw[5];
+			var j:number = raw[6];
+			var n:number = raw[7];
+			var c:number = raw[8];
+			var g:number = raw[9];
+			var k:number = raw[10];
+			var o:number = raw[11];
+			var outIndex:number = 0;
+			var length:number = vin.length;
+			for(var index:number = 0; index<length; index+=3) {
+				var x:number = vin[index];
+				var y:number = vin[index+1];
+				var z:number = vin[index+2];
+				vout[outIndex++] = a * x + b * y + c * z;
+				vout[outIndex++] = e * x + f * y + g * z;
+				vout[outIndex++] = i * x + j * y + k * z;
+			}
+		}
 	}
 }

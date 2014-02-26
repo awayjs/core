@@ -1,4 +1,4 @@
-ame-core-ts
+AwayJS Core
 ===========
 
-Away Media Engine core library for Typescript
+AwayJS Core is a set of APIs built to provide a common interface for browser & Webview-based graphics frameworks.

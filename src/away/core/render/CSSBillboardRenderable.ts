@@ -14,20 +14,37 @@ module away.render
 		{
 			super(sourceEntity, material, animator);
 
-			var image:HTMLImageElement = <HTMLImageElement> document.createElement("img");
-			image.src = material.imageElement.src;
+			var div:HTMLDivElement = <HTMLDivElement> document.createElement("div");
+			div.onmousedown = (event:MouseEvent) => false;
 
-			this.htmlElement = image;
+			this.htmlElement = div;
 
-			var style:MSStyleCSSProperties = this.htmlElement.style;
+			var style:MSStyleCSSProperties = div.style;
 
 			style.position = "absolute";
-
+			style.width = "1px";
+			style.height = "1px";
 			style.transformOrigin
-				= style["WebkitTransformOrigin"]
-				= style["MozTransformOrigin"]
-				= style["OTransformOrigin"]
-				= style["msTransformOrigin"] = "0% 0%";
+				= style["-webkit-transform-origin"]
+				= style["-moz-transform-origin"]
+				= style["-o-transform-origin"]
+				= style["-ms-transform-origin"] = "0% 0%";
+
+			var img:HTMLImageElement = <HTMLImageElement> document.createElement("img");
+
+			div.appendChild(img);
+			img.src = material.imageElement.src;
+
+			style = img.style;
+
+			style.position = "absolute";
+			style.width = "1px";
+			style.height = "1px";
+			style.transform
+				= style["-webkit-transform"]
+				= style["-moz-transform"]
+				= style["-o-transform"]
+				= style["-ms-transform"] = "rotateX(180deg)";
 		}
 	}
 }

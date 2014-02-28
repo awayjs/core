@@ -40,24 +40,33 @@ var tests;
 
                 //create a billboard entity
                 this._billboard1 = new away.entities.Billboard(this._bitmapMaterial, 100, 100);
+                this._billboard1.alignmentMode = away.base.AlignmentMode.PIVOT_POINT;
+                this._billboard1.x = -100;
+                this._billboard1.y = -100;
 
                 //add billboard to the scene
                 this._view.scene.addChild(this._billboard1);
 
                 this._billboard2 = new away.entities.Billboard(this._bitmapMaterial, 100, 100);
-                this._billboard2.x = 200;
+                this._billboard2.alignmentMode = away.base.AlignmentMode.PIVOT_POINT;
+                this._billboard2.x = 100;
+                this._billboard2.y = -100;
                 this._view.scene.addChild(this._billboard2);
 
                 this._billboard3 = new away.entities.Billboard(this._bitmapMaterial, 100, 100);
-                this._billboard3.x = 200;
-                this._billboard3.y = 200;
+                this._billboard3.alignmentMode = away.base.AlignmentMode.PIVOT_POINT;
+                this._billboard3.x = 100;
+                this._billboard3.y = 100;
                 this._view.scene.addChild(this._billboard3);
 
                 this._billboard4 = new away.entities.Billboard(this._bitmapMaterial, 100, 100);
-                this._billboard4.y = 200;
+                this._billboard4.alignmentMode = away.base.AlignmentMode.PIVOT_POINT;
+                this._billboard4.x = -100;
+                this._billboard4.y = 100;
                 this._view.scene.addChild(this._billboard4);
 
-                //this._hoverControl = new away.controllers.HoverController(this._view.camera, null, 150, 10);
+                this._hoverControl = new away.controllers.HoverController(this._view.camera, null, 150, 10);
+
                 document.onmousedown = function (event) {
                     return _this.onMouseDownHandler(event);
                 };

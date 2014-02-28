@@ -5072,52 +5072,18 @@ declare module away.render {
     *
     * @class away.render.RendererBase
     */
-    class CSSRendererBase extends away.events.EventDispatcher implements render.IRenderer {
-        public _pContext: HTMLDivElement;
+    class CSSRendererBase extends away.events.EventDispatcher {
         private _backgroundR;
         private _backgroundG;
         private _backgroundB;
         private _backgroundAlpha;
-        private _viewportDirty;
-        private _scissorDirty;
-        private _pBackBufferInvalid;
-        private _width;
-        private _height;
-        private _localPos;
-        private _globalPos;
-        public _pScissorRect: away.geom.Rectangle;
-        private _viewPort;
-        private _scissorUpdated;
-        private _viewPortUpdated;
+        public _pBackBufferInvalid: boolean;
+        public _depthTextureInvalid: boolean;
         /**
         * Creates a new RendererBase object.
         */
         constructor(renderToTexture?: boolean, forceSoftware?: boolean, profile?: string);
         public _iCreateEntityCollector(): away.traverse.ICollector;
-        /**
-        * A viewPort rectangle equivalent of the StageGL size and position.
-        */
-        public viewPort : away.geom.Rectangle;
-        /**
-        * A scissor rectangle equivalent of the view size and position.
-        */
-        public scissorRect : away.geom.Rectangle;
-        /**
-        *
-        */
-        public x : number;
-        /**
-        *
-        */
-        public y : number;
-        /**
-        *
-        */
-        public width : number;
-        /**
-        *
-        */
-        public height : number;
         /**
         * The background color's red component, used when clearing.
         *
@@ -5154,10 +5120,6 @@ declare module away.render {
         */
         public pExecuteRender(entityCollector: away.traverse.CSSEntityCollector, scissorRect?: away.geom.Rectangle): void;
         /**
-        * Updates the backbuffer properties.
-        */
-        public pUpdateBackBuffer(): void;
-        /**
         * Performs the actual drawing of dom objects to the target.
         *
         * @param entityCollector The EntityCollector object containing the potentially visible dom objects.
@@ -5165,17 +5127,9 @@ declare module away.render {
         public pDraw(entityCollector: away.traverse.CSSEntityCollector): void;
         public _iBackgroundAlpha : number;
         /**
-        * @private
-        */
-        private notifyScissorUpdate();
-        /**
-        * @private
-        */
-        private notifyViewportUpdate();
-        /**
         *
         */
-        private updateGlobalPos();
+        public updateGlobalPos(): void;
     }
 }
 /**
@@ -5188,18 +5142,64 @@ declare module away.render {
     *
     * @class away.render.DefaultRenderer
     */
-    class CSSDefaultRenderer extends render.CSSRendererBase {
+    class CSSDefaultRenderer extends render.CSSRendererBase implements render.IRenderer {
+        private _context;
+        private _contextStyle;
+        private _contextMatrix;
         private _activeMaterial;
         private _skyboxProjection;
         private _transform;
+        public _width: number;
+        public _height: number;
+        private _viewPort;
+        private _viewportDirty;
+        private _scissorRect;
+        private _scissorDirty;
+        private _localPos;
+        private _globalPos;
+        private _scissorUpdated;
+        private _viewPortUpdated;
+        /**
+        * A viewPort rectangle equivalent of the StageGL size and position.
+        */
+        public viewPort : away.geom.Rectangle;
+        /**
+        * A scissor rectangle equivalent of the view size and position.
+        */
+        public scissorRect : away.geom.Rectangle;
+        /**
+        *
+        */
+        public x : number;
+        /**
+        *
+        */
+        public y : number;
+        /**
+        *
+        */
+        public width : number;
+        /**
+        *
+        */
+        public height : number;
         /**
         * Creates a new CSSDefaultRenderer object.
         */
         constructor();
         /**
+        *
+        * @param entityCollector
+        */
+        public render(entityCollector: away.traverse.ICollector): void;
+        /**
         * @inheritDoc
         */
         public pDraw(entityCollector: away.traverse.CSSEntityCollector): void;
+        /**
+        * Updates the backbuffer properties.
+        */
+        public pUpdateBackBuffer(): void;
         /**
         * Draw the skybox if present.
         * @param entityCollector The EntityCollector containing all potentially visible information.
@@ -5212,6 +5212,18 @@ declare module away.render {
         */
         private drawRenderables(item, entityCollector);
         public dispose(): void;
+        /**
+        * @private
+        */
+        private notifyScissorUpdate();
+        /**
+        * @private
+        */
+        private notifyViewportUpdate();
+        /**
+        *
+        */
+        public updateGlobalPos(): void;
     }
 }
 /**

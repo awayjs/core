@@ -9933,16 +9933,31 @@ var away;
             function CSSBillboardRenderable(sourceEntity, material, animator) {
                 _super.call(this, sourceEntity, material, animator);
 
-                var image = document.createElement("img");
-                image.src = material.imageElement.src;
+                var div = document.createElement("div");
+                div.onmousedown = function (event) {
+                    return false;
+                };
 
-                this.htmlElement = image;
+                this.htmlElement = div;
 
-                var style = this.htmlElement.style;
+                var style = div.style;
 
                 style.position = "absolute";
+                style.width = "1px";
+                style.height = "1px";
+                style.transformOrigin = style["-webkit-transform-origin"] = style["-moz-transform-origin"] = style["-o-transform-origin"] = style["-ms-transform-origin"] = "0% 0%";
 
-                style.transformOrigin = style["WebkitTransformOrigin"] = style["MozTransformOrigin"] = style["OTransformOrigin"] = style["msTransformOrigin"] = "0% 0%";
+                var img = document.createElement("img");
+
+                div.appendChild(img);
+                img.src = material.imageElement.src;
+
+                style = img.style;
+
+                style.position = "absolute";
+                style.width = "1px";
+                style.height = "1px";
+                style.transform = style["-webkit-transform"] = style["-moz-transform"] = style["-o-transform"] = style["-ms-transform"] = "rotateX(180deg)";
             }
             return CSSBillboardRenderable;
         })(away.render.CSSRenderableBase);
@@ -9978,138 +9993,11 @@ var away;
                 this._backgroundB = 0;
                 this._backgroundAlpha = 1;
                 this._pBackBufferInvalid = true;
-                this._localPos = new away.geom.Point();
-                this._globalPos = new away.geom.Point();
-                this._pScissorRect = new away.geom.Rectangle();
-
-                //create context for the renderer
-                this._pContext = document.createElement("div");
-
-                //this._pContext.style.transformStyle = this._pContext.style["-webkit-transform-style"] = "preserve-3d";
-                //add context container to body
-                document.body.appendChild(this._pContext);
-
-                this._viewPort = new away.geom.Rectangle();
-
-                if (this._width == 0)
-                    this.width = window.innerWidth;
-
-                if (this._height == 0)
-                    this.height = window.innerHeight;
+                this._depthTextureInvalid = true;
             }
             CSSRendererBase.prototype._iCreateEntityCollector = function () {
                 return new away.traverse.CSSEntityCollector();
             };
-
-            Object.defineProperty(CSSRendererBase.prototype, "viewPort", {
-                /**
-                * A viewPort rectangle equivalent of the StageGL size and position.
-                */
-                get: function () {
-                    return this._viewPort;
-                },
-                enumerable: true,
-                configurable: true
-            });
-
-            Object.defineProperty(CSSRendererBase.prototype, "scissorRect", {
-                /**
-                * A scissor rectangle equivalent of the view size and position.
-                */
-                get: function () {
-                    return this._pScissorRect;
-                },
-                enumerable: true,
-                configurable: true
-            });
-
-            Object.defineProperty(CSSRendererBase.prototype, "x", {
-                /**
-                *
-                */
-                get: function () {
-                    return this._localPos.x;
-                },
-                set: function (value) {
-                    if (this.x == value)
-                        return;
-
-                    this._globalPos.x = this._localPos.x = value;
-
-                    this.updateGlobalPos();
-                },
-                enumerable: true,
-                configurable: true
-            });
-
-
-            Object.defineProperty(CSSRendererBase.prototype, "y", {
-                /**
-                *
-                */
-                get: function () {
-                    return this._localPos.y;
-                },
-                set: function (value) {
-                    if (this.y == value)
-                        return;
-
-                    this._globalPos.y = this._localPos.y = value;
-
-                    this.updateGlobalPos();
-                },
-                enumerable: true,
-                configurable: true
-            });
-
-
-            Object.defineProperty(CSSRendererBase.prototype, "width", {
-                /**
-                *
-                */
-                get: function () {
-                    return this._width;
-                },
-                set: function (value) {
-                    if (this._width == value)
-                        return;
-
-                    this._width = value;
-                    this._pScissorRect.width = value;
-
-                    this._viewPort.width = value;
-
-                    this.notifyScissorUpdate();
-                    this.notifyViewportUpdate();
-                },
-                enumerable: true,
-                configurable: true
-            });
-
-
-            Object.defineProperty(CSSRendererBase.prototype, "height", {
-                /**
-                *
-                */
-                get: function () {
-                    return this._height;
-                },
-                set: function (value) {
-                    if (this._height == value)
-                        return;
-
-                    this._height = value;
-                    this._pScissorRect.height = value;
-
-                    this._viewPort.height = value;
-
-                    this.notifyScissorUpdate();
-                    this.notifyViewportUpdate();
-                },
-                enumerable: true,
-                configurable: true
-            });
-
 
             Object.defineProperty(CSSRendererBase.prototype, "_iBackgroundR", {
                 /**
@@ -10190,10 +10078,6 @@ var away;
             };
 
             CSSRendererBase.prototype.render = function (entityCollector) {
-                this._viewportDirty = false;
-                this._scissorDirty = false;
-
-                this._iRender(entityCollector);
             };
 
             /**
@@ -10217,12 +10101,6 @@ var away;
             CSSRendererBase.prototype.pExecuteRender = function (entityCollector, scissorRect) {
                 if (typeof scissorRect === "undefined") { scissorRect = null; }
                 this.pDraw(entityCollector);
-            };
-
-            /**
-            * Updates the backbuffer properties.
-            */
-            CSSRendererBase.prototype.pUpdateBackBuffer = function () {
             };
 
             /**
@@ -10252,52 +10130,9 @@ var away;
 
 
             /**
-            * @private
-            */
-            CSSRendererBase.prototype.notifyScissorUpdate = function () {
-                var style = this._pContext.style;
-
-                //			style.transform
-                //				= style["-webkit-transform"]
-                //				= style["-moz-transform"]
-                //				= style["-o-transform"]
-                //				= style["-ms-transform"] = "scale3d(" + this._width/1024 + ", " + this._height/1024 + ", 1)";
-                if (this._scissorDirty)
-                    return;
-
-                this._scissorDirty = true;
-
-                if (!this._scissorUpdated)
-                    this._scissorUpdated = new away.events.RendererEvent(away.events.RendererEvent.SCISSOR_UPDATED);
-
-                this.dispatchEvent(this._scissorUpdated);
-            };
-
-            /**
-            * @private
-            */
-            CSSRendererBase.prototype.notifyViewportUpdate = function () {
-                if (this._viewportDirty)
-                    return;
-
-                this._viewportDirty = true;
-
-                if (!this._viewPortUpdated)
-                    this._viewPortUpdated = new away.events.RendererEvent(away.events.RendererEvent.VIEWPORT_UPDATED);
-
-                this.dispatchEvent(this._viewPortUpdated);
-            };
-
-            /**
             *
             */
             CSSRendererBase.prototype.updateGlobalPos = function () {
-                this._pScissorRect.x = 0;
-                this._pScissorRect.y = 0;
-                this._viewPort.x = this._globalPos.x;
-                this._viewPort.y = this._globalPos.y;
-
-                this.notifyScissorUpdate();
             };
             return CSSRendererBase;
         })(away.events.EventDispatcher);
@@ -10325,9 +10160,161 @@ var away;
             */
             function CSSDefaultRenderer() {
                 _super.call(this);
+                this._contextMatrix = new away.geom.Matrix3D();
                 this._skyboxProjection = new away.geom.Matrix3D();
                 this._transform = new away.geom.Matrix3D();
+                this._viewPort = new away.geom.Rectangle();
+                this._scissorRect = new away.geom.Rectangle();
+                this._localPos = new away.geom.Point();
+                this._globalPos = new away.geom.Point();
+
+                //create context for the renderer
+                this._context = document.createElement("div");
+
+                this._contextStyle = this._context.style;
+                this._contextStyle.overflow = "hidden";
+                this._contextStyle.position = "absolute";
+
+                //add context container to body
+                document.body.appendChild(this._context);
+                document.body.style.margin = "0px";
+
+                this._viewPort = new away.geom.Rectangle();
+
+                if (this._width == 0)
+                    this.width = window.innerWidth;
+
+                if (this._height == 0)
+                    this.height = window.innerHeight;
             }
+            Object.defineProperty(CSSDefaultRenderer.prototype, "viewPort", {
+                /**
+                * A viewPort rectangle equivalent of the StageGL size and position.
+                */
+                get: function () {
+                    return this._viewPort;
+                },
+                enumerable: true,
+                configurable: true
+            });
+
+            Object.defineProperty(CSSDefaultRenderer.prototype, "scissorRect", {
+                /**
+                * A scissor rectangle equivalent of the view size and position.
+                */
+                get: function () {
+                    return this._scissorRect;
+                },
+                enumerable: true,
+                configurable: true
+            });
+
+            Object.defineProperty(CSSDefaultRenderer.prototype, "x", {
+                /**
+                *
+                */
+                get: function () {
+                    return this._localPos.x;
+                },
+                set: function (value) {
+                    if (this.x == value)
+                        return;
+
+                    this.updateGlobalPos();
+                },
+                enumerable: true,
+                configurable: true
+            });
+
+
+            Object.defineProperty(CSSDefaultRenderer.prototype, "y", {
+                /**
+                *
+                */
+                get: function () {
+                    return this._localPos.y;
+                },
+                set: function (value) {
+                    if (this.y == value)
+                        return;
+
+                    this._globalPos.y = this._localPos.y = value;
+
+                    this.updateGlobalPos();
+                },
+                enumerable: true,
+                configurable: true
+            });
+
+
+            Object.defineProperty(CSSDefaultRenderer.prototype, "width", {
+                /**
+                *
+                */
+                get: function () {
+                    return this._width;
+                },
+                set: function (value) {
+                    if (this._width == value)
+                        return;
+
+                    this._width = value;
+                    this._scissorRect.width = value;
+                    this._viewPort.width = value;
+
+                    this._pBackBufferInvalid = true;
+                    this._depthTextureInvalid = true;
+
+                    this.notifyViewportUpdate();
+                    this.notifyScissorUpdate();
+                },
+                enumerable: true,
+                configurable: true
+            });
+
+
+            Object.defineProperty(CSSDefaultRenderer.prototype, "height", {
+                /**
+                *
+                */
+                get: function () {
+                    return this._height;
+                },
+                set: function (value) {
+                    if (this._height == value)
+                        return;
+
+                    this._height = value;
+                    this._scissorRect.height = value;
+                    this._viewPort.height = value;
+
+                    this._pBackBufferInvalid = true;
+                    this._depthTextureInvalid = true;
+
+                    this.notifyViewportUpdate();
+                    this.notifyScissorUpdate();
+                },
+                enumerable: true,
+                configurable: true
+            });
+
+
+            /**
+            *
+            * @param entityCollector
+            */
+            CSSDefaultRenderer.prototype.render = function (entityCollector) {
+                this._viewportDirty = false;
+                this._scissorDirty = false;
+
+                if (this._pBackBufferInvalid)
+                    this.pUpdateBackBuffer();
+
+                this._iRender(entityCollector);
+
+                this._pBackBufferInvalid = false;
+            };
+
             /**
             * @inheritDoc
             */
@@ -10352,6 +10339,20 @@ var away;
             };
 
             /**
+            * Updates the backbuffer properties.
+            */
+            CSSDefaultRenderer.prototype.pUpdateBackBuffer = function () {
+                this._contextStyle.width = this._width + "px";
+                this._contextStyle.height = this._height + "px";
+                this._contextStyle.clip = "rect(0px, " + this._width + "px, " + this._height + "px, 0px)";
+                this._contextMatrix.rawData[0] = this._width;
+                this._contextMatrix.rawData[5] = -this._height;
+                this._contextMatrix.rawData[12] = this._width / 2;
+                this._contextMatrix.rawData[13] = this._height / 2;
+                this._pBackBufferInvalid = false;
+            };
+
+            /**
             * Draw the skybox if present.
             * @param entityCollector The EntityCollector containing all potentially visible information.
             */
@@ -10365,22 +10366,23 @@ var away;
             * @param entityCollector The EntityCollector containing all potentially visible information.
             */
             CSSDefaultRenderer.prototype.drawRenderables = function (item, entityCollector) {
-                var viewProjection = entityCollector.camera.viewProjection;
+                var viewProjection = entityCollector.camera.viewProjection.clone();
 
                 while (item) {
                     this._activeMaterial = item.material;
 
                     //serialise transform and apply to html element
                     this._transform.copyRawDataFrom(item.renderSceneTransform.rawData);
-                    this._transform.prepend(viewProjection);
+                    this._transform.append(viewProjection);
+                    this._transform.append(this._contextMatrix);
 
                     var style = item.htmlElement.style;
 
                     style.transform = style["-webkit-transform"] = style["-moz-transform"] = style["-o-transform"] = style["-ms-transform"] = "matrix3d(" + this._transform.rawData.join(",") + ")";
 
                     //check if child requires adding to the view
-                    if (!document.body.contains(item.htmlElement))
-                        document.body.appendChild(item.htmlElement);
+                    if (!this._context.contains(item.htmlElement))
+                        this._context.appendChild(item.htmlElement);
 
                     item = item.next;
                 }
@@ -10430,6 +10432,47 @@ var away;
             CSSDefaultRenderer.prototype.dispose = function () {
                 _super.prototype.dispose.call(this);
                 //TODO
+            };
+
+            /**
+            * @private
+            */
+            CSSDefaultRenderer.prototype.notifyScissorUpdate = function () {
+                if (this._scissorDirty)
+                    return;
+
+                this._scissorDirty = true;
+
+                if (!this._scissorUpdated)
+                    this._scissorUpdated = new away.events.RendererEvent(away.events.RendererEvent.SCISSOR_UPDATED);
+
+                this.dispatchEvent(this._scissorUpdated);
+            };
+
+            /**
+            * @private
+            */
+            CSSDefaultRenderer.prototype.notifyViewportUpdate = function () {
+                if (this._viewportDirty)
+                    return;
+
+                this._viewportDirty = true;
+
+                if (!this._viewPortUpdated)
+                    this._viewPortUpdated = new away.events.RendererEvent(away.events.RendererEvent.VIEWPORT_UPDATED);
+
+                this.dispatchEvent(this._viewPortUpdated);
+            };
+
+            /**
+            *
+            */
+            CSSDefaultRenderer.prototype.updateGlobalPos = function () {
+                this._viewPort.x = this._globalPos.x;
+                this._viewPort.y = this._globalPos.y;
+
+                this.notifyViewportUpdate();
+                this.notifyScissorUpdate();
             };
             return CSSDefaultRenderer;
         })(away.render.CSSRendererBase);

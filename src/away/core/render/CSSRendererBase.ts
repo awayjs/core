@@ -11,31 +11,15 @@ module away.render
 	 *
 	 * @class away.render.RendererBase
 	 */
-	export class CSSRendererBase extends away.events.EventDispatcher implements IRenderer
+	export class CSSRendererBase extends away.events.EventDispatcher
 	{
-		public _pContext:HTMLDivElement;
-
 		private _backgroundR:number = 0;
 		private _backgroundG:number = 0;
 		private _backgroundB:number = 0;
 		private _backgroundAlpha:number = 1;
 
-		private _viewportDirty:boolean;
-		private _scissorDirty:boolean;
-
-		private _pBackBufferInvalid:boolean = true;
-
-		private _width:number;
-		private _height:number;
-		private _localPos:away.geom.Point = new away.geom.Point();
-		private _globalPos:away.geom.Point = new away.geom.Point();
-		public _pScissorRect:away.geom.Rectangle = new away.geom.Rectangle();
-
-		private _viewPort:away.geom.Rectangle;
-
-		private _scissorUpdated:away.events.RendererEvent;
-		private _viewPortUpdated:away.events.RendererEvent;
-
+		public _pBackBufferInvalid:boolean = true;
+		public _depthTextureInvalid:boolean = true;
 
 		/**
 		 * Creates a new RendererBase object.
@@ -43,122 +27,11 @@ module away.render
 		constructor(renderToTexture:boolean = false, forceSoftware:boolean = false, profile:string = "baseline")
 		{
 			super();
-
-			//create context for the renderer
-			this._pContext = document.createElement("div");
-			//this._pContext.style.transformStyle = this._pContext.style["-webkit-transform-style"] = "preserve-3d";
-
-			//add context container to body
-			document.body.appendChild(this._pContext);
-
-			this._viewPort = new away.geom.Rectangle();
-
-			if (this._width == 0)
-				this.width = window.innerWidth;
-
-			if (this._height == 0)
-				this.height = window.innerHeight;
 		}
 
 		public _iCreateEntityCollector():away.traverse.ICollector
 		{
 			return new away.traverse.CSSEntityCollector();
-		}
-
-		/**
-		 * A viewPort rectangle equivalent of the StageGL size and position.
-		 */
-		public get viewPort():away.geom.Rectangle
-		{
-			return this._viewPort;
-		}
-
-		/**
-		 * A scissor rectangle equivalent of the view size and position.
-		 */
-		public get scissorRect():away.geom.Rectangle
-		{
-			return this._pScissorRect;
-		}
-
-		/**
-		 *
-		 */
-		public get x():number
-		{
-			return this._localPos.x;
-		}
-
-		public set x(value:number)
-		{
-			if (this.x == value)
-				return;
-
-			this._globalPos.x = this._localPos.x = value;
-
-			this.updateGlobalPos();
-		}
-
-		/**
-		 *
-		 */
-		public get y():number
-		{
-			return this._localPos.y;
-		}
-
-		public set y(value:number)
-		{
-			if (this.y == value)
-				return;
-
-			this._globalPos.y = this._localPos.y = value;
-
-			this.updateGlobalPos();
-		}
-
-		/**
-		 *
-		 */
-		public get width():number
-		{
-			return this._width;
-		}
-
-		public set width(value:number)
-		{
-			if (this._width == value)
-				return;
-
-			this._width = value;
-			this._pScissorRect.width = value;
-
-			this._viewPort.width = value;
-
-			this.notifyScissorUpdate();
-			this.notifyViewportUpdate();
-		}
-
-		/**
-		 *
-		 */
-		public get height():number
-		{
-			return this._height;
-		}
-
-		public set height(value:number)
-		{
-			if (this._height == value)
-				return;
-
-			this._height = value;
-			this._pScissorRect.height = value;
-
-			this._viewPort.height = value;
-
-			this.notifyScissorUpdate();
-			this.notifyViewportUpdate();
 		}
 
 		/**
@@ -236,10 +109,6 @@ module away.render
 
 		public render(entityCollector:away.traverse.ICollector)
 		{
-			this._viewportDirty = false;
-			this._scissorDirty = false;
-
-			this._iRender(<away.traverse.CSSEntityCollector> entityCollector);
 		}
 
 		/**
@@ -263,14 +132,6 @@ module away.render
 		public pExecuteRender(entityCollector:away.traverse.CSSEntityCollector, scissorRect:away.geom.Rectangle = null)
 		{
 			this.pDraw(entityCollector);
-		}
-
-		/**
-		 * Updates the backbuffer properties.
-		 */
-		public pUpdateBackBuffer()
-		{
-
 		}
 
 		/**
@@ -298,57 +159,13 @@ module away.render
 			this._pBackBufferInvalid = true;
 		}
 
-		/**
-		 * @private
-		 */
-		private notifyScissorUpdate()
-		{
-			var style:MSStyleCSSProperties = this._pContext.style;
-
-//			style.transform
-//				= style["-webkit-transform"]
-//				= style["-moz-transform"]
-//				= style["-o-transform"]
-//				= style["-ms-transform"] = "scale3d(" + this._width/1024 + ", " + this._height/1024 + ", 1)";
-
-			if (this._scissorDirty)
-				return;
-
-			this._scissorDirty = true;
-
-			if (!this._scissorUpdated)
-				this._scissorUpdated = new away.events.RendererEvent(away.events.RendererEvent.SCISSOR_UPDATED);
-
-			this.dispatchEvent(this._scissorUpdated);
-		}
-
-		/**
-		 * @private
-		 */
-		private notifyViewportUpdate()
-		{
-			if (this._viewportDirty)
-				return;
-
-			this._viewportDirty = true;
-
-			if (!this._viewPortUpdated)
-				this._viewPortUpdated = new away.events.RendererEvent(away.events.RendererEvent.VIEWPORT_UPDATED);
-
-			this.dispatchEvent(this._viewPortUpdated);
-		}
 
 		/**
 		 *
 		 */
-		private updateGlobalPos()
+		public updateGlobalPos()
 		{
-			this._pScissorRect.x = 0;
-			this._pScissorRect.y = 0;
-			this._viewPort.x = this._globalPos.x;
-			this._viewPort.y = this._globalPos.y;
 
-			this.notifyScissorUpdate();
 		}
 	}
 }

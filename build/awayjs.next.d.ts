@@ -941,6 +941,15 @@ declare module away.parsers {
 declare module away.parsers {
     class ParserUtils {
         /**
+        * Converts an ArrayBuffer to a base64 string
+        *
+        * @param image data as a ByteArray
+        *
+        * @return HTMLImageElement
+        *
+        */
+        static arrayBufferToImage(data: ArrayBuffer): HTMLImageElement;
+        /**
         * Converts an ByteArray to an Image - returns an HTMLImageElement
         *
         * @param image data as a ByteArray

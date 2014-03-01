@@ -682,7 +682,7 @@ module away.entities
 		 */
 		public appendText(newText:string)
 		{
-
+			//TODO
 		}
 	
 		/**

@@ -22,29 +22,33 @@ module away.render
 			var style:MSStyleCSSProperties = div.style;
 
 			style.position = "absolute";
-			style.width = "1px";
-			style.height = "1px";
 			style.transformOrigin
 				= style["-webkit-transform-origin"]
 				= style["-moz-transform-origin"]
 				= style["-o-transform-origin"]
 				= style["-ms-transform-origin"] = "0% 0%";
 
-			var img:HTMLImageElement = <HTMLImageElement> document.createElement("img");
+			var img:HTMLDivElement = <HTMLDivElement> document.createElement("div");
 
 			div.appendChild(img);
-			img.src = material.imageElement.src;
 
 			style = img.style;
 
+			style.backgroundImage = "url(" + material.imageElement.src + ")";
+			style.backgroundSize = "100% 100%";
 			style.position = "absolute";
-			style.width = "1px";
-			style.height = "1px";
+			style.width = material.imageElement.width + "px";
+			style.height = material.imageElement.height + "px";
+			style.transformOrigin
+				= style["-webkit-transform-origin"]
+				= style["-moz-transform-origin"]
+				= style["-o-transform-origin"]
+				= style["-ms-transform-origin"] = "0% 0%";
 			style.transform
 				= style["-webkit-transform"]
 				= style["-moz-transform"]
 				= style["-o-transform"]
-				= style["-ms-transform"] = "rotateX(180deg)";
+				= style["-ms-transform"] = "scale3d(" + 1/material.imageElement.width + ", -" + 1/material.imageElement.height + ", 1) translateY(-" + material.imageElement.height + "px)";
 		}
 	}
 }

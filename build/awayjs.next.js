@@ -2491,7 +2491,7 @@ var away;
             * @param extra The holder for extra contextual data that the parser might need.
             */
             function BitmapParser() {
-                _super.call(this, away.net.URLLoaderDataFormat.BLOB);
+                _super.call(this, away.net.URLLoaderDataFormat.ARRAY_BUFFER);
             }
             /**
             * Indicates whether or not a given file extension is supported by the parser.
@@ -2573,6 +2573,11 @@ var away;
                     } else {
                         sizeError = true;
                     }
+                } else if (this.data instanceof ArrayBuffer) {
+                    this._htmlImageElement = away.parsers.ParserUtils.arrayBufferToImage(this.data);
+
+                    asset = new away.textures.ImageTexture(this._htmlImageElement, false);
+                    this._pFinalizeAsset(asset, this._iFileName);
                 } else if (this.data instanceof Blob) {
                     this._htmlImageElement = away.parsers.ParserUtils.blobToImage(this.data);
 
@@ -2875,6 +2880,30 @@ var away;
         var ParserUtils = (function () {
             function ParserUtils() {
             }
+            /**
+            * Converts an ArrayBuffer to a base64 string
+            *
+            * @param image data as a ByteArray
+            *
+            * @return HTMLImageElement
+            *
+            */
+            ParserUtils.arrayBufferToImage = function (data) {
+                var byteStr = '';
+                var bytes = new Uint8Array(data);
+                var len = bytes.byteLength;
+
+                for (var i = 0; i < len; i++)
+                    byteStr += String.fromCharCode(bytes[i]);
+
+                var base64Image = window.btoa(byteStr);
+                var str = 'data:image/png;base64,' + base64Image;
+                var img = new Image();
+                img.src = str;
+
+                return img;
+            };
+
             /**
             * Converts an ByteArray to an Image - returns an HTMLImageElement
             *
@@ -6524,7 +6553,7 @@ var away;
                 if (xAxis.length < .05) {
                     xAxis.x = upAxis.y;
                     xAxis.y = upAxis.x;
-                    xAxis.z = 0;
+                    xAxis.z = zAxis.z;
                     xAxis.normalize();
                 } else {
                     xAxis.normalize();
@@ -9943,21 +9972,21 @@ var away;
                 var style = div.style;
 
                 style.position = "absolute";
-                style.width = "1px";
-                style.height = "1px";
                 style.transformOrigin = style["-webkit-transform-origin"] = style["-moz-transform-origin"] = style["-o-transform-origin"] = style["-ms-transform-origin"] = "0% 0%";
 
-                var img = document.createElement("img");
+                var img = document.createElement("div");
 
                 div.appendChild(img);
-                img.src = material.imageElement.src;
 
                 style = img.style;
 
+                style.backgroundImage = "url(" + material.imageElement.src + ")";
+                style.backgroundSize = "100% 100%";
                 style.position = "absolute";
-                style.width = "1px";
-                style.height = "1px";
-                style.transform = style["-webkit-transform"] = style["-moz-transform"] = style["-o-transform"] = style["-ms-transform"] = "rotateX(180deg)";
+                style.width = material.imageElement.width + "px";
+                style.height = material.imageElement.height + "px";
+                style.transformOrigin = style["-webkit-transform-origin"] = style["-moz-transform-origin"] = style["-o-transform-origin"] = style["-ms-transform-origin"] = "0% 0%";
+                style.transform = style["-webkit-transform"] = style["-moz-transform"] = style["-o-transform"] = style["-ms-transform"] = "scale3d(" + 1 / material.imageElement.width + ", -" + 1 / material.imageElement.height + ", 1) translateY(-" + material.imageElement.height + "px)";
             }
             return CSSBillboardRenderable;
         })(away.render.CSSRenderableBase);

@@ -25,7 +25,7 @@ module away.parsers
 		 */
 		constructor()
 		{
-			super(away.net.URLLoaderDataFormat.BLOB);
+			super(away.net.URLLoaderDataFormat.ARRAY_BUFFER);
 		}
 
 		/**
@@ -117,6 +117,13 @@ module away.parsers
 				} else {
 					sizeError = true;
 				}
+
+			} else if (this.data instanceof ArrayBuffer) {// Parse an ArrayBuffer
+
+				this._htmlImageElement = away.parsers.ParserUtils.arrayBufferToImage(this.data);
+
+				asset = <away.textures.Texture2DBase> new away.textures.ImageTexture(this._htmlImageElement, false);
+				this._pFinalizeAsset(<away.library.IAsset> asset, this._iFileName);
 
 			} else if (this.data instanceof Blob) { // Parse a Blob
 

@@ -17,7 +17,7 @@ var tests;
             function BillboardEntityTest() {
                 this._move = false;
                 //load an image
-                AssetLibrary.load(new URLRequest('assets/1024x1024.png'));
+                AssetLibrary.load(new URLRequest('assets/256x256.png'));
 
                 //listen for a resource complete event
                 AssetLibrary.addEventListener(away.events.LoaderEvent.RESOURCE_COMPLETE, Delegate.create(this, this.onResourceComplete));
@@ -38,32 +38,19 @@ var tests;
                 //create a bitmap material
                 this._bitmapMaterial = new away.materials.CSSMaterialBase(this._imageTexture);
 
-                //create a billboard entity
-                this._billboard1 = new away.entities.Billboard(this._bitmapMaterial, 100, 100);
-                this._billboard1.alignmentMode = away.base.AlignmentMode.PIVOT_POINT;
-                this._billboard1.x = -100;
-                this._billboard1.y = -100;
+                var billboard;
+                var numBillboards = 500;
+                for (var i = 0; i < numBillboards; i++) {
+                    billboard = new away.entities.Billboard(this._bitmapMaterial, 50, 50);
+                    billboard.x = Math.cos(i * 32 * Math.PI / numBillboards) * 400 * Math.sin(i * Math.PI / numBillboards);
+                    billboard.y = Math.sin(i * 32 * Math.PI / numBillboards) * 400 * Math.sin(i * Math.PI / numBillboards);
+                    billboard.z = Math.cos(i * Math.PI / numBillboards) * 400;
+                    billboard.orientationMode = away.base.OrientationMode.CAMERA_PLANE;
+                    billboard.alignmentMode = away.base.AlignmentMode.PIVOT_POINT;
 
-                //add billboard to the scene
-                this._view.scene.addChild(this._billboard1);
-
-                this._billboard2 = new away.entities.Billboard(this._bitmapMaterial, 100, 100);
-                this._billboard2.alignmentMode = away.base.AlignmentMode.PIVOT_POINT;
-                this._billboard2.x = 100;
-                this._billboard2.y = -100;
-                this._view.scene.addChild(this._billboard2);
-
-                this._billboard3 = new away.entities.Billboard(this._bitmapMaterial, 100, 100);
-                this._billboard3.alignmentMode = away.base.AlignmentMode.PIVOT_POINT;
-                this._billboard3.x = 100;
-                this._billboard3.y = 100;
-                this._view.scene.addChild(this._billboard3);
-
-                this._billboard4 = new away.entities.Billboard(this._bitmapMaterial, 100, 100);
-                this._billboard4.alignmentMode = away.base.AlignmentMode.PIVOT_POINT;
-                this._billboard4.x = -100;
-                this._billboard4.y = 100;
-                this._view.scene.addChild(this._billboard4);
+                    //add billboard to the scene
+                    this._view.scene.addChild(billboard);
+                }
 
                 this._hoverControl = new away.controllers.HoverController(this._view.camera, null, 150, 10);
 
@@ -97,8 +84,8 @@ var tests;
             };
 
             BillboardEntityTest.prototype.render = function (dt) {
-                this._billboard1.rotationY += 1;
-                this._billboard3.rotationY += 1;
+                //			this._billboard1.rotationY += 1;
+                //			this._billboard3.rotationY += 1;
                 this._view.render();
             };
 

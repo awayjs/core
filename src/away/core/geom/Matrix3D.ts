@@ -682,5 +682,16 @@ module away.geom
 			this.rawData[13] = value.y;
 			this.rawData[14] = value.z;
 		}
+
+		public toFixed(decimalPlace:number):string
+		{
+			var magnitude:number = Math.pow(10, decimalPlace);
+			return "matrix3d(" + Math.round(this.rawData[0]*magnitude)/magnitude + "," + Math.round(this.rawData[1]*magnitude)/magnitude + "," + Math.round(this.rawData[2]*magnitude)/magnitude + "," + Math.round(this.rawData[3]*magnitude)/magnitude + "," + Math.round(this.rawData[4]*magnitude)/magnitude + "," + Math.round(this.rawData[5]*magnitude)/magnitude + "," + Math.round(this.rawData[6]*magnitude)/magnitude + "," + Math.round(this.rawData[7]*magnitude)/magnitude + "," + Math.round(this.rawData[8]*magnitude)/magnitude + "," + Math.round(this.rawData[9]*magnitude)/magnitude + "," + Math.round(this.rawData[10]*magnitude)/magnitude + "," + Math.round(this.rawData[11]*magnitude)/magnitude + "," + Math.round(this.rawData[12]*magnitude)/magnitude + "," + Math.round(this.rawData[13]*magnitude)/magnitude + "," + Math.round(this.rawData[14]*magnitude)/magnitude + "," + Math.round(this.rawData[15]*magnitude)/magnitude + ")";
+		}
+
+		public toString():string
+		{
+			return "matrix3d(" + Math.round(this.rawData[0]*1000)/1000 + "," + Math.round(this.rawData[1]*1000)/1000 + "," + Math.round(this.rawData[2]*1000)/1000 + "," + Math.round(this.rawData[3]*1000)/1000 + "," + Math.round(this.rawData[4]*1000)/1000 + "," + Math.round(this.rawData[5]*1000)/1000 + "," + Math.round(this.rawData[6]*1000)/1000 + "," + Math.round(this.rawData[7]*1000)/1000 + "," + Math.round(this.rawData[8]*1000)/1000 + "," + Math.round(this.rawData[9]*1000)/1000 + "," + Math.round(this.rawData[10]*1000)/1000 + "," + Math.round(this.rawData[11]*1000)/1000 + "," + Math.round(this.rawData[12]*1000)/1000 + "," + Math.round(this.rawData[13]*1000)/1000 + "," + Math.round(this.rawData[14]*1000)/1000 + "," + Math.round(this.rawData[15]*1000)/1000 + ")";
+		}
 	}
 }

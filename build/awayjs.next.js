@@ -6544,20 +6544,13 @@ var away;
 
                 if (upAxis == null)
                     upAxis = away.geom.Vector3D.Y_AXIS;
+                else
+                    upAxis.normalize();
 
                 zAxis = target.subtract(this._iMatrix3D.position);
                 zAxis.normalize();
 
                 xAxis = upAxis.crossProduct(zAxis);
-
-                if (xAxis.length < .05) {
-                    xAxis.x = upAxis.y;
-                    xAxis.y = upAxis.x;
-                    xAxis.z = zAxis.z;
-                    xAxis.normalize();
-                } else {
-                    xAxis.normalize();
-                }
 
                 yAxis = zAxis.crossProduct(xAxis);
 
@@ -9442,7 +9435,7 @@ var away;
                     renderable.cascaded = false;
 
                     // project onto camera's z-axis
-                    position.decrementBy(this._iEntryPoint);
+                    position = this._iEntryPoint.subtract(position);
                     renderable.zIndex = entity.zOffset - position.dotProduct(this._pCameraForward);
 
                     //store reference to scene transform
@@ -9978,15 +9971,7 @@ var away;
 
                 div.appendChild(img);
 
-                style = img.style;
-
-                style.backgroundImage = "url(" + material.imageElement.src + ")";
-                style.backgroundSize = "100% 100%";
-                style.position = "absolute";
-                style.width = material.imageElement.width + "px";
-                style.height = material.imageElement.height + "px";
-                style.transformOrigin = style["-webkit-transform-origin"] = style["-moz-transform-origin"] = style["-o-transform-origin"] = style["-ms-transform-origin"] = "0% 0%";
-                style.transform = style["-webkit-transform"] = style["-moz-transform"] = style["-o-transform"] = style["-ms-transform"] = "scale3d(" + 1 / material.imageElement.width + ", -" + 1 / material.imageElement.height + ", 1) translateY(-" + material.imageElement.height + "px)";
+                img.className = "material" + material.id;
             }
             return CSSBillboardRenderable;
         })(away.render.CSSRenderableBase);
@@ -10197,16 +10182,24 @@ var away;
                 this._localPos = new away.geom.Point();
                 this._globalPos = new away.geom.Point();
 
-                //create context for the renderer
-                this._context = document.createElement("div");
+                //create container for the renderer
+                this._container = document.createElement("div");
+                this._container.style.overflow = "hidden";
+                this._container.style.position = "absolute";
 
-                this._contextStyle = this._context.style;
-                this._contextStyle.overflow = "hidden";
-                this._contextStyle.position = "absolute";
-
-                //add context container to body
-                document.body.appendChild(this._context);
+                //add container to body
+                document.body.appendChild(this._container);
                 document.body.style.margin = "0px";
+
+                //create conxtext for the renderer
+                this._context = document.createElement("div");
+                this._contextStyle = this._context.style;
+                this._contextStyle.position = "absolute";
+                this._contextStyle.transformStyle = this._contextStyle["-webkit-transform-style"] = this._contextStyle["-moz-transform-style"] = this._contextStyle["-o-transform-style"] = this._contextStyle["-ms-transform-style"] = "preserve-3d";
+                this._contextStyle.transformOrigin = this._contextStyle["-webkit-transform-origin"] = this._contextStyle["-moz-transform-origin"] = this._contextStyle["-o-transform-origin"] = this._contextStyle["-ms-transform-origin"] = "0% 0%";
+
+                //add context to container
+                this._container.appendChild(this._context);
 
                 this._viewPort = new away.geom.Rectangle();
 
@@ -10371,13 +10364,20 @@ var away;
             * Updates the backbuffer properties.
             */
             CSSDefaultRenderer.prototype.pUpdateBackBuffer = function () {
-                this._contextStyle.width = this._width + "px";
-                this._contextStyle.height = this._height + "px";
-                this._contextStyle.clip = "rect(0px, " + this._width + "px, " + this._height + "px, 0px)";
+                this._container.style.width = this._width + "px";
+                this._container.style.height = this._height + "px";
+                this._container.style.clip = "rect(0px, " + this._width + "px, " + this._height + "px, 0px)";
+
+                //update context matrix
                 this._contextMatrix.rawData[0] = this._width;
                 this._contextMatrix.rawData[5] = -this._height;
+                this._contextMatrix.rawData[10] = -1; //fix for innaccurate z-sort
                 this._contextMatrix.rawData[12] = this._width / 2;
                 this._contextMatrix.rawData[13] = this._height / 2;
+
+                //update context tranform
+                this._contextStyle.transform = this._contextStyle["-webkit-transform"] = this._contextStyle["-moz-transform"] = this._contextStyle["-o-transform"] = this._contextStyle["-ms-transform"] = this._contextMatrix.toString();
+
                 this._pBackBufferInvalid = false;
             };
 
@@ -10403,11 +10403,12 @@ var away;
                     //serialise transform and apply to html element
                     this._transform.copyRawDataFrom(item.renderSceneTransform.rawData);
                     this._transform.append(viewProjection);
-                    this._transform.append(this._contextMatrix);
 
                     var style = item.htmlElement.style;
 
-                    style.transform = style["-webkit-transform"] = style["-moz-transform"] = style["-o-transform"] = style["-ms-transform"] = "matrix3d(" + this._transform.rawData.join(",") + ")";
+                    style.transform = style["-webkit-transform"] = style["-moz-transform"] = style["-o-transform"] = style["-ms-transform"] = this._transform.toString();
+
+                    style.transformStyle = style["-webkit-transform-style"] = style["-moz-transform-style"] = style["-o-transform-style"] = style["-ms-transform-style"] = "preserve-3d";
 
                     //check if child requires adding to the view
                     if (!this._context.contains(item.htmlElement))
@@ -13881,6 +13882,15 @@ var away;
                 configurable: true
             });
 
+
+            Matrix3D.prototype.toFixed = function (decimalPlace) {
+                var magnitude = Math.pow(10, decimalPlace);
+                return "matrix3d(" + Math.round(this.rawData[0] * magnitude) / magnitude + "," + Math.round(this.rawData[1] * magnitude) / magnitude + "," + Math.round(this.rawData[2] * magnitude) / magnitude + "," + Math.round(this.rawData[3] * magnitude) / magnitude + "," + Math.round(this.rawData[4] * magnitude) / magnitude + "," + Math.round(this.rawData[5] * magnitude) / magnitude + "," + Math.round(this.rawData[6] * magnitude) / magnitude + "," + Math.round(this.rawData[7] * magnitude) / magnitude + "," + Math.round(this.rawData[8] * magnitude) / magnitude + "," + Math.round(this.rawData[9] * magnitude) / magnitude + "," + Math.round(this.rawData[10] * magnitude) / magnitude + "," + Math.round(this.rawData[11] * magnitude) / magnitude + "," + Math.round(this.rawData[12] * magnitude) / magnitude + "," + Math.round(this.rawData[13] * magnitude) / magnitude + "," + Math.round(this.rawData[14] * magnitude) / magnitude + "," + Math.round(this.rawData[15] * magnitude) / magnitude + ")";
+            };
+
+            Matrix3D.prototype.toString = function () {
+                return "matrix3d(" + Math.round(this.rawData[0] * 1000) / 1000 + "," + Math.round(this.rawData[1] * 1000) / 1000 + "," + Math.round(this.rawData[2] * 1000) / 1000 + "," + Math.round(this.rawData[3] * 1000) / 1000 + "," + Math.round(this.rawData[4] * 1000) / 1000 + "," + Math.round(this.rawData[5] * 1000) / 1000 + "," + Math.round(this.rawData[6] * 1000) / 1000 + "," + Math.round(this.rawData[7] * 1000) / 1000 + "," + Math.round(this.rawData[8] * 1000) / 1000 + "," + Math.round(this.rawData[9] * 1000) / 1000 + "," + Math.round(this.rawData[10] * 1000) / 1000 + "," + Math.round(this.rawData[11] * 1000) / 1000 + "," + Math.round(this.rawData[12] * 1000) / 1000 + "," + Math.round(this.rawData[13] * 1000) / 1000 + "," + Math.round(this.rawData[14] * 1000) / 1000 + "," + Math.round(this.rawData[15] * 1000) / 1000 + ")";
+            };
             return Matrix3D;
         })();
         geom.Matrix3D = Matrix3D;
@@ -19919,6 +19929,7 @@ var away;
             */
             function TextField() {
                 _super.call(this);
+                this._text = "";
             }
             Object.defineProperty(TextField.prototype, "bottomScrollV", {
                 /**
@@ -20021,6 +20032,31 @@ var away;
                 configurable: true
             });
 
+            Object.defineProperty(TextField.prototype, "text", {
+                /**
+                * A string that is the current text in the text field. Lines are separated
+                * by the carriage return character(<code>'\r'</code>, ASCII 13). This
+                * property contains unformatted text in the text field, without HTML tags.
+                *
+                * <p>To get the text in HTML form, use the <code>htmlText</code>
+                * property.</p>
+                */
+                get: function () {
+                    return this._text;
+                },
+                enumerable: true,
+                configurable: true
+            });
+
+            Object.defineProperty(TextField.prototype, "tewt", {
+                set: function (value) {
+                    if (this._text == value)
+                        return;
+                },
+                enumerable: true,
+                configurable: true
+            });
+
             Object.defineProperty(TextField.prototype, "textHeight", {
                 /**
                 * The height of the text in pixels.
@@ -20069,6 +20105,7 @@ var away;
             * @param newText The string to append to the existing text.
             */
             TextField.prototype.appendText = function (newText) {
+                //TODO
             };
 
             /**
@@ -24047,6 +24084,14 @@ var away;
                 configurable: true
             });
 
+            Object.defineProperty(CSSMaterialBase.prototype, "imageStyle", {
+                get: function () {
+                    return this._imageStyle;
+                },
+                enumerable: true,
+                configurable: true
+            });
+
             Object.defineProperty(CSSMaterialBase.prototype, "repeat", {
                 /**
                 * Indicates whether or not any used textures should be tiled. If set to false, texture samples are clamped to
@@ -24093,8 +24138,25 @@ var away;
 
                     this._texture = value;
 
-                    if (value instanceof away.textures.ImageTexture)
+                    if (value instanceof away.textures.ImageTexture) {
                         this._imageElement = value.htmlImageElement;
+
+                        var node = document.createElement("style");
+                        node.type = "text/css";
+                        document.getElementsByTagName("head")[0].appendChild(node);
+
+                        var sheet = document.styleSheets[document.styleSheets.length - 1];
+                        sheet.insertRule(".material" + this.id + "{ }", 0);
+                        var style = sheet.cssRules[0].style;
+
+                        style.backgroundImage = "url(" + this._imageElement.src + ")";
+                        style.backgroundSize = "100% 100%";
+                        style.position = "absolute";
+                        style.width = this._imageElement.width + "px";
+                        style.height = this._imageElement.height + "px";
+                        style.transformOrigin = style["-webkit-transform-origin"] = style["-moz-transform-origin"] = style["-o-transform-origin"] = style["-ms-transform-origin"] = "0% 0%";
+                        style.transform = style["-webkit-transform"] = style["-moz-transform"] = style["-o-transform"] = style["-ms-transform"] = "scale3d(" + 1 / this._imageElement.width + ", -" + 1 / this._imageElement.height + ", 1) translateY(-" + this._imageElement.height + "px)";
+                    }
                 },
                 enumerable: true,
                 configurable: true

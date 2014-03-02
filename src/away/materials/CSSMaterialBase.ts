@@ -61,6 +61,7 @@ module away.materials
 		public _pBlendMode:string = BlendMode.NORMAL;
 
 		private _imageElement:HTMLImageElement;
+		private _imageStyle:MSStyleCSSProperties;
 		private _repeat:boolean = false;
 		private _smooth:boolean = true;
 		private _texture:away.textures.Texture2DBase;
@@ -68,6 +69,11 @@ module away.materials
 		public get imageElement():HTMLImageElement
 		{
 			return this._imageElement;
+		}
+
+		public get imageStyle():MSStyleCSSProperties
+		{
+			return this._imageStyle;
 		}
 
 		/**
@@ -116,8 +122,33 @@ module away.materials
 
 			this._texture = value;
 
-			if (value instanceof away.textures.ImageTexture)
+			if (value instanceof away.textures.ImageTexture) {
 				this._imageElement = (<away.textures.ImageTexture> value).htmlImageElement;
+
+				var node:HTMLStyleElement = document.createElement("style");
+				node.type = "text/css";
+				document.getElementsByTagName("head")[0].appendChild(node);
+
+				var sheet:CSSStyleSheet = <CSSStyleSheet> document.styleSheets[document.styleSheets.length - 1];
+				sheet.insertRule(".material" + this.id + "{ }", 0);
+				var style:MSStyleCSSProperties = (<CSSStyleRule> sheet.cssRules[0]).style;
+
+				style.backgroundImage = "url(" + this._imageElement.src + ")";
+				style.backgroundSize = "100% 100%";
+				style.position = "absolute";
+				style.width = this._imageElement.width + "px";
+				style.height = this._imageElement.height + "px";
+				style.transformOrigin
+					= style["-webkit-transform-origin"]
+					= style["-moz-transform-origin"]
+					= style["-o-transform-origin"]
+					= style["-ms-transform-origin"] = "0% 0%";
+				style.transform
+					= style["-webkit-transform"]
+					= style["-moz-transform"]
+					= style["-o-transform"]
+					= style["-ms-transform"] = "scale3d(" + 1/this._imageElement.width + ", -" + 1/this._imageElement.height + ", 1) translateY(-" + this._imageElement.height + "px)";
+			}
 		}
 
 		/**
@@ -135,6 +166,8 @@ module away.materials
 			this.repeat = repeat;
 
 			this._owners = new Array<IMaterialOwner>();
+
+
 		}
 
 		/**

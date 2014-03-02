@@ -13,10 +13,11 @@ module away.render
 	 */
 	export class CSSDefaultRenderer extends CSSRendererBase implements IRenderer
 	{
+		private _container:HTMLDivElement;
 		private _context:HTMLDivElement;
 		private _contextStyle:MSStyleCSSProperties;
 		private _contextMatrix:away.geom.Matrix3D = new away.geom.Matrix3D();
-
+		
 		private _activeMaterial:away.materials.CSSMaterialBase;
 		private _skyboxProjection:away.geom.Matrix3D = new away.geom.Matrix3D();
 		private _transform:away.geom.Matrix3D = new away.geom.Matrix3D();
@@ -140,17 +141,33 @@ module away.render
 		{
 			super();
 
-			//create context for the renderer
-			this._context = document.createElement("div");
-
-			this._contextStyle = this._context.style;
-			this._contextStyle.overflow = "hidden";
-			this._contextStyle.position = "absolute";
-
-			//add context container to body
-			document.body.appendChild(this._context);
+			//create container for the renderer
+			this._container = document.createElement("div");
+			this._container.style.overflow = "hidden";
+			this._container.style.position = "absolute";
+			
+			//add container to body
+			document.body.appendChild(this._container);
 			document.body.style.margin = "0px";
 
+			//create conxtext for the renderer
+			this._context = document.createElement("div");
+			this._contextStyle = this._context.style;
+			this._contextStyle.position = "absolute";
+			this._contextStyle.transformStyle
+				= this._contextStyle["-webkit-transform-style"]
+				= this._contextStyle["-moz-transform-style"]
+				= this._contextStyle["-o-transform-style"]
+				= this._contextStyle["-ms-transform-style"] = "preserve-3d";
+			this._contextStyle.transformOrigin
+				= this._contextStyle["-webkit-transform-origin"]
+				= this._contextStyle["-moz-transform-origin"]
+				= this._contextStyle["-o-transform-origin"]
+				= this._contextStyle["-ms-transform-origin"] = "0% 0%";
+
+			//add context to container
+			this._container.appendChild(this._context);
+			
 			this._viewPort = new away.geom.Rectangle();
 
 			if (this._width == 0)
@@ -209,13 +226,24 @@ module away.render
 		 */
 		public pUpdateBackBuffer()
 		{
-			this._contextStyle.width = this._width + "px";
-			this._contextStyle.height = this._height + "px";
-			this._contextStyle.clip = "rect(0px, " + this._width + "px, " + this._height + "px, 0px)";
+			this._container.style.width = this._width + "px";
+			this._container.style.height = this._height + "px";
+			this._container.style.clip = "rect(0px, " + this._width + "px, " + this._height + "px, 0px)";
+
+			//update context matrix
 			this._contextMatrix.rawData[0] = this._width;
 			this._contextMatrix.rawData[5] = -this._height;
+			this._contextMatrix.rawData[10] = -1; //fix for innaccurate z-sort
 			this._contextMatrix.rawData[12] = this._width/2;
 			this._contextMatrix.rawData[13] = this._height/2;
+
+			//update context tranform
+			this._contextStyle.transform
+				= this._contextStyle["-webkit-transform"]
+				= this._contextStyle["-moz-transform"]
+				= this._contextStyle["-o-transform"]
+				= this._contextStyle["-ms-transform"] = this._contextMatrix.toString();
+
 			this._pBackBufferInvalid = false;
 		}
 
@@ -243,7 +271,6 @@ module away.render
 				//serialise transform and apply to html element
 				this._transform.copyRawDataFrom(item.renderSceneTransform.rawData);
 				this._transform.append(viewProjection);
-				this._transform.append(this._contextMatrix);
 
 				var style:MSStyleCSSProperties = item.htmlElement.style;
 
@@ -251,7 +278,13 @@ module away.render
 					= style["-webkit-transform"]
 					= style["-moz-transform"]
 					= style["-o-transform"]
-					= style["-ms-transform"] = "matrix3d(" + this._transform.rawData.join(",") + ")";
+					= style["-ms-transform"] = this._transform.toString();
+
+				style.transformStyle
+					= style["-webkit-transform-style"]
+					= style["-moz-transform-style"]
+					= style["-o-transform-style"]
+					= style["-ms-transform-style"] = "preserve-3d";
 
 				//check if child requires adding to the view
 				if (!this._context.contains(item.htmlElement))

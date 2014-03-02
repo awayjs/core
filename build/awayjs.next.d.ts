@@ -5152,6 +5152,7 @@ declare module away.render {
     * @class away.render.DefaultRenderer
     */
     class CSSDefaultRenderer extends render.CSSRendererBase implements render.IRenderer {
+        private _container;
         private _context;
         private _contextStyle;
         private _contextMatrix;
@@ -6473,6 +6474,8 @@ declare module away.geom {
         * transformation's frame of reference.
         */
         public position : geom.Vector3D;
+        public toFixed(decimalPlace: number): string;
+        public toString(): string;
     }
 }
 declare module away.geom {
@@ -10490,6 +10493,7 @@ declare module away.entities {
         private _numLines;
         private _selectionBeginIndex;
         private _selectionEndIndex;
+        private _text;
         private _textHeight;
         private _textInteractionMode;
         private _textWidth;
@@ -10915,7 +10919,8 @@ declare module away.entities {
         * <p>To get the text in HTML form, use the <code>htmlText</code>
         * property.</p>
         */
-        public text: string;
+        public text : string;
+        public tewt : string;
         /**
         * The color of the text in a text field, in hexadecimal format. The
         * hexadecimal color system uses six digits to represent color values. Each
@@ -12399,10 +12404,12 @@ declare module away.materials {
         private _owners;
         public _pBlendMode: string;
         private _imageElement;
+        private _imageStyle;
         private _repeat;
         private _smooth;
         private _texture;
         public imageElement : HTMLImageElement;
+        public imageStyle : MSStyleCSSProperties;
         /**
         * Indicates whether or not any used textures should be tiled. If set to false, texture samples are clamped to
         * the texture's borders when the uv coordinates are outside the [0, 1] interval.

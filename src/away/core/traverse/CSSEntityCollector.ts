@@ -220,7 +220,7 @@ module away.traverse
 				renderable.cascaded = false;
 
 				// project onto camera's z-axis
-				position.decrementBy(this._iEntryPoint);
+				position = this._iEntryPoint.subtract(position);
 				renderable.zIndex = entity.zOffset - position.dotProduct(this._pCameraForward);
 
 				//store reference to scene transform

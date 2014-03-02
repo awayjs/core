@@ -1578,21 +1578,13 @@ module away.base
 
 			if (upAxis == null)
 				upAxis = away.geom.Vector3D.Y_AXIS;
+			else
+				upAxis.normalize();
 
 			zAxis = target.subtract(this._iMatrix3D.position);
 			zAxis.normalize();
 
 			xAxis = upAxis.crossProduct(zAxis);
-
-			if (xAxis.length < .05) {
-				xAxis.x = upAxis.y;
-				xAxis.y = upAxis.x;
-				xAxis.z = 0;
-				xAxis.normalize();
-			} else {
-				xAxis.normalize();
-			}
-
 
 			yAxis = zAxis.crossProduct(xAxis);
 

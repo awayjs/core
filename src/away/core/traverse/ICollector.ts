@@ -18,11 +18,6 @@ module away.traverse
 		/**
 		 *
 		 */
-		renderableSorter:away.sort.IEntitySorter;
-
-		/**
-		 *
-		 */
 		scene:away.containers.Scene;
 
 		/**
@@ -46,22 +41,5 @@ module away.traverse
 		 * @param entity
 		 */
 		applyEntity(entity:away.entities.IEntity);
-
-		/**
-		 *
-		 */
-		sortRenderables();
-
-		/**
-		 * //TODO
-		 *
-		 * @param entity
-		 * @param shortestCollisionDistance
-		 * @param findClosest
-		 * @returns {boolean}
-		 *
-		 * @internal
-		 */
-		_iCollidesBefore(entity:away.entities.IEntity, shortestCollisionDistance:number, findClosest:boolean):boolean
 	}
 }

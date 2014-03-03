@@ -91,6 +91,7 @@ module away.entities
 		private _numLines:number;
 		private _selectionBeginIndex:number;
 		private _selectionEndIndex:number;
+		private _text:string = "";
 		private _textHeight:number;
 		private _textInteractionMode:away.text.TextInteractionMode;
 		private _textWidth:number;
@@ -572,7 +573,18 @@ module away.entities
 		 * <p>To get the text in HTML form, use the <code>htmlText</code>
 		 * property.</p>
 		 */
-		public text:string;
+		public get text():string
+		{
+			return this._text;
+		}
+
+		public set text(value:string)
+		{
+			if (this._text == value)
+				return;
+
+			this._text = value;
+		}
 	
 		/**
 		 * The color of the text in a text field, in hexadecimal format. The

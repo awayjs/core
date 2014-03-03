@@ -9,7 +9,6 @@ module away.materials
 	import Delegate						= away.utils.Delegate;
 
 	import IMaterialOwner				= away.base.IMaterialOwner;
-	import CSSRenderableBase			= away.render.CSSRenderableBase;
 
 	/**
 	 * MaterialBase forms an abstract base class for any material.

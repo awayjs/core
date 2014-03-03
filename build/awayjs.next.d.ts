@@ -2181,6 +2181,7 @@ declare module away.base {
         private _worldBounds;
         private _worldBoundsInvalid;
         private _pickingCollider;
+        public _pRenderables: away.pool.IRenderable[];
         /**
         *
         */
@@ -3062,6 +3063,8 @@ declare module away.base {
         * @protected
         */
         public pUpdateSceneTransform(): void;
+        public _iAddRenderable(renderable: away.pool.IRenderable): away.pool.IRenderable;
+        public _iRemoveRenderable(renderable: away.pool.IRenderable): away.pool.IRenderable;
         /**
         * @internal
         */
@@ -3902,6 +3905,10 @@ declare module away.base {
         */
         animator: away.animators.IAnimator;
         /**
+        *
+        */
+        id: string;
+        /**
         * The material with which to render the object.
         */
         material: away.materials.IMaterial;
@@ -3913,6 +3920,14 @@ declare module away.base {
         *
         */
         _iSetUVMatrixComponents(offsetU: number, offsetV: number, scaleU: number, scaleV: number, rotationUV: number): any;
+        /**
+        *
+        */
+        _iAddRenderable(renderable: away.pool.IRenderable): away.pool.IRenderable;
+        /**
+        *
+        */
+        _iRemoveRenderable(renderable: away.pool.IRenderable): away.pool.IRenderable;
     }
 }
 /**
@@ -4455,35 +4470,6 @@ declare module away.base {
 */
 declare module away.pool {
     /**
-    * IRenderable is an interface for classes that are used in the rendering pipeline to render the
-    * contents of a partition
-    *
-    * @class away.render.IRenderable
-    */
-    interface IRenderable {
-        /**
-        *
-        */
-        next: IRenderable;
-        /**
-        *
-        */
-        materialId: number;
-        /**
-        *
-        */
-        renderOrderId: number;
-        /**
-        *
-        */
-        zIndex: number;
-    }
-}
-/**
-* @module away.pool
-*/
-declare module away.pool {
-    /**
     * @class away.pool.EntityListItem
     */
     class EntityListItem {
@@ -4524,6 +4510,123 @@ declare module away.pool {
     }
 }
 /**
+* @module away.pool
+*/
+declare module away.pool {
+    /**
+    * IRenderable is an interface for classes that are used in the rendering pipeline to render the
+    * contents of a partition
+    *
+    * @class away.render.IRenderable
+    */
+    interface IRenderable {
+        /**
+        *
+        */
+        next: IRenderable;
+        /**
+        *
+        */
+        materialId: number;
+        /**
+        *
+        */
+        renderOrderId: number;
+        /**
+        *
+        */
+        zIndex: number;
+        /**
+        *
+        */
+        dispose(): any;
+    }
+}
+/**
+* @module away.pool
+*/
+declare module away.pool {
+    /**
+    * @class away.pool.RenderablePool
+    */
+    class RenderablePool {
+        private _pool;
+        private _renderableClass;
+        constructor(renderableClass: any);
+        public getItem(materialOwner: away.base.IMaterialOwner): pool.IRenderable;
+        public disposeItem(materialOwner: away.base.IMaterialOwner): void;
+    }
+}
+/**
+* @module away.data
+*/
+declare module away.pool {
+    /**
+    * @class away.pool.RenderableListItem
+    */
+    class CSSRenderableBase implements pool.IRenderable {
+        /**
+        *
+        */
+        private _pool;
+        /**
+        *
+        */
+        public next: CSSRenderableBase;
+        /**
+        *
+        */
+        public materialId: number;
+        /**
+        *
+        */
+        public renderOrderId: number;
+        /**
+        *
+        */
+        public zIndex: number;
+        /**
+        *
+        */
+        public cascaded: boolean;
+        /**
+        *
+        */
+        public renderSceneTransform: away.geom.Matrix3D;
+        /**
+        *
+        */
+        public sourceEntity: away.entities.IEntity;
+        /**
+        *
+        */
+        public materialOwner: away.base.IMaterialOwner;
+        /**
+        *
+        */
+        public htmlElement: HTMLElement;
+        /**
+        *
+        * @param sourceEntity
+        * @param material
+        * @param animator
+        */
+        constructor(pool: pool.RenderablePool, sourceEntity: away.entities.IEntity, materialOwner: away.base.IMaterialOwner);
+        public dispose(): void;
+    }
+}
+/**
+* @module away.data
+*/
+declare module away.pool {
+    /**
+    * @class away.pool.RenderableListItem
+    */
+    class CSSBillboardRenderable extends pool.CSSRenderableBase {
+        constructor(pool: pool.RenderablePool, billboard: away.entities.Billboard);
+    }
+}
+/**
 * @module away.traverse
 */
 declare module away.traverse {
@@ -4535,10 +4638,6 @@ declare module away.traverse {
         *
         */
         camera: away.entities.Camera;
-        /**
-        *
-        */
-        renderableSorter: away.sort.IEntitySorter;
         /**
         *
         */
@@ -4561,21 +4660,6 @@ declare module away.traverse {
         * @param entity
         */
         applyEntity(entity: away.entities.IEntity): any;
-        /**
-        *
-        */
-        sortRenderables(): any;
-        /**
-        * //TODO
-        *
-        * @param entity
-        * @param shortestCollisionDistance
-        * @param findClosest
-        * @returns {boolean}
-        *
-        * @internal
-        */
-        _iCollidesBefore(entity: away.entities.IEntity, shortestCollisionDistance: number, findClosest: boolean): boolean;
     }
 }
 /**
@@ -4586,27 +4670,19 @@ declare module away.traverse {
     * @class away.traverse.EntityCollector
     */
     class CSSEntityCollector implements traverse.ICollector {
-        private static _billboardRenderablePool;
         public scene: away.containers.Scene;
-        public _iEntryPoint: away.geom.Vector3D;
-        public _renderableHead: away.render.CSSRenderableBase;
         private _entityHead;
         public _pEntityListItemPool: away.pool.EntityListItemPool;
         public _pNumEntities: number;
+        public _pNumInteractiveEntities: number;
         public _pNumLights: number;
-        public _pNumMouseEnableds: number;
         public _pCamera: away.entities.Camera;
         private _numDirectionalLights;
         private _numPointLights;
         private _numLightProbes;
-        public _pCameraForward: away.geom.Vector3D;
         private _customCullPlanes;
         private _cullPlanes;
         private _numCullPlanes;
-        /**
-        *
-        */
-        public renderableSorter: away.sort.IEntitySorter;
         constructor();
         /**
         *
@@ -4619,16 +4695,11 @@ declare module away.traverse {
         /**
         *
         */
-        public numMouseEnableds : number;
+        public numInteractiveEntities : number;
         /**
         *
         */
         public entityHead : away.pool.EntityListItem;
-        public entryPoint : away.geom.Vector3D;
-        /**
-        *
-        */
-        public renderableHead : away.render.CSSRenderableBase;
         /**
         *
         */
@@ -4637,7 +4708,6 @@ declare module away.traverse {
         *
         */
         public enterNode(node: away.partition.NodeBase): boolean;
-        public sortRenderables(): void;
         /**
         *
         */
@@ -4646,29 +4716,6 @@ declare module away.traverse {
         * Cleans up any data at the end of a frame.
         */
         public cleanUp(): void;
-        /**
-        *
-        * @param billboard
-        * @private
-        */
-        private applyBillboard(billboard);
-        /**
-        *
-        * @param renderable
-        * @private
-        */
-        private applyRenderable(renderable);
-        /**
-        * //TODO
-        *
-        * @param entity
-        * @param shortestCollisionDistance
-        * @param findClosest
-        * @returns {boolean}
-        *
-        * @internal
-        */
-        public _iCollidesBefore(entity: away.entities.IEntity, shortestCollisionDistance: number, findClosest: boolean): boolean;
     }
 }
 /**
@@ -4973,6 +5020,10 @@ declare module away.render {
     * @class away.render.IRenderer
     */
     interface IRenderer extends away.events.IEventDispatcher {
+        /**
+        *
+        */
+        renderableSorter: away.sort.IEntitySorter;
         x: number;
         y: number;
         width: number;
@@ -5004,74 +5055,6 @@ declare module away.render {
     }
 }
 /**
-* @module away.data
-*/
-declare module away.render {
-    /**
-    * @class away.pool.RenderableListItem
-    */
-    class CSSRenderableBase implements away.pool.IRenderable {
-        /**
-        *
-        */
-        public next: CSSRenderableBase;
-        /**
-        *
-        */
-        public materialId: number;
-        /**
-        *
-        */
-        public renderOrderId: number;
-        /**
-        *
-        */
-        public zIndex: number;
-        /**
-        *
-        */
-        public cascaded: boolean;
-        /**
-        *
-        */
-        public renderSceneTransform: away.geom.Matrix3D;
-        /**
-        *
-        */
-        public sourceEntity: away.entities.IEntity;
-        /**
-        *
-        */
-        public material: away.materials.CSSMaterialBase;
-        /**
-        *
-        */
-        public animator: away.animators.IAnimator;
-        /**
-        *
-        */
-        public htmlElement: HTMLElement;
-        /**
-        *
-        * @param sourceEntity
-        * @param material
-        * @param animator
-        */
-        constructor(sourceEntity: away.entities.IEntity, material: away.materials.CSSMaterialBase, animator: away.animators.IAnimator);
-    }
-}
-/**
-* @module away.data
-*/
-declare module away.render {
-    /**
-    * @class away.pool.RenderableListItem
-    */
-    class CSSBillboardRenderable extends render.CSSRenderableBase {
-        constructor(sourceEntity: away.entities.IEntity, material: away.materials.CSSMaterialBase, animator: away.animators.IAnimator);
-    }
-}
-/**
 * @module away.render
 */
 declare module away.render {
@@ -5082,12 +5065,17 @@ declare module away.render {
     * @class away.render.RendererBase
     */
     class CSSRendererBase extends away.events.EventDispatcher {
+        static billboardRenderablePool: away.pool.RenderablePool;
+        public _pCamera: away.entities.Camera;
+        public _iEntryPoint: away.geom.Vector3D;
+        public _pCameraForward: away.geom.Vector3D;
         private _backgroundR;
         private _backgroundG;
         private _backgroundB;
         private _backgroundAlpha;
         public _pBackBufferInvalid: boolean;
         public _depthTextureInvalid: boolean;
+        public _renderableHead: away.pool.CSSRenderableBase;
         /**
         * Creates a new RendererBase object.
         */
@@ -5122,6 +5110,7 @@ declare module away.render {
         * @param scissorRect
         */
         public _iRender(entityCollector: away.traverse.CSSEntityCollector, scissorRect?: away.geom.Rectangle): void;
+        public pCollectRenderables(entityCollector: away.traverse.ICollector): void;
         /**
         * Renders the potentially visible geometry to the back buffer or texture. Only executed if everything is set up.
         * @param entityCollector The EntityCollector object containing the potentially visible geometry.
@@ -5139,6 +5128,34 @@ declare module away.render {
         *
         */
         public updateGlobalPos(): void;
+        /**
+        *
+        * @param billboard
+        * @protected
+        */
+        public applyBillboard(billboard: away.entities.Billboard): void;
+        /**
+        *
+        * @param renderable
+        * @private
+        */
+        private applyRenderable(renderable);
+        /**
+        *
+        * @param entity
+        */
+        public pFindRenderables(entity: away.entities.IEntity): void;
+        /**
+        * //TODO
+        *
+        * @param entity
+        * @param shortestCollisionDistance
+        * @param findClosest
+        * @returns {boolean}
+        *
+        * @internal
+        */
+        static _iCollidesBefore(entity: away.entities.IEntity, shortestCollisionDistance: number, findClosest: boolean): boolean;
     }
 }
 /**
@@ -5193,6 +5210,10 @@ declare module away.render {
         *
         */
         public height : number;
+        /**
+        *
+        */
+        public renderableSorter: away.sort.IEntitySorter;
         /**
         * Creates a new CSSDefaultRenderer object.
         */
@@ -10920,7 +10941,6 @@ declare module away.entities {
         * property.</p>
         */
         public text : string;
-        public tewt : string;
         /**
         * The color of the text in a text field, in hexadecimal format. The
         * hexadecimal color system uses six digits to represent color values. Each
@@ -12348,6 +12368,7 @@ declare module away.materials {
     * @class away.materials.IMaterial
     */
     interface IMaterial {
+        id: string;
         /**
         *
         *

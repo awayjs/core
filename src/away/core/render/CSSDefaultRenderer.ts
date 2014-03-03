@@ -135,6 +135,11 @@ module away.render
 		}
 
 		/**
+		 *
+		 */
+		public renderableSorter:away.sort.IEntitySorter;
+
+		/**
 		 * Creates a new CSSDefaultRenderer object.
 		 */
 		constructor()
@@ -213,7 +218,7 @@ module away.render
 //
 //			var which:number = target? DefaultRenderer.SCREEN_PASSES : DefaultRenderer.ALL_PASSES;
 
-			this.drawRenderables(entityCollector.renderableHead, entityCollector);
+			this.drawRenderables(this._renderableHead, entityCollector);
 
 //			if (this._activeMaterial)
 //				this._activeMaterial.iDeactivate(this._pStageGL);
@@ -261,12 +266,12 @@ module away.render
 		 * @param renderables The renderables to draw.
 		 * @param entityCollector The EntityCollector containing all potentially visible information.
 		 */
-		private drawRenderables(item:away.render.CSSRenderableBase, entityCollector:away.traverse.CSSEntityCollector)
+		private drawRenderables(item:away.pool.CSSRenderableBase, entityCollector:away.traverse.CSSEntityCollector)
 		{
 			var viewProjection:away.geom.Matrix3D = entityCollector.camera.viewProjection.clone();
 
 			while (item) {
-				this._activeMaterial = item.material;
+				this._activeMaterial = <away.materials.CSSMaterialBase> item.materialOwner.material;
 
 				//serialise transform and apply to html element
 				this._transform.copyRawDataFrom(item.renderSceneTransform.rawData);

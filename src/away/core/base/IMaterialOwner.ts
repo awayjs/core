@@ -18,6 +18,11 @@ module away.base
 		animator:away.animators.IAnimator; // in most cases, this will in fact be null
 
 		/**
+		 *
+		 */
+		id:string;
+
+		/**
 		 * The material with which to render the object.
 		 */
 		material:away.materials.IMaterial; // GET / SET
@@ -31,5 +36,15 @@ module away.base
 		 *
 		 */
 		_iSetUVMatrixComponents(offsetU:number, offsetV:number, scaleU:number, scaleV:number, rotationUV:number);
+
+		/**
+		 *
+		 */
+		_iAddRenderable(renderable:away.pool.IRenderable):away.pool.IRenderable;
+
+		/**
+		 *
+		 */
+		_iRemoveRenderable(renderable:away.pool.IRenderable):away.pool.IRenderable;
 	}
 }

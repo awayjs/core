@@ -218,6 +218,8 @@ module away.base
 
 		private _pickingCollider:away.pick.IPickingCollider;
 
+		public _pRenderables:Array<away.pool.IRenderable> = new Array<away.pool.IRenderable>();
+
 		/**
 		 *
 		 */
@@ -1367,6 +1369,10 @@ module away.base
 		{
 			if (this.parent)
 				this.parent.removeChild(this);
+
+			var len:number = this._pRenderables.length;
+			for (var i:number = 0; i < len; i++)
+				this._pRenderables[i].dispose();
 		}
 
 		/**
@@ -2075,6 +2081,23 @@ module away.base
 			this._pSceneTransformDirty = false;
 		}
 
+		public _iAddRenderable(renderable:away.pool.IRenderable):away.pool.IRenderable
+		{
+			this._pRenderables.push(renderable);
+
+			return renderable;
+		}
+
+
+		public _iRemoveRenderable(renderable:away.pool.IRenderable):away.pool.IRenderable
+		{
+			var index:number = this._pRenderables.indexOf(renderable);
+
+			this._pRenderables.splice(index, 1);
+
+			return renderable;
+		}
+
 		/**
 		 * @internal
 		 */
@@ -2167,7 +2190,7 @@ module away.base
 		{
 			if (!this._boundsIsShown) {
 				this._boundsIsShown = true;
-//				this.addChild(this._pBounds.boundingEntity);
+//				this.addChild(this._pBounds.boundingEntity);//TODO turn this into a Node-based bounding Entity
 			}
 		}
 

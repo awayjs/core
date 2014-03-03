@@ -3,13 +3,18 @@
 /**
  * @module away.data
  */
-module away.render
+module away.pool
 {
 	/**
 	 * @class away.pool.RenderableListItem
 	 */
 	export class CSSRenderableBase implements away.pool.IRenderable
 	{
+		/**
+		 *
+		 */
+		private _pool:RenderablePool;
+
 		/**
 		 *
 		 */
@@ -48,12 +53,7 @@ module away.render
 		/**
 		 *
 		 */
-		public material:away.materials.CSSMaterialBase;
-
-		/**
-		 *
-		 */
-		public animator:away.animators.IAnimator;
+		public materialOwner:away.base.IMaterialOwner;
 
 		/**
 		 *
@@ -66,11 +66,18 @@ module away.render
 		 * @param material
 		 * @param animator
 		 */
-		constructor(sourceEntity:away.entities.IEntity, material:away.materials.CSSMaterialBase, animator:away.animators.IAnimator)
+		constructor(pool:RenderablePool, sourceEntity:away.entities.IEntity, materialOwner:away.base.IMaterialOwner)
 		{
+			//store a reference to the pool for later disposal
+			this._pool = pool;
+
 			this.sourceEntity = sourceEntity;
-			this.material = material;
-			this.animator = animator;
+			this.materialOwner = materialOwner;
+		}
+
+		public dispose()
+		{
+			this._pool.disposeItem(this.materialOwner);
 		}
 	}
 }

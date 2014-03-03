@@ -3,16 +3,16 @@
 /**
  * @module away.data
  */
-module away.render
+module away.pool
 {
 	/**
 	 * @class away.pool.RenderableListItem
 	 */
 	export class CSSBillboardRenderable extends CSSRenderableBase
 	{
-		constructor(sourceEntity:away.entities.IEntity, material:away.materials.CSSMaterialBase, animator:away.animators.IAnimator)
+		constructor(pool:RenderablePool, billboard:away.entities.Billboard)
 		{
-			super(sourceEntity, material, animator);
+			super(pool, billboard, billboard);
 
 			var div:HTMLDivElement = <HTMLDivElement> document.createElement("div");
 			div.onmousedown = (event:MouseEvent) => false;
@@ -32,7 +32,7 @@ module away.render
 
 			div.appendChild(img);
 
-			img.className = "material" + material.id;
+			img.className = "material" + this.materialOwner.material.id;
 		}
 	}
 }

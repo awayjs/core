@@ -33,5 +33,10 @@ module away.pool
 		 *
 		 */
 		zIndex:number;
+
+		/**
+		 *
+		 */
+		dispose();
 	}
 }

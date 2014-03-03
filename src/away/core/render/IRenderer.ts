@@ -13,6 +13,11 @@ module away.render
 	 */
 	export interface IRenderer extends away.events.IEventDispatcher
 	{
+		/**
+		 *
+		 */
+		renderableSorter:away.sort.IEntitySorter;
+
 		x:number /*uint*/;
 		y:number /*uint*/;
 		width:number /*uint*/;

@@ -5350,6 +5350,7 @@ var away;
                 this._pIgnoreTransform = false;
                 this._pBoundsInvalid = true;
                 this._worldBoundsInvalid = true;
+                this._pRenderables = new Array();
                 /**
                 *
                 */
@@ -6342,6 +6343,10 @@ var away;
             DisplayObject.prototype.dispose = function () {
                 if (this.parent)
                     this.parent.removeChild(this);
+
+                var len = this._pRenderables.length;
+                for (var i = 0; i < len; i++)
+                    this._pRenderables[i].dispose();
             };
 
             /**
@@ -7018,6 +7023,20 @@ var away;
                 this._pSceneTransformDirty = false;
             };
 
+            DisplayObject.prototype._iAddRenderable = function (renderable) {
+                this._pRenderables.push(renderable);
+
+                return renderable;
+            };
+
+            DisplayObject.prototype._iRemoveRenderable = function (renderable) {
+                var index = this._pRenderables.indexOf(renderable);
+
+                this._pRenderables.splice(index, 1);
+
+                return renderable;
+            };
+
             /**
             * @internal
             */
@@ -7102,7 +7121,7 @@ var away;
             DisplayObject.prototype.addBounds = function () {
                 if (!this._boundsIsShown) {
                     this._boundsIsShown = true;
-                    //				this.addChild(this._pBounds.boundingEntity);
+                    //				this.addChild(this._pBounds.boundingEntity);//TODO turn this into a Node-based bounding Entity
                 }
             };
 
@@ -9161,7 +9180,6 @@ var away;
     var base = away.base;
 })(away || (away = {}));
 ///<reference path="../../_definitions.ts"/>
-///<reference path="../../_definitions.ts"/>
 var away;
 (function (away) {
     /**
@@ -9235,6 +9253,107 @@ var away;
 var away;
 (function (away) {
     /**
+    * @module away.pool
+    */
+    (function (pool) {
+        /**
+        * @class away.pool.RenderablePool
+        */
+        var RenderablePool = (function () {
+            function RenderablePool(renderableClass) {
+                this._pool = new Object();
+                this._renderableClass = renderableClass;
+            }
+            RenderablePool.prototype.getItem = function (materialOwner) {
+                return (this._pool[materialOwner.id] || (this._pool[materialOwner.id] = materialOwner._iAddRenderable(new this._renderableClass(this, materialOwner))));
+            };
+
+            RenderablePool.prototype.disposeItem = function (materialOwner) {
+                this._pool[materialOwner.id] = null;
+            };
+            return RenderablePool;
+        })();
+        pool.RenderablePool = RenderablePool;
+    })(away.pool || (away.pool = {}));
+    var pool = away.pool;
+})(away || (away = {}));
+///<reference path="../../_definitions.ts"/>
+var away;
+(function (away) {
+    /**
+    * @module away.data
+    */
+    (function (pool) {
+        /**
+        * @class away.pool.RenderableListItem
+        */
+        var CSSRenderableBase = (function () {
+            /**
+            *
+            * @param sourceEntity
+            * @param material
+            * @param animator
+            */
+            function CSSRenderableBase(pool, sourceEntity, materialOwner) {
+                //store a reference to the pool for later disposal
+                this._pool = pool;
+
+                this.sourceEntity = sourceEntity;
+                this.materialOwner = materialOwner;
+            }
+            CSSRenderableBase.prototype.dispose = function () {
+                this._pool.disposeItem(this.materialOwner);
+            };
+            return CSSRenderableBase;
+        })();
+        pool.CSSRenderableBase = CSSRenderableBase;
+    })(away.pool || (away.pool = {}));
+    var pool = away.pool;
+})(away || (away = {}));
+///<reference path="../../_definitions.ts"/>
+var away;
+(function (away) {
+    /**
+    * @module away.data
+    */
+    (function (pool) {
+        /**
+        * @class away.pool.RenderableListItem
+        */
+        var CSSBillboardRenderable = (function (_super) {
+            __extends(CSSBillboardRenderable, _super);
+            function CSSBillboardRenderable(pool, billboard) {
+                _super.call(this, pool, billboard, billboard);
+
+                var div = document.createElement("div");
+                div.onmousedown = function (event) {
+                    return false;
+                };
+
+                this.htmlElement = div;
+
+                var style = div.style;
+
+                style.position = "absolute";
+                style.transformOrigin = style["-webkit-transform-origin"] = style["-moz-transform-origin"] = style["-o-transform-origin"] = style["-ms-transform-origin"] = "0% 0%";
+
+                var img = document.createElement("div");
+
+                div.appendChild(img);
+
+                img.className = "material" + this.materialOwner.material.id;
+            }
+            return CSSBillboardRenderable;
+        })(away.pool.CSSRenderableBase);
+        pool.CSSBillboardRenderable = CSSBillboardRenderable;
+    })(away.pool || (away.pool = {}));
+    var pool = away.pool;
+})(away || (away = {}));
+///<reference path="../../_definitions.ts"/>
+///<reference path="../../_definitions.ts"/>
+var away;
+(function (away) {
+    /**
     * @module away.traverse
     */
     (function (traverse) {
@@ -9244,8 +9363,8 @@ var away;
         var CSSEntityCollector = (function () {
             function CSSEntityCollector() {
                 this._pNumEntities = 0;
+                this._pNumInteractiveEntities = 0;
                 this._pNumLights = 0;
-                this._pNumMouseEnableds = 0;
                 this._numDirectionalLights = 0;
                 this._numPointLights = 0;
                 this._numLightProbes = 0;
@@ -9261,8 +9380,6 @@ var away;
                 },
                 set: function (value) {
                     this._pCamera = value;
-                    this._iEntryPoint = this._pCamera.scenePosition;
-                    this._pCameraForward = this._pCamera.transform.forwardVector;
                     this._cullPlanes = this._pCamera.frustumPlanes;
                 },
                 enumerable: true,
@@ -9285,12 +9402,12 @@ var away;
             });
 
 
-            Object.defineProperty(CSSEntityCollector.prototype, "numMouseEnableds", {
+            Object.defineProperty(CSSEntityCollector.prototype, "numInteractiveEntities", {
                 /**
                 *
                 */
                 get: function () {
-                    return this._pNumMouseEnableds;
+                    return this._pNumInteractiveEntities;
                 },
                 enumerable: true,
                 configurable: true
@@ -9314,42 +9431,15 @@ var away;
                 configurable: true
             });
 
-            Object.defineProperty(CSSEntityCollector.prototype, "entryPoint", {
-                get: function () {
-                    return this._iEntryPoint;
-                },
-                enumerable: true,
-                configurable: true
-            });
-
-            Object.defineProperty(CSSEntityCollector.prototype, "renderableHead", {
-                /**
-                *
-                */
-                get: function () {
-                    return this._renderableHead;
-                },
-                set: function (value) {
-                    this._renderableHead = value;
-                },
-                enumerable: true,
-                configurable: true
-            });
-
-
             /**
             *
             */
             CSSEntityCollector.prototype.clear = function () {
-                this._iEntryPoint = this._pCamera.scenePosition;
-                this._pCameraForward = this._pCamera.transform.forwardVector;
+                this._pNumEntities = this._pNumInteractiveEntities = 0;
+
                 this._cullPlanes = this._customCullPlanes ? this._customCullPlanes : (this._pCamera ? this._pCamera.frustumPlanes : null);
                 this._numCullPlanes = this._cullPlanes ? this._cullPlanes.length : 0;
-                this._pNumMouseEnableds = 0;
-                this._renderableHead = null;
                 this._entityHead = null;
-
-                //			this._pRenderableListItemPool.freeAll();
                 this._pEntityListItemPool.freeAll();
             };
 
@@ -9362,10 +9452,6 @@ var away;
                 node._iCollectionMark = this.scene._iCollectionMark;
 
                 return enter;
-            };
-
-            CSSEntityCollector.prototype.sortRenderables = function () {
-                //nothing here for now
             };
 
             /**
@@ -9381,14 +9467,14 @@ var away;
             CSSEntityCollector.prototype.applyEntity = function (entity) {
                 ++this._pNumEntities;
 
+                if (entity._iIsMouseEnabled())
+                    this._pNumInteractiveEntities++;
+
                 var item = this._pEntityListItemPool.getItem();
                 item.entity = entity;
 
                 item.next = this._entityHead;
                 this._entityHead = item;
-
-                if (entity.assetType == away.library.AssetType.BILLBOARD)
-                    this.applyBillboard(entity);
             };
 
             /**
@@ -9396,83 +9482,6 @@ var away;
             */
             CSSEntityCollector.prototype.cleanUp = function () {
             };
-
-            /**
-            *
-            * @param billboard
-            * @private
-            */
-            CSSEntityCollector.prototype.applyBillboard = function (billboard) {
-                var renderable = CSSEntityCollector._billboardRenderablePool[billboard.id];
-
-                if (renderable) {
-                    renderable.animator = billboard.animator;
-                    renderable.material = billboard.material;
-                } else {
-                    renderable = CSSEntityCollector._billboardRenderablePool[billboard.id] = new away.render.CSSBillboardRenderable(billboard, billboard.material, billboard.animator);
-                }
-
-                this.applyRenderable(renderable);
-            };
-
-            /**
-            *
-            * @param renderable
-            * @private
-            */
-            CSSEntityCollector.prototype.applyRenderable = function (renderable) {
-                var material = renderable.material;
-                var entity = renderable.sourceEntity;
-                var position = entity.scenePosition;
-
-                if (renderable.sourceEntity._iIsMouseEnabled())
-                    ++this._pNumMouseEnableds;
-
-                if (material) {
-                    //set ids for faster referencing
-                    renderable.materialId = material._iMaterialId;
-                    renderable.renderOrderId = material._iRenderOrderId;
-                    renderable.cascaded = false;
-
-                    // project onto camera's z-axis
-                    position = this._iEntryPoint.subtract(position);
-                    renderable.zIndex = entity.zOffset - position.dotProduct(this._pCameraForward);
-
-                    //store reference to scene transform
-                    renderable.renderSceneTransform = renderable.sourceEntity.getRenderSceneTransform(this._pCamera);
-
-                    //store reference to next item in list
-                    renderable.next = this._renderableHead;
-                    this._renderableHead = renderable;
-                }
-            };
-
-            /**
-            * //TODO
-            *
-            * @param entity
-            * @param shortestCollisionDistance
-            * @param findClosest
-            * @returns {boolean}
-            *
-            * @internal
-            */
-            CSSEntityCollector.prototype._iCollidesBefore = function (entity, shortestCollisionDistance, findClosest) {
-                var pickingCollider = entity.pickingCollider;
-                var pickingCollisionVO = entity._iPickingCollisionVO;
-
-                pickingCollider.setLocalRay(entity._iPickingCollisionVO.localRayPosition, entity._iPickingCollisionVO.localRayDirection);
-                pickingCollisionVO.materialOwner = null;
-
-                if (entity.assetType === away.library.AssetType.BILLBOARD) {
-                    //return this.testBillBoard(<away.entities.Billboard> entity, pickingCollider, pickingCollisionVO, shortestCollisionDistance, findClosest);
-                } else if (entity.assetType === away.library.AssetType.MESH) {
-                    //return this.testMesh(<away.entities.Mesh> entity, pickingCollider, pickingCollisionVO, shortestCollisionDistance, findClosest);
-                }
-
-                return false;
-            };
-            CSSEntityCollector._billboardRenderablePool = new Object();
             return CSSEntityCollector;
         })();
         traverse.CSSEntityCollector = CSSEntityCollector;
@@ -9916,73 +9925,6 @@ var away;
 var away;
 (function (away) {
     /**
-    * @module away.data
-    */
-    (function (render) {
-        /**
-        * @class away.pool.RenderableListItem
-        */
-        var CSSRenderableBase = (function () {
-            /**
-            *
-            * @param sourceEntity
-            * @param material
-            * @param animator
-            */
-            function CSSRenderableBase(sourceEntity, material, animator) {
-                this.sourceEntity = sourceEntity;
-                this.material = material;
-                this.animator = animator;
-            }
-            return CSSRenderableBase;
-        })();
-        render.CSSRenderableBase = CSSRenderableBase;
-    })(away.render || (away.render = {}));
-    var render = away.render;
-})(away || (away = {}));
-///<reference path="../../_definitions.ts"/>
-var away;
-(function (away) {
-    /**
-    * @module away.data
-    */
-    (function (render) {
-        /**
-        * @class away.pool.RenderableListItem
-        */
-        var CSSBillboardRenderable = (function (_super) {
-            __extends(CSSBillboardRenderable, _super);
-            function CSSBillboardRenderable(sourceEntity, material, animator) {
-                _super.call(this, sourceEntity, material, animator);
-
-                var div = document.createElement("div");
-                div.onmousedown = function (event) {
-                    return false;
-                };
-
-                this.htmlElement = div;
-
-                var style = div.style;
-
-                style.position = "absolute";
-                style.transformOrigin = style["-webkit-transform-origin"] = style["-moz-transform-origin"] = style["-o-transform-origin"] = style["-ms-transform-origin"] = "0% 0%";
-
-                var img = document.createElement("div");
-
-                div.appendChild(img);
-
-                img.className = "material" + material.id;
-            }
-            return CSSBillboardRenderable;
-        })(away.render.CSSRenderableBase);
-        render.CSSBillboardRenderable = CSSBillboardRenderable;
-    })(away.render || (away.render = {}));
-    var render = away.render;
-})(away || (away = {}));
-///<reference path="../../_definitions.ts"/>
-var away;
-(function (away) {
-    /**
     * @module away.render
     */
     (function (render) {
@@ -10107,6 +10049,24 @@ var away;
                 this.pExecuteRender(entityCollector, scissorRect);
             };
 
+            CSSRendererBase.prototype.pCollectRenderables = function (entityCollector) {
+                //reset head values
+                this._renderableHead = null;
+
+                //grab entity head
+                var entity = entityCollector.entityHead;
+
+                //set temp values for entry point and camera forward vector
+                this._pCamera = entityCollector.camera;
+                this._iEntryPoint = this._pCamera.scenePosition;
+                this._pCameraForward = this._pCamera.transform.forwardVector;
+
+                while (entity) {
+                    this.pFindRenderables(entity.entity);
+                    entity = entity.next;
+                }
+            };
+
             /**
             * Renders the potentially visible geometry to the back buffer or texture. Only executed if everything is set up.
             * @param entityCollector The EntityCollector object containing the potentially visible geometry.
@@ -10114,6 +10074,8 @@ var away;
             */
             CSSRendererBase.prototype.pExecuteRender = function (entityCollector, scissorRect) {
                 if (typeof scissorRect === "undefined") { scissorRect = null; }
+                this.pCollectRenderables(entityCollector);
+
                 this.pDraw(entityCollector);
             };
 
@@ -10148,6 +10110,82 @@ var away;
             */
             CSSRendererBase.prototype.updateGlobalPos = function () {
             };
+
+            /**
+            *
+            * @param billboard
+            * @protected
+            */
+            CSSRendererBase.prototype.applyBillboard = function (billboard) {
+                this.applyRenderable(CSSRendererBase.billboardRenderablePool.getItem(billboard));
+            };
+
+            /**
+            *
+            * @param renderable
+            * @private
+            */
+            CSSRendererBase.prototype.applyRenderable = function (renderable) {
+                var material = renderable.materialOwner.material;
+                var entity = renderable.sourceEntity;
+                var position = entity.scenePosition;
+
+                if (material) {
+                    //set ids for faster referencing
+                    renderable.materialId = material._iMaterialId;
+                    renderable.renderOrderId = material._iRenderOrderId;
+                    renderable.cascaded = false;
+
+                    // project onto camera's z-axis
+                    position = this._iEntryPoint.subtract(position);
+                    renderable.zIndex = entity.zOffset - position.dotProduct(this._pCameraForward);
+
+                    //store reference to scene transform
+                    renderable.renderSceneTransform = renderable.sourceEntity.getRenderSceneTransform(this._pCamera);
+
+                    //store reference to next item in list
+                    renderable.next = this._renderableHead;
+                    this._renderableHead = renderable;
+                }
+            };
+
+            /**
+            *
+            * @param entity
+            */
+            CSSRendererBase.prototype.pFindRenderables = function (entity) {
+                //TODO abstract conditional in the entity with a callback to IRenderer
+                if (entity.assetType === away.library.AssetType.BILLBOARD) {
+                    this.applyBillboard(entity);
+                }
+            };
+
+            /**
+            * //TODO
+            *
+            * @param entity
+            * @param shortestCollisionDistance
+            * @param findClosest
+            * @returns {boolean}
+            *
+            * @internal
+            */
+            CSSRendererBase._iCollidesBefore = function (entity, shortestCollisionDistance, findClosest) {
+                var pickingCollider = entity.pickingCollider;
+                var pickingCollisionVO = entity._iPickingCollisionVO;
+
+                pickingCollider.setLocalRay(entity._iPickingCollisionVO.localRayPosition, entity._iPickingCollisionVO.localRayDirection);
+                pickingCollisionVO.materialOwner = null;
+
+                if (entity.assetType === away.library.AssetType.BILLBOARD) {
+                    //return this.testBillBoard(<away.entities.Billboard> entity, pickingCollider, pickingCollisionVO, shortestCollisionDistance, findClosest);
+                } else if (entity.assetType === away.library.AssetType.MESH) {
+                    //return this.testMesh(<away.entities.Mesh> entity, pickingCollider, pickingCollisionVO, shortestCollisionDistance, findClosest);
+                }
+
+                return false;
+            };
+            CSSRendererBase.billboardRenderablePool = new away.pool.RenderablePool(away.pool.CSSBillboardRenderable);
             return CSSRendererBase;
         })(away.events.EventDispatcher);
         render.CSSRendererBase = CSSRendererBase;
@@ -10353,7 +10391,7 @@ var away;
                 //			}
                 //
                 //			var which:number = target? DefaultRenderer.SCREEN_PASSES : DefaultRenderer.ALL_PASSES;
-                this.drawRenderables(entityCollector.renderableHead, entityCollector);
+                this.drawRenderables(this._renderableHead, entityCollector);
 
                 //			if (this._activeMaterial)
                 //				this._activeMaterial.iDeactivate(this._pStageGL);
@@ -10398,7 +10436,7 @@ var away;
                 var viewProjection = entityCollector.camera.viewProjection.clone();
 
                 while (item) {
-                    this._activeMaterial = item.material;
+                    this._activeMaterial = item.materialOwner.material;
 
                     //serialise transform and apply to html element
                     this._transform.copyRawDataFrom(item.renderSceneTransform.rawData);
@@ -20044,18 +20082,16 @@ var away;
                 get: function () {
                     return this._text;
                 },
-                enumerable: true,
-                configurable: true
-            });
-
-            Object.defineProperty(TextField.prototype, "tewt", {
                 set: function (value) {
                     if (this._text == value)
                         return;
+
+                    this._text = value;
                 },
                 enumerable: true,
                 configurable: true
             });
+
 
             Object.defineProperty(TextField.prototype, "textHeight", {
                 /**
@@ -24032,8 +24068,6 @@ var away;
         var Matrix3D = away.geom.Matrix3D;
         var AssetType = away.library.AssetType;
         var Delegate = away.utils.Delegate;
-
-        var CSSRenderableBase = away.render.CSSRenderableBase;
 
         /**
         * MaterialBase forms an abstract base class for any material.

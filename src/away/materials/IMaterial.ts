@@ -10,6 +10,8 @@ module away.materials
 	 */
 	export interface IMaterial
 	{
+		id:string;
+
 		/**
 		 *
 		 *

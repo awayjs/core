@@ -97,9 +97,12 @@
 ///<reference path="core/base/StageGL.ts" />
 ///<reference path="core/base/TriangleCulling.ts" />
 
-///<reference path="core/pool/IRenderable.ts"/>
 ///<reference path="core/pool/EntityListItem.ts"/>
 ///<reference path="core/pool/EntityListItemPool.ts"/>
+///<reference path="core/pool/IRenderable.ts"/>
+///<reference path="core/pool/RenderablePool.ts"/>
+///<reference path="core/pool/CSSRenderableBase.ts"/>
+///<reference path="core/pool/CSSBillboardRenderable.ts"/>
 
 ///<reference path="core/traverse/ICollector.ts" />
 ///<reference path="core/traverse/CSSEntityCollector.ts" />
@@ -115,8 +118,6 @@
 ///<reference path="core/pick/PickingCollisionVO.ts"/>
 
 ///<reference path="core/render/IRenderer.ts"/>
-///<reference path="core/render/CSSRenderableBase.ts"/>
-///<reference path="core/render/CSSBillboardRenderable.ts"/>
 ///<reference path="core/render/CSSRendererBase.ts"/>
 ///<reference path="core/render/CSSDefaultRenderer.ts"/>
 

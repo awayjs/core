@@ -28,14 +28,14 @@ module away.events
 		 * @param {String} Name of event to remove a listener for
 		 * @param {Function} Callback function
 		 */
-		removeEventListener (type:string, listener:Function);
+		removeEventListener(type:string, listener:Function);
 
 		/**
 		 * Dispatch an event
 		 * @method dispatchEvent
 		 * @param {Event} Event to dispatch
 		 */
-		dispatchEvent (event:Event);
+		dispatchEvent(event:Event);
 
 		/**
 		 * check if an object has an event listener assigned to it

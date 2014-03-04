@@ -98,7 +98,7 @@ module away.events
 		 */
 		public hasEventListener(type:string, listener?:Function):boolean
 		{
-			if (this.listeners != null) {
+			if (listener != null) {
 				return ( this.getEventListenerIndex(type, listener) !== -1 );
 			} else {
 				if (this.listeners[ type ] !== undefined)

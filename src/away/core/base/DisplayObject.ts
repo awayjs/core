@@ -1591,6 +1591,14 @@ module away.base
 			zAxis.normalize();
 
 			xAxis = upAxis.crossProduct(zAxis);
+			xAxis.normalize();
+
+			if (xAxis.length < 0.05) {
+				xAxis.x = upAxis.y;
+				xAxis.y = upAxis.x;
+				xAxis.z = 0;
+				xAxis.normalize();
+			}
 
 			yAxis = zAxis.crossProduct(xAxis);
 

@@ -403,7 +403,6 @@ module away.geom
 				this.z *= invLength;
 				return;
 			}
-			throw "Cannot divide by zero length.";
 		}
 
 		/**

@@ -27,10 +27,6 @@ module tests.entities
 
 		private _imageTexture:ImageTexture;
 		private _bitmapMaterial:CSSMaterialBase;
-		private _billboard1 :Billboard;
-		private _billboard2 :Billboard;
-		private _billboard3 :Billboard;
-		private _billboard4 :Billboard;
 		constructor()
 		{
 			//load an image

@@ -65,8 +65,31 @@
  */
 module away.containers
 {
+
+	/**
+	 * Dispatched when any asset finishes parsing. Also see specific events for each
+	 * individual asset type (meshes, materials et c.)
+	 *
+	 * @eventType away3d.events.AssetEvent
+	 */
+	//[Event(name="assetComplete", type="away3d.events.AssetEvent")]
+
+
+	/**
+	 * Dispatched when a full resource (including dependencies) finishes loading.
+	 *
+	 * @eventType away3d.events.LoaderEvent
+	 */
+	//[Event(name="resourceComplete", type="away3d.events.LoaderEvent")]
+
 	export class Loader extends DisplayObjectContainer
 	{
+		private _loadingSessions:Array<away.net.AssetLoader>;
+		private _useAssetLib:boolean;
+		private _assetLibId:string;
+		private _onResourceCompleteDelegate:Function;
+		private _onAssetCompleteDelegate:Function;
+
 		private _content:away.base.DisplayObject;
 		private _contentLoaderInfo:away.base.LoaderInfo;
 		
@@ -161,9 +184,16 @@ module away.containers
 		 * handler.</li>
 		 * </ul>
 		 */
-		constructor()
+		constructor(useAssetLibrary:boolean = true, assetLibraryId:string = null)
 		{
 			super();
+
+			this._loadingSessions = new Array<away.net.AssetLoader>();
+			this._useAssetLib = useAssetLibrary;
+			this._assetLibId = assetLibraryId;
+
+			this._onResourceCompleteDelegate = away.utils.Delegate.create(this, this.onResourceComplete);
+			this._onAssetCompleteDelegate = away.utils.Delegate.create(this, this.onAssetComplete);
 		}
 	
 		/**
@@ -173,7 +203,21 @@ module away.containers
 		 */
 		public close()
 		{
-
+			if (this._useAssetLib) {
+				var lib:away.library.AssetLibraryBundle;
+				lib = away.library.AssetLibraryBundle.getInstance(this._assetLibId);
+				lib.stopAllLoadingSessions();
+				this._loadingSessions = null;
+				return
+			}
+			var i:number /*int*/;
+			var length:number /*int*/ = this._loadingSessions.length;
+			for (i = 0; i < length; i++) {
+				this.removeListeners(this._loadingSessions[i]);
+				this._loadingSessions[i].stop();
+				this._loadingSessions[i] = null;
+			}
+			this._loadingSessions = null;
 		}
 	
 		/**
@@ -255,6 +299,12 @@ module away.containers
 		 *                properties in the <a
 		 *                href="../system/LoaderContext.html">LoaderContext</a>
 		 *                class.</p>
+		 * @param ns      An optional namespace string under which the file is to be
+		 *                loaded, allowing the differentiation of two resources with
+		 *                identical assets.
+		 * @param parser  An optional parser object for translating the loaded data
+		 *                into a usable resource. If not provided, AssetLoader will
+		 *                attempt to auto-detect the file type.
 		 * @throws IOError               The <code>digest</code> property of the
 		 *                               <code>request</code> object is not
 		 *                               <code>null</code>. You should only set the
@@ -337,9 +387,28 @@ module away.containers
 		 * @event unload        Dispatched by the <code>contentLoaderInfo</code>
 		 *                      object when a loaded object is removed.
 		 */
-		public load(request:away.net.URLRequest, context:away.net.AssetLoaderContext = null)
+		public load(request:away.net.URLRequest, context:away.net.AssetLoaderContext = null, ns:string = null, parser:away.parsers.ParserBase = null):away.net.AssetLoaderToken
 		{
+			var token:away.net.AssetLoaderToken;
 
+			if (this._useAssetLib) {
+				var lib:away.library.AssetLibraryBundle;
+				lib = away.library.AssetLibraryBundle.getInstance(this._assetLibId);
+				token = lib.load(request, context, ns, parser);
+			} else {
+				var loader:away.net.AssetLoader = new away.net.AssetLoader();
+				this._loadingSessions.push(loader);
+				token = loader.load(request, context, ns, parser);
+			}
+
+			token.addEventListener(away.events.LoaderEvent.RESOURCE_COMPLETE, this._onResourceCompleteDelegate);
+			token.addEventListener(away.events.AssetEvent.ASSET_COMPLETE, this._onAssetCompleteDelegate);
+
+			// Error are handled separately (see documentation for addErrorHandler)
+			token._iLoader._iAddErrorHandler(this.onLoadError);
+			token._iLoader._iAddParseErrorHandler(this.onParseError);
+
+			return token;
 		}
 	
 		/**
@@ -428,9 +497,28 @@ module away.containers
 		 * @event unload        Dispatched by the <code>contentLoaderInfo</code>
 		 *                      object when a loaded object is removed.
 		 */
-		public loadBytes(bytes:away.utils.ByteArray, context:away.net.AssetLoaderContext = null)
+		public loadData(data:any, context:away.net.AssetLoaderContext = null, ns:string = null, parser:away.parsers.ParserBase = null):away.net.AssetLoaderToken
 		{
+			var token:away.net.AssetLoaderToken;
 
+			if (this._useAssetLib) {
+				var lib:away.library.AssetLibraryBundle;
+				lib = away.library.AssetLibraryBundle.getInstance(this._assetLibId);
+				token = lib.loadData(data, context, ns, parser);
+			} else {
+				var loader:away.net.AssetLoader = new away.net.AssetLoader();
+				this._loadingSessions.push(loader);
+				token = loader.loadData(data, '', context, ns, parser);
+			}
+
+			token.addEventListener(away.events.LoaderEvent.RESOURCE_COMPLETE, this._onResourceCompleteDelegate);
+			token.addEventListener(away.events.AssetEvent.ASSET_COMPLETE, this._onAssetCompleteDelegate);
+
+			// Error are handled separately (see documentation for addErrorHandler)
+			token._iLoader._iAddErrorHandler(this.onLoadError);
+			token._iLoader._iAddParseErrorHandler(this.onParseError);
+
+			return token;
 		}
 	
 		/**
@@ -458,7 +546,88 @@ module away.containers
 		 */
 		public unload()
 		{
+			//TODO
+		}
 
+		/**
+		 * Enables a specific parser.
+		 * When no specific parser is set for a loading/parsing opperation,
+		 * loader3d can autoselect the correct parser to use.
+		 * A parser must have been enabled, to be considered when autoselecting the parser.
+		 *
+		 * @param parserClass The parser class to enable.
+		 * @see away.parsers.Parsers
+		 */
+		public static enableParser(parserClass:Object):void
+		{
+			away.net.AssetLoader.enableParser(parserClass);
+		}
+
+		/**
+		 * Enables a list of parsers.
+		 * When no specific parser is set for a loading/parsing opperation,
+		 * loader3d can autoselect the correct parser to use.
+		 * A parser must have been enabled, to be considered when autoselecting the parser.
+		 *
+		 * @param parserClasses A Vector of parser classes to enable.
+		 * @see away.parsers.Parsers
+		 */
+		public static enableParsers(parserClasses:Object[]):void
+		{
+			away.net.AssetLoader.enableParsers(parserClasses);
+		}
+
+
+		private removeListeners(dispatcher:away.events.EventDispatcher):void
+		{
+			dispatcher.removeEventListener(away.events.LoaderEvent.RESOURCE_COMPLETE, this._onResourceCompleteDelegate);
+			dispatcher.removeEventListener(away.events.AssetEvent.ASSET_COMPLETE, this._onAssetCompleteDelegate);
+		}
+
+		private onAssetComplete(event:away.events.AssetEvent):void
+		{
+			this.dispatchEvent(event);
+		}
+
+		/**
+		 * Called when an error occurs during loading
+		 */
+		private onLoadError(event:away.events.LoaderEvent):boolean
+		{
+			if (this.hasEventListener(away.events.IOErrorEvent.IO_ERROR)) {
+				this.dispatchEvent(event);
+				return true;
+			} else {
+				return false;
+			}
+		}
+
+		/**
+		 * Called when a an error occurs during parsing
+		 */
+		private onParseError(event:away.events.ParserEvent):boolean
+		{
+			if (this.hasEventListener(away.events.ParserEvent.PARSE_ERROR)) {
+				this.dispatchEvent(event);
+				return true;
+			} else {
+				return false;
+			}
+		}
+
+		/**
+		 * Called when the resource and all of its dependencies was retrieved.
+		 */
+		private onResourceComplete(event:away.events.LoaderEvent)
+		{
+			var content:away.base.DisplayObject = event.content;
+
+			this._content = content;
+
+			if (content)
+				this.addChild(content);
+
+			this.dispatchEvent(event);
 		}
 	}
 }

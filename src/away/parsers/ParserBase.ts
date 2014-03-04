@@ -24,12 +24,13 @@ module away.parsers
 	 */
 	export class ParserBase extends away.events.EventDispatcher
 	{
-		public _iFileName:string; // ARCANE
+		public _iFileName:string;
 		private _dataFormat:string;
 		private _data:any;
 		private _frameLimit:number;
 		private _lastFrameTime:number;
 		private _pOnIntervalDelegate:Function;
+		public _pContent:away.base.DisplayObject;
 
 		//----------------------------------------------------------------------------------------------------------------------------------------------------------------
 		// TODO: add error checking for the following ( could cause a problem if this function is not implemented )
@@ -78,6 +79,11 @@ module away.parsers
 		/* Protected */
 
 
+		public get content():away.base.DisplayObject
+		{
+			return this._pContent;
+		}
+		
 		/**
 		 * Creates a new ParserBase object
 		 * @param format The data format of the file data to be parsed. Can be either <code>ParserDataFormat.BINARY</code> or <code>ParserDataFormat.PLAIN_TEXT</code>, and should be provided by the concrete subtype.
@@ -164,10 +170,10 @@ module away.parsers
 		 * actual time spent on a frame can exceed this number since time-checks can
 		 * only be performed between logical sections of the parsing procedure.
 		 */
-		public parseAsync(data:any, frameLimit:number = 30):void
+		public parseAsync(data:any, frameLimit:number = 30)
 		{
 			this._data = data;
-			this.startParsing(frameLimit);
+			this._pStartParsing(frameLimit);
 		}
 
 		/**
@@ -185,7 +191,7 @@ module away.parsers
 		 *
 		 * @param resourceDependency The dependency to be resolved.
 		 */
-		public _iResolveDependency(resourceDependency:ResourceDependency):void
+		public _iResolveDependency(resourceDependency:ResourceDependency)
 		{
 			throw new away.errors.AbstractMethodError();
 		}
@@ -195,7 +201,7 @@ module away.parsers
 		 *
 		 * @param resourceDependency The dependency to be resolved.
 		 */
-		public _iResolveDependencyFailure(resourceDependency:ResourceDependency):void
+		public _iResolveDependencyFailure(resourceDependency:ResourceDependency)
 		{
 			throw new away.errors.AbstractMethodError();
 		}
@@ -210,7 +216,7 @@ module away.parsers
 			return asset.name;
 		}
 
-		public _iResumeParsingAfterDependencies():void
+		public _iResumeParsingAfterDependencies()
 		{
 			this._parsingPaused = false;
 
@@ -218,7 +224,7 @@ module away.parsers
 				this._timer.start();
 		}
 
-		public _pFinalizeAsset(asset:away.library.IAsset, name:string = null):void
+		public _pFinalizeAsset(asset:away.library.IAsset, name:string = null)
 		{
 			var type_event:string;
 			var type_name:string;
@@ -311,7 +317,7 @@ module away.parsers
 			throw new away.errors.AbstractMethodError();
 		}
 
-		public _pDieWithError(message:string = 'Unknown parsing error'):void
+		public _pDieWithError(message:string = 'Unknown parsing error')
 		{
 			if (this._timer) {
 				this._timer.removeEventListener(away.events.TimerEvent.TIMER, this._pOnIntervalDelegate);
@@ -330,7 +336,7 @@ module away.parsers
 			return dependency;
 		}
 
-		public _pPauseAndRetrieveDependencies():void
+		public _pPauseAndRetrieveDependencies()
 		{
 			if (this._timer)
 				this._timer.stop();
@@ -351,7 +357,7 @@ module away.parsers
 		/**
 		 * Called when the parsing pause interval has passed and parsing can proceed.
 		 */
-		public _pOnInterval(event:away.events.TimerEvent = null):void
+		public _pOnInterval(event:away.events.TimerEvent = null)
 		{
 			this._lastFrameTime = away.utils.getTimer();
 
@@ -363,7 +369,7 @@ module away.parsers
 		 * Initializes the parsing of data.
 		 * @param frameLimit The maximum duration of a parsing session.
 		 */
-		private startParsing(frameLimit:number):void
+		public _pStartParsing(frameLimit:number)
 		{
 			this._frameLimit = frameLimit;
 			this._timer = new away.utils.Timer(this._frameLimit, 0);
@@ -374,7 +380,7 @@ module away.parsers
 		/**
 		 * Finish parsing the data.
 		 */
-		public _pFinishParsing():void
+		public _pFinishParsing()
 		{
 			if (this._timer) {
 				this._timer.removeEventListener(away.events.TimerEvent.TIMER, this._pOnIntervalDelegate);

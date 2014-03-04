@@ -522,11 +522,7 @@ module away.library
 
 			// Add loader to a garbage array - for a collection sweep and kill
 			this._loadingSessionsGarbage.push(loader);
-			this._gcTimeoutIID = setTimeout(() =>
-			{
-				this.loadingSessionGC()
-			}, 100);
-
+			this._gcTimeoutIID = setTimeout(() => {this.loadingSessionGC()}, 100);
 		}
 
 		private loadingSessionGC():void
@@ -549,7 +545,6 @@ module away.library
 			loader.removeEventListener(away.events.AssetEvent.TEXTURE_SIZE_ERROR, this._onTextureSizeErrorDelegate);
 			loader.removeEventListener(away.events.AssetEvent.ASSET_COMPLETE, this._onAssetCompleteDelegate);
 			loader.stop();
-
 		}
 
 		/**

@@ -66,6 +66,7 @@ module away.net
 		private _context:AssetLoaderContext;
 		private _token:AssetLoaderToken;
 		private _uri:string;
+		private _content:away.base.DisplayObject;
 		private _materialMode:number;
 		
 		private _errorHandlers:Array<Function>;
@@ -218,7 +219,7 @@ module away.net
 
 			} else if (this._currentDependency.parser && this._currentDependency.parser.parsingPaused) {
 
-				this._currentDependency.parser._iResumeParsingAfterDependencies();//resumeParsingAfterDependencies();
+				this._currentDependency.parser._iResumeParsingAfterDependencies();
 				this._stack.pop();
 
 			} else if (this._stack.length) {
@@ -233,9 +234,8 @@ module away.net
 				this.retrieveNext(parser);
 
 			} else {
-				this.dispatchEvent(new away.events.LoaderEvent(away.events.LoaderEvent.RESOURCE_COMPLETE, this._uri, this._baseDependency.assets));
+				this.dispatchEvent(new away.events.LoaderEvent(away.events.LoaderEvent.RESOURCE_COMPLETE, this._uri, this._baseDependency.parser.content, this._baseDependency.assets));
 			}
-
 		}
 
 		/**

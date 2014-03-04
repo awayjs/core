@@ -13,6 +13,7 @@ module away.events
 		public static RESOURCE_COMPLETE:string = "resourceComplete";
 
 		private _url:string;
+		private _content:away.base.DisplayObject;
 		private _assets:away.library.IAsset[];
 
 		/**
@@ -22,12 +23,21 @@ module away.events
 		 * @param url The url of the loaded resource.
 		 * @param assets The assets of the loaded resource.
 		 */
-		constructor(type:string, url:string = null, assets:Array<away.library.IAsset> = null)
+		constructor(type:string, url:string = null, content:away.base.DisplayObject = null, assets:Array<away.library.IAsset> = null)
 		{
 			super(type);
 
 			this._url = url;
+			this._content = content;
 			this._assets = assets;
+		}
+
+		/**
+		 * The content returned if the resource has been loaded inside a <code>Loader</code> object.
+		 */
+		public get content():away.base.DisplayObject
+		{
+			return this._content;
 		}
 
 		/**
@@ -52,7 +62,7 @@ module away.events
 		 */
 		public clone():away.events.Event
 		{
-			return <away.events.Event> new LoaderEvent(this.type, this._url, this._assets);
+			return <away.events.Event> new LoaderEvent(this.type, this._url, this._content, this._assets);
 		}
 	}
 }

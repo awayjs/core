@@ -12010,13 +12010,7 @@ var away;
             //@override
             AGLSLContextGL.prototype.setProgramConstantsFromMatrix = function (programType, firstRegister, matrix, transposedMatrix) {
                 if (typeof transposedMatrix === "undefined") { transposedMatrix = false; }
-                /*
-                console.log( "======== setProgramConstantsFromMatrix ========" );
-                console.log( "programType       >>> " + programType );
-                console.log( "firstRegister     >>> " + firstRegister );
-                console.log( "matrix            >>> " + matrix.rawData );
-                console.log( "transposedMatrix  >>> " + transposedMatrix );
-                */
+                //TODO remove special case for WebGL matrix calls?
                 var d = matrix.rawData;
                 if (transposedMatrix) {
                     this.setProgramConstantsFromArray(programType, firstRegister, [d[0], d[4], d[8], d[12]], 1);
@@ -12029,13 +12023,6 @@ var away;
                     this.setProgramConstantsFromArray(programType, firstRegister + 2, [d[8], d[9], d[10], d[11]], 1);
                     this.setProgramConstantsFromArray(programType, firstRegister + 3, [d[12], d[13], d[14], d[15]], 1);
                 }
-            };
-
-            //@override
-            AGLSLContextGL.prototype.drawTriangles = function (indexBuffer, firstIndex, numTriangles) {
-                if (typeof firstIndex === "undefined") { firstIndex = 0; }
-                if (typeof numTriangles === "undefined") { numTriangles = -1; }
-                _super.prototype.drawTriangles.call(this, indexBuffer, firstIndex, numTriangles);
             };
             return AGLSLContextGL;
         })(away.gl.ContextGL);

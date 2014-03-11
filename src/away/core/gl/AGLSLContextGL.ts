@@ -12,14 +12,7 @@ module away.gl
 		//@override
 		public setProgramConstantsFromMatrix(programType:string, firstRegister:number, matrix:away.geom.Matrix3D, transposedMatrix:boolean = false)
 		{
-			/*
-			 console.log( "======== setProgramConstantsFromMatrix ========" );
-			 console.log( "programType       >>> " + programType );
-			 console.log( "firstRegister     >>> " + firstRegister );
-			 console.log( "matrix            >>> " + matrix.rawData );
-			 console.log( "transposedMatrix  >>> " + transposedMatrix );
-			 */
-
+			//TODO remove special case for WebGL matrix calls?
 			var d:number[] = matrix.rawData;
 			if (transposedMatrix) {
 				this.setProgramConstantsFromArray(programType, firstRegister, [ d[0], d[4], d[8], d[12] ], 1);
@@ -32,12 +25,6 @@ module away.gl
 				this.setProgramConstantsFromArray(programType, firstRegister + 2, [ d[8], d[9], d[10], d[11] ], 1);
 				this.setProgramConstantsFromArray(programType, firstRegister + 3, [ d[12], d[13], d[14], d[15] ], 1);
 			}
-		}
-
-		//@override
-		public drawTriangles(indexBuffer:IndexBuffer, firstIndex:number = 0, numTriangles:number = -1)
-		{
-			super.drawTriangles(indexBuffer, firstIndex, numTriangles);
 		}
 	}
 }

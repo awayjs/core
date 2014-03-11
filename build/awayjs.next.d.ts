@@ -5556,7 +5556,6 @@ declare module away.gl {
     class AGLSLContextGL extends gl.ContextGL {
         constructor(canvas: HTMLCanvasElement);
         public setProgramConstantsFromMatrix(programType: string, firstRegister: number, matrix: away.geom.Matrix3D, transposedMatrix?: boolean): void;
-        public drawTriangles(indexBuffer: gl.IndexBuffer, firstIndex?: number, numTriangles?: number): void;
     }
 }
 /**

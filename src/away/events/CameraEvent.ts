@@ -10,7 +10,7 @@ module away.events
 	 */
 	export class CameraEvent extends away.events.Event
 	{
-		public static LENS_CHANGED:string = "projectionChanged";
+		public static PROJECTION_CHANGED:string = "projectionChanged";
 
 		private _camera:away.entities.Camera;
 

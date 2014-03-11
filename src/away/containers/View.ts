@@ -202,7 +202,7 @@ module away.containers
 				return;
 
 			if (this._pCamera)
-				this._pCamera.removeEventListener(CameraEvent.LENS_CHANGED, this._onProjectionChangedDelegate);
+				this._pCamera.removeEventListener(CameraEvent.PROJECTION_CHANGED, this._onProjectionChangedDelegate);
 
 			this._pCamera = value;
 
@@ -212,7 +212,7 @@ module away.containers
 			if (this._pScene)
 				this._pCamera.partition = this._pScene.partition;
 
-			this._pCamera.addEventListener(CameraEvent.LENS_CHANGED, this._onProjectionChangedDelegate);
+			this._pCamera.addEventListener(CameraEvent.PROJECTION_CHANGED, this._onProjectionChangedDelegate);
 			this._scissorDirty = true;
 			this._viewportDirty = true;
 		}

@@ -142,7 +142,7 @@ module away.parsers
 //				this.dispatchEvent(new away.events.AssetEvent(away.events.AssetEvent.TEXTURE_SIZE_ERROR, <away.library.IAsset> asset));
 			}
 
-			this._pContent = new away.entities.Billboard(new away.materials.CSSMaterialBase(asset), asset.width, asset.height);
+			this._pContent = new away.entities.Billboard(new away.materials.CSSMaterialBase(asset));
 
 			return away.parsers.ParserBase.PARSING_DONE;
 

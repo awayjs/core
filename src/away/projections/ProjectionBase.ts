@@ -118,10 +118,11 @@ module away.projections
 
 		public set iAspectRatio(value:number)
 		{
-			if (this._pAspectRatio == value) {
+			if (this._pAspectRatio == value)
 				return;
-			}
+
 			this._pAspectRatio = value;
+
 			this.pInvalidateMatrix();
 		}
 

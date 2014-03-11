@@ -8,9 +8,19 @@ module away.materials
 	/**
 	 * @class away.materials.IMaterial
 	 */
-	export interface IMaterial
+	export interface IMaterial extends away.events.IEventDispatcher
 	{
 		id:string;
+
+		/**
+		 *
+		 */
+		height:number;
+
+		/**
+		 *
+		 */
+		width:number;
 
 		/**
 		 *

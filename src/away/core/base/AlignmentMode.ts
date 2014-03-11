@@ -15,6 +15,6 @@ module away.base
 		/**
 		 *
 		 */
-		public static PIVOT_POINT:string = "pivotPoint";
+		public static PIVOT_POINT:string = "pivot";
 	}
 }

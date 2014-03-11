@@ -205,7 +205,7 @@ module away.entities
 			this._projection.removeEventListener(away.events.ProjectionEvent.MATRIX_CHANGED, this._onProjectionMatrixChangedDelegate);
 			this._projection = value;
 			this._projection.addEventListener(away.events.ProjectionEvent.MATRIX_CHANGED, this._onProjectionMatrixChangedDelegate);
-			this.dispatchEvent(new away.events.CameraEvent(away.events.CameraEvent.LENS_CHANGED, this));
+			this.dispatchEvent(new away.events.CameraEvent(away.events.CameraEvent.PROJECTION_CHANGED, this));
 		}
 
 		/**

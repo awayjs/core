@@ -205,7 +205,7 @@ module away.containers
 		public clone():away.base.DisplayObject
 		{
 			var clone:away.containers.DisplayObjectContainer = new away.containers.DisplayObjectContainer();
-			clone.pivotPoint = this.pivotPoint;
+			clone.pivot = this.pivot;
 			clone._iMatrix3D = this._iMatrix3D;
 			clone.partition = this.partition;
 			clone.name = name;

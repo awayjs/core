@@ -54,7 +54,7 @@ module away.geom
 		/**
 		 * Appends an incremental rotation to a Matrix3D object.
 		 */
-		public appendRotation(degrees:number, axis:Vector3D):void //, pivotPoint:Vector3D = null )
+		public appendRotation(degrees:number, axis:Vector3D):void //, pivot:Vector3D = null )
 		{
 			var m:Matrix3D = Matrix3D.getAxisRotation(axis.x, axis.y, axis.z, degrees);
 
@@ -500,14 +500,14 @@ module away.geom
 		/**
 		 * Prepends an incremental rotation to a Matrix3D object.
 		 */
-		public prependRotation(degrees:number, axis:Vector3D) //, pivotPoint:Vector3D = null )
+		public prependRotation(degrees:number, axis:Vector3D) //, pivot:Vector3D = null )
 		{
 			var m:Matrix3D = Matrix3D.getAxisRotation(axis.x, axis.y, axis.z, degrees);
 
 			/*
-			 if ( pivotPoint != null )
+			 if ( pivot != null )
 			 {
-			 var p:Vector3D = pivotPoint;
+			 var p:Vector3D = pivot;
 			 m.appendTranslation( p.x, p.y, p.z );
 			 }
 			 */

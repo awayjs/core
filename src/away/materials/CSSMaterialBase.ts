@@ -3,7 +3,7 @@
 module away.materials
 {
 	import BlendMode					= away.base.BlendMode;
-	import Event						= away.events.Event;
+	import MaterialEvent				= away.events.MaterialEvent;
 	import Matrix3D						= away.geom.Matrix3D;
 	import AssetType					= away.library.AssetType;
 	import Delegate						= away.utils.Delegate;
@@ -23,6 +23,9 @@ module away.materials
 	 */
 	export class CSSMaterialBase extends away.library.NamedAssetBase implements away.library.IAsset, IMaterial
 	{
+		private _height:number;
+		private _sizeChanged:MaterialEvent;
+		private _width:number;
 
 		/**
 		 * An object to contain any extra data.
@@ -64,6 +67,14 @@ module away.materials
 		private _repeat:boolean = false;
 		private _smooth:boolean = true;
 		private _texture:away.textures.Texture2DBase;
+
+		/**
+		 *
+		 */
+		public get height():number
+		{
+			return this._height;
+		}
 
 		public get imageElement():HTMLImageElement
 		{
@@ -142,12 +153,21 @@ module away.materials
 					= style["-moz-transform-origin"]
 					= style["-o-transform-origin"]
 					= style["-ms-transform-origin"] = "0% 0%";
-				style.transform
-					= style["-webkit-transform"]
-					= style["-moz-transform"]
-					= style["-o-transform"]
-					= style["-ms-transform"] = "scale3d(" + 1/this._imageElement.width + ", -" + 1/this._imageElement.height + ", 1) translateY(-" + this._imageElement.height + "px)";
+
+				this._height = this._imageElement.height;
+				this._width = this._imageElement.width;
+
+				this.notifySizeChanged();
 			}
+		}
+
+
+		/**
+		 *
+		 */
+		public get width():number
+		{
+			return this._width;
 		}
 
 		/**
@@ -248,9 +268,10 @@ module away.materials
 		 */
 		public iAddOwner(owner:away.base.IMaterialOwner)
 		{
-			this._owners.push(owner);
+			var index:number = this._owners.indexOf(owner);
 
-			//TODO
+			if (index == -1)
+				this._owners.push(owner);
 		}
 
 		/**
@@ -261,7 +282,10 @@ module away.materials
 		 */
 		public iRemoveOwner(owner:away.base.IMaterialOwner)
 		{
-			//TODO
+			var index:number = this._owners.indexOf(owner);
+
+			if (index != -1)
+				this._owners.splice(index, 1);
 		}
 
 		/**
@@ -272,6 +296,14 @@ module away.materials
 		public get iOwners():Array<IMaterialOwner>
 		{
 			return this._owners;
+		}
+
+		private notifySizeChanged()
+		{
+			if (!this._sizeChanged)
+				this._sizeChanged = new away.events.MaterialEvent(away.events.MaterialEvent.SIZE_CHANGED);
+
+			this.dispatchEvent(this._sizeChanged);
 		}
 	}
 }

@@ -218,6 +218,17 @@ module away.render
 //
 //			var which:number = target? DefaultRenderer.SCREEN_PASSES : DefaultRenderer.ALL_PASSES;
 
+			var sheet:CSSStyleSheet = <CSSStyleSheet> document.styleSheets[document.styleSheets.length - 1];
+
+			for (var i:number = 0; i < sheet.cssRules.length; i++) {
+				var style:MSStyleCSSProperties = (<CSSStyleRule> sheet.cssRules[i]).style;
+				style.transform
+					= style["-webkit-transform"]
+					= style["-moz-transform"]
+					= style["-o-transform"]
+					= style["-ms-transform"] = ((<away.projections.PerspectiveProjection> entityCollector.camera.projection).coordinateSystem == away.projections.CoordinateSystem.RIGHT_HANDED)? "" : "scale3d(1, -1, 1) translateY(-" + style.height + ")";
+			}
+
 			this.drawRenderables(this._renderableHead, entityCollector);
 
 //			if (this._activeMaterial)

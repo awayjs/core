@@ -75,9 +75,20 @@ module away.pool
 			this.materialOwner = materialOwner;
 		}
 
+		/**
+		 *
+		 */
 		public dispose()
 		{
 			this._pool.disposeItem(this.materialOwner);
+		}
+
+		/**
+		 *
+		 */
+		public _iUpdate()
+		{
+			//nothing to do here
 		}
 	}
 }

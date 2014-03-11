@@ -194,7 +194,7 @@ module away.base
 		private _x:number = 0;
 		private _y:number = 0;
 		private _z:number = 0;
-		private _pivotPoint:away.geom.Vector3D = new away.geom.Vector3D();
+		private _pivot:away.geom.Vector3D = new away.geom.Vector3D();
 		private _orientationMatrix:away.geom.Matrix3D = new away.geom.Matrix3D();
 		private _pivotZero:boolean = true;
 		private _pivotDirty:boolean = true;
@@ -768,15 +768,15 @@ module away.base
 		/**
 		 * Defines the local point around which the object rotates.
 		 */
-		public get pivotPoint():away.geom.Vector3D
+		public get pivot():away.geom.Vector3D
 		{
-			return this._pivotPoint;
+			return this._pivot;
 		}
 
 
-		public set pivotPoint(pivot:away.geom.Vector3D)
+		public set pivot(pivot:away.geom.Vector3D)
 		{
-			this._pivotPoint = pivot.clone();
+			this._pivot = pivot.clone();
 
 			this.invalidatePivot();
 		}
@@ -1025,8 +1025,9 @@ module away.base
 		{
 			if (this._scenePositionDirty) {
 				if (!this._pivotZero && this.alignmentMode == AlignmentMode.PIVOT_POINT) {
-					this._scenePosition = this.sceneTransform.transformVector(this._pivotPoint);
-					//this._scenePosition.decrementBy(new away.geom.Vector3D(this._pivotPoint.x*this._pScaleX, this._pivotPoint.y*this._pScaleY, this._pivotPoint.z*this._pScaleZ));
+					var pivotScale:away.geom.Vector3D = new away.geom.Vector3D(this._pivot.x/this._pScaleX, this._pivot.y/this._pScaleY, this._pivot.z/this._pScaleZ)
+						this._scenePosition = this.sceneTransform.transformVector(pivotScale);
+					//this._scenePosition.decrementBy(new away.geom.Vector3D(this._pivot.x*this._pScaleX, this._pivot.y*this._pScaleY, this._pivot.z*this._pScaleZ));
 				} else {
 					this.sceneTransform.copyColumnTo(3, this._scenePosition);
 				}
@@ -1354,7 +1355,7 @@ module away.base
 		public clone():DisplayObject
 		{
 			var clone:DisplayObject = new DisplayObject();
-			clone.pivotPoint = this.pivotPoint;
+			clone.pivot = this.pivot;
 			clone._iMatrix3D = this._iMatrix3D;
 			clone.name = name;
 
@@ -1370,9 +1371,8 @@ module away.base
 			if (this.parent)
 				this.parent.removeChild(this);
 
-			var len:number = this._pRenderables.length;
-			for (var i:number = 0; i < len; i++)
-				this._pRenderables[i].dispose();
+			while (this._pRenderables.length)
+				this._pRenderables[0].dispose();
 		}
 
 		/**
@@ -1688,12 +1688,12 @@ module away.base
 		 */
 		public movePivot(dx:number, dy:number, dz:number)
 		{
-			if (this._pivotPoint == null)
-				this._pivotPoint = new away.geom.Vector3D();
+			if (this._pivot == null)
+				this._pivot = new away.geom.Vector3D();
 
-			this._pivotPoint.x += dx;
-			this._pivotPoint.y += dy;
-			this._pivotPoint.z += dz;
+			this._pivot.x += dx;
+			this._pivot.y += dy;
+			this._pivot.z += dz;
 
 			this.invalidatePivot();
 		}
@@ -1719,11 +1719,12 @@ module away.base
 				comps[0] = this.scenePosition;
 				scale.x = this._pScaleX;
 				scale.y = this._pScaleY;
+				scale.z = this._pScaleZ;
 				this._orientationMatrix.recompose(comps);
 
 				//add in case of pivot
 				if (!this._pivotZero && this.alignmentMode == AlignmentMode.PIVOT_POINT)
-					this._orientationMatrix.prependTranslation(-this._pivotPoint.x, -this._pivotPoint.y, -this._pivotPoint.z);
+					this._orientationMatrix.prependTranslation(-this._pivot.x/this._pScaleX, -this._pivot.y/this._pScaleY, -this._pivot.z/this._pScaleZ);
 
 				return this._orientationMatrix;
 			}
@@ -2062,9 +2063,9 @@ module away.base
 			this._matrix3D.recompose(this._transformComponents);
 
 			if (!this._pivotZero) {
-				this._matrix3D.prependTranslation(-this._pivotPoint.x, -this._pivotPoint.y, -this._pivotPoint.z);
+				this._matrix3D.prependTranslation(-this._pivot.x/this._pScaleX, -this._pivot.y/this._pScaleY, -this._pivot.z/this._pScaleZ);
 				if (this.alignmentMode != AlignmentMode.PIVOT_POINT)
-					this._matrix3D.appendTranslation(this._pivotPoint.x*this._pScaleX, this._pivotPoint.y*this._pScaleY, this._pivotPoint.z*this._pScaleZ);
+					this._matrix3D.appendTranslation(this._pivot.x, this._pivot.y, this._pivot.z);
 			}
 
 			this._matrix3DDirty = false;
@@ -2280,7 +2281,7 @@ module away.base
 		 */
 		private invalidatePivot()
 		{
-			this._pivotZero = (this._pivotPoint.x == 0) && (this._pivotPoint.y == 0) && (this._pivotPoint.z == 0);
+			this._pivotZero = (this._pivot.x == 0) && (this._pivot.y == 0) && (this._pivot.z == 0);
 
 			if (this._pivotDirty)
 				return;

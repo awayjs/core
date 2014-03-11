@@ -5,6 +5,7 @@ var tests;
     (function (entities) {
         var View = away.containers.View;
         var Billboard = away.entities.Billboard;
+        var Vector3D = away.geom.Vector3D;
         var AssetLibrary = away.library.AssetLibrary;
         var CSSMaterialBase = away.materials.CSSMaterialBase;
         var ImageTexture = away.textures.ImageTexture;
@@ -16,6 +17,7 @@ var tests;
         var BillboardEntityTest = (function () {
             function BillboardEntityTest() {
                 this._move = false;
+                this._billboards = new Array();
                 //load an image
                 AssetLibrary.load(new URLRequest('assets/256x256.png'));
 
@@ -41,12 +43,16 @@ var tests;
                 var billboard;
                 var numBillboards = 500;
                 for (var i = 0; i < numBillboards; i++) {
-                    billboard = new away.entities.Billboard(this._bitmapMaterial, 50, 50);
+                    billboard = new Billboard(this._bitmapMaterial);
+                    billboard.width = 50;
+                    billboard.height = 50;
+                    billboard.pivot = new Vector3D(25, 25, 0);
                     billboard.x = Math.cos(i * 32 * Math.PI / numBillboards) * 400 * Math.sin(i * Math.PI / numBillboards);
                     billboard.y = Math.sin(i * 32 * Math.PI / numBillboards) * 400 * Math.sin(i * Math.PI / numBillboards);
                     billboard.z = Math.cos(i * Math.PI / numBillboards) * 400;
                     billboard.orientationMode = away.base.OrientationMode.CAMERA_PLANE;
                     billboard.alignmentMode = away.base.AlignmentMode.PIVOT_POINT;
+                    this._billboards.push(billboard);
 
                     //add billboard to the scene
                     this._view.scene.addChild(billboard);
@@ -84,8 +90,10 @@ var tests;
             };
 
             BillboardEntityTest.prototype.render = function (dt) {
-                //			this._billboard1.rotationY += 1;
-                //			this._billboard3.rotationY += 1;
+                for (var i = 0; i < this._billboards.length; i++) {
+                    //this._billboards[i].rotationZ +=2;
+                }
+
                 this._view.render();
             };
 

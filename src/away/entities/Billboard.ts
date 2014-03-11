@@ -36,17 +36,26 @@
  */
 module away.entities
 {
+	import IAnimator					= away.animators.IAnimator;
+	import MaterialEvent				= away.events.MaterialEvent;
+	import Matrix3D						= away.geom.Matrix3D;
+	import UVTransform					= away.geom.UVTransform;
+	import IMaterial					= away.materials.IMaterial;
+
 	export class Billboard extends away.base.DisplayObject implements IEntity, away.base.IMaterialOwner, away.library.IAsset
 	{
-		private _animator:away.animators.IAnimator;
-		private _bitmapMatrix:away.geom.Matrix3D;
-		private _material:away.materials.IMaterial;
-		private _uvTransform:away.geom.UVTransform;
+		private _animator:IAnimator;
+		private _billboardWidth:number;
+		private _billboardHeight:number;
+		private _material:IMaterial;
+		private _uvTransform:UVTransform;
+
+		private onSizeChangedDelegate:(event:MaterialEvent) => void;
 
 		/**
 		 * Defines the animator of the mesh. Act on the mesh's geometry. Defaults to null
 		 */
-		public get animator():away.animators.IAnimator
+		public get animator():IAnimator
 		{
 			return this._animator;
 		}
@@ -67,23 +76,44 @@ module away.entities
 		/**
 		 *
 		 */
-		public get material():away.materials.IMaterial
+		public get billboardHeight():number
+		{
+			return this._billboardHeight;
+		}
+
+		/**
+		 *
+		 */
+		public get billboardWidth():number
+		{
+			return this._billboardWidth;
+		}
+
+		/**
+		 *
+		 */
+		public get material():IMaterial
 		{
 			return this._material;
 		}
 
-		public set material(value:away.materials.IMaterial)
+		public set material(value:IMaterial)
 		{
 			if (value == this._material)
 				return;
 
-			if (this._material)
+			if (this._material) {
 				this._material.iRemoveOwner(this);
+				this._material.removeEventListener(MaterialEvent.SIZE_CHANGED, this.onSizeChangedDelegate);
+			}
+
 
 			this._material = value;
 
-			if (this._material)
+			if (this._material) {
 				this._material.iAddOwner(this);
+				this._material.addEventListener(MaterialEvent.SIZE_CHANGED, this.onSizeChangedDelegate);
+			}
 		}
 
 		/**
@@ -114,28 +144,25 @@ module away.entities
 		/**
 		 *
 		 */
-		public get uvTransform():away.geom.UVTransform
+		public get uvTransform():UVTransform
 		{
 			return this._uvTransform;
 		}
 
-		constructor(material:away.materials.IMaterial, width:number, height:number, pixelSnapping:string = "auto", smoothing:boolean = false)
+		constructor(material:IMaterial, pixelSnapping:string = "auto", smoothing:boolean = false)
 		{
 			super();
 
 			this._pIsEntity = true;
 
+			this.onSizeChangedDelegate = (event:MaterialEvent) => this.onSizeChanged(event);
+
 			this.material = material;
 
-			//TODO don't rely on scaling for the width and height of the billboard
-			this.width = width;
-			this.height = height;
+			this._billboardWidth = material.width;
+			this._billboardHeight = material.height;
 
-			this.pivotPoint = new away.geom.Vector3D(0.5, 0.5, 0);
-
-			this._bitmapMatrix = new away.geom.Matrix3D();
-
-			this._uvTransform = new away.geom.UVTransform(this);
+			this._uvTransform = new UVTransform(this);
 		}
 
 		/**
@@ -151,7 +178,7 @@ module away.entities
 		 */
 		public pUpdateBounds()
 		{
-			this._pBounds.fromExtremes(0, 0, 0, 1, 1, 0);
+			this._pBounds.fromExtremes(0, 0, 0, this._billboardWidth, this._billboardHeight, 0);
 
 			super.pUpdateBounds();
 		}
@@ -173,6 +200,20 @@ module away.entities
 		public _iSetUVMatrixComponents(offsetU:number, offsetV:number, scaleU:number, scaleV:number, rotationUV:number)
 		{
 
+		}
+
+		/**
+		 * @private
+		 */
+		private onSizeChanged(event:MaterialEvent)
+		{
+			this._billboardWidth = this._material.width;
+			this._billboardHeight = this._material.height;
+
+
+			var len:number = this._pRenderables.length;
+			for (var i:number = 0; i < len; i++)
+				this._pRenderables[i]._iUpdate();
 		}
 	}
 }

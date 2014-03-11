@@ -38,5 +38,10 @@ module away.pool
 		 *
 		 */
 		dispose();
+
+		/**
+		 *
+		 */
+		_iUpdate();
 	}
 }

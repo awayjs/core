@@ -25,6 +25,8 @@ module away.pool
 
 		public disposeItem(materialOwner:away.base.IMaterialOwner)
 		{
+			materialOwner._iRemoveRenderable(this._pool[materialOwner.id]);
+
 			this._pool[materialOwner.id] = null;
 		}
 	}

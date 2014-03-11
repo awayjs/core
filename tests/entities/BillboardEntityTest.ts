@@ -5,6 +5,7 @@ module tests.entities
 {
 	import View						= away.containers.View;
 	import Billboard				= away.entities.Billboard;
+	import Vector3D					= away.geom.Vector3D;
 	import AssetLibrary				= away.library.AssetLibrary;
 	import CSSMaterialBase			= away.materials.CSSMaterialBase;
 	import ImageTexture				= away.textures.ImageTexture;
@@ -27,6 +28,8 @@ module tests.entities
 
 		private _imageTexture:ImageTexture;
 		private _bitmapMaterial:CSSMaterialBase;
+		private _billboards:Array<Billboard> = new Array<Billboard>();
+
 		constructor()
 		{
 			//load an image
@@ -55,12 +58,16 @@ module tests.entities
 			var billboard:Billboard;
 			var numBillboards:number = 500;
 			for (var i:number = 0; i < numBillboards; i++) {
-				billboard = new away.entities.Billboard(this._bitmapMaterial, 50, 50);
+				billboard = new Billboard(this._bitmapMaterial);
+				billboard.width = 50;
+				billboard.height = 50;
+				billboard.pivot = new Vector3D(25, 25, 0);
 				billboard.x = Math.cos(i*32*Math.PI/numBillboards)*400*Math.sin(i*Math.PI/numBillboards);
 				billboard.y = Math.sin(i*32*Math.PI/numBillboards)*400*Math.sin(i*Math.PI/numBillboards);
 				billboard.z = Math.cos(i*Math.PI/numBillboards)*400;
 				billboard.orientationMode = away.base.OrientationMode.CAMERA_PLANE;
 				billboard.alignmentMode = away.base.AlignmentMode.PIVOT_POINT;
+				this._billboards.push(billboard);
 				//add billboard to the scene
 				this._view.scene.addChild(billboard);
 			}
@@ -91,8 +98,10 @@ module tests.entities
 
 		private render(dt:number)
 		{
-//			this._billboard1.rotationY += 1;
-//			this._billboard3.rotationY += 1;
+			for (var i:number = 0; i < this._billboards.length; i++) {
+				//this._billboards[i].rotationZ +=2;
+			}
+
 			this._view.render();
 
 		}

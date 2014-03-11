@@ -34,6 +34,7 @@
 ///<reference path="events/ProjectionEvent.ts" />
 ///<reference path="events/LoaderEvent.ts" />
 ///<reference path="events/ParserEvent.ts" />
+///<reference path="events/MaterialEvent.ts" />
 ///<reference path="events/ProgressEvent.ts" />
 ///<reference path="events/RendererEvent.ts" />
 ///<reference path="events/SceneEvent.ts"/>
@@ -193,6 +194,7 @@
 ///<reference path="entities/Shape.ts" />
 ///<reference path="entities/TextField.ts" />
 
+///<reference path="projections/CoordinateSystem.ts" />
 ///<reference path="projections/ProjectionBase.ts" />
 ///<reference path="projections/PerspectiveProjection.ts" />
 ///<reference path="projections/FreeMatrixProjection.ts" />

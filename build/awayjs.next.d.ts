@@ -320,8 +320,8 @@ declare module away.events {
     class ProjectionEvent extends events.Event {
         static MATRIX_CHANGED: string;
         private _projection;
-        constructor(type: string, projection: away.projections.ProjectionBase);
-        public projection : away.projections.ProjectionBase;
+        constructor(type: string, projection: away.projections.IProjection);
+        public projection : away.projections.IProjection;
     }
 }
 /**
@@ -5532,7 +5532,7 @@ declare module away.gl {
         public present(): void;
         public setBlendFactors(sourceFactor: string, destinationFactor: string): void;
         public setColorMask(red: boolean, green: boolean, blue: boolean, alpha: boolean): void;
-        public setCulling(triangleFaceToCull: string): void;
+        public setCulling(triangleFaceToCull: string, coordinateSystem?: string): void;
         public setDepthTest(depthMask: boolean, passCompareMode: string): void;
         public setProgram(program: gl.Program): void;
         private getUniformLocationNameFromAgalRegisterIndex(programType, firstRegister);
@@ -5554,11 +5554,9 @@ declare module away.gl {
 }
 declare module away.gl {
     class AGLSLContextGL extends gl.ContextGL {
-        private _yFlip;
         constructor(canvas: HTMLCanvasElement);
         public setProgramConstantsFromMatrix(programType: string, firstRegister: number, matrix: away.geom.Matrix3D, transposedMatrix?: boolean): void;
         public drawTriangles(indexBuffer: gl.IndexBuffer, firstIndex?: number, numTriangles?: number): void;
-        public setCulling(triangleFaceToCull: string): void;
     }
 }
 /**
@@ -10386,7 +10384,7 @@ declare module away.entities {
         private _frustumPlanes;
         private _frustumPlanesDirty;
         private _onProjectionMatrixChangedDelegate;
-        constructor(projection?: away.projections.ProjectionBase);
+        constructor(projection?: away.projections.IProjection);
         public pCreateDefaultBoundingVolume(): away.bounds.BoundingVolumeBase;
         /**
         * @protected
@@ -10407,7 +10405,7 @@ declare module away.entities {
         /**
         *
         */
-        public projection : away.projections.ProjectionBase;
+        public projection : away.projections.IProjection;
         /**
         *
         */
@@ -11352,15 +11350,37 @@ declare module away.projections {
         /**
         * Default option, projects to a left-handed coordinate system
         */
-        static LEFT_HANDED: number;
+        static LEFT_HANDED: string;
         /**
         * Projects to a right-handed coordinate system
         */
-        static RIGHT_HANDED: number;
+        static RIGHT_HANDED: string;
+    }
+}
+/**
+* @module away.base
+*/
+declare module away.projections {
+    /**
+    * IMaterialOwner provides an interface for objects that can use materials.
+    *
+    * @interface away.base.IMaterialOwner
+    */
+    interface IProjection extends away.events.IEventDispatcher {
+        coordinateSystem: string;
+        frustumCorners: number[];
+        matrix: away.geom.Matrix3D;
+        near: number;
+        far: number;
+        _iAspectRatio: number;
+        project(point3d: away.geom.Vector3D): away.geom.Vector3D;
+        unproject(nX: number, nY: number, sZ: number): away.geom.Vector3D;
+        _iUpdateScissorRect(x: number, y: number, width: number, height: number): any;
+        _iUpdateViewport(x: number, y: number, width: number, height: number): any;
     }
 }
 declare module away.projections {
-    class ProjectionBase extends away.events.EventDispatcher {
+    class ProjectionBase extends away.events.EventDispatcher implements projections.IProjection {
         public _pMatrix: away.geom.Matrix3D;
         public _pScissorRect: away.geom.Rectangle;
         public _pViewPort: away.geom.Rectangle;
@@ -11369,9 +11389,14 @@ declare module away.projections {
         public _pAspectRatio: number;
         public _pMatrixInvalid: boolean;
         public _pFrustumCorners: number[];
+        public _pCoordinateSystem: string;
         private _unprojection;
         private _unprojectionInvalid;
-        constructor();
+        constructor(coordinateSystem?: string);
+        /**
+        * The handedness of the coordinate system projection. The default is LEFT_HANDED.
+        */
+        public coordinateSystem : string;
         public frustumCorners : number[];
         public matrix : away.geom.Matrix3D;
         public near : number;
@@ -11380,11 +11405,11 @@ declare module away.projections {
         public unprojectionMatrix : away.geom.Matrix3D;
         public unproject(nX: number, nY: number, sZ: number): away.geom.Vector3D;
         public clone(): ProjectionBase;
-        public iAspectRatio : number;
+        public _iAspectRatio : number;
         public pInvalidateMatrix(): void;
         public pUpdateMatrix(): void;
-        public iUpdateScissorRect(x: number, y: number, width: number, height: number): void;
-        public iUpdateViewport(x: number, y: number, width: number, height: number): void;
+        public _iUpdateScissorRect(x: number, y: number, width: number, height: number): void;
+        public _iUpdateViewport(x: number, y: number, width: number, height: number): void;
     }
 }
 declare module away.projections {
@@ -11395,16 +11420,11 @@ declare module away.projections {
         private _hFocalLength;
         private _preserveAspectRatio;
         private _origin;
-        private _pCoordinateSystem;
-        constructor(fieldOfView?: number, coordinateSystem?: number);
+        constructor(fieldOfView?: number, coordinateSystem?: string);
         /**
         *
         */
         public preserveAspectRatio : boolean;
-        /**
-        * The handedness of the coordinate system projection. The default is LEFT_HANDED.
-        */
-        public coordinateSystem : number;
         /**
         *
         */
@@ -11494,13 +11514,13 @@ declare module away.projections {
         private _baseProjection;
         private _plane;
         private _onProjectionMatrixChangedDelegate;
-        constructor(baseProjection: projections.ProjectionBase, plane: away.geom.Plane3D);
+        constructor(baseProjection: projections.IProjection, plane: away.geom.Plane3D);
         public frustumCorners : number[];
         public near : number;
         public far : number;
         public iAspectRatio : number;
         public plane : away.geom.Plane3D;
-        public baseProjection : projections.ProjectionBase;
+        public baseProjection : projections.IProjection;
         private onProjectionMatrixChanged(event);
         public pUpdateMatrix(): void;
     }

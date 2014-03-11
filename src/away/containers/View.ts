@@ -269,7 +269,7 @@ module away.containers
 
 			this._width = value;
 			this._aspectRatio = this._width/this._height;
-			this._pCamera.projection.iAspectRatio = this._aspectRatio;
+			this._pCamera.projection._iAspectRatio = this._aspectRatio;
 			this._pRenderer.width = value;
 		}
 
@@ -288,7 +288,7 @@ module away.containers
 
 			this._height = value;
 			this._aspectRatio = this._width/this._height;
-			this._pCamera.projection.iAspectRatio = this._aspectRatio;
+			this._pCamera.projection._iAspectRatio = this._aspectRatio;
 			this._pRenderer.height = value;
 		}
 
@@ -355,16 +355,16 @@ module away.containers
 			this.pUpdateTime();
 
 			//update view and size data
-			this._pCamera.projection.iAspectRatio = this._aspectRatio;
+			this._pCamera.projection._iAspectRatio = this._aspectRatio;
 
 			if (this._scissorDirty) {
 				this._scissorDirty = false;
-				this._pCamera.projection.iUpdateScissorRect(this._pRenderer.scissorRect.x, this._pRenderer.scissorRect.y, this._pRenderer.scissorRect.width, this._pRenderer.scissorRect.height);
+				this._pCamera.projection._iUpdateScissorRect(this._pRenderer.scissorRect.x, this._pRenderer.scissorRect.y, this._pRenderer.scissorRect.width, this._pRenderer.scissorRect.height);
 			}
 
 			if (this._viewportDirty) {
 				this._viewportDirty = false;
-				this._pCamera.projection.iUpdateViewport(this._pRenderer.viewPort.x, this._pRenderer.viewPort.y, this._pRenderer.viewPort.width, this._pRenderer.viewPort.height);
+				this._pCamera.projection._iUpdateViewport(this._pRenderer.viewPort.x, this._pRenderer.viewPort.y, this._pRenderer.viewPort.width, this._pRenderer.viewPort.height);
 			}
 
 			//clear entity collector ready for collection

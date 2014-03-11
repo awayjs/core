@@ -5,11 +5,11 @@ module away.projections
 	export class ObliqueNearPlaneProjection extends ProjectionBase
 	{
 
-		private _baseProjection:ProjectionBase;
+		private _baseProjection:IProjection;
 		private _plane:away.geom.Plane3D;
 		private _onProjectionMatrixChangedDelegate:Function;
 
-		constructor(baseProjection:ProjectionBase, plane:away.geom.Plane3D)
+		constructor(baseProjection:IProjection, plane:away.geom.Plane3D)
 		{
 			super();
 			this.baseProjection = baseProjection;
@@ -51,13 +51,13 @@ module away.projections
 		//@override
 		public get iAspectRatio():number
 		{
-			return this._baseProjection.iAspectRatio;
+			return this._baseProjection._iAspectRatio;
 		}
 
 		//@override
 		public set iAspectRatio(value:number)
 		{
-			this._baseProjection.iAspectRatio = value;
+			this._baseProjection._iAspectRatio = value;
 		}
 
 		public get plane():away.geom.Plane3D
@@ -71,7 +71,7 @@ module away.projections
 			this.pInvalidateMatrix();
 		}
 
-		public set baseProjection(value:ProjectionBase)
+		public set baseProjection(value:IProjection)
 		{
 			if (this._baseProjection) {
 				this._baseProjection.removeEventListener(away.events.ProjectionEvent.MATRIX_CHANGED, this._onProjectionMatrixChangedDelegate);

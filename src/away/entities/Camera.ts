@@ -6,12 +6,12 @@ module away.entities
 	{
 		private _viewProjection:away.geom.Matrix3D = new away.geom.Matrix3D();
 		private _viewProjectionDirty:Boolean = true;
-		private _projection:away.projections.ProjectionBase;
+		private _projection:away.projections.IProjection;
 		private _frustumPlanes:Array<away.geom.Plane3D>;
 		private _frustumPlanesDirty:Boolean = true;
 		private _onProjectionMatrixChangedDelegate:Function;
 
-		constructor(projection:away.projections.ProjectionBase = null)
+		constructor(projection:away.projections.IProjection = null)
 		{
 			super();
 
@@ -189,12 +189,12 @@ module away.entities
 		/**
 		 *
 		 */
-		public get projection():away.projections.ProjectionBase
+		public get projection():away.projections.IProjection
 		{
 			return this._projection;
 		}
 
-		public set projection(value:away.projections.ProjectionBase)
+		public set projection(value:away.projections.IProjection)
 		{
 			if (this._projection == value)
 				return;

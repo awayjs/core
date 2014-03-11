@@ -160,7 +160,7 @@ module aglsl
 
 			// adjust z from opengl range of -1..1 to 0..1 as in d3d, this also enforces a left handed coordinate system
 			if (desc.header.type == "vertex") {
-				body += "  gl_Position = vec4(outpos.x, yflip*outpos.y, outpos.z*2.0 - outpos.w, outpos.w);\n";
+				body += "  gl_Position = vec4(outpos.x, outpos.y, outpos.z*2.0 - outpos.w, outpos.w);\n";
 			}
 
 			// clamp fragment depth

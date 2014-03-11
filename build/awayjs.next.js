@@ -11646,17 +11646,18 @@ var away;
                 this._gl.colorMask(red, green, blue, alpha);
             };
 
-            ContextGL.prototype.setCulling = function (triangleFaceToCull) {
+            ContextGL.prototype.setCulling = function (triangleFaceToCull, coordinateSystem) {
+                if (typeof coordinateSystem === "undefined") { coordinateSystem = "leftHanded"; }
                 if (triangleFaceToCull == away.gl.ContextGLTriangleFace.NONE) {
                     this._gl.disable(this._gl.CULL_FACE);
                 } else {
                     this._gl.enable(this._gl.CULL_FACE);
                     switch (triangleFaceToCull) {
-                        case away.gl.ContextGLTriangleFace.FRONT:
-                            this._gl.cullFace(this._gl.BACK);
-                            break;
                         case away.gl.ContextGLTriangleFace.BACK:
-                            this._gl.cullFace(this._gl.FRONT);
+                            this._gl.cullFace((coordinateSystem == "leftHanded") ? this._gl.FRONT : this._gl.BACK);
+                            break;
+                        case away.gl.ContextGLTriangleFace.FRONT:
+                            this._gl.cullFace((coordinateSystem == "leftHanded") ? this._gl.BACK : this._gl.FRONT);
                             break;
                         case away.gl.ContextGLTriangleFace.FRONT_AND_BACK:
                             this._gl.cullFace(this._gl.FRONT_AND_BACK);
@@ -12005,7 +12006,6 @@ var away;
             __extends(AGLSLContextGL, _super);
             function AGLSLContextGL(canvas) {
                 _super.call(this, canvas);
-                this._yFlip = -1;
             }
             //@override
             AGLSLContextGL.prototype.setProgramConstantsFromMatrix = function (programType, firstRegister, matrix, transposedMatrix) {
@@ -12035,38 +12035,7 @@ var away;
             AGLSLContextGL.prototype.drawTriangles = function (indexBuffer, firstIndex, numTriangles) {
                 if (typeof firstIndex === "undefined") { firstIndex = 0; }
                 if (typeof numTriangles === "undefined") { numTriangles = -1; }
-                /*
-                console.log( "======= drawTriangles ========" );
-                console.log( indexBuffer );
-                console.log( "firstIndex: " +  firstIndex );
-                console.log( "numTriangles:" + numTriangles );
-                */
-                var location = this._gl.getUniformLocation(this._currentProgram.glProgram, "yflip");
-                this._gl.uniform1f(location, this._yFlip);
                 _super.prototype.drawTriangles.call(this, indexBuffer, firstIndex, numTriangles);
-            };
-
-            //@override
-            AGLSLContextGL.prototype.setCulling = function (triangleFaceToCull) {
-                _super.prototype.setCulling.call(this, triangleFaceToCull);
-
-                switch (triangleFaceToCull) {
-                    case away.gl.ContextGLTriangleFace.FRONT:
-                        this._yFlip = -1;
-                        break;
-                    case away.gl.ContextGLTriangleFace.BACK:
-                        this._yFlip = 1; // checked
-                        break;
-                    case away.gl.ContextGLTriangleFace.FRONT_AND_BACK:
-                        this._yFlip = 1;
-                        break;
-                    case away.gl.ContextGLTriangleFace.NONE:
-                        this._yFlip = 1; // checked
-                        break;
-                    default:
-                        throw "Unknown culling mode " + triangleFaceToCull + ".";
-                        break;
-                }
             };
             return AGLSLContextGL;
         })(away.gl.ContextGL);
@@ -20593,23 +20562,26 @@ var away;
         var CoordinateSystem = (function () {
             function CoordinateSystem() {
             }
-            CoordinateSystem.LEFT_HANDED = 0;
+            CoordinateSystem.LEFT_HANDED = "leftHanded";
 
-            CoordinateSystem.RIGHT_HANDED = 1;
+            CoordinateSystem.RIGHT_HANDED = "rightHanded";
             return CoordinateSystem;
         })();
         projections.CoordinateSystem = CoordinateSystem;
     })(away.projections || (away.projections = {}));
     var projections = away.projections;
 })(away || (away = {}));
+///<reference path="../_definitions.ts"/>
 ///<reference path="../_definitions.ts" />
 var away;
 (function (away) {
     (function (projections) {
         var ProjectionBase = (function (_super) {
             __extends(ProjectionBase, _super);
-            function ProjectionBase() {
+            function ProjectionBase(coordinateSystem) {
+                if (typeof coordinateSystem === "undefined") { coordinateSystem = "leftHanded"; }
                 _super.call(this);
+                this._pMatrix = new away.geom.Matrix3D();
                 this._pScissorRect = new away.geom.Rectangle();
                 this._pViewPort = new away.geom.Rectangle();
                 this._pNear = 20;
@@ -20618,8 +20590,29 @@ var away;
                 this._pMatrixInvalid = true;
                 this._pFrustumCorners = [];
                 this._unprojectionInvalid = true;
-                this._pMatrix = new away.geom.Matrix3D();
+
+                this.coordinateSystem = coordinateSystem;
             }
+            Object.defineProperty(ProjectionBase.prototype, "coordinateSystem", {
+                /**
+                * The handedness of the coordinate system projection. The default is LEFT_HANDED.
+                */
+                get: function () {
+                    return this._pCoordinateSystem;
+                },
+                set: function (value) {
+                    if (this._pCoordinateSystem == value)
+                        return;
+
+                    this._pCoordinateSystem = value;
+
+                    this.pInvalidateMatrix();
+                },
+                enumerable: true,
+                configurable: true
+            });
+
+
             Object.defineProperty(ProjectionBase.prototype, "frustumCorners", {
                 get: function () {
                     return this._pFrustumCorners;
@@ -20716,7 +20709,7 @@ var away;
                 throw new away.errors.AbstractMethodError();
             };
 
-            Object.defineProperty(ProjectionBase.prototype, "iAspectRatio", {
+            Object.defineProperty(ProjectionBase.prototype, "_iAspectRatio", {
                 get: function () {
                     return this._pAspectRatio;
                 },
@@ -20743,7 +20736,7 @@ var away;
                 throw new away.errors.AbstractMethodError();
             };
 
-            ProjectionBase.prototype.iUpdateScissorRect = function (x, y, width, height) {
+            ProjectionBase.prototype._iUpdateScissorRect = function (x, y, width, height) {
                 this._pScissorRect.x = x;
                 this._pScissorRect.y = y;
                 this._pScissorRect.width = width;
@@ -20751,7 +20744,7 @@ var away;
                 this.pInvalidateMatrix();
             };
 
-            ProjectionBase.prototype.iUpdateViewport = function (x, y, width, height) {
+            ProjectionBase.prototype._iUpdateViewport = function (x, y, width, height) {
                 this._pViewPort.x = x;
                 this._pViewPort.y = y;
                 this._pViewPort.width = width;
@@ -20772,12 +20765,11 @@ var away;
             __extends(PerspectiveProjection, _super);
             function PerspectiveProjection(fieldOfView, coordinateSystem) {
                 if (typeof fieldOfView === "undefined") { fieldOfView = 60; }
-                if (typeof coordinateSystem === "undefined") { coordinateSystem = 0; }
-                _super.call(this);
+                if (typeof coordinateSystem === "undefined") { coordinateSystem = "leftHanded"; }
+                _super.call(this, coordinateSystem);
                 this._preserveAspectRatio = true;
                 this._origin = new away.geom.Point(0.5, 0.5);
                 this.fieldOfView = fieldOfView;
-                this.coordinateSystem = coordinateSystem;
             }
             Object.defineProperty(PerspectiveProjection.prototype, "preserveAspectRatio", {
                 /**
@@ -20794,26 +20786,6 @@ var away;
 
                     if (this._preserveAspectRatio)
                         this.hFocalLength = this._focalLength / this._pAspectRatio;
-                },
-                enumerable: true,
-                configurable: true
-            });
-
-
-            Object.defineProperty(PerspectiveProjection.prototype, "coordinateSystem", {
-                /**
-                * The handedness of the coordinate system projection. The default is LEFT_HANDED.
-                */
-                get: function () {
-                    return this._pCoordinateSystem;
-                },
-                set: function (value) {
-                    if (this._pCoordinateSystem == value)
-                        return;
-
-                    this._pCoordinateSystem = value;
-
-                    this.pInvalidateMatrix();
                 },
                 enumerable: true,
                 configurable: true
@@ -21512,11 +21484,11 @@ var away;
             Object.defineProperty(ObliqueNearPlaneProjection.prototype, "iAspectRatio", {
                 //@override
                 get: function () {
-                    return this._baseProjection.iAspectRatio;
+                    return this._baseProjection._iAspectRatio;
                 },
                 //@override
                 set: function (value) {
-                    this._baseProjection.iAspectRatio = value;
+                    this._baseProjection._iAspectRatio = value;
                 },
                 enumerable: true,
                 configurable: true
@@ -22573,7 +22545,7 @@ var away;
 
                     this._width = value;
                     this._aspectRatio = this._width / this._height;
-                    this._pCamera.projection.iAspectRatio = this._aspectRatio;
+                    this._pCamera.projection._iAspectRatio = this._aspectRatio;
                     this._pRenderer.width = value;
                 },
                 enumerable: true,
@@ -22594,7 +22566,7 @@ var away;
 
                     this._height = value;
                     this._aspectRatio = this._width / this._height;
-                    this._pCamera.projection.iAspectRatio = this._aspectRatio;
+                    this._pCamera.projection._iAspectRatio = this._aspectRatio;
                     this._pRenderer.height = value;
                 },
                 enumerable: true,
@@ -22673,16 +22645,16 @@ var away;
                 this.pUpdateTime();
 
                 //update view and size data
-                this._pCamera.projection.iAspectRatio = this._aspectRatio;
+                this._pCamera.projection._iAspectRatio = this._aspectRatio;
 
                 if (this._scissorDirty) {
                     this._scissorDirty = false;
-                    this._pCamera.projection.iUpdateScissorRect(this._pRenderer.scissorRect.x, this._pRenderer.scissorRect.y, this._pRenderer.scissorRect.width, this._pRenderer.scissorRect.height);
+                    this._pCamera.projection._iUpdateScissorRect(this._pRenderer.scissorRect.x, this._pRenderer.scissorRect.y, this._pRenderer.scissorRect.width, this._pRenderer.scissorRect.height);
                 }
 
                 if (this._viewportDirty) {
                     this._viewportDirty = false;
-                    this._pCamera.projection.iUpdateViewport(this._pRenderer.viewPort.x, this._pRenderer.viewPort.y, this._pRenderer.viewPort.width, this._pRenderer.viewPort.height);
+                    this._pCamera.projection._iUpdateViewport(this._pRenderer.viewPort.x, this._pRenderer.viewPort.y, this._pRenderer.viewPort.width, this._pRenderer.viewPort.height);
                 }
 
                 //clear entity collector ready for collection
@@ -27439,7 +27411,7 @@ var aglsl;
 
             // adjust z from opengl range of -1..1 to 0..1 as in d3d, this also enforces a left handed coordinate system
             if (desc.header.type == "vertex") {
-                body += "  gl_Position = vec4(outpos.x, yflip*outpos.y, outpos.z*2.0 - outpos.w, outpos.w);\n";
+                body += "  gl_Position = vec4(outpos.x, outpos.y, outpos.z*2.0 - outpos.w, outpos.w);\n";
             }
 
             // clamp fragment depth

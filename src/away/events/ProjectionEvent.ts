@@ -8,15 +8,15 @@ module away.events
 	{
 		public static MATRIX_CHANGED:string = "matrixChanged";
 
-		private _projection:away.projections.ProjectionBase;
+		private _projection:away.projections.IProjection;
 
-		constructor(type:string, projection:away.projections.ProjectionBase)
+		constructor(type:string, projection:away.projections.IProjection)
 		{
 			super(type);
 			this._projection = projection;
 		}
 
-		public get projection():away.projections.ProjectionBase
+		public get projection():away.projections.IProjection
 		{
 			return this._projection;
 		}

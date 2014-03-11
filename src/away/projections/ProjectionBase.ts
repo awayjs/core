@@ -2,9 +2,9 @@
 
 module away.projections
 {
-	export class ProjectionBase extends away.events.EventDispatcher
+	export class ProjectionBase extends away.events.EventDispatcher implements IProjection
 	{
-		public _pMatrix:away.geom.Matrix3D;
+		public _pMatrix:away.geom.Matrix3D = new away.geom.Matrix3D();
 		public _pScissorRect:away.geom.Rectangle = new away.geom.Rectangle();
 		public _pViewPort:away.geom.Rectangle = new away.geom.Rectangle();
 		public _pNear:number = 20;
@@ -13,14 +13,34 @@ module away.projections
 
 		public _pMatrixInvalid:boolean = true;
 		public _pFrustumCorners:number[] = [];
+		public _pCoordinateSystem:string;
 
 		private _unprojection:away.geom.Matrix3D;
 		private _unprojectionInvalid:boolean = true;
 
-		constructor()
+		constructor(coordinateSystem:string = "leftHanded")
 		{
 			super();
-			this._pMatrix = new away.geom.Matrix3D();
+
+			this.coordinateSystem = coordinateSystem;
+		}
+
+		/**
+		 * The handedness of the coordinate system projection. The default is LEFT_HANDED.
+		 */
+		public get coordinateSystem():string
+		{
+			return this._pCoordinateSystem;
+		}
+
+		public set coordinateSystem(value:string)
+		{
+			if (this._pCoordinateSystem == value)
+				return;
+
+			this._pCoordinateSystem = value;
+
+			this.pInvalidateMatrix();
 		}
 
 		public get frustumCorners():number[]
@@ -111,12 +131,12 @@ module away.projections
 			throw new away.errors.AbstractMethodError();
 		}
 
-		public get iAspectRatio():number
+		public get _iAspectRatio():number
 		{
 			return this._pAspectRatio;
 		}
 
-		public set iAspectRatio(value:number)
+		public set _iAspectRatio(value:number)
 		{
 			if (this._pAspectRatio == value)
 				return;
@@ -138,7 +158,7 @@ module away.projections
 			throw new away.errors.AbstractMethodError();
 		}
 
-		public iUpdateScissorRect(x:number, y:number, width:number, height:number)
+		public _iUpdateScissorRect(x:number, y:number, width:number, height:number)
 		{
 			this._pScissorRect.x = x;
 			this._pScissorRect.y = y;
@@ -147,7 +167,7 @@ module away.projections
 			this.pInvalidateMatrix();
 		}
 
-		public iUpdateViewport(x:number, y:number, width:number, height:number)
+		public _iUpdateViewport(x:number, y:number, width:number, height:number)
 		{
 			this._pViewPort.x = x;
 			this._pViewPort.y = y;

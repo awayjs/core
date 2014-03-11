@@ -195,6 +195,7 @@
 ///<reference path="entities/TextField.ts" />
 
 ///<reference path="projections/CoordinateSystem.ts" />
+///<reference path="projections/IProjection.ts" />
 ///<reference path="projections/ProjectionBase.ts" />
 ///<reference path="projections/PerspectiveProjection.ts" />
 ///<reference path="projections/FreeMatrixProjection.ts" />

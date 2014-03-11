@@ -286,18 +286,18 @@ module away.gl
 			this._gl.colorMask(red, green, blue, alpha);
 		}
 
-		public setCulling(triangleFaceToCull:string)
+		public setCulling(triangleFaceToCull:string, coordinateSystem:string = "leftHanded")
 		{
 			if (triangleFaceToCull == ContextGLTriangleFace.NONE) {
 				this._gl.disable(this._gl.CULL_FACE);
 			} else {
 				this._gl.enable(this._gl.CULL_FACE);
 				switch (triangleFaceToCull) {
-					case ContextGLTriangleFace.FRONT:
-						this._gl.cullFace(this._gl.BACK);
-						break
 					case ContextGLTriangleFace.BACK:
-						this._gl.cullFace(this._gl.FRONT);
+						this._gl.cullFace((coordinateSystem == "leftHanded")? this._gl.FRONT : this._gl.BACK);
+						break
+					case ContextGLTriangleFace.FRONT:
+						this._gl.cullFace((coordinateSystem == "leftHanded")? this._gl.BACK : this._gl.FRONT);
 						break;
 					case ContextGLTriangleFace.FRONT_AND_BACK:
 						this._gl.cullFace(this._gl.FRONT_AND_BACK);

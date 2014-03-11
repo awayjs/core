@@ -10,13 +10,11 @@ module away.projections
 		private _hFocalLength:number;
 		private _preserveAspectRatio:boolean = true;
 		private _origin:away.geom.Point = new away.geom.Point(0.5, 0.5);
-		private _pCoordinateSystem:number;
 
-		constructor(fieldOfView:number = 60, coordinateSystem:number = 0)
+		constructor(fieldOfView:number = 60, coordinateSystem:string = "leftHanded")
 		{
-			super();
+			super(coordinateSystem);
 			this.fieldOfView = fieldOfView;
-			this.coordinateSystem = coordinateSystem;
 		}
 
 		/**
@@ -36,24 +34,6 @@ module away.projections
 
 			if (this._preserveAspectRatio)
 				this.hFocalLength = this._focalLength/this._pAspectRatio;
-		}
-
-		/**
-		 * The handedness of the coordinate system projection. The default is LEFT_HANDED.
-		 */
-		public get coordinateSystem():number
-		{
-			return this._pCoordinateSystem;
-		}
-
-		public set coordinateSystem(value:number)
-		{
-			if (this._pCoordinateSystem == value)
-				return;
-
-			this._pCoordinateSystem = value;
-
-			this.pInvalidateMatrix();
 		}
 
 		/**

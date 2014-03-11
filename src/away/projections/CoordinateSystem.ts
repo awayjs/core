@@ -10,11 +10,11 @@ module away.projections
 		/**
 		 * Default option, projects to a left-handed coordinate system
 		 */
-		public static LEFT_HANDED:number /*uint*/ = 0;
+		public static LEFT_HANDED:string = "leftHanded";
 		
 		/**
 		 * Projects to a right-handed coordinate system
 		 */
-		public static RIGHT_HANDED:number /*uint*/ = 1;
+		public static RIGHT_HANDED:string = "rightHanded";
 	}
 }

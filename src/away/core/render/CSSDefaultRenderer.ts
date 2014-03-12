@@ -226,7 +226,7 @@ module away.render
 					= style["-webkit-transform"]
 					= style["-moz-transform"]
 					= style["-o-transform"]
-					= style["-ms-transform"] = ((<away.projections.PerspectiveProjection> entityCollector.camera.projection).coordinateSystem == away.projections.CoordinateSystem.RIGHT_HANDED)? "" : "scale3d(1, -1, 1) translateY(-" + style.height + ")";
+					= style["-ms-transform"] = (entityCollector.camera.projection.coordinateSystem == away.projections.CoordinateSystem.RIGHT_HANDED)? "" : "scale3d(1, -1, 1) translateY(-" + style.height + ")";
 			}
 
 			this.drawRenderables(this._renderableHead, entityCollector);
@@ -247,8 +247,8 @@ module away.render
 			this._container.style.clip = "rect(0px, " + this._width + "px, " + this._height + "px, 0px)";
 
 			//update context matrix
-			this._contextMatrix.rawData[0] = this._width;
-			this._contextMatrix.rawData[5] = -this._height;
+			this._contextMatrix.rawData[0] = this._width/2;
+			this._contextMatrix.rawData[5] = -this._height/2;
 			this._contextMatrix.rawData[10] = -1; //fix for innaccurate z-sort
 			this._contextMatrix.rawData[12] = this._width/2;
 			this._contextMatrix.rawData[13] = this._height/2;

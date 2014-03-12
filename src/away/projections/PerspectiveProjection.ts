@@ -4,11 +4,12 @@ module away.projections
 {
 	export class PerspectiveProjection extends ProjectionBase
 	{
-		private _fieldOfView:number;
-		private _focalLength:number;
-		private _hFieldOfView:number;
-		private _hFocalLength:number;
+		private _fieldOfView:number = 60;
+		private _focalLength:number = 1000;
+		private _hFieldOfView:number = 60;
+		private _hFocalLength:number = 1000;
 		private _preserveAspectRatio:boolean = true;
+		private _preserveFocalLength:boolean = false;
 		private _origin:away.geom.Point = new away.geom.Point(0.5, 0.5);
 
 		constructor(fieldOfView:number = 60, coordinateSystem:string = "leftHanded")
@@ -33,7 +34,25 @@ module away.projections
 			this._preserveAspectRatio = value;
 
 			if (this._preserveAspectRatio)
-				this.hFocalLength = this._focalLength/this._pAspectRatio;
+				this.pInvalidateMatrix();
+		}
+
+		/**
+		 *
+		 */
+		public get preserveFocalLength():boolean
+		{
+			return this._preserveFocalLength;
+		}
+
+		public set preserveFocalLength(value:boolean)
+		{
+			if (this._preserveFocalLength == value)
+				return;
+
+			this._preserveFocalLength = value;
+
+			this.pInvalidateMatrix();
 		}
 
 		/**
@@ -50,8 +69,6 @@ module away.projections
 				return;
 
 			this._fieldOfView = value;
-
-			this._focalLength = 1/Math.tan(this._fieldOfView*Math.PI/360);
 
 			this.pInvalidateMatrix();
 		}
@@ -70,8 +87,6 @@ module away.projections
 				return;
 
 			this._focalLength = value;
-
-			this._fieldOfView = Math.atan(1/this._focalLength)*360/Math.PI;
 
 			this.pInvalidateMatrix();
 		}
@@ -110,8 +125,6 @@ module away.projections
 				return;
 
 			this._hFocalLength = value;
-
-			this._hFieldOfView = Math.atan(1/this._hFocalLength)*360/Math.PI;
 
 			this.pInvalidateMatrix();
 		}
@@ -163,16 +176,24 @@ module away.projections
 		{
 			var raw:number[] = [];
 
-			if (this._preserveAspectRatio)
-				this.hFocalLength = this._focalLength/this._pAspectRatio;
+			if (this._preserveFocalLength) {
+				if (this._preserveAspectRatio)
+					this._hFocalLength = this._focalLength;
 
-			var tanMinX = -(this._origin.x + 0.5)/this._hFocalLength;
-			var tanMaxX = (1.5 - this._origin.x)/this._hFocalLength;
-			var tanMinY = -(this._origin.y + 0.5)/this._focalLength;
-			var tanMaxY = (1.5 - this._origin.y)/this._focalLength;
+				this._fieldOfView = Math.atan(this._pScissorRect.height/this._focalLength)*360/Math.PI;
+				this._hFieldOfView = Math.atan(this._pScissorRect.width/this._hFocalLength)*360/Math.PI;
+			} else {
+				this._focalLength = this._pScissorRect.height/Math.tan(this._fieldOfView*Math.PI/360);
+				if (this._preserveAspectRatio)
+					this._hFocalLength = this._focalLength;
+				else
+					this._hFocalLength = this._pScissorRect.width/Math.tan(this._hFieldOfView*Math.PI/360);
+			}
 
-			var minLengthFracX:number = -tanMinX/(tanMaxX - tanMinX);
-			var minLengthFracY:number = -tanMinY/(tanMaxY - tanMinY);
+			var tanMinX = -this._origin.x/this._hFocalLength;
+			var tanMaxX = (1 - this._origin.x)/this._hFocalLength;
+			var tanMinY = -this._origin.y/this._focalLength;
+			var tanMaxY = (1 - this._origin.y)/this._focalLength;
 
 			var left:number;
 			var right:number;
@@ -180,13 +201,13 @@ module away.projections
 			var bottom:number;
 
 			// assume scissored frustum
-			var center:number = -tanMinX*(this._pScissorRect.x + this._pScissorRect.width*minLengthFracX)/(this._pScissorRect.width*minLengthFracX);
-			var middle:number = tanMinY*(this._pScissorRect.y + this._pScissorRect.height*minLengthFracY)/(this._pScissorRect.height*minLengthFracY);
+			var center:number = -((tanMinX - tanMaxX)*this._pScissorRect.x + tanMinX*this._pScissorRect.width);
+			var middle:number = ((tanMinY - tanMaxY)*this._pScissorRect.y + tanMinY*this._pScissorRect.height);
 
-			left = center - (tanMaxX - tanMinX)*(this._pViewPort.width/this._pScissorRect.width);
+			left = center - (tanMaxX - tanMinX)*this._pViewPort.width;
 			right = center;
 			top = middle;
-			bottom = middle + (tanMaxY - tanMinY)*(this._pViewPort.height/this._pScissorRect.height);
+			bottom = middle + (tanMaxY - tanMinY)*this._pViewPort.height;
 
 			raw[0] = 2/(right - left);
 			raw[5] = 2/(bottom - top);

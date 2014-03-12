@@ -201,7 +201,6 @@
 ///<reference path="projections/FreeMatrixProjection.ts" />
 ///<reference path="projections/OrthographicProjection.ts" />
 ///<reference path="projections/OrthographicOffCenterProjection.ts" />
-///<reference path="projections/PerspectiveOffCenterProjection.ts" />
 ///<reference path="projections/ObliqueNearPlaneProjection.ts" />
 
 ///<reference path="containers/Loader.ts" />

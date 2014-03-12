@@ -57,6 +57,8 @@ module tests.entities
 
 
 			this._projection.coordinateSystem = away.projections.CoordinateSystem.RIGHT_HANDED;
+			this._projection.focalLength = 1000;
+			this._projection.preserveFocalLength = true;
 			this._projection.origin.x = 0;
 			this._projection.origin.y = 0;
 
@@ -105,7 +107,6 @@ module tests.entities
 			this._view.y = 0;
 			this._view.width = window.innerWidth;
 			this._view.height = window.innerHeight;
-			(<away.projections.PerspectiveProjection> this._view.camera.projection).focalLength = 1000/window.innerHeight;
 		}
 
 		private render(dt:number)

@@ -180,14 +180,15 @@ module away.projections
 				if (this._preserveAspectRatio)
 					this._hFocalLength = this._focalLength;
 
-				this._fieldOfView = Math.atan(this._pScissorRect.height/this._focalLength)*360/Math.PI;
-				this._hFieldOfView = Math.atan(this._pScissorRect.width/this._hFocalLength)*360/Math.PI;
+				this._fieldOfView = Math.atan(0.5*this._pScissorRect.height/this._focalLength)*360/Math.PI;
+				this._hFieldOfView = Math.atan(0.5*this._pScissorRect.width/this._hFocalLength)*360/Math.PI;
 			} else {
-				this._focalLength = this._pScissorRect.height/Math.tan(this._fieldOfView*Math.PI/360);
+				this._focalLength = 0.5*this._pScissorRect.height/Math.tan(this._fieldOfView*Math.PI/360);
+
 				if (this._preserveAspectRatio)
 					this._hFocalLength = this._focalLength;
 				else
-					this._hFocalLength = this._pScissorRect.width/Math.tan(this._hFieldOfView*Math.PI/360);
+					this._hFocalLength = 0.5*this._pScissorRect.width/Math.tan(this._hFieldOfView*Math.PI/360);
 			}
 
 			var tanMinX = -this._origin.x/this._hFocalLength;

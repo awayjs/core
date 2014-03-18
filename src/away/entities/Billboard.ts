@@ -184,17 +184,6 @@ module away.entities
 		}
 
 		/**
-		 * @protected
-		 */
-		public pInvalidateBounds()
-		{
-			super.pInvalidateBounds();
-
-			if (this._iAssignedPartition)
-				this._iAssignedPartition.iMarkForUpdate(this);
-		}
-
-		/**
 		 * @internal
 		 */
 		public _iSetUVMatrixComponents(offsetU:number, offsetV:number, scaleU:number, scaleV:number, rotationUV:number)

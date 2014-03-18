@@ -162,6 +162,38 @@ module away.base
 
 		/**
 		 *
+		 * @param rect
+		 * @param inputByteArray
+		 */
+		public setPixels(rect:away.geom.Rectangle, inputByteArray:away.utils.ByteArray)
+		{
+			if (!this._locked) {
+				this._imageData = this._context.getImageData(0, 0, this._rect.width, this._rect.height);
+			}
+
+			if (this._imageData) {
+				inputByteArray.position = 0;
+				var i:number /*uint*/, j:number /*uint*/, index:number /*uint*/;
+				for (i = 0; i < rect.width; ++i) {
+					for (j = 0; j < rect.height; ++j) {
+						index = (i + rect.x + (j + rect.y)*this._imageCanvas.width)*4;
+
+						this._imageData.data[index + 0] = inputByteArray.readUnsignedInt();
+						this._imageData.data[index + 1] = inputByteArray.readUnsignedInt();
+						this._imageData.data[index + 2] = inputByteArray.readUnsignedInt();
+						this._imageData.data[index + 3] = inputByteArray.readUnsignedInt();
+					}
+				}
+			}
+
+			if (!this._locked) {
+				this._context.putImageData(this._imageData, 0, 0);
+				this._imageData = null;
+			}
+		}
+
+		/**
+		 *
 		 * @param x
 		 * @param y
 		 * @param color

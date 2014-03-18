@@ -34,6 +34,7 @@
 ///<reference path="events/ProjectionEvent.ts" />
 ///<reference path="events/LoaderEvent.ts" />
 ///<reference path="events/ParserEvent.ts" />
+///<reference path="events/MouseEvent.ts"/>
 ///<reference path="events/MaterialEvent.ts" />
 ///<reference path="events/ProgressEvent.ts" />
 ///<reference path="events/RendererEvent.ts" />
@@ -106,6 +107,8 @@
 ///<reference path="core/pool/CSSBillboardRenderable.ts"/>
 
 ///<reference path="core/traverse/ICollector.ts" />
+///<reference path="core/traverse/CollectorBase.ts" />
+///<reference path="core/traverse/RaycastCollector.ts" />
 ///<reference path="core/traverse/CSSEntityCollector.ts" />
 
 ///<reference path="core/partition/NodeBase.ts" />
@@ -117,6 +120,7 @@
 ///<reference path="core/pick/IPickingCollider.ts" />
 ///<reference path="core/pick/IPicker.ts"/>
 ///<reference path="core/pick/PickingCollisionVO.ts"/>
+///<reference path="core/pick/RaycastPicker.ts" />
 
 ///<reference path="core/render/IRenderer.ts"/>
 ///<reference path="core/render/CSSRendererBase.ts"/>
@@ -203,6 +207,10 @@
 ///<reference path="projections/OrthographicOffCenterProjection.ts" />
 ///<reference path="projections/ObliqueNearPlaneProjection.ts" />
 
+///<reference path="managers/MouseManager.ts"/>
+///<reference path="managers/RTTBufferManager.ts"/>
+///<reference path="managers/StageGLManager.ts"/>
+
 ///<reference path="containers/Loader.ts" />
 ///<reference path="containers/Scene.ts" />
 ///<reference path="containers/View.ts" />
@@ -221,9 +229,6 @@
 
 ///<reference path="materials/IMaterial.ts"/>
 ///<reference path="materials/CSSMaterialBase.ts"/>
-
-///<reference path="managers/RTTBufferManager.ts"/>
-///<reference path="managers/StageGLManager.ts"/>
 
 ///<reference path="animators/IAnimator.ts"/>
 

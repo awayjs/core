@@ -10,6 +10,8 @@ module away.pool
 	 */
 	export class CSSBillboardRenderable extends CSSRenderableBase
 	{
+		public static id:string = "billboard";
+
 		constructor(pool:RenderablePool, billboard:away.entities.Billboard)
 		{
 			super(pool, billboard, billboard);

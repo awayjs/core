@@ -820,7 +820,7 @@ module away.base
 		 * the range. For example, the statement <code>my_video.rotation = 450</code>
 		 * is the same as <code> my_video.rotation = 90</code>.
 		 */
-		public rotation:number;
+		public rotation:number; //TODO
 
 		/**
 		 * Indicates the x-axis rotation of the DisplayObject instance, in degrees,
@@ -1984,6 +1984,10 @@ module away.base
 		{
 			this._pBoundsInvalid = true;
 			this._worldBoundsInvalid = true;
+
+
+			if (this.isEntity)
+				this.invalidatePartition();
 		}
 
 		/**
@@ -1996,6 +2000,9 @@ module away.base
 			this._scenePositionDirty = !this._pIgnoreTransform;
 
 			this._worldBoundsInvalid = !this._pIgnoreTransform;
+
+			if (this.isEntity)
+				this.invalidatePartition();
 
 			if (this._listenToSceneTransformChanged)
 				this.notifySceneTransformChange();
@@ -2274,6 +2281,15 @@ module away.base
 
 			if (!this._pSceneTransformDirty && !this._pIgnoreTransform)
 				this.pInvalidateSceneTransform();
+		}
+
+		/**
+		 * @private
+		 */
+		private invalidatePartition()
+		{
+			if (this._iAssignedPartition)
+				this._iAssignedPartition.iMarkForUpdate(this);
 		}
 
 		/**

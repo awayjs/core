@@ -13,7 +13,7 @@ module away.render
 	 */
 	export class CSSRendererBase extends away.events.EventDispatcher
 	{
-		public static billboardRenderablePool:away.pool.RenderablePool = new away.pool.RenderablePool(away.pool.CSSBillboardRenderable);
+		private _billboardRenderablePool:away.pool.RenderablePool;
 
 		public _pCamera:away.entities.Camera;
 		public _iEntryPoint:away.geom.Vector3D;
@@ -23,6 +23,7 @@ module away.render
 		private _backgroundG:number = 0;
 		private _backgroundB:number = 0;
 		private _backgroundAlpha:number = 1;
+		private _shareContext:boolean = false;
 
 		public _pBackBufferInvalid:boolean = true;
 		public _depthTextureInvalid:boolean = true;
@@ -35,11 +36,8 @@ module away.render
 		constructor(renderToTexture:boolean = false, forceSoftware:boolean = false, profile:string = "baseline")
 		{
 			super();
-		}
 
-		public _iCreateEntityCollector():away.traverse.ICollector
-		{
-			return new away.traverse.CSSEntityCollector();
+			this._billboardRenderablePool = away.pool.RenderablePool.getPool(away.pool.CSSBillboardRenderable);
 		}
 
 		/**
@@ -100,6 +98,21 @@ module away.render
 			this._backgroundB = value;
 
 			this._pBackBufferInvalid = true;
+		}
+
+		public get shareContext():boolean
+		{
+			return this._shareContext;
+		}
+
+		public set shareContext(value:boolean)
+		{
+			if (this._shareContext == value)
+				return;
+
+			this._shareContext = value;
+
+			this.updateGlobalPos();
 		}
 
 		/**
@@ -204,7 +217,7 @@ module away.render
 		 */
 		public applyBillboard(billboard:away.entities.Billboard)
 		{
-			this.applyRenderable(<away.pool.CSSRenderableBase> CSSRendererBase.billboardRenderablePool.getItem(billboard));
+			this.applyRenderable(<away.pool.CSSRenderableBase> this._billboardRenderablePool.getItem(billboard));
 		}
 
 		/**
@@ -260,7 +273,7 @@ module away.render
 		 *
 		 * @internal
 		 */
-		public static _iCollidesBefore(entity:away.entities.IEntity, shortestCollisionDistance:number, findClosest:boolean):boolean
+		public _iCollidesBefore(entity:away.entities.IEntity, shortestCollisionDistance:number, findClosest:boolean):boolean
 		{
 			var pickingCollider:away.pick.IPickingCollider = entity.pickingCollider;
 			var pickingCollisionVO:away.pick.PickingCollisionVO = entity._iPickingCollisionVO;

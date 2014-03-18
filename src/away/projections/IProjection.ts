@@ -12,7 +12,6 @@ module away.projections
 	 */
 	export interface IProjection extends away.events.IEventDispatcher
 	{
-
 		coordinateSystem:string;
 
 		frustumCorners:Array<number>
@@ -20,6 +19,10 @@ module away.projections
 		matrix:away.geom.Matrix3D;
 
 		near:number;
+
+		originX:number;
+
+		originY:number;
 
 		far:number;
 

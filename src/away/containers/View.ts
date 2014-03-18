@@ -2,23 +2,24 @@
 
 module away.containers
 {
-	import ContextGL					= away.gl.ContextGL;
-	import ContextGLTextureFormat		= away.gl.ContextGLTextureFormat;
-	import Texture						= away.gl.Texture;
+	import Scene						= away.containers.Scene;
+	import Camera						= away.entities.Camera;
+	import CameraEvent					= away.events.CameraEvent;
+	import SceneEvent					= away.events.SceneEvent;
 	import RendererEvent				= away.events.RendererEvent;
 	import Matrix3D						= away.geom.Matrix3D;
 	import Point						= away.geom.Point;
 	import Rectangle					= away.geom.Rectangle;
 	import Vector3D						= away.geom.Vector3D;
-	import Delegate						= away.utils.Delegate;
-
-	import Camera						= away.entities.Camera;
-	import Scene						= away.containers.Scene;
-	import CameraEvent					= away.events.CameraEvent;
-	import SceneEvent					= away.events.SceneEvent;
+	import ContextGL					= away.gl.ContextGL;
+	import ContextGLTextureFormat		= away.gl.ContextGLTextureFormat;
+	import Texture						= away.gl.Texture;
+	import MouseManager					= away.managers.MouseManager;
 	import IRenderer					= away.render.IRenderer;
 	import CSSRendererBase				= away.render.CSSRendererBase;
 	import ICollector					= away.traverse.ICollector;
+	import Delegate						= away.utils.Delegate;
+
 
 	export class View
 	{
@@ -60,6 +61,12 @@ module away.containers
 		private _onProjectionChangedDelegate;
 		private _onViewportUpdatedDelegate;
 		private _onScissorUpdatedDelegate;
+		private _mouseManager:MouseManager;
+
+		private _htmlElement:HTMLDivElement;
+		private _shareContext:boolean;
+		public _pMouseX:number;
+		public _pMouseY:number;
 
 		/*
 		 ***********************************************************************
@@ -68,7 +75,6 @@ module away.containers
 		 *
 		 * private _background:away.textures.Texture2DBase;
 		 *
-		 * public _pMouse3DManager:away.managers.Mouse3DManager;
 		 * public _pTouch3DManager:away.managers.Touch3DManager;
 		 *
 		 */
@@ -82,6 +88,17 @@ module away.containers
 			this.scene = scene || new Scene();
 			this.camera = camera || new Camera();
 			this.renderer = renderer;
+
+			this._htmlElement = document.createElement("div");
+			this._htmlElement.style.position = "absolute";
+
+			document.body.appendChild(this._htmlElement);
+
+			this._mouseManager = MouseManager.getInstance();
+			this._mouseManager.registerView(this);
+
+//			if (this._shareContext)
+//				this._mouse3DManager.addViewLayer(this);
 		}
 
 		/**
@@ -94,6 +111,25 @@ module away.containers
 				this._pCamera.partition = this.scene.partition;
 		}
 
+		public layeredView:boolean; //TODO: something to enable this correctly
+
+		public get mouseX():number
+		{
+			return this._pMouseX;
+		}
+
+		public get mouseY():number
+		{
+			return this._pMouseY;
+		}
+
+		/**
+		 *
+		 */
+		public get htmlElement():HTMLDivElement
+		{
+			return this._htmlElement;
+		}
 		/**
 		 *
 		 */
@@ -131,21 +167,38 @@ module away.containers
 			this._pRenderer._iBackgroundAlpha = this._backgroundAlpha;
 			this._pRenderer.width = this._width;
 			this._pRenderer.height = this._height;
+			this._pRenderer.shareContext = this._shareContext;
+
+			this.mousePicker = this._pRenderer.getDefaultPicker();
 		}
 
 		/**
 		 *
-		 * @returns {number}
+		 */
+		public get shareContext():boolean
+		{
+			return this._shareContext;
+		}
+
+		public set shareContext(value:boolean)
+		{
+			if (this._shareContext == value)
+				return;
+
+			this._shareContext = value;
+
+			if (this._pRenderer)
+				this._pRenderer.shareContext = this._shareContext;
+		}
+
+		/**
+		 *
 		 */
 		public get backgroundColor():number
 		{
 			return this._backgroundColor;
 		}
 
-		/**
-		 *
-		 * @param value
-		 */
 		public set backgroundColor(value:number)
 		{
 			if (this._backgroundColor == value)
@@ -271,6 +324,7 @@ module away.containers
 			this._aspectRatio = this._width/this._height;
 			this._pCamera.projection._iAspectRatio = this._aspectRatio;
 			this._pRenderer.width = value;
+			this._htmlElement.style.width = value + "px";
 		}
 
 		/**
@@ -290,6 +344,7 @@ module away.containers
 			this._aspectRatio = this._width/this._height;
 			this._pCamera.projection._iAspectRatio = this._aspectRatio;
 			this._pRenderer.height = value;
+			this._htmlElement.style.height = value + "px";
 		}
 
 		/**
@@ -306,6 +361,7 @@ module away.containers
 				return;
 
 			this._pRenderer.x == value;
+			this._htmlElement.style.left = value + "px";
 		}
 
 		/**
@@ -322,6 +378,7 @@ module away.containers
 				return;
 
 			this._pRenderer.y == value;
+			this._htmlElement.style.top = value + "px";
 		}
 
 		/**
@@ -329,12 +386,13 @@ module away.containers
 		 */
 		public get visible():boolean
 		{
-			return true;
+			return (this._htmlElement.style.visibility == "visible");
 		}
 
-		public set visible(v:boolean)
+		public set visible(value:boolean)
 		{
-			//TODO
+			this._htmlElement.style.visibility = value? "visible" : "hidden";
+			//TODO transfer visible property to associated context (if one exists)
 		}
 
 		/**
@@ -367,28 +425,24 @@ module away.containers
 				this._pCamera.projection._iUpdateViewport(this._pRenderer.viewPort.x, this._pRenderer.viewPort.y, this._pRenderer.viewPort.width, this._pRenderer.viewPort.height);
 			}
 
+			// update picking
+			if (!this._shareContext) {
+				if (this.forceMouseMove && this._htmlElement == this._mouseManager._iActiveDiv && !this._mouseManager._iUpdateDirty)
+					this._mouseManager._iCollidingObject = this.mousePicker.getViewCollision(this._pMouseX, this._pMouseY, this);
+
+				this._mouseManager.fireMouseEvents(this.forceMouseMove);
+				//_touch3DManager.fireTouchEvents();
+			}
+			//_touch3DManager.updateCollider();
+
 			//clear entity collector ready for collection
 			this._pEntityCollector.clear();
 
 			// collect stuff to render
 			this._pScene.traversePartitions(this._pEntityCollector);
 
-			// TODO: implement & integrate mouse3DManager
-			// update picking
-			//_mouse3DManager.updateCollider(this);
-			//_touch3DManager.updateCollider();
-
 			//render the contents of the entity collector
 			this._pRenderer.render(this._pEntityCollector);
-
-			//if (!this._pShareContext) {
-
-				// TODO: imeplement mouse3dManager
-				// fire collected mouse events
-				//_mouse3DManager.fireMouseEvents();
-				//_touch3DManager.fireTouchEvents();
-
-			//}
 		}
 
 		/**
@@ -412,12 +466,13 @@ module away.containers
 		{
 			this._pRenderer.dispose();
 
-			// TODO: imeplement mouse3DManager / touch3DManager
-			//this._mouse3DManager.disableMouseListeners(this);
-			//this._mouse3DManager.dispose();
+			// TODO: imeplement mouseManager / touch3DManager
+			this._mouseManager.unregisterView(this);
+
 			//this._touch3DManager.disableTouchListeners(this);
 			//this._touch3DManager.dispose();
-			//this._mouse3DManager = null;
+
+			this._mouseManager = null;
 			//this._touch3DManager = null;
 
 			this._pRenderer = null;
@@ -468,7 +523,7 @@ module away.containers
 
 		public unproject(sX:number, sY:number, sZ:number):Vector3D
 		{
-			return this._pCamera.unproject((sX*2 - this._width)/this._pRenderer.viewPort.width, (sY*2 - this._height)/this._pRenderer.viewPort.height, sZ);
+			return this._pCamera.unproject(2*(sX - this._width*this._pCamera.projection.originX)/this._pRenderer.viewPort.width, 2*(sY - this._height*this._pCamera.projection.originY)/this._pRenderer.viewPort.height, sZ);
 
 		}
 
@@ -477,18 +532,8 @@ module away.containers
 			return this._pCamera.getRay((sX*2 - this._width)/this._width, (sY*2 - this._height)/this._height, sZ);
 		}
 
-		/* TODO: implement Mouse3DManager
-		 public get mousePicker():away.pick.IPicker
-		 {
-		 return this._mouse3DManager.mousePicker;
-		 }
-		 */
-		/* TODO: implement Mouse3DManager
-		 public set mousePicker( value:away.pick.IPicker )
-		 {
-		 this._mouse3DManager.mousePicker = value;
-		 }
-		 */
+		public mousePicker:away.pick.IPicker;
+
 		/* TODO: implement Touch3DManager
 		 public get touchPicker():away.pick.IPicker
 		 {
@@ -501,19 +546,9 @@ module away.containers
 		 this._touch3DManager.touchPicker = value;
 		 }
 		 */
-		/*TODO: implement Mouse3DManager
-		 public get forceMouseMove():boolean
-		 {
-		 return this._mouse3DManager.forceMouseMove;
-		 }
-		 */
-		/* TODO: implement Mouse3DManager
-		 public set forceMouseMove( value:boolean )
-		 {
-		 this._mouse3DManager.forceMouseMove = value;
-		 this._touch3DManager.forceTouchMove = value;
-		 }
-		 */
+
+		public forceMouseMove:boolean;
+
 		/*TODO: implement Background
 		 public get background():away.textures.Texture2DBase
 		 {
@@ -527,5 +562,19 @@ module away.containers
 		 this._renderer.background = _background;
 		 }
 		 */
+
+		// TODO: required dependency stageGL
+		public updateCollider()
+		{
+			if (!this._shareContext) {
+				if (this._htmlElement == this._mouseManager._iActiveDiv)
+					this._mouseManager._iCollidingObject = this.mousePicker.getViewCollision(this._pMouseX, this._pMouseY, this);
+			} else {
+				var collidingObject:away.pick.PickingCollisionVO = this.mousePicker.getViewCollision(this._pMouseX, this._pMouseY, this);
+
+				if (this.layeredView || this._mouseManager._iCollidingObject == null || collidingObject.rayEntryDistance < this._mouseManager._iCollidingObject.rayEntryDistance)
+					this._mouseManager._iCollidingObject = collidingObject;
+			}
+		}
 	}
 }

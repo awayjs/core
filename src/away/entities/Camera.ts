@@ -249,8 +249,8 @@ module away.entities
 		/**
 		 * Calculates the scene position of the given normalized coordinates in screen space.
 		 *
-		 * @param nX The normalised x coordinate in screen space, -1 corresponds to the left edge of the viewport, 1 to the right.
-		 * @param nY The normalised y coordinate in screen space, -1 corresponds to the top edge of the viewport, 1 to the bottom.
+		 * @param nX The normalised x coordinate in screen space, minus the originX offset of the projection property.
+		 * @param nY The normalised y coordinate in screen space, minus the originY offset of the projection property.
 		 * @param sZ The z coordinate in screen space, representing the distance into the screen.
 		 * @return The scene position of the given screen coordinates.
 		 */

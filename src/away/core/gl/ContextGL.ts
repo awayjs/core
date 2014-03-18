@@ -151,34 +151,14 @@ module away.gl
 
 		public drawToBitmapData(destination:away.base.BitmapData)
 		{
-			// TODO drawToBitmapData( destination:away.base.BitmapData )
+			var arrayBuffer:ArrayBuffer = new ArrayBuffer(destination.width*destination.height*4);
 
-			/*
-			 rttFramebuffer = gl.createFramebuffer();
-			 gl.bindFramebuffer(gl.FRAMEBUFFER, rttFramebuffer);
-			 rttFramebuffer.width = 512;
-			 rttFramebuffer.height = 512;
+			this._gl.readPixels(0, 0, destination.width, destination.height, this._gl.RGBA, this._gl.UNSIGNED_BYTE, new Uint8Array(arrayBuffer));
 
-			 rttTexture = gl.createTexture();
-			 gl.bindTexture(gl.TEXTURE_2D, rttTexture);
-			 gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
-			 gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_NEAREST);
-			 gl.generateMipmap(gl.TEXTURE_2D);
-			 gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, rttFramebuffer.width, rttFramebuffer.height, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
+			var byteArray:away.utils.ByteArray = new away.utils.ByteArray();
+			byteArray.setArrayBuffer(arrayBuffer);
 
-			 var renderbuffer = gl.createRenderbuffer();
-			 gl.bindRenderbuffer(gl.RENDERBUFFER, renderbuffer);
-			 gl.renderbufferStorage(gl.RENDERBUFFER, gl.DEPTH_COMPONENT16, rttFramebuffer.width, rttFramebuffer.height);
-
-			 gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, rttTexture, 0);
-			 gl.framebufferRenderbuffer(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.RENDERBUFFER, renderbuffer);
-
-			 gl.bindTexture(gl.TEXTURE_2D, null);
-			 gl.bindRenderbuffer(gl.RENDERBUFFER, null);
-			 gl.bindFramebuffer(gl.FRAMEBUFFER, null);
-			 */
-
-			throw new away.errors.PartialImplementationError();
+			destination.setPixels(new away.geom.Rectangle(0, 0, destination.width, destination.height), byteArray);
 		}
 
 		public drawTriangles(indexBuffer:IndexBuffer, firstIndex:number = 0, numTriangles:number = -1)

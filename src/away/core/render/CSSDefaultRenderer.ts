@@ -13,6 +13,11 @@ module away.render
 	 */
 	export class CSSDefaultRenderer extends CSSRendererBase implements IRenderer
 	{
+		private _rayCastPicker:away.pick.RaycastPicker;
+		private _rayCastPickerClosest:away.pick.RaycastPicker;
+
+		public static CSS_RAYCAST_PICKER:string = "cssRaycastPicker";
+
 		private _container:HTMLDivElement;
 		private _context:HTMLDivElement;
 		private _contextStyle:MSStyleCSSProperties;
@@ -180,6 +185,41 @@ module away.render
 
 			if (this._height == 0)
 				this.height = window.innerHeight;
+		}
+
+
+		/**
+		 * //TODO
+		 *
+		 * away.pick.RaycastPicker
+		 */
+		public getDefaultPicker():away.pick.IPicker
+		{
+			return this.getPicker(CSSDefaultRenderer.CSS_RAYCAST_PICKER);
+		}
+
+		/**
+		 * //TODO
+		 *
+		 * @param type
+		 * @param findClosestCollision
+		 * @returns away.pick.RaycastPicker
+		 */
+		public getPicker(type:string, findClosestCollision:boolean = false):away.pick.IPicker
+		{
+			if (type == CSSDefaultRenderer.CSS_RAYCAST_PICKER) {
+				if (findClosestCollision) {
+					if (this._rayCastPickerClosest)
+						return this._rayCastPickerClosest;
+
+					return (this._rayCastPickerClosest = new away.pick.RaycastPicker(this, true));
+				} else {
+					if (this._rayCastPicker)
+						return this._rayCastPicker;
+
+					return (this._rayCastPicker = new away.pick.RaycastPicker(this, false));
+				}
+			}
 		}
 
 		/**
@@ -356,6 +396,9 @@ module away.render
 		{
 			super.dispose();
 
+			this._rayCastPickerClosest = null;
+			this._rayCastPicker = null;
+
 			//TODO
 		}
 
@@ -402,6 +445,12 @@ module away.render
 
 			this.notifyViewportUpdate();
 			this.notifyScissorUpdate();
+		}
+
+
+		public _iCreateEntityCollector():away.traverse.ICollector
+		{
+			return new away.traverse.CSSEntityCollector(this);
 		}
 	}
 }

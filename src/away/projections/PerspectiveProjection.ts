@@ -10,7 +10,6 @@ module away.projections
 		private _hFocalLength:number = 1000;
 		private _preserveAspectRatio:boolean = true;
 		private _preserveFocalLength:boolean = false;
-		private _origin:away.geom.Point = new away.geom.Point(0.5, 0.5);
 
 		constructor(fieldOfView:number = 60, coordinateSystem:string = "leftHanded")
 		{
@@ -129,20 +128,6 @@ module away.projections
 			this.pInvalidateMatrix();
 		}
 
-		public get origin():away.geom.Point
-		{
-			return this._origin;
-		}
-
-		public set origin(value:away.geom.Point)
-		{
-			if (this._origin == value)
-				return;
-
-			this._origin = value;
-		}
-
-
 
 		//@override
 		public unproject(nX:number, nY:number, sZ:number):away.geom.Vector3D
@@ -191,10 +176,10 @@ module away.projections
 					this._hFocalLength = 0.5*this._pScissorRect.width/Math.tan(this._hFieldOfView*Math.PI/360);
 			}
 
-			var tanMinX = -this._origin.x/this._hFocalLength;
-			var tanMaxX = (1 - this._origin.x)/this._hFocalLength;
-			var tanMinY = -this._origin.y/this._focalLength;
-			var tanMaxY = (1 - this._origin.y)/this._focalLength;
+			var tanMinX = -this._pOriginX/this._hFocalLength;
+			var tanMaxX = (1 - this._pOriginX)/this._hFocalLength;
+			var tanMinY = -this._pOriginY/this._focalLength;
+			var tanMaxY = (1 - this._pOriginY)/this._focalLength;
 
 			var left:number;
 			var right:number;

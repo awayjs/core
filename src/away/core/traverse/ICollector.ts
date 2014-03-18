@@ -23,6 +23,21 @@ module away.traverse
 		/**
 		 *
 		 */
+		numEntities:number;
+
+		/**
+		 *
+		 */
+		numInteractiveEntities:number;
+
+		/**
+		 *
+		 */
+		renderer:away.render.IRenderer;
+
+		/**
+		 *
+		 */
 		clear();
 
 		/**

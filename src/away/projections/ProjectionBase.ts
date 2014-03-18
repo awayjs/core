@@ -14,6 +14,8 @@ module away.projections
 		public _pMatrixInvalid:boolean = true;
 		public _pFrustumCorners:number[] = [];
 		public _pCoordinateSystem:string;
+		public _pOriginX:number = 0.5;
+		public _pOriginY:number = 0.5;
 
 		private _unprojection:away.geom.Matrix3D;
 		private _unprojectionInvalid:boolean = true;
@@ -82,6 +84,32 @@ module away.projections
 			this.pInvalidateMatrix();
 		}
 
+		public get originX():number
+		{
+			return this._pOriginX;
+		}
+
+		public set originX(value:number)
+		{
+			if (this._pOriginX == value)
+				return;
+
+			this._pOriginX = value;
+		}
+
+		public get originY():number
+		{
+			return this._pOriginY;
+		}
+
+		public set originY(value:number)
+		{
+			if (this._pOriginY == value)
+				return;
+
+			this._pOriginY = value;
+		}
+
 		public get far():number
 		{
 			return this._pFar;
@@ -111,9 +139,9 @@ module away.projections
 		public get unprojectionMatrix():away.geom.Matrix3D
 		{
 			if (this._unprojectionInvalid) {
-				if (!this._unprojection) {
+				if (!this._unprojection)
 					this._unprojection = new away.geom.Matrix3D();
-				}
+
 				this._unprojection.copyFrom(this.matrix);
 				this._unprojection.invert();
 				this._unprojectionInvalid = false;

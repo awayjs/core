@@ -6007,10 +6007,10 @@ var away;
                 *
                 */
                 get: function () {
-                    return this._pickingCollider;
+                    return this._pPickingCollider;
                 },
                 set: function (value) {
-                    this._pickingCollider = value;
+                    this._pPickingCollider = value;
                 },
                 enumerable: true,
                 configurable: true
@@ -7091,10 +7091,10 @@ var away;
                 * @internal
                 */
                 get: function () {
-                    if (!this._pickingCollisionVO)
-                        this._pickingCollisionVO = new away.pick.PickingCollisionVO(this);
+                    if (!this._pPickingCollisionVO)
+                        this._pPickingCollisionVO = new away.pick.PickingCollisionVO(this);
 
-                    return this._pickingCollisionVO;
+                    return this._pPickingCollisionVO;
                 },
                 enumerable: true,
                 configurable: true
@@ -7182,8 +7182,8 @@ var away;
                 this._pImplicitMouseEnabled = this._explicitMouseEnabled && value;
 
                 // If there is a parent and this child does not have a picking collider, use its parent's picking collider.
-                if (this._pImplicitMouseEnabled && this._pParent && !this._pickingCollider)
-                    this._pickingCollider = this._pParent._pickingCollider;
+                if (this._pImplicitMouseEnabled && this._pParent && !this._pPickingCollider)
+                    this._pPickingCollider = this._pParent._pPickingCollider;
             };
 
             /**
@@ -7261,10 +7261,16 @@ var away;
             };
 
             /**
+            * //TODO
+            *
+            * @param shortestCollisionDistance
+            * @param findClosest
+            * @returns {boolean}
+            *
             * @internal
             */
-            DisplayObject.prototype._iCollidesBefore = function (shortestCollisionDistance, findClosest) {
-                return true;
+            DisplayObject.prototype._iTestCollision = function (shortestCollisionDistance, findClosest) {
+                return false;
             };
 
             /**
@@ -9481,6 +9487,7 @@ var away;
 })(away || (away = {}));
 ///<reference path="../../_definitions.ts"/>
 ///<reference path="../../_definitions.ts"/>
+///<reference path="../../_definitions.ts"/>
 var away;
 (function (away) {
     /**
@@ -9626,7 +9633,7 @@ var away;
 
                 div.appendChild(img);
 
-                img.className = "material" + this.materialOwner.material.id;
+                img.className = "material" + billboard.material.id;
             }
             CSSBillboardRenderable.id = "billboard";
             return CSSBillboardRenderable;
@@ -9647,22 +9654,12 @@ var away;
         * @class away.traverse.CollectorBase
         */
         var CollectorBase = (function () {
-            function CollectorBase(renderer) {
+            function CollectorBase() {
                 this._numCullPlanes = 0;
                 this._pNumEntities = 0;
                 this._pNumInteractiveEntities = 0;
-                this._renderer = renderer;
-
                 this._pEntityListItemPool = new away.pool.EntityListItemPool();
             }
-            Object.defineProperty(CollectorBase.prototype, "renderer", {
-                get: function () {
-                    return this._renderer;
-                },
-                enumerable: true,
-                configurable: true
-            });
-
             Object.defineProperty(CollectorBase.prototype, "camera", {
                 /**
                 *
@@ -9755,6 +9752,14 @@ var away;
             *
             * @param entity
             */
+            CollectorBase.prototype.applyDirectionalLight = function (entity) {
+                //don't do anything here
+            };
+
+            /**
+            *
+            * @param entity
+            */
             CollectorBase.prototype.applyEntity = function (entity) {
                 this._pNumEntities++;
 
@@ -9766,6 +9771,22 @@ var away;
 
                 item.next = this._pEntityHead;
                 this._pEntityHead = item;
+            };
+
+            /**
+            *
+            * @param entity
+            */
+            CollectorBase.prototype.applyLightProbe = function (entity) {
+                //don't do anything here
+            };
+
+            /**
+            *
+            * @param entity
+            */
+            CollectorBase.prototype.applyPointLight = function (entity) {
+                //don't do anything here
             };
             return CollectorBase;
         })();
@@ -9794,8 +9815,8 @@ var away;
             /**
             * Creates a new RaycastCollector object.
             */
-            function RaycastCollector(renderer) {
-                _super.call(this, renderer);
+            function RaycastCollector() {
+                _super.call(this);
                 this._rayPosition = new away.geom.Vector3D();
                 this._rayDirection = new away.geom.Vector3D();
                 this._iCollectionMark = 0;
@@ -9856,8 +9877,8 @@ var away;
         */
         var CSSEntityCollector = (function (_super) {
             __extends(CSSEntityCollector, _super);
-            function CSSEntityCollector(renderer) {
-                _super.call(this, renderer);
+            function CSSEntityCollector() {
+                _super.call(this);
             }
             return CSSEntityCollector;
         })(away.traverse.CollectorBase);
@@ -10315,16 +10336,15 @@ var away;
             /**
             * Creates a new <code>RaycastPicker</code> object.
             *
-            * @param renderer
             * @param findClosestCollision Determines whether the picker searches for the closest bounds collision along the ray,
             * or simply returns the first collision encountered. Defaults to false.
             */
-            function RaycastPicker(renderer, findClosestCollision) {
+            function RaycastPicker(findClosestCollision) {
                 if (typeof findClosestCollision === "undefined") { findClosestCollision = false; }
                 this._ignoredEntities = [];
                 this._onlyMouseEnabled = true;
                 this._numEntities = 0;
-                this._raycastCollector = new away.traverse.RaycastCollector(renderer);
+                this._raycastCollector = new away.traverse.RaycastCollector();
 
                 this._findClosestCollision = findClosestCollision;
                 this._entities = new Array();
@@ -10445,7 +10465,7 @@ var away;
                     pickingCollisionVO = entity._iPickingCollisionVO;
                     if (entity.pickingCollider) {
                         // If a collision exists, update the collision data and stop all checks.
-                        if ((bestCollisionVO == null || pickingCollisionVO.rayEntryDistance < bestCollisionVO.rayEntryDistance) && collector.renderer._iCollidesBefore(entity, shortestCollisionDistance, this._findClosestCollision)) {
+                        if ((bestCollisionVO == null || pickingCollisionVO.rayEntryDistance < bestCollisionVO.rayEntryDistance) && entity._iTestCollision(shortestCollisionDistance, this._findClosestCollision)) {
                             shortestCollisionDistance = pickingCollisionVO.rayEntryDistance;
                             bestCollisionVO = pickingCollisionVO;
                             if (!this._findClosestCollision) {
@@ -10743,32 +10763,6 @@ var away;
                     this.applyBillboard(entity);
                 }
             };
-
-            /**
-            * //TODO
-            *
-            * @param entity
-            * @param shortestCollisionDistance
-            * @param findClosest
-            * @returns {boolean}
-            *
-            * @internal
-            */
-            CSSRendererBase.prototype._iCollidesBefore = function (entity, shortestCollisionDistance, findClosest) {
-                var pickingCollider = entity.pickingCollider;
-                var pickingCollisionVO = entity._iPickingCollisionVO;
-
-                pickingCollider.setLocalRay(entity._iPickingCollisionVO.localRayPosition, entity._iPickingCollisionVO.localRayDirection);
-                pickingCollisionVO.materialOwner = null;
-
-                if (entity.assetType === away.library.AssetType.BILLBOARD) {
-                    //return this.testBillBoard(<away.entities.Billboard> entity, pickingCollider, pickingCollisionVO, shortestCollisionDistance, findClosest);
-                } else if (entity.assetType === away.library.AssetType.MESH) {
-                    //return this.testMesh(<away.entities.Mesh> entity, pickingCollider, pickingCollisionVO, shortestCollisionDistance, findClosest);
-                }
-
-                return false;
-            };
             return CSSRendererBase;
         })(away.events.EventDispatcher);
         render.CSSRendererBase = CSSRendererBase;
@@ -10810,7 +10804,6 @@ var away;
 
                 //add container to body
                 document.body.appendChild(this._container);
-                document.body.style.margin = "0px";
 
                 //create conxtext for the renderer
                 this._context = document.createElement("div");
@@ -10941,39 +10934,6 @@ var away;
                 configurable: true
             });
 
-
-            /**
-            * //TODO
-            *
-            * away.pick.RaycastPicker
-            */
-            CSSDefaultRenderer.prototype.getDefaultPicker = function () {
-                return this.getPicker(CSSDefaultRenderer.CSS_RAYCAST_PICKER);
-            };
-
-            /**
-            * //TODO
-            *
-            * @param type
-            * @param findClosestCollision
-            * @returns away.pick.RaycastPicker
-            */
-            CSSDefaultRenderer.prototype.getPicker = function (type, findClosestCollision) {
-                if (typeof findClosestCollision === "undefined") { findClosestCollision = false; }
-                if (type == CSSDefaultRenderer.CSS_RAYCAST_PICKER) {
-                    if (findClosestCollision) {
-                        if (this._rayCastPickerClosest)
-                            return this._rayCastPickerClosest;
-
-                        return (this._rayCastPickerClosest = new away.pick.RaycastPicker(this, true));
-                    } else {
-                        if (this._rayCastPicker)
-                            return this._rayCastPicker;
-
-                        return (this._rayCastPicker = new away.pick.RaycastPicker(this, false));
-                    }
-                }
-            };
 
             /**
             *
@@ -11122,9 +11082,6 @@ var away;
 
             CSSDefaultRenderer.prototype.dispose = function () {
                 _super.prototype.dispose.call(this);
-
-                this._rayCastPickerClosest = null;
-                this._rayCastPicker = null;
                 //TODO
             };
 
@@ -11170,9 +11127,8 @@ var away;
             };
 
             CSSDefaultRenderer.prototype._iCreateEntityCollector = function () {
-                return new away.traverse.CSSEntityCollector(this);
+                return new away.traverse.CSSEntityCollector();
             };
-            CSSDefaultRenderer.CSS_RAYCAST_PICKER = "cssRaycastPicker";
             return CSSDefaultRenderer;
         })(away.render.CSSRendererBase);
         render.CSSDefaultRenderer = CSSDefaultRenderer;
@@ -14239,8 +14195,11 @@ var away;
             * coordinate to another.
             */
             Matrix3D.prototype.deltaTransformVector = function (v) {
-                var x = v.x, y = v.y, z = v.z;
-                return new away.geom.Vector3D((x * this.rawData[0] + y * this.rawData[1] + z * this.rawData[2] + this.rawData[3]), (x * this.rawData[4] + y * this.rawData[5] + z * this.rawData[6] + this.rawData[7]), (x * this.rawData[8] + y * this.rawData[9] + z * this.rawData[10] + this.rawData[11]), 0);
+                var x = v.x;
+                var y = v.y;
+                var z = v.z;
+
+                return new away.geom.Vector3D((x * this.rawData[0] + y * this.rawData[4] + z * this.rawData[8]), (x * this.rawData[1] + y * this.rawData[5] + z * this.rawData[9]), (x * this.rawData[2] + y * this.rawData[6] + z * this.rawData[10]), (x * this.rawData[3] + y * this.rawData[7] + z * this.rawData[11]));
             };
 
             /**
@@ -14409,10 +14368,10 @@ var away;
             };
 
             Matrix3D.prototype.transformVector = function (v) {
-                // Initial Tests - OK
                 var x = v.x;
                 var y = v.y;
                 var z = v.z;
+
                 return new away.geom.Vector3D((x * this.rawData[0] + y * this.rawData[4] + z * this.rawData[8] + this.rawData[12]), (x * this.rawData[1] + y * this.rawData[5] + z * this.rawData[9] + this.rawData[13]), (x * this.rawData[2] + y * this.rawData[6] + z * this.rawData[10] + this.rawData[14]), (x * this.rawData[3] + y * this.rawData[7] + z * this.rawData[11] + this.rawData[15]));
             };
 
@@ -20142,6 +20101,17 @@ var away;
             });
 
 
+            Object.defineProperty(Billboard.prototype, "sourceEntity", {
+                /**
+                *
+                */
+                get: function () {
+                    return this;
+                },
+                enumerable: true,
+                configurable: true
+            });
+
             Object.defineProperty(Billboard.prototype, "uvTransform", {
                 /**
                 *
@@ -20173,6 +20143,19 @@ var away;
             * @internal
             */
             Billboard.prototype._iSetUVMatrixComponents = function (offsetU, offsetV, scaleU, scaleV, rotationUV) {
+            };
+
+            /**
+            * //TODO
+            *
+            * @param shortestCollisionDistance
+            * @param findClosest
+            * @returns {boolean}
+            *
+            * @internal
+            */
+            Billboard.prototype._iTestCollision = function (shortestCollisionDistance, findClosest) {
+                return this._pPickingCollider.testBillboardCollision(this, this._pPickingCollisionVO, shortestCollisionDistance);
             };
 
             /**
@@ -20440,8 +20423,8 @@ var away;
             /**
             * Calculates the scene position of the given normalized coordinates in screen space.
             *
-            * @param nX The normalised x coordinate in screen space, -1 corresponds to the left edge of the viewport, 1 to the right.
-            * @param nY The normalised y coordinate in screen space, -1 corresponds to the top edge of the viewport, 1 to the bottom.
+            * @param nX The normalised x coordinate in screen space, minus the originX offset of the projection property.
+            * @param nY The normalised y coordinate in screen space, minus the originY offset of the projection property.
             * @param sZ The z coordinate in screen space, representing the distance into the screen.
             * @return The scene position of the given screen coordinates.
             */
@@ -21265,9 +21248,9 @@ var away;
             Object.defineProperty(ProjectionBase.prototype, "unprojectionMatrix", {
                 get: function () {
                     if (this._unprojectionInvalid) {
-                        if (!this._unprojection) {
+                        if (!this._unprojection)
                             this._unprojection = new away.geom.Matrix3D();
-                        }
+
                         this._unprojection.copyFrom(this.matrix);
                         this._unprojection.invert();
                         this._unprojectionInvalid = false;
@@ -23516,6 +23499,7 @@ var away;
                 this._backgroundAlpha = 1;
                 this._viewportDirty = true;
                 this._scissorDirty = true;
+                this._mousePicker = new away.pick.RaycastPicker();
                 this._onScenePartitionChangedDelegate = Delegate.create(this, this.onScenePartitionChanged);
                 this._onProjectionChangedDelegate = Delegate.create(this, this.onProjectionChanged);
                 this._onViewportUpdatedDelegate = Delegate.create(this, this.onViewportUpdated);
@@ -23524,6 +23508,9 @@ var away;
                 this.scene = scene || new Scene();
                 this.camera = camera || new Camera();
                 this.renderer = renderer;
+
+                //make sure document border is zero
+                document.body.style.margin = "0px";
 
                 this._htmlElement = document.createElement("div");
                 this._htmlElement.style.position = "absolute";
@@ -23607,8 +23594,6 @@ var away;
                     this._pRenderer.width = this._width;
                     this._pRenderer.height = this._height;
                     this._pRenderer.shareContext = this._shareContext;
-
-                    this.mousePicker = this._pRenderer.getDefaultPicker();
                 },
                 enumerable: true,
                 configurable: true
@@ -23807,6 +23792,27 @@ var away;
             });
 
 
+            Object.defineProperty(View.prototype, "mousePicker", {
+                /**
+                *
+                */
+                get: function () {
+                    return this._mousePicker;
+                },
+                set: function (value) {
+                    if (this._mousePicker == value)
+                        return;
+
+                    if (value == null)
+                        this._mousePicker = new away.pick.RaycastPicker();
+                    else
+                        this._mousePicker = value;
+                },
+                enumerable: true,
+                configurable: true
+            });
+
+
             Object.defineProperty(View.prototype, "x", {
                 /**
                 *
@@ -23979,8 +23985,8 @@ var away;
 
             View.prototype.project = function (point3d) {
                 var v = this._pCamera.project(point3d);
-                v.x = (v.x + 1.0) * this._width / 2.0;
-                v.y = (v.y + 1.0) * this._height / 2.0;
+                v.x = (v.x * this._pRenderer.viewPort.width + this._width * this._pCamera.projection.originX) / 2.0;
+                v.y = (v.y * this._pRenderer.viewPort.height + this._height * this._pCamera.projection.originY) / 2.0;
 
                 return v;
             };

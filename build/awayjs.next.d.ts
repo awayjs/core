@@ -2331,12 +2331,12 @@ declare module away.base {
         private _showBounds;
         private _boundsIsShown;
         private _shaderPickingDetails;
-        private _pickingCollisionVO;
+        public _pPickingCollisionVO: away.pick.PickingCollisionVO;
         public _pBounds: away.bounds.BoundingVolumeBase;
         public _pBoundsInvalid: boolean;
         private _worldBounds;
         private _worldBoundsInvalid;
-        private _pickingCollider;
+        public _pPickingCollider: away.pick.IPickingCollider;
         public _pRenderables: away.pool.IRenderable[];
         /**
         *
@@ -3222,9 +3222,15 @@ declare module away.base {
         public _iAddRenderable(renderable: away.pool.IRenderable): away.pool.IRenderable;
         public _iRemoveRenderable(renderable: away.pool.IRenderable): away.pool.IRenderable;
         /**
+        * //TODO
+        *
+        * @param shortestCollisionDistance
+        * @param findClosest
+        * @returns {boolean}
+        *
         * @internal
         */
-        public _iCollidesBefore(shortestCollisionDistance: number, findClosest: boolean): boolean;
+        public _iTestCollision(shortestCollisionDistance: number, findClosest: boolean): boolean;
         /**
         *
         */
@@ -4059,9 +4065,9 @@ declare module away.base {
     *
     * @interface away.base.IMaterialOwner
     */
-    interface IMaterialOwner {
+    interface IMaterialOwner extends away.library.IAsset {
         /**
-        * The animation used by the material to assemble the vertex code.
+        * The animation used by the material owner to assemble the vertex code.
         */
         animator: away.animators.IAnimator;
         /**
@@ -4711,6 +4717,27 @@ declare module away.pool {
 */
 declare module away.pool {
     /**
+    * IRenderableClass is an interface for the constructable class definition IRenderable that is used to
+    * create renderable objects in the rendering pipeline to render the contents of a partition
+    *
+    * @class away.render.IRenderableClass
+    */
+    interface IRenderableClass {
+        /**
+        *
+        */
+        id: string;
+        /**
+        *
+        */
+        new(pool: pool.RenderablePool, materialOwner: away.base.IMaterialOwner): pool.IRenderable;
+    }
+}
+/**
+* @module away.pool
+*/
+declare module away.pool {
+    /**
     * @class away.pool.RenderablePool
     */
     class RenderablePool {
@@ -4722,7 +4749,7 @@ declare module away.pool {
         *
         * @param renderableClass
         */
-        constructor(renderableClass: any);
+        constructor(renderableClass: pool.IRenderableClass);
         /**
         * //TODO
         *
@@ -4742,7 +4769,7 @@ declare module away.pool {
         * @param renderableClass
         * @returns RenderablePool
         */
-        static getPool(renderableClass: any): RenderablePool;
+        static getPool(renderableClass: pool.IRenderableClass): RenderablePool;
         /**
         * //TODO
         *
@@ -4855,10 +4882,6 @@ declare module away.traverse {
         /**
         *
         */
-        renderer: away.render.IRenderer;
-        /**
-        *
-        */
         clear(): any;
         /**
         *
@@ -4873,7 +4896,22 @@ declare module away.traverse {
         *
         * @param entity
         */
+        applyDirectionalLight(entity: away.entities.IEntity): any;
+        /**
+        *
+        * @param entity
+        */
         applyEntity(entity: away.entities.IEntity): any;
+        /**
+        *
+        * @param entity
+        */
+        applyLightProbe(entity: away.entities.IEntity): any;
+        /**
+        *
+        * @param entity
+        */
+        applyPointLight(entity: away.entities.IEntity): any;
     }
 }
 /**
@@ -4887,15 +4925,13 @@ declare module away.traverse {
         public scene: away.containers.Scene;
         public _pEntityHead: away.pool.EntityListItem;
         public _pEntityListItemPool: away.pool.EntityListItemPool;
-        public _renderer: away.render.IRenderer;
         public _pCamera: away.entities.Camera;
         private _customCullPlanes;
         private _cullPlanes;
         private _numCullPlanes;
         public _pNumEntities: number;
         public _pNumInteractiveEntities: number;
-        constructor(renderer: away.render.IRenderer);
-        public renderer : away.render.IRenderer;
+        constructor();
         /**
         *
         */
@@ -4930,7 +4966,22 @@ declare module away.traverse {
         *
         * @param entity
         */
+        public applyDirectionalLight(entity: away.entities.IEntity): void;
+        /**
+        *
+        * @param entity
+        */
         public applyEntity(entity: away.entities.IEntity): void;
+        /**
+        *
+        * @param entity
+        */
+        public applyLightProbe(entity: away.entities.IEntity): void;
+        /**
+        *
+        * @param entity
+        */
+        public applyPointLight(entity: away.entities.IEntity): void;
     }
 }
 /**
@@ -4961,7 +5012,7 @@ declare module away.traverse {
         /**
         * Creates a new RaycastCollector object.
         */
-        constructor(renderer: away.render.IRenderer);
+        constructor();
         /**
         * Returns true if the current node is at least partly in the frustum. If so, the partition node knows to pass on the traverser to its children.
         *
@@ -4978,7 +5029,7 @@ declare module away.traverse {
     * @class away.traverse.CSSEntityCollector
     */
     class CSSEntityCollector extends traverse.CollectorBase implements traverse.ICollector {
-        constructor(renderer: away.render.IRenderer);
+        constructor();
     }
 }
 /**
@@ -5163,6 +5214,23 @@ declare module away.pick {
         * @param localPosition The direction vector in local coordinates
         */
         setLocalRay(localPosition: away.geom.Vector3D, localDirection: away.geom.Vector3D): any;
+        /**
+        * Tests a <code>Billboard</code> object for a collision with the picking ray.
+        *
+        * @param entity The entity instance to be tested.
+        * @param pickingCollisionVO The collision object used to store the collision results
+        * @param shortestCollisionDistance The current value of the shortest distance to a detected collision along the ray.
+        */
+        testBillboardCollision(entity: away.entities.IEntity, pickingCollisionVO: pick.PickingCollisionVO, shortestCollisionDistance: number): boolean;
+        /**
+        * Tests a <code>Mesh</code> object for a collision with the picking ray.
+        *
+        * @param entity The entity instance to be tested.
+        * @param pickingCollisionVO The collision object used to store the collision results
+        * @param shortestCollisionDistance The current value of the shortest distance to a detected collision along the ray.
+        * @param findClosest
+        */
+        testMeshCollision(entity: away.entities.IEntity, pickingCollisionVO: pick.PickingCollisionVO, shortestCollisionDistance: number, findClosest: boolean): boolean;
     }
 }
 /**
@@ -5298,11 +5366,10 @@ declare module away.pick {
         /**
         * Creates a new <code>RaycastPicker</code> object.
         *
-        * @param renderer
         * @param findClosestCollision Determines whether the picker searches for the closest bounds collision along the ray,
         * or simply returns the first collision encountered. Defaults to false.
         */
-        constructor(renderer: away.render.IRenderer, findClosestCollision?: boolean);
+        constructor(findClosestCollision?: boolean);
         /**
         * @inheritDoc
         */
@@ -5343,8 +5410,6 @@ declare module away.render {
         scissorRect: away.geom.Rectangle;
         dispose(): any;
         render(entityCollector: away.traverse.ICollector): any;
-        getDefaultPicker(): any;
-        getPicker(type: string, findClosestCollision?: boolean): away.pick.IPicker;
         /**
         * @internal
         */
@@ -5365,17 +5430,6 @@ declare module away.render {
         * @internal
         */
         _iCreateEntityCollector(): away.traverse.ICollector;
-        /**
-        * //TODO
-        *
-        * @param entity
-        * @param shortestCollisionDistance
-        * @param findClosest
-        * @returns {boolean}
-        *
-        * @internal
-        */
-        _iCollidesBefore(entity: away.entities.IEntity, shortestCollisionDistance: number, findClosest: boolean): boolean;
     }
 }
 /**
@@ -5470,17 +5524,6 @@ declare module away.render {
         * @param entity
         */
         public pFindRenderables(entity: away.entities.IEntity): void;
-        /**
-        * //TODO
-        *
-        * @param entity
-        * @param shortestCollisionDistance
-        * @param findClosest
-        * @returns {boolean}
-        *
-        * @internal
-        */
-        public _iCollidesBefore(entity: away.entities.IEntity, shortestCollisionDistance: number, findClosest: boolean): boolean;
     }
 }
 /**
@@ -5494,9 +5537,6 @@ declare module away.render {
     * @class away.render.DefaultRenderer
     */
     class CSSDefaultRenderer extends render.CSSRendererBase implements render.IRenderer {
-        private _rayCastPicker;
-        private _rayCastPickerClosest;
-        static CSS_RAYCAST_PICKER: string;
         private _container;
         private _context;
         private _contextStyle;
@@ -5546,20 +5586,6 @@ declare module away.render {
         * Creates a new CSSDefaultRenderer object.
         */
         constructor();
-        /**
-        * //TODO
-        *
-        * away.pick.RaycastPicker
-        */
-        public getDefaultPicker(): away.pick.IPicker;
-        /**
-        * //TODO
-        *
-        * @param type
-        * @param findClosestCollision
-        * @returns away.pick.RaycastPicker
-        */
-        public getPicker(type: string, findClosestCollision?: boolean): away.pick.IPicker;
         /**
         *
         * @param entityCollector
@@ -10555,9 +10581,15 @@ declare module away.entities {
         */
         _iAssignedPartition: away.partition.Partition;
         /**
+        * //TODO
+        *
+        * @param shortestCollisionDistance
+        * @param findClosest
+        * @returns {boolean}
+        *
         * @internal
         */
-        _iCollidesBefore(shortestCollisionDistance: number, findClosest: boolean): boolean;
+        _iTestCollision(shortestCollisionDistance: number, findClosest: boolean): boolean;
         /**
         * @internal
         */
@@ -10610,7 +10642,7 @@ declare module away.entities {
 * contains the Billboard object.</p>
 */
 declare module away.entities {
-    class Billboard extends away.base.DisplayObject implements entities.IEntity, away.base.IMaterialOwner, away.library.IAsset {
+    class Billboard extends away.base.DisplayObject implements entities.IEntity, away.base.IMaterialOwner {
         private _animator;
         private _billboardWidth;
         private _billboardHeight;
@@ -10667,6 +10699,10 @@ declare module away.entities {
         /**
         *
         */
+        public sourceEntity : entities.IEntity;
+        /**
+        *
+        */
         public uvTransform : away.geom.UVTransform;
         constructor(material: away.materials.IMaterial, pixelSnapping?: string, smoothing?: boolean);
         /**
@@ -10681,6 +10717,16 @@ declare module away.entities {
         * @internal
         */
         public _iSetUVMatrixComponents(offsetU: number, offsetV: number, scaleU: number, scaleV: number, rotationUV: number): void;
+        /**
+        * //TODO
+        *
+        * @param shortestCollisionDistance
+        * @param findClosest
+        * @returns {boolean}
+        *
+        * @internal
+        */
+        public _iTestCollision(shortestCollisionDistance: number, findClosest: boolean): boolean;
         /**
         * @private
         */
@@ -10740,8 +10786,8 @@ declare module away.entities {
         /**
         * Calculates the scene position of the given normalized coordinates in screen space.
         *
-        * @param nX The normalised x coordinate in screen space, -1 corresponds to the left edge of the viewport, 1 to the right.
-        * @param nY The normalised y coordinate in screen space, -1 corresponds to the top edge of the viewport, 1 to the bottom.
+        * @param nX The normalised x coordinate in screen space, minus the originX offset of the projection property.
+        * @param nY The normalised y coordinate in screen space, minus the originY offset of the projection property.
         * @param sZ The z coordinate in screen space, representing the distance into the screen.
         * @return The scene position of the given screen coordinates.
         */
@@ -12512,6 +12558,7 @@ declare module away.containers {
         private _onViewportUpdatedDelegate;
         private _onScissorUpdatedDelegate;
         private _mouseManager;
+        private _mousePicker;
         private _htmlElement;
         private _shareContext;
         public _pMouseX: number;
@@ -12582,6 +12629,10 @@ declare module away.containers {
         /**
         *
         */
+        public mousePicker : away.pick.IPicker;
+        /**
+        *
+        */
         public x : number;
         /**
         *
@@ -12627,7 +12678,6 @@ declare module away.containers {
         public project(point3d: away.geom.Vector3D): away.geom.Vector3D;
         public unproject(sX: number, sY: number, sZ: number): away.geom.Vector3D;
         public getRay(sX: number, sY: number, sZ: number): away.geom.Vector3D;
-        public mousePicker: away.pick.IPicker;
         public forceMouseMove: boolean;
         public updateCollider(): void;
     }

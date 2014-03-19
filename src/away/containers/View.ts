@@ -62,6 +62,7 @@ module away.containers
 		private _onViewportUpdatedDelegate;
 		private _onScissorUpdatedDelegate;
 		private _mouseManager:MouseManager;
+		private _mousePicker:away.pick.IPicker = new away.pick.RaycastPicker();
 
 		private _htmlElement:HTMLDivElement;
 		private _shareContext:boolean;
@@ -88,6 +89,9 @@ module away.containers
 			this.scene = scene || new Scene();
 			this.camera = camera || new Camera();
 			this.renderer = renderer;
+
+			//make sure document border is zero
+			document.body.style.margin = "0px";
 
 			this._htmlElement = document.createElement("div");
 			this._htmlElement.style.position = "absolute";
@@ -168,8 +172,6 @@ module away.containers
 			this._pRenderer.width = this._width;
 			this._pRenderer.height = this._height;
 			this._pRenderer.shareContext = this._shareContext;
-
-			this.mousePicker = this._pRenderer.getDefaultPicker();
 		}
 
 		/**
@@ -350,6 +352,25 @@ module away.containers
 		/**
 		 *
 		 */
+		public get mousePicker():away.pick.IPicker
+		{
+			return this._mousePicker;
+		}
+
+		public set mousePicker(value:away.pick.IPicker)
+		{
+			if (this._mousePicker == value)
+				return;
+
+			if (value == null)
+				this._mousePicker = new away.pick.RaycastPicker();
+			else
+				this._mousePicker = value;
+		}
+
+		/**
+		 *
+		 */
 		public get x():number
 		{
 			return this._pRenderer.x;
@@ -515,8 +536,8 @@ module away.containers
 		public project(point3d:Vector3D):Vector3D
 		{
 			var v:away.geom.Vector3D = this._pCamera.project(point3d);
-			v.x = (v.x + 1.0)*this._width/2.0;
-			v.y = (v.y + 1.0)*this._height/2.0;
+			v.x = (v.x*this._pRenderer.viewPort.width + this._width*this._pCamera.projection.originX)/2.0;
+			v.y = (v.y*this._pRenderer.viewPort.height + this._height*this._pCamera.projection.originY)/2.0;
 
 			return v;
 		}
@@ -531,8 +552,6 @@ module away.containers
 		{
 			return this._pCamera.getRay((sX*2 - this._width)/this._width, (sY*2 - this._height)/this._height, sZ);
 		}
-
-		public mousePicker:away.pick.IPicker;
 
 		/* TODO: implement Touch3DManager
 		 public get touchPicker():away.pick.IPicker

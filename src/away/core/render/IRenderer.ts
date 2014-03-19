@@ -33,10 +33,6 @@ module away.render
 
 		render(entityCollector:away.traverse.ICollector);
 
-		getDefaultPicker();
-
-		getPicker(type:string, findClosestCollision?:boolean):away.pick.IPicker;
-
 		/**
 		 * @internal
 		 */
@@ -61,17 +57,5 @@ module away.render
 		 * @internal
 		 */
 		_iCreateEntityCollector():away.traverse.ICollector;
-
-		/**
-		 * //TODO
-		 *
-		 * @param entity
-		 * @param shortestCollisionDistance
-		 * @param findClosest
-		 * @returns {boolean}
-		 *
-		 * @internal
-		 */
-		_iCollidesBefore(entity:away.entities.IEntity, shortestCollisionDistance:number, findClosest:boolean):boolean
 	}
 }

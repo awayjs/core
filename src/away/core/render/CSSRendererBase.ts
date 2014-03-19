@@ -261,33 +261,5 @@ module away.render
 				this.applyBillboard(<away.entities.Billboard> entity);
 			}
 		}
-
-
-		/**
-		 * //TODO
-		 *
-		 * @param entity
-		 * @param shortestCollisionDistance
-		 * @param findClosest
-		 * @returns {boolean}
-		 *
-		 * @internal
-		 */
-		public _iCollidesBefore(entity:away.entities.IEntity, shortestCollisionDistance:number, findClosest:boolean):boolean
-		{
-			var pickingCollider:away.pick.IPickingCollider = entity.pickingCollider;
-			var pickingCollisionVO:away.pick.PickingCollisionVO = entity._iPickingCollisionVO;
-
-			pickingCollider.setLocalRay(entity._iPickingCollisionVO.localRayPosition, entity._iPickingCollisionVO.localRayDirection);
-			pickingCollisionVO.materialOwner = null;
-
-			if (entity.assetType === away.library.AssetType.BILLBOARD) {
-				//return this.testBillBoard(<away.entities.Billboard> entity, pickingCollider, pickingCollisionVO, shortestCollisionDistance, findClosest);
-			} else if (entity.assetType === away.library.AssetType.MESH) {
-				//return this.testMesh(<away.entities.Mesh> entity, pickingCollider, pickingCollisionVO, shortestCollisionDistance, findClosest);
-			}
-
-			return false;
-		}
 	}
 }

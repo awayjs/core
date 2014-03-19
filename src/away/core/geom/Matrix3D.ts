@@ -383,8 +383,11 @@ module away.geom
 		 */
 		public deltaTransformVector(v:Vector3D):Vector3D
 		{
-			var x:number = v.x, y:number = v.y, z:number = v.z;
-			return new Vector3D((x*this.rawData[0] + y*this.rawData[1] + z*this.rawData[2] + this.rawData[3]), (x*this.rawData[4] + y*this.rawData[5] + z*this.rawData[6] + this.rawData[7]), (x*this.rawData[8] + y*this.rawData[9] + z*this.rawData[10] + this.rawData[11]), 0);
+			var x:number = v.x;
+			var y:number = v.y;
+			var z:number = v.z;
+
+			return new away.geom.Vector3D((x*this.rawData[0] + y*this.rawData[4] + z*this.rawData[8]), (x*this.rawData[1] + y*this.rawData[5] + z*this.rawData[9]), (x*this.rawData[2] + y*this.rawData[6] + z*this.rawData[10]), (x*this.rawData[3] + y*this.rawData[7] + z*this.rawData[11]));
 		}
 
 		/**
@@ -570,14 +573,11 @@ module away.geom
 
 		public transformVector(v:away.geom.Vector3D):away.geom.Vector3D
 		{
-
-			// Initial Tests - OK
-
 			var x:number = v.x;
 			var y:number = v.y;
 			var z:number = v.z;
-			return new away.geom.Vector3D((x*this.rawData[0] + y*this.rawData[4] + z*this.rawData[8] + this.rawData[12]), (x*this.rawData[1] + y*this.rawData[5] + z*this.rawData[9] + this.rawData[13]), (x*this.rawData[2] + y*this.rawData[6] + z*this.rawData[10] + this.rawData[14]), (x*this.rawData[3] + y*this.rawData[7] + z*this.rawData[11] + this.rawData[15]));
 
+			return new away.geom.Vector3D((x*this.rawData[0] + y*this.rawData[4] + z*this.rawData[8] + this.rawData[12]), (x*this.rawData[1] + y*this.rawData[5] + z*this.rawData[9] + this.rawData[13]), (x*this.rawData[2] + y*this.rawData[6] + z*this.rawData[10] + this.rawData[14]), (x*this.rawData[3] + y*this.rawData[7] + z*this.rawData[11] + this.rawData[15]));
 		}
 
 		/**

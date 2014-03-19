@@ -10,9 +10,9 @@ module away.traverse
 	 */
 	export class CSSEntityCollector extends CollectorBase implements ICollector
 	{
-		constructor(renderer:away.render.IRenderer)
+		constructor()
 		{
-			super(renderer);
+			super();
 		}
 	}
 }

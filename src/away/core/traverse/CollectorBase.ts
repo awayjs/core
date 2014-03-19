@@ -14,7 +14,6 @@ module away.traverse
 
 		public _pEntityHead:away.pool.EntityListItem;
 		public _pEntityListItemPool:away.pool.EntityListItemPool;
-		public _renderer:away.render.IRenderer;
 		public _pCamera:away.entities.Camera;
 		private _customCullPlanes:away.geom.Plane3D[];
 		private _cullPlanes:away.geom.Plane3D[];
@@ -22,16 +21,9 @@ module away.traverse
 		public _pNumEntities:number = 0;
 		public _pNumInteractiveEntities:number = 0;
 
-		constructor(renderer:away.render.IRenderer)
+		constructor()
 		{
-			this._renderer = renderer;
-
 			this._pEntityListItemPool = new away.pool.EntityListItemPool();
-		}
-
-		public get renderer():away.render.IRenderer
-		{
-			return this._renderer;
 		}
 
 		/**
@@ -115,6 +107,15 @@ module away.traverse
 		 *
 		 * @param entity
 		 */
+		public applyDirectionalLight(entity:away.entities.IEntity)
+		{
+			//don't do anything here
+		}
+
+		/**
+		 *
+		 * @param entity
+		 */
 		public applyEntity(entity:away.entities.IEntity)
 		{
 			this._pNumEntities++;
@@ -127,6 +128,24 @@ module away.traverse
 
 			item.next = this._pEntityHead;
 			this._pEntityHead = item;
+		}
+
+		/**
+		 *
+		 * @param entity
+		 */
+		public applyLightProbe(entity:away.entities.IEntity)
+		{
+			//don't do anything here
+		}
+
+		/**
+		 *
+		 * @param entity
+		 */
+		public applyPointLight(entity:away.entities.IEntity)
+		{
+			//don't do anything here
 		}
 	}
 }

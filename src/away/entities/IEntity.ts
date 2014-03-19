@@ -100,9 +100,15 @@ module away.entities
 		_iAssignedPartition:away.partition.Partition;
 
 		/**
+		 * //TODO
+		 *
+		 * @param shortestCollisionDistance
+		 * @param findClosest
+		 * @returns {boolean}
+		 *
 		 * @internal
 		 */
-		_iCollidesBefore(shortestCollisionDistance:number, findClosest:boolean):boolean; //TODO: remove
+		_iTestCollision(shortestCollisionDistance:number, findClosest:boolean):boolean;
 
 		/**
 		 * @internal

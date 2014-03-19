@@ -34,7 +34,7 @@ module away.pool
 
 			div.appendChild(img);
 
-			img.className = "material" + this.materialOwner.material.id;
+			img.className = "material" + billboard.material.id;
 		}
 	}
 }

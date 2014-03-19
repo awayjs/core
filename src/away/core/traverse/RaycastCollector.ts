@@ -51,9 +51,9 @@ module away.traverse
 		/**
 		 * Creates a new RaycastCollector object.
 		 */
-		constructor(renderer:away.render.IRenderer)
+		constructor()
 		{
-			super(renderer);
+			super();
 		}
 
 		/**

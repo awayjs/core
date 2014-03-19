@@ -102,6 +102,7 @@
 ///<reference path="core/pool/EntityListItem.ts"/>
 ///<reference path="core/pool/EntityListItemPool.ts"/>
 ///<reference path="core/pool/IRenderable.ts"/>
+///<reference path="core/pool/IRenderableClass.ts"/>
 ///<reference path="core/pool/RenderablePool.ts"/>
 ///<reference path="core/pool/CSSRenderableBase.ts"/>
 ///<reference path="core/pool/CSSBillboardRenderable.ts"/>

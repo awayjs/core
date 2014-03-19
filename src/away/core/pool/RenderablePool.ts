@@ -13,14 +13,14 @@ module away.pool
 		private static _pools:Object = new Object();
 
 		private _pool:Object = new Object();
-		private _renderableClass:any;
+		private _renderableClass:IRenderableClass;
 
 		/**
 		 * //TODO
 		 *
 		 * @param renderableClass
 		 */
-		constructor(renderableClass:any)
+		constructor(renderableClass:IRenderableClass)
 		{
 			this._renderableClass = renderableClass;
 		}
@@ -54,7 +54,7 @@ module away.pool
 		 * @param renderableClass
 		 * @returns RenderablePool
 		 */
-		public static getPool(renderableClass:any):RenderablePool
+		public static getPool(renderableClass:IRenderableClass):RenderablePool
 		{
 			var pool:RenderablePool = RenderablePool._pools[renderableClass.id];
 

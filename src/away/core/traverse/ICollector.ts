@@ -33,11 +33,6 @@ module away.traverse
 		/**
 		 *
 		 */
-		renderer:away.render.IRenderer;
-
-		/**
-		 *
-		 */
 		clear();
 
 		/**
@@ -55,6 +50,24 @@ module away.traverse
 		 *
 		 * @param entity
 		 */
+		applyDirectionalLight(entity:away.entities.IEntity);
+
+		/**
+		 *
+		 * @param entity
+		 */
 		applyEntity(entity:away.entities.IEntity);
+
+		/**
+		 *
+		 * @param entity
+		 */
+		applyLightProbe(entity:away.entities.IEntity);
+
+		/**
+		 *
+		 * @param entity
+		 */
+		applyPointLight(entity:away.entities.IEntity);
 	}
 }

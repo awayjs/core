@@ -10,10 +10,10 @@ module away.base
 	 *
 	 * @interface away.base.IMaterialOwner
 	 */
-	export interface IMaterialOwner
+	export interface IMaterialOwner extends away.library.IAsset
 	{
 		/**
-		 * The animation used by the material to assemble the vertex code.
+		 * The animation used by the material owner to assemble the vertex code.
 		 */
 		animator:away.animators.IAnimator; // in most cases, this will in fact be null
 

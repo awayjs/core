@@ -25,12 +25,22 @@ module away.pick
 		setLocalRay(localPosition:away.geom.Vector3D, localDirection:away.geom.Vector3D);
 
 		/**
-		 * Tests a <code>IRenderable</code> object for a collision with the picking ray.
+		 * Tests a <code>Billboard</code> object for a collision with the picking ray.
 		 *
-		 * @param renderable The <code>SubMesh</code> instance to be tested.
+		 * @param entity The entity instance to be tested.
 		 * @param pickingCollisionVO The collision object used to store the collision results
 		 * @param shortestCollisionDistance The current value of the shortest distance to a detected collision along the ray.
 		 */
-		//testRenderableCollision(renderable:away.render.RenderableBase, pickingCollisionVO:PickingCollisionVO, shortestCollisionDistance:number):boolean
+		testBillboardCollision(entity:away.entities.IEntity, pickingCollisionVO:PickingCollisionVO, shortestCollisionDistance:number):boolean
+
+		/**
+		 * Tests a <code>Mesh</code> object for a collision with the picking ray.
+		 *
+		 * @param entity The entity instance to be tested.
+		 * @param pickingCollisionVO The collision object used to store the collision results
+		 * @param shortestCollisionDistance The current value of the shortest distance to a detected collision along the ray.
+		 * @param findClosest
+		 */
+		testMeshCollision(entity:away.entities.IEntity, pickingCollisionVO:PickingCollisionVO, shortestCollisionDistance:number, findClosest:boolean):boolean
 	}
 }

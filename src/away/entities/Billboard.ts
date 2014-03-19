@@ -42,7 +42,7 @@ module away.entities
 	import UVTransform					= away.geom.UVTransform;
 	import IMaterial					= away.materials.IMaterial;
 
-	export class Billboard extends away.base.DisplayObject implements IEntity, away.base.IMaterialOwner, away.library.IAsset
+	export class Billboard extends away.base.DisplayObject implements IEntity, away.base.IMaterialOwner
 	{
 		private _animator:IAnimator;
 		private _billboardWidth:number;
@@ -144,6 +144,14 @@ module away.entities
 		/**
 		 *
 		 */
+		public get sourceEntity():IEntity
+		{
+			return this;
+		}
+
+		/**
+		 *
+		 */
 		public get uvTransform():UVTransform
 		{
 			return this._uvTransform;
@@ -189,6 +197,20 @@ module away.entities
 		public _iSetUVMatrixComponents(offsetU:number, offsetV:number, scaleU:number, scaleV:number, rotationUV:number)
 		{
 
+		}
+
+		/**
+		 * //TODO
+		 *
+		 * @param shortestCollisionDistance
+		 * @param findClosest
+		 * @returns {boolean}
+		 *
+		 * @internal
+		 */
+		public _iTestCollision(shortestCollisionDistance:number, findClosest:boolean):boolean
+		{
+			return this._pPickingCollider.testBillboardCollision(this, this._pPickingCollisionVO, shortestCollisionDistance);
 		}
 
 		/**

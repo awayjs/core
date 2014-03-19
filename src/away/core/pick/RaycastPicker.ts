@@ -39,13 +39,12 @@ module away.pick
 		/**
 		 * Creates a new <code>RaycastPicker</code> object.
 		 *
-		 * @param renderer
 		 * @param findClosestCollision Determines whether the picker searches for the closest bounds collision along the ray,
 		 * or simply returns the first collision encountered. Defaults to false.
 		 */
-		constructor(renderer:away.render.IRenderer, findClosestCollision:boolean = false)
+		constructor(findClosestCollision:boolean = false)
 		{
-			this._raycastCollector = new away.traverse.RaycastCollector(renderer);
+			this._raycastCollector = new away.traverse.RaycastCollector();
 
 			this._findClosestCollision = findClosestCollision;
 			this._entities = new Array<away.entities.IEntity>();
@@ -160,7 +159,7 @@ module away.pick
 				pickingCollisionVO = entity._iPickingCollisionVO;
 				if (entity.pickingCollider) {
 					// If a collision exists, update the collision data and stop all checks.
-					if ((bestCollisionVO == null || pickingCollisionVO.rayEntryDistance < bestCollisionVO.rayEntryDistance) && collector.renderer._iCollidesBefore(entity, shortestCollisionDistance, this._findClosestCollision)) {
+					if ((bestCollisionVO == null || pickingCollisionVO.rayEntryDistance < bestCollisionVO.rayEntryDistance) && entity._iTestCollision(shortestCollisionDistance, this._findClosestCollision)) {
 						shortestCollisionDistance = pickingCollisionVO.rayEntryDistance;
 						bestCollisionVO = pickingCollisionVO;
 						if (!this._findClosestCollision) {

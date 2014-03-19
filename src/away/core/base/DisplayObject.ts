@@ -209,14 +209,14 @@ module away.base
 		private _boundsIsShown:boolean;
 		private _shaderPickingDetails:boolean;
 
-		private _pickingCollisionVO:away.pick.PickingCollisionVO;
+		public _pPickingCollisionVO:away.pick.PickingCollisionVO;
 
 		public _pBounds:away.bounds.BoundingVolumeBase;
 		public _pBoundsInvalid:boolean = true;
 		private _worldBounds:away.bounds.BoundingVolumeBase;
 		private _worldBoundsInvalid:boolean = true;
 
-		private _pickingCollider:away.pick.IPickingCollider;
+		public _pPickingCollider:away.pick.IPickingCollider;
 
 		public _pRenderables:Array<away.pool.IRenderable> = new Array<away.pool.IRenderable>();
 
@@ -757,12 +757,12 @@ module away.base
 		 */
 		public get pickingCollider():away.pick.IPickingCollider
 		{
-			return this._pickingCollider;
+			return this._pPickingCollider;
 		}
 
 		public set pickingCollider(value:away.pick.IPickingCollider)
 		{
-			this._pickingCollider = value;
+			this._pPickingCollider = value;
 		}
 
 		/**
@@ -1932,10 +1932,10 @@ module away.base
 		 */
 		public get _iPickingCollisionVO():away.pick.PickingCollisionVO
 		{
-			if (!this._pickingCollisionVO)
-				this._pickingCollisionVO = new away.pick.PickingCollisionVO(this);
+			if (!this._pPickingCollisionVO)
+				this._pPickingCollisionVO = new away.pick.PickingCollisionVO(this);
 
-			return this._pickingCollisionVO;
+			return this._pPickingCollisionVO;
 		}
 
 		/**
@@ -2028,8 +2028,8 @@ module away.base
 			this._pImplicitMouseEnabled = this._explicitMouseEnabled && value;
 
 			// If there is a parent and this child does not have a picking collider, use its parent's picking collider.
-			if (this._pImplicitMouseEnabled && this._pParent && !this._pickingCollider)
-				this._pickingCollider =  this._pParent._pickingCollider;
+			if (this._pImplicitMouseEnabled && this._pParent && !this._pPickingCollider)
+				this._pPickingCollider =  this._pParent._pPickingCollider;
 		}
 
 		/**
@@ -2115,11 +2115,17 @@ module away.base
 		}
 
 		/**
+		 * //TODO
+		 *
+		 * @param shortestCollisionDistance
+		 * @param findClosest
+		 * @returns {boolean}
+		 *
 		 * @internal
 		 */
-		public _iCollidesBefore(shortestCollisionDistance:number, findClosest:boolean):boolean
+		public _iTestCollision(shortestCollisionDistance:number, findClosest:boolean):boolean
 		{
-			return true;
+			return false;
 		}
 
 		/**

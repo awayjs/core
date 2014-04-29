@@ -74,8 +74,8 @@ module away.gl
 		{
 			this._frameBuffer = this._gl.createFramebuffer();
 			this._gl.bindFramebuffer(this._gl.FRAMEBUFFER, this._frameBuffer);
-			this._frameBuffer.width = this._width;
-			this._frameBuffer.height = this._height;
+			//this._frameBuffer.width = this._width;
+			//this._frameBuffer.height = this._height;
 
 			this._gl.bindTexture(this._gl.TEXTURE_2D, this._glTexture);
 			//this._gl.texParameteri(this._gl.TEXTURE_2D, this._gl.TEXTURE_MAG_FILTER, this._gl.LINEAR);

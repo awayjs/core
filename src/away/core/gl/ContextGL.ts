@@ -601,7 +601,8 @@ module away.gl
 
 		public setRenderToTexture(target:away.gl.TextureBase, enableDepthAndStencil:boolean = false, antiAlias:number = 0, surfaceSelector:number = 0)
 		{
-			var frameBuffer:WebGLFramebuffer = (<away.gl.Texture>target).frameBuffer
+			var texture : away.gl.Texture = <away.gl.Texture>target;
+			var frameBuffer:WebGLFramebuffer = texture.frameBuffer;
 			this._gl.bindFramebuffer(this._gl.FRAMEBUFFER, frameBuffer);
 
 			if (enableDepthAndStencil) {
@@ -609,10 +610,7 @@ module away.gl
 				this._gl.enable(this._gl.DEPTH_TEST);
 			}
 
-			this._gl.viewport['width'] = frameBuffer.width;
-			this._gl.viewport['height'] = frameBuffer.height;
-
-			this._gl.viewport(0, 0, frameBuffer.width, frameBuffer.height);
+			this._gl.viewport(0, 0, texture.width, texture.height );
 		}
 
 		public setRenderToBackBuffer()

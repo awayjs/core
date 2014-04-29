@@ -349,11 +349,9 @@ module away.net
 				// If overriding full URLs, get rid of scheme (e.g. "http://")
 				// and replace with the dependencyBaseUrl defined by user.
 				if (this._context && this._context.overrideFullURLs) {
-					var noscheme_url:string;
 
-					noscheme_url = url['replace'](scheme_re);
-
-					return this.joinUrl(this._context.dependencyBaseUrl, noscheme_url);
+					var noscheme_url : string  = url.replace( scheme_re , '' );//url['replace'](scheme_re);
+					return this.joinUrl(this._context.dependencyBaseUrl, <string> noscheme_url);
 				}
 			}
 

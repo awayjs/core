@@ -28,7 +28,8 @@ module away.utils
 			this._rafUpdateFunction = () =>
 			{
 
-				if (this._active) {
+				if (this._active)
+				{
 
 					this._tick();
 
@@ -60,28 +61,28 @@ module away.utils
 		 */
 		public start()
 		{
-			this._prevTime  = this._getTimer();
-			this._active    = true;
+			this._prevTime = this._getTimer();
+			this._active = true;
 
-            if (window.requestAnimationFrame)
-            {
-                window.requestAnimationFrame(this._rafUpdateFunction);
-            }
-            else
-            {
-                if (window['mozRequestAnimationFrame'])
-                {
-                    window.requestAnimationFrame = window['mozRequestAnimationFrame'];
-                }
-                else if (window['webkitRequestAnimationFrame'])
-                {
-                    window.requestAnimationFrame = window['webkitRequestAnimationFrame'];
-                }
-                else if (window['oRequestAnimationFrame'])
-                {
-                    window.requestAnimationFrame = window['oRequestAnimationFrame'];
-                }
-            }
+			if (window.requestAnimationFrame)
+			{
+				window.requestAnimationFrame(this._rafUpdateFunction);
+			}
+			else
+			{
+				if (window['mozRequestAnimationFrame'])
+				{
+					window.requestAnimationFrame = window['mozRequestAnimationFrame'];
+				}
+				else if (window['webkitRequestAnimationFrame'])
+				{
+					window.requestAnimationFrame = window['webkitRequestAnimationFrame'];
+				}
+				else if (window['oRequestAnimationFrame'])
+				{
+					window.requestAnimationFrame = window['oRequestAnimationFrame'];
+				}
+			}
 		}
 
 		/**

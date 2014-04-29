@@ -14,6 +14,7 @@ module away.render
 	export class CSSRendererBase extends away.events.EventDispatcher
 	{
 		private _billboardRenderablePool:away.pool.RenderablePool;
+		private _lineSegmentRenderablePool:away.pool.RenderablePool;
 
 		public _pCamera:away.entities.Camera;
 		public _iEntryPoint:away.geom.Vector3D;
@@ -30,6 +31,123 @@ module away.render
 
 		public _renderableHead:away.pool.CSSRenderableBase;
 
+		public _width:number;
+		public _height:number;
+
+		private _viewPort:away.geom.Rectangle = new away.geom.Rectangle();
+		private _viewportDirty:boolean;
+		private _scissorRect:away.geom.Rectangle = new away.geom.Rectangle();
+		private _scissorDirty:boolean;
+
+		private _localPos:away.geom.Point = new away.geom.Point();
+		private _globalPos:away.geom.Point = new away.geom.Point();
+
+		private _scissorUpdated:away.events.RendererEvent;
+		private _viewPortUpdated:away.events.RendererEvent;
+
+		/**
+		 * A viewPort rectangle equivalent of the StageGL size and position.
+		 */
+		public get viewPort():away.geom.Rectangle
+		{
+			return this._viewPort;
+		}
+
+		/**
+		 * A scissor rectangle equivalent of the view size and position.
+		 */
+		public get scissorRect():away.geom.Rectangle
+		{
+			return this._scissorRect;
+		}
+
+		/**
+		 *
+		 */
+		public get x():number
+		{
+			return this._localPos.x;
+		}
+
+		public set x(value:number)
+		{
+			if (this.x == value)
+				return;
+
+			this.updateGlobalPos();
+		}
+
+		/**
+		 *
+		 */
+		public get y():number
+		{
+			return this._localPos.y;
+		}
+
+		public set y(value:number)
+		{
+			if (this.y == value)
+				return;
+
+			this._globalPos.y = this._localPos.y = value;
+
+			this.updateGlobalPos();
+		}
+
+		/**
+		 *
+		 */
+		public get width():number
+		{
+			return this._width;
+		}
+
+		public set width(value:number)
+		{
+			if (this._width == value)
+				return;
+
+			this._width = value;
+			this._scissorRect.width = value;
+			this._viewPort.width = value;
+
+			this._pBackBufferInvalid = true;
+			this._depthTextureInvalid = true;
+
+			this.notifyViewportUpdate();
+			this.notifyScissorUpdate();
+		}
+
+		/**
+		 *
+		 */
+		public get height():number
+		{
+			return this._height;
+		}
+
+		public set height(value:number)
+		{
+			if (this._height == value)
+				return;
+
+			this._height = value;
+			this._scissorRect.height = value;
+			this._viewPort.height = value;
+
+			this._pBackBufferInvalid = true;
+			this._depthTextureInvalid = true;
+
+			this.notifyViewportUpdate();
+			this.notifyScissorUpdate();
+		}
+
+		/**
+		 *
+		 */
+		public renderableSorter:away.sort.IEntitySorter;
+
 		/**
 		 * Creates a new RendererBase object.
 		 */
@@ -38,6 +156,15 @@ module away.render
 			super();
 
 			this._billboardRenderablePool = away.pool.RenderablePool.getPool(away.pool.CSSBillboardRenderable);
+			this._lineSegmentRenderablePool = away.pool.RenderablePool.getPool(away.pool.CSSLineSegmentRenderable);
+
+			this._viewPort = new away.geom.Rectangle();
+
+			if (this._width == 0)
+				this.width = window.innerWidth;
+
+			if (this._height == 0)
+				this.height = window.innerHeight;
 		}
 
 		/**
@@ -130,6 +257,8 @@ module away.render
 
 		public render(entityCollector:away.traverse.ICollector)
 		{
+			this._viewportDirty = false;
+			this._scissorDirty = false;
 		}
 
 		/**
@@ -151,7 +280,7 @@ module away.render
 			this._renderableHead = null;
 
 			//grab entity head
-			var entity:away.pool.EntityListItem = entityCollector.entityHead;
+			var item:away.pool.EntityListItem = entityCollector.entityHead;
 
 			//set temp values for entry point and camera forward vector
 			this._pCamera = entityCollector.camera;
@@ -159,9 +288,9 @@ module away.render
 			this._pCameraForward = this._pCamera.transform.forwardVector;
 
 			//iterate through all entities
-			while (entity) {
-				this.pFindRenderables(entity.entity)
-				entity = entity.next;
+			while (item) {
+				item.entity._iCollectRenderables(this);
+				item = item.next;
 			}
 		}
 
@@ -202,22 +331,40 @@ module away.render
 			this._pBackBufferInvalid = true;
 		}
 
-
-		/**
-		 *
-		 */
-		public updateGlobalPos()
-		{
-
-		}
 		/**
 		 *
 		 * @param billboard
-		 * @protected
 		 */
 		public applyBillboard(billboard:away.entities.Billboard)
 		{
-			this.applyRenderable(<away.pool.CSSRenderableBase> this._billboardRenderablePool.getItem(billboard));
+			this._applyRenderable(<away.pool.CSSRenderableBase> this._billboardRenderablePool.getItem(billboard));
+		}
+
+		/**
+		 *
+		 * @param lineSubMesh
+		 */
+		public applyLineSubMesh(lineSubMesh:away.base.LineSubMesh)
+		{
+			//this._applyRenderable(<away.pool.CSSRenderableBase> this._billboardRenderablePool.getItem(lineSegment));
+		}
+
+		/**
+		 *
+		 * @param skybox
+		 */
+		public applySkybox(skybox:away.entities.Skybox)
+		{
+
+		}
+
+		/**
+		 *
+		 * @param triangleSubMesh
+		 */
+		public applyTriangleSubMesh(triangleSubMesh:away.base.TriangleSubMesh)
+		{
+
 		}
 
 		/**
@@ -225,7 +372,7 @@ module away.render
 		 * @param renderable
 		 * @private
 		 */
-		private applyRenderable(renderable:away.pool.CSSRenderableBase)
+		private _applyRenderable(renderable:away.pool.CSSRenderableBase)
 		{
 			var material:away.materials.CSSMaterialBase = <away.materials.CSSMaterialBase> renderable.materialOwner.material;
 			var entity:away.entities.IEntity = renderable.sourceEntity;
@@ -250,16 +397,56 @@ module away.render
 			}
 		}
 
+
+		/**
+		 * @private
+		 */
+		private notifyScissorUpdate()
+		{
+			if (this._scissorDirty)
+				return;
+
+			this._scissorDirty = true;
+
+			if (!this._scissorUpdated)
+				this._scissorUpdated = new away.events.RendererEvent(away.events.RendererEvent.SCISSOR_UPDATED);
+
+			this.dispatchEvent(this._scissorUpdated);
+		}
+
+
+		/**
+		 * @private
+		 */
+		private notifyViewportUpdate()
+		{
+			if (this._viewportDirty)
+				return;
+
+			this._viewportDirty = true;
+
+			if (!this._viewPortUpdated)
+				this._viewPortUpdated = new away.events.RendererEvent(away.events.RendererEvent.VIEWPORT_UPDATED);
+
+			this.dispatchEvent(this._viewPortUpdated);
+		}
+
 		/**
 		 *
-		 * @param entity
 		 */
-		public pFindRenderables(entity:away.entities.IEntity)
+		public updateGlobalPos()
 		{
-			//TODO abstract conditional in the entity with a callback to IRenderer
-			if (entity.assetType === away.library.AssetType.BILLBOARD) {
-				this.applyBillboard(<away.entities.Billboard> entity);
-			}
+			this._viewPort.x = this._globalPos.x;
+			this._viewPort.y = this._globalPos.y;
+
+			this.notifyViewportUpdate();
+			this.notifyScissorUpdate();
+		}
+
+
+		public _iCreateEntityCollector():away.traverse.ICollector
+		{
+			throw new away.errors.AbstractMethodError();
 		}
 	}
 }

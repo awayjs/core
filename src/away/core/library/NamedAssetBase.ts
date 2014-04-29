@@ -69,11 +69,8 @@ module away.library
 			prev = this._name;
 			this._name = val;
 
-			if (this._name == null) {
-
+			if (this._name == null)
 				this._name = 'null';
-
-			}
 
 			this.updateFullPath();
 
@@ -108,11 +105,8 @@ module away.library
 			this._name = name? name : 'null';
 			this._namespace = ns? ns : NamedAssetBase.DEFAULT_NAMESPACE;
 
-			if (overrideOriginal) {
-
+			if (overrideOriginal)
 				this._originalName = this._name;
-
-			}
 
 			this.updateFullPath();
 		}

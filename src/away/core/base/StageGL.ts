@@ -514,6 +514,68 @@ module away.base
 			this._bufferClear = newBufferClear;
 		}
 
+		/**
+		 * Assigns an attribute stream
+		 *
+		 * @param index The attribute stream index for the vertex shader
+		 * @param buffer
+		 * @param offset
+		 * @param stride
+		 * @param format
+		 */
+		public activateBuffer(index:number, buffer:away.gl.VertexData, offset:number, format:string)
+		{
+			if (!buffer.stageGLs[this._iStageGLIndex])
+				buffer.stageGLs[this._iStageGLIndex] = this;
+
+			if (!buffer.buffers[this._iStageGLIndex]) {
+				buffer.buffers[this._iStageGLIndex] = this._contextGL.createVertexBuffer(buffer.data.length/buffer.dataPerVertex, buffer.dataPerVertex);
+				buffer.invalid[this._iStageGLIndex] = true;
+			}
+
+			if (buffer.invalid[this._iStageGLIndex]) {
+				buffer.buffers[this._iStageGLIndex].uploadFromArray(buffer.data, 0, buffer.data.length/buffer.dataPerVertex);
+				buffer.invalid[this._iStageGLIndex] = false;
+			}
+
+			this._contextGL.setVertexBufferAt(index, buffer.buffers[this._iStageGLIndex], offset, format);
+		}
+
+		public disposeVertexData(buffer:away.gl.VertexData)
+		{
+			buffer.buffers[this._iStageGLIndex].dispose();
+			buffer.buffers[this._iStageGLIndex] = null;
+		}
+
+		/**
+		 * Retrieves the VertexBuffer object that contains triangle indices.
+		 * @param context The ContextGL for which we request the buffer
+		 * @return The VertexBuffer object that contains triangle indices.
+		 */
+		public getIndexBuffer(buffer:away.gl.IndexData):away.gl.IndexBuffer
+		{
+			if (!buffer.stageGLs[this._iStageGLIndex])
+				buffer.stageGLs[this._iStageGLIndex] = this;
+
+			if (!buffer.buffers[this._iStageGLIndex]) {
+				buffer.buffers[this._iStageGLIndex] = this._contextGL.createIndexBuffer(buffer.data.length/3);
+				buffer.invalid[this._iStageGLIndex] = true;
+			}
+
+			if (buffer.invalid[this._iStageGLIndex]) {
+				buffer.buffers[this._iStageGLIndex].uploadFromArray(buffer.data, 0, buffer.data.length/3);
+				buffer.invalid[this._iStageGLIndex] = false;
+			}
+
+			return buffer.buffers[this._iStageGLIndex];
+		}
+
+		public disposeIndexData(buffer:away.gl.IndexData)
+		{
+			buffer.buffers[this._iStageGLIndex].dispose();
+			buffer.buffers[this._iStageGLIndex] = null;
+		}
+
 		/*
 		 * Access to fire mouseevents across multiple layered view3D instances
 		 */

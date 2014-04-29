@@ -33,7 +33,7 @@ module away.partition
 			this._rootNode.acceptTraverser(traverser);
 		}
 
-		public iMarkForUpdate(entity:away.entities.IEntity)
+		public iMarkForUpdate(entity:away.base.DisplayObject)
 		{
 			var node:EntityNode = entity.partitionNode;
 			var t:EntityNode = this._updateQueue;
@@ -51,7 +51,7 @@ module away.partition
 			this._updatesMade = true;
 		}
 
-		public iRemoveEntity(entity:away.entities.IEntity)
+		public iRemoveEntity(entity:away.base.DisplayObject)
 		{
 			var node:EntityNode = entity.partitionNode;
 			var t:EntityNode;

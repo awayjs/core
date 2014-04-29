@@ -1,7 +1,6 @@
+///<reference path="../../build/awayjs.next.d.ts" />
 var tests;
 (function (tests) {
-    ///<reference path="../../../build/Away3D.next.d.ts" />
-    //<reference path="../../../src/Away3D.ts" />
     (function (geom) {
         var ColorUtils = (function () {
             function ColorUtils() {

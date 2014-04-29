@@ -86,7 +86,7 @@ module away.containers
 				this.iRegisterPartition(displayObject.partition);
 
 			if (displayObject.isEntity)
-				displayObject._iAssignedPartition.iMarkForUpdate(<away.entities.IEntity> displayObject);
+				displayObject._iAssignedPartition.iMarkForUpdate(displayObject);
 		}
 
 		/**
@@ -110,7 +110,7 @@ module away.containers
 				this.iUnregisterPartition(displayObject.partition);
 
 			if (displayObject.isEntity)
-				displayObject._iAssignedPartition.iRemoveEntity(<away.entities.IEntity> displayObject);
+				displayObject._iAssignedPartition.iRemoveEntity(displayObject);
 		}
 
 		/**

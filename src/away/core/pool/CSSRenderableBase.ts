@@ -86,9 +86,25 @@ module away.pool
 		/**
 		 *
 		 */
-		public _iUpdate()
+		public invalidateGeometry()
 		{
-			//nothing to do here
+
+		}
+
+		/**
+		 *
+		 */
+		public invalidateIndexData()
+		{
+
+		}
+
+		/**
+		 *
+		 */
+		public invalidateVertexData(dataType:string)
+		{
+
 		}
 	}
 }

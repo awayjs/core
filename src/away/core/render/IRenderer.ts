@@ -18,19 +18,74 @@ module away.render
 		 */
 		renderableSorter:away.sort.IEntitySorter;
 
+		/**
+		 *
+		 */
 		shareContext:boolean;
 
+		/**
+		 *
+		 */
 		x:number /*uint*/;
+
+		/**
+		 *
+		 */
 		y:number /*uint*/;
+
+		/**
+		 *
+		 */
 		width:number /*uint*/;
+
+		/**
+		 *
+		 */
 		height:number /*uint*/;
 
+		/**
+		 *
+		 */
 		viewPort:away.geom.Rectangle;
 
+		/**
+		 *
+		 */
 		scissorRect:away.geom.Rectangle;
 
+		/**
+		 *
+		 * @param billboard
+		 */
+		applyBillboard(billboard:away.entities.Billboard);
+
+		/**
+		 *
+		 * @param triangleSubMesh
+		 */
+		applyLineSubMesh(triangleSubMesh:away.base.LineSubMesh);
+
+		/**
+		 *
+		 * @param skybox
+		 */
+		applySkybox(skybox:away.entities.Skybox);
+
+		/**
+		 *
+		 * @param triangleSubMesh
+		 */
+		applyTriangleSubMesh(triangleSubMesh:away.base.TriangleSubMesh);
+
+		/**
+		 *
+		 */
 		dispose();
 
+		/**
+		 *
+		 * @param entityCollector
+		 */
 		render(entityCollector:away.traverse.ICollector);
 
 		/**

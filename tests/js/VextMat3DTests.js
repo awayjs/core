@@ -1,32 +1,18 @@
+///<reference path="../../build/awayjs.next.d.ts" />
 var tests;
 (function (tests) {
-    ///<reference path="../../../build/Away3D.next.d.ts" />
-    //<reference path="../../../src/Away3D.ts" />
     (function (geom) {
         var VextMat3DTests = (function () {
             function VextMat3DTests() {
                 var m = new away.geom.Matrix3D([
-                    1,
-                    2,
-                    3,
-                    4,
-                    5,
-                    6,
-                    7,
-                    8,
-                    9,
-                    10,
-                    11,
-                    12,
-                    13,
-                    14,
-                    15,
-                    16
-                ]);
+                    1, 2, 3, 4,
+                    5, 6, 7, 8,
+                    9, 10, 11, 12,
+                    13, 14, 15, 16]);
 
                 var v = new away.geom.Vector3D();
 
-                console.log('------------------------------------ copyColumnTo');
+                console.log('------------------------------------ copyColumnTo'); // DONE OK
 
                 m.copyColumnTo(0, v);
                 console.log('copyColumnTo 0 ', v);
@@ -37,7 +23,7 @@ var tests;
                 m.copyColumnTo(3, v);
                 console.log('copyColumnTo 3 ', v);
 
-                console.log('------------------------------------ copyRowTo');
+                console.log('------------------------------------ copyRowTo'); // DONE OK
 
                 var r = new away.geom.Vector3D();
 
@@ -50,7 +36,7 @@ var tests;
                 m.copyRowTo(3, r);
                 console.log('copyRowTo 3 ', r);
 
-                console.log('------------------------------------ copyRowFrom');
+                console.log('------------------------------------ copyRowFrom'); // DONE OK
 
                 m = new away.geom.Matrix3D([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]);
 
@@ -63,7 +49,7 @@ var tests;
                 m.copyRowFrom(3, new away.geom.Vector3D(4, 3, 2, 1));
                 console.log('copyRowFrom 3 ', m.rawData);
 
-                console.log('------------------------------------ copyColumnFrom');
+                console.log('------------------------------------ copyColumnFrom'); // DONE OK
 
                 m = new away.geom.Matrix3D([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]);
 
@@ -76,289 +62,133 @@ var tests;
                 m.copyColumnFrom(3, new away.geom.Vector3D(4, 3, 2, 1));
                 console.log('copyColumnFrom 3 ', m.rawData);
 
-                console.log('------------------------------------ Append');
+                console.log('------------------------------------ Append'); // DONE OK
 
                 m = new away.geom.Matrix3D([
-                    1,
-                    2,
-                    3,
-                    4,
-                    5,
-                    6,
-                    7,
-                    8,
-                    9,
-                    10,
-                    11,
-                    12,
-                    13,
-                    14,
-                    15,
-                    16
-                ]);
+                    1, 2, 3, 4,
+                    5, 6, 7, 8,
+                    9, 10, 11, 12,
+                    13, 14, 15, 16]);
 
                 var s = new away.geom.Matrix3D([
-                    16,
-                    15,
-                    14,
-                    13,
-                    12,
-                    11,
-                    10,
-                    9,
-                    8,
-                    7,
-                    6,
-                    5,
-                    4,
-                    3,
-                    2,
-                    1
-                ]);
+                    16, 15, 14, 13,
+                    12, 11, 10, 9,
+                    8, 7, 6, 5,
+                    4, 3, 2, 1]);
 
                 m.append(s);
 
                 console.log('Append Result', m.rawData);
                 console.log('Appendee', s.rawData);
 
-                console.log('------------------------------------ Prepend');
+                console.log('------------------------------------ Prepend'); // DONE OK
 
                 m = new away.geom.Matrix3D([
-                    1,
-                    2,
-                    3,
-                    4,
-                    5,
-                    6,
-                    7,
-                    8,
-                    9,
-                    10,
-                    11,
-                    12,
-                    13,
-                    14,
-                    15,
-                    16
-                ]);
+                    1, 2, 3, 4,
+                    5, 6, 7, 8,
+                    9, 10, 11, 12,
+                    13, 14, 15, 16]);
 
                 s = new away.geom.Matrix3D([
-                    16,
-                    15,
-                    14,
-                    13,
-                    12,
-                    11,
-                    10,
-                    9,
-                    8,
-                    7,
-                    6,
-                    5,
-                    4,
-                    3,
-                    2,
-                    1
-                ]);
+                    16, 15, 14, 13,
+                    12, 11, 10, 9,
+                    8, 7, 6, 5,
+                    4, 3, 2, 1]);
 
                 m.prepend(s);
 
                 console.log('Prepend Result', m.rawData);
                 console.log('Prependee', s.rawData);
 
-                console.log('------------------------------------ Append Translation');
+                console.log('------------------------------------ Append Translation'); // DONE OK
 
                 m = new away.geom.Matrix3D([
-                    1,
-                    2,
-                    3,
-                    4,
-                    5,
-                    6,
-                    7,
-                    8,
-                    9,
-                    10,
-                    11,
-                    12,
-                    13,
-                    14,
-                    15,
-                    16
-                ]);
+                    1, 2, 3, 4,
+                    5, 6, 7, 8,
+                    9, 10, 11, 12,
+                    13, 14, 15, 16]);
 
                 m.appendTranslation(5, 6, 7);
                 console.log(' Append Translation', m.rawData);
 
-                console.log('------------------------------------ appendRotation');
+                console.log('------------------------------------ appendRotation'); // DONE OK - Pivot gives different result ( commented out for now )
 
                 m = new away.geom.Matrix3D([
-                    1,
-                    2,
-                    3,
-                    4,
-                    5,
-                    6,
-                    7,
-                    8,
-                    9,
-                    10,
-                    11,
-                    12,
-                    13,
-                    14,
-                    15,
-                    16
-                ]);
+                    1, 2, 3, 4,
+                    5, 6, 7, 8,
+                    9, 10, 11, 12,
+                    13, 14, 15, 16]);
 
                 var pivot = new away.geom.Vector3D(7, 8, 9);
 
                 var axis = new away.geom.Vector3D(0, 0, 1);
-                m.appendRotation(45, axis);
+                m.appendRotation(45, axis); //, pivot );
                 console.log('appendRotation', m.rawData);
 
-                console.log('------------------------------------ appendScale');
+                console.log('------------------------------------ appendScale'); // DONE OK
 
                 m = new away.geom.Matrix3D([
-                    1,
-                    2,
-                    3,
-                    4,
-                    5,
-                    6,
-                    7,
-                    8,
-                    9,
-                    10,
-                    11,
-                    12,
-                    13,
-                    14,
-                    15,
-                    16
-                ]);
+                    1, 2, 3, 4,
+                    5, 6, 7, 8,
+                    9, 10, 11, 12,
+                    13, 14, 15, 16]);
 
                 m.appendScale(6, 7, 8);
                 console.log('appendScale', m.rawData);
 
-                console.log('------------------------------------ prepentScale');
+                console.log('------------------------------------ prepentScale'); // DONE OK
 
                 m = new away.geom.Matrix3D([
-                    1,
-                    2,
-                    3,
-                    4,
-                    5,
-                    6,
-                    7,
-                    8,
-                    9,
-                    10,
-                    11,
-                    12,
-                    13,
-                    14,
-                    15,
-                    16
-                ]);
+                    1, 2, 3, 4,
+                    5, 6, 7, 8,
+                    9, 10, 11, 12,
+                    13, 14, 15, 16]);
 
                 m.prependScale(6, 7, 8);
                 console.log('prepentScale', m.rawData);
 
-                console.log('------------------------------------ clone');
+                console.log('------------------------------------ clone'); // DONE OK
 
                 m = new away.geom.Matrix3D([
-                    1,
-                    2,
-                    3,
-                    4,
-                    5,
-                    6,
-                    7,
-                    8,
-                    9,
-                    10,
-                    11,
-                    12,
-                    13,
-                    14,
-                    15,
-                    16
-                ]);
+                    1, 2, 3, 4,
+                    5, 6, 7, 8,
+                    9, 10, 11, 12,
+                    13, 14, 15, 16]);
 
                 console.log('clone', m.clone().rawData);
 
-                console.log('------------------------------------ copyFrom');
+                console.log('------------------------------------ copyFrom'); // DONE OK
 
                 m = new away.geom.Matrix3D([
-                    1,
-                    2,
-                    3,
-                    4,
-                    5,
-                    6,
-                    7,
-                    8,
-                    9,
-                    10,
-                    11,
-                    12,
-                    13,
-                    14,
-                    15,
-                    16
-                ]);
+                    1, 2, 3, 4,
+                    5, 6, 7, 8,
+                    9, 10, 11, 12,
+                    13, 14, 15, 16]);
 
                 var cl = new away.geom.Matrix3D([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]);
                 cl.copyFrom(m);
 
                 console.log('copyFrom', cl.rawData);
 
-                console.log('------------------------------------ copyRawDataFrom');
+                console.log('------------------------------------ copyRawDataFrom'); // DONE ok - Offet / Traspose not implemented
 
                 m = new away.geom.Matrix3D([
-                    1,
-                    2,
-                    3,
-                    4,
-                    5,
-                    6,
-                    7,
-                    8,
-                    9,
-                    10,
-                    11,
-                    12,
-                    13,
-                    14,
-                    15,
-                    16
-                ]);
+                    1, 2, 3, 4,
+                    5, 6, 7, 8,
+                    9, 10, 11, 12,
+                    13, 14, 15, 16]);
 
                 m.copyRawDataFrom([16, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1]);
 
                 console.log('copyRawDataFrom', m.rawData);
 
-                console.log('------------------------------------ copyRawDataTo');
+                console.log('------------------------------------ copyRawDataTo'); // done OK
 
                 m = new away.geom.Matrix3D([
-                    1,
-                    2,
-                    3,
-                    4,
-                    5,
-                    6,
-                    7,
-                    8,
-                    9,
-                    10,
-                    11,
-                    12,
-                    13,
-                    14,
-                    15,
-                    16
-                ]);
+                    1, 2, 3, 4,
+                    5, 6, 7, 8,
+                    9, 10, 11, 12,
+                    13, 14, 15, 16]);
 
                 var result = new Array(9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9);
 
@@ -368,184 +198,80 @@ var tests;
                 console.log('rawData', m.rawData);
                 console.log('copyRawDataTo', result);
 
-                console.log('------------------------------------ transpose');
+                console.log('------------------------------------ transpose'); // DONE ok - Offet / Traspose not implemented
 
                 m = new away.geom.Matrix3D([
-                    1,
-                    2,
-                    3,
-                    4,
-                    5,
-                    6,
-                    7,
-                    8,
-                    9,
-                    10,
-                    11,
-                    12,
-                    13,
-                    14,
-                    15,
-                    16
-                ]);
+                    1, 2, 3, 4,
+                    5, 6, 7, 8,
+                    9, 10, 11, 12,
+                    13, 14, 15, 16]);
 
                 m.transpose();
                 console.log('transpose', m.rawData);
 
-                console.log('------------------------------------ copyToMatrix3D');
+                console.log('------------------------------------ copyToMatrix3D'); // done ok
 
                 m = new away.geom.Matrix3D([
-                    1,
-                    2,
-                    3,
-                    4,
-                    5,
-                    6,
-                    7,
-                    8,
-                    9,
-                    10,
-                    11,
-                    12,
-                    13,
-                    14,
-                    15,
-                    16
-                ]);
+                    1, 2, 3, 4,
+                    5, 6, 7, 8,
+                    9, 10, 11, 12,
+                    13, 14, 15, 16]);
 
                 s = new away.geom.Matrix3D([
-                    16,
-                    15,
-                    14,
-                    13,
-                    12,
-                    11,
-                    10,
-                    9,
-                    8,
-                    7,
-                    6,
-                    5,
-                    4,
-                    3,
-                    2,
-                    1
-                ]);
+                    16, 15, 14, 13,
+                    12, 11, 10, 9,
+                    8, 7, 6, 5,
+                    4, 3, 2, 1]);
 
                 m.copyToMatrix3D(s);
                 console.log('copyToMatrix3D', m.rawData);
 
-                console.log('------------------------------------ decompose');
+                console.log('------------------------------------ decompose'); /// NOT WORKING
 
                 m = new away.geom.Matrix3D([
-                    1,
-                    6,
-                    0,
-                    0,
-                    0,
-                    1,
-                    0,
-                    0,
-                    0,
-                    0,
-                    1,
-                    0,
-                    0,
-                    0,
-                    0,
-                    1
-                ]);
+                    1, 6, 0, 0,
+                    0, 1, 0, 0,
+                    0, 0, 1, 0,
+                    0, 0, 0, 1]);
 
                 var resultDecompose = m.decompose();
                 console.log('copyToMatrix3D', resultDecompose[0]);
                 console.log('copyToMatrix3D', resultDecompose[1]);
                 console.log('copyToMatrix3D', resultDecompose[2]);
 
-                console.log('------------------------------------ determinant');
+                console.log('------------------------------------ determinant'); // WORKING ok - good
 
                 m = new away.geom.Matrix3D([
-                    1,
-                    2,
-                    0,
-                    6,
-                    2,
-                    1,
-                    0,
-                    0,
-                    0,
-                    0,
-                    1,
-                    3,
-                    6,
-                    0,
-                    3,
-                    1
-                ]);
+                    1, 2, 0, 6,
+                    2, 1, 0, 0,
+                    0, 0, 1, 3,
+                    6, 0, 3, 1]);
 
                 console.log('determinant:', m.determinant);
 
                 m = new away.geom.Matrix3D([
-                    1,
-                    2,
-                    5,
-                    6,
-                    2,
-                    1,
-                    0,
-                    8,
-                    5,
-                    0,
-                    1,
-                    3,
-                    6,
-                    8,
-                    3,
-                    1
-                ]);
+                    1, 2, 5, 6,
+                    2, 1, 0, 8,
+                    5, 0, 1, 3,
+                    6, 8, 3, 1]);
 
                 console.log('determinant:', m.determinant);
 
                 m = new away.geom.Matrix3D([
-                    1,
-                    0,
-                    0,
-                    0,
-                    0,
-                    1,
-                    0,
-                    0,
-                    0,
-                    0,
-                    1,
-                    0,
-                    0,
-                    0,
-                    0,
-                    1
-                ]);
+                    1, 0, 0, 0,
+                    0, 1, 0, 0,
+                    0, 0, 1, 0,
+                    0, 0, 0, 1]);
 
                 console.log('determinant:', m.determinant);
 
-                console.log('------------------------------------ invert');
+                console.log('------------------------------------ invert'); // WORKING ok - good
 
                 m = new away.geom.Matrix3D([
-                    1,
-                    2,
-                    5,
-                    6,
-                    2,
-                    1,
-                    0,
-                    8,
-                    5,
-                    0,
-                    1,
-                    3,
-                    6,
-                    8,
-                    3,
-                    1
-                ]);
+                    1, 2, 5, 6,
+                    2, 1, 0, 8,
+                    5, 0, 1, 3,
+                    6, 8, 3, 1]);
 
                 var b;
 
@@ -553,98 +279,46 @@ var tests;
                 console.log('invert:', b, m.rawData);
 
                 m = new away.geom.Matrix3D([
-                    1,
-                    2,
-                    3,
-                    4,
-                    5,
-                    6,
-                    7,
-                    8,
-                    9,
-                    10,
-                    11,
-                    12,
-                    13,
-                    14,
-                    15,
-                    16
-                ]);
+                    1, 2, 3, 4,
+                    5, 6, 7, 8,
+                    9, 10, 11, 12,
+                    13, 14, 15, 16]);
 
                 b = m.invert();
                 console.log('invert:', b, m.rawData);
 
-                console.log('------------------------------------ Prepend Rotation');
+                console.log('------------------------------------ Prepend Rotation'); // OK Good
 
                 m = new away.geom.Matrix3D([
-                    1,
-                    2,
-                    3,
-                    4,
-                    5,
-                    6,
-                    7,
-                    8,
-                    9,
-                    10,
-                    11,
-                    12,
-                    13,
-                    14,
-                    15,
-                    16
-                ]);
+                    1, 2, 3, 4,
+                    5, 6, 7, 8,
+                    9, 10, 11, 12,
+                    13, 14, 15, 16]);
 
                 axis = new away.geom.Vector3D(1, 0, 0);
                 m.prependRotation(45, axis);
 
                 console.log('prependRotation:', m.rawData);
 
-                console.log('------------------------------------ prependTranslation');
+                console.log('------------------------------------ prependTranslation'); // OK Good
 
                 m = new away.geom.Matrix3D([
-                    1,
-                    2,
-                    3,
-                    4,
-                    5,
-                    6,
-                    7,
-                    8,
-                    9,
-                    10,
-                    11,
-                    12,
-                    13,
-                    14,
-                    15,
-                    16
-                ]);
+                    1, 2, 3, 4,
+                    5, 6, 7, 8,
+                    9, 10, 11, 12,
+                    13, 14, 15, 16]);
 
                 m.prependTranslation(5, 10, 15);
 
                 console.log('prependTranslation:', m.rawData);
 
-                console.log('------------------------------------ recompose');
+                console.log('------------------------------------ recompose'); // OK Good
 
                 m = new away.geom.Matrix3D([
-                    1,
-                    2,
-                    3,
-                    4,
-                    5,
-                    6,
-                    7,
-                    8,
-                    9,
-                    10,
-                    11,
-                    12,
-                    13,
-                    14,
-                    15,
-                    16
-                ]);
+                    1, 2, 3, 4,
+                    5, 6, 7, 8,
+                    9, 10, 11, 12,
+                    13, 14, 15, 16]);
 
                 var rVects = new Array();
                 rVects.push(new away.geom.Vector3D(5, 1, 3));
@@ -654,23 +328,10 @@ var tests;
                 m.recompose(rVects);
 
                 m = new away.geom.Matrix3D([
-                    1,
-                    2,
-                    3,
-                    4,
-                    5,
-                    6,
-                    7,
-                    8,
-                    9,
-                    10,
-                    11,
-                    12,
-                    13,
-                    14,
-                    15,
-                    16
-                ]);
+                    1, 2, 3, 4,
+                    5, 6, 7, 8,
+                    9, 10, 11, 12,
+                    13, 14, 15, 16]);
 
                 rVects = new Array();
                 rVects.push(new away.geom.Vector3D(1, 2, 9));
@@ -690,124 +351,59 @@ var tests;
 
                 console.log('fail - recompose:', m.rawData, b);
 
-                console.log('------------------------------------ transformVector ');
+                console.log('------------------------------------ transformVector '); // IT WORKS !!!
 
                 m = new away.geom.Matrix3D([
-                    1,
-                    2,
-                    3,
-                    4,
-                    5,
-                    6,
-                    7,
-                    8,
-                    9,
-                    10,
-                    11,
-                    12,
-                    13,
-                    14,
-                    15,
-                    16
-                ]);
+                    1, 2, 3, 4,
+                    5, 6, 7, 8,
+                    9, 10, 11, 12,
+                    13, 14, 15, 16]);
 
                 var tVResult = m.transformVector(new away.geom.Vector3D(1, 2, 3));
 
                 console.log(tVResult);
 
-                console.log('------------------------------------ transformVector ');
+                console.log('------------------------------------ transformVector '); // IT WORKS !!!
 
                 m = new away.geom.Matrix3D([
-                    1,
-                    2,
-                    3,
-                    4,
-                    5,
-                    6,
-                    7,
-                    8,
-                    9,
-                    10,
-                    11,
-                    12,
-                    13,
-                    14,
-                    15,
-                    16
-                ]);
+                    1, 2, 3, 4,
+                    5, 6, 7, 8,
+                    9, 10, 11, 12,
+                    13, 14, 15, 16]);
 
                 var vout = new Array(0, 1, 2, 3, 4, 5);
                 var vin = new Array(4, 5, 6);
                 m.transformVectors(vin, vout);
                 console.log('transformVector', vout, vin);
 
-                console.log('------------------------------------ transpose');
+                console.log('------------------------------------ transpose'); // IT WORKS !!!
 
                 m = new away.geom.Matrix3D([
-                    1,
-                    2,
-                    3,
-                    4,
-                    5,
-                    6,
-                    7,
-                    8,
-                    9,
-                    10,
-                    11,
-                    12,
-                    13,
-                    14,
-                    15,
-                    16
-                ]);
+                    1, 2, 3, 4,
+                    5, 6, 7, 8,
+                    9, 10, 11, 12,
+                    13, 14, 15, 16]);
 
                 m.transpose();
                 console.log('transpose', m.rawData);
 
-                console.log('------------------------------------ getAxisRotation');
+                console.log('------------------------------------ getAxisRotation'); // internal class
 
                 m = new away.geom.Matrix3D([
-                    1,
-                    2,
-                    3,
-                    4,
-                    5,
-                    6,
-                    7,
-                    8,
-                    9,
-                    10,
-                    11,
-                    12,
-                    13,
-                    14,
-                    15,
-                    16
-                ]);
+                    1, 2, 3, 4,
+                    5, 6, 7, 8,
+                    9, 10, 11, 12,
+                    13, 14, 15, 16]);
 
                 //m.getAxisRotation(4 , 5 , 6 , 90 );
                 //console.log( 'getAxisRotation' , m.rawData );
-                console.log('------------------------------------ position');
+                console.log('------------------------------------ position'); // internal class
 
                 m = new away.geom.Matrix3D([
-                    1,
-                    2,
-                    3,
-                    4,
-                    5,
-                    6,
-                    7,
-                    8,
-                    9,
-                    10,
-                    11,
-                    12,
-                    13,
-                    14,
-                    15,
-                    16
-                ]);
+                    1, 2, 3, 4,
+                    5, 6, 7, 8,
+                    9, 10, 11, 12,
+                    13, 14, 15, 16]);
 
                 var posVect = new away.geom.Vector3D(5, 10, 15);
 
@@ -822,42 +418,16 @@ var tests;
                 var v2 = new away.geom.Vector3D(7, 8, 0);
 
                 var t = new away.geom.Matrix3D([
-                    0,
-                    10,
-                    10,
-                    1,
-                    10,
-                    5,
-                    10,
-                    10,
-                    10,
-                    10,
-                    5,
-                    10,
-                    1,
-                    10,
-                    10,
-                    0
-                ]);
+                    0, 10, 10, 1,
+                    10, 5, 10, 10,
+                    10, 10, 5, 10,
+                    1, 10, 10, 0]);
 
                 var d = new away.geom.Matrix3D([
-                    1,
-                    50,
-                    1,
-                    8,
-                    2,
-                    5,
-                    12,
-                    9,
-                    30,
-                    16,
-                    35,
-                    10,
-                    4,
-                    18,
-                    40,
-                    11
-                ]);
+                    1, 50, 1, 8,
+                    2, 5, 12, 9,
+                    30, 16, 35, 10,
+                    4, 18, 40, 11]);
                 t.append(d);
 
                 console.log(t.rawData);
@@ -869,23 +439,10 @@ var tests;
                 var v2 = new away.geom.Vector3D(7, 8, 0);
 
                 var t = new away.geom.Matrix3D([
-                    0,
-                    10,
-                    10,
-                    1,
-                    10,
-                    5,
-                    10,
-                    10,
-                    10,
-                    10,
-                    5,
-                    10,
-                    1,
-                    10,
-                    10,
-                    0
-                ]);
+                    0, 10, 10, 1,
+                    10, 5, 10, 10,
+                    10, 10, 5, 10,
+                    1, 10, 10, 0]);
 
                 var d = new away.geom.Matrix3D();
                 t.prependRotation(90, v);
@@ -899,23 +456,10 @@ var tests;
                 var v2 = new away.geom.Vector3D(7, 8, 0);
 
                 var t = new away.geom.Matrix3D([
-                    0,
-                    10,
-                    10,
-                    1,
-                    10,
-                    5,
-                    10,
-                    10,
-                    10,
-                    10,
-                    5,
-                    10,
-                    1,
-                    10,
-                    10,
-                    0
-                ]);
+                    0, 10, 10, 1,
+                    10, 5, 10, 10,
+                    10, 10, 5, 10,
+                    1, 10, 10, 0]);
 
                 var d = new away.geom.Matrix3D();
 
@@ -932,23 +476,10 @@ var tests;
 
                 for (var c = 0; c < 10; c++) {
                     m = new away.geom.Matrix3D([
-                        this.getRnd(-100, 100),
-                        this.getRnd(-100, 100),
-                        this.getRnd(-100, 100),
-                        this.getRnd(-100, 100),
-                        this.getRnd(-100, 100),
-                        this.getRnd(-100, 100),
-                        this.getRnd(-100, 100),
-                        this.getRnd(-100, 100),
-                        this.getRnd(-100, 100),
-                        this.getRnd(-100, 100),
-                        this.getRnd(-100, 100),
-                        this.getRnd(-100, 100),
-                        this.getRnd(-100, 100),
-                        this.getRnd(-100, 100),
-                        this.getRnd(-100, 100),
-                        this.getRnd(-100, 100)
-                    ]);
+                        this.getRnd(-100, 100), this.getRnd(-100, 100), this.getRnd(-100, 100), this.getRnd(-100, 100),
+                        this.getRnd(-100, 100), this.getRnd(-100, 100), this.getRnd(-100, 100), this.getRnd(-100, 100),
+                        this.getRnd(-100, 100), this.getRnd(-100, 100), this.getRnd(-100, 100), this.getRnd(-100, 100),
+                        this.getRnd(-100, 100), this.getRnd(-100, 100), this.getRnd(-100, 100), this.getRnd(-100, 100)]);
 
                     m.copyRawDataTo(r);
 
@@ -1005,11 +536,11 @@ var tests;
             };
 
             VextMat3DTests.prototype.outputDecompose = function (result, original, a1, a2, a3) {
-                var a1 = 'new Vector3D( ' + a1.x + ' , ' + a1.y + ' , ' + a1.z + ' )';
-                var a2 = 'new Vector3D( ' + a2.x + ' , ' + a2.y + ' , ' + a2.z + ' )';
-                var a3 = 'new Vector3D( ' + a3.x + ' , ' + a3.y + ' , ' + a3.z + ' )';
+                var s1 = 'new Vector3D( ' + a1.x + ' , ' + a1.y + ' , ' + a1.z + ' )';
+                var s2 = 'new Vector3D( ' + a2.x + ' , ' + a2.y + ' , ' + a2.z + ' )';
+                var s3 = 'new Vector3D( ' + a3.x + ' , ' + a3.y + ' , ' + a3.z + ' )';
 
-                console.log('testDecompose( new <Number> [' + result + '], new <Number> [' + original + '] , ' + a1 + ' , ' + a2 + ' , ' + a3 + ' );');
+                console.log('testDecompose( new <Number> [' + result + '], new <Number> [' + original + '] , ' + s1 + ' , ' + s2 + ' , ' + s3 + ' );');
             };
 
             VextMat3DTests.prototype.testPosition = function () {
@@ -1024,92 +555,40 @@ var tests;
                 var r = new Array(16);
 
                 m = new away.geom.Matrix3D([
-                    1,
-                    2,
-                    4,
-                    5,
-                    2,
-                    1,
-                    0,
-                    8,
-                    4,
-                    0,
-                    1,
-                    7,
-                    5,
-                    8,
-                    7,
-                    1
-                ]);
+                    1, 2, 4, 5,
+                    2, 1, 0, 8,
+                    4, 0, 1, 7,
+                    5, 8, 7, 1]);
                 m.copyRawDataTo(r);
                 m.position = v;
                 pos = m.position;
                 this.outputPosition(m.rawData, r, v);
 
                 m = new away.geom.Matrix3D([
-                    1,
-                    0,
-                    4,
-                    5,
-                    0,
-                    1,
-                    8,
-                    0,
-                    4,
-                    8,
-                    1,
-                    7,
-                    5,
-                    0,
-                    7,
-                    1
-                ]);
+                    1, 0, 4, 5,
+                    0, 1, 8, 0,
+                    4, 8, 1, 7,
+                    5, 0, 7, 1]);
                 m.copyRawDataTo(r);
                 m.position = v;
                 pos = m.position;
                 this.outputPosition(m.rawData, r, v);
 
                 m = new away.geom.Matrix3D([
-                    1,
-                    0,
-                    4,
-                    5,
-                    0,
-                    1,
-                    8,
-                    0,
-                    4,
-                    8,
-                    1,
-                    2,
-                    5,
-                    0,
-                    2,
-                    1
-                ]);
+                    1, 0, 4, 5,
+                    0, 1, 8, 0,
+                    4, 8, 1, 2,
+                    5, 0, 2, 1]);
                 m.copyRawDataTo(r);
                 m.position = v;
                 pos = m.position;
                 this.outputPosition(m.rawData, r, v);
 
                 m = new away.geom.Matrix3D([
-                    1,
-                    0,
-                    4,
-                    5,
-                    0,
-                    1,
-                    8,
-                    0,
-                    4,
-                    8,
-                    1,
-                    1,
-                    5,
-                    0,
-                    1,
-                    1
-                ]);
+                    1, 0, 4, 5,
+                    0, 1, 8, 0,
+                    4, 8, 1, 1,
+                    5, 0, 1, 1]);
                 m.copyRawDataTo(r);
                 m.position = v;
                 pos = m.position;
@@ -1143,92 +622,40 @@ var tests;
                 var r = new Array(16);
 
                 m = new away.geom.Matrix3D([
-                    1,
-                    2,
-                    4,
-                    5,
-                    2,
-                    1,
-                    0,
-                    8,
-                    4,
-                    0,
-                    1,
-                    7,
-                    5,
-                    8,
-                    7,
-                    1
-                ]);
+                    1, 2, 4, 5,
+                    2, 1, 0, 8,
+                    4, 0, 1, 7,
+                    5, 8, 7, 1]);
                 m.copyRawDataTo(r);
                 m.appendScale(v.x, v.y, v.z);
 
                 this.outputAppendScale(m.rawData, r, v);
 
                 m = new away.geom.Matrix3D([
-                    1,
-                    0,
-                    4,
-                    5,
-                    0,
-                    1,
-                    8,
-                    0,
-                    4,
-                    8,
-                    1,
-                    7,
-                    5,
-                    0,
-                    7,
-                    1
-                ]);
+                    1, 0, 4, 5,
+                    0, 1, 8, 0,
+                    4, 8, 1, 7,
+                    5, 0, 7, 1]);
 
                 m.copyRawDataTo(r);
                 m.appendScale(v.x, v.y, v.z);
                 this.outputAppendScale(m.rawData, r, v);
 
                 m = new away.geom.Matrix3D([
-                    1,
-                    0,
-                    4,
-                    5,
-                    0,
-                    1,
-                    8,
-                    0,
-                    4,
-                    8,
-                    1,
-                    2,
-                    5,
-                    0,
-                    2,
-                    1
-                ]);
+                    1, 0, 4, 5,
+                    0, 1, 8, 0,
+                    4, 8, 1, 2,
+                    5, 0, 2, 1]);
 
                 m.copyRawDataTo(r);
                 m.appendScale(v.x, v.y, v.z);
                 this.outputAppendScale(m.rawData, r, v);
 
                 m = new away.geom.Matrix3D([
-                    1,
-                    0,
-                    4,
-                    5,
-                    0,
-                    1,
-                    8,
-                    0,
-                    4,
-                    8,
-                    1,
-                    1,
-                    5,
-                    0,
-                    1,
-                    1
-                ]);
+                    1, 0, 4, 5,
+                    0, 1, 8, 0,
+                    4, 8, 1, 1,
+                    5, 0, 1, 1]);
 
                 m.copyRawDataTo(r);
                 m.appendScale(v.x, v.y, v.z);
@@ -1261,92 +688,40 @@ var tests;
                 var r = new Array(16);
 
                 m = new away.geom.Matrix3D([
-                    1,
-                    2,
-                    4,
-                    5,
-                    2,
-                    1,
-                    0,
-                    8,
-                    4,
-                    0,
-                    1,
-                    7,
-                    5,
-                    8,
-                    7,
-                    1
-                ]);
+                    1, 2, 4, 5,
+                    2, 1, 0, 8,
+                    4, 0, 1, 7,
+                    5, 8, 7, 1]);
                 m.copyRawDataTo(r);
                 m.appendTranslation(v.x, v.y, v.z);
 
                 this.outputAppendTranslation(m.rawData, r, v);
 
                 m = new away.geom.Matrix3D([
-                    1,
-                    0,
-                    4,
-                    5,
-                    0,
-                    1,
-                    8,
-                    0,
-                    4,
-                    8,
-                    1,
-                    7,
-                    5,
-                    0,
-                    7,
-                    1
-                ]);
+                    1, 0, 4, 5,
+                    0, 1, 8, 0,
+                    4, 8, 1, 7,
+                    5, 0, 7, 1]);
 
                 m.copyRawDataTo(r);
                 m.appendTranslation(v.x, v.y, v.z);
                 this.outputAppendTranslation(m.rawData, r, v);
 
                 m = new away.geom.Matrix3D([
-                    1,
-                    0,
-                    4,
-                    5,
-                    0,
-                    1,
-                    8,
-                    0,
-                    4,
-                    8,
-                    1,
-                    2,
-                    5,
-                    0,
-                    2,
-                    1
-                ]);
+                    1, 0, 4, 5,
+                    0, 1, 8, 0,
+                    4, 8, 1, 2,
+                    5, 0, 2, 1]);
 
                 m.copyRawDataTo(r);
                 m.appendTranslation(v.x, v.y, v.z);
                 this.outputAppendTranslation(m.rawData, r, v);
 
                 m = new away.geom.Matrix3D([
-                    1,
-                    0,
-                    4,
-                    5,
-                    0,
-                    1,
-                    8,
-                    0,
-                    4,
-                    8,
-                    1,
-                    1,
-                    5,
-                    0,
-                    1,
-                    1
-                ]);
+                    1, 0, 4, 5,
+                    0, 1, 8, 0,
+                    4, 8, 1, 1,
+                    5, 0, 1, 1]);
 
                 m.copyRawDataTo(r);
                 m.appendTranslation(v.x, v.y, v.z);
@@ -1382,95 +757,43 @@ var tests;
                 var r = new Array(16);
 
                 m = new away.geom.Matrix3D([
-                    1,
-                    2,
-                    4,
-                    5,
-                    2,
-                    1,
-                    0,
-                    8,
-                    4,
-                    0,
-                    1,
-                    7,
-                    5,
-                    8,
-                    7,
-                    1
-                ]);
+                    1, 2, 4, 5,
+                    2, 1, 0, 8,
+                    4, 0, 1, 7,
+                    5, 8, 7, 1]);
                 m.copyRawDataTo(r);
-                m.appendRotation(90, v);
+                m.appendRotation(90, v); // , p );
 
                 this.outputAppendRotation(m.rawData, r, v, p);
 
                 m = new away.geom.Matrix3D([
-                    1,
-                    0,
-                    4,
-                    5,
-                    0,
-                    1,
-                    8,
-                    0,
-                    4,
-                    8,
-                    1,
-                    7,
-                    5,
-                    0,
-                    7,
-                    1
-                ]);
+                    1, 0, 4, 5,
+                    0, 1, 8, 0,
+                    4, 8, 1, 7,
+                    5, 0, 7, 1]);
 
                 m.copyRawDataTo(r);
-                m.appendRotation(90, v);
+                m.appendRotation(90, v); //, p );
                 this.outputAppendRotation(m.rawData, r, v, p);
 
                 m = new away.geom.Matrix3D([
-                    1,
-                    0,
-                    4,
-                    5,
-                    0,
-                    1,
-                    8,
-                    0,
-                    4,
-                    8,
-                    1,
-                    2,
-                    5,
-                    0,
-                    2,
-                    1
-                ]);
+                    1, 0, 4, 5,
+                    0, 1, 8, 0,
+                    4, 8, 1, 2,
+                    5, 0, 2, 1]);
 
                 m.copyRawDataTo(r);
-                m.appendRotation(90, v);
+                m.appendRotation(90, v); //, p );
                 this.outputAppendRotation(m.rawData, r, v, p);
 
                 m = new away.geom.Matrix3D([
-                    1,
-                    0,
-                    4,
-                    5,
-                    0,
-                    1,
-                    8,
-                    0,
-                    4,
-                    8,
-                    1,
-                    1,
-                    5,
-                    0,
-                    1,
-                    1
-                ]);
+                    1, 0, 4, 5,
+                    0, 1, 8, 0,
+                    4, 8, 1, 1,
+                    5, 0, 1, 1]);
 
                 m.copyRawDataTo(r);
-                m.appendRotation(90, v);
+                m.appendRotation(90, v); //, p );
                 this.outputAppendRotation(m.rawData, r, v, p);
 
                 console.log('//------------------------------------------------------------ AS3');
@@ -1490,68 +813,29 @@ var tests;
                 var r = new Array(16);
 
                 m = new away.geom.Matrix3D([
-                    1,
-                    2,
-                    4,
-                    5,
-                    2,
-                    1,
-                    0,
-                    8,
-                    4,
-                    0,
-                    1,
-                    7,
-                    5,
-                    8,
-                    7,
-                    1
-                ]);
+                    1, 2, 4, 5,
+                    2, 1, 0, 8,
+                    4, 0, 1, 7,
+                    5, 8, 7, 1]);
                 m.copyRawDataTo(r);
                 i = m.invert();
                 this.outputInvert(i, m.rawData, r);
 
                 m = new away.geom.Matrix3D([
-                    1,
-                    0,
-                    4,
-                    5,
-                    0,
-                    1,
-                    8,
-                    0,
-                    4,
-                    8,
-                    1,
-                    7,
-                    5,
-                    0,
-                    7,
-                    1
-                ]);
+                    1, 0, 4, 5,
+                    0, 1, 8, 0,
+                    4, 8, 1, 7,
+                    5, 0, 7, 1]);
 
                 m.copyRawDataTo(r);
                 i = m.invert();
                 this.outputInvert(i, m.rawData, r);
 
                 m = new away.geom.Matrix3D([
-                    1,
-                    0,
-                    4,
-                    5,
-                    0,
-                    1,
-                    8,
-                    0,
-                    4,
-                    8,
-                    1,
-                    2,
-                    5,
-                    0,
-                    2,
-                    1
-                ]);
+                    1, 0, 4, 5,
+                    0, 1, 8, 0,
+                    4, 8, 1, 2,
+                    5, 0, 2, 1]);
 
                 m.copyRawDataTo(r);
                 i = m.invert();
@@ -1565,23 +849,10 @@ var tests;
                 var r = new Array(16);
 
                 m = new away.geom.Matrix3D([
-                    1,
-                    2,
-                    4,
-                    5,
-                    6,
-                    7,
-                    8,
-                    9,
-                    4,
-                    0,
-                    1,
-                    7,
-                    5,
-                    8,
-                    7,
-                    1
-                ]);
+                    1, 2, 4, 5,
+                    6, 7, 8, 9,
+                    4, 0, 1, 7,
+                    5, 8, 7, 1]);
 
                 m.copyRowTo(0, v);
                 console.log(v);
@@ -1629,42 +900,16 @@ var tests;
                 var r = new Array(16);
 
                 m = new away.geom.Matrix3D([
-                    1,
-                    0,
-                    4,
-                    5,
-                    0,
-                    1,
-                    8,
-                    0,
-                    4,
-                    8,
-                    1,
-                    1,
-                    5,
-                    0,
-                    1,
-                    1
-                ]);
+                    1, 0, 4, 5,
+                    0, 1, 8, 0,
+                    4, 8, 1, 1,
+                    5, 0, 1, 1]);
 
                 m = new away.geom.Matrix3D([
-                    1,
-                    2,
-                    3,
-                    4,
-                    5,
-                    6,
-                    7,
-                    8,
-                    9,
-                    10,
-                    1,
-                    12,
-                    13,
-                    14,
-                    15,
-                    16
-                ]);
+                    1, 2, 3, 4,
+                    5, 6, 7, 8,
+                    9, 10, 1, 12,
+                    13, 14, 15, 16]);
 
                 m.copyColumnTo(0, v);
                 console.log(v.toString());

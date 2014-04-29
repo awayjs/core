@@ -6,9 +6,9 @@ module away.controllers
 	{
 
 		public _pAutoUpdate:boolean = true;
-		public _pTargetObject:away.entities.IEntity;
+		public _pTargetObject:away.base.DisplayObject;
 
-		constructor(targetObject:away.entities.IEntity = null)
+		constructor(targetObject:away.base.DisplayObject = null)
 		{
 			this.targetObject = targetObject;
 		}
@@ -20,12 +20,12 @@ module away.controllers
 			}
 		}
 
-		public get targetObject():away.entities.IEntity
+		public get targetObject():away.base.DisplayObject
 		{
 			return this._pTargetObject;
 		}
 
-		public set targetObject(val:away.entities.IEntity)
+		public set targetObject(val:away.base.DisplayObject)
 		{
 			if (this._pTargetObject == val) {
 				return;

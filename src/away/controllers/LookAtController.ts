@@ -10,7 +10,7 @@ module away.controllers
 
 		private _onLookAtObjectChangedDelegate:Function;
 
-		constructor(targetObject:away.entities.IEntity = null, lookAtObject:away.base.DisplayObject = null)
+		constructor(targetObject:away.base.DisplayObject = null, lookAtObject:away.base.DisplayObject = null)
 		{
 			super(targetObject);
 

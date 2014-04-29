@@ -2,19 +2,27 @@
 
 module away.bounds
 {
+	import Geometry							= away.base.Geometry;
+	import SubGeometryBase					= away.base.SubGeometryBase;
+	import IEntity							= away.entities.IEntity;
+	import Box								= away.geom.Box;
+	import Matrix3D							= away.geom.Matrix3D;
+	import Plane3D							= away.geom.Plane3D;
+	import Vector3D							= away.geom.Vector3D;
+
 	export class BoundingVolumeBase
 	{
-		public _aabb:away.geom.Box;
+		public _aabb:Box;
 		public _pAabbPoints:Array<number> = new Array<number>();
 		public _pAabbPointsDirty:boolean = true;
-		public _pBoundingEntity:away.entities.IEntity;
+		public _pBoundingEntity:IEntity;
 
 		constructor()
 		{
-			this._aabb = new away.geom.Box();
+			this._aabb = new Box();
 		}
 
-		public get aabb():away.geom.Box
+		public get aabb():Box
 		{
 			return this._aabb;
 		}
@@ -27,7 +35,7 @@ module away.bounds
 			return this._pAabbPoints;
 		}
 
-		public get boundingEntity():away.entities.IEntity
+		public get boundingEntity():IEntity
 		{
 			if (!this._pBoundingEntity) {
 				this._pBoundingEntity = this.pCreateBoundingEntity();
@@ -91,7 +99,64 @@ module away.bounds
 			this.fromExtremes(minX, minY, minZ, maxX, maxY, maxZ);
 		}
 
-		public fromSphere(center:away.geom.Vector3D, radius:number)
+		/**
+		 * Updates the bounds to fit a Geometry object.
+		 *
+		 * @param geometry The Geometry object to be bounded.
+		 */
+		public fromGeometry(geometry:Geometry):void
+		{
+			var i:number, j:number, p:number;
+			var subGeoms:Array<SubGeometryBase> = geometry.subGeometries;
+			var subGeom:SubGeometryBase;
+			var boundingPositions:Array<number>;
+			var numSubGeoms:number = subGeoms.length;
+			var minX:number, minY:number, minZ:number;
+			var maxX:number, maxY:number, maxZ:number;
+
+			if (numSubGeoms > 0) {
+				i = 0;
+				subGeom = subGeoms[0];
+				boundingPositions = subGeom.getBoundingPositions();
+				minX = maxX = boundingPositions[i];
+				minY = maxY = boundingPositions[i + 1];
+				minZ = maxZ = boundingPositions[i + 2];
+
+				j = numSubGeoms;
+				while (j--) {
+					subGeom = subGeoms[j];
+					boundingPositions = subGeom.getBoundingPositions();
+					i = boundingPositions.length;
+					while (i--) {
+						p = boundingPositions[i];
+						if (p < minX)
+							minX = p;
+						else if (p > maxX)
+							maxX = p;
+
+						p = boundingPositions[i + 1];
+
+						if (p < minY)
+							minY = p;
+						else if (p > maxY)
+							maxY = p;
+
+						p = boundingPositions[i + 2];
+
+						if (p < minZ)
+							minZ = p;
+						else if (p > maxZ)
+							maxZ = p;
+					}
+				}
+
+				this.fromExtremes(minX, minY, minZ, maxX, maxY, maxZ);
+			} else {
+				this.fromExtremes(0, 0, 0, 0, 0, 0);
+			}
+		}
+
+		public fromSphere(center:Vector3D, radius:number)
 		{
 			this.fromExtremes(center.x - radius, center.y - radius, center.z - radius, center.x + radius, center.y + radius, center.z + radius);
 		}
@@ -110,27 +175,27 @@ module away.bounds
 				this.pUpdateBoundingEntity();
 		}
 
-		public isInFrustum(planes:Array<away.geom.Plane3D>, numPlanes:number):boolean
+		public isInFrustum(planes:Array<Plane3D>, numPlanes:number):boolean
 		{
 			throw new away.errors.AbstractMethodError();
 		}
 
-		public overlaps(bounds:away.bounds.BoundingVolumeBase):boolean
+		public overlaps(bounds:BoundingVolumeBase):boolean
 		{
 			return this._aabb.intersects(bounds.aabb);
 		}
 
-		public clone():away.bounds.BoundingVolumeBase
+		public clone():BoundingVolumeBase
 		{
 			throw new away.errors.AbstractMethodError();
 		}
 
-		public rayIntersection(position:away.geom.Vector3D, direction:away.geom.Vector3D, targetNormal:away.geom.Vector3D):number
+		public rayIntersection(position:Vector3D, direction:Vector3D, targetNormal:Vector3D):number
 		{
 			return -1;
 		}
 
-		public containsPoint(position:away.geom.Vector3D):boolean
+		public containsPoint(position:Vector3D):boolean
 		{
 			return false;
 		}
@@ -176,17 +241,17 @@ module away.bounds
 			throw new away.errors.AbstractMethodError();
 		}
 
-		public pCreateBoundingEntity():away.entities.IEntity
+		public pCreateBoundingEntity():IEntity
 		{
 			throw new away.errors.AbstractMethodError();
 		}
 
-		public classifyToPlane(plane:away.geom.Plane3D):number
+		public classifyToPlane(plane:Plane3D):number
 		{
 			throw new away.errors.AbstractMethodError();
 		}
 
-		public transformFrom(bounds:away.bounds.BoundingVolumeBase, matrix:away.geom.Matrix3D)
+		public transformFrom(bounds:BoundingVolumeBase, matrix:Matrix3D)
 		{
 			throw new away.errors.AbstractMethodError();
 		}

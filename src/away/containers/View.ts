@@ -536,8 +536,8 @@ module away.containers
 		public project(point3d:Vector3D):Vector3D
 		{
 			var v:away.geom.Vector3D = this._pCamera.project(point3d);
-			v.x = (v.x*this._pRenderer.viewPort.width + this._width*this._pCamera.projection.originX)/2.0;
-			v.y = (v.y*this._pRenderer.viewPort.height + this._height*this._pCamera.projection.originY)/2.0;
+			v.x = v.x*this._pRenderer.viewPort.width/2 + this._width*this._pCamera.projection.originX;
+			v.y = v.y*this._pRenderer.viewPort.height/2 + this._height*this._pCamera.projection.originY;
 
 			return v;
 		}

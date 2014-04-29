@@ -258,5 +258,21 @@ module away.entities
 		{
 			return this.sceneTransform.transformVector(this._projection.unproject(nX, nY, sZ));
 		}
+
+		public _iCollectRenderables(renderer:away.render.IRenderer)
+		{
+			// Since this getter is invoked every iteration of the render loop, and
+			// the prefab construct could affect the sub-meshes, the prefab is
+			// validated here to give it a chance to rebuild.
+			if (this._iSourcePrefab)
+				this._iSourcePrefab._iValidate();
+
+			this._iCollectRenderable(renderer);
+		}
+
+		public _iCollectRenderable(renderer:away.render.IRenderer)
+		{
+			//nothing to do here
+		}
 	}
 }

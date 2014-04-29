@@ -21,7 +21,7 @@ module away.materials
 	 * methods to build the shader code. MaterialBase can be extended to build specific and high-performant custom
 	 * shaders, or entire new material frameworks.
 	 */
-	export class CSSMaterialBase extends away.library.NamedAssetBase implements away.library.IAsset, IMaterial
+	export class CSSMaterialBase extends away.library.NamedAssetBase implements IMaterial
 	{
 		private _height:number;
 		private _sizeChanged:MaterialEvent;

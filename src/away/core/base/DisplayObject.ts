@@ -138,6 +138,7 @@ module away.base
 		private _mouseY:number;
 		private _root:away.containers.DisplayObjectContainer;
 		private _bounds:away.geom.Rectangle;
+		private _boundsVisible:boolean;
 		private _depth:number;
 		private _height:number;
 		private _width:number;
@@ -205,8 +206,6 @@ module away.base
 
 		public _pIgnoreTransform:boolean = false;
 
-		private _showBounds:boolean;
-		private _boundsIsShown:boolean;
 		private _shaderPickingDetails:boolean;
 
 		public _pPickingCollisionVO:away.pick.PickingCollisionVO;
@@ -219,6 +218,8 @@ module away.base
 		public _pPickingCollider:away.pick.IPickingCollider;
 
 		public _pRenderables:Array<away.pool.IRenderable> = new Array<away.pool.IRenderable>();
+
+		public _iSourcePrefab:away.prefabs.PrefabBase;
 
 		/**
 		 *
@@ -272,16 +273,17 @@ module away.base
 
 		public set bounds(value:away.bounds.BoundingVolumeBase)
 		{
-			if (this._showBounds)
-				this.removeBounds();
+			if (this._pBounds == value)
+				return;
 
 			this._pBounds = value;
+
 			this._worldBounds = value.clone();
 
 			this.pInvalidateBounds();
 
-			if (this._showBounds)
-				this.addBounds();
+			if (this._boundsVisible)
+				this._partitionNode._iUpdateEntityBounds();
 		}
 
 		/**
@@ -1080,22 +1082,19 @@ module away.base
 		/**
 		 *
 		 */
-		public get showBounds():boolean
+		public get boundsVisible():boolean
 		{
-			return this._showBounds;
+			return this._boundsVisible;
 		}
 
-		public set showBounds(value:boolean)
+		public set boundsVisible(value:boolean)
 		{
-			if (value == this._showBounds)
+			if (value == this._boundsVisible)
 				return;
 
-			this._showBounds = value;
+			this._boundsVisible = value;
 
-//			if (this._showBounds)
-//				this.addChild(this._pBounds.boundingEntity);
-//			else
-//				this.removeBounds();
+			this._partitionNode.boundsVisible = value;
 		}
 
 		/**
@@ -1196,6 +1195,12 @@ module away.base
 		 */
 		public get worldBounds():away.bounds.BoundingVolumeBase
 		{
+			// Since this getter is invoked every iteration of the render loop, and
+			// the prefab construct could affect the bounds of the entity, the prefab is
+			// validated here to give it a chance to rebuild.
+			if (this._iSourcePrefab)
+				this._iSourcePrefab._iValidate();
+
 			if (this._worldBoundsInvalid) {
 				this._worldBoundsInvalid = false;
 				this._worldBounds.transformFrom(this.bounds, this.sceneTransform);
@@ -2208,17 +2213,6 @@ module away.base
 		/**
 		 * @private
 		 */
-		private addBounds()
-		{
-			if (!this._boundsIsShown) {
-				this._boundsIsShown = true;
-//				this.addChild(this._pBounds.boundingEntity);//TODO turn this into a Node-based bounding Entity
-			}
-		}
-
-		/**
-		 * @private
-		 */
 		private notifyPositionChanged()
 		{
 			if (!this._positionChanged)
@@ -2359,18 +2353,6 @@ module away.base
 
 			if (this._listenToScaleChanged)
 				this.notifyScaleChanged();
-		}
-
-		/**
-		 * @private
-		 */
-		private removeBounds()
-		{
-			if (this._boundsIsShown) {
-				this._boundsIsShown = false;
-//				this.removeChild(this._pBounds.boundingEntity);
-				this._pBounds.disposeRenderable();
-			}
 		}
 	}
 }

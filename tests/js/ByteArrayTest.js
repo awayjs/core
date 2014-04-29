@@ -1,6 +1,6 @@
+///<reference path="../../build/awayjs.next.d.ts" />
 var tests;
 (function (tests) {
-    ///<reference path="../../../build/Away3D.next.d.ts" />
     (function (utils) {
         var ByteArrayTest = (function () {
             function ByteArrayTest() {

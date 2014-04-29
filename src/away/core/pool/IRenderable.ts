@@ -42,6 +42,16 @@ module away.pool
 		/**
 		 *
 		 */
-		_iUpdate();
+		invalidateGeometry();
+
+		/**
+		 *
+		 */
+		invalidateIndexData();
+
+		/**
+		 *
+		 */
+		invalidateVertexData(dataType:string);
 	}
 }

@@ -39,7 +39,7 @@ module away.controllers
 		 */
 		public positionOffset:away.geom.Vector3D = new away.geom.Vector3D(0, 500, -1000);
 
-		constructor(targetObject:away.entities.IEntity = null, lookAtObject:away.base.DisplayObject = null, stiffness:number = 1, mass:number = 40, damping:number = 4)
+		constructor(targetObject:away.base.DisplayObject = null, lookAtObject:away.base.DisplayObject = null, stiffness:number = 1, mass:number = 40, damping:number = 4)
 		{
 			super(targetObject, lookAtObject);
 

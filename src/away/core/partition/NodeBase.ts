@@ -11,11 +11,13 @@ module away.partition
 	 */
 	export class NodeBase
 	{
-
+		private _boundsChildrenVisible:boolean;
+		private _explicitBoundsVisible:boolean;
+		private _implicitBoundsVisible:boolean;
 		public _iParent:NodeBase;
 		public _pChildNodes:Array<NodeBase>;
 		public _pNumChildNodes:number = 0;
-		public _pDebugPrimitive:away.entities.IEntity;
+		public _pBoundsPrimitive:away.entities.IEntity;
 
 		public _iNumEntities:number = 0;
 		public _iCollectionMark:number;// = 0;
@@ -23,28 +25,36 @@ module away.partition
 		/**
 		 *
 		 */
-		public get showDebugBounds():boolean
+		public get boundsVisible():boolean
 		{
-			return this._pDebugPrimitive != null;
+			return this._explicitBoundsVisible;
 		}
 
-		public set showDebugBounds(value:boolean)
+		public set boundsVisible(value:boolean)
 		{
-			if (this._pDebugPrimitive && value == true)
+			if (this._explicitBoundsVisible == value)
 				return;
 
-			if (!this._pDebugPrimitive && value == false)
+			this._explicitBoundsVisible = value;
+
+			this._iUpdateImplicitBoundsVisible(this._iParent? this._iParent.boundsChildrenVisible : false);
+
+		}
+		
+		public get boundsChildrenVisible():boolean
+		{
+			return this._boundsChildrenVisible;
+		}
+		
+		public set boundsChildrenVisible(value:boolean)
+		{
+			if (this._boundsChildrenVisible == value)
 				return;
 
-			if (value) {
-				this._pDebugPrimitive = this.pCreateDebugBounds();
-			} else {
-				this._pDebugPrimitive.dispose();
-				this._pDebugPrimitive = null;
-			}
+			this._boundsChildrenVisible = value;
 
 			for (var i:number = 0; i < this._pNumChildNodes; ++i)
-				this._pChildNodes[i].showDebugBounds = value;
+				this._pChildNodes[i]._iUpdateImplicitBoundsVisible(this._boundsChildrenVisible);
 		}
 
 		/**
@@ -120,7 +130,7 @@ module away.partition
 		 */
 		public acceptTraverser(traverser:away.traverse.ICollector)
 		{
-			if (this._pNumEntities == 0 && !this._pDebugPrimitive)
+			if (this._pNumEntities == 0 && !this._implicitBoundsVisible)
 				return;
 
 			if (traverser.enterNode(this)) {
@@ -129,8 +139,8 @@ module away.partition
 				while (i < this._pNumChildNodes)
 					this._pChildNodes[i++].acceptTraverser(traverser);
 
-				if (this._pDebugPrimitive)
-					this._pDebugPrimitive.partitionNode.acceptTraverser(traverser);
+				if (this._implicitBoundsVisible)
+					this._pBoundsPrimitive.partitionNode.acceptTraverser(traverser);
 			}
 		}
 
@@ -138,7 +148,7 @@ module away.partition
 		 *
 		 * @protected
 		 */
-		public pCreateDebugBounds():away.entities.IEntity
+		public _pCreateBoundsPrimitive():away.entities.IEntity
 		{
 			return null;
 		}
@@ -153,7 +163,8 @@ module away.partition
 			node._iParent = this;
 			this._iNumEntities += node._pNumEntities;
 			this._pChildNodes[ this._pNumChildNodes++ ] = node;
-			node.showDebugBounds = this._pDebugPrimitive != null;
+
+			node._iUpdateImplicitBoundsVisible(this.boundsChildrenVisible);
 
 			var numEntities:number = node._pNumEntities;
 			node = this;
@@ -174,6 +185,8 @@ module away.partition
 			this._pChildNodes[index] = this._pChildNodes[--this._pNumChildNodes];
 			this._pChildNodes.pop();
 
+			node._iUpdateImplicitBoundsVisible(false);
+
 			var numEntities:number = node._pNumEntities;
 			node = this;
 
@@ -181,7 +194,28 @@ module away.partition
 				node._pNumEntities -= numEntities;
 			} while ((node = node._iParent) != null);
 		}
+		
+		private _iUpdateImplicitBoundsVisible(value:boolean)
+		{
+			if (this._implicitBoundsVisible == this._explicitBoundsVisible || value)
+				return;
 
+			this._implicitBoundsVisible = this._explicitBoundsVisible || value;
+
+			this._iUpdateEntityBounds();
+
+			for (var i:number = 0; i < this._pNumChildNodes; ++i)
+				this._pChildNodes[i]._iUpdateImplicitBoundsVisible(this._boundsChildrenVisible);
+		}
+
+		/**
+		 * @internal
+		 */
+		public _iIsBoundsVisible():boolean
+		{
+			return this._implicitBoundsVisible;
+		}
+		
 //		public _pUpdateNumEntities(value:number)
 //		{
 //			var diff:number = value - this._pNumEntities;
@@ -191,5 +225,16 @@ module away.partition
 //				node._pNumEntities += diff;
 //			} while ((node = node._iParent) != null);
 //		}
+
+		public _iUpdateEntityBounds()
+		{
+			if (this._pBoundsPrimitive) {
+				this._pBoundsPrimitive.dispose();
+				this._pBoundsPrimitive = null;
+			}
+
+			if (this._implicitBoundsVisible)
+				this._pBoundsPrimitive = this._pCreateBoundsPrimitive();
+		}
 	}
 }

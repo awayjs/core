@@ -232,77 +232,10 @@ module away.parsers
 			if (name != null)
 				asset.name = name;
 
-
-			switch (asset.assetType) {
-				case away.library.AssetType.LIGHT_PICKER:
-					type_name = 'lightPicker';
-					break;
-				case away.library.AssetType.LIGHT:
-					type_name = 'light';
-					break;
-				case away.library.AssetType.ANIMATOR:
-					type_name = 'animator';
-					break;
-				case away.library.AssetType.ANIMATION_SET:
-					type_name = 'animationSet';
-					break;
-				case away.library.AssetType.ANIMATION_STATE:
-					type_name = 'animationState';
-					break;
-				case away.library.AssetType.ANIMATION_NODE:
-					type_name = 'animationNode';
-					break;
-				case away.library.AssetType.STATE_TRANSITION:
-					type_name = 'stateTransition';
-					break;
-				case away.library.AssetType.TEXTURE:
-					type_name = 'texture';
-					break;
-				case away.library.AssetType.TEXTURE_PROJECTOR:
-					type_name = 'textureProjector';
-					break;
-				case away.library.AssetType.CONTAINER:
-					type_name = 'container';
-					break;
-				case away.library.AssetType.GEOMETRY:
-					type_name = 'geometry';
-					break;
-				case away.library.AssetType.MATERIAL:
-					type_name = 'material';
-					break;
-				case away.library.AssetType.MESH:
-					type_name = 'mesh';
-					break;
-				case away.library.AssetType.SKELETON:
-					type_name = 'skeleton';
-					break;
-				case away.library.AssetType.SKELETON_POSE:
-					type_name = 'skelpose';
-					break;
-				case away.library.AssetType.SKYBOX:
-					type_name = 'skybox';
-					break;
-				case away.library.AssetType.CAMERA:
-					type_name = 'camera';
-					break;
-				case away.library.AssetType.SEGMENT_SET:
-					type_name = 'segmentSet';
-					break;
-				case away.library.AssetType.EFFECTS_METHOD:
-					type_name = 'effectsMethod';
-					break;
-				case away.library.AssetType.SHADOW_MAP_METHOD:
-					type_name = 'effectsMethod';
-					break;
-				default:
-					throw new away.errors.Error('Unhandled asset type ' + asset.assetType + '. Report as bug!');
-					break;
-			}
-
 			// If the asset has no name, give it
 			// a per-type default name.
 			if (!asset.name)
-				asset.name = type_name;
+				asset.name = asset.assetType;
 
 			this.dispatchEvent(new away.events.AssetEvent(away.events.AssetEvent.ASSET_COMPLETE, asset));
 		}

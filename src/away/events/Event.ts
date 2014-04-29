@@ -30,7 +30,7 @@ module away.events
 		 * @property target
 		 * @type Object
 		 */
-		public target:Object = undefined;
+		public target:any = undefined;
 
 		constructor(type:string)
 		{

@@ -2,6 +2,8 @@
 
 module away.controllers
 {
+	import MathConsts					= away.geom.MathConsts;
+	import Vector3D						= away.geom.Vector3D;
 
 	/**
 	 * Extended camera used to hover round a specified target object.
@@ -23,6 +25,7 @@ module away.controllers
 		private _steps:number = 8;
 		private _yFactor:number = 2;
 		private _wrapPanAngle:boolean = false;
+		private _upAxis:Vector3D = new Vector3D();
 
 		/**
 		 * Fractional step taken each time the <code>hover()</code> method is called. Defaults to 8.
@@ -228,7 +231,7 @@ module away.controllers
 		/**
 		 * Creates a new <code>HoverController</code> object.
 		 */
-		constructor(targetObject:away.entities.IEntity = null, lookAtObject:away.base.DisplayObject = null, panAngle:number = 0, tiltAngle:number = 90, distance:number = 1000, minTiltAngle:number = -90, maxTiltAngle:number = 90, minPanAngle:number = null, maxPanAngle:number = null, steps:number = 8, yFactor:number = 2, wrapPanAngle:boolean = false)
+		constructor(targetObject:away.base.DisplayObject = null, lookAtObject:away.base.DisplayObject = null, panAngle:number = 0, tiltAngle:number = 90, distance:number = 1000, minTiltAngle:number = -90, maxTiltAngle:number = 90, minPanAngle:number = null, maxPanAngle:number = null, steps:number = 8, yFactor:number = 2, wrapPanAngle:boolean = false)
 		{
 			super(targetObject, lookAtObject);
 
@@ -296,12 +299,21 @@ module away.controllers
 				}
 			}
 
-			var pos:away.geom.Vector3D = (this.lookAtObject)? this.lookAtObject.transform.position : (this.lookAtPosition)? this.lookAtPosition : this._pOrigin;
-			this.targetObject.x = pos.x + this.distance*Math.sin(this._iCurrentPanAngle*away.geom.MathConsts.DEGREES_TO_RADIANS)*Math.cos(this._iCurrentTiltAngle*away.geom.MathConsts.DEGREES_TO_RADIANS);
-			this.targetObject.y = pos.y + this.distance*Math.sin(this._iCurrentTiltAngle*away.geom.MathConsts.DEGREES_TO_RADIANS)*this.yFactor;
-			this.targetObject.z = pos.z + this.distance*Math.cos(this._iCurrentPanAngle*away.geom.MathConsts.DEGREES_TO_RADIANS)*Math.cos(this._iCurrentTiltAngle*away.geom.MathConsts.DEGREES_TO_RADIANS);
+			var pos:Vector3D = (this.lookAtObject)? this.lookAtObject.transform.position : (this.lookAtPosition)? this.lookAtPosition : this._pOrigin;
+			this.targetObject.x = pos.x + this.distance*Math.sin(this._iCurrentPanAngle*MathConsts.DEGREES_TO_RADIANS)*Math.cos(this._iCurrentTiltAngle*MathConsts.DEGREES_TO_RADIANS);
+			this.targetObject.y = pos.y + this.distance*Math.sin(this._iCurrentTiltAngle*MathConsts.DEGREES_TO_RADIANS)*this.yFactor;
+			this.targetObject.z = pos.z + this.distance*Math.cos(this._iCurrentPanAngle*MathConsts.DEGREES_TO_RADIANS)*Math.cos(this._iCurrentTiltAngle*MathConsts.DEGREES_TO_RADIANS);
 
-			super.update();
+			this._upAxis.x = -Math.sin(this._iCurrentPanAngle*MathConsts.DEGREES_TO_RADIANS)*Math.sin(this._iCurrentTiltAngle*MathConsts.DEGREES_TO_RADIANS);
+			this._upAxis.y = Math.cos(this._iCurrentTiltAngle*MathConsts.DEGREES_TO_RADIANS);
+			this._upAxis.z = -Math.cos(this._iCurrentPanAngle*MathConsts.DEGREES_TO_RADIANS)*Math.sin(this._iCurrentTiltAngle*MathConsts.DEGREES_TO_RADIANS);
+
+			if (this._pTargetObject) {
+				if (this._pLookAtPosition)
+					this._pTargetObject.lookAt(this._pLookAtPosition, this._upAxis);
+				else if (this._pLookAtObject)
+					this._pTargetObject.lookAt(this._pLookAtObject.scene? this._pLookAtObject.scenePosition : this._pLookAtObject.transform.position, this._upAxis);
+			}
 		}
 	}
 }

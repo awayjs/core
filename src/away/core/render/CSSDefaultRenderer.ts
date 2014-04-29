@@ -22,123 +22,6 @@ module away.render
 		private _skyboxProjection:away.geom.Matrix3D = new away.geom.Matrix3D();
 		private _transform:away.geom.Matrix3D = new away.geom.Matrix3D();
 
-		public _width:number;
-		public _height:number;
-
-		private _viewPort:away.geom.Rectangle = new away.geom.Rectangle();
-		private _viewportDirty:boolean;
-		private _scissorRect:away.geom.Rectangle = new away.geom.Rectangle();
-		private _scissorDirty:boolean;
-
-		private _localPos:away.geom.Point = new away.geom.Point();
-		private _globalPos:away.geom.Point = new away.geom.Point();
-
-		private _scissorUpdated:away.events.RendererEvent;
-		private _viewPortUpdated:away.events.RendererEvent;
-
-		/**
-		 * A viewPort rectangle equivalent of the StageGL size and position.
-		 */
-		public get viewPort():away.geom.Rectangle
-		{
-			return this._viewPort;
-		}
-
-		/**
-		 * A scissor rectangle equivalent of the view size and position.
-		 */
-		public get scissorRect():away.geom.Rectangle
-		{
-			return this._scissorRect;
-		}
-
-		/**
-		 *
-		 */
-		public get x():number
-		{
-			return this._localPos.x;
-		}
-
-		public set x(value:number)
-		{
-			if (this.x == value)
-				return;
-
-			this.updateGlobalPos();
-		}
-
-		/**
-		 *
-		 */
-		public get y():number
-		{
-			return this._localPos.y;
-		}
-
-		public set y(value:number)
-		{
-			if (this.y == value)
-				return;
-
-			this._globalPos.y = this._localPos.y = value;
-
-			this.updateGlobalPos();
-		}
-
-		/**
-		 *
-		 */
-		public get width():number
-		{
-			return this._width;
-		}
-
-		public set width(value:number)
-		{
-			if (this._width == value)
-				return;
-
-			this._width = value;
-			this._scissorRect.width = value;
-			this._viewPort.width = value;
-
-			this._pBackBufferInvalid = true;
-			this._depthTextureInvalid = true;
-
-			this.notifyViewportUpdate();
-			this.notifyScissorUpdate();
-		}
-
-		/**
-		 *
-		 */
-		public get height():number
-		{
-			return this._height;
-		}
-
-		public set height(value:number)
-		{
-			if (this._height == value)
-				return;
-
-			this._height = value;
-			this._scissorRect.height = value;
-			this._viewPort.height = value;
-
-			this._pBackBufferInvalid = true;
-			this._depthTextureInvalid = true;
-
-			this.notifyViewportUpdate();
-			this.notifyScissorUpdate();
-		}
-
-		/**
-		 *
-		 */
-		public renderableSorter:away.sort.IEntitySorter;
-
 		/**
 		 * Creates a new CSSDefaultRenderer object.
 		 */
@@ -171,14 +54,6 @@ module away.render
 
 			//add context to container
 			this._container.appendChild(this._context);
-			
-			this._viewPort = new away.geom.Rectangle();
-
-			if (this._width == 0)
-				this.width = window.innerWidth;
-
-			if (this._height == 0)
-				this.height = window.innerHeight;
 		}
 
 		/**
@@ -187,9 +62,7 @@ module away.render
 		 */
 		public render(entityCollector:away.traverse.ICollector)
 		{
-			this._viewportDirty = false;
-			this._scissorDirty = false;
-
+			super.render(entityCollector);
 
 			if (this._pBackBufferInvalid)// reset or update render settings
 				this.pUpdateBackBuffer();
@@ -356,51 +229,6 @@ module away.render
 			super.dispose();
 
 			//TODO
-		}
-
-		/**
-		 * @private
-		 */
-		private notifyScissorUpdate()
-		{
-			if (this._scissorDirty)
-				return;
-
-			this._scissorDirty = true;
-
-			if (!this._scissorUpdated)
-				this._scissorUpdated = new away.events.RendererEvent(away.events.RendererEvent.SCISSOR_UPDATED);
-
-			this.dispatchEvent(this._scissorUpdated);
-		}
-
-
-		/**
-		 * @private
-		 */
-		private notifyViewportUpdate()
-		{
-			if (this._viewportDirty)
-				return;
-
-			this._viewportDirty = true;
-
-			if (!this._viewPortUpdated)
-				this._viewPortUpdated = new away.events.RendererEvent(away.events.RendererEvent.VIEWPORT_UPDATED);
-
-			this.dispatchEvent(this._viewPortUpdated);
-		}
-
-		/**
-		 *
-		 */
-		public updateGlobalPos()
-		{
-			this._viewPort.x = this._globalPos.x;
-			this._viewPort.y = this._globalPos.y;
-
-			this.notifyViewportUpdate();
-			this.notifyScissorUpdate();
 		}
 
 

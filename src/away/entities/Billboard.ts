@@ -144,17 +144,14 @@ module away.entities
 		/**
 		 *
 		 */
-		public get sourceEntity():IEntity
-		{
-			return this;
-		}
-
-		/**
-		 *
-		 */
 		public get uvTransform():UVTransform
 		{
 			return this._uvTransform;
+		}
+
+		public set uvTransform(value:UVTransform)
+		{
+			this._uvTransform = value;
 		}
 
 		constructor(material:IMaterial, pixelSnapping:string = "auto", smoothing:boolean = false)
@@ -169,8 +166,6 @@ module away.entities
 
 			this._billboardWidth = material.width;
 			this._billboardHeight = material.height;
-
-			this._uvTransform = new UVTransform(this);
 		}
 
 		/**
@@ -189,14 +184,6 @@ module away.entities
 			this._pBounds.fromExtremes(0, 0, 0, this._billboardWidth, this._billboardHeight, 0);
 
 			super.pUpdateBounds();
-		}
-
-		/**
-		 * @internal
-		 */
-		public _iSetUVMatrixComponents(offsetU:number, offsetV:number, scaleU:number, scaleV:number, rotationUV:number)
-		{
-
 		}
 
 		/**
@@ -221,10 +208,27 @@ module away.entities
 			this._billboardWidth = this._material.width;
 			this._billboardHeight = this._material.height;
 
+			this._pBoundsInvalid = true;
 
 			var len:number = this._pRenderables.length;
 			for (var i:number = 0; i < len; i++)
-				this._pRenderables[i]._iUpdate();
+				this._pRenderables[i].invalidateVertexData("vertices"); //TODO
+		}
+
+		public _iCollectRenderables(renderer:away.render.IRenderer)
+		{
+			// Since this getter is invoked every iteration of the render loop, and
+			// the prefab construct could affect the sub-meshes, the prefab is
+			// validated here to give it a chance to rebuild.
+			if (this._iSourcePrefab)
+				this._iSourcePrefab._iValidate();
+
+			this._iCollectRenderable(renderer);
+		}
+
+		public _iCollectRenderable(renderer:away.render.IRenderer)
+		{
+			renderer.applyBillboard(this);
 		}
 	}
 }

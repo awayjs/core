@@ -4,10 +4,10 @@ module away.geom
 {
 	export class UVTransform
 	{
-		private _materialOwner:away.base.IMaterialOwner;
 		private _uvMatrix:away.geom.Matrix = new away.geom.Matrix();
 		private _uvMatrixDirty:boolean;
-		private _rotationUV:number = 0;
+
+		private _rotation:number = 0;
 		private _scaleU:number = 1;
 		private _scaleV:number = 1;
 		private _offsetU:number = 0;
@@ -51,17 +51,17 @@ module away.geom
 		/**
 		 *
 		 */
-		public get rotationUV():number
+		public get rotation():number
 		{
-			return this._rotationUV;
+			return this._rotation;
 		}
 
-		public set rotationUV(value:number)
+		public set rotation(value:number)
 		{
-			if (value == this._rotationUV)
+			if (value == this._rotation)
 				return;
 
-			this._rotationUV = value;
+			this._rotation = value;
 
 			this._uvMatrixDirty = true;
 		}
@@ -113,10 +113,10 @@ module away.geom
 			return this._uvMatrix;
 		}
 
-		constructor(materialOwner:away.base.IMaterialOwner)
+		constructor()
 		{
-			this._materialOwner = materialOwner;
 		}
+
 
 		/**
 		 * @private
@@ -125,17 +125,15 @@ module away.geom
 		{
 			this._uvMatrix.identity();
 
-			if (this._rotationUV != 0)
-				this._uvMatrix.rotate(this._rotationUV);
+			if (this._rotation != 0)
+				this._uvMatrix.rotate(this._rotation);
 
 			if (this._scaleU != 1 || this._scaleV != 1)
 				this._uvMatrix.scale(this._scaleU, this._scaleV);
 
 			this._uvMatrix.translate(this._offsetU, this._offsetV);
-			this._uvMatrixDirty = false;
 
-			//TODO stop being lazy and provide proper matrix decomposition on the other side
-			this._materialOwner._iSetUVMatrixComponents(this._offsetU, this._offsetV, this._scaleU, this._scaleV, this._rotationUV);
+			this._uvMatrixDirty = false;
 		}
 	}
 }

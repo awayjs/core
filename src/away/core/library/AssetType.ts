@@ -11,11 +11,14 @@ module away.library
 		public static CONTAINER:string = 'container';
 		public static EFFECTS_METHOD:string = 'effectsMethod';
 		public static GEOMETRY:string = 'geometry';
+		public static LINE_SEGMENT:string = 'lineSegment';
 		public static LIGHT:string = 'light';
 		public static LIGHT_PICKER:string = 'lightPicker';
 		public static MATERIAL:string = 'material';
 		public static MESH:string = 'mesh';
-		public static SEGMENT_SET:string = 'segmentSet';
+		public static TRIANGLE_SUB_MESH:string = 'triangleSubMesh';
+		public static LINE_SUB_MESH:string = 'lineSubMesh';
+		public static PRIMITIVE_PREFAB:string = 'primitivePrefab';
 		public static SHADOW_MAP_METHOD:string = 'shadowMapMethod';
 		public static SKELETON:string = 'skeleton';
 		public static SKELETON_POSE:string = 'skeletonPose';

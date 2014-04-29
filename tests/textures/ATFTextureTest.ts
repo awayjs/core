@@ -27,7 +27,7 @@ module tests.textures
         private mipImgLoaded( e )
         {
 
-            var stage3DManager       : away.managers.StageGLManager        = new away.managers.StageGLManager();
+            var stage3DManager       : away.managers.StageGLManager        = away.managers.StageGLManager.getInstance();
             var stage3D     : away.base.StageGL      = stage3DManager.getStageGLAt( 0 );
             var context3D   : away.gl.ContextGL  = new away.gl.ContextGL( stage3D.canvas );
             var loader      : away.net.URLLoader        = <away.net.URLLoader > e.target;

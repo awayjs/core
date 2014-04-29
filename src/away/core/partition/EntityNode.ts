@@ -76,5 +76,14 @@ module away.partition
 
 			return this._entity.isIntersectingRay(rayPosition, rayDirection);
 		}
+
+		/**
+		 *
+		 * @protected
+		 */
+		public _pCreateBoundsPrimitive():away.entities.IEntity
+		{
+			return this._entity.bounds.boundingEntity;
+		}
 	}
 }

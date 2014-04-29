@@ -7,7 +7,7 @@ module away.events
 {
 	//import flash.events.Event;
 
-	export class StageGLEvent extends Event
+	export class StageGLEvent extends away.events.Event
 	{
 		public static CONTEXTGL_CREATED:string = "contextGLCreated";
 		public static CONTEXTGL_DISPOSED:string = "contextGLDisposed";

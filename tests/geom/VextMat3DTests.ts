@@ -532,12 +532,12 @@ module tests.geom {
         public outputDecompose(result : number[] , original : number[] , a1 : away.geom.Vector3D , a2 : away.geom.Vector3D , a3 : away.geom.Vector3D)
         {
 
-            var a1 : string = 'new Vector3D( ' + a1.x + ' , ' + a1.y + ' , ' + a1.z + ' )';
-            var a2 : string = 'new Vector3D( ' + a2.x + ' , ' + a2.y + ' , ' + a2.z + ' )';
-            var a3 : string = 'new Vector3D( ' + a3.x + ' , ' + a3.y + ' , ' + a3.z + ' )';
+            var s1 : string = 'new Vector3D( ' + a1.x + ' , ' + a1.y + ' , ' + a1.z + ' )';
+            var s2 : string = 'new Vector3D( ' + a2.x + ' , ' + a2.y + ' , ' + a2.z + ' )';
+            var s3 : string = 'new Vector3D( ' + a3.x + ' , ' + a3.y + ' , ' + a3.z + ' )';
 
 
-            console.log( 'testDecompose( new <Number> [' + result + '], new <Number> [' + original + '] , ' + a1 + ' , '+ a2 + ' , ' + a3 + ' );' ) ;
+            console.log( 'testDecompose( new <Number> [' + result + '], new <Number> [' + original + '] , ' + s1 + ' , '+ s2 + ' , ' + s3 + ' );' ) ;
 
 
         }
@@ -981,14 +981,14 @@ module tests.geom {
 
         }
 
-        public outputInvert(success : boolean , data : Array , original : Array )
+        public outputInvert(success : boolean , data : Array<number> , original : Array<number> )
         {
 
             console.log( 'testInvert(' + success + ', new <Number> [' + data + '], new <Number> [' + original + ']);' ) ;
 
         }
 
-        public output( data : Array , result : number )
+        public output( data : Array<number> , result : number )
         {
 
             console.log( 'testDeterminant( new <Number> [' + data + '], ' +  result + ');' ) ;

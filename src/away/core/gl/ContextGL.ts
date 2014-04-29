@@ -178,6 +178,8 @@ module away.gl
 
 		public setBlendFactors(sourceFactor:string, destinationFactor:string)
 		{
+			//TODO optimise with table lookup
+
 			this._blendEnabled = true;
 
 			switch (sourceFactor) {
@@ -291,6 +293,8 @@ module away.gl
 		// TODO ContextGLCompareMode
 		public setDepthTest(depthMask:boolean, passCompareMode:string)
 		{
+			//TODO optimise with table lookup
+
 			switch (passCompareMode) {
 				case ContextGLCompareMode.ALWAYS:
 					this._gl.depthFunc(this._gl.ALWAYS);
@@ -559,12 +563,10 @@ module away.gl
 
 			var location:number = this._currentProgram? this._gl.getAttribLocation(this._currentProgram.glProgram, locationName) : -1;
 			if (!buffer) {
-
-				if (location > -1) {
+				if (location > -1)
 					this._gl.disableVertexAttribArray(location);
-				}
-				return;
 
+				return;
 			}
 
 			this._gl.bindBuffer(this._gl.ARRAY_BUFFER, buffer.glBuffer);

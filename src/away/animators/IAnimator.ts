@@ -7,8 +7,13 @@ module away.animators
 	 *
 	 * @see away.animators.IAnimationSet
 	 */
-	export interface IAnimator
+	export interface IAnimator extends away.library.IAsset
 	{
+		/**
+		 *
+		 */
+		animationSet:away.animators.IAnimationSet;
+
 		/**
 		 *
 		 */
@@ -32,5 +37,12 @@ module away.animators
 		 * @private
 		 */
 		removeOwner(mesh:away.entities.IEntity);
+
+		/**
+		 * //TODO
+		 *
+		 * @param sourceSubGeometry
+		 */
+		getRenderableSubGeometry(renderable:away.pool.IRenderable, sourceSubGeometry:away.base.SubGeometryBase):away.base.SubGeometryBase;
 	}
 }

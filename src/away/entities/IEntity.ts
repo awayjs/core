@@ -128,5 +128,12 @@ module away.entities
 		 * return the scene transform.
 		 */
 		getRenderSceneTransform(camera:away.entities.Camera):away.geom.Matrix3D;
+
+		/**
+		 *
+		 * @param renderer
+		 * @private
+		 */
+		_iCollectRenderables(renderer:away.render.IRenderer);
 	}
 }

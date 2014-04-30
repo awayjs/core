@@ -20,7 +20,7 @@ module away.gl
 		{
 			var subGeometryData:Array<IndexData> = <Array<IndexData>> (IndexDataPool._pool[id] || (IndexDataPool._pool[id] = new Array<IndexData>()));
 
-			return subGeometryData[level] || (subGeometryData[level] = new IndexData());
+			return subGeometryData[level] || (subGeometryData[level] = new IndexData(level));
 		}
 
 		public static disposeItem(id:string, level:number)

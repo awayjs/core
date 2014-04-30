@@ -30,8 +30,11 @@ module away.gl
 
 		public offset:number;
 
-		constructor()
+		public level:number;
+
+		constructor(level:number)
 		{
+			this.level = level;
 		}
 
 		public updateData(offset:number, indices:Array<number>, numVertices:number)

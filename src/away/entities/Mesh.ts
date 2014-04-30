@@ -448,5 +448,12 @@ module away.entities
 			for (var i:number /*uint*/ = 0; i < len; i++)
 				this._subMeshes[i]._iCollectRenderable(renderer);
 		}
+
+		public _iInvalidateRenderableGeometries()
+		{
+			var len:number = this._subMeshes.length;
+			for (var i:number = 0; i < len; ++i)
+				this._subMeshes[i]._iInvalidateRenderableGeometry();
+		}
 	}
 }

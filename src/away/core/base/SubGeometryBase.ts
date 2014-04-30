@@ -10,6 +10,8 @@ module away.base
 	 */
 	export class SubGeometryBase extends away.library.NamedAssetBase
 	{
+		public static VERTEX_DATA:string = "vertices";
+
 		public _pStrideOffsetDirty:boolean = true;
 
 		public _pIndices:Array<number> /*uint*/;

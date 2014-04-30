@@ -5,11 +5,16 @@
  */
 module away.gl
 {
+	import SubGeometryEvent				= away.events.SubGeometryEvent;
+
 	/**
 	 *
 	 */
 	export class VertexData
 	{
+		private _onVerticesUpdatedDelegate:(event:SubGeometryEvent) => void;
+		private _subGeometry:away.base.SubGeometryBase;
+		private _dataType:string;
 		private _dataDirty = true;
 
 		public invalid:Array<boolean> = new Array<boolean>(8);
@@ -22,19 +27,28 @@ module away.gl
 
 		public dataPerVertex:number;
 
-		constructor()
+		constructor(subGeometry:away.base.SubGeometryBase, dataType:string)
 		{
+			this._subGeometry = subGeometry;
+			this._dataType = dataType;
+
+			this._onVerticesUpdatedDelegate = (event:SubGeometryEvent) => this._onVerticesUpdated(event);
+			this._subGeometry.addEventListener(SubGeometryEvent.VERTICES_UPDATED, this._onVerticesUpdatedDelegate);
 		}
 
-		public updateData(vertices:Array<number>, dataPerVertex:number, originalIndices:Array<number> = null, indexMappings:Array<number> = null)
+		public updateData(originalIndices:Array<number> = null, indexMappings:Array<number> = null)
 		{
 			if (this._dataDirty) {
 				this._dataDirty = false;
 
+				this.dataPerVertex = this._subGeometry.getStride(this._dataType);
+
+				var vertices:Array<number> = this._subGeometry[this._dataType];
+
 				if (indexMappings == null) {
-					this.setData(vertices, dataPerVertex);
+					this.setData(vertices);
 				} else {
-					var splitVerts:Array<number> = new Array<number>(originalIndices.length*dataPerVertex);
+					var splitVerts:Array<number> = new Array<number>(originalIndices.length*this.dataPerVertex);
 					var originalIndex:number;
 					var splitIndex:number;
 					var i:number = 0;
@@ -42,23 +56,18 @@ module away.gl
 					while(i < originalIndices.length) {
 						originalIndex = originalIndices[i];
 
-						splitIndex = indexMappings[originalIndex]*dataPerVertex;
-						originalIndex *= dataPerVertex;
+						splitIndex = indexMappings[originalIndex]*this.dataPerVertex;
+						originalIndex *= this.dataPerVertex;
 
-						for (j = 0; j < dataPerVertex; j++)
+						for (j = 0; j < this.dataPerVertex; j++)
 							splitVerts[splitIndex + j] = vertices[originalIndex + j];
 
 						i++;
 					}
 
-					this.setData(splitVerts, dataPerVertex);
+					this.setData(splitVerts);
 				}
 			}
-		}
-
-		public invalidateData()
-		{
-			this._dataDirty = true;
 		}
 
 		public dispose()
@@ -99,7 +108,7 @@ module away.gl
 		 * @param dataPerVertex
 		 * @private
 		 */
-		private setData(data:Array<number>, dataPerVertex:number)
+		private setData(data:Array<number>)
 		{
 			if (this.data && this.data.length != data.length)
 				this.disposeBuffers();
@@ -107,7 +116,20 @@ module away.gl
 				this.invalidateBuffers();
 
 			this.data = data;
-			this.dataPerVertex = dataPerVertex;
+		}
+
+		/**
+		 * //TODO
+		 *
+		 * @param event
+		 * @private
+		 */
+		private _onVerticesUpdated(event:SubGeometryEvent)
+		{
+			var dataType:string = this._subGeometry.concatenateArrays? away.base.SubGeometryBase.VERTEX_DATA : event.dataType;
+
+			if (dataType == this._dataType)
+				this._dataDirty = true;
 		}
 	}
 }

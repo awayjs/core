@@ -16,26 +16,32 @@ module away.gl
 		{
 		}
 
-		public static getItem(id:string, level:number, dataType:string):away.gl.VertexData
+		public static getItem(subGeometry:away.base.SubGeometryBase, indexData:IndexData, dataType:string):away.gl.VertexData
 		{
-			var subGeometryDictionary:Object = <Object> (VertexDataPool._pool[id] || (VertexDataPool._pool[id] = new Object()));
+			if (subGeometry.concatenateArrays)
+				dataType = away.base.SubGeometryBase.VERTEX_DATA;
+
+			var subGeometryDictionary:Object = <Object> (VertexDataPool._pool[subGeometry.id] || (VertexDataPool._pool[subGeometry.id] = new Object()));
 			var subGeometryData:Array<VertexData> = <Array<VertexData>> (subGeometryDictionary[dataType] || (subGeometryDictionary[dataType] = new Array<VertexData>()));
 
-			return subGeometryData[level] || (subGeometryData[level] = new VertexData());
+			var vertexData:VertexData = subGeometryData[indexData.level] || (subGeometryData[indexData.level] = new VertexData(subGeometry, dataType));
+			vertexData.updateData(indexData.originalIndices, indexData.indexMappings);
+
+			return vertexData;
 		}
 
-		public static disposeItem(id:string, level:number, dataType:string)
+		public static disposeItem(subGeometry:away.base.SubGeometryBase, level:number, dataType:string)
 		{
-			var subGeometryDictionary:Object = <Object> VertexDataPool._pool[id];
+			var subGeometryDictionary:Object = <Object> VertexDataPool._pool[subGeometry.id];
 			var subGeometryData:Array<VertexData> = <Array<VertexData>> subGeometryDictionary[dataType];
 
 			subGeometryData[level].dispose();
 			subGeometryData[level] = null;
 		}
 
-		public disposeData(id:string)
+		public disposeData(subGeometry:away.base.SubGeometryBase)
 		{
-			var subGeometryDictionary:Object = <Object> VertexDataPool._pool[id];
+			var subGeometryDictionary:Object = <Object> VertexDataPool._pool[subGeometry.id];
 
 			for (var key in subGeometryDictionary) {
 				var subGeometryData:Array<VertexData> = <Array<VertexData>> subGeometryDictionary[key];
@@ -47,7 +53,7 @@ module away.gl
 				}
 			}
 
-			VertexDataPool._pool[id] = null;
+			VertexDataPool._pool[subGeometry.id] = null;
 		}
 	}
 }

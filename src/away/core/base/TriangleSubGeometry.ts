@@ -10,7 +10,6 @@ module away.base
 	 */
 	export class TriangleSubGeometry extends SubGeometryBase
 	{
-		public static VERTEX_DATA:string = "vertices";
 		public static POSITION_DATA:string = "positions";
 		public static NORMAL_DATA:string = "vertexNormals";
 		public static TANGENT_DATA:string = "vertexTangents";

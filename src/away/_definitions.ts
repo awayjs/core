@@ -251,6 +251,15 @@
 ///<reference path="materials/CSSMaterialBase.ts"/>
 
 ///<reference path="prefabs/PrefabBase.ts"/>
+///<reference path="prefabs/PrimitivePrefabBase.ts"/>
+///<reference path="prefabs/PrimitiveTorusPrefab.ts"/>
+///<reference path="prefabs/PrimitiveCubePrefab.ts"/>
+///<reference path="prefabs/PrimitivePlanePrefab.ts"/>
+///<reference path="prefabs/PrimitiveCapsulePrefab.ts" />
+///<reference path="prefabs/PrimitiveCylinderPrefab.ts" />
+///<reference path="prefabs/PrimitiveConePrefab.ts" />
+///<reference path="prefabs/PrimitivePolygonPrefab.ts" />
+///<reference path="prefabs/PrimitiveSpherePrefab.ts" />
 
 ///<reference path="animators/nodes/AnimationNodeBase.ts"/>
 ///<reference path="animators/IAnimationSet.ts"/>

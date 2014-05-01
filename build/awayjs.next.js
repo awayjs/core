@@ -2151,16 +2151,16 @@ var away;
                 this._prevTime = this._getTimer();
                 this._active = true;
 
-                if (window['mozRequestAnimationFrame']) {
-                    window.requestAnimationFrame = window['mozRequestAnimationFrame'];
-                } else if (window['webkitRequestAnimationFrame']) {
-                    window.requestAnimationFrame = window['webkitRequestAnimationFrame'];
-                } else if (window['oRequestAnimationFrame']) {
-                    window.requestAnimationFrame = window['oRequestAnimationFrame'];
-                }
-
                 if (window.requestAnimationFrame) {
                     window.requestAnimationFrame(this._rafUpdateFunction);
+                } else {
+                    if (window['mozRequestAnimationFrame']) {
+                        window.requestAnimationFrame = window['mozRequestAnimationFrame'];
+                    } else if (window['webkitRequestAnimationFrame']) {
+                        window.requestAnimationFrame = window['webkitRequestAnimationFrame'];
+                    } else if (window['oRequestAnimationFrame']) {
+                        window.requestAnimationFrame = window['oRequestAnimationFrame'];
+                    }
                 }
             };
 
@@ -5200,10 +5200,13 @@ var away;
         var IndexDataPool = (function () {
             function IndexDataPool() {
             }
-            IndexDataPool.getItem = function (id, level) {
-                var subGeometryData = (IndexDataPool._pool[id] || (IndexDataPool._pool[id] = new Array()));
+            IndexDataPool.getItem = function (subGeometry, level, indexOffset) {
+                var subGeometryData = (IndexDataPool._pool[subGeometry.id] || (IndexDataPool._pool[subGeometry.id] = new Array()));
 
-                return subGeometryData[level] || (subGeometryData[level] = new gl.IndexData(level));
+                var indexData = subGeometryData[level] || (subGeometryData[level] = new gl.IndexData(level));
+                indexData.updateData(indexOffset, subGeometry.indices, subGeometry.numVertices);
+
+                return indexData;
             };
 
             IndexDataPool.disposeItem = function (id, level) {
@@ -30067,15 +30070,21 @@ var away;
 var away;
 (function (away) {
     (function (textures) {
+        /**
+        *
+        */
         var TextureProxyBase = (function (_super) {
             __extends(TextureProxyBase, _super);
+            /**
+            *
+            */
             function TextureProxyBase() {
                 _super.call(this);
                 this._pFormat = away.gl.ContextGLTextureFormat.BGRA;
                 this._pHasMipmaps = false;
 
-                this._textures = new Array(8); //_textures = new Vector.<TextureBase>(8);
-                this._dirty = new Array(8); //_dirty = new Vector.<ContextGL>(8);
+                this._textures = new Array(8);
+                this._dirty = new Array(8);
             }
             Object.defineProperty(TextureProxyBase.prototype, "hasMipMaps", {
                 /**
@@ -30137,6 +30146,11 @@ var away;
                 configurable: true
             });
 
+            /**
+            *
+            * @param stageGL
+            * @returns {away.gl.TextureBase}
+            */
             TextureProxyBase.prototype.getTextureForStageGL = function (stageGL) {
                 var contextIndex = stageGL._iStageGLIndex;
 
@@ -30147,7 +30161,7 @@ var away;
                 if (!tex || this._dirty[contextIndex] != context) {
                     this._textures[contextIndex] = tex = this.pCreateTexture(context);
                     this._dirty[contextIndex] = context;
-                    this.pUploadContent(tex); //_pUploadContent
+                    this.pUploadContent(tex);
                 }
 
                 return tex;
@@ -30430,6 +30444,11 @@ var away;
     (function (textures) {
         var ImageTexture = (function (_super) {
             __extends(ImageTexture, _super);
+            /**
+            *
+            * @param htmlImageElement
+            * @param generateMipmaps
+            */
             function ImageTexture(htmlImageElement, generateMipmaps) {
                 if (typeof generateMipmaps === "undefined") { generateMipmaps = true; }
                 _super.call(this);
@@ -30438,48 +30457,62 @@ var away;
                 this._generateMipmaps = generateMipmaps;
             }
             Object.defineProperty(ImageTexture.prototype, "htmlImageElement", {
+                /**
+                *
+                */
                 get: function () {
                     return this._htmlImageElement;
                 },
                 set: function (value) {
-                    if (value == this._htmlImageElement) {
+                    if (value == this._htmlImageElement)
                         return;
-                    }
 
-                    if (!away.utils.TextureUtils.isHTMLImageElementValid(value)) {
+                    if (!away.utils.TextureUtils.isHTMLImageElementValid(value))
                         throw new away.errors.Error("Invalid bitmapData: Width and height must be power of 2 and cannot exceed 2048");
-                    }
 
                     this.invalidateContent();
                     this.pSetSize(value.width, value.height);
                     this._htmlImageElement = value;
 
-                    if (this._generateMipmaps) {
+                    if (this._generateMipmaps)
                         this.getMipMapHolder();
-                    }
                 },
                 enumerable: true,
                 configurable: true
             });
 
 
-            ImageTexture.prototype.pUploadContent = function (texture) {
-                if (this._generateMipmaps) {
-                    away.textures.MipmapGenerator.generateHTMLImageElementMipMaps(this._htmlImageElement, texture, this._mipMapHolder, true);
-                } else {
-                    var tx = texture;
-                    tx.uploadFromHTMLImageElement(this._htmlImageElement, 0);
-                }
+            /**
+            *
+            */
+            ImageTexture.prototype.dispose = function () {
+                _super.prototype.dispose.call(this);
+
+                if (this._mipMapHolder)
+                    this.freeMipMapHolder();
             };
 
+            /**
+            *
+            * @param texture
+            */
+            ImageTexture.prototype.pUploadContent = function (texture) {
+                if (this._generateMipmaps)
+                    away.textures.MipmapGenerator.generateHTMLImageElementMipMaps(this._htmlImageElement, texture, this._mipMapHolder, true);
+                else
+                    texture.uploadFromHTMLImageElement(this._htmlImageElement, 0);
+            };
+
+            /**
+            *
+            */
             ImageTexture.prototype.getMipMapHolder = function () {
                 var newW = this._htmlImageElement.width;
                 var newH = this._htmlImageElement.height;
 
                 if (this._mipMapHolder) {
-                    if (this._mipMapHolder.width == newW && this._htmlImageElement.height == newH) {
+                    if (this._mipMapHolder.width == newW && this._htmlImageElement.height == newH)
                         return;
-                    }
 
                     this.freeMipMapHolder();
                 }
@@ -30498,6 +30531,9 @@ var away;
                 }
             };
 
+            /**
+            *
+            */
             ImageTexture.prototype.freeMipMapHolder = function () {
                 var holderWidth = this._mipMapHolder.width;
                 var holderHeight = this._mipMapHolder.height;
@@ -30505,14 +30541,6 @@ var away;
                 if (--ImageTexture._mipMapUses[holderWidth][holderHeight] == 0) {
                     ImageTexture._mipMaps[holderWidth][holderHeight].dispose();
                     ImageTexture._mipMaps[holderWidth][holderHeight] = null;
-                }
-            };
-
-            ImageTexture.prototype.dispose = function () {
-                _super.prototype.dispose.call(this);
-
-                if (this._mipMapHolder) {
-                    this.freeMipMapHolder();
                 }
             };
             ImageTexture._mipMaps = [];

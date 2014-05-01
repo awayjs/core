@@ -16,11 +16,14 @@ module away.gl
 		{
 		}
 
-		public static getItem(id:number, level:number):away.gl.IndexData
+		public static getItem(subGeometry:away.base.SubGeometryBase, level:number, indexOffset:number):away.gl.IndexData
 		{
-			var subGeometryData:Array<IndexData> = <Array<IndexData>> (IndexDataPool._pool[id] || (IndexDataPool._pool[id] = new Array<IndexData>()));
+			var subGeometryData:Array<IndexData> = <Array<IndexData>> (IndexDataPool._pool[subGeometry.id] || (IndexDataPool._pool[subGeometry.id] = new Array<IndexData>()));
 
-			return subGeometryData[level] || (subGeometryData[level] = new IndexData(level));
+			var indexData:IndexData = subGeometryData[level] || (subGeometryData[level] = new IndexData(level));
+			indexData.updateData(indexOffset, subGeometry.indices, subGeometry.numVertices);
+
+			return indexData;
 		}
 
 		public static disposeItem(id:number, level:number)

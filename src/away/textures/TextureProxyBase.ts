@@ -2,6 +2,9 @@
 
 module away.textures
 {
+	/**
+	 *
+	 */
 	export class TextureProxyBase extends away.library.NamedAssetBase implements away.library.IAsset
 	{
 		public _pFormat:string = away.gl.ContextGLTextureFormat.BGRA;
@@ -13,12 +16,15 @@ module away.textures
 		public _pWidth:number;
 		public _pHeight:number;
 
+		/**
+		 *
+		 */
 		constructor()
 		{
 			super();
 
-			this._textures = new Array<away.gl.TextureBase>(8);//_textures = new Vector.<TextureBase>(8);
-			this._dirty = new Array<away.gl.ContextGL>(8);//_dirty = new Vector.<ContextGL>(8);
+			this._textures = new Array<away.gl.TextureBase>(8);
+			this._dirty = new Array<away.gl.ContextGL>(8);
 		}
 
 		/**
@@ -66,6 +72,11 @@ module away.textures
 			return this._pHeight;
 		}
 
+		/**
+		 *
+		 * @param stageGL
+		 * @returns {away.gl.TextureBase}
+		 */
 		public getTextureForStageGL(stageGL:away.base.StageGL):away.gl.TextureBase
 		{
 			var contextIndex:number = stageGL._iStageGLIndex;
@@ -78,7 +89,7 @@ module away.textures
 
 				this._textures[contextIndex] = tex = this.pCreateTexture(context);
 				this._dirty[contextIndex] = context;
-				this.pUploadContent(tex);//_pUploadContent
+				this.pUploadContent(tex);
 
 			}
 
@@ -108,7 +119,6 @@ module away.textures
 
 			this._pWidth = width;
 			this._pHeight = height;
-
 		}
 
 		/**

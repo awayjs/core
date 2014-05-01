@@ -1966,7 +1966,7 @@ declare module away.gl {
     class IndexDataPool {
         private static _pool;
         constructor();
-        static getItem(id: number, level: number): IndexData;
+        static getItem(subGeometry: base.SubGeometryBase, level: number, indexOffset: number): IndexData;
         static disposeItem(id: number, level: number): void;
         public disposeData(id: number): void;
     }
@@ -14554,6 +14554,9 @@ declare module away.animators {
     }
 }
 declare module away.textures {
+    /**
+    *
+    */
     class TextureProxyBase extends library.NamedAssetBase implements library.IAsset {
         public _pFormat: string;
         public _pHasMipmaps: boolean;
@@ -14561,6 +14564,9 @@ declare module away.textures {
         private _dirty;
         public _pWidth: number;
         public _pHeight: number;
+        /**
+        *
+        */
         constructor();
         /**
         *
@@ -14587,6 +14593,11 @@ declare module away.textures {
         * @returns {number}
         */
         public height : number;
+        /**
+        *
+        * @param stageGL
+        * @returns {away.gl.TextureBase}
+        */
         public getTextureForStageGL(stageGL: base.StageGL): gl.TextureBase;
         /**
         *
@@ -14674,12 +14685,33 @@ declare module away.textures {
         private _htmlImageElement;
         private _generateMipmaps;
         private _mipMapHolder;
+        /**
+        *
+        * @param htmlImageElement
+        * @param generateMipmaps
+        */
         constructor(htmlImageElement: HTMLImageElement, generateMipmaps?: boolean);
+        /**
+        *
+        */
         public htmlImageElement : HTMLImageElement;
-        public pUploadContent(texture: gl.TextureBase): void;
-        private getMipMapHolder();
-        private freeMipMapHolder();
+        /**
+        *
+        */
         public dispose(): void;
+        /**
+        *
+        * @param texture
+        */
+        public pUploadContent(texture: gl.TextureBase): void;
+        /**
+        *
+        */
+        private getMipMapHolder();
+        /**
+        *
+        */
+        private freeMipMapHolder();
     }
 }
 declare module away.textures {

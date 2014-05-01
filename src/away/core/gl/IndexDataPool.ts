@@ -16,14 +16,14 @@ module away.gl
 		{
 		}
 
-		public static getItem(id:string, level:number):away.gl.IndexData
+		public static getItem(id:number, level:number):away.gl.IndexData
 		{
 			var subGeometryData:Array<IndexData> = <Array<IndexData>> (IndexDataPool._pool[id] || (IndexDataPool._pool[id] = new Array<IndexData>()));
 
 			return subGeometryData[level] || (subGeometryData[level] = new IndexData(level));
 		}
 
-		public static disposeItem(id:string, level:number)
+		public static disposeItem(id:number, level:number)
 		{
 			var subGeometryData:Array<IndexData> = <Array<IndexData>> this._pool[id];
 
@@ -31,7 +31,7 @@ module away.gl
 			subGeometryData[level] = null;
 		}
 
-		public disposeData(id:string)
+		public disposeData(id:number)
 		{
 			var subGeometryData:Array<IndexData> = <Array<IndexData>> IndexDataPool._pool[id];
 

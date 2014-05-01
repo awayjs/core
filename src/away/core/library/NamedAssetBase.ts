@@ -10,7 +10,7 @@ module away.library
 		private _originalName:string;
 		private _namespace:string;
 		private _name:string;
-		private _id:string;
+		private _id:number;
 		private _full_path:Array<string>;
 
 		public static DEFAULT_NAMESPACE:string = 'default';
@@ -19,7 +19,7 @@ module away.library
 		{
 			super();
 
-			this._id = (NamedAssetBase.ID_COUNT++).toString();
+			this._id = NamedAssetBase.ID_COUNT++;
 
 			if (name == null)
 				name = 'null';
@@ -52,7 +52,7 @@ module away.library
 		/**
 		 * A unique id for the asset, used to identify assets in an associative array
 		 */
-		public get id():string
+		public get id():number
 		{
 			return this._id;
 		}

@@ -253,7 +253,7 @@ module away.library
 				this._strategy.resolveConflict(asset, old, this._assetDictionary[ns], this._strategyPreference);
 
 			//create unique-id (for now this is used in AwayBuilder only
-			asset.id = IDUtil.createUID();
+			//asset.id = IDUtil.createUID();
 
 			// Add it
 			this._assets.push(asset);

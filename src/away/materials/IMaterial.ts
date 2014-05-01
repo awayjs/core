@@ -10,8 +10,6 @@ module away.materials
 	 */
 	export interface IMaterial extends away.library.IAsset
 	{
-		id:string;
-
 		/**
 		 *
 		 */

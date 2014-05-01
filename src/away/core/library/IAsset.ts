@@ -6,7 +6,7 @@ module away.library
 	{
 
 		name : string;
-		id : string;
+		id : number;
 		assetNamespace : string;
 		assetType : string;
 		assetFullPath : Array<string>;

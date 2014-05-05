@@ -4,21 +4,55 @@ module away.textures
 {
 	export class CubeTextureBase extends away.textures.TextureProxyBase
 	{
-		constructor()
+		public _pMipmapDataArray:Array<Array<away.base.BitmapData>> = new Array<Array<away.base.BitmapData>>(6);
+		public _pMipmapDataDirtyArray:Array<boolean> = new Array<boolean>(6);
+
+		constructor(generateMipmaps:boolean = true)
 		{
-			super();
+			super(generateMipmaps);
 		}
 
-		public get size():number
+		/**
+		 *
+		 * @param width
+		 * @param height
+		 * @private
+		 */
+		public _pSetSize(size:number)
 		{
-			//TODO replace this with this._pWidth (requires change in super class to reflect the protected declaration)
-			return this.width;
+			if (this._pSize != size)
+				this.invalidateSize();
+
+			for (var i:number = 0; i < 6; i++)
+				this._pMipmapDataDirtyArray[i] = true;
+
+			this._pSize = size;
 		}
 
-		//@override
-		public pCreateTexture(context:away.gl.ContextGL):away.gl.TextureBase
+		/**
+		 * @inheritDoc
+		 */
+		public dispose()
 		{
-			return context.createCubeTexture(this.width, away.gl.ContextGLTextureFormat.BGRA, false);
+			super.dispose();
+
+			for (var i:number = 0; i < 6; i++) {
+				var mipmapData:Array<away.base.BitmapData> = this._pMipmapDataArray[i];
+				var len:number = mipmapData.length;
+				for (var j:number = 0; j < len; j++)
+					MipmapGenerator.freeMipMapHolder(mipmapData[j]);
+			}
+		}
+
+		/**
+		 *
+		 */
+		public invalidateContent():void
+		{
+			super.invalidateContent();
+
+			for (var i:number = 0; i < 6; i++)
+				this._pMipmapDataDirtyArray[i] = true;
 		}
 	}
 }

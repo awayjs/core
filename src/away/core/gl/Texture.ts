@@ -70,7 +70,7 @@ module away.gl
 			return this._glTexture;
 		}
 
-		public generateFromRenderBuffer(data:away.base.BitmapData)
+		public generateFromRenderBuffer()
 		{
 			this._frameBuffer = this._gl.createFramebuffer();
 			this._gl.bindFramebuffer(this._gl.FRAMEBUFFER, this._frameBuffer);

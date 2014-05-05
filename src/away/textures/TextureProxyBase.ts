@@ -7,33 +7,30 @@ module away.textures
 	 */
 	export class TextureProxyBase extends away.library.NamedAssetBase implements away.library.IAsset
 	{
-		public _pFormat:string = away.gl.ContextGLTextureFormat.BGRA;
-		public _pHasMipmaps:boolean = false;
-
-		private _textures:away.gl.TextureBase[];
-		private _dirty:away.gl.ContextGL[];
-
-		public _pWidth:number;
-		public _pHeight:number;
-
+		public _pSize:number;
+		public _pFormat:string = "bgra"
+		private _hasMipmaps:boolean;
+		private _generateMipmaps:boolean;
+		private _textureData:Array<away.pool.ITextureData> = new Array<away.pool.ITextureData>();
+		
 		/**
 		 *
 		 */
-		constructor()
+		constructor(generateMipmaps:boolean = true)
 		{
 			super();
 
-			this._textures = new Array<away.gl.TextureBase>(8);
-			this._dirty = new Array<away.gl.ContextGL>(8);
+			this._generateMipmaps = this._hasMipmaps = generateMipmaps;
 		}
 
-		/**
-		 *
-		 * @returns {boolean}
-		 */
-		public get hasMipMaps():boolean
+		public get size():number
 		{
-			return this._pHasMipmaps;
+			return this._pSize;
+		}
+
+		public get hasMipmaps():boolean
+		{
+			return this._hasMipmaps;
 		}
 
 		/**
@@ -47,6 +44,25 @@ module away.textures
 
 		/**
 		 *
+		 * @returns {boolean}
+		 */
+		public get generateMipmaps():boolean
+		{
+			return this._generateMipmaps;
+		}
+
+		public set generateMipmaps(value:boolean)
+		{
+			if (this._generateMipmaps == value)
+				return;
+
+			this._generateMipmaps = this._hasMipmaps = value;
+
+			this.invalidateContent();
+		}
+
+		/**
+		 *
 		 * @returns {string}
 		 */
 		public get assetType():string
@@ -56,69 +72,11 @@ module away.textures
 
 		/**
 		 *
-		 * @returns {number}
+		 * @param stage
 		 */
-		public get width():number
-		{
-			return this._pWidth;
-		}
-
-		/**
-		 *
-		 * @returns {number}
-		 */
-		public get height():number
-		{
-			return this._pHeight;
-		}
-
-		/**
-		 *
-		 * @param stageGL
-		 * @returns {away.gl.TextureBase}
-		 */
-		public getTextureForStageGL(stageGL:away.base.StageGL):away.gl.TextureBase
-		{
-			var contextIndex:number = stageGL._iStageGLIndex;
-
-			var tex:away.gl.TextureBase = this._textures[contextIndex];
-
-			var context:away.gl.ContextGL = stageGL.contextGL;
-
-			if (!tex || this._dirty[contextIndex] != context) {
-
-				this._textures[contextIndex] = tex = this.pCreateTexture(context);
-				this._dirty[contextIndex] = context;
-				this.pUploadContent(tex);
-
-			}
-
-			return tex;
-		}
-
-		/**
-		 *
-		 * @param texture
-		 * @private
-		 */
-		public pUploadContent(texture:away.gl.TextureBase)
+		public activateTextureForStage(index:number, stage:away.base.IStage)
 		{
 			throw new away.errors.AbstractMethodError();
-		}
-
-		/**
-		 *
-		 * @param width
-		 * @param height
-		 * @private
-		 */
-		public pSetSize(width:number, height:number)
-		{
-			if (this._pWidth != width || this._pHeight != height)
-				this.pInvalidateSize();
-
-			this._pWidth = width;
-			this._pHeight = height;
 		}
 
 		/**
@@ -126,38 +84,19 @@ module away.textures
 		 */
 		public invalidateContent():void
 		{
-			for (var i:number = 0; i < 8; ++i)
-				this._dirty[i] = null;
+			var len:number = this._textureData.length
+			for (var i:number = 0; i < len; i++)
+				this._textureData[i].invalidate();
 		}
 
 		/**
 		 *
 		 * @private
 		 */
-		public pInvalidateSize():void
+		public invalidateSize():void
 		{
-			var tex:away.gl.TextureBase;
-			for (var i:number = 0; i < 8; ++i) {
-
-				tex = this._textures[i];
-
-				if (tex) {
-					tex.dispose();
-
-					this._textures[i] = null;
-					this._dirty[i] = null;
-				}
-			}
-		}
-
-		/**
-		 *
-		 * @param context
-		 * @private
-		 */
-		public pCreateTexture(context:away.gl.ContextGL):away.gl.TextureBase
-		{
-			throw new away.errors.AbstractMethodError();
+			while (this._textureData.length)
+				this._textureData[0].dispose();
 		}
 
 		/**
@@ -165,9 +104,23 @@ module away.textures
 		 */
 		public dispose()
 		{
-			for (var i:number = 0; i < 8; ++i)
-				if (this._textures[i])
-					this._textures[i].dispose();
+			while (this._textureData.length)
+				this._textureData[0].dispose();
+		}
+
+
+		public _iAddTextureData(textureData:away.pool.ITextureData):away.pool.ITextureData
+		{
+			this._textureData.push(textureData);
+
+			return textureData;
+		}
+
+		public _iRemoveTextureData(textureData:away.pool.ITextureData):away.pool.ITextureData
+		{
+			this._textureData.splice(this._textureData.indexOf(textureData), 1);
+
+			return textureData;
 		}
 	}
 }

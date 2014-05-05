@@ -18,6 +18,7 @@ module tests.entities
 	{
 		private _view:View;
 		private _timer:away.utils.RequestAnimationFrame;
+		private _time:number = 0;
 		private _hoverControl:away.controllers.HoverController;
 
 		private _move:boolean = false;
@@ -65,7 +66,7 @@ module tests.entities
 				billboard.x = Math.cos(i*32*Math.PI/numBillboards)*400*Math.sin(i*Math.PI/numBillboards);
 				billboard.y = Math.sin(i*32*Math.PI/numBillboards)*400*Math.sin(i*Math.PI/numBillboards);
 				billboard.z = Math.cos(i*Math.PI/numBillboards)*400;
-				billboard.orientationMode = away.base.OrientationMode.CAMERA_PLANE;
+				//billboard.orientationMode = away.base.OrientationMode.CAMERA_PLANE;
 				billboard.alignmentMode = away.base.AlignmentMode.PIVOT_POINT;
 				this._billboards.push(billboard);
 				//add billboard to the scene
@@ -98,8 +99,10 @@ module tests.entities
 
 		private render(dt:number)
 		{
+			this._time += dt;
 			for (var i:number = 0; i < this._billboards.length; i++) {
-				//this._billboards[i].rotationZ +=2;
+				this._billboards[i].rotationZ = i + this._time/10;
+				this._billboards[i].rotationX = i + this._time/10;
 			}
 
 			this._view.render();

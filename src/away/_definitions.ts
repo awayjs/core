@@ -80,11 +80,7 @@
 
 ///<reference path="core/gl/ContextGLClearMask.ts"/>
 ///<reference path="core/gl/VertexBuffer.ts"/>
-///<reference path="core/gl/VertexData.ts" />
-///<reference path="core/gl/VertexDataPool.ts" />
 ///<reference path="core/gl/IndexBuffer.ts"/>
-///<reference path="core/gl/IndexData.ts" />
-///<reference path="core/gl/IndexDataPool.ts" />
 ///<reference path="core/gl/Program.ts"/>
 ///<reference path="core/gl/SamplerState.ts"/>
 ///<reference path="core/gl/ContextGLTextureFormat.ts"/>
@@ -119,6 +115,7 @@
 ///<reference path="core/base/IGraphicsData.ts" />
 ///<reference path="core/base/IMaterialOwner.ts" />
 ///<reference path="core/base/InterpolationMethod.ts" />
+///<reference path="core/base/IStage.ts" />
 ///<reference path="core/base/ISubMesh.ts" />
 ///<reference path="core/base/ISubMeshClass.ts" />
 ///<reference path="core/base/SubGeometryBase.ts" />
@@ -130,7 +127,6 @@
 ///<reference path="core/base/LoaderInfo.ts" />
 ///<reference path="core/base/PixelSnapping.ts" />
 ///<reference path="core/base/SpreadMethod.ts" />
-///<reference path="core/base/StageGL.ts" />
 ///<reference path="core/base/TriangleCulling.ts" />
 ///<reference path="core/base/TriangleSubGeometry.ts" />
 ///<reference path="core/base/TriangleSubMesh.ts" />
@@ -140,9 +136,14 @@
 ///<reference path="core/pool/IRenderable.ts"/>
 ///<reference path="core/pool/IRenderableClass.ts"/>
 ///<reference path="core/pool/RenderablePool.ts"/>
+///<reference path="core/pool/ITextureData.ts"/>
+///<reference path="core/pool/ITextureDataClass.ts"/>
+///<reference path="core/pool/TextureDataPool.ts"/>
+
 ///<reference path="core/pool/CSSRenderableBase.ts"/>
 ///<reference path="core/pool/CSSBillboardRenderable.ts"/>
 ///<reference path="core/pool/CSSLineSegmentRenderable.ts"/>
+///<reference path="core/pool/CSSSkyboxRenderable.ts"/>
 
 ///<reference path="core/traverse/ICollector.ts" />
 ///<reference path="core/traverse/CollectorBase.ts" />
@@ -228,8 +229,6 @@
 ///<reference path="projections/ObliqueNearPlaneProjection.ts" />
 
 ///<reference path="managers/MouseManager.ts"/>
-///<reference path="managers/RTTBufferManager.ts"/>
-///<reference path="managers/StageGLManager.ts"/>
 
 ///<reference path="containers/Loader.ts" />
 ///<reference path="containers/Scene.ts" />
@@ -268,9 +267,6 @@
 ///<reference path="textures/TextureProxyBase.ts" />
 ///<reference path="textures/Texture2DBase.ts" />
 ///<reference path="textures/CubeTextureBase.ts" />
-///<reference path="textures/ATFData.ts" />
-///<reference path="textures/ATFCubeTexture.ts" />
-///<reference path="textures/ATFTexture.ts" />
 ///<reference path="textures/ImageTexture.ts" />
 ///<reference path="textures/BitmapTexture.ts" />
 ///<reference path="textures/RenderTexture.ts" />

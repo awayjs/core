@@ -5,12 +5,6 @@ module away.textures
 
 	export class RenderTexture extends away.textures.Texture2DBase
 	{
-		constructor(width:number, height:number)
-		{
-			super();
-			this.pSetSize(width, height);
-		}
-
 		/**
 		 *
 		 * @returns {number}
@@ -30,7 +24,7 @@ module away.textures
 
 			this.invalidateContent();
 
-			this.pSetSize(value, this._pHeight);
+			this._pSetSize(value, this._pHeight);
 		}
 
 		/**
@@ -51,22 +45,23 @@ module away.textures
 				throw new Error("Invalid size: Width and height must be power of 2 and cannot exceed 2048");
 
 			this.invalidateContent();
-			this.pSetSize(this._pWidth, value);
+			this._pSetSize(this._pWidth, value);
 		}
 
-		public pUploadContent(texture:away.gl.TextureBase)
+		constructor(width:number, height:number)
 		{
-			// fake data, to complete texture for sampling
-			var bmp:away.base.BitmapData = new away.base.BitmapData(this.width, this.height, false, 0xff0000);
-			//(<away.gl.Texture> texture).uploadFromBitmapData(bmp, 0);
-			//away.materials.MipmapGenerator.generateMipMaps(bmp, texture);
-			(<away.gl.Texture>texture).generateFromRenderBuffer(bmp);
-			bmp.dispose();
+			super(false);
+
+			this._pSetSize(width, height);
 		}
 
-		public pCreateTexture(context:away.gl.ContextGL):away.gl.TextureBase
+		/**
+		 *
+		 * @param stage
+		 */
+		public activateTextureForStage(index:number, stage:away.base.IStage)
 		{
-			return context.createTexture(this.width, this.height, away.gl.ContextGLTextureFormat.BGRA, true);
+			stage.activateRenderTexture(index, this);
 		}
 	}
 }

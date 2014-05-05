@@ -16,17 +16,13 @@ module away.textures
 		private _specularMap:BitmapData;
 		private _glossMap:BitmapData;
 		
-		constructor(specularMap:BitmapData = null, glossMap:BitmapData = null)
+		constructor(specularMap:BitmapData = null, glossMap:BitmapData = null, generateMipmaps:boolean = true)
 		{
-			var bmd:BitmapData;
-			
-			if (specularMap)
-				bmd = specularMap;
-			else
-				bmd = glossMap;
+			var bmd:BitmapData = specularMap? specularMap : glossMap;
+
 			bmd = bmd? new BitmapData(bmd.width, bmd.height, false, 0xffffff) : new BitmapData(1, 1, false, 0xffffff);
 			
-			super(bmd);
+			super(bmd, generateMipmaps);
 			
 			this.specularMap = specularMap;
 			this.glossMap = glossMap;
@@ -43,7 +39,7 @@ module away.textures
 
 			this.invalidateContent();
 			
-			this.testSize();
+			this._testSize();
 		}
 		
 		public get glossMap():BitmapData
@@ -56,10 +52,10 @@ module away.textures
 			this._glossMap = value;
 			this.invalidateContent();
 			
-			this.testSize();
+			this._testSize();
 		}
 		
-		private testSize()
+		private _testSize()
 		{
 			var w:Number, h:Number;
 			
@@ -74,33 +70,27 @@ module away.textures
 				h = 1;
 			}
 			
-			if (w != this.bitmapData.width && h != this.bitmapData.height) {
-				var oldBitmap:BitmapData = this.bitmapData;
+			if (w != this._bitmapData.width && h != this._bitmapData.height) {
+				var oldBitmap:BitmapData = this._bitmapData;
 				this.bitmapData = new BitmapData(this._specularMap.width, this._specularMap.height, false, 0xffffff);
 				oldBitmap.dispose();
 			}
 		}
-		
-		public pUploadContent(texture:TextureBase)
+
+		public get bitmapData():away.base.BitmapData
 		{
 			var rect:Rectangle = this._specularMap.rect;
 			var origin:Point = new Point();
-			
-			this.bitmapData.fillRect(rect, 0xffffff);
-			
+
+			this._bitmapData.fillRect(rect, 0xffffff);
+
 			if (this._glossMap)
-				this.bitmapData.copyChannel(this._glossMap, rect, origin, BitmapDataChannel.GREEN, BitmapDataChannel.GREEN);
-			
+				this._bitmapData.copyChannel(this._glossMap, rect, origin, BitmapDataChannel.GREEN, BitmapDataChannel.GREEN);
+
 			if (this._specularMap)
-				this.bitmapData.copyChannel(this._specularMap, rect, origin, BitmapDataChannel.RED, BitmapDataChannel.RED);
-			
-			super.pUploadContent(texture);
-		}
-		
-		public dispose()
-		{
-			this.bitmapData.dispose();
-			this.bitmapData = null;
+				this._bitmapData.copyChannel(this._specularMap, rect, origin, BitmapDataChannel.RED, BitmapDataChannel.RED);
+
+			return this._bitmapData;
 		}
 	}
 }

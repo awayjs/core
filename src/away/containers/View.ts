@@ -11,9 +11,6 @@ module away.containers
 	import Point						= away.geom.Point;
 	import Rectangle					= away.geom.Rectangle;
 	import Vector3D						= away.geom.Vector3D;
-	import ContextGL					= away.gl.ContextGL;
-	import ContextGLTextureFormat		= away.gl.ContextGLTextureFormat;
-	import Texture						= away.gl.Texture;
 	import MouseManager					= away.managers.MouseManager;
 	import IRenderer					= away.render.IRenderer;
 	import CSSRendererBase				= away.render.CSSRendererBase;

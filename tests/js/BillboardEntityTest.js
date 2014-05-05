@@ -3,19 +3,16 @@
 var tests;
 (function (tests) {
     (function (entities) {
-        var View = away.containers.View;
         var Billboard = away.entities.Billboard;
         var Vector3D = away.geom.Vector3D;
         var AssetLibrary = away.library.AssetLibrary;
-        var CSSMaterialBase = away.materials.CSSMaterialBase;
-        var ImageTexture = away.textures.ImageTexture;
-        var URLLoader = away.net.URLLoader;
+
         var URLRequest = away.net.URLRequest;
         var Delegate = away.utils.Delegate;
-        var RequestAnimationFrame = away.utils.RequestAnimationFrame;
 
         var BillboardEntityTest = (function () {
             function BillboardEntityTest() {
+                this._time = 0;
                 this._move = false;
                 this._billboards = new Array();
                 //load an image
@@ -50,7 +47,8 @@ var tests;
                     billboard.x = Math.cos(i * 32 * Math.PI / numBillboards) * 400 * Math.sin(i * Math.PI / numBillboards);
                     billboard.y = Math.sin(i * 32 * Math.PI / numBillboards) * 400 * Math.sin(i * Math.PI / numBillboards);
                     billboard.z = Math.cos(i * Math.PI / numBillboards) * 400;
-                    billboard.orientationMode = away.base.OrientationMode.CAMERA_PLANE;
+
+                    //billboard.orientationMode = away.base.OrientationMode.CAMERA_PLANE;
                     billboard.alignmentMode = away.base.AlignmentMode.PIVOT_POINT;
                     this._billboards.push(billboard);
 
@@ -90,8 +88,10 @@ var tests;
             };
 
             BillboardEntityTest.prototype.render = function (dt) {
+                this._time += dt;
                 for (var i = 0; i < this._billboards.length; i++) {
-                    //this._billboards[i].rotationZ +=2;
+                    this._billboards[i].rotationZ = i + this._time / 10;
+                    this._billboards[i].rotationX = i + this._time / 10;
                 }
 
                 this._view.render();

@@ -18,11 +18,12 @@ module away.base
 		public static JOINT_INDEX_DATA:string = "jointIndices";
 		public static JOINT_WEIGHT_DATA:string = "jointWeights";
 
-		public static POSITION_FORMAT:string = away.gl.ContextGLVertexBufferFormat.FLOAT_3;
-		public static NORMAL_FORMAT:string = away.gl.ContextGLVertexBufferFormat.FLOAT_3;
-		public static TANGENT_FORMAT:string = away.gl.ContextGLVertexBufferFormat.FLOAT_3;
-		public static UV_FORMAT:string = away.gl.ContextGLVertexBufferFormat.FLOAT_2;
-		public static SECONDARY_UV_FORMAT:string = away.gl.ContextGLVertexBufferFormat.FLOAT_2;
+		//TODO - move these to StageGL
+		public static POSITION_FORMAT:string = "float3";
+		public static NORMAL_FORMAT:string = "float3";
+		public static TANGENT_FORMAT:string = "float3";
+		public static UV_FORMAT:string = "float2";
+		public static SECONDARY_UV_FORMAT:string = "float2";
 
 		private _positionsDirty:boolean = true;
 		private _faceNormalsDirty:boolean = true;

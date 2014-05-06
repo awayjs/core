@@ -78,28 +78,6 @@
 ///<reference path="core/library/AssetLibraryBundle.ts"/>
 ///<reference path="core/library/AssetLibrary.ts" />
 
-///<reference path="core/gl/ContextGLClearMask.ts"/>
-///<reference path="core/gl/VertexBuffer.ts"/>
-///<reference path="core/gl/IndexBuffer.ts"/>
-///<reference path="core/gl/Program.ts"/>
-///<reference path="core/gl/SamplerState.ts"/>
-///<reference path="core/gl/ContextGLTextureFormat.ts"/>
-///<reference path="core/gl/TextureBase.ts"/>
-///<reference path="core/gl/Texture.ts" />
-///<reference path="core/gl/CubeTexture.ts" />
-///<reference path="core/gl/ContextGLTriangleFace.ts"/>
-///<reference path="core/gl/ContextGLVertexBufferFormat.ts"/>
-///<reference path="core/gl/ContextGLProgramType.ts"/>
-///<reference path="core/gl/ContextGLBlendFactor.ts"/>
-///<reference path="core/gl/ContextGLCompareMode.ts"/>
-///<reference path="core/gl/ContextGLMipFilter.ts"/>
-///<reference path="core/gl/ContextGLProfile.ts"/>
-///<reference path="core/gl/ContextGLStencilAction.ts"/>
-///<reference path="core/gl/ContextGLTextureFilter.ts"/>
-///<reference path="core/gl/ContextGLWrapMode.ts"/>
-///<reference path="core/gl/ContextGL.ts" />
-///<reference path="core/gl/AGLSLContextGL.ts" />
-
 ///<reference path="core/base/BlendMode.ts"/>
 ///<reference path="core/base/AlignmentMode.ts"/>
 ///<reference path="core/base/OrientationMode.ts"/>
@@ -272,22 +250,3 @@
 ///<reference path="textures/BitmapCubeTexture.ts" />
 ///<reference path="textures/MipmapGenerator.ts" />
 ///<reference path="textures/SpecularBitmapTexture.ts" />
-
-///<reference path="../aglsl/Sampler.ts"/>
-///<reference path="../aglsl/Token.ts"/>
-///<reference path="../aglsl/Header.ts"/>
-///<reference path="../aglsl/OpLUT.ts"/>
-///<reference path="../aglsl/Header.ts"/>
-///<reference path="../aglsl/Description.ts"/>
-///<reference path="../aglsl/Destination.ts"/>
-///<reference path="../aglsl/ContextGL.ts"/>
-///<reference path="../aglsl/Mapping.ts"/>
-///<reference path="../aglsl/assembler/OpCode.ts"/>
-///<reference path="../aglsl/assembler/OpcodeMap.ts"/>
-///<reference path="../aglsl/assembler/Part.ts"/>
-///<reference path="../aglsl/assembler/RegMap.ts"/>
-///<reference path="../aglsl/assembler/SamplerMap.ts"/>
-///<reference path="../aglsl/assembler/AGALMiniAssembler.ts"/>
-///<reference path="../aglsl/AGALTokenizer.ts"/>
-///<reference path="../aglsl/Parser.ts"/>
-///<reference path="../aglsl/AGLSLCompiler.ts"/>

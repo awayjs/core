@@ -16,9 +16,10 @@ module away.base
 		public static THICKNESS_DATA:string = "thickness";
 		public static COLOR_DATA:string = "colors";
 
-		public static POSITION_FORMAT:string = away.gl.ContextGLVertexBufferFormat.FLOAT_3;
-		public static COLOR_FORMAT:string = away.gl.ContextGLVertexBufferFormat.FLOAT_4;
-		public static THICKNESS_FORMAT:string = away.gl.ContextGLVertexBufferFormat.FLOAT_1;
+		//TODO - move these to StageGL
+		public static POSITION_FORMAT:string = "float3";
+		public static COLOR_FORMAT:string = "float4";
+		public static THICKNESS_FORMAT:string = "float1";
 
 		private _positionsDirty:boolean = true;
 		private _boundingPositionDirty = true;

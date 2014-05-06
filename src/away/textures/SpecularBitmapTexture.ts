@@ -4,7 +4,6 @@ module away.textures
 {
 	import BitmapData					= away.base.BitmapData;
 	import BitmapDataChannel			= away.base.BitmapDataChannel;
-	import TextureBase					= away.gl.TextureBase;
 	import Point						= away.geom.Point;
 	import Rectangle					= away.geom.Rectangle;
 	

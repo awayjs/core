@@ -1,4 +1,4 @@
-///<reference path="../../build/awayjs.next.d.ts" />
+///<reference path="../../build/awayjs-core.next.d.ts" />
 var __extends = this.__extends || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
@@ -193,7 +193,7 @@ var parsers;
     })(away.parsers.ParserBase);
     parsers.JSONTextureParser = JSONTextureParser;
 })(parsers || (parsers = {}));
-///<reference path="../../build/awayjs.next.d.ts" />
+///<reference path="../../build/awayjs-core.next.d.ts" />
 ///<reference path="../parsers/JSONTextureParser.ts" />
 var tests;
 (function (tests) {

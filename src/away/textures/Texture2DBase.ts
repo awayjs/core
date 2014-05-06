@@ -4,8 +4,8 @@ module away.textures
 {
 	export class Texture2DBase extends TextureProxyBase
 	{
-		public _pMipmapData:Array<away.base.BitmapData>;
-		public _pMipmapDataDirty:boolean;
+		private _mipmapData:Array<away.base.BitmapData>;
+		private _mipmapDataDirty:boolean;
 		public _pWidth:number;
 		public _pHeight:number;
 		
@@ -44,10 +44,10 @@ module away.textures
 		{
 			super.dispose();
 
-			if (this._pMipmapData) {
-				var len:number = this._pMipmapData.length;
+			if (this._mipmapData) {
+				var len:number = this._mipmapData.length;
 				for (var i:number = 0; i < len; i++)
-					MipmapGenerator.freeMipMapHolder(this._pMipmapData[i]);
+					MipmapGenerator.freeMipMapHolder(this._mipmapData[i]);
 			}
 		}
 
@@ -58,7 +58,7 @@ module away.textures
 		{
 			super.invalidateContent();
 
-			this._pMipmapDataDirty = true;
+			this._mipmapDataDirty = true;
 		}
 
 		/**
@@ -72,10 +72,38 @@ module away.textures
 			if (this._pWidth != width || this._pHeight != height)
 				this.invalidateSize();
 
-			this._pMipmapDataDirty = true;
+			this._mipmapDataDirty = true;
 
 			this._pWidth = width;
 			this._pHeight = height;
+		}
+
+		/**
+		 *
+		 * @param stage
+		 */
+		public activateTextureForStage(index:number, stage:away.base.IStage)
+		{
+			stage.activateTexture(index, this);
+		}
+
+		public _iGetMipmapData():Array<away.base.BitmapData>
+		{
+			if (this._mipmapDataDirty) {
+				this._mipmapDataDirty = false;
+
+				if (!this._mipmapData)
+					this._mipmapData = new Array<away.base.BitmapData>();
+
+				away.textures.MipmapGenerator.generateMipMaps(this._iGetTextureData(), this._mipmapData, true);
+			}
+
+			return this._mipmapData;
+		}
+
+		public _iGetTextureData():any
+		{
+			throw new away.errors.AbstractMethodError();
 		}
 	}
 }

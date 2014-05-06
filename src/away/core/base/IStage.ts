@@ -23,27 +23,13 @@ module away.base
 		 * @param index
 		 * @param texture
 		 */
-		activateImageTexture(index:number, texture:away.textures.ImageTexture);
+		activateTexture(index:number, texture:away.textures.Texture2DBase);
 
 		/**
 		 *
 		 * @param index
 		 * @param texture
 		 */
-		activateImageCubeTexture(index:number, texture:away.textures.ImageCubeTexture);
-
-		/**
-		 *
-		 * @param index
-		 * @param texture
-		 */
-		activateBitmapTexture(index:number, texture:away.textures.BitmapTexture);
-
-		/**
-		 *
-		 * @param index
-		 * @param texture
-		 */
-		activateBitmapCubeTexture(index:number, texture:away.textures.BitmapCubeTexture);
+		activateCubeTexture(index:number, texture:away.textures.CubeTextureBase);
 	}
 }

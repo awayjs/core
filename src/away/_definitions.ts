@@ -137,8 +137,6 @@
 ///<reference path="core/pool/IRenderableClass.ts"/>
 ///<reference path="core/pool/RenderablePool.ts"/>
 ///<reference path="core/pool/ITextureData.ts"/>
-///<reference path="core/pool/ITextureDataClass.ts"/>
-///<reference path="core/pool/TextureDataPool.ts"/>
 
 ///<reference path="core/pool/CSSRenderableBase.ts"/>
 ///<reference path="core/pool/CSSBillboardRenderable.ts"/>

@@ -38,15 +38,6 @@ module away.textures
 			this.bitmapData = bitmapData;
 		}
 
-		/**
-		 *
-		 * @param stage
-		 */
-		public activateTextureForStage(index:number, stage:away.base.IStage)
-		{
-			stage.activateBitmapTexture(index, this);
-		}
-
 		public dispose()
 		{
 			super.dispose();
@@ -55,18 +46,9 @@ module away.textures
 			this._bitmapData = null;
 		}
 
-		public _iGetMipmapData():Array<away.base.BitmapData>
+		public _iGetTextureData():away.base.BitmapData
 		{
-			if (this._pMipmapDataDirty) {
-				this._pMipmapDataDirty = false;
-
-				if (!this._pMipmapData)
-					this._pMipmapData = new Array<away.base.BitmapData>();
-
-				away.textures.MipmapGenerator.generateMipMaps(this.bitmapData, this._pMipmapData, true);
-			}
-
-			return this._pMipmapData;
+			return this._bitmapData;
 		}
 	}
 }

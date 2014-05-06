@@ -43,19 +43,16 @@ module away.gl
 			return this._frameBuffer;
 		}
 
-		public uploadFromHTMLImageElement(image:HTMLImageElement, miplevel:number = 0)
+		public uploadFromData(bitmapData:away.base.BitmapData, miplevel?:number);
+		public uploadFromData(image:HTMLImageElement, miplevel?:number);
+		public uploadFromData(data:any, miplevel:number = 0)
 		{
-			this._gl.bindTexture(this._gl.TEXTURE_2D, this._glTexture);
-			//this._gl.pixelStorei( this._gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, this._gl.ZERO );
-			this._gl.texImage2D(this._gl.TEXTURE_2D, miplevel, this._gl.RGBA, this._gl.RGBA, this._gl.UNSIGNED_BYTE, image);
-			this._gl.bindTexture(this._gl.TEXTURE_2D, null);
-		}
+			if (data instanceof away.base.BitmapData)
+				data = (<away.base.BitmapData> data).imageData;
 
-		public uploadFromBitmapData(data:away.base.BitmapData, miplevel:number = 0)
-		{
 			this._gl.bindTexture(this._gl.TEXTURE_2D, this._glTexture);
 			//this._gl.pixelStorei( this._gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, this._gl.ZERO );
-			this._gl.texImage2D(this._gl.TEXTURE_2D, miplevel, this._gl.RGBA, this._gl.RGBA, this._gl.UNSIGNED_BYTE, data.imageData);
+			this._gl.texImage2D(this._gl.TEXTURE_2D, miplevel, this._gl.RGBA, this._gl.RGBA, this._gl.UNSIGNED_BYTE, data);
 			this._gl.bindTexture(this._gl.TEXTURE_2D, null);
 		}
 

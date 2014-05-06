@@ -4,14 +4,14 @@ module away.textures
 {
 	export class ImageCubeTexture extends CubeTextureBase
 	{
-		public _pHTMLImageElements:Array<HTMLImageElement> = new Array<HTMLImageElement>(6);
+		private _htmlImageElements:Array<HTMLImageElement> = new Array<HTMLImageElement>(6);
 
 		/**
 		 * The texture on the cube's right face.
 		 */
 		public get positiveX():HTMLImageElement
 		{
-			return this._pHTMLImageElements[0];
+			return this._htmlImageElements[0];
 		}
 
 		public set positiveX(value:HTMLImageElement)
@@ -19,7 +19,7 @@ module away.textures
 			this._testSize(value);
 			this.invalidateContent();
 			this._pSetSize(value.width);
-			this._pHTMLImageElements[0] = value;
+			this._htmlImageElements[0] = value;
 		}
 
 		/**
@@ -27,7 +27,7 @@ module away.textures
 		 */
 		public get negativeX():HTMLImageElement
 		{
-			return this._pHTMLImageElements[1];
+			return this._htmlImageElements[1];
 		}
 
 		public set negativeX(value:HTMLImageElement)
@@ -35,7 +35,7 @@ module away.textures
 			this._testSize(value);
 			this.invalidateContent();
 			this._pSetSize(value.width);
-			this._pHTMLImageElements[1] = value;
+			this._htmlImageElements[1] = value;
 		}
 
 		/**
@@ -43,7 +43,7 @@ module away.textures
 		 */
 		public get positiveY():HTMLImageElement
 		{
-			return this._pHTMLImageElements[2];
+			return this._htmlImageElements[2];
 		}
 
 		public set positiveY(value:HTMLImageElement)
@@ -51,7 +51,7 @@ module away.textures
 			this._testSize(value);
 			this.invalidateContent();
 			this._pSetSize(value.width);
-			this._pHTMLImageElements[2] = value;
+			this._htmlImageElements[2] = value;
 		}
 
 		/**
@@ -59,7 +59,7 @@ module away.textures
 		 */
 		public get negativeY():HTMLImageElement
 		{
-			return this._pHTMLImageElements[3];
+			return this._htmlImageElements[3];
 		}
 
 		public set negativeY(value:HTMLImageElement)
@@ -67,7 +67,7 @@ module away.textures
 			this._testSize(value);
 			this.invalidateContent();
 			this._pSetSize(value.width);
-			this._pHTMLImageElements[3] = value;
+			this._htmlImageElements[3] = value;
 		}
 
 		/**
@@ -75,7 +75,7 @@ module away.textures
 		 */
 		public get positiveZ():HTMLImageElement
 		{
-			return this._pHTMLImageElements[4];
+			return this._htmlImageElements[4];
 		}
 
 		public set positiveZ(value:HTMLImageElement)
@@ -83,7 +83,7 @@ module away.textures
 			this._testSize(value);
 			this.invalidateContent();
 			this._pSetSize(value.width);
-			this._pHTMLImageElements[4] = value;
+			this._htmlImageElements[4] = value;
 		}
 
 		/**
@@ -91,7 +91,7 @@ module away.textures
 		 */
 		public get negativeZ():HTMLImageElement
 		{
-			return this._pHTMLImageElements[5];
+			return this._htmlImageElements[5];
 		}
 
 		public set negativeZ(value:HTMLImageElement)
@@ -99,19 +99,19 @@ module away.textures
 			this._testSize(value);
 			this.invalidateContent();
 			this._pSetSize(value.width);
-			this._pHTMLImageElements[5] = value;
+			this._htmlImageElements[5] = value;
 		}
 
 		constructor(posX:HTMLImageElement, negX:HTMLImageElement, posY:HTMLImageElement, negY:HTMLImageElement, posZ:HTMLImageElement, negZ:HTMLImageElement, generateMipmaps:boolean = false)
 		{
 			super(generateMipmaps);
 
-			this._testSize(this._pHTMLImageElements[0] = posX);
-			this._testSize(this._pHTMLImageElements[1] = negX);
-			this._testSize(this._pHTMLImageElements[2] = posY);
-			this._testSize(this._pHTMLImageElements[3] = negY);
-			this._testSize(this._pHTMLImageElements[4] = posZ);
-			this._testSize(this._pHTMLImageElements[5] = negZ);
+			this._testSize(this._htmlImageElements[0] = posX);
+			this._testSize(this._htmlImageElements[1] = negX);
+			this._testSize(this._htmlImageElements[2] = posY);
+			this._testSize(this._htmlImageElements[3] = negY);
+			this._testSize(this._htmlImageElements[4] = posZ);
+			this._testSize(this._htmlImageElements[5] = negZ);
 
 			this.invalidateContent();
 
@@ -126,25 +126,9 @@ module away.textures
 				throw new Error("Invalid bitmapData: Width and height must be power of 2 and cannot exceed 2048");
 		}
 
-		/**
-		 *
-		 * @param stage
-		 */
-		public activateTextureForStage(index:number, stage:away.base.IStage)
+		public _iGetTextureData(side:number):HTMLImageElement
 		{
-			stage.activateImageCubeTexture(index, this);
-		}
-
-		public _iGetMipmapData(side:number):Array<away.base.BitmapData>
-		{
-			if (this._pMipmapDataDirtyArray[side]) {
-				this._pMipmapDataDirtyArray[side] = false;
-
-				var mipmapData:Array<away.base.BitmapData> = this._pMipmapDataArray[side] || (this._pMipmapDataArray[side] = new Array<away.base.BitmapData>());
-				away.textures.MipmapGenerator.generateHTMLImageElementMipMaps(this._pHTMLImageElements[side], mipmapData, true);
-			}
-
-			return this._pMipmapDataArray[side];
+			return this._htmlImageElements[side];
 		}
 	}
 }

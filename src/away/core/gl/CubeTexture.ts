@@ -21,73 +21,40 @@ module away.gl
 			this._gl.deleteTexture(this._texture);
 		}
 
-		public uploadFromHTMLImageElement(image:HTMLImageElement, side:number, miplevel:number = 0)
+		public uploadFromData(bitmapData:away.base.BitmapData, side:number, miplevel?:number);
+		public uploadFromData(image:HTMLImageElement, side:number, miplevel?:number);
+		public uploadFromData(data:any, side:number, miplevel:number = 0)
 		{
+			if (data instanceof away.base.BitmapData)
+				data = (<away.base.BitmapData> data).imageData;
+
 			this._gl.bindTexture(this._gl.TEXTURE_CUBE_MAP, this._texture);
 
 			switch (side) {
 				case 0:
-					this._gl.texImage2D(this._gl.TEXTURE_CUBE_MAP_POSITIVE_X, miplevel, this._gl.RGBA, this._gl.RGBA, this._gl.UNSIGNED_BYTE, image);
+					this._gl.texImage2D(this._gl.TEXTURE_CUBE_MAP_POSITIVE_X, miplevel, this._gl.RGBA, this._gl.RGBA, this._gl.UNSIGNED_BYTE, data);
 
 					break;
 				case 1:
-					this._gl.texImage2D(this._gl.TEXTURE_CUBE_MAP_NEGATIVE_X, miplevel, this._gl.RGBA, this._gl.RGBA, this._gl.UNSIGNED_BYTE, image);
+					this._gl.texImage2D(this._gl.TEXTURE_CUBE_MAP_NEGATIVE_X, miplevel, this._gl.RGBA, this._gl.RGBA, this._gl.UNSIGNED_BYTE, data);
 					break;
 				case 2:
-					this._gl.texImage2D(this._gl.TEXTURE_CUBE_MAP_POSITIVE_Y, miplevel, this._gl.RGBA, this._gl.RGBA, this._gl.UNSIGNED_BYTE, image);
+					this._gl.texImage2D(this._gl.TEXTURE_CUBE_MAP_POSITIVE_Y, miplevel, this._gl.RGBA, this._gl.RGBA, this._gl.UNSIGNED_BYTE, data);
 					break;
 				case 3:
-					this._gl.texImage2D(this._gl.TEXTURE_CUBE_MAP_NEGATIVE_Y, miplevel, this._gl.RGBA, this._gl.RGBA, this._gl.UNSIGNED_BYTE, image);
+					this._gl.texImage2D(this._gl.TEXTURE_CUBE_MAP_NEGATIVE_Y, miplevel, this._gl.RGBA, this._gl.RGBA, this._gl.UNSIGNED_BYTE, data);
 					break;
 				case 4:
-					this._gl.texImage2D(this._gl.TEXTURE_CUBE_MAP_POSITIVE_Z, miplevel, this._gl.RGBA, this._gl.RGBA, this._gl.UNSIGNED_BYTE, image);
+					this._gl.texImage2D(this._gl.TEXTURE_CUBE_MAP_POSITIVE_Z, miplevel, this._gl.RGBA, this._gl.RGBA, this._gl.UNSIGNED_BYTE, data);
 					break;
 				case 5:
-					this._gl.texImage2D(this._gl.TEXTURE_CUBE_MAP_NEGATIVE_Z, miplevel, this._gl.RGBA, this._gl.RGBA, this._gl.UNSIGNED_BYTE, image);
+					this._gl.texImage2D(this._gl.TEXTURE_CUBE_MAP_NEGATIVE_Z, miplevel, this._gl.RGBA, this._gl.RGBA, this._gl.UNSIGNED_BYTE, data);
 					break;
 				default :
 					throw "unknown side type";
 			}
 
 			this._gl.bindTexture(this._gl.TEXTURE_CUBE_MAP, null);
-		}
-
-		public uploadFromBitmapData(data:away.base.BitmapData, side:number, miplevel:number = 0)
-		{
-			switch (side) {
-				case 0:
-					this._gl.bindTexture(this._gl.TEXTURE_CUBE_MAP, this._texture);
-					this._gl.texImage2D(this._gl.TEXTURE_CUBE_MAP_POSITIVE_X, miplevel, this._gl.RGBA, this._gl.RGBA, this._gl.UNSIGNED_BYTE, data.imageData);
-					this._gl.bindTexture(this._gl.TEXTURE_CUBE_MAP, null);
-					break;
-				case 1:
-					this._gl.bindTexture(this._gl.TEXTURE_CUBE_MAP, this._texture);
-					this._gl.texImage2D(this._gl.TEXTURE_CUBE_MAP_NEGATIVE_X, miplevel, this._gl.RGBA, this._gl.RGBA, this._gl.UNSIGNED_BYTE, data.imageData);
-					this._gl.bindTexture(this._gl.TEXTURE_CUBE_MAP, null);
-					break;
-				case 2:
-					this._gl.bindTexture(this._gl.TEXTURE_CUBE_MAP, this._texture);
-					this._gl.texImage2D(this._gl.TEXTURE_CUBE_MAP_POSITIVE_Y, miplevel, this._gl.RGBA, this._gl.RGBA, this._gl.UNSIGNED_BYTE, data.imageData);
-					this._gl.bindTexture(this._gl.TEXTURE_CUBE_MAP, null);
-					break;
-				case 3:
-					this._gl.bindTexture(this._gl.TEXTURE_CUBE_MAP, this._texture);
-					this._gl.texImage2D(this._gl.TEXTURE_CUBE_MAP_NEGATIVE_Y, miplevel, this._gl.RGBA, this._gl.RGBA, this._gl.UNSIGNED_BYTE, data.imageData);
-					this._gl.bindTexture(this._gl.TEXTURE_CUBE_MAP, null);
-					break;
-				case 4:
-					this._gl.bindTexture(this._gl.TEXTURE_CUBE_MAP, this._texture);
-					this._gl.texImage2D(this._gl.TEXTURE_CUBE_MAP_POSITIVE_Z, miplevel, this._gl.RGBA, this._gl.RGBA, this._gl.UNSIGNED_BYTE, data.imageData);
-					this._gl.bindTexture(this._gl.TEXTURE_CUBE_MAP, null);
-					break;
-				case 5:
-					this._gl.bindTexture(this._gl.TEXTURE_CUBE_MAP, this._texture);
-					this._gl.texImage2D(this._gl.TEXTURE_CUBE_MAP_NEGATIVE_Z, miplevel, this._gl.RGBA, this._gl.RGBA, this._gl.UNSIGNED_BYTE, data.imageData);
-					this._gl.bindTexture(this._gl.TEXTURE_CUBE_MAP, null);
-					break;
-				default :
-					throw "unknown side type";
-			}
 		}
 
 		public uploadCompressedTextureFromByteArray(data:away.utils.ByteArray, byteArrayOffset:number /*uint*/, async:boolean = false)

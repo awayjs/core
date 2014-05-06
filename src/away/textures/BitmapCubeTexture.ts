@@ -4,15 +4,14 @@ module away.textures
 {
 	export class BitmapCubeTexture extends CubeTextureBase
 	{
-
-		public _pBitmapDatas:Array<away.base.BitmapData> = new Array<away.base.BitmapData>(6);
+		private _bitmapDatas:Array<away.base.BitmapData> = new Array<away.base.BitmapData>(6);
 
 		/**
 		 * The texture on the cube's right face.
 		 */
 		public get positiveX():away.base.BitmapData
 		{
-			return this._pBitmapDatas[0];
+			return this._bitmapDatas[0];
 		}
 
 		public set positiveX(value:away.base.BitmapData)
@@ -20,7 +19,7 @@ module away.textures
 			this._testSize(value);
 			this.invalidateContent();
 			this._pSetSize(value.width);
-			this._pBitmapDatas[0] = value;
+			this._bitmapDatas[0] = value;
 		}
 
 		/**
@@ -28,7 +27,7 @@ module away.textures
 		 */
 		public get negativeX():away.base.BitmapData
 		{
-			return this._pBitmapDatas[1];
+			return this._bitmapDatas[1];
 		}
 
 		public set negativeX(value:away.base.BitmapData)
@@ -36,7 +35,7 @@ module away.textures
 			this._testSize(value);
 			this.invalidateContent();
 			this._pSetSize(value.width);
-			this._pBitmapDatas[1] = value;
+			this._bitmapDatas[1] = value;
 		}
 
 		/**
@@ -44,7 +43,7 @@ module away.textures
 		 */
 		public get positiveY():away.base.BitmapData
 		{
-			return this._pBitmapDatas[2];
+			return this._bitmapDatas[2];
 		}
 
 		public set positiveY(value:away.base.BitmapData)
@@ -52,7 +51,7 @@ module away.textures
 			this._testSize(value);
 			this.invalidateContent();
 			this._pSetSize(value.width);
-			this._pBitmapDatas[2] = value;
+			this._bitmapDatas[2] = value;
 		}
 
 		/**
@@ -60,7 +59,7 @@ module away.textures
 		 */
 		public get negativeY():away.base.BitmapData
 		{
-			return this._pBitmapDatas[3];
+			return this._bitmapDatas[3];
 		}
 
 		public set negativeY(value:away.base.BitmapData)
@@ -68,7 +67,7 @@ module away.textures
 			this._testSize(value);
 			this.invalidateContent();
 			this._pSetSize(value.width);
-			this._pBitmapDatas[3] = value;
+			this._bitmapDatas[3] = value;
 		}
 
 		/**
@@ -76,7 +75,7 @@ module away.textures
 		 */
 		public get positiveZ():away.base.BitmapData
 		{
-			return this._pBitmapDatas[4];
+			return this._bitmapDatas[4];
 		}
 
 		public set positiveZ(value:away.base.BitmapData)
@@ -84,7 +83,7 @@ module away.textures
 			this._testSize(value);
 			this.invalidateContent();
 			this._pSetSize(value.width);
-			this._pBitmapDatas[4] = value;
+			this._bitmapDatas[4] = value;
 		}
 
 		/**
@@ -92,7 +91,7 @@ module away.textures
 		 */
 		public get negativeZ():away.base.BitmapData
 		{
-			return this._pBitmapDatas[5];
+			return this._bitmapDatas[5];
 		}
 
 		public set negativeZ(value:away.base.BitmapData)
@@ -100,32 +99,23 @@ module away.textures
 			this._testSize(value);
 			this.invalidateContent();
 			this._pSetSize(value.width);
-			this._pBitmapDatas[5] = value;
+			this._bitmapDatas[5] = value;
 		}
 
 		constructor(posX:away.base.BitmapData, negX:away.base.BitmapData, posY:away.base.BitmapData, negY:away.base.BitmapData, posZ:away.base.BitmapData, negZ:away.base.BitmapData, generateMipmaps:boolean = false)
 		{
 			super(generateMipmaps);
 
-			this._testSize(this._pBitmapDatas[0] = posX);
-			this._testSize(this._pBitmapDatas[1] = negX);
-			this._testSize(this._pBitmapDatas[2] = posY);
-			this._testSize(this._pBitmapDatas[3] = negY);
-			this._testSize(this._pBitmapDatas[4] = posZ);
-			this._testSize(this._pBitmapDatas[5] = negZ);
+			this._testSize(this._bitmapDatas[0] = posX);
+			this._testSize(this._bitmapDatas[1] = negX);
+			this._testSize(this._bitmapDatas[2] = posY);
+			this._testSize(this._bitmapDatas[3] = negY);
+			this._testSize(this._bitmapDatas[4] = posZ);
+			this._testSize(this._bitmapDatas[5] = negZ);
 
 			this.invalidateContent();
 
 			this._pSetSize(posX.width);
-		}
-
-		/**
-		 *
-		 * @param stage
-		 */
-		public activateTextureForStage(index:number, stage:away.base.IStage)
-		{
-			stage.activateBitmapCubeTexture(index, this);
 		}
 
 		/**
@@ -145,25 +135,18 @@ module away.textures
 		{
 			super.dispose();
 
-			var len:number = this._pBitmapDatas.length
+			var len:number = this._bitmapDatas.length
 			for (var i:number = 0; i < len; i++) {
-				this._pBitmapDatas[i].dispose();
-				this._pBitmapDatas[i] = null;
+				this._bitmapDatas[i].dispose();
+				this._bitmapDatas[i] = null;
 			}
 
-			this._pBitmapDatas = null;
+			this._bitmapDatas = null;
 		}
 
-		public _iGetMipmapData(side:number):Array<away.base.BitmapData>
+		public _iGetTextureData(side:number):away.base.BitmapData
 		{
-			if (this._pMipmapDataDirtyArray[side]) {
-				this._pMipmapDataDirtyArray[side] = false;
-
-				var mipmapData:Array<away.base.BitmapData> = this._pMipmapDataArray[side] || (this._pMipmapDataArray[side] = new Array<away.base.BitmapData>());
-				away.textures.MipmapGenerator.generateMipMaps(this._pBitmapDatas[side], mipmapData, true);
-			}
-
-			return this._pMipmapDataArray[side];
+			return this._bitmapDatas[side];
 		}
 	}
 }

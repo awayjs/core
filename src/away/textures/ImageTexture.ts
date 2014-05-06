@@ -41,27 +41,9 @@ module away.textures
 			this._pSetSize(value.width, value.height);
 		}
 
-		/**
-		 *
-		 * @param stage
-		 */
-		public activateTextureForStage(index:number, stage:away.base.IStage)
+		public _iGetTextureData():HTMLImageElement
 		{
-			stage.activateImageTexture(index, this);
-		}
-
-		public _iGetMipmapData():Array<away.base.BitmapData>
-		{
-			if (this._pMipmapDataDirty) {
-				this._pMipmapDataDirty = false;
-
-				if (!this._pMipmapData)
-					this._pMipmapData = new Array<away.base.BitmapData>();
-
-				away.textures.MipmapGenerator.generateHTMLImageElementMipMaps(this._htmlImageElement, this._pMipmapData, true);
-			}
-
-			return this._pMipmapData;
+			return this._htmlImageElement;
 		}
 	}
 }

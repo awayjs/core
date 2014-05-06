@@ -22,32 +22,14 @@ module away.textures
 
 		/**
 		 * Uploads a BitmapData with mip maps to a target Texture object.
-		 * @param source
-		 * @param mipmap An optional mip map holder to avoids creating new instances for fe animated materials.
-		 * @param alpha Indicate whether or not the uploaded bitmapData is transparent.
-		 */
-		public static generateHTMLImageElementMipMaps(source:HTMLImageElement, output:Array<away.base.BitmapData> = null, alpha:boolean = false)
-		{
-			MipmapGenerator._rect.width = source.width;
-			MipmapGenerator._rect.height = source.height;
-
-			MipmapGenerator._source = new away.base.BitmapData(source.width, source.height, alpha);
-			MipmapGenerator._source.drawImage(source, MipmapGenerator._rect, MipmapGenerator._rect);
-
-			MipmapGenerator.generateMipMaps(MipmapGenerator._source, output, alpha);
-
-			MipmapGenerator._source.dispose();
-			MipmapGenerator._source = null;
-		}
-
-		/**
-		 * Uploads a BitmapData with mip maps to a target Texture object.
-		 * @param source The source BitmapData to upload.
+		 * @param source The source to upload.
 		 * @param target The target Texture to upload to.
 		 * @param mipmap An optional mip map holder to avoids creating new instances for fe animated materials.
 		 * @param alpha Indicate whether or not the uploaded bitmapData is transparent.
 		 */
-		public static generateMipMaps(source:away.base.BitmapData, output:Array<away.base.BitmapData> = null, alpha:boolean = false)
+		public static generateMipMaps(source:HTMLImageElement, output?:Array<away.base.BitmapData>, alpha?:boolean);
+		public static generateMipMaps(source:away.base.BitmapData, output?:Array<away.base.BitmapData>, alpha?:boolean);
+		public static generateMipMaps(source:any, output?:Array<away.base.BitmapData>, alpha:boolean = false)
 		{
 			var w:number = source.width;
 			var h:number = source.height;

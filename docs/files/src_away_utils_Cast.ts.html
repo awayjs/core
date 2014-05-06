@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>src/away/utils/Cast.ts</title>
+    <link rel="stylesheet" href="http://yui.yahooapis.com/3.9.1/build/cssgrids/cssgrids-min.css">
+    <link rel="stylesheet" href="../assets/vendor/prettify/prettify-min.css">
+    <link rel="stylesheet" href="../assets/css/main.css" id="site_styles">
+    <link rel="shortcut icon" type="image/png" href="../assets/favicon.png">
+    <script src="http://yui.yahooapis.com/combo?3.9.1/build/yui/yui-min.js"></script>
+</head>
+<body class="yui3-skin-sam">
+
+<div id="doc">
+    <div id="hd" class="yui3-g header">
+        <div class="yui3-u-3-4">
+            
+                <h1><img src="../assets/css/logo.png" title=""></h1>
+            
+        </div>
+        <div class="yui3-u-1-4 version">
+            <em>API Docs for: 0.1.0</em>
+        </div>
+    </div>
+    <div id="bd" class="yui3-g">
+
+        <div class="yui3-u-1-4">
+            <div id="docs-sidebar" class="sidebar apidocs">
+                <div id="api-list">
+    <h2 class="off-left">APIs</h2>
+    <div id="api-tabview" class="tabview">
+        <ul class="tabs">
+            <li><a href="#api-classes">Classes</a></li>
+            <li><a href="#api-modules">Modules</a></li>
+        </ul>
+
+        <div id="api-tabview-filter">
+            <input type="search" id="api-filter" placeholder="Type to filter APIs">
+        </div>
+
+        <div id="api-tabview-panel">
+            <ul id="api-classes" class="apis classes">
+            
+                <li><a href="../classes/away.events.AssetEvent.html">away.events.AssetEvent</a></li>
+            
+                <li><a href="../classes/away.events.CameraEvent.html">away.events.CameraEvent</a></li>
+            
+                <li><a href="../classes/away.events.Event.html">away.events.Event</a></li>
+            
+                <li><a href="../classes/away.events.EventDispatcher.html">away.events.EventDispatcher</a></li>
+            
+                <li><a href="../classes/away.events.HTTPStatusEvent.html">away.events.HTTPStatusEvent</a></li>
+            
+                <li><a href="../classes/away.materials.IMaterial.html">away.materials.IMaterial</a></li>
+            
+                <li><a href="../classes/away.partition.CameraNode.html">away.partition.CameraNode</a></li>
+            
+                <li><a href="../classes/away.partition.EntityNode.html">away.partition.EntityNode</a></li>
+            
+                <li><a href="../classes/away.partition.NodeBase.html">away.partition.NodeBase</a></li>
+            
+                <li><a href="../classes/away.partition.NullNode.html">away.partition.NullNode</a></li>
+            
+                <li><a href="../classes/away.partition.Partition.html">away.partition.Partition</a></li>
+            
+                <li><a href="../classes/away.pick.PickingCollisionVO.html">away.pick.PickingCollisionVO</a></li>
+            
+                <li><a href="../classes/away.pool.EntityListItem.html">away.pool.EntityListItem</a></li>
+            
+                <li><a href="../classes/away.pool.EntityListItemPool.html">away.pool.EntityListItemPool</a></li>
+            
+                <li><a href="../classes/away.pool.RenderableListItem.html">away.pool.RenderableListItem</a></li>
+            
+                <li><a href="../classes/away.pool.RenderablePool.html">away.pool.RenderablePool</a></li>
+            
+                <li><a href="../classes/away.render.DefaultRenderer.html">away.render.DefaultRenderer</a></li>
+            
+                <li><a href="../classes/away.render.IRenderable.html">away.render.IRenderable</a></li>
+            
+                <li><a href="../classes/away.render.IRenderer.html">away.render.IRenderer</a></li>
+            
+                <li><a href="../classes/away.render.RendererBase.html">away.render.RendererBase</a></li>
+            
+                <li><a href="../classes/away.sort.RenderableMergeSort.html">away.sort.RenderableMergeSort</a></li>
+            
+                <li><a href="../classes/away.traverse.EntityCollector.html">away.traverse.EntityCollector</a></li>
+            
+                <li><a href="../classes/away.traverse.ICollector.html">away.traverse.ICollector</a></li>
+            
+            </ul>
+
+            <ul id="api-modules" class="apis modules">
+            
+                <li><a href="../modules/away.base.html">away.base</a></li>
+            
+                <li><a href="../modules/away.data.html">away.data</a></li>
+            
+                <li><a href="../modules/away.events.html">away.events</a></li>
+            
+                <li><a href="../modules/away.materials.html">away.materials</a></li>
+            
+                <li><a href="../modules/away.partition.html">away.partition</a></li>
+            
+                <li><a href="../modules/away.pick.html">away.pick</a></li>
+            
+                <li><a href="../modules/away.pool.html">away.pool</a></li>
+            
+                <li><a href="../modules/away.render.html">away.render</a></li>
+            
+                <li><a href="../modules/away.sort.html">away.sort</a></li>
+            
+                <li><a href="../modules/away.traverse.html">away.traverse</a></li>
+            
+            </ul>
+        </div>
+    </div>
+</div>
+
+            </div>
+        </div>
+        <div class="yui3-u-3-4">
+                <div id="api-options">
+        Show:
+        <label for="api-show-inherited">
+            <input type="checkbox" id="api-show-inherited" checked>
+            Inherited
+        </label>
+
+        <label for="api-show-protected">
+            <input type="checkbox" id="api-show-protected">
+            Protected
+        </label>
+
+        <label for="api-show-private">
+            <input type="checkbox" id="api-show-private">
+            Private
+        </label>
+        <label for="api-show-deprecated">
+            <input type="checkbox" id="api-show-deprecated">
+            Deprecated
+        </label>
+
+    </div>
+
+
+            <div class="apidocs">
+                <div id="docs-main">
+                    <div class="content">
+                        <h1 class="file-heading">File: src/away/utils/Cast.ts</h1>
+
+<div class="file">
+    <pre class="code prettyprint linenums">
+///&lt;reference path=&quot;../_definitions.ts&quot;/&gt;
+
+module away.utils
+{
+	/**
+	 * Helper class for casting assets to usable objects
+	 */
+	export class Cast
+	{
+		private static _colorNames:Object;
+		private static _hexChars:string = &quot;0123456789abcdefABCDEF&quot;;
+
+		private static _notClasses:Object = new Object();
+		private static _classes:Object = new Object();
+
+		public static string(data:any):string
+		{
+			if (typeof(data) == &#x27;function&#x27;)
+				data = new data;
+
+			if (typeof(data) == &#x27;string&#x27;)
+				return data;
+
+			return &lt;string&gt; data;
+		}
+
+		public static byteArray(data:any):ByteArray
+		{
+			if (typeof(data) == &#x27;function&#x27;)
+				data = new data;
+
+			if (data instanceof ByteArray)
+				return data;
+
+			return &lt;ByteArray&gt; data;
+		}
+
+		//        public static xml(data:any):XML
+		//        {
+		//            if (typeof(data) == &#x27;function&#x27;)
+		//                data = new data;
+		//
+		//            if (data is XML)
+		//                return data;
+		//
+		//            return XML(data);
+		//        }
+
+		private static isHex(str:string):boolean
+		{
+			var length:number /*int*/ = str.length;
+			for (var i:number /*int*/ = 0; i &lt; length; ++i) {
+				if (this._hexChars.indexOf(str.charAt(i)) == -1)
+					return false;
+			}
+
+			return true;
+		}
+
+		public static tryColor(data:any):number /*uint*/
+		{
+			if (typeof(data) == &#x27;number&#x27; /*uint*/)
+				return Math.floor(&lt;number&gt; data);
+
+			if (typeof(data) == &#x27;string&#x27;) {
+				if (data == &quot;random&quot;)
+					return Math.floor(Math.random()*0x1000000);
+
+				if (this._colorNames == null) {
+					this._colorNames = new Object();
+					this._colorNames[&quot;steelblue&quot;] = 0x4682B4;
+					this._colorNames[&quot;royalblue&quot;] = 0x041690;
+					this._colorNames[&quot;cornflowerblue&quot;] = 0x6495ED;
+					this._colorNames[&quot;lightsteelblue&quot;] = 0xB0C4DE;
+					this._colorNames[&quot;mediumslateblue&quot;] = 0x7B68EE;
+					this._colorNames[&quot;slateblue&quot;] = 0x6A5ACD;
+					this._colorNames[&quot;darkslateblue&quot;] = 0x483D8B;
+					this._colorNames[&quot;midnightblue&quot;] = 0x191970;
+					this._colorNames[&quot;navy&quot;] = 0x000080;
+					this._colorNames[&quot;darkblue&quot;] = 0x00008B;
+					this._colorNames[&quot;mediumblue&quot;] = 0x0000CD;
+					this._colorNames[&quot;blue&quot;] = 0x0000FF;
+					this._colorNames[&quot;dodgerblue&quot;] = 0x1E90FF;
+					this._colorNames[&quot;deepskyblue&quot;] = 0x00BFFF;
+					this._colorNames[&quot;lightskyblue&quot;] = 0x87CEFA;
+					this._colorNames[&quot;skyblue&quot;] = 0x87CEEB;
+					this._colorNames[&quot;lightblue&quot;] = 0xADD8E6;
+					this._colorNames[&quot;powderblue&quot;] = 0xB0E0E6;
+					this._colorNames[&quot;azure&quot;] = 0xF0FFFF;
+					this._colorNames[&quot;lightcyan&quot;] = 0xE0FFFF;
+					this._colorNames[&quot;paleturquoise&quot;] = 0xAFEEEE;
+					this._colorNames[&quot;mediumturquoise&quot;] = 0x48D1CC;
+					this._colorNames[&quot;lightseagreen&quot;] = 0x20B2AA;
+					this._colorNames[&quot;darkcyan&quot;] = 0x008B8B;
+					this._colorNames[&quot;teal&quot;] = 0x008080;
+					this._colorNames[&quot;cadetblue&quot;] = 0x5F9EA0;
+					this._colorNames[&quot;darkturquoise&quot;] = 0x00CED1;
+					this._colorNames[&quot;aqua&quot;] = 0x00FFFF;
+					this._colorNames[&quot;cyan&quot;] = 0x00FFFF;
+					this._colorNames[&quot;turquoise&quot;] = 0x40E0D0;
+					this._colorNames[&quot;aquamarine&quot;] = 0x7FFFD4;
+					this._colorNames[&quot;mediumaquamarine&quot;] = 0x66CDAA;
+					this._colorNames[&quot;darkseagreen&quot;] = 0x8FBC8F;
+					this._colorNames[&quot;mediumseagreen&quot;] = 0x3CB371;
+					this._colorNames[&quot;seagreen&quot;] = 0x2E8B57;
+					this._colorNames[&quot;darkgreen&quot;] = 0x006400;
+					this._colorNames[&quot;green&quot;] = 0x008000;
+					this._colorNames[&quot;forestgreen&quot;] = 0x228B22;
+					this._colorNames[&quot;limegreen&quot;] = 0x32CD32;
+					this._colorNames[&quot;lime&quot;] = 0x00FF00;
+					this._colorNames[&quot;chartreuse&quot;] = 0x7FFF00;
+					this._colorNames[&quot;lawngreen&quot;] = 0x7CFC00;
+					this._colorNames[&quot;greenyellow&quot;] = 0xADFF2F;
+					this._colorNames[&quot;yellowgreen&quot;] = 0x9ACD32;
+					this._colorNames[&quot;palegreen&quot;] = 0x98FB98;
+					this._colorNames[&quot;lightgreen&quot;] = 0x90EE90;
+					this._colorNames[&quot;springgreen&quot;] = 0x00FF7F;
+					this._colorNames[&quot;mediumspringgreen&quot;] = 0x00FA9A;
+					this._colorNames[&quot;darkolivegreen&quot;] = 0x556B2F;
+					this._colorNames[&quot;olivedrab&quot;] = 0x6B8E23;
+					this._colorNames[&quot;olive&quot;] = 0x808000;
+					this._colorNames[&quot;darkkhaki&quot;] = 0xBDB76B;
+					this._colorNames[&quot;darkgoldenrod&quot;] = 0xB8860B;
+					this._colorNames[&quot;goldenrod&quot;] = 0xDAA520;
+					this._colorNames[&quot;gold&quot;] = 0xFFD700;
+					this._colorNames[&quot;yellow&quot;] = 0xFFFF00;
+					this._colorNames[&quot;khaki&quot;] = 0xF0E68C;
+					this._colorNames[&quot;palegoldenrod&quot;] = 0xEEE8AA;
+					this._colorNames[&quot;blanchedalmond&quot;] = 0xFFEBCD;
+					this._colorNames[&quot;moccasin&quot;] = 0xFFE4B5;
+					this._colorNames[&quot;wheat&quot;] = 0xF5DEB3;
+					this._colorNames[&quot;navajowhite&quot;] = 0xFFDEAD;
+					this._colorNames[&quot;burlywood&quot;] = 0xDEB887;
+					this._colorNames[&quot;tan&quot;] = 0xD2B48C;
+					this._colorNames[&quot;rosybrown&quot;] = 0xBC8F8F;
+					this._colorNames[&quot;sienna&quot;] = 0xA0522D;
+					this._colorNames[&quot;saddlebrown&quot;] = 0x8B4513;
+					this._colorNames[&quot;chocolate&quot;] = 0xD2691E;
+					this._colorNames[&quot;peru&quot;] = 0xCD853F;
+					this._colorNames[&quot;sandybrown&quot;] = 0xF4A460;
+					this._colorNames[&quot;darkred&quot;] = 0x8B0000;
+					this._colorNames[&quot;maroon&quot;] = 0x800000;
+					this._colorNames[&quot;brown&quot;] = 0xA52A2A;
+					this._colorNames[&quot;firebrick&quot;] = 0xB22222;
+					this._colorNames[&quot;indianred&quot;] = 0xCD5C5C;
+					this._colorNames[&quot;lightcoral&quot;] = 0xF08080;
+					this._colorNames[&quot;salmon&quot;] = 0xFA8072;
+					this._colorNames[&quot;darksalmon&quot;] = 0xE9967A;
+					this._colorNames[&quot;lightsalmon&quot;] = 0xFFA07A;
+					this._colorNames[&quot;coral&quot;] = 0xFF7F50;
+					this._colorNames[&quot;tomato&quot;] = 0xFF6347;
+					this._colorNames[&quot;darkorange&quot;] = 0xFF8C00;
+					this._colorNames[&quot;orange&quot;] = 0xFFA500;
+					this._colorNames[&quot;orangered&quot;] = 0xFF4500;
+					this._colorNames[&quot;crimson&quot;] = 0xDC143C;
+					this._colorNames[&quot;red&quot;] = 0xFF0000;
+					this._colorNames[&quot;deeppink&quot;] = 0xFF1493;
+					this._colorNames[&quot;fuchsia&quot;] = 0xFF00FF;
+					this._colorNames[&quot;magenta&quot;] = 0xFF00FF;
+					this._colorNames[&quot;hotpink&quot;] = 0xFF69B4;
+					this._colorNames[&quot;lightpink&quot;] = 0xFFB6C1;
+					this._colorNames[&quot;pink&quot;] = 0xFFC0CB;
+					this._colorNames[&quot;palevioletred&quot;] = 0xDB7093;
+					this._colorNames[&quot;mediumvioletred&quot;] = 0xC71585;
+					this._colorNames[&quot;purple&quot;] = 0x800080;
+					this._colorNames[&quot;darkmagenta&quot;] = 0x8B008B;
+					this._colorNames[&quot;mediumpurple&quot;] = 0x9370DB;
+					this._colorNames[&quot;blueviolet&quot;] = 0x8A2BE2;
+					this._colorNames[&quot;indigo&quot;] = 0x4B0082;
+					this._colorNames[&quot;darkviolet&quot;] = 0x9400D3;
+					this._colorNames[&quot;darkorchid&quot;] = 0x9932CC;
+					this._colorNames[&quot;mediumorchid&quot;] = 0xBA55D3;
+					this._colorNames[&quot;orchid&quot;] = 0xDA70D6;
+					this._colorNames[&quot;violet&quot;] = 0xEE82EE;
+					this._colorNames[&quot;plum&quot;] = 0xDDA0DD;
+					this._colorNames[&quot;thistle&quot;] = 0xD8BFD8;
+					this._colorNames[&quot;lavender&quot;] = 0xE6E6FA;
+					this._colorNames[&quot;ghostwhite&quot;] = 0xF8F8FF;
+					this._colorNames[&quot;aliceblue&quot;] = 0xF0F8FF;
+					this._colorNames[&quot;mintcream&quot;] = 0xF5FFFA;
+					this._colorNames[&quot;honeydew&quot;] = 0xF0FFF0;
+					this._colorNames[&quot;lightgoldenrodyellow&quot;] = 0xFAFAD2;
+					this._colorNames[&quot;lemonchiffon&quot;] = 0xFFFACD;
+					this._colorNames[&quot;cornsilk&quot;] = 0xFFF8DC;
+					this._colorNames[&quot;lightyellow&quot;] = 0xFFFFE0;
+					this._colorNames[&quot;ivory&quot;] = 0xFFFFF0;
+					this._colorNames[&quot;floralwhite&quot;] = 0xFFFAF0;
+					this._colorNames[&quot;linen&quot;] = 0xFAF0E6;
+					this._colorNames[&quot;oldlace&quot;] = 0xFDF5E6;
+					this._colorNames[&quot;antiquewhite&quot;] = 0xFAEBD7;
+					this._colorNames[&quot;bisque&quot;] = 0xFFE4C4;
+					this._colorNames[&quot;peachpuff&quot;] = 0xFFDAB9;
+					this._colorNames[&quot;papayawhip&quot;] = 0xFFEFD5;
+					this._colorNames[&quot;beige&quot;] = 0xF5F5DC;
+					this._colorNames[&quot;seashell&quot;] = 0xFFF5EE;
+					this._colorNames[&quot;lavenderblush&quot;] = 0xFFF0F5;
+					this._colorNames[&quot;mistyrose&quot;] = 0xFFE4E1;
+					this._colorNames[&quot;snow&quot;] = 0xFFFAFA;
+					this._colorNames[&quot;white&quot;] = 0xFFFFFF;
+					this._colorNames[&quot;whitesmoke&quot;] = 0xF5F5F5;
+					this._colorNames[&quot;gainsboro&quot;] = 0xDCDCDC;
+					this._colorNames[&quot;lightgrey&quot;] = 0xD3D3D3;
+					this._colorNames[&quot;silver&quot;] = 0xC0C0C0;
+					this._colorNames[&quot;darkgrey&quot;] = 0xA9A9A9;
+					this._colorNames[&quot;grey&quot;] = 0x808080;
+					this._colorNames[&quot;lightslategrey&quot;] = 0x778899;
+					this._colorNames[&quot;slategrey&quot;] = 0x708090;
+					this._colorNames[&quot;dimgrey&quot;] = 0x696969;
+					this._colorNames[&quot;darkslategrey&quot;] = 0x2F4F4F;
+					this._colorNames[&quot;black&quot;] = 0x000000;
+					this._colorNames[&quot;transparent&quot;] = 0xFF000000;
+				}
+
+				if (this._colorNames[data] != null)
+					return this._colorNames[data];
+
+				if (((&lt;string&gt; data).length == 6) &amp;&amp; this.isHex(data))
+					return parseInt(&quot;0x&quot; + data);
+			}
+
+			return null;
+		}
+
+		public static color(data:any):number /*uint*/
+		{
+			var result:number /*uint*/ = this.tryColor(data);
+
+			if (result == null)
+				throw new away.errors.CastError(&quot;Can&#x27;t cast to color: &quot; + data);
+
+			return result;
+		}
+
+		public static tryClass(name:string):any
+		{
+			if (this._notClasses[name])
+				return name;
+
+			var result:any = this._classes[name];
+
+			if (result != null)
+				return result;
+
+			try {
+				result = window[name];
+				this._classes[name] = result;
+				return result;
+			} catch (e /*ReferenceError*/) {
+			}
+
+			this._notClasses[name] = true;
+
+			return name;
+		}
+
+		public static bitmapData(data:any):away.base.BitmapData
+		{
+			if (data == null)
+				return null;
+
+			if (typeof(data) == &#x27;string&#x27;)
+				data = this.tryClass(data);
+
+			if (typeof(data) == &#x27;function&#x27;) {
+				try {
+					data = new data();
+				} catch (e /*ArgumentError*/) {
+					data = new data(0, 0);
+				}
+			}
+
+			if (data instanceof away.base.BitmapData)
+				return data;
+
+			if (data instanceof away.textures.ImageTexture)
+				data = (&lt;away.textures.ImageTexture&gt; data).htmlImageElement;
+
+			if (data instanceof HTMLImageElement) {
+				var imageElement:HTMLImageElement = &lt;HTMLImageElement&gt; data;
+				var bitmapData:away.base.BitmapData = new away.base.BitmapData(imageElement.width, imageElement.height, true, 0x0);
+				bitmapData.draw(imageElement)
+				return bitmapData;
+			}
+
+			//            if (data is DisplayObject) {
+			//                var ds:DisplayObject = data as DisplayObject;
+			//                var bmd:BitmapData = new BitmapData(ds.width, ds.height, true, 0x00FFFFFF);
+			//                var mat:Matrix = ds.transform.matrix.clone();
+			//                mat.tx = 0;
+			//                mat.ty = 0;
+			//                bmd.draw(ds, mat, ds.transform.colorTransform, ds.blendMode, bmd.rect, true);
+			//                return bmd;
+			//            }
+
+			throw new away.errors.CastError(&quot;Can&#x27;t cast to BitmapData: &quot; + data);
+		}
+
+		public static bitmapTexture(data:any):away.textures.BitmapTexture
+		{
+			if (data == null)
+				return null;
+
+			if (typeof(data) == &#x27;string&#x27;)
+				data = this.tryClass(data);
+
+			if (typeof(data) == &#x27;function&#x27;) {
+				try {
+					data = new data();
+				} catch (e /*ArgumentError*/) {
+					data = new data(0, 0);
+				}
+			}
+
+			if (data instanceof away.textures.BitmapTexture)
+				return data;
+
+			try {
+				var bmd:away.base.BitmapData = Cast.bitmapData(data);
+				return new away.textures.BitmapTexture(bmd);
+			} catch (e /*away.errors.CastError*/) {
+			}
+
+			throw new away.errors.CastError(&quot;Can&#x27;t cast to BitmapTexture: &quot; + data);
+		}
+	}
+}
+
+    </pre>
+</div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="../assets/vendor/prettify/prettify-min.js"></script>
+<script>prettyPrint();</script>
+<script src="../assets/js/yui-prettify.js"></script>
+<script src="../assets/../api.js"></script>
+<script src="../assets/js/api-filter.js"></script>
+<script src="../assets/js/api-list.js"></script>
+<script src="../assets/js/api-search.js"></script>
+<script src="../assets/js/apidocs.js"></script>
+</body>
+</html>

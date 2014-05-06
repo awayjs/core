@@ -1,0 +1,2517 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>src/away/core/base/DisplayObject.ts</title>
+    <link rel="stylesheet" href="http://yui.yahooapis.com/3.9.1/build/cssgrids/cssgrids-min.css">
+    <link rel="stylesheet" href="../assets/vendor/prettify/prettify-min.css">
+    <link rel="stylesheet" href="../assets/css/main.css" id="site_styles">
+    <link rel="shortcut icon" type="image/png" href="../assets/favicon.png">
+    <script src="http://yui.yahooapis.com/combo?3.9.1/build/yui/yui-min.js"></script>
+</head>
+<body class="yui3-skin-sam">
+
+<div id="doc">
+    <div id="hd" class="yui3-g header">
+        <div class="yui3-u-3-4">
+            
+                <h1><img src="../assets/css/logo.png" title=""></h1>
+            
+        </div>
+        <div class="yui3-u-1-4 version">
+            <em>API Docs for: 0.1.0</em>
+        </div>
+    </div>
+    <div id="bd" class="yui3-g">
+
+        <div class="yui3-u-1-4">
+            <div id="docs-sidebar" class="sidebar apidocs">
+                <div id="api-list">
+    <h2 class="off-left">APIs</h2>
+    <div id="api-tabview" class="tabview">
+        <ul class="tabs">
+            <li><a href="#api-classes">Classes</a></li>
+            <li><a href="#api-modules">Modules</a></li>
+        </ul>
+
+        <div id="api-tabview-filter">
+            <input type="search" id="api-filter" placeholder="Type to filter APIs">
+        </div>
+
+        <div id="api-tabview-panel">
+            <ul id="api-classes" class="apis classes">
+            
+                <li><a href="../classes/away.events.AssetEvent.html">away.events.AssetEvent</a></li>
+            
+                <li><a href="../classes/away.events.CameraEvent.html">away.events.CameraEvent</a></li>
+            
+                <li><a href="../classes/away.events.Event.html">away.events.Event</a></li>
+            
+                <li><a href="../classes/away.events.EventDispatcher.html">away.events.EventDispatcher</a></li>
+            
+                <li><a href="../classes/away.events.HTTPStatusEvent.html">away.events.HTTPStatusEvent</a></li>
+            
+                <li><a href="../classes/away.materials.IMaterial.html">away.materials.IMaterial</a></li>
+            
+                <li><a href="../classes/away.partition.CameraNode.html">away.partition.CameraNode</a></li>
+            
+                <li><a href="../classes/away.partition.EntityNode.html">away.partition.EntityNode</a></li>
+            
+                <li><a href="../classes/away.partition.NodeBase.html">away.partition.NodeBase</a></li>
+            
+                <li><a href="../classes/away.partition.NullNode.html">away.partition.NullNode</a></li>
+            
+                <li><a href="../classes/away.partition.Partition.html">away.partition.Partition</a></li>
+            
+                <li><a href="../classes/away.pick.PickingCollisionVO.html">away.pick.PickingCollisionVO</a></li>
+            
+                <li><a href="../classes/away.pool.EntityListItem.html">away.pool.EntityListItem</a></li>
+            
+                <li><a href="../classes/away.pool.EntityListItemPool.html">away.pool.EntityListItemPool</a></li>
+            
+                <li><a href="../classes/away.pool.RenderableListItem.html">away.pool.RenderableListItem</a></li>
+            
+                <li><a href="../classes/away.pool.RenderablePool.html">away.pool.RenderablePool</a></li>
+            
+                <li><a href="../classes/away.render.DefaultRenderer.html">away.render.DefaultRenderer</a></li>
+            
+                <li><a href="../classes/away.render.IRenderable.html">away.render.IRenderable</a></li>
+            
+                <li><a href="../classes/away.render.IRenderer.html">away.render.IRenderer</a></li>
+            
+                <li><a href="../classes/away.render.RendererBase.html">away.render.RendererBase</a></li>
+            
+                <li><a href="../classes/away.sort.RenderableMergeSort.html">away.sort.RenderableMergeSort</a></li>
+            
+                <li><a href="../classes/away.traverse.EntityCollector.html">away.traverse.EntityCollector</a></li>
+            
+                <li><a href="../classes/away.traverse.ICollector.html">away.traverse.ICollector</a></li>
+            
+            </ul>
+
+            <ul id="api-modules" class="apis modules">
+            
+                <li><a href="../modules/away.base.html">away.base</a></li>
+            
+                <li><a href="../modules/away.data.html">away.data</a></li>
+            
+                <li><a href="../modules/away.events.html">away.events</a></li>
+            
+                <li><a href="../modules/away.materials.html">away.materials</a></li>
+            
+                <li><a href="../modules/away.partition.html">away.partition</a></li>
+            
+                <li><a href="../modules/away.pick.html">away.pick</a></li>
+            
+                <li><a href="../modules/away.pool.html">away.pool</a></li>
+            
+                <li><a href="../modules/away.render.html">away.render</a></li>
+            
+                <li><a href="../modules/away.sort.html">away.sort</a></li>
+            
+                <li><a href="../modules/away.traverse.html">away.traverse</a></li>
+            
+            </ul>
+        </div>
+    </div>
+</div>
+
+            </div>
+        </div>
+        <div class="yui3-u-3-4">
+                <div id="api-options">
+        Show:
+        <label for="api-show-inherited">
+            <input type="checkbox" id="api-show-inherited" checked>
+            Inherited
+        </label>
+
+        <label for="api-show-protected">
+            <input type="checkbox" id="api-show-protected">
+            Protected
+        </label>
+
+        <label for="api-show-private">
+            <input type="checkbox" id="api-show-private">
+            Private
+        </label>
+        <label for="api-show-deprecated">
+            <input type="checkbox" id="api-show-deprecated">
+            Deprecated
+        </label>
+
+    </div>
+
+
+            <div class="apidocs">
+                <div id="docs-main">
+                    <div class="content">
+                        <h1 class="file-heading">File: src/away/core/base/DisplayObject.ts</h1>
+
+<div class="file">
+    <pre class="code prettyprint linenums">
+///&lt;reference path=&quot;../../_definitions.ts&quot;/&gt;
+
+/**
+ * The DisplayObject class is the base class for all objects that can be
+ * placed on the display list. The display list manages all objects displayed
+ * in flash. Use the DisplayObjectContainer class to arrange the
+ * display objects in the display list. DisplayObjectContainer objects can
+ * have child display objects, while other display objects, such as Shape and
+ * TextField objects, are &quot;leaf&quot; nodes that have only parents and siblings, no
+ * children.
+ *
+ * &lt;p&gt;The DisplayObject class supports basic functionality like the &lt;i&gt;x&lt;/i&gt;
+ * and &lt;i&gt;y&lt;/i&gt; position of an object, as well as more advanced properties of
+ * the object such as its transformation matrix. &lt;/p&gt;
+ *
+ * &lt;p&gt;DisplayObject is an abstract base class; therefore, you cannot call
+ * DisplayObject directly. Invoking &lt;code&gt;new DisplayObject()&lt;/code&gt; throws an
+ * &lt;code&gt;ArgumentError&lt;/code&gt; exception. &lt;/p&gt;
+ *
+ * &lt;p&gt;All display objects inherit from the DisplayObject class.&lt;/p&gt;
+ *
+ * &lt;p&gt;The DisplayObject class itself does not include any APIs for rendering
+ * content onscreen. For that reason, if you want create a custom subclass of
+ * the DisplayObject class, you will want to extend one of its subclasses that
+ * do have APIs for rendering content onscreen, such as the Shape, Sprite,
+ * Bitmap, SimpleButton, TextField, or MovieClip class.&lt;/p&gt;
+ *
+ * &lt;p&gt;The DisplayObject class contains several broadcast events. Normally, the
+ * target of any particular event is a specific DisplayObject instance. For
+ * example, the target of an &lt;code&gt;added&lt;/code&gt; event is the specific
+ * DisplayObject instance that was added to the display list. Having a single
+ * target restricts the placement of event listeners to that target and in
+ * some cases the target&#x27;s ancestors on the display list. With broadcast
+ * events, however, the target is not a specific DisplayObject instance, but
+ * rather all DisplayObject instances, including those that are not on the
+ * display list. This means that you can add a listener to any DisplayObject
+ * instance to listen for broadcast events. In addition to the broadcast
+ * events listed in the DisplayObject class&#x27;s Events table, the DisplayObject
+ * class also inherits two broadcast events from the EventDispatcher class:
+ * &lt;code&gt;activate&lt;/code&gt; and &lt;code&gt;deactivate&lt;/code&gt;.&lt;/p&gt;
+ *
+ * &lt;p&gt;Some properties previously used in the ActionScript 1.0 and 2.0
+ * MovieClip, TextField, and Button classes(such as &lt;code&gt;_alpha&lt;/code&gt;,
+ * &lt;code&gt;_height&lt;/code&gt;, &lt;code&gt;_name&lt;/code&gt;, &lt;code&gt;_width&lt;/code&gt;,
+ * &lt;code&gt;_x&lt;/code&gt;, &lt;code&gt;_y&lt;/code&gt;, and others) have equivalents in the
+ * ActionScript 3.0 DisplayObject class that are renamed so that they no
+ * longer begin with the underscore(_) character.&lt;/p&gt;
+ *
+ * &lt;p&gt;For more information, see the &quot;Display Programming&quot; chapter of the
+ * &lt;i&gt;ActionScript 3.0 Developer&#x27;s Guide&lt;/i&gt;.&lt;/p&gt;
+ * 
+ * @event added            Dispatched when a display object is added to the
+ *                         display list. The following methods trigger this
+ *                         event:
+ *                         &lt;code&gt;DisplayObjectContainer.addChild()&lt;/code&gt;,
+ *                         &lt;code&gt;DisplayObjectContainer.addChildAt()&lt;/code&gt;.
+ * @event addedToStage     Dispatched when a display object is added to the on
+ *                         stage display list, either directly or through the
+ *                         addition of a sub tree in which the display object
+ *                         is contained. The following methods trigger this
+ *                         event:
+ *                         &lt;code&gt;DisplayObjectContainer.addChild()&lt;/code&gt;,
+ *                         &lt;code&gt;DisplayObjectContainer.addChildAt()&lt;/code&gt;.
+ * @event enterFrame       [broadcast event] Dispatched when the playhead is
+ *                         entering a new frame. If the playhead is not
+ *                         moving, or if there is only one frame, this event
+ *                         is dispatched continuously in conjunction with the
+ *                         frame rate. This event is a broadcast event, which
+ *                         means that it is dispatched by all display objects
+ *                         with a listener registered for this event.
+ * @event exitFrame        [broadcast event] Dispatched when the playhead is
+ *                         exiting the current frame. All frame scripts have
+ *                         been run. If the playhead is not moving, or if
+ *                         there is only one frame, this event is dispatched
+ *                         continuously in conjunction with the frame rate.
+ *                         This event is a broadcast event, which means that
+ *                         it is dispatched by all display objects with a
+ *                         listener registered for this event.
+ * @event frameConstructed [broadcast event] Dispatched after the constructors
+ *                         of frame display objects have run but before frame
+ *                         scripts have run. If the playhead is not moving, or
+ *                         if there is only one frame, this event is
+ *                         dispatched continuously in conjunction with the
+ *                         frame rate. This event is a broadcast event, which
+ *                         means that it is dispatched by all display objects
+ *                         with a listener registered for this event.
+ * @event removed          Dispatched when a display object is about to be
+ *                         removed from the display list. Two methods of the
+ *                         DisplayObjectContainer class generate this event:
+ *                         &lt;code&gt;removeChild()&lt;/code&gt; and
+ *                         &lt;code&gt;removeChildAt()&lt;/code&gt;.
+ *
+ *                         &lt;p&gt;The following methods of a
+ *                         DisplayObjectContainer object also generate this
+ *                         event if an object must be removed to make room for
+ *                         the new object: &lt;code&gt;addChild()&lt;/code&gt;,
+ *                         &lt;code&gt;addChildAt()&lt;/code&gt;, and
+ *                         &lt;code&gt;setChildIndex()&lt;/code&gt;. &lt;/p&gt;
+ * @event removedFromStage Dispatched when a display object is about to be
+ *                         removed from the display list, either directly or
+ *                         through the removal of a sub tree in which the
+ *                         display object is contained. Two methods of the
+ *                         DisplayObjectContainer class generate this event:
+ *                         &lt;code&gt;removeChild()&lt;/code&gt; and
+ *                         &lt;code&gt;removeChildAt()&lt;/code&gt;.
+ *
+ *                         &lt;p&gt;The following methods of a
+ *                         DisplayObjectContainer object also generate this
+ *                         event if an object must be removed to make room for
+ *                         the new object: &lt;code&gt;addChild()&lt;/code&gt;,
+ *                         &lt;code&gt;addChildAt()&lt;/code&gt;, and
+ *                         &lt;code&gt;setChildIndex()&lt;/code&gt;. &lt;/p&gt;
+ * @event render           [broadcast event] Dispatched when the display list
+ *                         is about to be updated and rendered. This event
+ *                         provides the last opportunity for objects listening
+ *                         for this event to make changes before the display
+ *                         list is rendered. You must call the
+ *                         &lt;code&gt;invalidate()&lt;/code&gt; method of the Stage
+ *                         object each time you want a &lt;code&gt;render&lt;/code&gt;
+ *                         event to be dispatched. &lt;code&gt;Render&lt;/code&gt; events
+ *                         are dispatched to an object only if there is mutual
+ *                         trust between it and the object that called
+ *                         &lt;code&gt;Stage.invalidate()&lt;/code&gt;. This event is a
+ *                         broadcast event, which means that it is dispatched
+ *                         by all display objects with a listener registered
+ *                         for this event.
+ *
+ *                         &lt;p&gt;&lt;b&gt;Note: &lt;/b&gt;This event is not dispatched if the
+ *                         display is not rendering. This is the case when the
+ *                         content is either minimized or obscured. &lt;/p&gt;
+ */
+module away.base
+{
+	export class DisplayObject extends away.library.NamedAssetBase implements IBitmapDrawable
+	{
+		private _loaderInfo:LoaderInfo;
+		private _mouseX:number;
+		private _mouseY:number;
+		private _root:away.containers.DisplayObjectContainer;
+		private _bounds:away.geom.Rectangle;
+		private _depth:number;
+		private _height:number;
+		private _width:number;
+
+		public _pScene:away.containers.Scene;
+		public _pParent:away.containers.DisplayObjectContainer;
+		public _pSceneTransform:away.geom.Matrix3D = new away.geom.Matrix3D();
+		public _pSceneTransformDirty:boolean = true;
+		public _pIsEntity:boolean;
+
+		private _explicitPartition:away.partition.Partition;
+		public _pImplicitPartition:away.partition.Partition;
+		private _partitionNode:away.partition.EntityNode;
+
+		private _sceneTransformChanged:away.events.DisplayObjectEvent;
+		private _scenechanged:away.events.DisplayObjectEvent;
+		private _transform:away.geom.Transform;
+		private _matrix3D:away.geom.Matrix3D = new away.geom.Matrix3D();
+		private _matrix3DDirty:boolean = true;
+
+		private _inverseSceneTransform:away.geom.Matrix3D = new away.geom.Matrix3D();
+		private _inverseSceneTransformDirty:boolean = true;
+		private _scenePosition:away.geom.Vector3D = new away.geom.Vector3D();
+		private _scenePositionDirty:boolean = true;
+		private _explicitVisibility:boolean = true;
+		public _pImplicitVisibility:boolean = true;
+		private _explicitMouseEnabled:boolean = true;
+		public _pImplicitMouseEnabled:boolean = true;
+		private _listenToSceneTransformChanged:boolean;
+		private _listenToSceneChanged:boolean;
+
+		private _positionDirty:boolean = true;
+		private _rotationDirty:boolean = true;
+		private _scaleDirty:boolean = true;
+
+		private _positionChanged:away.events.DisplayObjectEvent;
+		private _rotationChanged:away.events.DisplayObjectEvent;
+		private _scaleChanged:away.events.DisplayObjectEvent;
+
+		private _rotationX:number = 0;
+		private _rotationY:number = 0;
+		private _rotationZ:number = 0;
+		private _eulers:away.geom.Vector3D = new away.geom.Vector3D();
+		private _flipY:away.geom.Matrix3D = new away.geom.Matrix3D();
+
+		private _listenToPositionChanged:boolean;
+		private _listenToRotationChanged:boolean;
+		private _listenToScaleChanged:boolean;
+		private _zOffset:number = 0;
+
+		public _pScaleX:number = 1;
+		public _pScaleY:number = 1;
+		public _pScaleZ:number = 1;
+		private _x:number = 0;
+		private _y:number = 0;
+		private _z:number = 0;
+		private _pivotPoint:away.geom.Vector3D = new away.geom.Vector3D();
+		private _orientationMatrix:away.geom.Matrix3D = new away.geom.Matrix3D();
+		private _pivotZero:boolean = true;
+		private _pivotDirty:boolean = true;
+		private _pos:away.geom.Vector3D = new away.geom.Vector3D();
+		private _rot:away.geom.Vector3D = new away.geom.Vector3D();
+		private _sca:away.geom.Vector3D = new away.geom.Vector3D();
+		private _transformComponents:away.geom.Vector3D[];
+
+		public _pIgnoreTransform:boolean = false;
+
+		private _showBounds:boolean;
+		private _boundsIsShown:boolean;
+		private _shaderPickingDetails:boolean;
+
+		private _pickingCollisionVO:away.pick.PickingCollisionVO;
+
+		public _pBounds:away.bounds.BoundingVolumeBase;
+		public _pBoundsInvalid:boolean = true;
+		private _worldBounds:away.bounds.BoundingVolumeBase;
+		private _worldBoundsInvalid:boolean = true;
+
+		private _pickingCollider:away.pick.IPickingCollider;
+
+		public _pRenderables:Array&lt;away.pool.IRenderable&gt; = new Array&lt;away.pool.IRenderable&gt;();
+
+		/**
+		 *
+		 */
+		public alignmentMode:string = AlignmentMode.REGISTRATION_POINT;
+
+		/**
+		 * Indicates the alpha transparency value of the object specified. Valid
+		 * values are 0(fully transparent) to 1(fully opaque). The default value is
+		 * 1. Display objects with &lt;code&gt;alpha&lt;/code&gt; set to 0 &lt;i&gt;are&lt;/i&gt; active,
+		 * even though they are invisible.
+		 */
+		public alpha:number;
+
+		/**
+		 * A value from the BlendMode class that specifies which blend mode to use. A
+		 * bitmap can be drawn internally in two ways. If you have a blend mode
+		 * enabled or an external clipping mask, the bitmap is drawn by adding a
+		 * bitmap-filled square shape to the vector render. If you attempt to set
+		 * this property to an invalid value, Flash runtimes set the value to
+		 * &lt;code&gt;BlendMode.NORMAL&lt;/code&gt;.
+		 *
+		 * &lt;p&gt;The &lt;code&gt;blendMode&lt;/code&gt; property affects each pixel of the display
+		 * object. Each pixel is composed of three constituent colors(red, green,
+		 * and blue), and each constituent color has a value between 0x00 and 0xFF.
+		 * Flash Player or Adobe AIR compares each constituent color of one pixel in
+		 * the movie clip with the corresponding color of the pixel in the
+		 * background. For example, if &lt;code&gt;blendMode&lt;/code&gt; is set to
+		 * &lt;code&gt;BlendMode.LIGHTEN&lt;/code&gt;, Flash Player or Adobe AIR compares the red
+		 * value of the display object with the red value of the background, and uses
+		 * the lighter of the two as the value for the red component of the displayed
+		 * color.&lt;/p&gt;
+		 *
+		 * &lt;p&gt;The following table describes the &lt;code&gt;blendMode&lt;/code&gt; settings. The
+		 * BlendMode class defines string values you can use. The illustrations in
+		 * the table show &lt;code&gt;blendMode&lt;/code&gt; values applied to a circular display
+		 * object(2) superimposed on another display object(1).&lt;/p&gt;
+		 */
+		public blendMode:BlendMode;
+
+		/**
+		 *
+		 */
+		public get bounds():away.bounds.BoundingVolumeBase
+		{
+			if (this._pBoundsInvalid)
+				this.pUpdateBounds();
+
+			return this._pBounds;
+		}
+
+		public set bounds(value:away.bounds.BoundingVolumeBase)
+		{
+			if (this._showBounds)
+				this.removeBounds();
+
+			this._pBounds = value;
+			this._worldBounds = value.clone();
+
+			this.pInvalidateBounds();
+
+			if (this._showBounds)
+				this.addBounds();
+		}
+
+		/**
+		 * If set to &lt;code&gt;true&lt;/code&gt;, NME will use the software renderer to cache
+		 * an internal bitmap representation of the display object. For native targets,
+		 * this is often much slower than the default hardware renderer. When you
+		 * are using the Flash target, this caching may increase performance for display
+		 * objects that contain complex vector content.
+		 *
+		 * &lt;p&gt;All vector data for a display object that has a cached bitmap is drawn
+		 * to the bitmap instead of the main display. If
+		 * &lt;code&gt;cacheAsBitmapMatrix&lt;/code&gt; is null or unsupported, the bitmap is
+		 * then copied to the main display as unstretched, unrotated pixels snapped
+		 * to the nearest pixel boundaries. Pixels are mapped 1 to 1 with the parent
+		 * object. If the bounds of the bitmap change, the bitmap is recreated
+		 * instead of being stretched.&lt;/p&gt;
+		 *
+		 * &lt;p&gt;If &lt;code&gt;cacheAsBitmapMatrix&lt;/code&gt; is non-null and supported, the
+		 * object is drawn to the off-screen bitmap using that matrix and the
+		 * stretched and/or rotated results of that rendering are used to draw the
+		 * object to the main display.&lt;/p&gt;
+		 *
+		 * &lt;p&gt;No internal bitmap is created unless the &lt;code&gt;cacheAsBitmap&lt;/code&gt;
+		 * property is set to &lt;code&gt;true&lt;/code&gt;.&lt;/p&gt;
+		 *
+		 * &lt;p&gt;After you set the &lt;code&gt;cacheAsBitmap&lt;/code&gt; property to
+		 * &lt;code&gt;true&lt;/code&gt;, the rendering does not change, however the display
+		 * object performs pixel snapping automatically. The animation speed can be
+		 * significantly faster depending on the complexity of the vector content.
+		 * &lt;/p&gt;
+		 *
+		 * &lt;p&gt;The &lt;code&gt;cacheAsBitmap&lt;/code&gt; property is automatically set to
+		 * &lt;code&gt;true&lt;/code&gt; whenever you apply a filter to a display object(when
+		 * its &lt;code&gt;filter&lt;/code&gt; array is not empty), and if a display object has a
+		 * filter applied to it, &lt;code&gt;cacheAsBitmap&lt;/code&gt; is reported as
+		 * &lt;code&gt;true&lt;/code&gt; for that display object, even if you set the property to
+		 * &lt;code&gt;false&lt;/code&gt;. If you clear all filters for a display object, the
+		 * &lt;code&gt;cacheAsBitmap&lt;/code&gt; setting changes to what it was last set to.&lt;/p&gt;
+		 *
+		 * &lt;p&gt;A display object does not use a bitmap even if the
+		 * &lt;code&gt;cacheAsBitmap&lt;/code&gt; property is set to &lt;code&gt;true&lt;/code&gt; and
+		 * instead renders from vector data in the following cases:&lt;/p&gt;
+		 *
+		 * &lt;ul&gt;
+		 *   &lt;li&gt;The bitmap is too large. In AIR 1.5 and Flash Player 10, the maximum
+		 * size for a bitmap image is 8,191 pixels in width or height, and the total
+		 * number of pixels cannot exceed 16,777,215 pixels.(So, if a bitmap image
+		 * is 8,191 pixels wide, it can only be 2,048 pixels high.) In Flash Player 9
+		 * and earlier, the limitation is is 2880 pixels in height and 2,880 pixels
+		 * in width.&lt;/li&gt;
+		 *   &lt;li&gt;The bitmap fails to allocate(out of memory error). &lt;/li&gt;
+		 * &lt;/ul&gt;
+		 *
+		 * &lt;p&gt;The &lt;code&gt;cacheAsBitmap&lt;/code&gt; property is best used with movie clips
+		 * that have mostly static content and that do not scale and rotate
+		 * frequently. With such movie clips, &lt;code&gt;cacheAsBitmap&lt;/code&gt; can lead to
+		 * performance increases when the movie clip is translated(when its &lt;i&gt;x&lt;/i&gt;
+		 * and &lt;i&gt;y&lt;/i&gt; position is changed).&lt;/p&gt;
+		 */
+		public cacheAsBitmap:boolean;
+
+		/**
+		 *
+		 */
+		public castsShadows:boolean = true;
+
+		/**
+		 * Indicates the depth of the display object, in pixels. The depth is
+		 * calculated based on the bounds of the content of the display object. When
+		 * you set the &lt;code&gt;depth&lt;/code&gt; property, the &lt;code&gt;scaleZ&lt;/code&gt; property
+		 * is adjusted accordingly, as shown in the following code:
+		 *
+		 * &lt;p&gt;Except for TextField and Video objects, a display object with no
+		 * content (such as an empty sprite) has a depth of 0, even if you try to
+		 * set &lt;code&gt;depth&lt;/code&gt; to a different value.&lt;/p&gt;
+		 */
+		public get depth():number
+		{
+			if (this._pBoundsInvalid)
+				this.pUpdateBounds();
+
+			return this._depth;
+		}
+
+		public set depth(val:number)
+		{
+			if (this._depth == val)
+				return;
+
+			this._depth == val;
+
+			this._pScaleZ = val/this.bounds.aabb.depth;
+
+			this.invalidateScale();
+		}
+
+		/**
+		 * Defines the rotation of the 3d object as a &lt;code&gt;Vector3D&lt;/code&gt; object containing euler angles for rotation around x, y and z axis.
+		 */
+		public get eulers():away.geom.Vector3D
+		{
+			this._eulers.x = this._rotationX*away.geom.MathConsts.RADIANS_TO_DEGREES;
+			this._eulers.y = this._rotationY*away.geom.MathConsts.RADIANS_TO_DEGREES;
+			this._eulers.z = this._rotationZ*away.geom.MathConsts.RADIANS_TO_DEGREES;
+
+			return this._eulers;
+		}
+
+		public set eulers(value:away.geom.Vector3D)
+		{
+			this._rotationX = value.x*away.geom.MathConsts.DEGREES_TO_RADIANS;
+			this._rotationY = value.y*away.geom.MathConsts.DEGREES_TO_RADIANS;
+			this._rotationZ = value.z*away.geom.MathConsts.DEGREES_TO_RADIANS;
+
+			this.invalidateRotation();
+		}
+
+		/**
+		 * An object that can contain any extra data.
+		 */
+		public extra:Object;
+
+		/**
+		 * An indexed array that contains each filter object currently associated
+		 * with the display object. The flash.filters package contains several
+		 * classes that define specific filters you can use.
+		 *
+		 * &lt;p&gt;Filters can be applied in Flash Professional at design time, or at run
+		 * time by using ActionScript code. To apply a filter by using ActionScript,
+		 * you must make a temporary copy of the entire &lt;code&gt;filters&lt;/code&gt; array,
+		 * modify the temporary array, then assign the value of the temporary array
+		 * back to the &lt;code&gt;filters&lt;/code&gt; array. You cannot directly add a new
+		 * filter object to the &lt;code&gt;filters&lt;/code&gt; array.&lt;/p&gt;
+		 *
+		 * &lt;p&gt;To add a filter by using ActionScript, perform the following steps
+		 * (assume that the target display object is named
+		 * &lt;code&gt;myDisplayObject&lt;/code&gt;):&lt;/p&gt;
+		 *
+		 * &lt;ol&gt;
+		 *   &lt;li&gt;Create a new filter object by using the constructor method of your
+		 * chosen filter class.&lt;/li&gt;
+		 *   &lt;li&gt;Assign the value of the &lt;code&gt;myDisplayObject.filters&lt;/code&gt; array
+		 * to a temporary array, such as one named &lt;code&gt;myFilters&lt;/code&gt;.&lt;/li&gt;
+		 *   &lt;li&gt;Add the new filter object to the &lt;code&gt;myFilters&lt;/code&gt; temporary
+		 * array.&lt;/li&gt;
+		 *   &lt;li&gt;Assign the value of the temporary array to the
+		 * &lt;code&gt;myDisplayObject.filters&lt;/code&gt; array.&lt;/li&gt;
+		 * &lt;/ol&gt;
+		 *
+		 * &lt;p&gt;If the &lt;code&gt;filters&lt;/code&gt; array is undefined, you do not need to use
+		 * a temporary array. Instead, you can directly assign an array literal that
+		 * contains one or more filter objects that you create. The first example in
+		 * the Examples section adds a drop shadow filter by using code that handles
+		 * both defined and undefined &lt;code&gt;filters&lt;/code&gt; arrays.&lt;/p&gt;
+		 *
+		 * &lt;p&gt;To modify an existing filter object, you must use the technique of
+		 * modifying a copy of the &lt;code&gt;filters&lt;/code&gt; array:&lt;/p&gt;
+		 *
+		 * &lt;ol&gt;
+		 *   &lt;li&gt;Assign the value of the &lt;code&gt;filters&lt;/code&gt; array to a temporary
+		 * array, such as one named &lt;code&gt;myFilters&lt;/code&gt;.&lt;/li&gt;
+		 *   &lt;li&gt;Modify the property by using the temporary array,
+		 * &lt;code&gt;myFilters&lt;/code&gt;. For example, to set the quality property of the
+		 * first filter in the array, you could use the following code:
+		 * &lt;code&gt;myFilters[0].quality = 1;&lt;/code&gt;&lt;/li&gt;
+		 *   &lt;li&gt;Assign the value of the temporary array to the &lt;code&gt;filters&lt;/code&gt;
+		 * array.&lt;/li&gt;
+		 * &lt;/ol&gt;
+		 *
+		 * &lt;p&gt;At load time, if a display object has an associated filter, it is
+		 * marked to cache itself as a transparent bitmap. From this point forward,
+		 * as long as the display object has a valid filter list, the player caches
+		 * the display object as a bitmap. This source bitmap is used as a source
+		 * image for the filter effects. Each display object usually has two bitmaps:
+		 * one with the original unfiltered source display object and another for the
+		 * final image after filtering. The final image is used when rendering. As
+		 * long as the display object does not change, the final image does not need
+		 * updating.&lt;/p&gt;
+		 *
+		 * &lt;p&gt;The flash.filters package includes classes for filters. For example, to
+		 * create a DropShadow filter, you would write:&lt;/p&gt;
+		 *
+		 * @throws ArgumentError When &lt;code&gt;filters&lt;/code&gt; includes a ShaderFilter
+		 *                       and the shader output type is not compatible with
+		 *                       this operation(the shader must specify a
+		 *                       &lt;code&gt;pixel4&lt;/code&gt; output).
+		 * @throws ArgumentError When &lt;code&gt;filters&lt;/code&gt; includes a ShaderFilter
+		 *                       and the shader doesn&#x27;t specify any image input or
+		 *                       the first input is not an &lt;code&gt;image4&lt;/code&gt; input.
+		 * @throws ArgumentError When &lt;code&gt;filters&lt;/code&gt; includes a ShaderFilter
+		 *                       and the shader specifies an image input that isn&#x27;t
+		 *                       provided.
+		 * @throws ArgumentError When &lt;code&gt;filters&lt;/code&gt; includes a ShaderFilter, a
+		 *                       ByteArray or Vector.&lt;Number&gt; instance as a shader
+		 *                       input, and the &lt;code&gt;width&lt;/code&gt; and
+		 *                       &lt;code&gt;height&lt;/code&gt; properties aren&#x27;t specified for
+		 *                       the ShaderInput object, or the specified values
+		 *                       don&#x27;t match the amount of data in the input data.
+		 *                       See the &lt;code&gt;ShaderInput.input&lt;/code&gt; property for
+		 *                       more information.
+		 */
+//		public filters:Array&lt;Dynamic&gt;;
+
+		/**
+		 * Indicates the height of the display object, in pixels. The height is
+		 * calculated based on the bounds of the content of the display object. When
+		 * you set the &lt;code&gt;height&lt;/code&gt; property, the &lt;code&gt;scaleY&lt;/code&gt; property
+		 * is adjusted accordingly, as shown in the following code:
+		 *
+		 * &lt;p&gt;Except for TextField and Video objects, a display object with no
+		 * content (such as an empty sprite) has a height of 0, even if you try to
+		 * set &lt;code&gt;height&lt;/code&gt; to a different value.&lt;/p&gt;
+		 */
+		public get height():number
+		{
+			if (this._pBoundsInvalid)
+				this.pUpdateBounds();
+
+			return this._height;
+		}
+
+		public set height(val:number)
+		{
+			if (this._height == val)
+				return;
+
+			this._height == val;
+
+			this._pScaleY = val/this.bounds.aabb.height;
+
+			this.invalidateScale();
+		}
+
+		/**
+		 * Indicates the instance container index of the DisplayObject. The object can be
+		 * identified in the child list of its parent display object container by
+		 * calling the &lt;code&gt;getChildByIndex()&lt;/code&gt; method of the display object
+		 * container.
+		 *
+		 * &lt;p&gt;If the DisplayObject has no parent container, index defaults to 0.&lt;/p&gt;
+		 */
+		public get index():number
+		{
+			if (this._pParent)
+				return this._pParent.getChildIndex(this);
+
+			return 0;
+		}
+
+		/**
+		 *
+		 */
+		public get inverseSceneTransform():away.geom.Matrix3D
+		{
+			if (this._inverseSceneTransformDirty) {
+				this._inverseSceneTransform.copyFrom(this.sceneTransform);
+				this._inverseSceneTransform.invert();
+				this._inverseSceneTransformDirty = false;
+			}
+			return this._inverseSceneTransform;
+		}
+
+		/**
+		 *
+		 */
+		public get ignoreTransform():boolean
+		{
+			return this._pIgnoreTransform;
+		}
+
+		public set ignoreTransform(value:boolean)
+		{
+			if (this._pIgnoreTransform == value)
+				return;
+
+			this._pIgnoreTransform = value;
+
+			if (value) {
+				this._pSceneTransform.identity();
+				this._scenePosition.setTo(0, 0, 0);
+			}
+
+			this.pInvalidateSceneTransform();
+		}
+
+		/**
+		 *
+		 */
+		public get isEntity()
+		{
+			return this._pIsEntity;
+		}
+		/**
+		 * Returns a LoaderInfo object containing information about loading the file
+		 * to which this display object belongs. The &lt;code&gt;loaderInfo&lt;/code&gt; property
+		 * is defined only for the root display object of a SWF file or for a loaded
+		 * Bitmap(not for a Bitmap that is drawn with ActionScript). To find the
+		 * &lt;code&gt;loaderInfo&lt;/code&gt; object associated with the SWF file that contains
+		 * a display object named &lt;code&gt;myDisplayObject&lt;/code&gt;, use
+		 * &lt;code&gt;myDisplayObject.root.loaderInfo&lt;/code&gt;.
+		 *
+		 * &lt;p&gt;A large SWF file can monitor its download by calling
+		 * &lt;code&gt;this.root.loaderInfo.addEventListener(Event.COMPLETE,
+		 * func)&lt;/code&gt;.&lt;/p&gt;
+		 */
+		public get loaderInfo():LoaderInfo
+		{
+			return this._loaderInfo;
+		}
+
+		/**
+		 * The calling display object is masked by the specified &lt;code&gt;mask&lt;/code&gt;
+		 * object. To ensure that masking works when the Stage is scaled, the
+		 * &lt;code&gt;mask&lt;/code&gt; display object must be in an active part of the display
+		 * list. The &lt;code&gt;mask&lt;/code&gt; object itself is not drawn. Set
+		 * &lt;code&gt;mask&lt;/code&gt; to &lt;code&gt;null&lt;/code&gt; to remove the mask.
+		 *
+		 * &lt;p&gt;To be able to scale a mask object, it must be on the display list. To
+		 * be able to drag a mask Sprite object(by calling its
+		 * &lt;code&gt;startDrag()&lt;/code&gt; method), it must be on the display list. To call
+		 * the &lt;code&gt;startDrag()&lt;/code&gt; method for a mask sprite based on a
+		 * &lt;code&gt;mouseDown&lt;/code&gt; event being dispatched by the sprite, set the
+		 * sprite&#x27;s &lt;code&gt;buttonMode&lt;/code&gt; property to &lt;code&gt;true&lt;/code&gt;.&lt;/p&gt;
+		 *
+		 * &lt;p&gt;When display objects are cached by setting the
+		 * &lt;code&gt;cacheAsBitmap&lt;/code&gt; property to &lt;code&gt;true&lt;/code&gt; an the
+		 * &lt;code&gt;cacheAsBitmapMatrix&lt;/code&gt; property to a Matrix object, both the
+		 * mask and the display object being masked must be part of the same cached
+		 * bitmap. Thus, if the display object is cached, then the mask must be a
+		 * child of the display object. If an ancestor of the display object on the
+		 * display list is cached, then the mask must be a child of that ancestor or
+		 * one of its descendents. If more than one ancestor of the masked object is
+		 * cached, then the mask must be a descendent of the cached container closest
+		 * to the masked object in the display list.&lt;/p&gt;
+		 *
+		 * &lt;p&gt;&lt;b&gt;Note:&lt;/b&gt; A single &lt;code&gt;mask&lt;/code&gt; object cannot be used to mask
+		 * more than one calling display object. When the &lt;code&gt;mask&lt;/code&gt; is
+		 * assigned to a second display object, it is removed as the mask of the
+		 * first object, and that object&#x27;s &lt;code&gt;mask&lt;/code&gt; property becomes
+		 * &lt;code&gt;null&lt;/code&gt;.&lt;/p&gt;
+		 */
+		public mask:DisplayObject;
+
+		/**
+		 * Specifies whether this object receives mouse, or other user input,
+		 * messages. The default value is &lt;code&gt;true&lt;/code&gt;, which means that by
+		 * default any InteractiveObject instance that is on the display list
+		 * receives mouse events or other user input events. If
+		 * &lt;code&gt;mouseEnabled&lt;/code&gt; is set to &lt;code&gt;false&lt;/code&gt;, the instance does
+		 * not receive any mouse events(or other user input events like keyboard
+		 * events). Any children of this instance on the display list are not
+		 * affected. To change the &lt;code&gt;mouseEnabled&lt;/code&gt; behavior for all
+		 * children of an object on the display list, use
+		 * &lt;code&gt;flash.display.DisplayObjectContainer.mouseChildren&lt;/code&gt;.
+		 *
+		 * &lt;p&gt; No event is dispatched by setting this property. You must use the
+		 * &lt;code&gt;addEventListener()&lt;/code&gt; method to create interactive
+		 * functionality.&lt;/p&gt;
+		 */
+		public get mouseEnabled():boolean
+		{
+			return this._explicitMouseEnabled;
+		}
+
+		public set mouseEnabled(value:boolean)
+		{
+			if (this._explicitMouseEnabled == value)
+				return;
+
+			this._explicitMouseEnabled = value;
+
+			this._pUpdateImplicitMouseEnabled(this._pParent? this._pParent.mouseChildren : true);
+		}
+
+
+		/**
+		 * Indicates the x coordinate of the mouse or user input device position, in
+		 * pixels.
+		 *
+		 * &lt;p&gt;&lt;b&gt;Note&lt;/b&gt;: For a DisplayObject that has been rotated, the returned x
+		 * coordinate will reflect the non-rotated object.&lt;/p&gt;
+		 */
+		public get mouseX():number
+		{
+			return this._mouseX;
+		}
+
+		/**
+		 * Indicates the y coordinate of the mouse or user input device position, in
+		 * pixels.
+		 *
+		 * &lt;p&gt;&lt;b&gt;Note&lt;/b&gt;: For a DisplayObject that has been rotated, the returned y
+		 * coordinate will reflect the non-rotated object.&lt;/p&gt;
+		 */
+		public get mouseY():number
+		{
+			return this._mouseY;
+		}
+
+		/**
+		 * Indicates the instance name of the DisplayObject. The object can be
+		 * identified in the child list of its parent display object container by
+		 * calling the &lt;code&gt;getChildByName()&lt;/code&gt; method of the display object
+		 * container.
+		 *
+		 * @throws IllegalOperationError If you are attempting to set this property
+		 *                               on an object that was placed on the timeline
+		 *                               in the Flash authoring tool.
+		 */
+		public name:string;
+
+		/**
+		 *
+		 */
+		public orientationMode:string = OrientationMode.DEFAULT;
+
+		/**
+		 * Indicates the DisplayObjectContainer object that contains this display
+		 * object. Use the &lt;code&gt;parent&lt;/code&gt; property to specify a relative path to
+		 * display objects that are above the current display object in the display
+		 * list hierarchy.
+		 *
+		 * &lt;p&gt;You can use &lt;code&gt;parent&lt;/code&gt; to move up multiple levels in the
+		 * display list as in the following:&lt;/p&gt;
+		 *
+		 * @throws SecurityError The parent display object belongs to a security
+		 *                       sandbox to which you do not have access. You can
+		 *                       avoid this situation by having the parent movie call
+		 *                       the &lt;code&gt;Security.allowDomain()&lt;/code&gt; method.
+		 */
+		public get parent():away.containers.DisplayObjectContainer
+		{
+			return this._pParent;
+		}
+
+		/**
+		 *
+		 */
+		public get partition():away.partition.Partition
+		{
+			return this._explicitPartition;
+		}
+
+		public set partition(value:away.partition.Partition)
+		{
+			if (this._explicitPartition == value)
+				return;
+
+			if (this._pScene &amp;&amp; this._explicitPartition)
+				this._pScene.iUnregisterPartition(this._explicitPartition);
+
+			this._explicitPartition = value;
+
+			if (this._pScene &amp;&amp; value)
+				this._pScene.iRegisterPartition(value);
+
+			this._pUpdateImplicitPartition(this._pParent? this._pParent._iAssignedPartition : null);
+		}
+
+		/**
+		 *
+		 */
+		public get partitionNode():away.partition.EntityNode
+		{
+			if (!this._partitionNode)
+				this._partitionNode = this.pCreateEntityPartitionNode();
+
+			return this._partitionNode;
+		}
+
+		/**
+		 *
+		 */
+		public get pickingCollider():away.pick.IPickingCollider
+		{
+			return this._pickingCollider;
+		}
+
+		public set pickingCollider(value:away.pick.IPickingCollider)
+		{
+			this._pickingCollider = value;
+		}
+
+		/**
+		 * Defines the local point around which the object rotates.
+		 */
+		public get pivotPoint():away.geom.Vector3D
+		{
+			return this._pivotPoint;
+		}
+
+
+		public set pivotPoint(pivot:away.geom.Vector3D)
+		{
+			this._pivotPoint = pivot.clone();
+
+			this.invalidatePivot();
+		}
+
+		/**
+		 * For a display object in a loaded SWF file, the &lt;code&gt;root&lt;/code&gt; property
+		 * is the top-most display object in the portion of the display list&#x27;s tree
+		 * structure represented by that SWF file. For a Bitmap object representing a
+		 * loaded image file, the &lt;code&gt;root&lt;/code&gt; property is the Bitmap object
+		 * itself. For the instance of the main class of the first SWF file loaded,
+		 * the &lt;code&gt;root&lt;/code&gt; property is the display object itself. The
+		 * &lt;code&gt;root&lt;/code&gt; property of the Stage object is the Stage object itself.
+		 * The &lt;code&gt;root&lt;/code&gt; property is set to &lt;code&gt;null&lt;/code&gt; for any display
+		 * object that has not been added to the display list, unless it has been
+		 * added to a display object container that is off the display list but that
+		 * is a child of the top-most display object in a loaded SWF file.
+		 *
+		 * &lt;p&gt;For example, if you create a new Sprite object by calling the
+		 * &lt;code&gt;Sprite()&lt;/code&gt; constructor method, its &lt;code&gt;root&lt;/code&gt; property
+		 * is &lt;code&gt;null&lt;/code&gt; until you add it to the display list(or to a display
+		 * object container that is off the display list but that is a child of the
+		 * top-most display object in a SWF file).&lt;/p&gt;
+		 *
+		 * &lt;p&gt;For a loaded SWF file, even though the Loader object used to load the
+		 * file may not be on the display list, the top-most display object in the
+		 * SWF file has its &lt;code&gt;root&lt;/code&gt; property set to itself. The Loader
+		 * object does not have its &lt;code&gt;root&lt;/code&gt; property set until it is added
+		 * as a child of a display object for which the &lt;code&gt;root&lt;/code&gt; property is
+		 * set.&lt;/p&gt;
+		 */
+		public get root():away.containers.DisplayObjectContainer
+		{
+			return this._root;
+		}
+
+		/**
+		 * Indicates the rotation of the DisplayObject instance, in degrees, from its
+		 * original orientation. Values from 0 to 180 represent clockwise rotation;
+		 * values from 0 to -180 represent counterclockwise rotation. Values outside
+		 * this range are added to or subtracted from 360 to obtain a value within
+		 * the range. For example, the statement &lt;code&gt;my_video.rotation = 450&lt;/code&gt;
+		 * is the same as &lt;code&gt; my_video.rotation = 90&lt;/code&gt;.
+		 */
+		public rotation:number;
+
+		/**
+		 * Indicates the x-axis rotation of the DisplayObject instance, in degrees,
+		 * from its original orientation relative to the 3D parent container. Values
+		 * from 0 to 180 represent clockwise rotation; values from 0 to -180
+		 * represent counterclockwise rotation. Values outside this range are added
+		 * to or subtracted from 360 to obtain a value within the range.
+		 */
+		public get rotationX():number
+		{
+			return this._rotationX*away.geom.MathConsts.RADIANS_TO_DEGREES;
+		}
+
+		public set rotationX(val:number)
+		{
+			if (this.rotationX == val)
+				return;
+
+			this._rotationX = val*away.geom.MathConsts.DEGREES_TO_RADIANS;
+
+			this.invalidateRotation();
+		}
+
+		/**
+		 * Indicates the y-axis rotation of the DisplayObject instance, in degrees,
+		 * from its original orientation relative to the 3D parent container. Values
+		 * from 0 to 180 represent clockwise rotation; values from 0 to -180
+		 * represent counterclockwise rotation. Values outside this range are added
+		 * to or subtracted from 360 to obtain a value within the range.
+		 */
+		public get rotationY():number
+		{
+			return this._rotationY*away.geom.MathConsts.RADIANS_TO_DEGREES;
+		}
+
+		public set rotationY(val:number)
+		{
+			if (this.rotationY == val)
+				return;
+
+			this._rotationY = val*away.geom.MathConsts.DEGREES_TO_RADIANS;
+
+			this.invalidateRotation();
+		}
+
+		/**
+		 * Indicates the z-axis rotation of the DisplayObject instance, in degrees,
+		 * from its original orientation relative to the 3D parent container. Values
+		 * from 0 to 180 represent clockwise rotation; values from 0 to -180
+		 * represent counterclockwise rotation. Values outside this range are added
+		 * to or subtracted from 360 to obtain a value within the range.
+		 */
+		public get rotationZ():number
+		{
+			return this._rotationZ*away.geom.MathConsts.RADIANS_TO_DEGREES;
+		}
+
+		public set rotationZ(val:number)
+		{
+			if (this.rotationZ == val)
+				return;
+
+			this._rotationZ = val*away.geom.MathConsts.DEGREES_TO_RADIANS;
+
+			this.invalidateRotation();
+		}
+
+		/**
+		 * The current scaling grid that is in effect. If set to &lt;code&gt;null&lt;/code&gt;,
+		 * the entire display object is scaled normally when any scale transformation
+		 * is applied.
+		 *
+		 * &lt;p&gt;When you define the &lt;code&gt;scale9Grid&lt;/code&gt; property, the display
+		 * object is divided into a grid with nine regions based on the
+		 * &lt;code&gt;scale9Grid&lt;/code&gt; rectangle, which defines the center region of the
+		 * grid. The eight other regions of the grid are the following areas: &lt;/p&gt;
+		 *
+		 * &lt;ul&gt;
+		 *   &lt;li&gt;The upper-left corner outside of the rectangle&lt;/li&gt;
+		 *   &lt;li&gt;The area above the rectangle &lt;/li&gt;
+		 *   &lt;li&gt;The upper-right corner outside of the rectangle&lt;/li&gt;
+		 *   &lt;li&gt;The area to the left of the rectangle&lt;/li&gt;
+		 *   &lt;li&gt;The area to the right of the rectangle&lt;/li&gt;
+		 *   &lt;li&gt;The lower-left corner outside of the rectangle&lt;/li&gt;
+		 *   &lt;li&gt;The area below the rectangle&lt;/li&gt;
+		 *   &lt;li&gt;The lower-right corner outside of the rectangle&lt;/li&gt;
+		 * &lt;/ul&gt;
+		 *
+		 * &lt;p&gt;You can think of the eight regions outside of the center(defined by
+		 * the rectangle) as being like a picture frame that has special rules
+		 * applied to it when scaled.&lt;/p&gt;
+		 *
+		 * &lt;p&gt;When the &lt;code&gt;scale9Grid&lt;/code&gt; property is set and a display object
+		 * is scaled, all text and gradients are scaled normally; however, for other
+		 * types of objects the following rules apply:&lt;/p&gt;
+		 *
+		 * &lt;ul&gt;
+		 *   &lt;li&gt;Content in the center region is scaled normally. &lt;/li&gt;
+		 *   &lt;li&gt;Content in the corners is not scaled. &lt;/li&gt;
+		 *   &lt;li&gt;Content in the top and bottom regions is scaled horizontally only.
+		 * Content in the left and right regions is scaled vertically only.&lt;/li&gt;
+		 *   &lt;li&gt;All fills(including bitmaps, video, and gradients) are stretched to
+		 * fit their shapes.&lt;/li&gt;
+		 * &lt;/ul&gt;
+		 *
+		 * &lt;p&gt;If a display object is rotated, all subsequent scaling is normal(and
+		 * the &lt;code&gt;scale9Grid&lt;/code&gt; property is ignored).&lt;/p&gt;
+		 *
+		 * &lt;p&gt;For example, consider the following display object and a rectangle that
+		 * is applied as the display object&#x27;s &lt;code&gt;scale9Grid&lt;/code&gt;:&lt;/p&gt;
+		 *
+		 * &lt;p&gt;A common use for setting &lt;code&gt;scale9Grid&lt;/code&gt; is to set up a display
+		 * object to be used as a component, in which edge regions retain the same
+		 * width when the component is scaled.&lt;/p&gt;
+		 *
+		 * @throws ArgumentError If you pass an invalid argument to the method.
+		 */
+		public scale9Grid:away.geom.Rectangle;
+
+		/**
+		 * Indicates the horizontal scale(percentage) of the object as applied from
+		 * the registration point. The default registration point is(0,0). 1.0
+		 * equals 100% scale.
+		 *
+		 * &lt;p&gt;Scaling the local coordinate system changes the &lt;code&gt;x&lt;/code&gt; and
+		 * &lt;code&gt;y&lt;/code&gt; property values, which are defined in whole pixels. &lt;/p&gt;
+		 */
+		public get scaleX():number
+		{
+			return this._pScaleX;
+		}
+
+		public set scaleX(val:number)
+		{
+			if (this._pScaleX == val)
+				return;
+
+			this._pScaleX = val;
+
+			this.invalidateScale();
+		}
+
+		/**
+		 * Indicates the vertical scale(percentage) of an object as applied from the
+		 * registration point of the object. The default registration point is(0,0).
+		 * 1.0 is 100% scale.
+		 *
+		 * &lt;p&gt;Scaling the local coordinate system changes the &lt;code&gt;x&lt;/code&gt; and
+		 * &lt;code&gt;y&lt;/code&gt; property values, which are defined in whole pixels. &lt;/p&gt;
+		 */
+		public get scaleY():number
+		{
+			return this._pScaleY;
+		}
+
+		public set scaleY(val:number)
+		{
+			if (this._pScaleY == val)
+				return;
+
+			this._pScaleY = val;
+
+			this.invalidateScale();
+		}
+
+		/**
+		 * Indicates the depth scale(percentage) of an object as applied from the
+		 * registration point of the object. The default registration point is(0,0).
+		 * 1.0 is 100% scale.
+		 *
+		 * &lt;p&gt;Scaling the local coordinate system changes the &lt;code&gt;x&lt;/code&gt;,
+		 * &lt;code&gt;y&lt;/code&gt; and &lt;code&gt;z&lt;/code&gt; property values, which are defined in
+		 * whole pixels. &lt;/p&gt;
+		 */
+		public get scaleZ():number
+		{
+			return this._pScaleZ;
+		}
+
+		public set scaleZ(val:number)
+		{
+			if (this._pScaleZ == val)
+				return;
+
+			this._pScaleZ = val;
+
+			this.invalidateScale();
+		}
+
+		/**
+		 *
+		 */
+		public get scene():away.containers.Scene
+		{
+			return this._pScene;
+		}
+
+		/**
+		 *
+		 */
+		public get scenePosition():away.geom.Vector3D
+		{
+			if (this._scenePositionDirty) {
+				if (!this._pivotZero &amp;&amp; this.alignmentMode == AlignmentMode.PIVOT_POINT) {
+					this._scenePosition = this.sceneTransform.transformVector(this._pivotPoint);
+					//this._scenePosition.decrementBy(new away.geom.Vector3D(this._pivotPoint.x*this._pScaleX, this._pivotPoint.y*this._pScaleY, this._pivotPoint.z*this._pScaleZ));
+				} else {
+					this.sceneTransform.copyColumnTo(3, this._scenePosition);
+				}
+
+				this._scenePositionDirty = false;
+			}
+			return this._scenePosition;
+		}
+
+		public get sceneTransform():away.geom.Matrix3D
+		{
+			if (this._pSceneTransformDirty)
+				this.pUpdateSceneTransform();
+
+			return this._pSceneTransform;
+		}
+
+		/**
+		 * The scroll rectangle bounds of the display object. The display object is
+		 * cropped to the size defined by the rectangle, and it scrolls within the
+		 * rectangle when you change the &lt;code&gt;x&lt;/code&gt; and &lt;code&gt;y&lt;/code&gt; properties
+		 * of the &lt;code&gt;scrollRect&lt;/code&gt; object.
+		 *
+		 * &lt;p&gt;The properties of the &lt;code&gt;scrollRect&lt;/code&gt; Rectangle object use the
+		 * display object&#x27;s coordinate space and are scaled just like the overall
+		 * display object. The corner bounds of the cropped window on the scrolling
+		 * display object are the origin of the display object(0,0) and the point
+		 * defined by the width and height of the rectangle. They are not centered
+		 * around the origin, but use the origin to define the upper-left corner of
+		 * the area. A scrolled display object always scrolls in whole pixel
+		 * increments. &lt;/p&gt;
+		 *
+		 * &lt;p&gt;You can scroll an object left and right by setting the &lt;code&gt;x&lt;/code&gt;
+		 * property of the &lt;code&gt;scrollRect&lt;/code&gt; Rectangle object. You can scroll
+		 * an object up and down by setting the &lt;code&gt;y&lt;/code&gt; property of the
+		 * &lt;code&gt;scrollRect&lt;/code&gt; Rectangle object. If the display object is rotated
+		 * 90° and you scroll it left and right, the display object actually scrolls
+		 * up and down.&lt;/p&gt;
+		 */
+		public scrollRect:away.geom.Rectangle;
+
+		/**
+		 *
+		 */
+		public get shaderPickingDetails():boolean
+		{
+			return this._shaderPickingDetails;
+		}
+
+		/**
+		 *
+		 */
+		public get showBounds():boolean
+		{
+			return this._showBounds;
+		}
+
+		public set showBounds(value:boolean)
+		{
+			if (value == this._showBounds)
+				return;
+
+			this._showBounds = value;
+
+//			if (this._showBounds)
+//				this.addChild(this._pBounds.boundingEntity);
+//			else
+//				this.removeBounds();
+		}
+
+		/**
+		 * An object with properties pertaining to a display object&#x27;s matrix, color
+		 * transform, and pixel bounds. The specific properties  -  matrix,
+		 * colorTransform, and three read-only properties
+		 * (&lt;code&gt;concatenatedMatrix&lt;/code&gt;, &lt;code&gt;concatenatedColorTransform&lt;/code&gt;,
+		 * and &lt;code&gt;pixelBounds&lt;/code&gt;)  -  are described in the entry for the
+		 * Transform class.
+		 *
+		 * &lt;p&gt;Each of the transform object&#x27;s properties is itself an object. This
+		 * concept is important because the only way to set new values for the matrix
+		 * or colorTransform objects is to create a new object and copy that object
+		 * into the transform.matrix or transform.colorTransform property.&lt;/p&gt;
+		 *
+		 * &lt;p&gt;For example, to increase the &lt;code&gt;tx&lt;/code&gt; value of a display
+		 * object&#x27;s matrix, you must make a copy of the entire matrix object, then
+		 * copy the new object into the matrix property of the transform object:&lt;/p&gt;
+		 * &lt;pre xml:space=&quot;preserve&quot;&gt;&lt;code&gt; public myMatrix:Matrix =
+		 * myDisplayObject.transform.matrix; myMatrix.tx += 10;
+		 * myDisplayObject.transform.matrix = myMatrix; &lt;/code&gt;&lt;/pre&gt;
+		 *
+		 * &lt;p&gt;You cannot directly set the &lt;code&gt;tx&lt;/code&gt; property. The following
+		 * code has no effect on &lt;code&gt;myDisplayObject&lt;/code&gt;: &lt;/p&gt;
+		 * &lt;pre xml:space=&quot;preserve&quot;&gt;&lt;code&gt; myDisplayObject.transform.matrix.tx +=
+		 * 10; &lt;/code&gt;&lt;/pre&gt;
+		 *
+		 * &lt;p&gt;You can also copy an entire transform object and assign it to another
+		 * display object&#x27;s transform property. For example, the following code
+		 * copies the entire transform object from &lt;code&gt;myOldDisplayObj&lt;/code&gt; to
+		 * &lt;code&gt;myNewDisplayObj&lt;/code&gt;:&lt;/p&gt;
+		 * &lt;code&gt;myNewDisplayObj.transform = myOldDisplayObj.transform;&lt;/code&gt;
+		 *
+		 * &lt;p&gt;The resulting display object, &lt;code&gt;myNewDisplayObj&lt;/code&gt;, now has the
+		 * same values for its matrix, color transform, and pixel bounds as the old
+		 * display object, &lt;code&gt;myOldDisplayObj&lt;/code&gt;.&lt;/p&gt;
+		 *
+		 * &lt;p&gt;Note that AIR for TV devices use hardware acceleration, if it is
+		 * available, for color transforms.&lt;/p&gt;
+		 */
+		public get transform():away.geom.Transform
+		{
+			return this._transform;
+		}
+
+		/**
+		 * Whether or not the display object is visible. Display objects that are not
+		 * visible are disabled. For example, if &lt;code&gt;visible=false&lt;/code&gt; for an
+		 * InteractiveObject instance, it cannot be clicked.
+		 */
+		public get visible():boolean
+		{
+			return this._explicitVisibility;
+		}
+
+		public set visible(value:boolean)
+		{
+			if (this._explicitVisibility == value)
+				return;
+
+			this._explicitVisibility = value;
+
+			this._pUpdateImplicitVisibility(this._pParent? this._pParent._iIsVisible() : true);
+		}
+
+		/**
+		 * Indicates the width of the display object, in pixels. The width is
+		 * calculated based on the bounds of the content of the display object. When
+		 * you set the &lt;code&gt;width&lt;/code&gt; property, the &lt;code&gt;scaleX&lt;/code&gt; property
+		 * is adjusted accordingly, as shown in the following code:
+		 *
+		 * &lt;p&gt;Except for TextField and Video objects, a display object with no
+		 * content(such as an empty sprite) has a width of 0, even if you try to set
+		 * &lt;code&gt;width&lt;/code&gt; to a different value.&lt;/p&gt;
+		 */
+		public get width():number
+		{
+			if (this._pBoundsInvalid)
+				this.pUpdateBounds();
+
+			return this._width;
+		}
+
+		public set width(val:number)
+		{
+			if (this._width == val)
+				return;
+
+			this._width == val;
+
+			this._pScaleX = val/this.bounds.aabb.width;
+
+			this.invalidateScale();
+		}
+
+		/**
+		 *
+		 */
+		public get worldBounds():away.bounds.BoundingVolumeBase
+		{
+			if (this._worldBoundsInvalid) {
+				this._worldBoundsInvalid = false;
+				this._worldBounds.transformFrom(this.bounds, this.sceneTransform);
+			}
+
+			return this._worldBounds;
+		}
+
+		/**
+		 * Indicates the &lt;i&gt;x&lt;/i&gt; coordinate of the DisplayObject instance relative
+		 * to the local coordinates of the parent DisplayObjectContainer. If the
+		 * object is inside a DisplayObjectContainer that has transformations, it is
+		 * in the local coordinate system of the enclosing DisplayObjectContainer.
+		 * Thus, for a DisplayObjectContainer rotated 90° counterclockwise, the
+		 * DisplayObjectContainer&#x27;s children inherit a coordinate system that is
+		 * rotated 90° counterclockwise. The object&#x27;s coordinates refer to the
+		 * registration point position.
+		 */
+		public get x():number
+		{
+			return this._x;
+		}
+
+		public set x(val:number)
+		{
+			if (this._x == val)
+				return;
+
+			this._x = val;
+
+			this.invalidatePosition();
+		}
+
+		/**
+		 * Indicates the &lt;i&gt;y&lt;/i&gt; coordinate of the DisplayObject instance relative
+		 * to the local coordinates of the parent DisplayObjectContainer. If the
+		 * object is inside a DisplayObjectContainer that has transformations, it is
+		 * in the local coordinate system of the enclosing DisplayObjectContainer.
+		 * Thus, for a DisplayObjectContainer rotated 90° counterclockwise, the
+		 * DisplayObjectContainer&#x27;s children inherit a coordinate system that is
+		 * rotated 90° counterclockwise. The object&#x27;s coordinates refer to the
+		 * registration point position.
+		 */
+		public get y():number
+		{
+			return this._y;
+		}
+
+		public set y(val:number)
+		{
+			if (this._y == val)
+				return;
+
+			this._y = val;
+
+			this.invalidatePosition();
+		}
+
+		/**
+		 * Indicates the z coordinate position along the z-axis of the DisplayObject
+		 * instance relative to the 3D parent container. The z property is used for
+		 * 3D coordinates, not screen or pixel coordinates.
+		 *
+		 * &lt;p&gt;When you set a &lt;code&gt;z&lt;/code&gt; property for a display object to
+		 * something other than the default value of &lt;code&gt;0&lt;/code&gt;, a corresponding
+		 * Matrix3D object is automatically created. for adjusting a display object&#x27;s
+		 * position and orientation in three dimensions. When working with the
+		 * z-axis, the existing behavior of x and y properties changes from screen or
+		 * pixel coordinates to positions relative to the 3D parent container.&lt;/p&gt;
+		 *
+		 * &lt;p&gt;For example, a child of the &lt;code&gt;_root&lt;/code&gt; at position x = 100, y =
+		 * 100, z = 200 is not drawn at pixel location(100,100). The child is drawn
+		 * wherever the 3D projection calculation puts it. The calculation is:&lt;/p&gt;
+		 *
+		 * &lt;p&gt;&lt;code&gt;(x~~cameraFocalLength/cameraRelativeZPosition,
+		 * y~~cameraFocalLength/cameraRelativeZPosition)&lt;/code&gt;&lt;/p&gt;
+		 */
+		public get z():number
+		{
+			return this._z;
+		}
+
+		public set z(val:number)
+		{
+			if (this._z == val)
+				return;
+
+			this._z = val;
+
+			this.invalidatePosition();
+		}
+
+		/**
+		 *
+		 */
+		public get zOffset():number
+		{
+			return this._zOffset;
+		}
+
+		public set zOffset(value:number)
+		{
+			this._zOffset = value;
+		}
+
+		/**
+		 * Creates a new &lt;code&gt;DisplayObject&lt;/code&gt; instance.
+		 */
+		constructor()
+		{
+			super();
+
+			// Cached vector of transformation components used when
+			// recomposing the transform matrix in updateTransform()
+
+			this._transformComponents = new Array&lt;away.geom.Vector3D&gt;(3);//_transformComponents = new Vector.&lt;Vector3D&gt;(3, true);
+
+			this._transformComponents[0] = this._pos;
+			this._transformComponents[1] = this._rot;
+			this._transformComponents[2] = this._sca;
+
+			//creation of associated transform object
+			this._transform = new away.geom.Transform(this);
+
+			this._matrix3D.identity();
+
+			this._flipY.appendScale(1, -1, 1);
+
+			this._pBounds = this.pCreateDefaultBoundingVolume();
+
+			this._worldBounds = this.pCreateDefaultBoundingVolume();
+		}
+
+		/**
+		 *
+		 */
+		public addEventListener(type:string, listener:Function)
+		{
+			super.addEventListener(type, listener);//, priority, useWeakReference);
+
+			switch (type) {
+				case away.events.DisplayObjectEvent.POSITION_CHANGED:
+					this._listenToPositionChanged = true;
+					break;
+				case away.events.DisplayObjectEvent.ROTATION_CHANGED:
+					this._listenToRotationChanged = true;
+					break;
+				case away.events.DisplayObjectEvent.SCALE_CHANGED:
+					this._listenToScaleChanged = true;
+					break;
+			}
+		}
+
+		/**
+		 *
+		 */
+		public clone():DisplayObject
+		{
+			var clone:DisplayObject = new DisplayObject();
+			clone.pivotPoint = this.pivotPoint;
+			clone._iMatrix3D = this._iMatrix3D;
+			clone.name = name;
+
+			// todo: implement for all subtypes
+			return clone;
+		}
+
+		/**
+		 *
+		 */
+		public dispose()
+		{
+			if (this.parent)
+				this.parent.removeChild(this);
+
+			var len:number = this._pRenderables.length;
+			for (var i:number = 0; i &lt; len; i++)
+				this._pRenderables[i].dispose();
+		}
+
+		/**
+		 * @inheritDoc
+		 */
+		public disposeAsset()
+		{
+			this.dispose();
+		}
+
+		/**
+		 * Returns a rectangle that defines the area of the display object relative
+		 * to the coordinate system of the &lt;code&gt;targetCoordinateSpace&lt;/code&gt; object.
+		 * Consider the following code, which shows how the rectangle returned can
+		 * vary depending on the &lt;code&gt;targetCoordinateSpace&lt;/code&gt; parameter that
+		 * you pass to the method:
+		 *
+		 * &lt;p&gt;&lt;b&gt;Note:&lt;/b&gt; Use the &lt;code&gt;localToGlobal()&lt;/code&gt; and
+		 * &lt;code&gt;globalToLocal()&lt;/code&gt; methods to convert the display object&#x27;s local
+		 * coordinates to display coordinates, or display coordinates to local
+		 * coordinates, respectively.&lt;/p&gt;
+		 *
+		 * &lt;p&gt;The &lt;code&gt;getBounds()&lt;/code&gt; method is similar to the
+		 * &lt;code&gt;getRect()&lt;/code&gt; method; however, the Rectangle returned by the
+		 * &lt;code&gt;getBounds()&lt;/code&gt; method includes any strokes on shapes, whereas
+		 * the Rectangle returned by the &lt;code&gt;getRect()&lt;/code&gt; method does not. For
+		 * an example, see the description of the &lt;code&gt;getRect()&lt;/code&gt; method.&lt;/p&gt;
+		 *
+		 * @param targetCoordinateSpace The display object that defines the
+		 *                              coordinate system to use.
+		 * @return The rectangle that defines the area of the display object relative
+		 *         to the &lt;code&gt;targetCoordinateSpace&lt;/code&gt; object&#x27;s coordinate
+		 *         system.
+		 */
+		public getBounds(targetCoordinateSpace:DisplayObject):away.geom.Rectangle
+		{
+			return this._bounds; //TODO
+		}
+
+		/**
+		 * Returns a rectangle that defines the boundary of the display object, based
+		 * on the coordinate system defined by the &lt;code&gt;targetCoordinateSpace&lt;/code&gt;
+		 * parameter, excluding any strokes on shapes. The values that the
+		 * &lt;code&gt;getRect()&lt;/code&gt; method returns are the same or smaller than those
+		 * returned by the &lt;code&gt;getBounds()&lt;/code&gt; method.
+		 *
+		 * &lt;p&gt;&lt;b&gt;Note:&lt;/b&gt; Use &lt;code&gt;localToGlobal()&lt;/code&gt; and
+		 * &lt;code&gt;globalToLocal()&lt;/code&gt; methods to convert the display object&#x27;s local
+		 * coordinates to Stage coordinates, or Stage coordinates to local
+		 * coordinates, respectively.&lt;/p&gt;
+		 *
+		 * @param targetCoordinateSpace The display object that defines the
+		 *                              coordinate system to use.
+		 * @return The rectangle that defines the area of the display object relative
+		 *         to the &lt;code&gt;targetCoordinateSpace&lt;/code&gt; object&#x27;s coordinate
+		 *         system.
+		 */
+		public getRect(targetCoordinateSpace:DisplayObject):away.geom.Rectangle
+		{
+			return this._bounds; //TODO
+		}
+
+		/**
+		 * Converts the &lt;code&gt;point&lt;/code&gt; object from the Stage(global) coordinates
+		 * to the display object&#x27;s(local) coordinates.
+		 *
+		 * &lt;p&gt;To use this method, first create an instance of the Point class. The
+		 * &lt;i&gt;x&lt;/i&gt; and &lt;i&gt;y&lt;/i&gt; values that you assign represent global coordinates
+		 * because they relate to the origin(0,0) of the main display area. Then
+		 * pass the Point instance as the parameter to the
+		 * &lt;code&gt;globalToLocal()&lt;/code&gt; method. The method returns a new Point object
+		 * with &lt;i&gt;x&lt;/i&gt; and &lt;i&gt;y&lt;/i&gt; values that relate to the origin of the display
+		 * object instead of the origin of the Stage.&lt;/p&gt;
+		 *
+		 * @param point An object created with the Point class. The Point object
+		 *              specifies the &lt;i&gt;x&lt;/i&gt; and &lt;i&gt;y&lt;/i&gt; coordinates as
+		 *              properties.
+		 * @return A Point object with coordinates relative to the display object.
+		 */
+		public globalToLocal(point:away.geom.Point):away.geom.Point
+		{
+			return point; //TODO
+		}
+
+		/**
+		 * Converts a two-dimensional point from the Stage(global) coordinates to a
+		 * three-dimensional display object&#x27;s(local) coordinates.
+		 *
+		 * &lt;p&gt;To use this method, first create an instance of the Point class. The x
+		 * and y values that you assign to the Point object represent global
+		 * coordinates because they are relative to the origin(0,0) of the main
+		 * display area. Then pass the Point object to the
+		 * &lt;code&gt;globalToLocal3D()&lt;/code&gt; method as the &lt;code&gt;point&lt;/code&gt; parameter.
+		 * The method returns three-dimensional coordinates as a Vector3D object
+		 * containing &lt;code&gt;x&lt;/code&gt;, &lt;code&gt;y&lt;/code&gt;, and &lt;code&gt;z&lt;/code&gt; values that
+		 * are relative to the origin of the three-dimensional display object.&lt;/p&gt;
+		 *
+		 * @param point A two dimensional Point object representing global x and y
+		 *              coordinates.
+		 * @return A Vector3D object with coordinates relative to the
+		 *         three-dimensional display object.
+		 */
+		public globalToLocal3D(point:away.geom.Point):away.geom.Vector3D
+		{
+			return new away.geom.Vector3D(); //TODO
+		}
+
+		/**
+		 * Evaluates the bounding box of the display object to see if it overlaps or
+		 * intersects with the bounding box of the &lt;code&gt;obj&lt;/code&gt; display object.
+		 *
+		 * @param obj The display object to test against.
+		 * @return &lt;code&gt;true&lt;/code&gt; if the bounding boxes of the display objects
+		 *         intersect; &lt;code&gt;false&lt;/code&gt; if not.
+		 */
+		public hitTestObject(obj:DisplayObject):boolean
+		{
+			return false; //TODO
+		}
+
+		/**
+		 * Evaluates the display object to see if it overlaps or intersects with the
+		 * point specified by the &lt;code&gt;x&lt;/code&gt; and &lt;code&gt;y&lt;/code&gt; parameters. The
+		 * &lt;code&gt;x&lt;/code&gt; and &lt;code&gt;y&lt;/code&gt; parameters specify a point in the
+		 * coordinate space of the Stage, not the display object container that
+		 * contains the display object(unless that display object container is the
+		 * Stage).
+		 *
+		 * @param x         The &lt;i&gt;x&lt;/i&gt; coordinate to test against this object.
+		 * @param y         The &lt;i&gt;y&lt;/i&gt; coordinate to test against this object.
+		 * @param shapeFlag Whether to check against the actual pixels of the object
+		 *                 (&lt;code&gt;true&lt;/code&gt;) or the bounding box
+		 *                 (&lt;code&gt;false&lt;/code&gt;).
+		 * @return &lt;code&gt;true&lt;/code&gt; if the display object overlaps or intersects
+		 *         with the specified point; &lt;code&gt;false&lt;/code&gt; otherwise.
+		 */
+		public hitTestPoint(x:number, y:number, shapeFlag:boolean = false):boolean
+		{
+			return false; //TODO
+		}
+
+		/**
+		 * @inheritDoc
+		 */
+		public isIntersectingRay(rayPosition:away.geom.Vector3D, rayDirection:away.geom.Vector3D):boolean
+		{
+			var localRayPosition:away.geom.Vector3D = this.inverseSceneTransform.transformVector(rayPosition);
+			var localRayDirection:away.geom.Vector3D = this.inverseSceneTransform.deltaTransformVector(rayDirection);
+			var pickingCollisionVO:away.pick.PickingCollisionVO = this._iPickingCollisionVO;
+
+			if (!pickingCollisionVO.localNormal)
+				pickingCollisionVO.localNormal = new away.geom.Vector3D();
+
+			var rayEntryDistance:number = this.bounds.rayIntersection(localRayPosition, localRayDirection, pickingCollisionVO.localNormal);
+
+			if (rayEntryDistance &lt; 0)
+				return false;
+
+			pickingCollisionVO.rayEntryDistance = rayEntryDistance;
+			pickingCollisionVO.localRayPosition = localRayPosition;
+			pickingCollisionVO.localRayDirection = localRayDirection;
+			pickingCollisionVO.rayPosition = rayPosition;
+			pickingCollisionVO.rayDirection = rayDirection;
+			pickingCollisionVO.rayOriginIsInsideBounds = rayEntryDistance == 0;
+
+			return true;
+		}
+
+		/**
+		 * Converts a three-dimensional point of the three-dimensional display
+		 * object&#x27;s(local) coordinates to a two-dimensional point in the Stage
+		 * (global) coordinates.
+		 *
+		 * &lt;p&gt;For example, you can only use two-dimensional coordinates(x,y) to draw
+		 * with the &lt;code&gt;display.Graphics&lt;/code&gt; methods. To draw a
+		 * three-dimensional object, you need to map the three-dimensional
+		 * coordinates of a display object to two-dimensional coordinates. First,
+		 * create an instance of the Vector3D class that holds the x-, y-, and z-
+		 * coordinates of the three-dimensional display object. Then pass the
+		 * Vector3D object to the &lt;code&gt;local3DToGlobal()&lt;/code&gt; method as the
+		 * &lt;code&gt;point3d&lt;/code&gt; parameter. The method returns a two-dimensional Point
+		 * object that can be used with the Graphics API to draw the
+		 * three-dimensional object.&lt;/p&gt;
+		 *
+		 * @param point3d A Vector3D object containing either a three-dimensional
+		 *                point or the coordinates of the three-dimensional display
+		 *                object.
+		 * @return A two-dimensional point representing a three-dimensional point in
+		 *         two-dimensional space.
+		 */
+		public local3DToGlobal(point3d:away.geom.Vector3D):away.geom.Point
+		{
+			return new away.geom.Point(); //TODO
+		}
+
+		/**
+		 * Rotates the 3d object around to face a point defined relative to the local coordinates of the parent &lt;code&gt;ObjectContainer3D&lt;/code&gt;.
+		 *
+		 * @param    target        The vector defining the point to be looked at
+		 * @param    upAxis        An optional vector used to define the desired up orientation of the 3d object after rotation has occurred
+		 */
+		public lookAt(target:away.geom.Vector3D, upAxis:away.geom.Vector3D = null)
+		{
+
+			var yAxis:away.geom.Vector3D;
+			var zAxis:away.geom.Vector3D;
+			var xAxis:away.geom.Vector3D;
+			var raw:Array&lt;number&gt;;
+
+			if (upAxis == null)
+				upAxis = away.geom.Vector3D.Y_AXIS;
+			else
+				upAxis.normalize();
+
+			zAxis = target.subtract(this._iMatrix3D.position);
+			zAxis.normalize();
+
+			xAxis = upAxis.crossProduct(zAxis);
+
+			yAxis = zAxis.crossProduct(xAxis);
+
+			raw = away.geom.Matrix3DUtils.RAW_DATA_CONTAINER;
+
+			raw[0] = xAxis.x;
+			raw[1] = xAxis.y;
+			raw[2] = xAxis.z;
+			raw[3] = 0;
+
+			raw[4] = yAxis.x;
+			raw[5] = yAxis.y;
+			raw[6] = yAxis.z;
+			raw[7] = 0;
+
+			raw[8] = zAxis.x;
+			raw[9] = zAxis.y;
+			raw[10] = zAxis.z;
+			raw[11] = 0;
+
+			var m:away.geom.Matrix3D = new away.geom.Matrix3D();
+			m.copyRawDataFrom(raw);
+
+			var vec:away.geom.Vector3D = m.decompose()[1];
+
+			this._rotationX = vec.x;
+			this._rotationY = vec.y;
+			this._rotationZ = vec.z;
+
+			this.invalidateRotation();
+		}
+
+		/**
+		 * Converts the &lt;code&gt;point&lt;/code&gt; object from the display object&#x27;s(local)
+		 * coordinates to the Stage(global) coordinates.
+		 *
+		 * &lt;p&gt;This method allows you to convert any given &lt;i&gt;x&lt;/i&gt; and &lt;i&gt;y&lt;/i&gt;
+		 * coordinates from values that are relative to the origin(0,0) of a
+		 * specific display object(local coordinates) to values that are relative to
+		 * the origin of the Stage(global coordinates).&lt;/p&gt;
+		 *
+		 * &lt;p&gt;To use this method, first create an instance of the Point class. The
+		 * &lt;i&gt;x&lt;/i&gt; and &lt;i&gt;y&lt;/i&gt; values that you assign represent local coordinates
+		 * because they relate to the origin of the display object.&lt;/p&gt;
+		 *
+		 * &lt;p&gt;You then pass the Point instance that you created as the parameter to
+		 * the &lt;code&gt;localToGlobal()&lt;/code&gt; method. The method returns a new Point
+		 * object with &lt;i&gt;x&lt;/i&gt; and &lt;i&gt;y&lt;/i&gt; values that relate to the origin of the
+		 * Stage instead of the origin of the display object.&lt;/p&gt;
+		 *
+		 * @param point The name or identifier of a point created with the Point
+		 *              class, specifying the &lt;i&gt;x&lt;/i&gt; and &lt;i&gt;y&lt;/i&gt; coordinates as
+		 *              properties.
+		 * @return A Point object with coordinates relative to the Stage.
+		 */
+		public localToGlobal(point:away.geom.Point):away.geom.Point
+		{
+			return new away.geom.Point(); //TODO
+		}
+
+		/**
+		 * Moves the 3d object directly to a point in space
+		 *
+		 * @param    dx        The amount of movement along the local x axis.
+		 * @param    dy        The amount of movement along the local y axis.
+		 * @param    dz        The amount of movement along the local z axis.
+		 */
+
+		public moveTo(dx:number, dy:number, dz:number)
+		{
+			if (this._x == dx &amp;&amp; this._y == dy &amp;&amp; this._z == dz)
+				return;
+
+			this._x = dx;
+			this._y = dy;
+			this._z = dz;
+
+			this.invalidatePosition();
+		}
+
+		/**
+		 * Moves the local point around which the object rotates.
+		 *
+		 * @param    dx        The amount of movement along the local x axis.
+		 * @param    dy        The amount of movement along the local y axis.
+		 * @param    dz        The amount of movement along the local z axis.
+		 */
+		public movePivot(dx:number, dy:number, dz:number)
+		{
+			if (this._pivotPoint == null)
+				this._pivotPoint = new away.geom.Vector3D();
+
+			this._pivotPoint.x += dx;
+			this._pivotPoint.y += dy;
+			this._pivotPoint.z += dz;
+
+			this.invalidatePivot();
+		}
+
+		/**
+		 * Rotates the 3d object around it&#x27;s local x-axis
+		 *
+		 * @param    angle        The amount of rotation in degrees
+		 */
+		public pitch(angle:number)
+		{
+			this.rotate(away.geom.Vector3D.X_AXIS, angle);
+		}
+
+		/**
+		 *
+		 */
+		public getRenderSceneTransform(camera:away.entities.Camera):away.geom.Matrix3D
+		{
+			if (this.orientationMode == OrientationMode.CAMERA_PLANE) {
+				var comps:away.geom.Vector3D[] = camera.sceneTransform.decompose();
+				var scale:away.geom.Vector3D = comps[2];
+				comps[0] = this.scenePosition;
+				scale.x = this._pScaleX;
+				scale.y = this._pScaleY;
+				this._orientationMatrix.recompose(comps);
+
+				//add in case of pivot
+				if (!this._pivotZero &amp;&amp; this.alignmentMode == AlignmentMode.PIVOT_POINT)
+					this._orientationMatrix.prependTranslation(-this._pivotPoint.x, -this._pivotPoint.y, -this._pivotPoint.z);
+
+				return this._orientationMatrix;
+			}
+
+			return this.sceneTransform;
+		}
+
+		/**
+		 * Rotates the 3d object around it&#x27;s local z-axis
+		 *
+		 * @param    angle        The amount of rotation in degrees
+		 */
+		public roll(angle:number)
+		{
+			this.rotate(away.geom.Vector3D.Z_AXIS, angle);
+		}
+
+		/**
+		 * Rotates the 3d object around an axis by a defined angle
+		 *
+		 * @param    axis        The vector defining the axis of rotation
+		 * @param    angle        The amount of rotation in degrees
+		 */
+		public rotate(axis:away.geom.Vector3D, angle:number)
+		{
+			var m:away.geom.Matrix3D = new away.geom.Matrix3D();
+			m.prependRotation(angle, axis);
+
+			var vec:away.geom.Vector3D = m.decompose()[1];
+
+			this._rotationX += vec.x;
+			this._rotationY += vec.y;
+			this._rotationZ += vec.z;
+
+			this.invalidateRotation();
+		}
+
+		/**
+		 * Rotates the 3d object directly to a euler angle
+		 *
+		 * @param    ax        The angle in degrees of the rotation around the x axis.
+		 * @param    ay        The angle in degrees of the rotation around the y axis.
+		 * @param    az        The angle in degrees of the rotation around the z axis.
+		 */
+		public rotateTo(ax:number, ay:number, az:number)
+		{
+			this._rotationX = ax*away.geom.MathConsts.DEGREES_TO_RADIANS;
+			this._rotationY = ay*away.geom.MathConsts.DEGREES_TO_RADIANS;
+			this._rotationZ = az*away.geom.MathConsts.DEGREES_TO_RADIANS;
+
+			this.invalidateRotation();
+		}
+
+		/**
+		 *
+		 */
+		public removeEventListener(type:string, listener:Function)
+		{
+			super.removeEventListener(type, listener);
+
+			if (this.hasEventListener(type, listener))
+				return;
+
+			switch (type) {
+				case away.events.DisplayObjectEvent.POSITION_CHANGED:
+					this._listenToPositionChanged = false;
+					break;
+
+				case away.events.DisplayObjectEvent.ROTATION_CHANGED:
+					this._listenToRotationChanged = false;
+					break;
+
+				case away.events.DisplayObjectEvent.SCALE_CHANGED:
+					this._listenToScaleChanged = false;
+					break;
+			}
+		}
+
+		/**
+		 * Moves the 3d object along a vector by a defined length
+		 *
+		 * @param    axis        The vector defining the axis of movement
+		 * @param    distance    The length of the movement
+		 */
+		public translate(axis:away.geom.Vector3D, distance:number)
+		{
+			var x:number = axis.x, y:number = axis.y, z:number = axis.z;
+			var len:number = distance/Math.sqrt(x*x + y*y + z*z);
+
+			this._x += x*len;
+			this._y += y*len;
+			this._z += z*len;
+
+			this.invalidatePosition();
+		}
+
+		/**
+		 * Moves the 3d object along a vector by a defined length
+		 *
+		 * @param    axis        The vector defining the axis of movement
+		 * @param    distance    The length of the movement
+		 */
+		public translateLocal(axis:away.geom.Vector3D, distance:number)
+		{
+			var x:number = axis.x, y:number = axis.y, z:number = axis.z;
+			var len:number = distance/Math.sqrt(x*x + y*y + z*z);
+
+			this._iMatrix3D.prependTranslation(x*len, y*len, z*len);
+
+			this._matrix3D.copyColumnTo(3, this._pos);
+
+			this._x = this._pos.x;
+			this._y = this._pos.y;
+			this._z = this._pos.z;
+
+			this.invalidatePosition();
+		}
+
+		/**
+		 * Rotates the 3d object around it&#x27;s local y-axis
+		 *
+		 * @param    angle        The amount of rotation in degrees
+		 */
+		public yaw(angle:number)
+		{
+			this.rotate(away.geom.Vector3D.Y_AXIS, angle);
+		}
+
+		/**
+		 * @internal
+		 */
+		public _iController:away.controllers.ControllerBase;
+
+		/**
+		 * @internal
+		 */
+		public get _iAssignedPartition():away.partition.Partition
+		{
+			return this._pImplicitPartition;
+		}
+
+		/**
+		 * The transformation of the 3d object, relative to the local coordinates of the parent &lt;code&gt;ObjectContainer3D&lt;/code&gt;.
+		 *
+		 * @internal
+		 */
+		public get _iMatrix3D():away.geom.Matrix3D
+		{
+			if (this._matrix3DDirty)
+				this._pUpdateMatrix3D();
+
+			return this._matrix3D;
+		}
+
+		public set _iMatrix3D(val:away.geom.Matrix3D)
+		{
+
+			// TODO: From AS3 - Do we still need this in JS ?
+			//ridiculous matrix error
+			/*
+			if (!val.rawData[0]) {
+
+				var raw:number[] = away.geom.Matrix3DUtils.RAW_DATA_CONTAINER;
+				val.copyRawDataTo(raw);
+				raw[0] = this._smallestNumber;
+				val.copyRawDataFrom(raw);
+			}
+			//*/
+			var elements:away.geom.Vector3D[] = val.decompose();
+			var vec:away.geom.Vector3D;
+
+			vec = elements[0];
+
+			if (this._x != vec.x || this._y != vec.y || this._z != vec.z) {
+				this._x = vec.x;
+				this._y = vec.y;
+				this._z = vec.z;
+
+				this.invalidatePosition();
+			}
+
+			vec = elements[1];
+
+			if (this._rotationX != vec.x || this._rotationY != vec.y || this._rotationZ != vec.z) {
+				this._rotationX = vec.x;
+				this._rotationY = vec.y;
+				this._rotationZ = vec.z;
+
+				this.invalidateRotation();
+			}
+
+			vec = elements[2];
+
+			if (this._pScaleX != vec.x || this._pScaleY != vec.y || this._pScaleZ != vec.z) {
+				this._pScaleX = vec.x;
+				this._pScaleY = vec.y;
+				this._pScaleZ = vec.z;
+
+				this.invalidateScale();
+			}
+		}
+
+		/**
+		 * @internal
+		 */
+		public get _iPickingCollisionVO():away.pick.PickingCollisionVO
+		{
+			if (!this._pickingCollisionVO)
+				this._pickingCollisionVO = new away.pick.PickingCollisionVO(this);
+
+			return this._pickingCollisionVO;
+		}
+
+		/**
+		 * @internal
+		 */
+		public iSetParent(value:away.containers.DisplayObjectContainer)
+		{
+			this._pParent = value;
+
+			if (value) {
+				this._pUpdateImplicitMouseEnabled(value.mouseChildren);
+				this._pUpdateImplicitVisibility(value._iIsVisible());
+				this._pUpdateImplicitPartition(value._iAssignedPartition);
+				this._iSetScene(value._pScene);
+			} else {
+				this._pUpdateImplicitMouseEnabled(true);
+				this._pUpdateImplicitVisibility(true);
+				this._pUpdateImplicitPartition(null);
+
+				this._iSetScene(null);
+			}
+		}
+
+		/**
+		 * @protected
+		 */
+		public pCreateDefaultBoundingVolume():away.bounds.BoundingVolumeBase
+		{
+			// point lights should be using sphere bounds
+			// directional lights should be using null bounds
+			return new away.bounds.AxisAlignedBoundingBox();
+		}
+
+		/**
+		 * @protected
+		 */
+		public pCreateEntityPartitionNode():away.partition.EntityNode
+		{
+			throw new away.errors.AbstractMethodError();
+		}
+
+		/**
+		 * @protected
+		 */
+		public pInvalidateBounds()
+		{
+			this._pBoundsInvalid = true;
+			this._worldBoundsInvalid = true;
+		}
+
+		/**
+		 * @protected
+		 */
+		public pInvalidateSceneTransform()
+		{
+			this._pSceneTransformDirty = !this._pIgnoreTransform;
+			this._inverseSceneTransformDirty = !this._pIgnoreTransform;
+			this._scenePositionDirty = !this._pIgnoreTransform;
+
+			this._worldBoundsInvalid = !this._pIgnoreTransform;
+
+			if (this._listenToSceneTransformChanged)
+				this.notifySceneTransformChange();
+		}
+
+		/**
+		 * @protected
+		 */
+		public pUpdateBounds()
+		{
+			this._width = this._pBounds.aabb.width*this._pScaleX;
+			this._height = this._pBounds.aabb.height*this._pScaleY;
+			this._depth = this._pBounds.aabb.depth*this._pScaleZ;
+
+			this._pBoundsInvalid = false;
+		}
+
+		/**
+		 * @protected
+		 */
+		public _pUpdateImplicitMouseEnabled(value:boolean)
+		{
+			this._pImplicitMouseEnabled = this._explicitMouseEnabled &amp;&amp; value;
+
+			// If there is a parent and this child does not have a picking collider, use its parent&#x27;s picking collider.
+			if (this._pImplicitMouseEnabled &amp;&amp; this._pParent &amp;&amp; !this._pickingCollider)
+				this._pickingCollider =  this._pParent._pickingCollider;
+		}
+
+		/**
+		 * @protected
+		 */
+		public _pUpdateImplicitPartition(value:away.partition.Partition)
+		{
+			// assign parent implicit partition if no explicit one is given
+			this._pImplicitPartition = this._explicitPartition || value;
+		}
+
+		/**
+		 * @protected
+		 */
+		public _pUpdateImplicitVisibility(value:boolean)
+		{
+			this._pImplicitVisibility = this._explicitVisibility &amp;&amp; value;
+		}
+
+		/**
+		 * @protected
+		 */
+		public _pUpdateMatrix3D()
+		{
+
+			this._pos.x = this._x;
+			this._pos.y = this._y;
+			this._pos.z = this._z;
+
+			this._rot.x = this._rotationX;
+			this._rot.y = this._rotationY;
+			this._rot.z = this._rotationZ;
+
+			this._sca.x = this._pScaleX;
+			this._sca.y = this._pScaleY;
+			this._sca.z = this._pScaleZ;
+
+			this._matrix3D.recompose(this._transformComponents);
+
+			if (!this._pivotZero) {
+				this._matrix3D.prependTranslation(-this._pivotPoint.x, -this._pivotPoint.y, -this._pivotPoint.z);
+				if (this.alignmentMode != AlignmentMode.PIVOT_POINT)
+					this._matrix3D.appendTranslation(this._pivotPoint.x*this._pScaleX, this._pivotPoint.y*this._pScaleY, this._pivotPoint.z*this._pScaleZ);
+			}
+
+			this._matrix3DDirty = false;
+			this._positionDirty = false;
+			this._rotationDirty = false;
+			this._scaleDirty = false;
+			this._pivotDirty = false;
+		}
+
+		/**
+		 * @protected
+		 */
+		public pUpdateSceneTransform()
+		{
+			if (this._pParent &amp;&amp; !this._pParent._iIsRoot) {
+				this._pSceneTransform.copyFrom(this._pParent.sceneTransform);
+				this._pSceneTransform.prepend(this._iMatrix3D);
+			} else {
+				this._pSceneTransform.copyFrom(this._iMatrix3D);
+			}
+
+			this._pSceneTransformDirty = false;
+		}
+
+		public _iAddRenderable(renderable:away.pool.IRenderable):away.pool.IRenderable
+		{
+			this._pRenderables.push(renderable);
+
+			return renderable;
+		}
+
+
+		public _iRemoveRenderable(renderable:away.pool.IRenderable):away.pool.IRenderable
+		{
+			var index:number = this._pRenderables.indexOf(renderable);
+
+			this._pRenderables.splice(index, 1);
+
+			return renderable;
+		}
+
+		/**
+		 * @internal
+		 */
+		public _iCollidesBefore(shortestCollisionDistance:number, findClosest:boolean):boolean
+		{
+			return true;
+		}
+
+		/**
+		 *
+		 */
+		public _iInternalUpdate()
+		{
+			if (this._iController)
+				this._iController.update();
+		}
+
+		/**
+		 * @internal
+		 */
+		public _iIsVisible():boolean
+		{
+			return this._pImplicitVisibility;
+		}
+
+		/**
+		 * @internal
+		 */
+		public _iIsMouseEnabled():boolean
+		{
+			return this._pImplicitMouseEnabled;
+		}
+
+		/**
+		 * @internal
+		 */
+		public _iSetScene(value:away.containers.Scene)
+		{
+			// test to see if we&#x27;re switching roots while we&#x27;re already using a scene partition
+			/*
+			if (value == null)
+				this._oldScene = this._pScene;
+
+			if (this._explicitPartition &amp;&amp; this._oldScene &amp;&amp; this._oldScene != this._pScene)
+				this.partition = null;
+
+			if (value)
+				this._oldScene = null;
+
+			// end of stupid partition test code
+			//*/
+
+			if (this._pScene == value)
+				return;
+
+			this._pUpdateScene(value);
+
+			if (!this._pSceneTransformDirty &amp;&amp; !this._pIgnoreTransform)
+				this.pInvalidateSceneTransform();
+		}
+
+		/**
+		 * @protected
+		 */
+		public _pUpdateScene(value:away.containers.Scene)
+		{
+			if (this._pScene) {
+				this._pScene.dispatchEvent(new away.events.SceneEvent(away.events.SceneEvent.REMOVED_FROM_SCENE, this));
+
+				//unregister entity from current scene
+				this._pScene.iUnregisterEntity(this);
+			}
+
+			this._pScene = value;
+
+			if (value) {
+				value.dispatchEvent(new away.events.SceneEvent(away.events.SceneEvent.ADDED_TO_SCENE, this));
+
+				//register entity with new scene
+				value.iRegisterEntity(this);
+			}
+
+			this.notifySceneChange();
+		}
+
+		/**
+		 * @private
+		 */
+		private addBounds()
+		{
+			if (!this._boundsIsShown) {
+				this._boundsIsShown = true;
+//				this.addChild(this._pBounds.boundingEntity);//TODO turn this into a Node-based bounding Entity
+			}
+		}
+
+		/**
+		 * @private
+		 */
+		private notifyPositionChanged()
+		{
+			if (!this._positionChanged)
+				this._positionChanged = new away.events.DisplayObjectEvent(away.events.DisplayObjectEvent.POSITION_CHANGED, this);
+
+			this.dispatchEvent(this._positionChanged);
+		}
+
+		/**
+		 * @private
+		 */
+		private notifyRotationChanged()
+		{
+			if (!this._rotationChanged)
+				this._rotationChanged = new away.events.DisplayObjectEvent(away.events.DisplayObjectEvent.ROTATION_CHANGED, this);
+
+			this.dispatchEvent(this._rotationChanged);
+		}
+
+		/**
+		 * @private
+		 */
+		private notifyScaleChanged()
+		{
+			if (!this._scaleChanged)
+				this._scaleChanged = new away.events.DisplayObjectEvent(away.events.DisplayObjectEvent.SCALE_CHANGED, this);
+
+			this.dispatchEvent(this._scaleChanged);
+		}
+
+		/**
+		 * @private
+		 */
+		private notifySceneChange()
+		{
+			if (this._listenToSceneChanged) {
+				if (!this._scenechanged)
+					this._scenechanged = new away.events.DisplayObjectEvent(away.events.DisplayObjectEvent.SCENE_CHANGED, this);
+
+				this.dispatchEvent(this._scenechanged);
+			}
+		}
+
+		/**
+		 * @private
+		 */
+		private notifySceneTransformChange()
+		{
+			if (!this._sceneTransformChanged)
+				this._sceneTransformChanged = new away.events.DisplayObjectEvent(away.events.DisplayObjectEvent.SCENETRANSFORM_CHANGED, this);
+
+			this.dispatchEvent(this._sceneTransformChanged);
+		}
+
+		/**
+		 * Invalidates the 3D transformation matrix, causing it to be updated upon the next request
+		 *
+		 * @private
+		 */
+		private invalidateMatrix3D():void
+		{
+			if (this._matrix3DDirty)
+				return;
+
+			this._matrix3DDirty = true;
+
+			if (!this._pSceneTransformDirty &amp;&amp; !this._pIgnoreTransform)
+				this.pInvalidateSceneTransform();
+		}
+
+		/**
+		 * @private
+		 */
+		private invalidatePivot()
+		{
+			this._pivotZero = (this._pivotPoint.x == 0) &amp;&amp; (this._pivotPoint.y == 0) &amp;&amp; (this._pivotPoint.z == 0);
+
+			if (this._pivotDirty)
+				return;
+
+			this._pivotDirty = true;
+
+			this.invalidateMatrix3D();
+		}
+
+		/**
+		 * @private
+		 */
+		private invalidatePosition()
+		{
+			if (this._positionDirty)
+				return;
+
+			this._positionDirty = true;
+
+			this.invalidateMatrix3D();
+
+			if (this._listenToPositionChanged)
+				this.notifyPositionChanged();
+		}
+
+		/**
+		 * @private
+		 */
+		private invalidateRotation()
+		{
+			if (this._rotationDirty)
+				return;
+
+			this._rotationDirty = true;
+
+			this.invalidateMatrix3D();
+
+			if (this._listenToRotationChanged)
+				this.notifyRotationChanged();
+		}
+
+		/**
+		 * @private
+		 */
+		private invalidateScale()
+		{
+			if (this._scaleDirty)
+				return;
+
+			this._scaleDirty = true;
+
+			this.invalidateMatrix3D();
+
+			if (this._listenToScaleChanged)
+				this.notifyScaleChanged();
+		}
+
+		/**
+		 * @private
+		 */
+		private removeBounds()
+		{
+			if (this._boundsIsShown) {
+				this._boundsIsShown = false;
+//				this.removeChild(this._pBounds.boundingEntity);
+				this._pBounds.disposeRenderable();
+			}
+		}
+	}
+}
+
+    </pre>
+</div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="../assets/vendor/prettify/prettify-min.js"></script>
+<script>prettyPrint();</script>
+<script src="../assets/js/yui-prettify.js"></script>
+<script src="../assets/../api.js"></script>
+<script src="../assets/js/api-filter.js"></script>
+<script src="../assets/js/api-list.js"></script>
+<script src="../assets/js/api-search.js"></script>
+<script src="../assets/js/apidocs.js"></script>
+</body>
+</html>

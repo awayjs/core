@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>src/away/materials/CSSMaterialBase.ts</title>
+    <link rel="stylesheet" href="http://yui.yahooapis.com/3.9.1/build/cssgrids/cssgrids-min.css">
+    <link rel="stylesheet" href="../assets/vendor/prettify/prettify-min.css">
+    <link rel="stylesheet" href="../assets/css/main.css" id="site_styles">
+    <link rel="shortcut icon" type="image/png" href="../assets/favicon.png">
+    <script src="http://yui.yahooapis.com/combo?3.9.1/build/yui/yui-min.js"></script>
+</head>
+<body class="yui3-skin-sam">
+
+<div id="doc">
+    <div id="hd" class="yui3-g header">
+        <div class="yui3-u-3-4">
+            
+                <h1><img src="../assets/css/logo.png" title=""></h1>
+            
+        </div>
+        <div class="yui3-u-1-4 version">
+            <em>API Docs for: 0.1.0</em>
+        </div>
+    </div>
+    <div id="bd" class="yui3-g">
+
+        <div class="yui3-u-1-4">
+            <div id="docs-sidebar" class="sidebar apidocs">
+                <div id="api-list">
+    <h2 class="off-left">APIs</h2>
+    <div id="api-tabview" class="tabview">
+        <ul class="tabs">
+            <li><a href="#api-classes">Classes</a></li>
+            <li><a href="#api-modules">Modules</a></li>
+        </ul>
+
+        <div id="api-tabview-filter">
+            <input type="search" id="api-filter" placeholder="Type to filter APIs">
+        </div>
+
+        <div id="api-tabview-panel">
+            <ul id="api-classes" class="apis classes">
+            
+                <li><a href="../classes/away.events.AssetEvent.html">away.events.AssetEvent</a></li>
+            
+                <li><a href="../classes/away.events.CameraEvent.html">away.events.CameraEvent</a></li>
+            
+                <li><a href="../classes/away.events.Event.html">away.events.Event</a></li>
+            
+                <li><a href="../classes/away.events.EventDispatcher.html">away.events.EventDispatcher</a></li>
+            
+                <li><a href="../classes/away.events.HTTPStatusEvent.html">away.events.HTTPStatusEvent</a></li>
+            
+                <li><a href="../classes/away.materials.IMaterial.html">away.materials.IMaterial</a></li>
+            
+                <li><a href="../classes/away.partition.CameraNode.html">away.partition.CameraNode</a></li>
+            
+                <li><a href="../classes/away.partition.EntityNode.html">away.partition.EntityNode</a></li>
+            
+                <li><a href="../classes/away.partition.NodeBase.html">away.partition.NodeBase</a></li>
+            
+                <li><a href="../classes/away.partition.NullNode.html">away.partition.NullNode</a></li>
+            
+                <li><a href="../classes/away.partition.Partition.html">away.partition.Partition</a></li>
+            
+                <li><a href="../classes/away.pick.PickingCollisionVO.html">away.pick.PickingCollisionVO</a></li>
+            
+                <li><a href="../classes/away.pool.EntityListItem.html">away.pool.EntityListItem</a></li>
+            
+                <li><a href="../classes/away.pool.EntityListItemPool.html">away.pool.EntityListItemPool</a></li>
+            
+                <li><a href="../classes/away.pool.RenderableListItem.html">away.pool.RenderableListItem</a></li>
+            
+                <li><a href="../classes/away.pool.RenderablePool.html">away.pool.RenderablePool</a></li>
+            
+                <li><a href="../classes/away.render.DefaultRenderer.html">away.render.DefaultRenderer</a></li>
+            
+                <li><a href="../classes/away.render.IRenderable.html">away.render.IRenderable</a></li>
+            
+                <li><a href="../classes/away.render.IRenderer.html">away.render.IRenderer</a></li>
+            
+                <li><a href="../classes/away.render.RendererBase.html">away.render.RendererBase</a></li>
+            
+                <li><a href="../classes/away.sort.RenderableMergeSort.html">away.sort.RenderableMergeSort</a></li>
+            
+                <li><a href="../classes/away.traverse.EntityCollector.html">away.traverse.EntityCollector</a></li>
+            
+                <li><a href="../classes/away.traverse.ICollector.html">away.traverse.ICollector</a></li>
+            
+            </ul>
+
+            <ul id="api-modules" class="apis modules">
+            
+                <li><a href="../modules/away.base.html">away.base</a></li>
+            
+                <li><a href="../modules/away.data.html">away.data</a></li>
+            
+                <li><a href="../modules/away.events.html">away.events</a></li>
+            
+                <li><a href="../modules/away.materials.html">away.materials</a></li>
+            
+                <li><a href="../modules/away.partition.html">away.partition</a></li>
+            
+                <li><a href="../modules/away.pick.html">away.pick</a></li>
+            
+                <li><a href="../modules/away.pool.html">away.pool</a></li>
+            
+                <li><a href="../modules/away.render.html">away.render</a></li>
+            
+                <li><a href="../modules/away.sort.html">away.sort</a></li>
+            
+                <li><a href="../modules/away.traverse.html">away.traverse</a></li>
+            
+            </ul>
+        </div>
+    </div>
+</div>
+
+            </div>
+        </div>
+        <div class="yui3-u-3-4">
+                <div id="api-options">
+        Show:
+        <label for="api-show-inherited">
+            <input type="checkbox" id="api-show-inherited" checked>
+            Inherited
+        </label>
+
+        <label for="api-show-protected">
+            <input type="checkbox" id="api-show-protected">
+            Protected
+        </label>
+
+        <label for="api-show-private">
+            <input type="checkbox" id="api-show-private">
+            Private
+        </label>
+        <label for="api-show-deprecated">
+            <input type="checkbox" id="api-show-deprecated">
+            Deprecated
+        </label>
+
+    </div>
+
+
+            <div class="apidocs">
+                <div id="docs-main">
+                    <div class="content">
+                        <h1 class="file-heading">File: src/away/materials/CSSMaterialBase.ts</h1>
+
+<div class="file">
+    <pre class="code prettyprint linenums">
+///&lt;reference path=&quot;../_definitions.ts&quot;/&gt;
+
+module away.materials
+{
+	import BlendMode					= away.base.BlendMode;
+	import Event						= away.events.Event;
+	import Matrix3D						= away.geom.Matrix3D;
+	import AssetType					= away.library.AssetType;
+	import Delegate						= away.utils.Delegate;
+
+	import IMaterialOwner				= away.base.IMaterialOwner;
+
+	/**
+	 * MaterialBase forms an abstract base class for any material.
+	 * A material consists of several passes, each of which constitutes at least one render call. Several passes could
+	 * be used for special effects (render lighting for many lights in several passes, render an outline in a separate
+	 * pass) or to provide additional render-to-texture passes (rendering diffuse light to texture for texture-space
+	 * subsurface scattering, or rendering a depth map for specialized self-shadowing).
+	 *
+	 * Away3D provides default materials trough SinglePassMaterialBase and MultiPassMaterialBase, which use modular
+	 * methods to build the shader code. MaterialBase can be extended to build specific and high-performant custom
+	 * shaders, or entire new material frameworks.
+	 */
+	export class CSSMaterialBase extends away.library.NamedAssetBase implements away.library.IAsset, IMaterial
+	{
+
+		/**
+		 * An object to contain any extra data.
+		 */
+		public extra:Object;
+
+		/**
+		 * An id for this material used to sort the renderables by shader program, which reduces Program state changes.
+		 *
+		 * @private
+		 */
+		public _iMaterialId:number;
+
+		/**
+		 * An id for this material used to sort the renderables by shader program, which reduces Program state changes.
+		 *
+		 * @private
+		 */
+		public _iRenderOrderId:number = 0;
+
+		/**
+		 * The same as _renderOrderId, but applied to the depth shader passes.
+		 *
+		 * @private
+		 */
+		public _iDepthPassId:number;
+
+		private _bothSides:boolean = false; // update
+
+		/**
+		 * A list of material owners, renderables or custom Entities.
+		 */
+		private _owners:Array&lt;IMaterialOwner&gt;;
+
+		public _pBlendMode:string = BlendMode.NORMAL;
+
+		private _imageElement:HTMLImageElement;
+		private _imageStyle:MSStyleCSSProperties;
+		private _repeat:boolean = false;
+		private _smooth:boolean = true;
+		private _texture:away.textures.Texture2DBase;
+
+		public get imageElement():HTMLImageElement
+		{
+			return this._imageElement;
+		}
+
+		public get imageStyle():MSStyleCSSProperties
+		{
+			return this._imageStyle;
+		}
+
+		/**
+		 * Indicates whether or not any used textures should be tiled. If set to false, texture samples are clamped to
+		 * the texture&#x27;s borders when the uv coordinates are outside the [0, 1] interval.
+		 */
+		public get repeat():boolean
+		{
+			return this._repeat;
+		}
+
+		public set repeat(value:boolean)
+		{
+			this._repeat = value;
+
+			//TODO
+		}
+
+		/**
+		 * Indicates whether or not any used textures should use smoothing.
+		 */
+		public get smooth():boolean
+		{
+			return this._smooth;
+		}
+
+		public set smooth(value:boolean)
+		{
+			this._smooth = value;
+
+			//TODO
+		}
+
+		/**
+		 * The texture object to use for the albedo colour.
+		 */
+		public get texture():away.textures.Texture2DBase
+		{
+			return this._texture;
+		}
+
+		public set texture(value:away.textures.Texture2DBase)
+		{
+			if (this._texture == value)
+				return;
+
+			this._texture = value;
+
+			if (value instanceof away.textures.ImageTexture) {
+				this._imageElement = (&lt;away.textures.ImageTexture&gt; value).htmlImageElement;
+
+				var node:HTMLStyleElement = document.createElement(&quot;style&quot;);
+				node.type = &quot;text/css&quot;;
+				document.getElementsByTagName(&quot;head&quot;)[0].appendChild(node);
+
+				var sheet:CSSStyleSheet = &lt;CSSStyleSheet&gt; document.styleSheets[document.styleSheets.length - 1];
+				sheet.insertRule(&quot;.material&quot; + this.id + &quot;{ }&quot;, 0);
+				var style:MSStyleCSSProperties = (&lt;CSSStyleRule&gt; sheet.cssRules[0]).style;
+
+				style.backgroundImage = &quot;url(&quot; + this._imageElement.src + &quot;)&quot;;
+				style.backgroundSize = &quot;100% 100%&quot;;
+				style.position = &quot;absolute&quot;;
+				style.width = this._imageElement.width + &quot;px&quot;;
+				style.height = this._imageElement.height + &quot;px&quot;;
+				style.transformOrigin
+					= style[&quot;-webkit-transform-origin&quot;]
+					= style[&quot;-moz-transform-origin&quot;]
+					= style[&quot;-o-transform-origin&quot;]
+					= style[&quot;-ms-transform-origin&quot;] = &quot;0% 0%&quot;;
+				style.transform
+					= style[&quot;-webkit-transform&quot;]
+					= style[&quot;-moz-transform&quot;]
+					= style[&quot;-o-transform&quot;]
+					= style[&quot;-ms-transform&quot;] = &quot;scale3d(&quot; + 1/this._imageElement.width + &quot;, -&quot; + 1/this._imageElement.height + &quot;, 1) translateY(-&quot; + this._imageElement.height + &quot;px)&quot;;
+			}
+		}
+
+		/**
+		 * Creates a new MaterialBase object.
+		 */
+		constructor(texture:away.textures.Texture2DBase = null, smooth:boolean = true, repeat:boolean = false)
+		{
+			super();
+
+			this._iMaterialId = Number(this.id);
+
+			this.texture = texture;
+
+			this.smooth = smooth;
+			this.repeat = repeat;
+
+			this._owners = new Array&lt;IMaterialOwner&gt;();
+
+
+		}
+
+		/**
+		 * @inheritDoc
+		 */
+		public get assetType():string
+		{
+			return AssetType.MATERIAL;
+		}
+
+		/**
+		 * Cleans up resources owned by the material, including passes. Textures are not owned by the material since they
+		 * could be used by other materials and will not be disposed.
+		 */
+		public dispose()
+		{
+			//TODO
+
+		}
+
+		/**
+		 * Defines whether or not the material should cull triangles facing away from the camera.
+		 */
+		public get bothSides():boolean
+		{
+			return this._bothSides;
+		}
+
+		public set bothSides(value:boolean)
+		{
+			this._bothSides = value;
+
+			//TODO
+
+		}
+
+		/**
+		 * The blend mode to use when drawing this renderable. The following blend modes are supported:
+		 * &lt;ul&gt;
+		 * &lt;li&gt;BlendMode.NORMAL: No blending, unless the material inherently needs it&lt;/li&gt;
+		 * &lt;li&gt;BlendMode.LAYER: Force blending. This will draw the object the same as NORMAL, but without writing depth writes.&lt;/li&gt;
+		 * &lt;li&gt;BlendMode.MULTIPLY&lt;/li&gt;
+		 * &lt;li&gt;BlendMode.ADD&lt;/li&gt;
+		 * &lt;li&gt;BlendMode.ALPHA&lt;/li&gt;
+		 * &lt;/ul&gt;
+		 */
+		public get blendMode():string
+		{
+			return this._pBlendMode;
+		}
+
+		public set blendMode(value:string)
+		{
+			this._pBlendMode = value;
+
+			//TODO
+		}
+
+		/**
+		 * Indicates whether or not the material requires alpha blending during rendering.
+		 */
+		public get requiresBlending():boolean
+		{
+			return this._pBlendMode != away.base.BlendMode.NORMAL;
+
+		}
+
+		//
+		// MATERIAL MANAGEMENT
+		//
+		/**
+		 * Mark an IMaterialOwner as owner of this material.
+		 * Assures we&#x27;re not using the same material across renderables with different animations, since the
+		 * Programs depend on animation. This method needs to be called when a material is assigned.
+		 *
+		 * @param owner The IMaterialOwner that had this material assigned
+		 *
+		 * @private
+		 */
+		public iAddOwner(owner:away.base.IMaterialOwner)
+		{
+			this._owners.push(owner);
+
+			//TODO
+		}
+
+		/**
+		 * Removes an IMaterialOwner as owner.
+		 * @param owner
+		 *
+		 * @internal
+		 */
+		public iRemoveOwner(owner:away.base.IMaterialOwner)
+		{
+			//TODO
+		}
+
+		/**
+		 * A list of the IMaterialOwners that use this material
+		 *
+		 * @internal
+		 */
+		public get iOwners():Array&lt;IMaterialOwner&gt;
+		{
+			return this._owners;
+		}
+	}
+}
+
+    </pre>
+</div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="../assets/vendor/prettify/prettify-min.js"></script>
+<script>prettyPrint();</script>
+<script src="../assets/js/yui-prettify.js"></script>
+<script src="../assets/../api.js"></script>
+<script src="../assets/js/api-filter.js"></script>
+<script src="../assets/js/api-list.js"></script>
+<script src="../assets/js/api-search.js"></script>
+<script src="../assets/js/apidocs.js"></script>
+</body>
+</html>

@@ -1,0 +1,20 @@
+# Build and Release Folders
+bin-debug/
+bin-debug-old/
+bin-release/
+out/
+target/
+node_modules/
+
+# Dev files
+tests/AppHarnessDebug.ts
+tests/debug.html
+
+# Project property files
+.actionScriptProperties
+.flexLibProperties
+.settings/
+.idea/
+.project
+.DS_Store
+*.iml

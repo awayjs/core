@@ -40,7 +40,7 @@ module away.textures
 			MipmapGenerator._rect.width = w;
 			MipmapGenerator._rect.height = h;
 
-			while (w >= 1 || h >= 1) {
+			while (w >= 1 && h >= 1) {
 
 				mipmap = output[i] = MipmapGenerator._getMipmapHolder(output[i], w, h);
 				

@@ -76,7 +76,7 @@ module away.textures
 			}
 		}
 
-		public get bitmapData():away.base.BitmapData
+		public _iGetTextureData():away.base.BitmapData
 		{
 			var rect:Rectangle = this._specularMap.rect;
 			var origin:Point = new Point();

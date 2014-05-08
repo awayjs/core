@@ -12,7 +12,7 @@ module away.textures
 		 * @param htmlImageElement
 		 * @param generateMipmaps
 		 */
-		constructor(htmlImageElement:HTMLImageElement, generateMipmaps:boolean = true)
+		constructor(htmlImageElement:HTMLImageElement, generateMipmaps:boolean = false)
 		{
 			super(generateMipmaps);
 

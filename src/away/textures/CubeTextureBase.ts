@@ -7,7 +7,7 @@ module away.textures
 		public _mipmapDataArray:Array<Array<away.base.BitmapData>> = new Array<Array<away.base.BitmapData>>(6);
 		public _mipmapDataDirtyArray:Array<boolean> = new Array<boolean>(6);
 
-		constructor(generateMipmaps:boolean = true)
+		constructor(generateMipmaps:boolean = false)
 		{
 			super(generateMipmaps);
 		}

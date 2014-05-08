@@ -16,7 +16,7 @@ module away.textures
 		/**
 		 *
 		 */
-		constructor(generateMipmaps:boolean = true)
+		constructor(generateMipmaps:boolean = false)
 		{
 			super();
 

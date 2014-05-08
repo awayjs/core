@@ -32,7 +32,7 @@ module away.textures
 			return this._pWidth;
 		}
 
-		constructor(generateMipmaps:boolean = true)
+		constructor(generateMipmaps:boolean = false)
 		{
 			super(generateMipmaps);
 		}

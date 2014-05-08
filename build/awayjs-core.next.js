@@ -30335,7 +30335,7 @@ var away;
             *
             */
             function TextureProxyBase(generateMipmaps) {
-                if (typeof generateMipmaps === "undefined") { generateMipmaps = true; }
+                if (typeof generateMipmaps === "undefined") { generateMipmaps = false; }
                 _super.call(this);
                 this._pFormat = "bgra";
                 this._textureData = new Array();
@@ -30461,7 +30461,7 @@ var away;
         var Texture2DBase = (function (_super) {
             __extends(Texture2DBase, _super);
             function Texture2DBase(generateMipmaps) {
-                if (typeof generateMipmaps === "undefined") { generateMipmaps = true; }
+                if (typeof generateMipmaps === "undefined") { generateMipmaps = false; }
                 _super.call(this, generateMipmaps);
             }
             Object.defineProperty(Texture2DBase.prototype, "width", {
@@ -30571,7 +30571,7 @@ var away;
         var CubeTextureBase = (function (_super) {
             __extends(CubeTextureBase, _super);
             function CubeTextureBase(generateMipmaps) {
-                if (typeof generateMipmaps === "undefined") { generateMipmaps = true; }
+                if (typeof generateMipmaps === "undefined") { generateMipmaps = false; }
                 _super.call(this, generateMipmaps);
                 this._mipmapDataArray = new Array(6);
                 this._mipmapDataDirtyArray = new Array(6);
@@ -30656,7 +30656,7 @@ var away;
             * @param generateMipmaps
             */
             function ImageTexture(htmlImageElement, generateMipmaps) {
-                if (typeof generateMipmaps === "undefined") { generateMipmaps = true; }
+                if (typeof generateMipmaps === "undefined") { generateMipmaps = false; }
                 _super.call(this, generateMipmaps);
 
                 this.htmlImageElement = htmlImageElement;
@@ -30701,7 +30701,7 @@ var away;
         var BitmapTexture = (function (_super) {
             __extends(BitmapTexture, _super);
             function BitmapTexture(bitmapData, generateMipmaps) {
-                if (typeof generateMipmaps === "undefined") { generateMipmaps = true; }
+                if (typeof generateMipmaps === "undefined") { generateMipmaps = false; }
                 _super.call(this, generateMipmaps);
 
                 this.bitmapData = bitmapData;

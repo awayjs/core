@@ -31,7 +31,7 @@ module away.textures
 			this._pSetSize(value.width, value.height);
 		}
 
-		constructor(bitmapData:away.base.BitmapData, generateMipmaps:boolean = true)
+		constructor(bitmapData:away.base.BitmapData, generateMipmaps:boolean = false)
 		{
 			super(generateMipmaps);
 

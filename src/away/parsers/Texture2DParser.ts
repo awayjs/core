@@ -92,7 +92,7 @@ module away.parsers
 			{
 
 				if (away.utils.TextureUtils.isHTMLImageElementValid(<HTMLImageElement> this.data)) {
-					asset = <away.textures.Texture2DBase> new away.textures.ImageTexture(<HTMLImageElement> this.data, false);
+					asset = <away.textures.Texture2DBase> new away.textures.ImageTexture(<HTMLImageElement> this.data);
 					this._pFinalizeAsset(<away.library.IAsset> asset, this._iFileName);
 				} else {
 					sizeError = true;
@@ -106,7 +106,7 @@ module away.parsers
 				var htmlImageElement:HTMLImageElement = away.parsers.ParserUtils.byteArrayToImage(this.data);
 
 				if (away.utils.TextureUtils.isHTMLImageElementValid(htmlImageElement)) {
-					asset = <away.textures.Texture2DBase> new away.textures.ImageTexture(htmlImageElement, false);
+					asset = <away.textures.Texture2DBase> new away.textures.ImageTexture(htmlImageElement);
 					this._pFinalizeAsset(<away.library.IAsset> asset, this._iFileName);
 				} else {
 					sizeError = true;

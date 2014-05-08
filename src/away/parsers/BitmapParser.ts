@@ -93,13 +93,13 @@ module away.parsers
 				return away.parsers.ParserBase.MORE_TO_PARSE;
 			} else if (this._htmlImageElement) {
 				if (away.utils.TextureUtils.isHTMLImageElementValid(this._htmlImageElement)) {
-					asset = <away.textures.Texture2DBase> new away.textures.ImageTexture(this._htmlImageElement, false);
+					asset = <away.textures.Texture2DBase> new away.textures.ImageTexture(this._htmlImageElement);
 					this._pFinalizeAsset(<away.library.IAsset> asset, this._iFileName);
 				}
 			} else if (this.data instanceof HTMLImageElement) {// Parse HTMLImageElement
 
 				if (away.utils.TextureUtils.isHTMLImageElementValid(<HTMLImageElement> this.data)) {
-					asset = <away.textures.Texture2DBase> new away.textures.ImageTexture(<HTMLImageElement> this.data, false);
+					asset = <away.textures.Texture2DBase> new away.textures.ImageTexture(<HTMLImageElement> this.data);
 					this._pFinalizeAsset(<away.library.IAsset> asset, this._iFileName);
 				} else {
 					sizeError = true;
@@ -112,7 +112,7 @@ module away.parsers
 				var htmlImageElement:HTMLImageElement = away.parsers.ParserUtils.byteArrayToImage(this.data);
 
 				if (away.utils.TextureUtils.isHTMLImageElementValid(htmlImageElement)) {
-					asset = <away.textures.Texture2DBase> new away.textures.ImageTexture(htmlImageElement, false);
+					asset = <away.textures.Texture2DBase> new away.textures.ImageTexture(htmlImageElement);
 					this._pFinalizeAsset(<away.library.IAsset> asset, this._iFileName);
 				} else {
 					sizeError = true;
@@ -122,7 +122,7 @@ module away.parsers
 
 				this._htmlImageElement = away.parsers.ParserUtils.arrayBufferToImage(this.data);
 
-				asset = <away.textures.Texture2DBase> new away.textures.ImageTexture(this._htmlImageElement, false);
+				asset = <away.textures.Texture2DBase> new away.textures.ImageTexture(this._htmlImageElement);
 				this._pFinalizeAsset(<away.library.IAsset> asset, this._iFileName);
 
 			} else if (this.data instanceof Blob) { // Parse a Blob

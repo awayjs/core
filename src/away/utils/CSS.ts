@@ -3,68 +3,70 @@ module away.utils
 {
 	export class CSS
 	{
-		public static setCanvasSize(canvas:HTMLCanvasElement, width:number, height:number)
+		public static setElementSize(element:HTMLElement, width:number, height:number)
 		{
-			canvas.style.width = width + "px";
-			canvas.style.height = height + "px";
-			canvas.width = width;
-			canvas.height = height;
+			element.style.width = width + "px";
+			element.style.height = height + "px";
+			element["width"] = width;
+			element["height"] = height;
 		}
 
-		public static setCanvasWidth(canvas:HTMLCanvasElement, width:number)
+		public static setElementWidth(element:HTMLElement, width:number)
 		{
-			canvas.style.width = width + "px";
-			canvas.width = width;
+			element.style.width = width + "px";
+			element["width"] = width;
 		}
 
-		public static setCanvasHeight(canvas:HTMLCanvasElement, height:number)
+		public static setElementHeight(element:HTMLElement, height:number)
 		{
-			canvas.style.height = height + "px";
-			canvas.height = height;
+			element.style.height = height + "px";
+			element["height"] = height;
 		}
 
-		public static setCanvasX(canvas:HTMLCanvasElement, x:number)
+		public static setElementX(element:HTMLElement, x:number)
 		{
-			canvas.style.position = 'absolute';
-			canvas.style.left = x + "px";
+			element.style.position = 'absolute';
+			element.style.left = x + "px";
 		}
 
-		public static setCanvasY(canvas:HTMLCanvasElement, y:number)
+		public static setElementY(element:HTMLElement, y:number)
 		{
-			canvas.style.position = 'absolute';
-			canvas.style.top = y + "px";
+			element.style.position = 'absolute';
+			element.style.top = y + "px";
 		}
 
-		public static getCanvasVisibility(canvas:HTMLCanvasElement):boolean
+		public static getElementVisibility(element:HTMLElement):boolean
 		{
-			return canvas.style.visibility == 'visible';
+			return element.style.visibility == 'visible';
 		}
 
-		public static setCanvasVisibility(canvas:HTMLCanvasElement, visible:boolean)
+		public static setElementVisibility(element:HTMLElement, visible:boolean)
 		{
 			if (visible) {
-				canvas.style.visibility = 'visible';
+				element.style.visibility = 'visible';
 			} else {
-				canvas.style.visibility = 'hidden';
+				element.style.visibility = 'hidden';
 			}
 		}
 
-		public static setCanvasAlpha(canvas:HTMLCanvasElement, alpha:number)
+		public static setElementAlpha(element:HTMLElement, alpha:number)
 		{
-			var context = canvas.getContext("2d");
-			context.globalAlpha = alpha;
+			if (element instanceof HTMLCanvasElement) {
+				var context = (<HTMLCanvasElement> element).getContext("2d");
+				context.globalAlpha = alpha;
+			}
 		}
 
-		public static setCanvasPosition(canvas:HTMLCanvasElement, x:number, y:number, absolute:boolean = false)
+		public static setElementPosition(element:HTMLElement, x:number, y:number, absolute:boolean = false)
 		{
 			if (absolute) {
-				canvas.style.position = "absolute";
+				element.style.position = "absolute";
 			} else {
-				canvas.style.position = "relative";
+				element.style.position = "relative";
 			}
 
-			canvas.style.left = x + "px";
-			canvas.style.top = y + "px";
+			element.style.left = x + "px";
+			element.style.top = y + "px";
 		}
 	}
 }

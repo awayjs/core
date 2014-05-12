@@ -8,7 +8,7 @@ module away.utils
 		public length:number = 0;
 		public _mode:string = "";
 
-		public Base64Key = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+		public static Base64Key = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 
 		constructor()
 		{
@@ -139,11 +139,20 @@ module away.utils
 			this.position = oldpos;
 		}
 
-		public internalGetBase64String(count, getUnsignedByteFunc, self)
+		public readBase64String(count:number)
+		{
+			if (count == undefined || count > this.length - this.position)
+				count = this.length - this.position;
+			if (!(count > 0)) return "";
+
+			return ByteArrayBase.internalGetBase64String(count, this.readUnsignedByte, this);
+		}
+
+		public static internalGetBase64String(count, getUnsignedByteFunc, self)
 		{ // return base64 string of the next count bytes
 			var r = "";
 			var b0, b1, b2, enc1, enc2, enc3, enc4;
-			var base64Key = this.Base64Key;
+			var base64Key = ByteArrayBase.Base64Key;
 			while (count >= 3) {
 				b0 = getUnsignedByteFunc.apply(self);
 				b1 = getUnsignedByteFunc.apply(self);

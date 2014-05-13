@@ -488,7 +488,7 @@ module away.containers
 
 			var len:number = this._children.length;
 			for (var i:number = 0; i < len; ++i)
-				this._children[i++].pInvalidateSceneTransform();
+				this._children[i].pInvalidateSceneTransform();
 		}
 
 		/**

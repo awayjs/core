@@ -5,6 +5,10 @@
  */
 module away.pick
 {
+	import Scene						= away.containers.Scene;
+	import View							= away.containers.View;
+	import Vector3D						= away.geom.Vector3D;
+
 	/**
 	 * Provides an interface for picking objects that can pick 3d objects from a view or scene.
 	 *
@@ -19,7 +23,7 @@ module away.pick
 		 * @param y The y coordinate of the picking ray in screen-space.
 		 * @param view The view on which the picking object acts.
 		 */
-		getViewCollision(x:number, y:number, view:away.containers.View):PickingCollisionVO;
+		getViewCollision(x:number, y:number, view:View):PickingCollisionVO;
 
 		/**
 		 * Gets the collision object from the scene position and direction of the picking ray.
@@ -28,7 +32,7 @@ module away.pick
 		 * @param direction The direction of the picking ray in scene-space.
 		 * @param scene The scene on which the picking object acts.
 		 */
-		getSceneCollision(position:away.geom.Vector3D, direction:away.geom.Vector3D, scene:away.containers.Scene):PickingCollisionVO;
+		getSceneCollision(position:Vector3D, direction:Vector3D, scene:Scene):PickingCollisionVO;
 
 		/**
 		 * Determines whether the picker takes account of the mouseEnabled properties of entities. Defaults to true.

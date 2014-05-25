@@ -2,17 +2,22 @@
 
 module away.animators
 {
+	import SubGeometryBase				= away.base.SubGeometryBase;
+	import IEntity						= away.entities.IEntity;
+	import IAsset						= away.library.IAsset;
+	import IRenderable					= away.pool.IRenderable;
+
 	/**
 	 * Provides an interface for animator classes that control animation output from a data set subtype of <code>AnimationSetBase</code>.
 	 *
 	 * @see away.animators.IAnimationSet
 	 */
-	export interface IAnimator extends away.library.IAsset
+	export interface IAnimator extends IAsset
 	{
 		/**
 		 *
 		 */
-		animationSet:away.animators.IAnimationSet;
+		animationSet:IAnimationSet;
 
 		/**
 		 *
@@ -29,20 +34,20 @@ module away.animators
 		 *
 		 * @private
 		 */
-		addOwner(mesh:away.entities.IEntity);
+		addOwner(mesh:IEntity);
 
 		/**
 		 * Used by the mesh object from which the animator is removed, unregisters the owner for internal use.
 		 *
 		 * @private
 		 */
-		removeOwner(mesh:away.entities.IEntity);
+		removeOwner(mesh:IEntity);
 
 		/**
 		 * //TODO
 		 *
 		 * @param sourceSubGeometry
 		 */
-		getRenderableSubGeometry(renderable:away.pool.IRenderable, sourceSubGeometry:away.base.SubGeometryBase):away.base.SubGeometryBase;
+		getRenderableSubGeometry(renderable:IRenderable, sourceSubGeometry:SubGeometryBase):SubGeometryBase;
 	}
 }

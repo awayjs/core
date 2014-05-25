@@ -15281,6 +15281,14 @@ var away;
 var away;
 (function (away) {
     (function (parsers) {
+        var AbstractMethodError = away.errors.AbstractMethodError;
+        var AssetEvent = away.events.AssetEvent;
+        var ParserEvent = away.events.ParserEvent;
+        var TimerEvent = away.events.TimerEvent;
+
+        var TextureUtils = away.utils.TextureUtils;
+        var Timer = away.utils.Timer;
+
         /**
         * <code>ParserBase</code> provides an abstract base class for objects that convert blocks of data to data structures
         * supported by away.
@@ -15325,8 +15333,7 @@ var away;
             //* Indicates whether or not a given file extension is supported by the parser.
             //----------------------------------------------------------------------------------------------------------------------------------------------------------------
             ParserBase.supportsType = function (extension) {
-                throw new away.errors.AbstractMethodError();
-                return false;
+                throw new AbstractMethodError();
             };
 
             Object.defineProperty(ParserBase.prototype, "content", {
@@ -15342,7 +15349,7 @@ var away;
             * Validates a bitmapData loaded before assigning to a default BitmapMaterial
             */
             ParserBase.prototype.isBitmapDataValid = function (bitmapData) {
-                var isValid = away.utils.TextureUtils.isBitmapDataValid(bitmapData);
+                var isValid = TextureUtils.isBitmapDataValid(bitmapData);
 
                 if (!isValid) {
                     console.log(">> Bitmap loaded is not having power of 2 dimensions or is higher than 2048");
@@ -15445,7 +15452,7 @@ var away;
             * @param resourceDependency The dependency to be resolved.
             */
             ParserBase.prototype._iResolveDependency = function (resourceDependency) {
-                throw new away.errors.AbstractMethodError();
+                throw new AbstractMethodError();
             };
 
             /**
@@ -15454,7 +15461,7 @@ var away;
             * @param resourceDependency The dependency to be resolved.
             */
             ParserBase.prototype._iResolveDependencyFailure = function (resourceDependency) {
-                throw new away.errors.AbstractMethodError();
+                throw new AbstractMethodError();
             };
 
             /**
@@ -15486,7 +15493,7 @@ var away;
                 if (!asset.name)
                     asset.name = asset.assetType;
 
-                this.dispatchEvent(new away.events.AssetEvent(away.events.AssetEvent.ASSET_COMPLETE, asset));
+                this.dispatchEvent(new AssetEvent(AssetEvent.ASSET_COMPLETE, asset));
             };
 
             /**
@@ -15495,18 +15502,18 @@ var away;
             * <code>ParserBase.ParserBase.MORE_TO_PARSE</code>.
             */
             ParserBase.prototype._pProceedParsing = function () {
-                throw new away.errors.AbstractMethodError();
+                throw new AbstractMethodError();
             };
 
             ParserBase.prototype._pDieWithError = function (message) {
                 if (typeof message === "undefined") { message = 'Unknown parsing error'; }
                 if (this._timer) {
-                    this._timer.removeEventListener(away.events.TimerEvent.TIMER, this._pOnIntervalDelegate);
+                    this._timer.removeEventListener(TimerEvent.TIMER, this._pOnIntervalDelegate);
                     this._timer.stop();
                     this._timer = null;
                 }
 
-                this.dispatchEvent(new away.events.ParserEvent(away.events.ParserEvent.PARSE_ERROR, message));
+                this.dispatchEvent(new ParserEvent(ParserEvent.PARSE_ERROR, message));
             };
 
             ParserBase.prototype._pAddDependency = function (id, req, retrieveAsRawData, data, suppressErrorEvents) {
@@ -15524,7 +15531,7 @@ var away;
                     this._timer.stop();
 
                 this._parsingPaused = true;
-                this.dispatchEvent(new away.events.ParserEvent(away.events.ParserEvent.READY_FOR_DEPENDENCIES));
+                this.dispatchEvent(new ParserEvent(ParserEvent.READY_FOR_DEPENDENCIES));
             };
 
             /**
@@ -15552,8 +15559,8 @@ var away;
             */
             ParserBase.prototype._pStartParsing = function (frameLimit) {
                 this._frameLimit = frameLimit;
-                this._timer = new away.utils.Timer(this._frameLimit, 0);
-                this._timer.addEventListener(away.events.TimerEvent.TIMER, this._pOnIntervalDelegate);
+                this._timer = new Timer(this._frameLimit, 0);
+                this._timer.addEventListener(TimerEvent.TIMER, this._pOnIntervalDelegate);
                 this._timer.start();
             };
 
@@ -15562,14 +15569,14 @@ var away;
             */
             ParserBase.prototype._pFinishParsing = function () {
                 if (this._timer) {
-                    this._timer.removeEventListener(away.events.TimerEvent.TIMER, this._pOnIntervalDelegate);
+                    this._timer.removeEventListener(TimerEvent.TIMER, this._pOnIntervalDelegate);
                     this._timer.stop();
                 }
 
                 this._timer = null;
                 this._parsingComplete = true;
 
-                this.dispatchEvent(new away.events.ParserEvent(away.events.ParserEvent.PARSE_COMPLETE));
+                this.dispatchEvent(new ParserEvent(ParserEvent.PARSE_COMPLETE));
             };
 
             /**
@@ -15598,152 +15605,12 @@ var away;
     })(away.parsers || (away.parsers = {}));
     var parsers = away.parsers;
 })(away || (away = {}));
-///<reference path="../_definitions.ts"/>
-var away;
-(function (away) {
-    (function (parsers) {
-        var URLLoaderDataFormat = away.net.URLLoaderDataFormat;
-        var ImageTexture = away.textures.ImageTexture;
-
-        var ByteArray = away.utils.ByteArray;
-        var TextureUtils = away.utils.TextureUtils;
-
-        /**
-        * BitmapParser provides a "parser" for natively supported image types (jpg, png). While it simply loads bytes into
-        * a loader object, it wraps it in a BitmapDataResource so resource management can happen consistently without
-        * exception cases.
-        */
-        var BitmapParser = (function (_super) {
-            __extends(BitmapParser, _super);
-            //private var _loader           : Loader;
-            /**
-            * Creates a new BitmapParser object.
-            * @param uri The url or id of the data or file to be parsed.
-            * @param extra The holder for extra contextual data that the parser might need.
-            */
-            function BitmapParser() {
-                _super.call(this, URLLoaderDataFormat.ARRAY_BUFFER);
-            }
-            /**
-            * Indicates whether or not a given file extension is supported by the parser.
-            * @param extension The file extension of a potential file to be parsed.
-            * @return Whether or not the given file type is supported.
-            */
-            BitmapParser.supportsType = function (extension) {
-                extension = extension.toLowerCase();
-                return extension == "jpg" || extension == "jpeg" || extension == "png" || extension == "gif";
-            };
-
-            /**
-            * Tests whether a data block can be parsed by the parser.
-            * @param data The data block to potentially be parsed.
-            * @return Whether or not the given data is supported.
-            */
-            BitmapParser.supportsData = function (data) {
-                if (data instanceof HTMLImageElement)
-                    return true;
-
-                if (!(data instanceof ByteArray))
-                    return false;
-
-                var ba = data;
-                ba.position = 0;
-
-                if (ba.readUnsignedShort() == 0xffd8)
-                    return true;
-
-                ba.position = 0;
-                if (ba.readShort() == 0x424D)
-                    return true;
-
-                ba.position = 1;
-                if (ba.readUTFBytes(3) == 'PNG')
-                    return true;
-
-                ba.position = 0;
-                if (ba.readUTFBytes(3) == 'GIF' && ba.readShort() == 0x3839 && ba.readByte() == 0x61)
-                    return true;
-
-                ba.position = 0;
-                if (ba.readUTFBytes(3) == 'ATF')
-                    return true;
-
-                return false;
-            };
-
-            /**
-            * @inheritDoc
-            */
-            BitmapParser.prototype._pProceedParsing = function () {
-                var _this = this;
-                var asset;
-                var sizeError = false;
-
-                if (this._loadingImage) {
-                    return parsers.ParserBase.MORE_TO_PARSE;
-                } else if (this._htmlImageElement) {
-                    if (TextureUtils.isHTMLImageElementValid(this._htmlImageElement)) {
-                        asset = new ImageTexture(this._htmlImageElement);
-                        this._pFinalizeAsset(asset, this._iFileName);
-                    }
-                } else if (this.data instanceof HTMLImageElement) {
-                    if (TextureUtils.isHTMLImageElementValid(this.data)) {
-                        asset = new ImageTexture(this.data);
-                        this._pFinalizeAsset(asset, this._iFileName);
-                    } else {
-                        sizeError = true;
-                    }
-                } else if (this.data instanceof ByteArray) {
-                    var ba = this.data;
-                    ba.position = 0;
-                    var htmlImageElement = parsers.ParserUtils.byteArrayToImage(this.data);
-
-                    if (TextureUtils.isHTMLImageElementValid(htmlImageElement)) {
-                        asset = new ImageTexture(htmlImageElement);
-                        this._pFinalizeAsset(asset, this._iFileName);
-                    } else {
-                        sizeError = true;
-                    }
-                } else if (this.data instanceof ArrayBuffer) {
-                    this._htmlImageElement = parsers.ParserUtils.arrayBufferToImage(this.data);
-
-                    asset = new ImageTexture(this._htmlImageElement);
-                    this._pFinalizeAsset(asset, this._iFileName);
-                } else if (this.data instanceof Blob) {
-                    this._htmlImageElement = parsers.ParserUtils.blobToImage(this.data);
-
-                    this._htmlImageElement.onload = function (event) {
-                        return _this.onLoadComplete(event);
-                    };
-                    this._loadingImage = true;
-
-                    return parsers.ParserBase.MORE_TO_PARSE;
-                }
-
-                if (sizeError == true) {
-                    //				asset = new BitmapTexture(away.materials.DefaultMaterialManager.createCheckeredBitmapData(), false);
-                    //				this._pFinalizeAsset(<away.library.IAsset> asset, this._iFileName);
-                    //				this.dispatchEvent(new away.events.AssetEvent(away.events.AssetEvent.TEXTURE_SIZE_ERROR, <away.library.IAsset> asset));
-                }
-
-                this._pContent = new away.entities.Billboard(new away.materials.CSSMaterialBase(asset));
-
-                return parsers.ParserBase.PARSING_DONE;
-            };
-
-            BitmapParser.prototype.onLoadComplete = function (event) {
-                this._loadingImage = false;
-            };
-            return BitmapParser;
-        })(parsers.ParserBase);
-        parsers.BitmapParser = BitmapParser;
-    })(away.parsers || (away.parsers = {}));
-    var parsers = away.parsers;
-})(away || (away = {}));
 ///<reference path="../_definitions.ts" />
 var away;
 (function (away) {
     (function (parsers) {
+        var ImageCubeTexture = away.textures.ImageCubeTexture;
+
         /**
         * CubeTextureParser provides a "parser" for natively supported image types (jpg, png). While it simply loads bytes into
         * a loader object, it wraps it in a BitmapDataResource so resource management can happen consistently without
@@ -15806,7 +15673,7 @@ var away;
             */
             CubeTextureParser.prototype._pProceedParsing = function () {
                 if (this._imgDependencyDictionary != null) {
-                    var asset = new away.textures.ImageCubeTexture(this._getHTMLImageElement(CubeTextureParser.posX), this._getHTMLImageElement(CubeTextureParser.negX), this._getHTMLImageElement(CubeTextureParser.posY), this._getHTMLImageElement(CubeTextureParser.negY), this._getHTMLImageElement(CubeTextureParser.posZ), this._getHTMLImageElement(CubeTextureParser.negZ));
+                    var asset = new ImageCubeTexture(this._getHTMLImageElement(CubeTextureParser.posX), this._getHTMLImageElement(CubeTextureParser.negX), this._getHTMLImageElement(CubeTextureParser.posY), this._getHTMLImageElement(CubeTextureParser.negY), this._getHTMLImageElement(CubeTextureParser.posZ), this._getHTMLImageElement(CubeTextureParser.negZ));
 
                     //clear dictionary
                     this._imgDependencyDictionary = null;
@@ -15823,9 +15690,8 @@ var away;
                     var data = json.data;
                     var rec;
 
-                    if (data.length != 6) {
+                    if (data.length != 6)
                         this._pDieWithError('CubeTextureParser: Error - cube texture should have exactly 6 images');
-                    }
 
                     if (json) {
                         this._imgDependencyDictionary = new Object();
@@ -15881,6 +15747,12 @@ var away;
 var away;
 (function (away) {
     (function (parsers) {
+        var URLLoaderDataFormat = away.net.URLLoaderDataFormat;
+        var ImageTexture = away.textures.ImageTexture;
+
+        var ByteArray = away.utils.ByteArray;
+        var TextureUtils = away.utils.TextureUtils;
+
         /**
         * Texture2DParser provides a "parser" for natively supported image types (jpg, png). While it simply loads bytes into
         * a loader object, it wraps it in a BitmapDataResource so resource management can happen consistently without
@@ -15888,14 +15760,13 @@ var away;
         */
         var Texture2DParser = (function (_super) {
             __extends(Texture2DParser, _super);
-            //private var _loader           : Loader;
             /**
             * Creates a new Texture2DParser object.
             * @param uri The url or id of the data or file to be parsed.
             * @param extra The holder for extra contextual data that the parser might need.
             */
             function Texture2DParser() {
-                _super.call(this, away.net.URLLoaderDataFormat.TEXT);
+                _super.call(this, URLLoaderDataFormat.ARRAY_BUFFER);
             }
             /**
             * Indicates whether or not a given file extension is supported by the parser.
@@ -15904,7 +15775,7 @@ var away;
             */
             Texture2DParser.supportsType = function (extension) {
                 extension = extension.toLowerCase();
-                return extension == "tex";
+                return extension == "jpg" || extension == "jpeg" || extension == "png" || extension == "gif";
             };
 
             /**
@@ -15916,7 +15787,7 @@ var away;
                 if (data instanceof HTMLImageElement)
                     return true;
 
-                if (!(data instanceof away.utils.ByteArray))
+                if (!(data instanceof ByteArray))
                     return false;
 
                 var ba = data;
@@ -15948,36 +15819,64 @@ var away;
             * @inheritDoc
             */
             Texture2DParser.prototype._pProceedParsing = function () {
+                var _this = this;
                 var asset;
                 var sizeError = false;
 
-                if (this.data instanceof HTMLImageElement) {
-                    if (away.utils.TextureUtils.isHTMLImageElementValid(this.data)) {
-                        asset = new away.textures.ImageTexture(this.data);
+                if (this._loadingImage) {
+                    return parsers.ParserBase.MORE_TO_PARSE;
+                } else if (this._htmlImageElement) {
+                    if (TextureUtils.isHTMLImageElementValid(this._htmlImageElement)) {
+                        asset = new ImageTexture(this._htmlImageElement);
+                        this._pFinalizeAsset(asset, this._iFileName);
+                    }
+                } else if (this.data instanceof HTMLImageElement) {
+                    if (TextureUtils.isHTMLImageElementValid(this.data)) {
+                        asset = new ImageTexture(this.data);
                         this._pFinalizeAsset(asset, this._iFileName);
                     } else {
                         sizeError = true;
                     }
-                } else if (this.data instanceof away.utils.ByteArray) {
+                } else if (this.data instanceof ByteArray) {
                     var ba = this.data;
                     ba.position = 0;
                     var htmlImageElement = parsers.ParserUtils.byteArrayToImage(this.data);
 
-                    if (away.utils.TextureUtils.isHTMLImageElementValid(htmlImageElement)) {
-                        asset = new away.textures.ImageTexture(htmlImageElement);
+                    if (TextureUtils.isHTMLImageElementValid(htmlImageElement)) {
+                        asset = new ImageTexture(htmlImageElement);
                         this._pFinalizeAsset(asset, this._iFileName);
                     } else {
                         sizeError = true;
                     }
+                } else if (this.data instanceof ArrayBuffer) {
+                    this._htmlImageElement = parsers.ParserUtils.arrayBufferToImage(this.data);
+
+                    asset = new ImageTexture(this._htmlImageElement);
+                    this._pFinalizeAsset(asset, this._iFileName);
+                } else if (this.data instanceof Blob) {
+                    this._htmlImageElement = parsers.ParserUtils.blobToImage(this.data);
+
+                    this._htmlImageElement.onload = function (event) {
+                        return _this.onLoadComplete(event);
+                    };
+                    this._loadingImage = true;
+
+                    return parsers.ParserBase.MORE_TO_PARSE;
                 }
 
                 if (sizeError == true) {
-                    //				asset = <away.textures.Texture2DBase> new away.textures.BitmapTexture(away.materials.DefaultMaterialManager.createCheckeredBitmapData(), false);
+                    //				asset = new BitmapTexture(away.materials.DefaultMaterialManager.createCheckeredBitmapData(), false);
                     //				this._pFinalizeAsset(<away.library.IAsset> asset, this._iFileName);
                     //				this.dispatchEvent(new away.events.AssetEvent(away.events.AssetEvent.TEXTURE_SIZE_ERROR, <away.library.IAsset> asset));
                 }
 
+                this._pContent = new away.entities.Billboard(new away.materials.CSSMaterialBase(asset));
+
                 return parsers.ParserBase.PARSING_DONE;
+            };
+
+            Texture2DParser.prototype.onLoadComplete = function (event) {
+                this._loadingImage = false;
             };
             return Texture2DParser;
         })(parsers.ParserBase);
@@ -16010,6 +15909,8 @@ var away;
 var away;
 (function (away) {
     (function (parsers) {
+        var ByteArray = away.utils.ByteArray;
+
         var ParserUtils = (function () {
             function ParserUtils() {
             }
@@ -16050,9 +15951,8 @@ var away;
                 var bytes = new Uint8Array(data.arraybytes);
                 var len = bytes.byteLength;
 
-                for (var i = 0; i < len; i++) {
+                for (var i = 0; i < len; i++)
                     byteStr += String.fromCharCode(bytes[i]);
-                }
 
                 var base64Image = window.btoa(byteStr);
                 var str = 'data:image/png;base64,' + base64Image;
@@ -16088,7 +15988,7 @@ var away;
             *
             */
             ParserUtils.toByteArray = function (data) {
-                var b = new away.utils.ByteArray();
+                var b = new ByteArray();
                 b.setArrayBuffer(data);
                 return b;
             };
@@ -16104,17 +16004,14 @@ var away;
             */
             ParserUtils.toString = function (data, length) {
                 if (typeof length === "undefined") { length = 0; }
-                if (typeof data === 'string')
-                    ;
-                 {
+                if (typeof data === 'string') {
                     var s = data;
 
-                    if (s['substr'] != null) {
+                    if (s['substr'] != null)
                         return s.substr(0, s.length);
-                    }
                 }
 
-                if (data instanceof away.utils.ByteArray) {
+                if (data instanceof ByteArray) {
                     var ba = data;
                     ba.position = 0;
                     return ba.readUTFBytes(Math.min(ba.getBytesAvailable(), length));
@@ -16149,11 +16046,6 @@ var away;
 var away;
 (function (away) {
     (function (parsers) {
-        //import away.arcane;
-        //import away.library.assets.IAsset;
-        //import away.loaders.parsers.ParserBase;
-        //import flash.net.URLRequest;
-        //use namespace arcane;
         /**
         * ResourceDependency represents the data required to load, parse and resolve additional files ("dependencies")
         * required by a parser, used by ResourceLoadSession.
@@ -16501,6 +16393,11 @@ var away;
         var URLLoader = away.net.URLLoader;
         var URLLoaderDataFormat = away.net.URLLoaderDataFormat;
 
+        var CubeTextureParser = away.parsers.CubeTextureParser;
+
+        var ResourceDependency = away.parsers.ResourceDependency;
+        var Texture2DParser = away.parsers.Texture2DParser;
+
         /**
         * Dispatched when any asset finishes parsing. Also see specific events for each
         * individual asset type (meshes, materials et c.)
@@ -16632,7 +16529,7 @@ var away;
                     this._context = context;
                     this._namespace = ns;
 
-                    this._baseDependency = new away.parsers.ResourceDependency('', req, null, parser, null);
+                    this._baseDependency = new ResourceDependency('', req, null, parser, null);
                     this.retrieveDependency(this._baseDependency);
 
                     return this._token;
@@ -16661,7 +16558,7 @@ var away;
                     this._context = context;
                     this._namespace = ns;
 
-                    this._baseDependency = new away.parsers.ResourceDependency(id, null, data, parser, null);
+                    this._baseDependency = new ResourceDependency(id, null, data, parser, null);
                     this.retrieveDependency(this._baseDependency);
 
                     return this._token;
@@ -17108,7 +17005,7 @@ var away;
 
                 return null;
             };
-            AssetLoader._parsers = new Array(away.parsers.BitmapParser, away.parsers.Texture2DParser, away.parsers.CubeTextureParser);
+            AssetLoader._parsers = new Array(Texture2DParser, CubeTextureParser);
             return AssetLoader;
         })(away.events.EventDispatcher);
         library.AssetLoader = AssetLoader;
@@ -19600,7 +19497,27 @@ var away;
     var partition = away.partition;
 })(away || (away = {}));
 ///<reference path="../../_definitions.ts"/>
+var away;
+(function (away) {
+    /**
+    * @module away.pick
+    */
+    (function (pick) {
+        
+    })(away.pick || (away.pick = {}));
+    var pick = away.pick;
+})(away || (away = {}));
 ///<reference path="../../_definitions.ts"/>
+var away;
+(function (away) {
+    /**
+    * @module away.pick
+    */
+    (function (pick) {
+        
+    })(away.pick || (away.pick = {}));
+    var pick = away.pick;
+})(away || (away = {}));
 var away;
 (function (away) {
     ///<reference path="../../_definitions.ts"/>
@@ -19638,6 +19555,8 @@ var away;
     * @module away.pick
     */
     (function (pick) {
+        var RaycastCollector = away.traverse.RaycastCollector;
+
         /**
         * Picks a 3d object from a view or scene by 3D raycast calculations.
         * Performs an initial coarse boundary calculation to return a subset of entities whose bounding volumes intersect with the specified ray,
@@ -19657,7 +19576,7 @@ var away;
                 this._ignoredEntities = [];
                 this._onlyMouseEnabled = true;
                 this._numEntities = 0;
-                this._raycastCollector = new away.traverse.RaycastCollector();
+                this._raycastCollector = new RaycastCollector();
 
                 this._findClosestCollision = findClosestCollision;
                 this._entities = new Array();
@@ -19720,11 +19639,11 @@ var away;
                 return this.getPickingCollisionVO(this._raycastCollector);
             };
 
-            //		public getEntityCollision(position:away.geom.Vector3D, direction:away.geom.Vector3D, entities:Array<away.entities.IEntity>):PickingCollisionVO
+            //		public getEntityCollision(position:away.geom.Vector3D, direction:away.geom.Vector3D, entities:Array<IEntity>):PickingCollisionVO
             //		{
             //			this._numEntities = 0;
             //
-            //			var entity:away.entities.IEntity;
+            //			var entity:IEntity;
             //			var l:number = entities.length;
             //
             //			for (var c:number = 0; c < l; c++) {
@@ -31322,6 +31241,10 @@ var away;
 var away;
 (function (away) {
     (function (animators) {
+        var AssetType = away.library.AssetType;
+
+        var NamedAssetBase = away.library.NamedAssetBase;
+
         /**
         * Provides an abstract base class for nodes in an animation blend tree.
         */
@@ -31352,19 +31275,33 @@ var away;
                 * @inheritDoc
                 */
                 get: function () {
-                    return away.library.AssetType.ANIMATION_NODE;
+                    return AssetType.ANIMATION_NODE;
                 },
                 enumerable: true,
                 configurable: true
             });
             return AnimationNodeBase;
-        })(away.library.NamedAssetBase);
+        })(NamedAssetBase);
         animators.AnimationNodeBase = AnimationNodeBase;
     })(away.animators || (away.animators = {}));
     var animators = away.animators;
 })(away || (away = {}));
 ///<reference path="../_definitions.ts"/>
+var away;
+(function (away) {
+    (function (animators) {
+        
+    })(away.animators || (away.animators = {}));
+    var animators = away.animators;
+})(away || (away = {}));
 ///<reference path="../_definitions.ts"/>
+var away;
+(function (away) {
+    (function (animators) {
+        
+    })(away.animators || (away.animators = {}));
+    var animators = away.animators;
+})(away || (away = {}));
 /**********************************************************************************************************************************************************************************************************
 * This file contains a reference to all the classes used in the project.
 ********************************************************************************************************************************************************************************************************
@@ -31483,7 +31420,6 @@ var away;
 ///<reference path="textures/MipmapGenerator.ts" />
 ///<reference path="textures/SpecularBitmapTexture.ts" />
 ///<reference path="parsers/ParserBase.ts" />
-///<reference path="parsers/BitmapParser.ts" />
 ///<reference path="parsers/CubeTextureParser.ts" />
 ///<reference path="parsers/Texture2DParser.ts" />
 ///<reference path="parsers/ParserDataFormat.ts" />

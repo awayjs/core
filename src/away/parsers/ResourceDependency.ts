@@ -2,13 +2,9 @@
 
 module away.parsers
 {
-	//import away.arcane;
-	//import away.library.assets.IAsset;
-	//import away.loaders.parsers.ParserBase;
-
-	//import flash.net.URLRequest;
-
-	//use namespace arcane;
+	import IAsset					= away.library.IAsset;
+	import URLLoader				= away.net.URLLoader;
+	import URLRequest				= away.net.URLRequest;
 
 	/**
 	 * ResourceDependency represents the data required to load, parse and resolve additional files ("dependencies")
@@ -18,8 +14,8 @@ module away.parsers
 	export class ResourceDependency
 	{
 		private _id:string;
-		private _request:away.net.URLRequest;
-		private _assets:Array<away.library.IAsset>;
+		private _request:URLRequest;
+		private _assets:Array<IAsset>;
 		private _parser:ParserBase;
 		private _parentParser:ParserBase;
 		private _data:any;
@@ -27,11 +23,11 @@ module away.parsers
 		private _suppressAssetEvents:boolean;
 		private _dependencies:ResourceDependency[];
 
-		public _iLoader:away.net.URLLoader;
+		public _iLoader:URLLoader;
 		public _iSuccess:boolean;
 
 
-		constructor(id:string, request:away.net.URLRequest, data:any, parser:ParserBase, parentParser:ParserBase, retrieveAsRawData:boolean = false, suppressAssetEvents:boolean = false)
+		constructor(id:string, request:URLRequest, data:any, parser:ParserBase, parentParser:ParserBase, retrieveAsRawData:boolean = false, suppressAssetEvents:boolean = false)
 		{
 			this._id = id;
 			this._request = request;
@@ -41,7 +37,7 @@ module away.parsers
 			this._retrieveAsRawData = retrieveAsRawData;
 			this._suppressAssetEvents = suppressAssetEvents;
 
-			this._assets = new Array<away.library.IAsset>();
+			this._assets = new Array<IAsset>();
 			this._dependencies = new Array<ResourceDependency>();
 		}
 
@@ -56,7 +52,7 @@ module away.parsers
 		/**
 		 *
 		 */
-		public get request():away.net.URLRequest
+		public get request():URLRequest
 		{
 			return this._request;
 		}
@@ -104,7 +100,7 @@ module away.parsers
 		/**
 		 *
 		 */
-		public get assets():Array<away.library.IAsset>
+		public get assets():Array<IAsset>
 		{
 			return this._assets;
 		}
@@ -158,13 +154,12 @@ module away.parsers
 		/**
 		 * Resolve the dependencies name
 		 */
-		public resolveName(asset:away.library.IAsset):string
+		public resolveName(asset:IAsset):string
 		{
 			if (this._parentParser)
 				return this._parentParser._iResolveDependencyName(this, asset);
 
 			return asset.name;
 		}
-
 	}
 }

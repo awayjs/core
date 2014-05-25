@@ -2,9 +2,14 @@
 
 module away.library
 {
+	import DisplayObject			= away.base.DisplayObject;
 	import URLLoader				= away.net.URLLoader;
 	import URLLoaderDataFormat		= away.net.URLLoaderDataFormat;
 	import URLRequest				= away.net.URLRequest;
+	import CubeTextureParser		= away.parsers.CubeTextureParser;
+	import ParserBase				= away.parsers.ParserBase;
+	import ResourceDependency		= away.parsers.ResourceDependency;
+	import Texture2DParser			= away.parsers.Texture2DParser;
 
 	/**
 	 * Dispatched when any asset finishes parsing. Also see specific events for each
@@ -70,15 +75,15 @@ module away.library
 		private _context:AssetLoaderContext;
 		private _token:AssetLoaderToken;
 		private _uri:string;
-		private _content:away.base.DisplayObject;
+		private _content:DisplayObject;
 		private _materialMode:number;
 		
 		private _errorHandlers:Array<Function>;
 		private _parseErrorHandlers:Array<Function>;
 
-		private _stack:Array<away.parsers.ResourceDependency>;
-		private _baseDependency:away.parsers.ResourceDependency;
-		private _currentDependency:away.parsers.ResourceDependency;
+		private _stack:Array<ResourceDependency>;
+		private _baseDependency:ResourceDependency;
+		private _currentDependency:ResourceDependency;
 		private _namespace:string;
 		
 		private _onReadyForDependenciesDelegate:Function;
@@ -90,7 +95,7 @@ module away.library
 		private _onAssetCompleteDelegate:Function;
 
 		// Image parser only parser that is added by default, to save file size.
-		private static _parsers:Array<any> = new Array<any>(away.parsers.BitmapParser, away.parsers.Texture2DParser, away.parsers.CubeTextureParser);
+		private static _parsers:Array<any> = new Array<any>(Texture2DParser, CubeTextureParser);
 
 		/**
 		 * Enables a specific parser.
@@ -126,7 +131,7 @@ module away.library
 		/**
 		 * Returns the base dependency of the loader
 		 */
-		public get baseDependency():away.parsers.ResourceDependency
+		public get baseDependency():ResourceDependency
 		{
 			return this._baseDependency;
 		}
@@ -140,7 +145,7 @@ module away.library
 
 			this._materialMode = materialMode;
 
-			this._stack = new Array<away.parsers.ResourceDependency>();
+			this._stack = new Array<ResourceDependency>();
 			this._errorHandlers = new Array<Function>();
 			this._parseErrorHandlers = new Array<Function>();
 
@@ -161,7 +166,7 @@ module away.library
 		 * @param ns An optional namespace string under which the file is to be loaded, allowing the differentiation of two resources with identical assets
 		 * @param parser An optional parser object for translating the loaded data into a usable resource. If not provided, AssetLoader will attempt to auto-detect the file type.
 		 */
-		public load(req:URLRequest, context:AssetLoaderContext = null, ns:string = null, parser:away.parsers.ParserBase = null):AssetLoaderToken
+		public load(req:URLRequest, context:AssetLoaderContext = null, ns:string = null, parser:ParserBase = null):AssetLoaderToken
 		{
 			if (!this._token) {
 				this._token = new AssetLoaderToken(this);
@@ -170,7 +175,7 @@ module away.library
 				this._context = context;
 				this._namespace = ns;
 
-				this._baseDependency = new away.parsers.ResourceDependency('', req, null, parser, null);
+				this._baseDependency = new ResourceDependency('', req, null, parser, null);
 				this.retrieveDependency(this._baseDependency);
 
 				return this._token;
@@ -188,7 +193,7 @@ module away.library
 		 * @param ns An optional namespace string under which the file is to be loaded, allowing the differentiation of two resources with identical assets
 		 * @param parser An optional parser object for translating the loaded data into a usable resource. If not provided, AssetLoader will attempt to auto-detect the file type.
 		 */
-		public loadData(data:any, id:string, context:AssetLoaderContext = null, ns:string = null, parser:away.parsers.ParserBase = null):AssetLoaderToken
+		public loadData(data:any, id:string, context:AssetLoaderContext = null, ns:string = null, parser:ParserBase = null):AssetLoaderToken
 		{
 			if (!this._token) {
 				this._token = new AssetLoaderToken(this);
@@ -197,7 +202,7 @@ module away.library
 				this._context = context;
 				this._namespace = ns;
 
-				this._baseDependency = new away.parsers.ResourceDependency(id, null, data, parser, null);
+				this._baseDependency = new ResourceDependency(id, null, data, parser, null);
 				this.retrieveDependency(this._baseDependency);
 
 				return this._token;
@@ -212,11 +217,11 @@ module away.library
 		 * stack when complete and continues on the top set.
 		 * @param parser The parser that will translate the data into a usable resource.
 		 */
-		private retrieveNext(parser:away.parsers.ParserBase = null)
+		private retrieveNext(parser:ParserBase = null)
 		{
 			if (this._currentDependency.dependencies.length) {
 
-				var next:away.parsers.ResourceDependency = this._currentDependency.dependencies.pop();
+				var next:ResourceDependency = this._currentDependency.dependencies.pop();
 
 				this._stack.push(this._currentDependency);
 				this.retrieveDependency(next);
@@ -228,7 +233,7 @@ module away.library
 
 			} else if (this._stack.length) {
 
-				var prev:away.parsers.ResourceDependency = this._currentDependency;
+				var prev:ResourceDependency = this._currentDependency;
 
 				this._currentDependency = this._stack.pop();
 
@@ -246,7 +251,7 @@ module away.library
 		 * Retrieves a single dependency.
 		 * @param parser The parser that will translate the data into a usable resource.
 		 */
-		private retrieveDependency(dependency:away.parsers.ResourceDependency)
+		private retrieveDependency(dependency:ResourceDependency)
 		{
 			var data:any;
 
@@ -324,7 +329,7 @@ module away.library
 
 		}
 
-		private resolveDependencyUrl(dependency:away.parsers.ResourceDependency):string
+		private resolveDependencyUrl(dependency:ResourceDependency):string
 		{
 			var scheme_re:RegExp;
 			var base:string;
@@ -502,7 +507,7 @@ module away.library
 
 		private onReadyForDependencies(event:away.events.ParserEvent)
 		{
-			var parser:away.parsers.ParserBase = <away.parsers.ParserBase> event.target;
+			var parser:ParserBase = <ParserBase> event.target;
 
 			if (this._context && !this._context.includeDependencies)
 				parser._iResumeParsingAfterDependencies();
@@ -536,7 +541,7 @@ module away.library
 		 */
 		private onParseComplete(event:away.events.ParserEvent):void
 		{
-			var parser:away.parsers.ParserBase = <away.parsers.ParserBase> event.target;
+			var parser:ParserBase = <ParserBase> event.target;
 
 			this.resolveParserDependencies();//resolve in front of removing listeners to allow any remaining asset events to propagate
 
@@ -621,7 +626,7 @@ module away.library
 		 * @param uri The url or id of the object to be parsed.
 		 * @return An instance of the guessed parser.
 		 */
-		private getParserFromData(data:any):away.parsers.ParserBase
+		private getParserFromData(data:any):ParserBase
 		{
 			var len:number = AssetLoader._parsers.length;
 
@@ -639,9 +644,9 @@ module away.library
 		 * 
 		 * @param The dependency to be parsed.
 		 */
-		private parseDependency(dependency:away.parsers.ResourceDependency):void
+		private parseDependency(dependency:ResourceDependency):void
 		{
-			var parser:away.parsers.ParserBase = dependency.parser;
+			var parser:ParserBase = dependency.parser;
 			
 			// If no parser has been defined, try to find one by letting
 			// all plugged in parsers inspect the actual data.
@@ -675,7 +680,7 @@ module away.library
 		 * Guesses the parser to be used based on the file extension.
 		 * @return An instance of the guessed parser.
 		 */
-		private getParserFromSuffix(url:string):away.parsers.ParserBase
+		private getParserFromSuffix(url:string):ParserBase
 		{
 			// Get rid of query string if any and extract extension
 			var base:string = (url.indexOf('?') > 0)? url.split('?')[0] : url;

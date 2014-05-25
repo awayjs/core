@@ -2,11 +2,14 @@
 
 module away.animators
 {
+	import AssetType					= away.library.AssetType;
+	import IAsset						= away.library.IAsset;
+	import NamedAssetBase				= away.library.NamedAssetBase;
 
 	/**
 	 * Provides an abstract base class for nodes in an animation blend tree.
 	 */
-	export class AnimationNodeBase extends away.library.NamedAssetBase implements away.library.IAsset
+	export class AnimationNodeBase extends NamedAssetBase implements IAsset
 	{
 		public _pStateClass:any;
 
@@ -35,7 +38,7 @@ module away.animators
 		 */
 		public get assetType():string
 		{
-			return away.library.AssetType.ANIMATION_NODE;
+			return AssetType.ANIMATION_NODE;
 		}
 	}
 }

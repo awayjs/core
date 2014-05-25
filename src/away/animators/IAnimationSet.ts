@@ -2,13 +2,14 @@
 
 module away.animators
 {
+	import IAsset						= away.library.IAsset;
 
 	/**
 	 * Provides an interface for data set classes that hold animation data for use in animator classes.
 	 *
 	 * @see away3d.animators.AnimatorBase
 	 */
-	export interface IAnimationSet
+	export interface IAnimationSet extends IAsset
 	{
 		/**
 		 * Check to determine whether a state is registered in the animation set under the given name.

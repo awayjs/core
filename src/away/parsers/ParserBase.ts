@@ -2,6 +2,16 @@
 
 module away.parsers
 {
+	import BitmapData				= away.base.BitmapData;
+	import DisplayObject			= away.base.DisplayObject;
+	import AbstractMethodError		= away.errors.AbstractMethodError;
+	import AssetEvent				= away.events.AssetEvent;
+	import ParserEvent				= away.events.ParserEvent;
+	import TimerEvent				= away.events.TimerEvent;
+	import IAsset					= away.library.IAsset;
+	import TextureUtils				= away.utils.TextureUtils;
+	import Timer					= away.utils.Timer;
+	import ByteArray				= away.utils.ByteArray;
 
 	/**
 	 * <code>ParserBase</code> provides an abstract base class for objects that convert blocks of data to data structures
@@ -30,7 +40,7 @@ module away.parsers
 		private _frameLimit:number;
 		private _lastFrameTime:number;
 		private _pOnIntervalDelegate:Function;
-		public _pContent:away.base.DisplayObject;
+		public _pContent:DisplayObject;
 
 		//----------------------------------------------------------------------------------------------------------------------------------------------------------------
 		// TODO: add error checking for the following ( could cause a problem if this function is not implemented )
@@ -42,10 +52,7 @@ module away.parsers
 
 		public static supportsType(extension:string):boolean
 		{
-
-			throw new away.errors.AbstractMethodError();
-			return false;
-
+			throw new AbstractMethodError();
 		}
 
 		/* TODO: Implement ParserUtils;
@@ -59,11 +66,11 @@ module away.parsers
 		 return ParserUtils.toByteArray(_data);
 		 }
 		 */
-		private _dependencies:ResourceDependency[];//Vector.<ResourceDependency>;
+		private _dependencies:Array<ResourceDependency>;
 		private _parsingPaused:boolean;
 		private _parsingComplete:boolean;
 		private _parsingFailure:boolean;
-		private _timer:away.utils.Timer;
+		private _timer:Timer;
 		private _materialMode:number;
 
 		/**
@@ -79,7 +86,7 @@ module away.parsers
 		/* Protected */
 
 
-		public get content():away.base.DisplayObject
+		public get content():DisplayObject
 		{
 			return this._pContent;
 		}
@@ -105,9 +112,9 @@ module away.parsers
 		 * Validates a bitmapData loaded before assigning to a default BitmapMaterial
 		 */
 
-		public isBitmapDataValid(bitmapData:away.base.BitmapData):boolean
+		public isBitmapDataValid(bitmapData:BitmapData):boolean
 		{
-			var isValid:boolean = away.utils.TextureUtils.isBitmapDataValid(bitmapData);
+			var isValid:boolean = TextureUtils.isBitmapDataValid(bitmapData);
 
 			if (!isValid) {
 
@@ -193,7 +200,7 @@ module away.parsers
 		 */
 		public _iResolveDependency(resourceDependency:ResourceDependency)
 		{
-			throw new away.errors.AbstractMethodError();
+			throw new AbstractMethodError();
 		}
 
 		/**
@@ -203,7 +210,7 @@ module away.parsers
 		 */
 		public _iResolveDependencyFailure(resourceDependency:ResourceDependency)
 		{
-			throw new away.errors.AbstractMethodError();
+			throw new AbstractMethodError();
 		}
 
 		/**
@@ -211,7 +218,7 @@ module away.parsers
 		 *
 		 * @param resourceDependency The dependency to be resolved.
 		 */
-		public _iResolveDependencyName(resourceDependency:ResourceDependency, asset:away.library.IAsset):string
+		public _iResolveDependencyName(resourceDependency:ResourceDependency, asset:IAsset):string
 		{
 			return asset.name;
 		}
@@ -224,7 +231,7 @@ module away.parsers
 				this._timer.start();
 		}
 
-		public _pFinalizeAsset(asset:away.library.IAsset, name:string = null)
+		public _pFinalizeAsset(asset:IAsset, name:string = null)
 		{
 			var type_event:string;
 			var type_name:string;
@@ -237,7 +244,7 @@ module away.parsers
 			if (!asset.name)
 				asset.name = asset.assetType;
 
-			this.dispatchEvent(new away.events.AssetEvent(away.events.AssetEvent.ASSET_COMPLETE, asset));
+			this.dispatchEvent(new AssetEvent(AssetEvent.ASSET_COMPLETE, asset));
 		}
 
 		/**
@@ -247,18 +254,18 @@ module away.parsers
 		 */
 		public _pProceedParsing():boolean
 		{
-			throw new away.errors.AbstractMethodError();
+			throw new AbstractMethodError();
 		}
 
 		public _pDieWithError(message:string = 'Unknown parsing error')
 		{
 			if (this._timer) {
-				this._timer.removeEventListener(away.events.TimerEvent.TIMER, this._pOnIntervalDelegate);
+				this._timer.removeEventListener(TimerEvent.TIMER, this._pOnIntervalDelegate);
 				this._timer.stop();
 				this._timer = null;
 			}
 
-			this.dispatchEvent(new away.events.ParserEvent(away.events.ParserEvent.PARSE_ERROR, message));
+			this.dispatchEvent(new ParserEvent(ParserEvent.PARSE_ERROR, message));
 		}
 
 		public _pAddDependency(id:string, req:away.net.URLRequest, retrieveAsRawData:boolean = false, data:any = null, suppressErrorEvents:boolean = false):ResourceDependency
@@ -275,7 +282,7 @@ module away.parsers
 				this._timer.stop();
 
 			this._parsingPaused = true;
-			this.dispatchEvent(new away.events.ParserEvent(away.events.ParserEvent.READY_FOR_DEPENDENCIES));
+			this.dispatchEvent(new ParserEvent(ParserEvent.READY_FOR_DEPENDENCIES));
 		}
 
 		/**
@@ -290,7 +297,7 @@ module away.parsers
 		/**
 		 * Called when the parsing pause interval has passed and parsing can proceed.
 		 */
-		public _pOnInterval(event:away.events.TimerEvent = null)
+		public _pOnInterval(event:TimerEvent = null)
 		{
 			this._lastFrameTime = away.utils.getTimer();
 
@@ -305,8 +312,8 @@ module away.parsers
 		public _pStartParsing(frameLimit:number)
 		{
 			this._frameLimit = frameLimit;
-			this._timer = new away.utils.Timer(this._frameLimit, 0);
-			this._timer.addEventListener(away.events.TimerEvent.TIMER, this._pOnIntervalDelegate);
+			this._timer = new Timer(this._frameLimit, 0);
+			this._timer.addEventListener(TimerEvent.TIMER, this._pOnIntervalDelegate);
 			this._timer.start();
 		}
 
@@ -316,14 +323,14 @@ module away.parsers
 		public _pFinishParsing()
 		{
 			if (this._timer) {
-				this._timer.removeEventListener(away.events.TimerEvent.TIMER, this._pOnIntervalDelegate);
+				this._timer.removeEventListener(TimerEvent.TIMER, this._pOnIntervalDelegate);
 				this._timer.stop();
 			}
 
 			this._timer = null;
 			this._parsingComplete = true;
 
-			this.dispatchEvent(new away.events.ParserEvent(away.events.ParserEvent.PARSE_COMPLETE));
+			this.dispatchEvent(new ParserEvent(ParserEvent.PARSE_COMPLETE));
 		}
 
 		/**
@@ -341,7 +348,7 @@ module away.parsers
 		 * @returns {string}
 		 * @private
 		 */
-		public _pGetByteData():away.utils.ByteArray
+		public _pGetByteData():ByteArray
 		{
 			return ParserUtils.toByteArray(this._data);
 		}

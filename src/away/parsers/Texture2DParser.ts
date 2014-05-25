@@ -2,6 +2,11 @@
 
 module away.parsers
 {
+	import URLLoaderDataFormat		= away.net.URLLoaderDataFormat;
+	import ImageTexture				= away.textures.ImageTexture;
+	import Texture2DBase			= away.textures.Texture2DBase;
+	import ByteArray				= away.utils.ByteArray;
+	import TextureUtils				= away.utils.TextureUtils;
 
 	/**
 	 * Texture2DParser provides a "parser" for natively supported image types (jpg, png). While it simply loads bytes into
@@ -10,10 +15,10 @@ module away.parsers
 	 */
 	export class Texture2DParser extends ParserBase
 	{
-		//private var _byteData         : ByteArray;
 		private _startedParsing:boolean;
 		private _doneParsing:boolean;
-		//private var _loader           : Loader;
+		private _loadingImage:boolean;
+		private _htmlImageElement:HTMLImageElement;
 
 		/**
 		 * Creates a new Texture2DParser object.
@@ -22,7 +27,7 @@ module away.parsers
 		 */
 		constructor()
 		{
-			super(away.net.URLLoaderDataFormat.TEXT);
+			super(URLLoaderDataFormat.ARRAY_BUFFER);
 		}
 
 		/**
@@ -30,12 +35,11 @@ module away.parsers
 		 * @param extension The file extension of a potential file to be parsed.
 		 * @return Whether or not the given file type is supported.
 		 */
-
 		public static supportsType(extension:string):boolean
 		{
 
 			extension = extension.toLowerCase();
-			return extension == "tex";
+			return extension == "jpg" || extension == "jpeg" || extension == "png" || extension == "gif";//|| extension == "bmp";//|| extension == "atf";
 
 		}
 
@@ -50,10 +54,10 @@ module away.parsers
 			if (data  instanceof HTMLImageElement)
 				return true;
 
-			if (!(data instanceof away.utils.ByteArray))
+			if (!(data instanceof ByteArray))
 				return false;
 
-			var ba:away.utils.ByteArray = <away.utils.ByteArray> data;
+			var ba:ByteArray = <ByteArray> data;
 			ba.position = 0;
 
 			if (ba.readUnsignedShort() == 0xffd8)
@@ -85,45 +89,71 @@ module away.parsers
 		public _pProceedParsing():boolean
 		{
 
-			var asset:away.textures.Texture2DBase;
+			var asset:Texture2DBase;
 			var sizeError:boolean = false;
 
-			if (this.data instanceof HTMLImageElement)// Parse HTMLImageElement
-			{
+			if (this._loadingImage) {
+				return ParserBase.MORE_TO_PARSE;
+			} else if (this._htmlImageElement) {
+				if (TextureUtils.isHTMLImageElementValid(this._htmlImageElement)) {
+					asset = new ImageTexture(this._htmlImageElement);
+					this._pFinalizeAsset(<away.library.IAsset> asset, this._iFileName);
+				}
+			} else if (this.data instanceof HTMLImageElement) {// Parse HTMLImageElement
 
-				if (away.utils.TextureUtils.isHTMLImageElementValid(<HTMLImageElement> this.data)) {
-					asset = <away.textures.Texture2DBase> new away.textures.ImageTexture(<HTMLImageElement> this.data);
+				if (TextureUtils.isHTMLImageElementValid(<HTMLImageElement> this.data)) {
+					asset = new ImageTexture(<HTMLImageElement> this.data);
 					this._pFinalizeAsset(<away.library.IAsset> asset, this._iFileName);
 				} else {
 					sizeError = true;
 				}
 
-			} else if (this.data instanceof away.utils.ByteArray) // Parse a ByteArray
-			{
+			} else if (this.data instanceof ByteArray) { // Parse a ByteArray
 
-				var ba:away.utils.ByteArray = this.data
+				var ba:ByteArray = this.data;
 				ba.position = 0;
 				var htmlImageElement:HTMLImageElement = ParserUtils.byteArrayToImage(this.data);
 
-				if (away.utils.TextureUtils.isHTMLImageElementValid(htmlImageElement)) {
-					asset = <away.textures.Texture2DBase> new away.textures.ImageTexture(htmlImageElement);
+				if (TextureUtils.isHTMLImageElementValid(htmlImageElement)) {
+					asset = new ImageTexture(htmlImageElement);
 					this._pFinalizeAsset(<away.library.IAsset> asset, this._iFileName);
 				} else {
 					sizeError = true;
 				}
 
+			} else if (this.data instanceof ArrayBuffer) {// Parse an ArrayBuffer
+
+				this._htmlImageElement = ParserUtils.arrayBufferToImage(this.data);
+
+				asset = new ImageTexture(this._htmlImageElement);
+				this._pFinalizeAsset(<away.library.IAsset> asset, this._iFileName);
+
+			} else if (this.data instanceof Blob) { // Parse a Blob
+
+				this._htmlImageElement = ParserUtils.blobToImage(this.data);
+
+				this._htmlImageElement.onload = (event) => this.onLoadComplete(event);
+				this._loadingImage = true;
+
+				return ParserBase.MORE_TO_PARSE;
 			}
 
 			if (sizeError == true) // Generate new Checkerboard texture material
 			{
-//				asset = <away.textures.Texture2DBase> new away.textures.BitmapTexture(away.materials.DefaultMaterialManager.createCheckeredBitmapData(), false);
+//				asset = new BitmapTexture(away.materials.DefaultMaterialManager.createCheckeredBitmapData(), false);
 //				this._pFinalizeAsset(<away.library.IAsset> asset, this._iFileName);
 //				this.dispatchEvent(new away.events.AssetEvent(away.events.AssetEvent.TEXTURE_SIZE_ERROR, <away.library.IAsset> asset));
 			}
+
+			this._pContent = new away.entities.Billboard(new away.materials.CSSMaterialBase(asset));
 
 			return ParserBase.PARSING_DONE;
 
 		}
 
+		public onLoadComplete(event)
+		{
+			this._loadingImage = false;
+		}
 	}
 }

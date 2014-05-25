@@ -5,6 +5,7 @@
  */
 module away.traverse
 {
+
 	/**
 	 * @class away.traverse.CollectorBase
 	 */

@@ -2,6 +2,8 @@
 
 module away.parsers
 {
+	import ImageCubeTexture			= away.textures.ImageCubeTexture;
+	import ImageTexture				= away.textures.ImageTexture;
 
 	/**
 	 * CubeTextureParser provides a "parser" for natively supported image types (jpg, png). While it simply loads bytes into
@@ -87,7 +89,7 @@ module away.parsers
 		public _pProceedParsing():boolean
 		{
 			if (this._imgDependencyDictionary != null) { //all images loaded
-				var asset:away.textures.ImageCubeTexture = new away.textures.ImageCubeTexture(
+				var asset:ImageCubeTexture = new ImageCubeTexture(
 
 					this._getHTMLImageElement(CubeTextureParser.posX), this._getHTMLImageElement(CubeTextureParser.negX), this._getHTMLImageElement(CubeTextureParser.posY), this._getHTMLImageElement(CubeTextureParser.negY), this._getHTMLImageElement(CubeTextureParser.posZ), this._getHTMLImageElement(CubeTextureParser.negZ));
 
@@ -106,9 +108,8 @@ module away.parsers
 				var data:Array<Object> = <Array<Object>> json.data;
 				var rec:any;
 
-				if (data.length != 6) {
+				if (data.length != 6)
 					this._pDieWithError('CubeTextureParser: Error - cube texture should have exactly 6 images');
-				}
 
 				if (json) {
 					this._imgDependencyDictionary = new Object();
@@ -148,7 +149,7 @@ module away.parsers
 			var dependency:ResourceDependency = <ResourceDependency> this._imgDependencyDictionary[ name ];
 
 			if (dependency) {
-				return <HTMLImageElement> (<away.textures.ImageTexture> dependency.assets[0]).htmlImageElement;
+				return <HTMLImageElement> (<ImageTexture> dependency.assets[0]).htmlImageElement;
 			}
 
 			return null;

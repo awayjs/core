@@ -5,6 +5,13 @@
  */
 module away.pick
 {
+	import Scene						= away.containers.Scene;
+	import View							= away.containers.View;
+	import IEntity						= away.entities.IEntity;
+	import Vector3D						= away.geom.Vector3D;
+	import ICollector					= away.traverse.ICollector;
+	import RaycastCollector				= away.traverse.RaycastCollector;
+
 	/**
 	 * Picks a 3d object from a view or scene by 3D raycast calculations.
 	 * Performs an initial coarse boundary calculation to return a subset of entities whose bounding volumes intersect with the specified ray,
@@ -15,11 +22,11 @@ module away.pick
 	export class RaycastPicker implements IPicker
 	{
 		private _findClosestCollision:boolean;
-		private _raycastCollector:away.traverse.RaycastCollector;
+		private _raycastCollector:RaycastCollector;
 		private _ignoredEntities = [];
 		private _onlyMouseEnabled:boolean = true;
 
-		private _entities:Array<away.entities.IEntity>;
+		private _entities:Array<IEntity>;
 		private _numEntities:number = 0;
 		private _hasCollisions:boolean;
 
@@ -44,10 +51,10 @@ module away.pick
 		 */
 		constructor(findClosestCollision:boolean = false)
 		{
-			this._raycastCollector = new away.traverse.RaycastCollector();
+			this._raycastCollector = new RaycastCollector();
 
 			this._findClosestCollision = findClosestCollision;
-			this._entities = new Array<away.entities.IEntity>();
+			this._entities = new Array<IEntity>();
 		}
 
 		/**
@@ -79,7 +86,7 @@ module away.pick
 
 			this._numEntities = 0;
 			var node:away.pool.EntityListItem = this._raycastCollector.entityHead;
-			var entity:away.entities.IEntity;
+			var entity:IEntity;
 
 			while (node) {
 				if (!this.isIgnored(entity = node.entity))
@@ -95,11 +102,11 @@ module away.pick
 			return this.getPickingCollisionVO(this._raycastCollector);
 		}
 
-//		public getEntityCollision(position:away.geom.Vector3D, direction:away.geom.Vector3D, entities:Array<away.entities.IEntity>):PickingCollisionVO
+//		public getEntityCollision(position:away.geom.Vector3D, direction:away.geom.Vector3D, entities:Array<IEntity>):PickingCollisionVO
 //		{
 //			this._numEntities = 0;
 //
-//			var entity:away.entities.IEntity;
+//			var entity:IEntity;
 //			var l:number = entities.length;
 //
 //			for (var c:number = 0; c < l; c++) {
@@ -117,7 +124,7 @@ module away.pick
 			this._ignoredEntities = entities;
 		}
 
-		private isIgnored(entity:away.entities.IEntity):boolean
+		private isIgnored(entity:IEntity):boolean
 		{
 			if (this._onlyMouseEnabled && !entity._iIsMouseEnabled())
 				return true;
@@ -130,12 +137,12 @@ module away.pick
 			return false;
 		}
 
-		private sortOnNearT(entity1:away.entities.IEntity, entity2:away.entities.IEntity):number
+		private sortOnNearT(entity1:IEntity, entity2:IEntity):number
 		{
 			return entity1._iPickingCollisionVO.rayEntryDistance > entity2._iPickingCollisionVO.rayEntryDistance? 1 : -1;
 		}
 
-		private getPickingCollisionVO(collector:away.traverse.ICollector):PickingCollisionVO
+		private getPickingCollisionVO(collector:ICollector):PickingCollisionVO
 		{
 			// trim before sorting
 			this._entities.length = this._numEntities;
@@ -151,7 +158,7 @@ module away.pick
 			var shortestCollisionDistance:number = Number.MAX_VALUE;
 			var bestCollisionVO:PickingCollisionVO;
 			var pickingCollisionVO:PickingCollisionVO;
-			var entity:away.entities.IEntity;
+			var entity:IEntity;
 			var i:number;
 
 			for (i = 0; i < this._numEntities; ++i) {

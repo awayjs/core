@@ -4,6 +4,10 @@
  */
 module away.pick
 {
+	import DisplayObject				= away.base.DisplayObject;
+	import IMaterialOwner				= away.base.IMaterialOwner;
+	import Point						= away.geom.Point;
+	import Vector3D						= away.geom.Vector3D;
 
 	/**
 	 * Value object for a picking collision returned by a picking collider. Created as unique objects on display objects
@@ -18,22 +22,22 @@ module away.pick
 		/**
 		 * The display object to which this collision object belongs.
 		 */
-		public displayObject:away.base.DisplayObject;
+		public displayObject:DisplayObject;
 
 		/**
 		 * The local position of the collision on the entity's surface.
 		 */
-		public localPosition:away.geom.Vector3D;
+		public localPosition:Vector3D;
 
 		/**
 		 * The local normal vector at the position of the collision.
 		 */
-		public localNormal:away.geom.Vector3D;
+		public localNormal:Vector3D;
 
 		/**
 		 * The uv coordinate at the position of the collision.
 		 */
-		public uv:away.geom.Point;
+		public uv:Point;
 
 		/**
 		 * The index of the face where the event took pl ace.
@@ -48,22 +52,22 @@ module away.pick
 		/**
 		 * The starting position of the colliding ray in local coordinates.
 		 */
-		public localRayPosition:away.geom.Vector3D;
+		public localRayPosition:Vector3D;
 
 		/**
 		 * The direction of the colliding ray in local coordinates.
 		 */
-		public localRayDirection:away.geom.Vector3D;
+		public localRayDirection:Vector3D;
 
 		/**
 		 * The starting position of the colliding ray in scene coordinates.
 		 */
-		public rayPosition:away.geom.Vector3D;
+		public rayPosition:Vector3D;
 
 		/**
 		 * The direction of the colliding ray in scene coordinates.
 		 */
-		public rayDirection:away.geom.Vector3D;
+		public rayDirection:Vector3D;
 
 		/**
 		 * Determines if the ray position is contained within the entity bounds.
@@ -80,14 +84,14 @@ module away.pick
 		/**
 		 * The material ownwer associated with a collision.
 		 */
-		public materialOwner:away.base.IMaterialOwner;
+		public materialOwner:IMaterialOwner;
 
 		/**
 		 * Creates a new <code>PickingCollisionVO</code> object.
 		 *
 		 * @param entity The entity to which this collision object belongs.
 		 */
-		constructor(displayObject:away.base.DisplayObject)
+		constructor(displayObject:DisplayObject)
 		{
 			this.displayObject = displayObject;
 		}

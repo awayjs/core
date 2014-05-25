@@ -126,7 +126,6 @@
 ///<reference path="textures/SpecularBitmapTexture.ts" />
 
 ///<reference path="parsers/ParserBase.ts" />
-///<reference path="parsers/BitmapParser.ts" />
 ///<reference path="parsers/CubeTextureParser.ts" />
 ///<reference path="parsers/Texture2DParser.ts" />
 ///<reference path="parsers/ParserDataFormat.ts" />

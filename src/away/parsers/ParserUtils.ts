@@ -2,6 +2,7 @@
 
 module away.parsers
 {
+	import ByteArray				= away.utils.ByteArray;
 
 	export class ParserUtils
 	{
@@ -16,7 +17,6 @@ module away.parsers
 		 */
 		public static arrayBufferToImage(data:ArrayBuffer):HTMLImageElement
 		{
-
 			var byteStr:string = '';
 			var bytes:Uint8Array = new Uint8Array(data);
 			var len:number = bytes.byteLength;
@@ -30,7 +30,6 @@ module away.parsers
 			img.src = str;
 
 			return img;
-
 		}
 
 		/**
@@ -41,16 +40,14 @@ module away.parsers
 		 * @return HTMLImageElement
 		 *
 		 */
-		public static byteArrayToImage(data:away.utils.ByteArray):HTMLImageElement
+		public static byteArrayToImage(data:ByteArray):HTMLImageElement
 		{
-
 			var byteStr:string = '';
 			var bytes:Uint8Array = new Uint8Array(data.arraybytes);
 			var len:number = bytes.byteLength;
 
-			for (var i = 0; i < len; i++) {
+			for (var i = 0; i < len; i++)
 				byteStr += String.fromCharCode(bytes[ i ])
-			}
 
 			var base64Image:string = window.btoa(byteStr);
 			var str:string = 'data:image/png;base64,' + base64Image;
@@ -58,7 +55,6 @@ module away.parsers
 			img.src = str;
 
 			return img;
-
 		}
 
 		/**
@@ -78,6 +74,7 @@ module away.parsers
 
 			return img;
 		}
+
 		/**
 		 * Returns a object as ByteArray, if possible.
 		 *
@@ -86,9 +83,9 @@ module away.parsers
 		 * @return The ByteArray or null
 		 *
 		 */
-		public static toByteArray(data:any):away.utils.ByteArray
+		public static toByteArray(data:any):ByteArray
 		{
-			var b:away.utils.ByteArray = new away.utils.ByteArray();
+			var b:ByteArray = new ByteArray();
 			b.setArrayBuffer(data);
 			return b;
 		}
@@ -105,23 +102,17 @@ module away.parsers
 		public static toString(data:any, length:number = 0):string
 		{
 
-			if (typeof data === 'string');
-			{
-
+			if (typeof data === 'string') {
 				var s:string = <string> data;
 
-				if (s['substr'] != null) {
+				if (s['substr'] != null)
 					return s.substr(0, s.length);
-				}
-
 			}
 
-			if (data instanceof away.utils.ByteArray) {
-
-				var ba:away.utils.ByteArray = <away.utils.ByteArray> data;
+			if (data instanceof ByteArray) {
+				var ba:ByteArray = <ByteArray> data;
 				ba.position = 0;
 				return ba.readUTFBytes(Math.min(ba.getBytesAvailable(), length));
-
 			}
 
 			return null;

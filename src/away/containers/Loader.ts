@@ -65,7 +65,18 @@
  */
 module away.containers
 {
-
+	import DisplayObject			= away.base.DisplayObject;
+	import LoaderInfo				= away.base.LoaderInfo;
+	import AssetEvent				= away.events.AssetEvent;
+	import EventDispatcher			= away.events.EventDispatcher;
+	import IOErrorEvent				= away.events.IOErrorEvent;
+	import LoaderEvent				= away.events.LoaderEvent;
+	import ParserEvent				= away.events.ParserEvent;
+	import AssetLoader				= away.library.AssetLoader;
+	import AssetLoaderContext		= away.library.AssetLoaderContext;
+	import AssetLoaderToken			= away.library.AssetLoaderToken;
+	import ParserBase				= away.parsers.ParserBase;
+	import URLRequest				= away.net.URLRequest;
 	/**
 	 * Dispatched when any asset finishes parsing. Also see specific events for each
 	 * individual asset type (meshes, materials et c.)
@@ -84,14 +95,14 @@ module away.containers
 
 	export class Loader extends DisplayObjectContainer
 	{
-		private _loadingSessions:Array<away.net.AssetLoader>;
+		private _loadingSessions:Array<AssetLoader>;
 		private _useAssetLib:boolean;
 		private _assetLibId:string;
 		private _onResourceCompleteDelegate:Function;
 		private _onAssetCompleteDelegate:Function;
 
-		private _content:away.base.DisplayObject;
-		private _contentLoaderInfo:away.base.LoaderInfo;
+		private _content:DisplayObject;
+		private _contentLoaderInfo:LoaderInfo;
 		
 		/**
 		 * Contains the root display object of the SWF file or image(JPG, PNG, or
@@ -110,7 +121,7 @@ module away.containers
 		 *                       call the <code>load()</code> or
 		 *                       <code>loadBytes()</code> method.
 		 */
-		public get content():away.base.DisplayObject
+		public get content():DisplayObject
 		{
 			return this._content;
 		}
@@ -131,7 +142,7 @@ module away.containers
 		 * <code>Loader.uncaughtErrorEvents</code> property, not the
 		 * <code>Loader.contentLoaderInfo.uncaughtErrorEvents</code> property.</p>
 		 */
-		public get contentLoaderInfo():away.base.LoaderInfo
+		public get contentLoaderInfo():LoaderInfo
 		{
 			return this._contentLoaderInfo;
 		}
@@ -188,7 +199,7 @@ module away.containers
 		{
 			super();
 
-			this._loadingSessions = new Array<away.net.AssetLoader>();
+			this._loadingSessions = new Array<AssetLoader>();
 			this._useAssetLib = useAssetLibrary;
 			this._assetLibId = assetLibraryId;
 
@@ -387,16 +398,16 @@ module away.containers
 		 * @event unload        Dispatched by the <code>contentLoaderInfo</code>
 		 *                      object when a loaded object is removed.
 		 */
-		public load(request:away.net.URLRequest, context:away.net.AssetLoaderContext = null, ns:string = null, parser:away.parsers.ParserBase = null):away.net.AssetLoaderToken
+		public load(request:URLRequest, context:AssetLoaderContext = null, ns:string = null, parser:ParserBase = null):AssetLoaderToken
 		{
-			var token:away.net.AssetLoaderToken;
+			var token:AssetLoaderToken;
 
 			if (this._useAssetLib) {
 				var lib:away.library.AssetLibraryBundle;
 				lib = away.library.AssetLibraryBundle.getInstance(this._assetLibId);
 				token = lib.load(request, context, ns, parser);
 			} else {
-				var loader:away.net.AssetLoader = new away.net.AssetLoader();
+				var loader:AssetLoader = new AssetLoader();
 				this._loadingSessions.push(loader);
 				token = loader.load(request, context, ns, parser);
 			}
@@ -497,16 +508,16 @@ module away.containers
 		 * @event unload        Dispatched by the <code>contentLoaderInfo</code>
 		 *                      object when a loaded object is removed.
 		 */
-		public loadData(data:any, context:away.net.AssetLoaderContext = null, ns:string = null, parser:away.parsers.ParserBase = null):away.net.AssetLoaderToken
+		public loadData(data:any, context:AssetLoaderContext = null, ns:string = null, parser:ParserBase = null):AssetLoaderToken
 		{
-			var token:away.net.AssetLoaderToken;
+			var token:AssetLoaderToken;
 
 			if (this._useAssetLib) {
 				var lib:away.library.AssetLibraryBundle;
 				lib = away.library.AssetLibraryBundle.getInstance(this._assetLibId);
 				token = lib.loadData(data, context, ns, parser);
 			} else {
-				var loader:away.net.AssetLoader = new away.net.AssetLoader();
+				var loader:AssetLoader = new AssetLoader();
 				this._loadingSessions.push(loader);
 				token = loader.loadData(data, '', context, ns, parser);
 			}
@@ -560,7 +571,7 @@ module away.containers
 		 */
 		public static enableParser(parserClass:Object):void
 		{
-			away.net.AssetLoader.enableParser(parserClass);
+			AssetLoader.enableParser(parserClass);
 		}
 
 		/**
@@ -572,19 +583,19 @@ module away.containers
 		 * @param parserClasses A Vector of parser classes to enable.
 		 * @see away.parsers.Parsers
 		 */
-		public static enableParsers(parserClasses:Object[]):void
+		public static enableParsers(parserClasses:Array<Object>):void
 		{
-			away.net.AssetLoader.enableParsers(parserClasses);
+			AssetLoader.enableParsers(parserClasses);
 		}
 
 
-		private removeListeners(dispatcher:away.events.EventDispatcher):void
+		private removeListeners(dispatcher:EventDispatcher):void
 		{
-			dispatcher.removeEventListener(away.events.LoaderEvent.RESOURCE_COMPLETE, this._onResourceCompleteDelegate);
-			dispatcher.removeEventListener(away.events.AssetEvent.ASSET_COMPLETE, this._onAssetCompleteDelegate);
+			dispatcher.removeEventListener(LoaderEvent.RESOURCE_COMPLETE, this._onResourceCompleteDelegate);
+			dispatcher.removeEventListener(AssetEvent.ASSET_COMPLETE, this._onAssetCompleteDelegate);
 		}
 
-		private onAssetComplete(event:away.events.AssetEvent):void
+		private onAssetComplete(event:AssetEvent):void
 		{
 			this.dispatchEvent(event);
 		}
@@ -592,9 +603,9 @@ module away.containers
 		/**
 		 * Called when an error occurs during loading
 		 */
-		private onLoadError(event:away.events.LoaderEvent):boolean
+		private onLoadError(event:LoaderEvent):boolean
 		{
-			if (this.hasEventListener(away.events.IOErrorEvent.IO_ERROR)) {
+			if (this.hasEventListener(IOErrorEvent.IO_ERROR)) {
 				this.dispatchEvent(event);
 				return true;
 			} else {
@@ -605,9 +616,9 @@ module away.containers
 		/**
 		 * Called when a an error occurs during parsing
 		 */
-		private onParseError(event:away.events.ParserEvent):boolean
+		private onParseError(event:ParserEvent):boolean
 		{
-			if (this.hasEventListener(away.events.ParserEvent.PARSE_ERROR)) {
+			if (this.hasEventListener(ParserEvent.PARSE_ERROR)) {
 				this.dispatchEvent(event);
 				return true;
 			} else {
@@ -618,9 +629,9 @@ module away.containers
 		/**
 		 * Called when the resource and all of its dependencies was retrieved.
 		 */
-		private onResourceComplete(event:away.events.LoaderEvent)
+		private onResourceComplete(event:LoaderEvent)
 		{
-			var content:away.base.DisplayObject = event.content;
+			var content:DisplayObject = event.content;
 
 			this._content = content;
 

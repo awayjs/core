@@ -2,20 +2,18 @@
 
 module away.bounds
 {
-
-	//import away3d.arcane;
-	//import away3d.core.geom.*;
-	//import away3d.primitives.*;
-
-	//import flash.geom.*;
-
-	//use namespace arcane;
+	import IEntity						= away.entities.IEntity;
+	import Matrix3D						= away.geom.Matrix3D;
+	import Matrix3DUtils				= away.geom.Matrix3DUtils;
+	import PlaneClassification			= away.geom.PlaneClassification;
+	import Plane3D						= away.geom.Plane3D;
+	import Vector3D						= away.geom.Vector3D;
 
 	/**
 	 * AxisAlignedBoundingBox represents a bounding box volume that has its planes aligned to the local coordinate axes of the bounded object.
 	 * This is useful for most meshes.
 	 */
-	export class AxisAlignedBoundingBox extends away.bounds.BoundingVolumeBase
+	export class AxisAlignedBoundingBox extends BoundingVolumeBase
 	{
 		private _centerX:number = 0;
 		private _centerY:number = 0;
@@ -46,7 +44,7 @@ module away.bounds
 		/**
 		 * @inheritDoc
 		 */
-		public isInFrustum(planes:away.geom.Plane3D[], numPlanes:number):boolean
+		public isInFrustum(planes:Array<Plane3D>, numPlanes:number):boolean
 		{
 			for (var i:number = 0; i < numPlanes; ++i) {
 
@@ -66,7 +64,7 @@ module away.bounds
 			return true;
 		}
 
-		public rayIntersection(position:away.geom.Vector3D, direction:away.geom.Vector3D, targetNormal:away.geom.Vector3D):number
+		public rayIntersection(position:Vector3D, direction:Vector3D, targetNormal:Vector3D):number
 		{
 
 			if (this.containsPoint(position))
@@ -173,7 +171,7 @@ module away.bounds
 		/**
 		 * @inheritDoc
 		 */
-		public containsPoint(position:away.geom.Vector3D):boolean
+		public containsPoint(position:Vector3D):boolean
 		{
 			var px:number = position.x - this._centerX, py:number = position.y - this._centerY, pz:number = position.z - this._centerZ;
 			return px <= this._halfExtentsX && px >= -this._halfExtentsX && py <= this._halfExtentsY && py >= -this._halfExtentsY && pz <= this._halfExtentsZ && pz >= -this._halfExtentsZ;
@@ -227,12 +225,12 @@ module away.bounds
 		 * @param target An optional Vector3D to store the result to prevent creating a new object.
 		 * @return
 		 */
-		public closestPointToPoint(point:away.geom.Vector3D, target:away.geom.Vector3D = null):away.geom.Vector3D
+		public closestPointToPoint(point:Vector3D, target:Vector3D = null):Vector3D
 		{
 			var p:number;
 
 			if (target == null)
-				target = new away.geom.Vector3D();
+				target = new Vector3D();
 
 			p = point.x;
 			if (p < this._aabb.x)
@@ -268,12 +266,12 @@ module away.bounds
 			this._pBoundingEntity.transform.position.z = this._centerZ;
 		}
 
-		public pCreateBoundingEntity():away.entities.IEntity
+		public pCreateBoundingEntity():IEntity
 		{
 			return null;//<away.primitives.WireframePrimitiveBase> new away.primitives.WireframeCube(1, 1, 1, 0xffffff, 0.5);
 		}
 
-		public classifyToPlane(plane:away.geom.Plane3D):number
+		public classifyToPlane(plane:Plane3D):number
 		{
 			var a:number = plane.a;
 			var b:number = plane.b;
@@ -291,16 +289,16 @@ module away.bounds
 
 			var boundOffset:number = a*this._halfExtentsX + b*this._halfExtentsY + c*this._halfExtentsZ;
 
-			return centerDistance > boundOffset? away.geom.PlaneClassification.FRONT : centerDistance < -boundOffset? away.geom.PlaneClassification.BACK : away.geom.PlaneClassification.INTERSECT;
+			return centerDistance > boundOffset? PlaneClassification.FRONT : centerDistance < -boundOffset? PlaneClassification.BACK : PlaneClassification.INTERSECT;
 		}
 
-		public transformFrom(bounds:BoundingVolumeBase, matrix:away.geom.Matrix3D)
+		public transformFrom(bounds:BoundingVolumeBase, matrix:Matrix3D)
 		{
 			var aabb:AxisAlignedBoundingBox = <AxisAlignedBoundingBox> bounds;
 			var cx:number = aabb._centerX;
 			var cy:number = aabb._centerY;
 			var cz:number = aabb._centerZ;
-			var raw:number[] = away.geom.Matrix3DUtils.RAW_DATA_CONTAINER;
+			var raw:number[] = Matrix3DUtils.RAW_DATA_CONTAINER;
 
 			matrix.copyRawDataTo(raw);
 

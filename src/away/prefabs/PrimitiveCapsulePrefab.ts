@@ -9,7 +9,7 @@ module away.prefabs
 	/**
 	 * A Capsule primitive mesh.
 	 */
-	export class PrimitiveCapsulePrefab extends away.prefabs.PrimitivePrefabBase implements away.library.IAsset
+	export class PrimitiveCapsulePrefab extends PrimitivePrefabBase implements away.library.IAsset
 	{
 		private _radius:number;
 		private _height:number;

@@ -2,9 +2,13 @@
 
 module away.textures
 {
-	export class CubeTextureBase extends away.textures.TextureProxyBase
+	import BitmapData					= away.base.BitmapData;
+	import IStage						= away.base.IStage;
+	import AbstractMethodError			=  away.errors.AbstractMethodError;
+
+	export class CubeTextureBase extends TextureProxyBase
 	{
-		public _mipmapDataArray:Array<Array<away.base.BitmapData>> = new Array<Array<away.base.BitmapData>>(6);
+		public _mipmapDataArray:Array<Array<BitmapData>> = new Array<Array<BitmapData>>(6);
 		public _mipmapDataDirtyArray:Array<boolean> = new Array<boolean>(6);
 
 		constructor(generateMipmaps:boolean = false)
@@ -37,7 +41,7 @@ module away.textures
 			super.dispose();
 
 			for (var i:number = 0; i < 6; i++) {
-				var mipmapData:Array<away.base.BitmapData> = this._mipmapDataArray[i];
+				var mipmapData:Array<BitmapData> = this._mipmapDataArray[i];
 				var len:number = mipmapData.length;
 				for (var j:number = 0; j < len; j++)
 					MipmapGenerator.freeMipMapHolder(mipmapData[j]);
@@ -59,18 +63,18 @@ module away.textures
 		 *
 		 * @param stage
 		 */
-		public activateTextureForStage(index:number, stage:away.base.IStage)
+		public activateTextureForStage(index:number, stage:IStage)
 		{
 			stage.activateCubeTexture(index, this);
 		}
 
-		public _iGetMipmapData(side:number):Array<away.base.BitmapData>
+		public _iGetMipmapData(side:number):Array<BitmapData>
 		{
 			if (this._mipmapDataDirtyArray[side]) {
 				this._mipmapDataDirtyArray[side] = false;
 
-				var mipmapData:Array<away.base.BitmapData> = this._mipmapDataArray[side] || (this._mipmapDataArray[side] = new Array<away.base.BitmapData>());
-				away.textures.MipmapGenerator.generateMipMaps(this._iGetTextureData(side), mipmapData, true);
+				var mipmapData:Array<BitmapData> = this._mipmapDataArray[side] || (this._mipmapDataArray[side] = new Array<BitmapData>());
+				MipmapGenerator.generateMipMaps(this._iGetTextureData(side), mipmapData, true);
 			}
 
 			return this._mipmapDataArray[side];
@@ -78,7 +82,7 @@ module away.textures
 
 		public _iGetTextureData(side:number):any
 		{
-			throw new away.errors.AbstractMethodError();
+			throw new AbstractMethodError();
 		}
 	}
 }

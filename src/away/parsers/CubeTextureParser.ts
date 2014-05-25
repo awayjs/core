@@ -8,7 +8,7 @@ module away.parsers
 	 * a loader object, it wraps it in a BitmapDataResource so resource management can happen consistently without
 	 * exception cases.
 	 */
-	export class CubeTextureParser extends away.parsers.ParserBase
+	export class CubeTextureParser extends ParserBase
 	{
 
 		private static posX:string = 'posX';
@@ -68,7 +68,7 @@ module away.parsers
 		/**
 		 * @inheritDoc
 		 */
-		public _iResolveDependency(resourceDependency:away.parsers.ResourceDependency):void
+		public _iResolveDependency(resourceDependency:ResourceDependency):void
 		{
 
 		}
@@ -76,7 +76,7 @@ module away.parsers
 		/**
 		 * @inheritDoc
 		 */
-		public _iResolveDependencyFailure(resourceDependency:away.parsers.ResourceDependency):void
+		public _iResolveDependencyFailure(resourceDependency:ResourceDependency):void
 		{
 
 		}
@@ -98,7 +98,7 @@ module away.parsers
 
 				this._pFinalizeAsset(<away.library.IAsset> asset, this._iFileName);
 
-				return away.parsers.ParserBase.PARSING_DONE;
+				return ParserBase.PARSING_DONE;
 			}
 
 			try {
@@ -122,19 +122,19 @@ module away.parsers
 
 						this._pDieWithError("CubeTextureParser: JSON data error - cubes require id of:   \n" + CubeTextureParser.posX + ', ' + CubeTextureParser.negX + ',  \n' + CubeTextureParser.posY + ', ' + CubeTextureParser.negY + ',  \n' + CubeTextureParser.posZ + ', ' + CubeTextureParser.negZ);
 
-						return away.parsers.ParserBase.PARSING_DONE;
+						return ParserBase.PARSING_DONE;
 
 					}
 
 					this._pPauseAndRetrieveDependencies();
 
-					return away.parsers.ParserBase.MORE_TO_PARSE;
+					return ParserBase.MORE_TO_PARSE;
 				}
 			} catch (e) {
 				this._pDieWithError('CubeTexturePaser Error parsing JSON');
 			}
 
-			return away.parsers.ParserBase.PARSING_DONE;
+			return ParserBase.PARSING_DONE;
 
 		}
 
@@ -145,7 +145,7 @@ module away.parsers
 
 		private _getHTMLImageElement(name:string):HTMLImageElement
 		{
-			var dependency:away.parsers.ResourceDependency = <away.parsers.ResourceDependency> this._imgDependencyDictionary[ name ];
+			var dependency:ResourceDependency = <ResourceDependency> this._imgDependencyDictionary[ name ];
 
 			if (dependency) {
 				return <HTMLImageElement> (<away.textures.ImageTexture> dependency.assets[0]).htmlImageElement;

@@ -2,6 +2,7 @@
 
 module away.library
 {
+	import AbstractMethodError			= away.errors.AbstractMethodError;
 
 	export class NamedAssetBase extends away.events.EventDispatcher
 	{
@@ -28,7 +29,6 @@ module away.library
 			this._originalName = name;
 
 			this.updateFullPath();
-
 		}
 
 		/**
@@ -36,7 +36,7 @@ module away.library
 		 */
 		public get assetType():string
 		{
-			throw new away.errors.AbstractMethodError();
+			throw new AbstractMethodError();
 		}
 
 		/**
@@ -75,13 +75,13 @@ module away.library
 			this.updateFullPath();
 
 			//if (hasEventListener(AssetEvent.ASSET_RENAME))
-			this.dispatchEvent(new away.events.AssetEvent(away.events.AssetEvent.ASSET_RENAME, <away.library.IAsset> this, prev));
+			this.dispatchEvent(new away.events.AssetEvent(away.events.AssetEvent.ASSET_RENAME, <IAsset> this, prev));
 
 		}
 
 		public dispose()
 		{
-			throw new away.errors.AbstractMethodError();
+			throw new AbstractMethodError();
 		}
 
 		public get assetNamespace():string

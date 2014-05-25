@@ -1,18 +1,7 @@
 ///<reference path="../../_definitions.ts"/>
 
-module away.net
+module away.library
 {
-	//import away.arcane;
-	//import away.events.AssetEvent;
-	//import away.events.LoaderEvent;
-	//import away.loaders.AssetLoader;
-
-	//import flash.events.Event;
-	//import flash.events.EventDispatcher;
-
-	//use namespace arcane;
-
-
 	/**
 	 * Dispatched when any asset finishes parsing. Also see specific events for each
 	 * individual asset type (meshes, materials et c.)
@@ -213,9 +202,9 @@ module away.net
 	 */
 	export class AssetLoaderToken extends away.events.EventDispatcher
 	{
-		public _iLoader:away.net.AssetLoader;
+		public _iLoader:AssetLoader;
 
-		constructor(loader:away.net.AssetLoader)
+		constructor(loader:AssetLoader)
 		{
 			super();
 

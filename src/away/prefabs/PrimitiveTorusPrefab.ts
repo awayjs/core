@@ -9,7 +9,7 @@ module away.prefabs
 	/**
 	 * A UV Cylinder primitive mesh.
 	 */
-	export class PrimitiveTorusPrefab extends away.prefabs.PrimitivePrefabBase implements away.library.IAsset
+	export class PrimitiveTorusPrefab extends PrimitivePrefabBase implements away.library.IAsset
 	{
 		private _radius:number;
 		private _tubeRadius:number;

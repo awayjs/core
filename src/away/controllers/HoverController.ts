@@ -2,15 +2,16 @@
 
 module away.controllers
 {
+	import DisplayObject				= away.base.DisplayObject;
 	import MathConsts					= away.geom.MathConsts;
 	import Vector3D						= away.geom.Vector3D;
 
 	/**
 	 * Extended camera used to hover round a specified target object.
 	 *
-	 * @see    away3d.containers.View3D
+	 * @see    away.containers.View
 	 */
-	export class HoverController extends away.controllers.LookAtController
+	export class HoverController extends LookAtController
 	{
 		public _iCurrentPanAngle:number = 0;
 		public _iCurrentTiltAngle:number = 90;
@@ -231,7 +232,7 @@ module away.controllers
 		/**
 		 * Creates a new <code>HoverController</code> object.
 		 */
-		constructor(targetObject:away.base.DisplayObject = null, lookAtObject:away.base.DisplayObject = null, panAngle:number = 0, tiltAngle:number = 90, distance:number = 1000, minTiltAngle:number = -90, maxTiltAngle:number = 90, minPanAngle:number = null, maxPanAngle:number = null, steps:number = 8, yFactor:number = 2, wrapPanAngle:boolean = false)
+		constructor(targetObject:DisplayObject = null, lookAtObject:DisplayObject = null, panAngle:number = 0, tiltAngle:number = 90, distance:number = 1000, minTiltAngle:number = -90, maxTiltAngle:number = 90, minPanAngle:number = null, maxPanAngle:number = null, steps:number = 8, yFactor:number = 2, wrapPanAngle:boolean = false)
 		{
 			super(targetObject, lookAtObject);
 

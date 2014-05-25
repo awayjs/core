@@ -5,6 +5,9 @@
  */
 module away.partition
 {
+	import DisplayObject				= away.base.DisplayObject;
+	import ICollector					= away.traverse.ICollector;
+
 	/**
 	 * @class away.partition.Partition
 	 */
@@ -25,7 +28,7 @@ module away.partition
 			return this._rootNode;
 		}
 
-		public traverse(traverser:away.traverse.ICollector)
+		public traverse(traverser:ICollector)
 		{
 			if (this._updatesMade)
 				this.updateEntities();
@@ -51,7 +54,7 @@ module away.partition
 			this._updatesMade = true;
 		}
 
-		public iRemoveEntity(entity:away.base.DisplayObject)
+		public iRemoveEntity(entity:DisplayObject)
 		{
 			var node:EntityNode = entity.partitionNode;
 			var t:EntityNode;

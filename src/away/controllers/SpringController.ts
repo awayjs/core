@@ -2,6 +2,8 @@
 
 module away.controllers
 {
+	import DisplayObject				= away.base.DisplayObject;
+	import Vector3D						= away.geom.Vector3D;
 
 	/**
 	 * Uses spring physics to animate the target object towards a position that is
@@ -10,12 +12,12 @@ module away.controllers
 	 */
 	export class SpringController extends LookAtController
 	{
-		private _velocity:away.geom.Vector3D;
-		private _dv:away.geom.Vector3D;
-		private _stretch:away.geom.Vector3D;
-		private _force:away.geom.Vector3D;
-		private _acceleration:away.geom.Vector3D;
-		private _desiredPosition:away.geom.Vector3D;
+		private _velocity:Vector3D;
+		private _dv:Vector3D;
+		private _stretch:Vector3D;
+		private _force:Vector3D;
+		private _acceleration:Vector3D;
+		private _desiredPosition:Vector3D;
 
 		/**
 		 * Stiffness of the spring, how hard is it to extend. The higher it is, the more "fixed" the cam will be.
@@ -37,9 +39,9 @@ module away.controllers
 		/**
 		 * Offset of spring center from target in target object space, ie: Where the camera should ideally be in the target object space.
 		 */
-		public positionOffset:away.geom.Vector3D = new away.geom.Vector3D(0, 500, -1000);
+		public positionOffset:Vector3D = new Vector3D(0, 500, -1000);
 
-		constructor(targetObject:away.base.DisplayObject = null, lookAtObject:away.base.DisplayObject = null, stiffness:number = 1, mass:number = 40, damping:number = 4)
+		constructor(targetObject:DisplayObject = null, lookAtObject:DisplayObject = null, stiffness:number = 1, mass:number = 40, damping:number = 4)
 		{
 			super(targetObject, lookAtObject);
 
@@ -47,18 +49,18 @@ module away.controllers
 			this.damping = damping;
 			this.mass = mass;
 
-			this._velocity = new away.geom.Vector3D();
-			this._dv = new away.geom.Vector3D();
-			this._stretch = new away.geom.Vector3D();
-			this._force = new away.geom.Vector3D();
-			this._acceleration = new away.geom.Vector3D();
-			this._desiredPosition = new away.geom.Vector3D();
+			this._velocity = new Vector3D();
+			this._dv = new Vector3D();
+			this._stretch = new Vector3D();
+			this._force = new Vector3D();
+			this._acceleration = new Vector3D();
+			this._desiredPosition = new Vector3D();
 
 		}
 
 		public update(interpolate:boolean = true)
 		{
-			var offs:away.geom.Vector3D;
+			var offs:Vector3D;
 
 			if (!this._pLookAtObject || !this._pTargetObject)
 				return;

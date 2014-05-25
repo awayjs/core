@@ -1,19 +1,11 @@
 ///<reference path="../../_definitions.ts"/>
 module away.net
 {
-
 	/**
 	 *
 	 */
 	export class URLRequest
 	{
-
-		//public authenticate     : boolean = false;
-		//public cacheResponse    : boolean = true;
-		//public idleTimeout      : number;
-		//public requestHeader    : Array;
-		//public userAgent        : string;
-
 		/*
 		 * The MIME content type of the content in the the data property.
 		 * @type {string}
@@ -33,7 +25,7 @@ module away.net
 		 *
 		 * @type {string}
 		 */
-		public method:string = away.net.URLRequestMethod.GET;
+		public method:string = URLRequestMethod.GET;
 
 		/**
 		 * Use asynchronous XMLHttpRequest

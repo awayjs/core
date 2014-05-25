@@ -5,23 +5,28 @@
  */
 module away.partition
 {
+	import IEntity						= away.entities.IEntity;
+	import Plane3D						= away.geom.Plane3D;
+	import Vector3D						= away.geom.Vector3D;
+	import ICollector					= away.traverse.ICollector;
+
 	/**
 	 * @class away.partition.EntityNode
 	 */
 	export class EntityNode extends NodeBase
 	{
 
-		private _entity:away.entities.IEntity;
+		private _entity:IEntity;
 		public _iUpdateQueueNext:EntityNode;
 
-		constructor(entity:away.entities.IEntity)
+		constructor(entity:IEntity)
 		{
 			super();
 			this._entity = entity;
 			this._iNumEntities = 1;
 		}
 
-		public get entity():away.entities.IEntity
+		public get entity():IEntity
 		{
 			return this._entity;
 		}
@@ -49,7 +54,7 @@ module away.partition
 		 * @param numPlanes
 		 * @returns {boolean}
 		 */
-		public isInFrustum(planes:away.geom.Plane3D[], numPlanes:number):boolean
+		public isInFrustum(planes:Array<Plane3D>, numPlanes:number):boolean
 		{
 			if (!this._entity._iIsVisible())
 				return false;
@@ -60,7 +65,7 @@ module away.partition
 		/**
 		 * @inheritDoc
 		 */
-		public acceptTraverser(traverser:away.traverse.ICollector)
+		public acceptTraverser(traverser:ICollector)
 		{
 			if (traverser.enterNode(<NodeBase> this))
 				traverser.applyEntity(this._entity);
@@ -69,7 +74,7 @@ module away.partition
 		/**
 		 * @inheritDoc
 		 */
-		public isIntersectingRay(rayPosition:away.geom.Vector3D, rayDirection:away.geom.Vector3D):boolean
+		public isIntersectingRay(rayPosition:Vector3D, rayDirection:Vector3D):boolean
 		{
 			if (!this._entity._iIsVisible())
 				return false;
@@ -81,7 +86,7 @@ module away.partition
 		 *
 		 * @protected
 		 */
-		public _pCreateBoundsPrimitive():away.entities.IEntity
+		public _pCreateBoundsPrimitive():IEntity
 		{
 			return this._entity.bounds.boundingEntity;
 		}

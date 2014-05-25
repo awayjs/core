@@ -9,7 +9,7 @@ module away.prefabs
 	/**
 	 * A Cube primitive prefab.
 	 */
-	export class PrimitiveCubePrefab extends away.prefabs.PrimitivePrefabBase implements away.library.IAsset
+	export class PrimitiveCubePrefab extends PrimitivePrefabBase implements away.library.IAsset
 	{
 		private _width:number;
 		private _height:number;

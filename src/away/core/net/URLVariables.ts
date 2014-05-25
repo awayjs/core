@@ -1,11 +1,9 @@
 ///<reference path="../../_definitions.ts"/>
+
 module away.net
 {
-
-
 	export class URLVariables
 	{
-
 		private _variables:Object = new Object();
 
 		/**
@@ -14,14 +12,8 @@ module away.net
 		 */
 		constructor(source:string = null)
 		{
-
-			if (source !== null) {
-
+			if (source !== null)
 				this.decode(source);
-
-			}
-
-
 		}
 
 		/**
@@ -30,17 +22,12 @@ module away.net
 		 */
 		public decode(source:string):void
 		{
-
 			source = source.split("+").join(" ");
 
 			var tokens, re = /[?&]?([^=]+)=([^&]*)/g;
 
-			while (tokens = re.exec(source)) {
-
+			while (tokens = re.exec(source))
 				this._variables[decodeURIComponent(tokens[1])] = decodeURIComponent(tokens[2]);
-
-			}
-
 		}
 
 		/**
@@ -49,7 +36,6 @@ module away.net
 		 */
 		public toString():string
 		{
-
 			return '';
 		}
 
@@ -59,9 +45,7 @@ module away.net
 		 */
 		public get variables():Object
 		{
-
 			return this._variables;
-
 		}
 
 		/**
@@ -70,18 +54,12 @@ module away.net
 		 */
 		public get formData():FormData
 		{
-
 			var fd:FormData = new FormData();
 
-			for (var s in this._variables) {
-
+			for (var s in this._variables)
 				fd.append(s, this._variables[s]);
 
-			}
-
 			return fd;
-
-
 		}
 
 		/**
@@ -90,13 +68,7 @@ module away.net
 		 */
 		public set variables(obj:Object)
 		{
-
 			this._variables = obj;
-
 		}
-
-
 	}
-
-
 }

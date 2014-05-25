@@ -263,7 +263,7 @@ module away.parsers
 
 		public _pAddDependency(id:string, req:away.net.URLRequest, retrieveAsRawData:boolean = false, data:any = null, suppressErrorEvents:boolean = false):ResourceDependency
 		{
-			var dependency:ResourceDependency = new away.parsers.ResourceDependency(id, req, data, null, this, retrieveAsRawData, suppressErrorEvents);
+			var dependency:ResourceDependency = new ResourceDependency(id, req, data, null, this, retrieveAsRawData, suppressErrorEvents);
 			this._dependencies.push(dependency);
 
 			return dependency;
@@ -333,7 +333,7 @@ module away.parsers
 		 */
 		public _pGetTextData():string
 		{
-			return away.parsers.ParserUtils.toString(this._data);
+			return ParserUtils.toString(this._data);
 		}
 
 		/**
@@ -343,7 +343,7 @@ module away.parsers
 		 */
 		public _pGetByteData():away.utils.ByteArray
 		{
-			return away.parsers.ParserUtils.toByteArray(this._data);
+			return ParserUtils.toByteArray(this._data);
 		}
 	}
 }

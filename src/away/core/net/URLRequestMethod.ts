@@ -1,7 +1,6 @@
 ///<reference path="../../_definitions.ts"/>
 module away.net
 {
-
 	export class URLRequestMethod
 	{
 		/**
@@ -14,7 +13,5 @@ module away.net
 		 * @type {string}
 		 */
 		public static GET:string = 'GET';
-
 	}
-
 }

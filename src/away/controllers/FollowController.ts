@@ -2,6 +2,7 @@
 
 module away.controllers
 {
+	import DisplayObject				= away.base.DisplayObject;
 
 	/**
 	 * Controller used to follow behind an object on the XZ plane, with an optional
@@ -9,9 +10,9 @@ module away.controllers
 	 *
 	 * @see    away3d.containers.View3D
 	 */
-	export class FollowController extends away.controllers.HoverController
+	export class FollowController extends HoverController
 	{
-		constructor(targetObject:away.base.DisplayObject = null, lookAtObject:away.base.DisplayObject = null, tiltAngle:number = 45, distance:number = 700)
+		constructor(targetObject:DisplayObject = null, lookAtObject:DisplayObject = null, tiltAngle:number = 45, distance:number = 700)
 		{
 			super(targetObject, lookAtObject, 0, tiltAngle, distance);
 		}

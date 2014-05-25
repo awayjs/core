@@ -2,19 +2,21 @@
 
 module away.textures
 {
+	import BitmapData					= away.base.BitmapData;
+
 	export class BitmapCubeTexture extends CubeTextureBase
 	{
-		private _bitmapDatas:Array<away.base.BitmapData> = new Array<away.base.BitmapData>(6);
+		private _bitmapDatas:Array<BitmapData> = new Array<BitmapData>(6);
 
 		/**
 		 * The texture on the cube's right face.
 		 */
-		public get positiveX():away.base.BitmapData
+		public get positiveX():BitmapData
 		{
 			return this._bitmapDatas[0];
 		}
 
-		public set positiveX(value:away.base.BitmapData)
+		public set positiveX(value:BitmapData)
 		{
 			this._testSize(value);
 			this.invalidateContent();
@@ -25,12 +27,12 @@ module away.textures
 		/**
 		 * The texture on the cube's left face.
 		 */
-		public get negativeX():away.base.BitmapData
+		public get negativeX():BitmapData
 		{
 			return this._bitmapDatas[1];
 		}
 
-		public set negativeX(value:away.base.BitmapData)
+		public set negativeX(value:BitmapData)
 		{
 			this._testSize(value);
 			this.invalidateContent();
@@ -41,12 +43,12 @@ module away.textures
 		/**
 		 * The texture on the cube's top face.
 		 */
-		public get positiveY():away.base.BitmapData
+		public get positiveY():BitmapData
 		{
 			return this._bitmapDatas[2];
 		}
 
-		public set positiveY(value:away.base.BitmapData)
+		public set positiveY(value:BitmapData)
 		{
 			this._testSize(value);
 			this.invalidateContent();
@@ -57,12 +59,12 @@ module away.textures
 		/**
 		 * The texture on the cube's bottom face.
 		 */
-		public get negativeY():away.base.BitmapData
+		public get negativeY():BitmapData
 		{
 			return this._bitmapDatas[3];
 		}
 
-		public set negativeY(value:away.base.BitmapData)
+		public set negativeY(value:BitmapData)
 		{
 			this._testSize(value);
 			this.invalidateContent();
@@ -73,12 +75,12 @@ module away.textures
 		/**
 		 * The texture on the cube's far face.
 		 */
-		public get positiveZ():away.base.BitmapData
+		public get positiveZ():BitmapData
 		{
 			return this._bitmapDatas[4];
 		}
 
-		public set positiveZ(value:away.base.BitmapData)
+		public set positiveZ(value:BitmapData)
 		{
 			this._testSize(value);
 			this.invalidateContent();
@@ -89,12 +91,12 @@ module away.textures
 		/**
 		 * The texture on the cube's near face.
 		 */
-		public get negativeZ():away.base.BitmapData
+		public get negativeZ():BitmapData
 		{
 			return this._bitmapDatas[5];
 		}
 
-		public set negativeZ(value:away.base.BitmapData)
+		public set negativeZ(value:BitmapData)
 		{
 			this._testSize(value);
 			this.invalidateContent();
@@ -102,7 +104,7 @@ module away.textures
 			this._bitmapDatas[5] = value;
 		}
 
-		constructor(posX:away.base.BitmapData, negX:away.base.BitmapData, posY:away.base.BitmapData, negY:away.base.BitmapData, posZ:away.base.BitmapData, negZ:away.base.BitmapData, generateMipmaps:boolean = false)
+		constructor(posX:BitmapData, negX:BitmapData, posY:BitmapData, negY:BitmapData, posZ:BitmapData, negZ:BitmapData, generateMipmaps:boolean = false)
 		{
 			super(generateMipmaps);
 
@@ -123,7 +125,7 @@ module away.textures
 		 * @param value
 		 * @private
 		 */
-		private _testSize(value:away.base.BitmapData)
+		private _testSize(value:BitmapData)
 		{
 			if (value.width != value.height)
 				throw new Error("BitmapData should have equal width and height!");
@@ -144,7 +146,7 @@ module away.textures
 			this._bitmapDatas = null;
 		}
 
-		public _iGetTextureData(side:number):away.base.BitmapData
+		public _iGetTextureData(side:number):BitmapData
 		{
 			return this._bitmapDatas[side];
 		}

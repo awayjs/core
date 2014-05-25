@@ -103,7 +103,7 @@ module away.parsers
 
 				var ba:away.utils.ByteArray = this.data
 				ba.position = 0;
-				var htmlImageElement:HTMLImageElement = away.parsers.ParserUtils.byteArrayToImage(this.data);
+				var htmlImageElement:HTMLImageElement = ParserUtils.byteArrayToImage(this.data);
 
 				if (away.utils.TextureUtils.isHTMLImageElementValid(htmlImageElement)) {
 					asset = <away.textures.Texture2DBase> new away.textures.ImageTexture(htmlImageElement);
@@ -121,7 +121,7 @@ module away.parsers
 //				this.dispatchEvent(new away.events.AssetEvent(away.events.AssetEvent.TEXTURE_SIZE_ERROR, <away.library.IAsset> asset));
 			}
 
-			return away.parsers.ParserBase.PARSING_DONE;
+			return ParserBase.PARSING_DONE;
 
 		}
 

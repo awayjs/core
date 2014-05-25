@@ -2,6 +2,7 @@
 
 module away.library
 {
+	import URLRequest				= away.net.URLRequest;
 
 	/**
 	 * AssetLibrary enforces a singleton pattern and is not intended to be instanced.
@@ -33,9 +34,9 @@ module away.library
 		 * @param key Defines which multiton instance should be returned.
 		 * @return An instance of the asset library
 		 */
-		public static getBundle(key:string = 'default'):away.library.AssetLibraryBundle
+		public static getBundle(key:string = 'default'):AssetLibraryBundle
 		{
-			return away.library.AssetLibraryBundle.getInstance(key);
+			return AssetLibraryBundle.getInstance(key);
 		}
 
 		/**
@@ -43,7 +44,7 @@ module away.library
 		 */
 		public static enableParser(parserClass)
 		{
-			away.net.AssetLoader.enableParser(parserClass);
+			AssetLoader.enableParser(parserClass);
 		}
 
 		/**
@@ -51,82 +52,82 @@ module away.library
 		 */
 		public static enableParsers(parserClasses:Object[])
 		{
-			away.net.AssetLoader.enableParsers(parserClasses);
+			AssetLoader.enableParsers(parserClasses);
 		}
 
 		/**
 		 * Short-hand for conflictStrategy property on default asset library bundle.
 		 *
-		 * @see away.library.AssetLibraryBundle.conflictStrategy
+		 * @see AssetLibraryBundle.conflictStrategy
 		 */
-		public static get conflictStrategy():away.library.ConflictStrategyBase
+		public static get conflictStrategy():ConflictStrategyBase
 		{
-			return away.library.AssetLibrary.getBundle().conflictStrategy;
+			return AssetLibrary.getBundle().conflictStrategy;
 		}
 
-		public static set conflictStrategy(val:away.library.ConflictStrategyBase)
+		public static set conflictStrategy(val:ConflictStrategyBase)
 		{
-			away.library.AssetLibrary.getBundle().conflictStrategy = val;
+			AssetLibrary.getBundle().conflictStrategy = val;
 		}
 
 		/**
 		 * Short-hand for conflictPrecedence property on default asset library bundle.
 		 *
-		 * @see away.library.AssetLibraryBundle.conflictPrecedence
+		 * @see AssetLibraryBundle.conflictPrecedence
 		 */
 		public static get conflictPrecedence():string
 		{
-			return away.library.AssetLibrary.getBundle().conflictPrecedence;
+			return AssetLibrary.getBundle().conflictPrecedence;
 		}
 
 		public static set conflictPrecedence(val:string)
 		{
-			away.library.AssetLibrary.getBundle().conflictPrecedence = val;
+			AssetLibrary.getBundle().conflictPrecedence = val;
 		}
 
 		/**
 		 * Short-hand for createIterator() method on default asset library bundle.
 		 *
-		 * @see away.library.AssetLibraryBundle.createIterator()
+		 * @see AssetLibraryBundle.createIterator()
 		 */
-		public static createIterator(assetTypeFilter:string = null, namespaceFilter:string = null, filterFunc = null):away.library.AssetLibraryIterator
+		public static createIterator(assetTypeFilter:string = null, namespaceFilter:string = null, filterFunc = null):AssetLibraryIterator
 		{
-			return away.library.AssetLibrary.getBundle().createIterator(assetTypeFilter, namespaceFilter, filterFunc);
+			return AssetLibrary.getBundle().createIterator(assetTypeFilter, namespaceFilter, filterFunc);
 		}
 
 		/**
 		 * Short-hand for load() method on default asset library bundle.
 		 *
-		 * @see away.library.AssetLibraryBundle.load()
+		 * @see AssetLibraryBundle.load()
 		 */
-		public static load(req:away.net.URLRequest, context:away.net.AssetLoaderContext = null, ns:string = null, parser:away.parsers.ParserBase = null):away.net.AssetLoaderToken
+		public static load(req:URLRequest, context:AssetLoaderContext = null, ns:string = null, parser:away.parsers.ParserBase = null):AssetLoaderToken
 		{
-			return away.library.AssetLibrary.getBundle().load(req, context, ns, parser);
+			return AssetLibrary.getBundle().load(req, context, ns, parser);
 		}
 
 		/**
 		 * Short-hand for loadData() method on default asset library bundle.
 		 *
-		 * @see away.library.AssetLibraryBundle.loadData()
+		 * @see AssetLibraryBundle.loadData()
 		 */
-		public static loadData(data:any, context:away.net.AssetLoaderContext = null, ns:string = null, parser:away.parsers.ParserBase = null):away.net.AssetLoaderToken
+		public static loadData(data:any, context:AssetLoaderContext = null, ns:string = null, parser:away.parsers.ParserBase = null):AssetLoaderToken
 		{
-			return away.library.AssetLibrary.getBundle().loadData(data, context, ns, parser);
+			return AssetLibrary.getBundle().loadData(data, context, ns, parser);
 		}
 
 		public static stopLoad()
 		{
-			away.library.AssetLibrary.getBundle().stopAllLoadingSessions();
+			AssetLibrary.getBundle().stopAllLoadingSessions();
 		}
 
 		/**
 		 * Short-hand for getAsset() method on default asset library bundle.
 		 *
-		 * @see away.library.AssetLibraryBundle.getAsset()
+		 * @see AssetLibraryBundle.getAsset()
 		 */
-		public static getAsset(name:string, ns:string = null):away.library.IAsset
+		public static getAsset(name:string, ns:string = null):IAsset
 		{
-			return away.library.AssetLibrary.getBundle().getAsset(name, ns);
+			return AssetLibrary.getBundle().getAsset(name, ns);
 		}
 
 		/**
@@ -134,7 +135,7 @@ module away.library
 		 */
 		public static addEventListener(type:string, listener:Function)
 		{
-			away.library.AssetLibrary.getBundle().addEventListener(type, listener);
+			AssetLibrary.getBundle().addEventListener(type, listener);
 		}
 
 		/**
@@ -142,7 +143,7 @@ module away.library
 		 */
 		public static removeEventListener(type:string, listener:Function)
 		{
-			away.library.AssetLibrary.getBundle().removeEventListener(type, listener);
+			AssetLibrary.getBundle().removeEventListener(type, listener);
 		}
 
 		/**
@@ -150,7 +151,7 @@ module away.library
 
 		 public static hasEventListener(type:string):boolean
 		 {
-			return away.library.AssetLibrary.getBundle().hasEventListener(type);
+			return AssetLibrary.getBundle().hasEventListener(type);
 		}
 
 		 public static willTrigger(type:string):boolean
@@ -162,11 +163,11 @@ module away.library
 		/**
 		 * Short-hand for addAsset() method on default asset library bundle.
 		 *
-		 * @see away.library.AssetLibraryBundle.addAsset()
+		 * @see AssetLibraryBundle.addAsset()
 		 */
 		public static addAsset(asset:IAsset)
 		{
-			away.library.AssetLibrary.getBundle().addAsset(asset);
+			AssetLibrary.getBundle().addAsset(asset);
 		}
 
 		/**
@@ -175,11 +176,11 @@ module away.library
 		 * @param asset The asset which should be removed from the library.
 		 * @param dispose Defines whether the assets should also be disposed.
 		 *
-		 * @see away.library.AssetLibraryBundle.removeAsset()
+		 * @see AssetLibraryBundle.removeAsset()
 		 */
 		public static removeAsset(asset:IAsset, dispose:boolean = true)
 		{
-			away.library.AssetLibrary.getBundle().removeAsset(asset, dispose);
+			AssetLibrary.getBundle().removeAsset(asset, dispose);
 		}
 
 		/**
@@ -189,11 +190,11 @@ module away.library
 		 * @param ns The namespace to which the desired asset belongs.
 		 * @param dispose Defines whether the assets should also be disposed.
 		 *
-		 * @see away.library.AssetLibraryBundle.removeAssetByName()
+		 * @see AssetLibraryBundle.removeAssetByName()
 		 */
 		public static removeAssetByName(name:string, ns:string = null, dispose:boolean = true):IAsset
 		{
-			return away.library.AssetLibrary.getBundle().removeAssetByName(name, ns, dispose);
+			return AssetLibrary.getBundle().removeAssetByName(name, ns, dispose);
 		}
 
 		/**
@@ -201,21 +202,21 @@ module away.library
 		 *
 		 * @param dispose Defines whether the assets should also be disposed.
 		 *
-		 * @see away.library.AssetLibraryBundle.removeAllAssets()
+		 * @see AssetLibraryBundle.removeAllAssets()
 		 */
 		public static removeAllAssets(dispose:boolean = true)
 		{
-			away.library.AssetLibrary.getBundle().removeAllAssets(dispose);
+			AssetLibrary.getBundle().removeAllAssets(dispose);
 		}
 
 		/**
 		 * Short-hand for removeNamespaceAssets() method on default asset library bundle.
 		 *
-		 * @see away.library.AssetLibraryBundle.removeNamespaceAssets()
+		 * @see AssetLibraryBundle.removeNamespaceAssets()
 		 */
 		public static removeNamespaceAssets(ns:string = null, dispose:boolean = true)
 		{
-			away.library.AssetLibrary.getBundle().removeNamespaceAssets(ns, dispose);
+			AssetLibrary.getBundle().removeNamespaceAssets(ns, dispose);
 		}
 	}
 }

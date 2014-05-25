@@ -2,15 +2,19 @@
 
 module away.controllers
 {
-	export class LookAtController extends away.controllers.ControllerBase
+	import DisplayObject				= away.base.DisplayObject;
+	import DisplayObjectEvent			= away.events.DisplayObjectEvent;
+	import Vector3D						= away.geom.Vector3D;
+
+	export class LookAtController extends ControllerBase
 	{
-		public _pLookAtPosition:away.geom.Vector3D;
-		public _pLookAtObject:away.base.DisplayObject;
-		public _pOrigin:away.geom.Vector3D = new away.geom.Vector3D(0.0, 0.0, 0.0);
+		public _pLookAtPosition:Vector3D;
+		public _pLookAtObject:DisplayObject;
+		public _pOrigin:Vector3D = new Vector3D(0.0, 0.0, 0.0);
 
 		private _onLookAtObjectChangedDelegate:Function;
 
-		constructor(targetObject:away.base.DisplayObject = null, lookAtObject:away.base.DisplayObject = null)
+		constructor(targetObject:DisplayObject = null, lookAtObject:DisplayObject = null)
 		{
 			super(targetObject);
 
@@ -19,19 +23,19 @@ module away.controllers
 			if (lookAtObject) {
 				this.lookAtObject = lookAtObject;
 			} else {
-				this.lookAtPosition = new away.geom.Vector3D();
+				this.lookAtPosition = new Vector3D();
 			}
 		}
 
-		public get lookAtPosition():away.geom.Vector3D
+		public get lookAtPosition():Vector3D
 		{
 			return this._pLookAtPosition;
 		}
 
-		public set lookAtPosition(val:away.geom.Vector3D)
+		public set lookAtPosition(val:Vector3D)
 		{
 			if (this._pLookAtObject) {
-				this._pLookAtObject.removeEventListener(away.events.DisplayObjectEvent.SCENETRANSFORM_CHANGED, this._onLookAtObjectChangedDelegate);
+				this._pLookAtObject.removeEventListener(DisplayObjectEvent.SCENETRANSFORM_CHANGED, this._onLookAtObjectChangedDelegate);
 				this._pLookAtObject = null;
 			}
 
@@ -39,29 +43,26 @@ module away.controllers
 			this.pNotifyUpdate();
 		}
 
-		public get lookAtObject():away.base.DisplayObject
+		public get lookAtObject():DisplayObject
 		{
 			return this._pLookAtObject;
 		}
 
-		public set lookAtObject(val:away.base.DisplayObject)
+		public set lookAtObject(val:DisplayObject)
 		{
-			if (this._pLookAtPosition) {
+			if (this._pLookAtPosition)
 				this._pLookAtPosition = null;
-			}
 
-			if (this._pLookAtObject == val) {
+			if (this._pLookAtObject == val)
 				return;
-			}
 
-			if (this._pLookAtObject) {
-				this._pLookAtObject.removeEventListener(away.events.DisplayObjectEvent.SCENETRANSFORM_CHANGED, this._onLookAtObjectChangedDelegate);
-			}
+			if (this._pLookAtObject)
+				this._pLookAtObject.removeEventListener(DisplayObjectEvent.SCENETRANSFORM_CHANGED, this._onLookAtObjectChangedDelegate);
+
 			this._pLookAtObject = val;
 
-			if (this._pLookAtObject) {
-				this._pLookAtObject.addEventListener(away.events.DisplayObjectEvent.SCENETRANSFORM_CHANGED, this._onLookAtObjectChangedDelegate);
-			}
+			if (this._pLookAtObject)
+				this._pLookAtObject.addEventListener(DisplayObjectEvent.SCENETRANSFORM_CHANGED, this._onLookAtObjectChangedDelegate);
 
 			this.pNotifyUpdate();
 		}
@@ -77,10 +78,9 @@ module away.controllers
 			}
 		}
 
-		private onLookAtObjectChanged(event:away.events.DisplayObjectEvent)
+		private onLookAtObjectChanged(event:DisplayObjectEvent)
 		{
 			this.pNotifyUpdate();
 		}
-
 	}
 }

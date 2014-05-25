@@ -9,7 +9,7 @@ module away.prefabs
 	/**
 	 * A UV Sphere primitive mesh.
 	 */
-	export class PrimitiveSpherePrefab extends away.prefabs.PrimitivePrefabBase implements away.library.IAsset
+	export class PrimitiveSpherePrefab extends PrimitivePrefabBase implements away.library.IAsset
 	{
 		private _radius:number;
 		private _segmentsW:number;

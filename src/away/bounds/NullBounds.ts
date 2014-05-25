@@ -2,6 +2,12 @@
 
 module away.bounds
 {
+	import IEntity						= away.entities.IEntity;
+	import Matrix3D						= away.geom.Matrix3D;
+	import PlaneClassification			= away.geom.PlaneClassification;
+	import Plane3D						= away.geom.Plane3D;
+	import Vector3D						= away.geom.Vector3D;
+
 	export class NullBounds extends BoundingVolumeBase
 	{
 		private _alwaysIn:boolean;
@@ -17,20 +23,20 @@ module away.bounds
 		}
 
 		//@override
-		public clone():away.bounds.BoundingVolumeBase
+		public clone():BoundingVolumeBase
 		{
-			return new away.bounds.NullBounds(this._alwaysIn);
+			return new NullBounds(this._alwaysIn);
 		}
 
 		//@override
-		public pCreateBoundingEntity():away.entities.IEntity
+		public pCreateBoundingEntity():IEntity
 		{
 			//return this._renderable || new away.primitives.WireframeSphere( 100, 16, 12, 0xffffff, 0.5 );
 			return null;
 		}
 
 		//@override
-		public isInFrustum(planes:Array<away.geom.Plane3D>, numPlanes:number):boolean
+		public isInFrustum(planes:Array<Plane3D>, numPlanes:number):boolean
 		{
 			return this._alwaysIn;
 		}
@@ -41,7 +47,7 @@ module away.bounds
 //		}
 
 		//@override
-		public fromSphere(center:away.geom.Vector3D, radius:number)
+		public fromSphere(center:Vector3D, radius:number)
 		{
 		}
 
@@ -50,15 +56,15 @@ module away.bounds
 		{
 		}
 
-		public classifyToPlane(plane:away.geom.Plane3D):number
+		public classifyToPlane(plane:Plane3D):number
 		{
-			return away.geom.PlaneClassification.INTERSECT;
+			return PlaneClassification.INTERSECT;
 		}
 
 		//@override
-		public transformFrom(bounds:away.bounds.BoundingVolumeBase, matrix:away.geom.Matrix3D)
+		public transformFrom(bounds:BoundingVolumeBase, matrix:Matrix3D)
 		{
-			this._alwaysIn = (<away.bounds.NullBounds> bounds)._alwaysIn;
+			this._alwaysIn = (<NullBounds> bounds)._alwaysIn;
 		}
 	}
 }

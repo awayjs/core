@@ -12,6 +12,9 @@ module away.containers
 	import Rectangle					= away.geom.Rectangle;
 	import Vector3D						= away.geom.Vector3D;
 	import MouseManager					= away.managers.MouseManager;
+	import IPicker						= away.pick.IPicker;
+	import PickingCollisionVO			= away.pick.PickingCollisionVO;
+	import RaycastPicker				= away.pick.RaycastPicker;
 	import IRenderer					= away.render.IRenderer;
 	import CSSRendererBase				= away.render.CSSRendererBase;
 	import ICollector					= away.traverse.ICollector;
@@ -59,7 +62,7 @@ module away.containers
 		private _onViewportUpdatedDelegate;
 		private _onScissorUpdatedDelegate;
 		private _mouseManager:MouseManager;
-		private _mousePicker:away.pick.IPicker = new away.pick.RaycastPicker();
+		private _mousePicker:IPicker = new RaycastPicker();
 
 		private _htmlElement:HTMLDivElement;
 		private _shareContext:boolean;
@@ -349,18 +352,18 @@ module away.containers
 		/**
 		 *
 		 */
-		public get mousePicker():away.pick.IPicker
+		public get mousePicker():IPicker
 		{
 			return this._mousePicker;
 		}
 
-		public set mousePicker(value:away.pick.IPicker)
+		public set mousePicker(value:IPicker)
 		{
 			if (this._mousePicker == value)
 				return;
 
 			if (value == null)
-				this._mousePicker = new away.pick.RaycastPicker();
+				this._mousePicker = new RaycastPicker();
 			else
 				this._mousePicker = value;
 		}
@@ -551,13 +554,13 @@ module away.containers
 		}
 
 		/* TODO: implement Touch3DManager
-		 public get touchPicker():away.pick.IPicker
+		 public get touchPicker():IPicker
 		 {
 		 return this._touch3DManager.touchPicker;
 		 }
 		 */
 		/* TODO: implement Touch3DManager
-		 public set touchPicker( value:away.pick.IPicker)
+		 public set touchPicker( value:IPicker)
 		 {
 		 this._touch3DManager.touchPicker = value;
 		 }
@@ -586,7 +589,7 @@ module away.containers
 				if (this._htmlElement == this._mouseManager._iActiveDiv)
 					this._mouseManager._iCollidingObject = this.mousePicker.getViewCollision(this._pMouseX, this._pMouseY, this);
 			} else {
-				var collidingObject:away.pick.PickingCollisionVO = this.mousePicker.getViewCollision(this._pMouseX, this._pMouseY, this);
+				var collidingObject:PickingCollisionVO = this.mousePicker.getViewCollision(this._pMouseX, this._pMouseY, this);
 
 				if (this.layeredView || this._mouseManager._iCollidingObject == null || collidingObject.rayEntryDistance < this._mouseManager._iCollidingObject.rayEntryDistance)
 					this._mouseManager._iCollidingObject = collidingObject;

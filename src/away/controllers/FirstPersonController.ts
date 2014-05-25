@@ -2,13 +2,14 @@
 
 module away.controllers
 {
+	import DisplayObject				= away.base.DisplayObject;
 
 	/**
 	 * Extended camera used to hover round a specified target object.
 	 *
 	 * @see    away3d.containers.View3D
 	 */
-	export class FirstPersonController extends away.controllers.ControllerBase
+	export class FirstPersonController extends ControllerBase
 	{
 		public _iCurrentPanAngle:number = 0;
 		public  _iCurrentTiltAngle:number = 90;
@@ -149,7 +150,7 @@ module away.controllers
 		/**
 		 * Creates a new <code>HoverController</code> object.
 		 */
-		constructor(targetObject:away.base.DisplayObject = null, panAngle:number = 0, tiltAngle:number = 90, minTiltAngle:number = -90, maxTiltAngle:number = 90, steps:number = 8, wrapPanAngle:boolean = false)
+		constructor(targetObject:DisplayObject = null, panAngle:number = 0, tiltAngle:number = 90, minTiltAngle:number = -90, maxTiltAngle:number = 90, steps:number = 8, wrapPanAngle:boolean = false)
 		{
 			super(targetObject);
 

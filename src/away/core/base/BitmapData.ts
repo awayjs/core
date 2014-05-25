@@ -2,6 +2,11 @@
 
 module away.base
 {
+	import ColorTransform				= away.geom.ColorTransform;
+	import Matrix						= away.geom.Matrix;
+	import Rectangle					= away.geom.Rectangle;
+	import Point						= away.geom.Point;
+	import ColorUtils					= away.utils.ColorUtils;
 
 	/**
 	 *
@@ -12,7 +17,7 @@ module away.base
 		private _imageCanvas:HTMLCanvasElement;
 		private _context:CanvasRenderingContext2D;
 		private _imageData:ImageData;
-		private _rect:away.geom.Rectangle;
+		private _rect:Rectangle;
 		private _transparent:boolean;
 		private _alpha:number = 1;
 		private _locked:boolean = false;
@@ -33,7 +38,7 @@ module away.base
 			this._imageCanvas.width = width;
 			this._imageCanvas.height = height;
 			this._context = this._imageCanvas.getContext("2d");
-			this._rect = new away.geom.Rectangle(0, 0, width, height);
+			this._rect = new Rectangle(0, 0, width, height);
 
 			if (fillColor != null) {
 
@@ -165,7 +170,7 @@ module away.base
 		 * @param rect
 		 * @param inputByteArray
 		 */
-		public setPixels(rect:away.geom.Rectangle, inputByteArray:away.utils.ByteArray)
+		public setPixels(rect:Rectangle, inputByteArray:away.utils.ByteArray)
 		{
 			if (!this._locked) {
 				this._imageData = this._context.getImageData(0, 0, this._rect.width, this._rect.height);
@@ -223,7 +228,7 @@ module away.base
 
 		}
 
-		public setVector(rect:away.geom.Rectangle, inputVector:Array<number>):void
+		public setVector(rect:Rectangle, inputVector:Array<number>):void
 		{
 			if (!this._locked) {
 				this._imageData = this._context.getImageData(0, 0, this._rect.width, this._rect.height);
@@ -257,11 +262,11 @@ module away.base
 		 * @param sourceRect - source rectange to copy from
 		 * @param destRect - destinatoin rectange to copy to
 		 */
-		public drawImage(img:BitmapData, sourceRect:away.geom.Rectangle, destRect:away.geom.Rectangle);
+		public drawImage(img:BitmapData, sourceRect:Rectangle, destRect:Rectangle);
 
-		public drawImage(img:HTMLImageElement, sourceRect:away.geom.Rectangle, destRect:away.geom.Rectangle);
+		public drawImage(img:HTMLImageElement, sourceRect:Rectangle, destRect:Rectangle);
 
-		public drawImage(img:any, sourceRect:away.geom.Rectangle, destRect:away.geom.Rectangle):void
+		public drawImage(img:any, sourceRect:Rectangle, destRect:Rectangle):void
 		{
 
 			if (this._locked) {
@@ -287,11 +292,11 @@ module away.base
 
 		}
 
-		private _drawImage(img:BitmapData, sourceRect:away.geom.Rectangle, destRect:away.geom.Rectangle);
+		private _drawImage(img:BitmapData, sourceRect:Rectangle, destRect:Rectangle);
 
-		private _drawImage(img:HTMLImageElement, sourceRect:away.geom.Rectangle, destRect:away.geom.Rectangle);
+		private _drawImage(img:HTMLImageElement, sourceRect:Rectangle, destRect:Rectangle);
 
-		private _drawImage(img:any, sourceRect:away.geom.Rectangle, destRect:away.geom.Rectangle):void
+		private _drawImage(img:any, sourceRect:Rectangle, destRect:Rectangle):void
 		{
 			if (img instanceof away.base.BitmapData) {
 				this._context.drawImage(img.canvas, sourceRect.x, sourceRect.y, sourceRect.width, sourceRect.height, destRect.x, destRect.y, destRect.width, destRect.height);
@@ -306,11 +311,11 @@ module away.base
 		 * @param sourceRect
 		 * @param destRect
 		 */
-		public copyPixels(bmpd:BitmapData, sourceRect:away.geom.Rectangle, destRect:away.geom.Rectangle)
+		public copyPixels(bmpd:BitmapData, sourceRect:Rectangle, destRect:Rectangle)
 
-		public copyPixels(bmpd:HTMLImageElement, sourceRect:away.geom.Rectangle, destRect:away.geom.Rectangle);
+		public copyPixels(bmpd:HTMLImageElement, sourceRect:Rectangle, destRect:Rectangle);
 
-		public copyPixels(bmpd:any, sourceRect:away.geom.Rectangle, destRect:away.geom.Rectangle):void
+		public copyPixels(bmpd:any, sourceRect:Rectangle, destRect:Rectangle):void
 		{
 
 			if (this._locked) {
@@ -336,11 +341,11 @@ module away.base
 
 		}
 
-		private _copyPixels(bmpd:BitmapData, sourceRect:away.geom.Rectangle, destRect:away.geom.Rectangle)
+		private _copyPixels(bmpd:BitmapData, sourceRect:Rectangle, destRect:Rectangle)
 
-		private _copyPixels(bmpd:HTMLImageElement, sourceRect:away.geom.Rectangle, destRect:away.geom.Rectangle);
+		private _copyPixels(bmpd:HTMLImageElement, sourceRect:Rectangle, destRect:Rectangle);
 
-		private _copyPixels(bmpd:any, sourceRect:away.geom.Rectangle, destRect:away.geom.Rectangle):void
+		private _copyPixels(bmpd:any, sourceRect:Rectangle, destRect:Rectangle):void
 		{
 
 			if (bmpd instanceof away.base.BitmapData) {
@@ -356,7 +361,7 @@ module away.base
 		 * @param rect
 		 * @param color
 		 */
-		public fillRect(rect:away.geom.Rectangle, color:number):void
+		public fillRect(rect:Rectangle, color:number):void
 		{
 
 			if (this._locked) {
@@ -391,11 +396,11 @@ module away.base
 		 * @param source
 		 * @param matrix
 		 */
-		public draw(source:BitmapData, matrix?:away.geom.Matrix)
+		public draw(source:BitmapData, matrix?:Matrix)
 
-		public draw(source:HTMLImageElement, matrix?:away.geom.Matrix)
+		public draw(source:HTMLImageElement, matrix?:Matrix)
 
-		public draw(source:any, matrix?:away.geom.Matrix):void
+		public draw(source:any, matrix?:Matrix):void
 		{
 
 			if (this._locked) {
@@ -421,11 +426,11 @@ module away.base
 
 		}
 
-		private _draw(source:BitmapData, matrix:away.geom.Matrix)
+		private _draw(source:BitmapData, matrix:Matrix)
 
-		private _draw(source:HTMLImageElement, matrix:away.geom.Matrix)
+		private _draw(source:HTMLImageElement, matrix:Matrix)
 
-		private _draw(source:any, matrix:away.geom.Matrix):void
+		private _draw(source:any, matrix:Matrix):void
 		{
 
 			if (source instanceof away.base.BitmapData) {
@@ -449,7 +454,7 @@ module away.base
 
 		}
 
-		public copyChannel(sourceBitmap:BitmapData, sourceRect:away.geom.Rectangle, destPoint:away.geom.Point, sourceChannel:number, destChannel:number):void
+		public copyChannel(sourceBitmap:BitmapData, sourceRect:Rectangle, destPoint:Point, sourceChannel:number, destChannel:number):void
 		{
 			var imageData:ImageData = sourceBitmap.imageData;
 
@@ -481,7 +486,7 @@ module away.base
 			}
 		}
 
-		public colorTransform(rect:away.geom.Rectangle, colorTransform:away.geom.ColorTransform):void
+		public colorTransform(rect:Rectangle, colorTransform:ColorTransform):void
 		{
 			if (!this._locked) {
 				this._imageData = this._context.getImageData(0, 0, this._rect.width, this._rect.height);
@@ -567,9 +572,9 @@ module away.base
 
 		/**
 		 *
-		 * @param {away.geom.Rectangle}
+		 * @param {Rectangle}
 		 */
-		public get rect():away.geom.Rectangle
+		public get rect():Rectangle
 		{
 			return this._rect;
 		}
@@ -600,7 +605,7 @@ module away.base
 		private hexToRGBACSS(d:number):string
 		{
 
-			var argb:number[] = away.utils.ColorUtils.float32ColorToARGB(d);
+			var argb:number[] = ColorUtils.float32ColorToARGB(d);
 
 			if (this._transparent == false) {
 

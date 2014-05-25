@@ -2,21 +2,22 @@
 
 module away.textures
 {
+	import BitmapData					= away.base.BitmapData;
 
 	export class BitmapTexture extends Texture2DBase
 	{
-		public _bitmapData:away.base.BitmapData;
+		public _bitmapData:BitmapData;
 
 		/**
 		 *
-		 * @returns {away.base.BitmapData}
+		 * @returns {BitmapData}
 		 */
-		public get bitmapData():away.base.BitmapData
+		public get bitmapData():BitmapData
 		{
 			return this._bitmapData;
 		}
 
-		public set bitmapData(value:away.base.BitmapData)
+		public set bitmapData(value:BitmapData)
 		{
 			if (this._bitmapData == value)
 				return;
@@ -31,7 +32,7 @@ module away.textures
 			this._pSetSize(value.width, value.height);
 		}
 
-		constructor(bitmapData:away.base.BitmapData, generateMipmaps:boolean = false)
+		constructor(bitmapData:BitmapData, generateMipmaps:boolean = false)
 		{
 			super(generateMipmaps);
 
@@ -46,7 +47,7 @@ module away.textures
 			this._bitmapData = null;
 		}
 
-		public _iGetTextureData():away.base.BitmapData
+		public _iGetTextureData():BitmapData
 		{
 			return this._bitmapData;
 		}

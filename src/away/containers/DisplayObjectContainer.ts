@@ -23,10 +23,18 @@
  */
 module away.containers
 {
-	export class DisplayObjectContainer extends away.base.DisplayObject implements away.library.IAsset
+	import DisplayObject				= away.base.DisplayObject;
+	import ArgumentError				= away.errors.ArgumentError;
+	import Error						= away.errors.Error;
+	import RangeError					= away.errors.RangeError;
+	import Point						= away.geom.Point;
+	import AssetType					= away.library.AssetType;
+	import IAsset						= away.library.IAsset;
+	
+	export class DisplayObjectContainer extends DisplayObject implements IAsset
 	{
 		private _mouseChildren:boolean = true;
-		private _children:Array<away.base.DisplayObject> = new Array<away.base.DisplayObject>();
+		private _children:Array<DisplayObject> = new Array<DisplayObject>();
 		public _iIsRoot:boolean;
 
 		/**
@@ -34,7 +42,7 @@ module away.containers
 		 */
 		public get assetType():string
 		{
-			return away.library.AssetType.CONTAINER;
+			return AssetType.CONTAINER;
 		}
 
 		/**
@@ -141,10 +149,10 @@ module away.containers
 		 * @event added Dispatched when a display object is added to the display
 		 *              list.
 		 */
-		public addChild(child:away.base.DisplayObject):away.base.DisplayObject
+		public addChild(child:DisplayObject):DisplayObject
 		{
 			if (child == null)
-				throw new away.errors.Error("Parameter child cannot be null.");
+				throw new Error("Parameter child cannot be null.");
 
 			//if child already has a parent, remove it.
 			if (child._pParent)
@@ -187,12 +195,12 @@ module away.containers
 		 * @event added Dispatched when a display object is added to the display
 		 *              list.
 		 */
-		public addChildAt(child:away.base.DisplayObject, index:number /*int*/):away.base.DisplayObject
+		public addChildAt(child:DisplayObject, index:number /*int*/):DisplayObject
 		{
 			return child;
 		}
 
-		public addChildren(...childarray:Array<away.base.DisplayObject>)
+		public addChildren(...childarray:Array<DisplayObject>)
 		{
 			var len:number = childarray.length;
 			for (var i:number = 0; i <  len; i++)
@@ -202,9 +210,9 @@ module away.containers
 		/**
 		 *
 		 */
-		public clone():away.base.DisplayObject
+		public clone():DisplayObject
 		{
-			var clone:away.containers.DisplayObjectContainer = new away.containers.DisplayObjectContainer();
+			var clone:DisplayObjectContainer = new DisplayObjectContainer();
 			clone.pivot = this.pivot;
 			clone._iMatrix3D = this._iMatrix3D;
 			clone.partition = this.partition;
@@ -230,7 +238,7 @@ module away.containers
 		 *         the DisplayObjectContainer or the container itself; otherwise
 		 *         <code>false</code>.
 		 */
-		public contains(child:away.base.DisplayObject):boolean
+		public contains(child:DisplayObject):boolean
 		{
 			return this._children.indexOf(child) >= 0;
 		}
@@ -255,12 +263,12 @@ module away.containers
 		 * @throws RangeError    Throws if the index does not exist in the child
 		 *                       list.
 		 */
-		public getChildAt(index:number /*int*/):away.base.DisplayObject
+		public getChildAt(index:number /*int*/):DisplayObject
 		{
-			var child:away.base.DisplayObject = this._children[index];
+			var child:DisplayObject = this._children[index];
 
 			if (child == null)
-				throw new away.errors.RangeError("Index does not exist in the child list of the caller");
+				throw new RangeError("Index does not exist in the child list of the caller");
 
 			return child;
 		}
@@ -279,7 +287,7 @@ module away.containers
 		 * @param name The name of the child to return.
 		 * @return The child display object with the specified name.
 		 */
-		public getChildByName(name:string):away.base.DisplayObject
+		public getChildByName(name:string):DisplayObject
 		{
 			var len:number = this._children.length;
 			for (var i:number = 0; i < len; ++i)
@@ -297,12 +305,12 @@ module away.containers
 		 * @throws ArgumentError Throws if the child parameter is not a child of this
 		 *                       object.
 		 */
-		public getChildIndex(child:away.base.DisplayObject):number /*int*/
+		public getChildIndex(child:DisplayObject):number /*int*/
 		{
 			var childIndex:number = this._children.indexOf(child);
 
 			if (childIndex == -1)
-				throw new away.errors.ArgumentError("Child parameter is not a child of the caller");
+				throw new ArgumentError("Child parameter is not a child of the caller");
 
 			return childIndex;
 		}
@@ -326,9 +334,9 @@ module away.containers
 		 *         children(or grandchildren, and so on) of this
 		 *         DisplayObjectContainer instance.
 		 */
-		public getObjectsUnderPoint(point:away.geom.Point):Array<away.base.DisplayObject>
+		public getObjectsUnderPoint(point:away.geom.Point):Array<DisplayObject>
 		{
-			return new Array<away.base.DisplayObject>();
+			return new Array<DisplayObject>();
 		}
 
 		/**
@@ -350,10 +358,10 @@ module away.containers
 		 * @throws ArgumentError Throws if the child parameter is not a child of this
 		 *                       object.
 		 */
-		public removeChild(child:away.base.DisplayObject):away.base.DisplayObject
+		public removeChild(child:DisplayObject):DisplayObject
 		{
 			if (child == null)
-				throw new away.errors.Error("Parameter child cannot be null");
+				throw new Error("Parameter child cannot be null");
 
 			this.removeChildInternal(child);
 
@@ -384,7 +392,7 @@ module away.containers
 		 *                       can avoid this situation by having the child movie
 		 *                       call the <code>Security.allowDomain()</code> method.
 		 */
-		public removeChildAt(index:number /*int*/):away.base.DisplayObject
+		public removeChildAt(index:number /*int*/):DisplayObject
 		{
 			return this.removeChild(this._children[index]);
 		}
@@ -408,10 +416,10 @@ module away.containers
 		public removeChildren(beginIndex:number /*int*/ = 0, endIndex:number /*int*/ = 2147483647)
 		{
 			if (beginIndex < 0)
-				throw new away.errors.RangeError("beginIndex is out of range of the child list");
+				throw new RangeError("beginIndex is out of range of the child list");
 
 			if (endIndex > this._children.length)
-				throw new away.errors.RangeError("endIndex is out of range of the child list");
+				throw new RangeError("endIndex is out of range of the child list");
 
 			for(var i:number /*uint*/ = beginIndex; i < endIndex; i++)
 				this.removeChild(this._children[i]);
@@ -445,7 +453,7 @@ module away.containers
 		 * @throws RangeError    Throws if the index does not exist in the child
 		 *                       list.
 		 */
-		public setChildIndex(child:away.base.DisplayObject, index:number /*int*/)
+		public setChildIndex(child:DisplayObject, index:number /*int*/)
 		{
 			//TODO
 		}
@@ -460,7 +468,7 @@ module away.containers
 		 * @throws ArgumentError Throws if either child parameter is not a child of
 		 *                       this object.
 		 */
-		public swapChildren(child1:away.base.DisplayObject, child2:away.base.DisplayObject)
+		public swapChildren(child1:DisplayObject, child2:DisplayObject)
 		{
 			//TODO
 		}
@@ -494,7 +502,7 @@ module away.containers
 		/**
 		 * @protected
 		 */
-		public _pUpdateScene(value:away.containers.Scene)
+		public _pUpdateScene(value:Scene)
 		{
 			super._pUpdateScene(value);
 
@@ -544,7 +552,7 @@ module away.containers
 		 *
 		 * @param child
 		 */
-		private removeChildInternal(child:away.base.DisplayObject):away.base.DisplayObject
+		private removeChildInternal(child:DisplayObject):DisplayObject
 		{
 			this._children.splice(this.getChildIndex(child), 1);
 

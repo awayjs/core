@@ -3,7 +3,7 @@
 module away.textures
 {
 
-	export class ImageTexture extends away.textures.Texture2DBase
+	export class ImageTexture extends Texture2DBase
 	{
 		private _htmlImageElement:HTMLImageElement;
 

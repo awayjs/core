@@ -1,6 +1,6 @@
 ///<reference path="../../_definitions.ts"/>
 
-module away.net
+module away.library
 {
 
 	export class AssetLoaderContext

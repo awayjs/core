@@ -2,26 +2,33 @@
 
 module away.containers
 {
+	import DisplayObject			= away.base.DisplayObject;
+	import DisplayObjectContainer	= away.containers.DisplayObjectContainer;
+	import SceneEvent				= away.events.SceneEvent;
+	import NodeBase					= away.partition.NodeBase;
+	import Partition				= away.partition.Partition;
+	import ICollector				= away.traverse.ICollector;
+
 	export class Scene extends away.events.EventDispatcher
 	{
-		private _expandedPartitions:Array<away.partition.Partition> = new Array<away.partition.Partition>();
-		private _partitions:Array<away.partition.Partition> = new Array<away.partition.Partition>();
+		private _expandedPartitions:Array<Partition> = new Array<Partition>();
+		private _partitions:Array<Partition> = new Array<Partition>();
 
-		public _iSceneGraphRoot:away.containers.DisplayObjectContainer;
+		public _iSceneGraphRoot:DisplayObjectContainer;
 		public _iCollectionMark = 0;
 
 		constructor()
 		{
 			super();
 
-			this._iSceneGraphRoot = new away.containers.DisplayObjectContainer();
+			this._iSceneGraphRoot = new DisplayObjectContainer();
 
 			this._iSceneGraphRoot._iSetScene(this);
 			this._iSceneGraphRoot._iIsRoot = true;
-			this._iSceneGraphRoot.partition = new away.partition.Partition(new away.partition.NodeBase());
+			this._iSceneGraphRoot.partition = new Partition(new NodeBase());
 		}
 
-		public traversePartitions(traverser:away.traverse.ICollector)
+		public traversePartitions(traverser:ICollector)
 		{
 			var i:number = 0;
 			var len:number = this._partitions.length;
@@ -34,29 +41,29 @@ module away.containers
 			}
 		}
 
-		public get partition():away.partition.Partition
+		public get partition():Partition
 		{
 			return this._iSceneGraphRoot.partition;
 		}
 
-		public set partition(value:away.partition.Partition)
+		public set partition(value:Partition)
 		{
 			this._iSceneGraphRoot.partition = value;
 
-			this.dispatchEvent(new away.events.SceneEvent(away.events.SceneEvent.PARTITION_CHANGED, this._iSceneGraphRoot));
+			this.dispatchEvent(new SceneEvent(SceneEvent.PARTITION_CHANGED, this._iSceneGraphRoot));
 		}
 
-		public contains(child:away.base.DisplayObject):boolean
+		public contains(child:DisplayObject):boolean
 		{
 			return this._iSceneGraphRoot.contains(child);
 		}
 
-		public addChild(child:away.base.DisplayObject):away.base.DisplayObject
+		public addChild(child:DisplayObject):DisplayObject
 		{
 			return this._iSceneGraphRoot.addChild(child);
 		}
 
-		public removeChild(child:away.base.DisplayObject)
+		public removeChild(child:DisplayObject)
 		{
 			this._iSceneGraphRoot.removeChild(child);
 		}
@@ -67,7 +74,7 @@ module away.containers
 		}
 
 
-		public getChildAt(index:number):away.base.DisplayObject
+		public getChildAt(index:number):DisplayObject
 		{
 			return this._iSceneGraphRoot.getChildAt(index);
 		}
@@ -80,7 +87,7 @@ module away.containers
 		/**
 		 * @internal
 		 */
-		public iRegisterEntity(displayObject:away.base.DisplayObject)
+		public iRegisterEntity(displayObject:DisplayObject)
 		{
 			if (displayObject.partition)
 				this.iRegisterPartition(displayObject.partition);
@@ -92,7 +99,7 @@ module away.containers
 		/**
 		 * @internal
 		 */
-		public iRegisterPartition(partition:away.partition.Partition)
+		public iRegisterPartition(partition:Partition)
 		{
 			this._expandedPartitions.push(partition);
 
@@ -104,7 +111,7 @@ module away.containers
 		/**
 		 * @internal
 		 */
-		public iUnregisterEntity(displayObject:away.base.DisplayObject)
+		public iUnregisterEntity(displayObject:DisplayObject)
 		{
 			if (displayObject.partition)
 				this.iUnregisterPartition(displayObject.partition);
@@ -116,7 +123,7 @@ module away.containers
 		/**
 		 * @internal
 		 */
-		public iUnregisterPartition(partition:away.partition.Partition)
+		public iUnregisterPartition(partition:Partition)
 		{
 			this._expandedPartitions.splice(this._expandedPartitions.indexOf(partition), 1);
 

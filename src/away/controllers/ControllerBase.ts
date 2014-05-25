@@ -2,13 +2,16 @@
 
 module away.controllers
 {
+	import DisplayObject				= away.base.DisplayObject;
+	import AbstractMethodError			= away.errors.AbstractMethodError;
+
 	export class ControllerBase
 	{
 
 		public _pAutoUpdate:boolean = true;
-		public _pTargetObject:away.base.DisplayObject;
+		public _pTargetObject:DisplayObject;
 
-		constructor(targetObject:away.base.DisplayObject = null)
+		constructor(targetObject:DisplayObject = null)
 		{
 			this.targetObject = targetObject;
 		}
@@ -20,12 +23,12 @@ module away.controllers
 			}
 		}
 
-		public get targetObject():away.base.DisplayObject
+		public get targetObject():DisplayObject
 		{
 			return this._pTargetObject;
 		}
 
-		public set targetObject(val:away.base.DisplayObject)
+		public set targetObject(val:DisplayObject)
 		{
 			if (this._pTargetObject == val) {
 				return;
@@ -65,7 +68,7 @@ module away.controllers
 
 		public update(interpolate:boolean = true)
 		{
-			throw new away.errors.AbstractMethodError();
+			throw new AbstractMethodError();
 		}
 	}
 }

@@ -56,27 +56,32 @@
 ///<reference path="utils/TextureUtils.ts" />
 ///<reference path="utils/Timer.ts" />
 
-///<reference path="parsers/ParserBase.ts" />
-///<reference path="parsers/BitmapParser.ts" />
-///<reference path="parsers/CubeTextureParser.ts" />
-///<reference path="parsers/Texture2DParser.ts" />
-///<reference path="parsers/ParserDataFormat.ts" />
-///<reference path="parsers/ParserUtils.ts" />
-///<reference path="parsers/ResourceDependency.ts" />
+///<reference path="core/geom/Box.ts"/>
+///<reference path="core/geom/ColorTransform.ts"/>
+///<reference path="core/geom/MathConsts.ts" />
+///<reference path="core/geom/Matrix.ts" />
+///<reference path="core/geom/Matrix3D.ts" />
+///<reference path="core/geom/Matrix3DUtils.ts" />
+///<reference path="core/geom/Orientation3D.ts" />
+///<reference path="core/geom/PerspectiveProjection.ts" />
+///<reference path="core/geom/Plane3D.ts" />
+///<reference path="core/geom/PlaneClassification.ts" />
+///<reference path="core/geom/Point.ts" />
+///<reference path="core/geom/PoissonLookup.ts" />
+///<reference path="core/geom/Quaternion.ts" />
+///<reference path="core/geom/Rectangle.ts" />
+///<reference path="core/geom/Transform.ts" />
+///<reference path="core/geom/UVTransform.ts" />
+///<reference path="core/geom/Vector3D.ts" />
+
+///<reference path="core/net/URLRequest.ts" />
+///<reference path="core/net/URLLoaderDataFormat.ts" />
+///<reference path="core/net/URLRequestMethod.ts" />
+///<reference path="core/net/URLLoader.ts" />
+///<reference path="core/net/URLVariables.ts" />
 
 ///<reference path="core/library/IAsset.ts" />
-///<reference path="core/library/IDUtil.ts" />
 ///<reference path="core/library/NamedAssetBase.ts" />
-///<reference path="core/library/AssetType.ts" />
-///<reference path="core/library/AssetLibraryIterator.ts" />
-///<reference path="core/library/ConflictStrategyBase.ts" />
-///<reference path="core/library/NumSuffixConflictStrategy.ts" />
-///<reference path="core/library/IgnoreConflictStrategy.ts" />
-///<reference path="core/library/ErrorConflictStrategy.ts" />
-///<reference path="core/library/ConflictPrecedence.ts" />
-///<reference path="core/library/ConflictStrategy.ts" />
-///<reference path="core/library/AssetLibraryBundle.ts"/>
-///<reference path="core/library/AssetLibrary.ts" />
 
 ///<reference path="core/base/BlendMode.ts"/>
 ///<reference path="core/base/AlignmentMode.ts"/>
@@ -108,6 +113,40 @@
 ///<reference path="core/base/TriangleCulling.ts" />
 ///<reference path="core/base/TriangleSubGeometry.ts" />
 ///<reference path="core/base/TriangleSubMesh.ts" />
+
+///<reference path="textures/TextureProxyBase.ts" />
+///<reference path="textures/Texture2DBase.ts" />
+///<reference path="textures/CubeTextureBase.ts" />
+///<reference path="textures/ImageTexture.ts" />
+///<reference path="textures/BitmapTexture.ts" />
+///<reference path="textures/RenderTexture.ts" />
+///<reference path="textures/ImageCubeTexture.ts" />
+///<reference path="textures/BitmapCubeTexture.ts" />
+///<reference path="textures/MipmapGenerator.ts" />
+///<reference path="textures/SpecularBitmapTexture.ts" />
+
+///<reference path="parsers/ParserBase.ts" />
+///<reference path="parsers/BitmapParser.ts" />
+///<reference path="parsers/CubeTextureParser.ts" />
+///<reference path="parsers/Texture2DParser.ts" />
+///<reference path="parsers/ParserDataFormat.ts" />
+///<reference path="parsers/ParserUtils.ts" />
+///<reference path="parsers/ResourceDependency.ts" />
+
+///<reference path="core/library/AssetLoaderContext.ts"/>
+///<reference path="core/library/AssetLoader.ts" />
+///<reference path="core/library/AssetLoaderToken.ts" />
+///<reference path="core/library/IDUtil.ts" />
+///<reference path="core/library/AssetType.ts" />
+///<reference path="core/library/AssetLibraryIterator.ts" />
+///<reference path="core/library/ConflictStrategyBase.ts" />
+///<reference path="core/library/NumSuffixConflictStrategy.ts" />
+///<reference path="core/library/IgnoreConflictStrategy.ts" />
+///<reference path="core/library/ErrorConflictStrategy.ts" />
+///<reference path="core/library/ConflictPrecedence.ts" />
+///<reference path="core/library/ConflictStrategy.ts" />
+///<reference path="core/library/AssetLibraryBundle.ts"/>
+///<reference path="core/library/AssetLibrary.ts" />
 
 ///<reference path="core/pool/EntityListItem.ts"/>
 ///<reference path="core/pool/EntityListItemPool.ts"/>
@@ -144,34 +183,6 @@
 
 ///<reference path="core/sort/IEntitySorter.ts"/>
 ///<reference path="core/sort/RenderableMergeSort.ts"/>
-
-///<reference path="core/geom/Box.ts"/>
-///<reference path="core/geom/ColorTransform.ts"/>
-///<reference path="core/geom/Matrix.ts" />
-///<reference path="core/geom/Matrix3D.ts" />
-///<reference path="core/geom/Orientation3D.ts" />
-///<reference path="core/geom/PerspectiveProjection.ts" />
-///<reference path="core/geom/Point.ts" />
-///<reference path="core/geom/Rectangle.ts" />
-///<reference path="core/geom/Transform.ts" />
-///<reference path="core/geom/UVTransform.ts" />
-///<reference path="core/geom/Vector3D.ts" />
-
-///<reference path="core/geom/MathConsts.ts" />
-///<reference path="core/geom/Quaternion.ts" />
-///<reference path="core/geom/PlaneClassification.ts" />
-///<reference path="core/geom/Plane3D.ts" />
-///<reference path="core/geom/Matrix3DUtils.ts" />
-///<reference path="core/geom/PoissonLookup.ts" />
-
-///<reference path="core/net/AssetLoaderContext.ts"/>
-///<reference path="core/net/AssetLoader.ts" />
-///<reference path="core/net/AssetLoaderToken.ts" />
-///<reference path="core/net/URLRequest.ts" />
-///<reference path="core/net/URLLoaderDataFormat.ts" />
-///<reference path="core/net/URLRequestMethod.ts" />
-///<reference path="core/net/URLLoader.ts" />
-///<reference path="core/net/URLVariables.ts" />
 
 ///<reference path="core/text/AntiAliasType.ts"/>
 ///<reference path="core/text/GridFitType.ts"/>
@@ -240,13 +251,3 @@
 ///<reference path="animators/IAnimationSet.ts"/>
 ///<reference path="animators/IAnimator.ts"/>
 
-///<reference path="textures/TextureProxyBase.ts" />
-///<reference path="textures/Texture2DBase.ts" />
-///<reference path="textures/CubeTextureBase.ts" />
-///<reference path="textures/ImageTexture.ts" />
-///<reference path="textures/BitmapTexture.ts" />
-///<reference path="textures/RenderTexture.ts" />
-///<reference path="textures/ImageCubeTexture.ts" />
-///<reference path="textures/BitmapCubeTexture.ts" />
-///<reference path="textures/MipmapGenerator.ts" />
-///<reference path="textures/SpecularBitmapTexture.ts" />

@@ -2,24 +2,22 @@
 
 module away.library
 {
-	//import away.library.assets.IAsset;
-
-	export class IgnoreConflictStrategy extends away.library.ConflictStrategyBase
+	export class IgnoreConflictStrategy extends ConflictStrategyBase
 	{
 		constructor()
 		{
 			super();
 		}
 
-		public resolveConflict(changedAsset:away.library.IAsset, oldAsset:away.library.IAsset, assetsDictionary:Object, precedence:string)
+		public resolveConflict(changedAsset:IAsset, oldAsset:IAsset, assetsDictionary:Object, precedence:string)
 		{
 			// Do nothing, ignore the fact that there is a conflict.
 			return;
 		}
 
-		public create():away.library.ConflictStrategyBase
+		public create():ConflictStrategyBase
 		{
-			return new away.library.IgnoreConflictStrategy();
+			return new IgnoreConflictStrategy();
 		}
 	}
 }

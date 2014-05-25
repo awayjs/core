@@ -9,7 +9,7 @@ module away.prefabs
 	/**
 	 * A Cylinder primitive mesh.
 	 */
-	export class PrimitiveCylinderPrefab extends away.prefabs.PrimitivePrefabBase implements away.library.IAsset
+	export class PrimitiveCylinderPrefab extends PrimitivePrefabBase implements away.library.IAsset
 	{
 		public _pBottomRadius:number;
 		public _pSegmentsW:number;

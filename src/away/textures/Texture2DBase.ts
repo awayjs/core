@@ -2,9 +2,12 @@
 
 module away.textures
 {
+	import BitmapData					= away.base.BitmapData;
+	import IStage						= away.base.IStage;
+
 	export class Texture2DBase extends TextureProxyBase
 	{
-		private _mipmapData:Array<away.base.BitmapData>;
+		private _mipmapData:Array<BitmapData>;
 		private _mipmapDataDirty:boolean;
 		public _pWidth:number;
 		public _pHeight:number;
@@ -82,18 +85,18 @@ module away.textures
 		 *
 		 * @param stage
 		 */
-		public activateTextureForStage(index:number, stage:away.base.IStage)
+		public activateTextureForStage(index:number, stage:IStage)
 		{
 			stage.activateTexture(index, this);
 		}
 
-		public _iGetMipmapData():Array<away.base.BitmapData>
+		public _iGetMipmapData():Array<BitmapData>
 		{
 			if (this._mipmapDataDirty) {
 				this._mipmapDataDirty = false;
 
 				if (!this._mipmapData)
-					this._mipmapData = new Array<away.base.BitmapData>();
+					this._mipmapData = new Array<BitmapData>();
 
 				away.textures.MipmapGenerator.generateMipMaps(this._iGetTextureData(), this._mipmapData, true);
 			}

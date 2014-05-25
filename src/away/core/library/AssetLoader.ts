@@ -1,7 +1,11 @@
 ///<reference path="../../_definitions.ts"/>
 
-module away.net
+module away.library
 {
+	import URLLoader				= away.net.URLLoader;
+	import URLLoaderDataFormat		= away.net.URLLoaderDataFormat;
+	import URLRequest				= away.net.URLRequest;
+
 	/**
 	 * Dispatched when any asset finishes parsing. Also see specific events for each
 	 * individual asset type (meshes, materials et c.)

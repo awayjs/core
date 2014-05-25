@@ -2,8 +2,9 @@
 
 module away.textures
 {
+	import IStage						= away.base.IStage;
 
-	export class RenderTexture extends away.textures.Texture2DBase
+	export class RenderTexture extends Texture2DBase
 	{
 		/**
 		 *
@@ -59,7 +60,7 @@ module away.textures
 		 *
 		 * @param stage
 		 */
-		public activateTextureForStage(index:number, stage:away.base.IStage)
+		public activateTextureForStage(index:number, stage:IStage)
 		{
 			stage.activateRenderTexture(index, this);
 		}

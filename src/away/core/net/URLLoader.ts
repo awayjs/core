@@ -1,7 +1,6 @@
 ///<reference path="../../_definitions.ts"/>
 module away.net
 {
-
 	/**
 	 * The URLLoader is used to load a single file, as part of a resource.
 	 *
@@ -17,7 +16,7 @@ module away.net
 		private _XHR:XMLHttpRequest;
 		private _bytesLoaded:number = 0;
 		private _bytesTotal:number = 0;
-		private _dataFormat:string = away.net.URLLoaderDataFormat.TEXT;
+		private _dataFormat:string = URLLoaderDataFormat.TEXT;
 		private _loadError:boolean = false;
 
 		private _request:URLRequest;
@@ -56,9 +55,9 @@ module away.net
 
 		/**
 		 *
-		 * away.net.URLLoaderDataFormat.BINARY
-		 * away.net.URLLoaderDataFormat.TEXT
-		 * away.net.URLLoaderDataFormat.VARIABLES
+		 * URLLoaderDataFormat.BINARY
+		 * URLLoaderDataFormat.TEXT
+		 * URLLoaderDataFormat.VARIABLES
 		 *
 		 * @param format
 		 */
@@ -101,7 +100,7 @@ module away.net
 
 			this.initXHR();
 
-			if (request.method === away.net.URLRequestMethod.POST)
+			if (request.method === URLRequestMethod.POST)
 				this.postRequest(request);
 			else
 				this.getRequest(request);
@@ -140,17 +139,17 @@ module away.net
 		private setResponseType(xhr:XMLHttpRequest, responseType:string):void
 		{
 			switch (responseType) {
-				case away.net.URLLoaderDataFormat.ARRAY_BUFFER:
-				case away.net.URLLoaderDataFormat.BLOB:
-				case away.net.URLLoaderDataFormat.TEXT:
+				case URLLoaderDataFormat.ARRAY_BUFFER:
+				case URLLoaderDataFormat.BLOB:
+				case URLLoaderDataFormat.TEXT:
 					xhr.responseType = responseType;
 					break;
 
-				case away.net.URLLoaderDataFormat.VARIABLES:
-					xhr.responseType = away.net.URLLoaderDataFormat.TEXT;
+				case URLLoaderDataFormat.VARIABLES:
+					xhr.responseType = URLLoaderDataFormat.TEXT;
 					break;
 
-				case away.net.URLLoaderDataFormat.BINARY:
+				case URLLoaderDataFormat.BINARY:
 					xhr.responseType = '';
 					break;
 
@@ -160,9 +159,9 @@ module away.net
 
 		/**
 		 *
-		 * @param request {away.net.URLRequest}
+		 * @param request {URLRequest}
 		 */
-		private getRequest(request:away.net.URLRequest):void
+		private getRequest(request:URLRequest):void
 		{
 			try {
 				this._XHR.open(request.method, request.url, request.async);
@@ -175,17 +174,17 @@ module away.net
 
 		/**
 		 *
-		 * @param request {away.net.URLRequest}
+		 * @param request {URLRequest}
 		 */
-		private postRequest(request:away.net.URLRequest):void
+		private postRequest(request:URLRequest):void
 		{
 			this._loadError = false;
 
 			this._XHR.open(request.method, request.url, request.async);
 
 			if (request.data != null) {
-				if (request.data instanceof away.net.URLVariables) {
-					var urlVars:away.net.URLVariables = <away.net.URLVariables> request.data;
+				if (request.data instanceof URLVariables) {
+					var urlVars:URLVariables = <URLVariables> request.data;
 
 					try {
 						this._XHR.responseType = 'text';
@@ -236,14 +235,14 @@ module away.net
 			if (!this._XHR) {
 				this._XHR = new XMLHttpRequest();
 
-				this._XHR.onloadstart = (event) => this.onLoadStart(event);                 // loadstart	        - When the request starts.
-				this._XHR.onprogress = (event) => this.onProgress(event);	                // progress	            - While loading and sending data.
-				this._XHR.onabort = (event) => this.onAbort(event);	                        // abort	            - When the request has been aborted, either by invoking the abort() method or navigating away from the page.
-				this._XHR.onerror = (event) => this.onLoadError(event);                     // error	            - When the request has failed.
-				this._XHR.onload = (event) => this.onLoadComplete(event);                   // load	                - When the request has successfully completed.
-				this._XHR.ontimeout = (event) => this.onTimeOut(event);                     // timeout	            - When the author specified timeout has passed before the request could complete.
-				this._XHR.onloadend = (event) => this.onLoadEnd(event);                     // loadend	            - When the request has completed, regardless of whether or not it was successful.
-				this._XHR.onreadystatechange = (event) => this.onReadyStateChange(event);   // onreadystatechange   - When XHR state changes
+				this._XHR.onloadstart = (event:ProgressEvent) => this.onLoadStart(event);                 // loadstart	        - When the request starts.
+				this._XHR.onprogress = (event:ProgressEvent) => this.onProgress(event);	                // progress	            - While loading and sending data.
+				this._XHR.onabort = (event:UIEvent) => this.onAbort(event);	                        // abort	            - When the request has been aborted, either by invoking the abort() method or navigating away from the page.
+				this._XHR.onerror = (event:ErrorEvent) => this.onLoadError(event);                     // error	            - When the request has failed.
+				this._XHR.onload = (event:Event) => this.onLoadComplete(event);                   // load	                - When the request has successfully completed.
+				this._XHR.ontimeout = (event:Event) => this.onTimeOut(event);                     // timeout	            - When the author specified timeout has passed before the request could complete.
+				this._XHR.onloadend = (event:ProgressEvent) => this.onLoadEnd(event);                     // loadend	            - When the request has completed, regardless of whether or not it was successful.
+				this._XHR.onreadystatechange = (event:Event) => this.onReadyStateChange(event);   // onreadystatechange   - When XHR state changes
 			}
 		}
 
@@ -288,7 +287,7 @@ module away.net
 		 * When XHR state changes
 		 * @param event
 		 */
-		private onReadyStateChange(event)
+		private onReadyStateChange(event:Event)
 		{
 			if (this._XHR.readyState == 4) {
 				if (this._XHR.status == 404) {
@@ -308,7 +307,7 @@ module away.net
 		 * When the request has completed, regardless of whether or not it was successful.
 		 * @param event
 		 */
-		private onLoadEnd(event)
+		private onLoadEnd(event:ProgressEvent)
 		{
 			if (this._loadError === true)
 				return;
@@ -318,7 +317,7 @@ module away.net
 		 * When the author specified timeout has passed before the request could complete.
 		 * @param event
 		 */
-		private onTimeOut(event)
+		private onTimeOut(event:Event)
 		{
 			//TODO: Timeout not currently implemented ( also not part of AS3 API )
 		}
@@ -327,7 +326,7 @@ module away.net
 		 * When the request has been aborted, either by invoking the abort() method or navigating away from the page.
 		 * @param event
 		 */
-		private onAbort(event)
+		private onAbort(event:UIEvent)
 		{
 			// TODO: investigate whether this needs to be an IOError
 		}
@@ -336,7 +335,7 @@ module away.net
 		 * While loading and sending data.
 		 * @param event
 		 */
-		private onProgress(event)
+		private onProgress(event:ProgressEvent)
 		{
 			if (!this._progressEvent)
 				this._progressEvent = new away.events.ProgressEvent(away.events.ProgressEvent.PROGRESS);
@@ -351,7 +350,7 @@ module away.net
 		 * When the request starts.
 		 * @param event
 		 */
-		private onLoadStart(event)
+		private onLoadStart(event:ProgressEvent)
 		{
 			if (!this._loadStartEvent)
 				this._loadStartEvent = new away.events.Event(away.events.Event.OPEN);
@@ -363,23 +362,23 @@ module away.net
 		 * When the request has successfully completed.
 		 * @param event
 		 */
-		private onLoadComplete(event)
+		private onLoadComplete(event:Event)
 		{
 			if (this._loadError === true)
 				return;
 
 			switch (this._dataFormat) {
-				case away.net.URLLoaderDataFormat.TEXT:
+				case URLLoaderDataFormat.TEXT:
 					this._data = this._XHR.responseText;
 					break;
 
-				case away.net.URLLoaderDataFormat.VARIABLES:
+				case URLLoaderDataFormat.VARIABLES:
 					this._data = this.decodeURLVariables(this._XHR.responseText);
 					break;
 
-				case away.net.URLLoaderDataFormat.BLOB:
-				case away.net.URLLoaderDataFormat.ARRAY_BUFFER:
-				case away.net.URLLoaderDataFormat.BINARY:
+				case URLLoaderDataFormat.BLOB:
+				case URLLoaderDataFormat.ARRAY_BUFFER:
+				case URLLoaderDataFormat.BINARY:
 					this._data = this._XHR.response;
 					break;
 
@@ -398,7 +397,7 @@ module away.net
 		 * When the request has failed. ( due to network issues ).
 		 * @param event
 		 */
-		private onLoadError(event)
+		private onLoadError(event:Event)
 		{
 			this._loadError = true;
 

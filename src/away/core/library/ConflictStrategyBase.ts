@@ -2,6 +2,7 @@
 
 module away.library
 {
+	import AbstractMethodError			= away.errors.AbstractMethodError;
 
 	/**
 	 * Abstract base class for naming conflict resolution classes. Extend this to create a
@@ -31,11 +32,9 @@ module away.library
 		 * Resolve a naming conflict between two assets. Must be implemented by concrete strategy
 		 * classes.
 		 */
-		public resolveConflict(changedAsset:away.library.IAsset, oldAsset:away.library.IAsset, assetsDictionary:Object, precedence:string)
+		public resolveConflict(changedAsset:IAsset, oldAsset:IAsset, assetsDictionary:Object, precedence:string)
 		{
-
-			throw new away.errors.AbstractMethodError();
-
+			throw new AbstractMethodError();
 		}
 
 		/**
@@ -45,9 +44,7 @@ module away.library
 		 */
 		public create():ConflictStrategyBase
 		{
-
-			throw new away.errors.AbstractMethodError();
-
+			throw new AbstractMethodError();
 		}
 
 		/**
@@ -60,8 +57,8 @@ module away.library
 			var winner:IAsset;
 			var loser:IAsset;
 
-			winner = (precedence === away.library.ConflictPrecedence.FAVOR_NEW)? newAsset : oldAsset;
-			loser = (precedence === away.library.ConflictPrecedence.FAVOR_NEW)? oldAsset : newAsset;
+			winner = (precedence === ConflictPrecedence.FAVOR_NEW)? newAsset : oldAsset;
+			loser = (precedence === ConflictPrecedence.FAVOR_NEW)? oldAsset : newAsset;
 
 			loser_prev_name = loser.name;
 

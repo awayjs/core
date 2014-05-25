@@ -2,11 +2,9 @@
 
 module away.textures
 {
-	//import flash.base.*;
-	//import flash.gl.textures.CubeTexture;
-	//import flash.gl.textures.Texture;
-	//import flash.gl.textures.TextureBase;
-	//import flash.geom.*;
+	import BitmapData					= away.base.BitmapData;
+	import Matrix						= away.geom.Matrix;
+	import Rectangle					= away.geom.Rectangle;
 
 	/**
 	 * MipmapGenerator is a helper class that uploads BitmapData to a Texture including mipmap levels.
@@ -16,9 +14,9 @@ module away.textures
 		private static _mipMaps = [];
 		private static _mipMapUses = [];
 		
-		private static _matrix:away.geom.Matrix = new away.geom.Matrix();
-		private static _rect:away.geom.Rectangle = new away.geom.Rectangle();
-		private static _source:away.base.BitmapData;
+		private static _matrix:Matrix = new Matrix();
+		private static _rect:Rectangle = new Rectangle();
+		private static _source:BitmapData;
 
 		/**
 		 * Uploads a BitmapData with mip maps to a target Texture object.
@@ -27,15 +25,15 @@ module away.textures
 		 * @param mipmap An optional mip map holder to avoids creating new instances for fe animated materials.
 		 * @param alpha Indicate whether or not the uploaded bitmapData is transparent.
 		 */
-		public static generateMipMaps(source:HTMLImageElement, output?:Array<away.base.BitmapData>, alpha?:boolean);
-		public static generateMipMaps(source:away.base.BitmapData, output?:Array<away.base.BitmapData>, alpha?:boolean);
-		public static generateMipMaps(source:any, output?:Array<away.base.BitmapData>, alpha:boolean = false)
+		public static generateMipMaps(source:HTMLImageElement, output?:Array<BitmapData>, alpha?:boolean);
+		public static generateMipMaps(source:BitmapData, output?:Array<BitmapData>, alpha?:boolean);
+		public static generateMipMaps(source:any, output?:Array<BitmapData>, alpha:boolean = false)
 		{
 			var w:number = source.width;
 			var h:number = source.height;
 			var i:number = 0;
 
-			var mipmap:away.base.BitmapData;
+			var mipmap:BitmapData;
 
 			MipmapGenerator._rect.width = w;
 			MipmapGenerator._rect.height = h;
@@ -62,7 +60,7 @@ module away.textures
 			}
 		}
 
-		private static _getMipmapHolder(mipMapHolder:away.base.BitmapData, newW:number, newH:number):away.base.BitmapData
+		private static _getMipmapHolder(mipMapHolder:BitmapData, newW:number, newH:number):BitmapData
 		{
 			if (mipMapHolder) {
 				if (mipMapHolder.width == newW && mipMapHolder.height == newH)
@@ -77,7 +75,7 @@ module away.textures
 			}
 
 			if (!MipmapGenerator._mipMaps[newW][newH]) {
-				mipMapHolder = MipmapGenerator._mipMaps[newW][newH] = new away.base.BitmapData(newW, newH, true);
+				mipMapHolder = MipmapGenerator._mipMaps[newW][newH] = new BitmapData(newW, newH, true);
 				MipmapGenerator._mipMapUses[newW][newH] = 1;
 			} else {
 				MipmapGenerator._mipMapUses[newW][newH] = MipmapGenerator._mipMapUses[newW][newH] + 1;
@@ -87,7 +85,7 @@ module away.textures
 			return mipMapHolder;
 		}
 
-		public static freeMipMapHolder(mipMapHolder:away.base.BitmapData)
+		public static freeMipMapHolder(mipMapHolder:BitmapData)
 		{
 			var holderWidth:number = mipMapHolder.width;
 			var holderHeight:number = mipMapHolder.height;

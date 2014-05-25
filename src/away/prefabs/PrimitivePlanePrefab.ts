@@ -9,7 +9,7 @@ module away.prefabs
 	/**
 	 * A Plane primitive mesh.
 	 */
-	export class PrimitivePlanePrefab extends away.prefabs.PrimitivePrefabBase implements away.library.IAsset
+	export class PrimitivePlanePrefab extends PrimitivePrefabBase implements away.library.IAsset
 	{
 		private _segmentsW:number;
 		private _segmentsH:number;

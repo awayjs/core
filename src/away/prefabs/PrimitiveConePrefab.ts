@@ -6,7 +6,7 @@ module away.prefabs
 	/**
 	 * A UV Cone primitive mesh.
 	 */
-	export class PrimitiveConePrefab extends away.prefabs.PrimitiveCylinderPrefab implements away.library.IAsset
+	export class PrimitiveConePrefab extends PrimitiveCylinderPrefab implements away.library.IAsset
 	{
 
 		/**

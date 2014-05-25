@@ -1,10 +1,8 @@
 ///<reference path="../../_definitions.ts"/>
 module away.net
 {
-
 	export class URLLoaderDataFormat
 	{
-
 		/**
 		 * TEXT
 		 * @type {string}
@@ -34,8 +32,5 @@ module away.net
 		 * @type {string}
 		 */
 		public static BINARY:string = 'binary';
-
-
 	}
-
 }

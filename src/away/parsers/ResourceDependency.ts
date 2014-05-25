@@ -20,8 +20,8 @@ module away.parsers
 		private _id:string;
 		private _request:away.net.URLRequest;
 		private _assets:Array<away.library.IAsset>;
-		private _parser:away.parsers.ParserBase;
-		private _parentParser:away.parsers.ParserBase;
+		private _parser:ParserBase;
+		private _parentParser:ParserBase;
 		private _data:any;
 		private _retrieveAsRawData:boolean;
 		private _suppressAssetEvents:boolean;
@@ -31,7 +31,7 @@ module away.parsers
 		public _iSuccess:boolean;
 
 
-		constructor(id:string, request:away.net.URLRequest, data:any, parser:away.parsers.ParserBase, parentParser:away.parsers.ParserBase, retrieveAsRawData:boolean = false, suppressAssetEvents:boolean = false)
+		constructor(id:string, request:away.net.URLRequest, data:any, parser:ParserBase, parentParser:ParserBase, retrieveAsRawData:boolean = false, suppressAssetEvents:boolean = false)
 		{
 			this._id = id;
 			this._request = request;
@@ -72,7 +72,7 @@ module away.parsers
 		/**
 		 *
 		 */
-		public get parser():away.parsers.ParserBase
+		public get parser():ParserBase
 		{
 			return this._parser;
 		}
@@ -80,7 +80,7 @@ module away.parsers
 		/**
 		 * The parser which is dependent on this ResourceDependency object.
 		 */
-		public get parentParser():away.parsers.ParserBase
+		public get parentParser():ParserBase
 		{
 			return this._parentParser;
 		}
@@ -130,7 +130,7 @@ module away.parsers
 		 * @private
 		 *
 		 */
-		public _iSetParser(parser:away.parsers.ParserBase):void
+		public _iSetParser(parser:ParserBase):void
 		{
 			this._parser = parser;
 		}

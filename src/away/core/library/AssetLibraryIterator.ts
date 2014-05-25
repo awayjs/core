@@ -7,12 +7,12 @@ module away.library
 	export class AssetLibraryIterator
 	{
 
-		private  _assets:away.library.IAsset[];//private  _assets:Vector.<IAsset>;
-		private _filtered:away.library.IAsset[];//Vector.<IAsset>;
+		private  _assets:IAsset[];//private  _assets:Vector.<IAsset>;
+		private _filtered:IAsset[];//Vector.<IAsset>;
 
 		private _idx:number;
 
-		constructor(assets:away.library.IAsset[], assetTypeFilter:string, namespaceFilter:string, filterFunc)
+		constructor(assets:IAsset[], assetTypeFilter:string, namespaceFilter:string, filterFunc)
 		{
 			this._assets = assets;
 			this.filter(assetTypeFilter, namespaceFilter, filterFunc);
@@ -56,17 +56,17 @@ module away.library
 			if (assetTypeFilter || namespaceFilter) {
 
 				var idx:number;
-				var asset:away.library.IAsset;
+				var asset:IAsset;
 
 
 				idx = 0;
-				this._filtered = new Array<away.library.IAsset>();//new Vector.<IAsset>;
+				this._filtered = new Array<IAsset>();//new Vector.<IAsset>;
 
 				var l:number = this._assets.length;
 
 				for (var c:number = 0; c < l; c++) {
 
-					asset = <away.library.IAsset> this._assets[c];
+					asset = <IAsset> this._assets[c];
 
 					// Skip this assets if filtering on type and this is wrong type
 					if (assetTypeFilter && asset.assetType != assetTypeFilter)

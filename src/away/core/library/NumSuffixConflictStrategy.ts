@@ -3,8 +3,7 @@
 
 module away.library
 {
-
-	export class NumSuffixConflictStrategy extends away.library.ConflictStrategyBase
+	export class NumSuffixConflictStrategy extends ConflictStrategyBase
 	{
 		private _separator:string;
 		private _next_suffix:Object;
@@ -17,7 +16,7 @@ module away.library
 			this._next_suffix = {};
 		}
 
-		public resolveConflict(changedAsset:away.library.IAsset, oldAsset:away.library.IAsset, assetsDictionary:Object, precedence:string)
+		public resolveConflict(changedAsset:IAsset, oldAsset:IAsset, assetsDictionary:Object, precedence:string)
 		{
 			var orig:string;
 			var new_name:string;
@@ -64,9 +63,9 @@ module away.library
 
 		}
 
-		public create():away.library.ConflictStrategyBase
+		public create():ConflictStrategyBase
 		{
-			return new away.library.NumSuffixConflictStrategy(this._separator);
+			return new NumSuffixConflictStrategy(this._separator);
 		}
 	}
 }

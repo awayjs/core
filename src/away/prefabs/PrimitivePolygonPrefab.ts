@@ -6,7 +6,7 @@ module away.prefabs
 	/**
 	 * A UV RegularPolygon primitive mesh.
 	 */
-	export class PrimitivePolygonPrefab extends away.prefabs.PrimitiveCylinderPrefab implements away.library.IAsset
+	export class PrimitivePolygonPrefab extends PrimitiveCylinderPrefab implements away.library.IAsset
 	{
 
 		/**

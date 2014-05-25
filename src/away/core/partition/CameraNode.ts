@@ -5,12 +5,15 @@
  */
 module away.partition
 {
+	import IEntity						= away.entities.IEntity;
+	import ICollector					= away.traverse.ICollector;
+
 	/**
 	 * @class away.partition.CameraNode
 	 */
 	export class CameraNode extends EntityNode
 	{
-		constructor(camera:away.entities.IEntity)
+		constructor(camera:IEntity)
 		{
 			super(camera);
 		}
@@ -18,7 +21,7 @@ module away.partition
 		/**
 		 * @inheritDoc
 		 */
-		public acceptTraverser(traverser:away.traverse.ICollector)
+		public acceptTraverser(traverser:ICollector)
 		{
 			// todo: dead end for now, if it has a debug mesh, then sure accept that
 		}

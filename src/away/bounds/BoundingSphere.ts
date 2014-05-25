@@ -2,7 +2,14 @@
 
 module away.bounds
 {
-	export class BoundingSphere extends away.bounds.BoundingVolumeBase
+	import IEntity						= away.entities.IEntity;
+	import Matrix3D						= away.geom.Matrix3D;
+	import PlaneClassification			= away.geom.PlaneClassification;
+	import Plane3D						= away.geom.Plane3D;
+	import Transform					= away.geom.Transform;
+	import Vector3D						= away.geom.Vector3D;
+
+	export class BoundingSphere extends BoundingVolumeBase
 	{
 
 		private _radius:number = 0;
@@ -27,10 +34,10 @@ module away.bounds
 			this._radius = 0;
 		}
 
-		public isInFrustum(planes:away.geom.Plane3D[], numPlanes:number):boolean
+		public isInFrustum(planes:Array<Plane3D>, numPlanes:number):boolean
 		{
 			for (var i:number = 0; i < numPlanes; ++i) {
-				var plane:away.geom.Plane3D = planes[i];
+				var plane:Plane3D = planes[i];
 				var flippedExtentX:number = plane.a < 0? -this._radius : this._radius;
 				var flippedExtentY:number = plane.b < 0? -this._radius : this._radius;
 				var flippedExtentZ:number = plane.c < 0? -this._radius : this._radius;
@@ -42,7 +49,7 @@ module away.bounds
 			return true;
 		}
 
-		public fromSphere(center:away.geom.Vector3D, radius:number)
+		public fromSphere(center:Vector3D, radius:number)
 		{
 			this._centerX = center.x;
 			this._centerY = center.y;
@@ -78,14 +85,14 @@ module away.bounds
 			super.fromExtremes(minX, minY, minZ, maxX, maxY, maxZ);
 		}
 
-		public clone():away.bounds.BoundingVolumeBase
+		public clone():BoundingVolumeBase
 		{
 			var clone:BoundingSphere = new BoundingSphere();
-			clone.fromSphere(new away.geom.Vector3D(this._centerX, this._centerY, this._centerZ), this._radius);
+			clone.fromSphere(new Vector3D(this._centerX, this._centerY, this._centerZ), this._radius);
 			return clone;
 		}
 
-		public rayIntersection(position:away.geom.Vector3D, direction:away.geom.Vector3D, targetNormal:away.geom.Vector3D):number
+		public rayIntersection(position:Vector3D, direction:Vector3D, targetNormal:Vector3D):number
 		{
 			if (this.containsPoint(position)) {
 				return 0;
@@ -117,7 +124,7 @@ module away.bounds
 			return -1;
 		}
 
-		public containsPoint(position:away.geom.Vector3D):boolean
+		public containsPoint(position:Vector3D):boolean
 		{
 			var px:number = position.x - this._centerX;
 			var py:number = position.y - this._centerY;
@@ -132,9 +139,9 @@ module away.bounds
 			if (sc == 0)
 				sc = 0.001;
 
-			var transform:away.geom.Transform = this._pBoundingEntity.transform;
-			transform.scale = new away.geom.Vector3D(sc, sc, sc);
-			transform.position = new away.geom.Vector3D(this._centerX, this._centerY, this._centerZ);
+			var transform:Transform = this._pBoundingEntity.transform;
+			transform.scale = new Vector3D(sc, sc, sc);
+			transform.position = new Vector3D(this._centerX, this._centerY, this._centerZ);
 		}
 
 		// TODO pCreateBoundingRenderable():WireframePrimitiveBase
@@ -146,7 +153,7 @@ module away.bounds
 
 
 		//@override
-		public classifyToPlane(plane:away.geom.Plane3D):number
+		public classifyToPlane(plane:Plane3D):number
 		{
 			var a:number = plane.a;
 			var b:number = plane.b;
@@ -164,12 +171,12 @@ module away.bounds
 
 			var rr:Number = (a + b + c)*this._radius;
 
-			return dd > rr? away.geom.PlaneClassification.FRONT : dd < -rr? away.geom.PlaneClassification.BACK : away.geom.PlaneClassification.INTERSECT;
+			return dd > rr? PlaneClassification.FRONT : dd < -rr? PlaneClassification.BACK : PlaneClassification.INTERSECT;
 		}
 
-		public transformFrom(bounds:away.bounds.BoundingVolumeBase, matrix:away.geom.Matrix3D)
+		public transformFrom(bounds:BoundingVolumeBase, matrix:Matrix3D)
 		{
-			var sphere:away.bounds.BoundingSphere = <away.bounds.BoundingSphere> bounds;
+			var sphere:BoundingSphere = <BoundingSphere> bounds;
 			var cx:number = sphere._centerX;
 			var cy:number = sphere._centerY;
 			var cz:number = sphere._centerZ;

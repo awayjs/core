@@ -6,6 +6,11 @@
  */
 module away.partition
 {
+	import IEntity						= away.entities.IEntity;
+	import Plane3D						= away.geom.Plane3D;
+	import Vector3D						= away.geom.Vector3D;
+	import ICollector					= away.traverse.ICollector;
+	
 	/**
 	 * @class away.partition.NodeBase
 	 */
@@ -17,7 +22,7 @@ module away.partition
 		public _iParent:NodeBase;
 		public _pChildNodes:Array<NodeBase>;
 		public _pNumChildNodes:number = 0;
-		public _pBoundsPrimitive:away.entities.IEntity;
+		public _pBoundsPrimitive:IEntity;
 
 		public _iNumEntities:number = 0;
 		public _iCollectionMark:number;// = 0;
@@ -89,7 +94,7 @@ module away.partition
 		 * @returns {boolean}
 		 * @internal
 		 */
-		public isInFrustum(planes:away.geom.Plane3D[], numPlanes:number):boolean
+		public isInFrustum(planes:Array<Plane3D>, numPlanes:number):boolean
 		{
 			return true;
 		}
@@ -100,7 +105,7 @@ module away.partition
 		 * @param rayDirection
 		 * @returns {boolean}
 		 */
-		public isIntersectingRay(rayPosition:away.geom.Vector3D, rayDirection:away.geom.Vector3D):boolean
+		public isIntersectingRay(rayPosition:Vector3D, rayDirection:Vector3D):boolean
 		{
 			return true;
 		}
@@ -119,7 +124,7 @@ module away.partition
 		 * @param entity
 		 * @returns {away.partition.NodeBase}
 		 */
-		public findPartitionForEntity(entity:away.entities.IEntity):NodeBase
+		public findPartitionForEntity(entity:IEntity):NodeBase
 		{
 			return this;
 		}
@@ -128,7 +133,7 @@ module away.partition
 		 *
 		 * @param traverser
 		 */
-		public acceptTraverser(traverser:away.traverse.ICollector)
+		public acceptTraverser(traverser:ICollector)
 		{
 			if (this._pNumEntities == 0 && !this._implicitBoundsVisible)
 				return;
@@ -148,7 +153,7 @@ module away.partition
 		 *
 		 * @protected
 		 */
-		public _pCreateBoundsPrimitive():away.entities.IEntity
+		public _pCreateBoundsPrimitive():IEntity
 		{
 			return null;
 		}

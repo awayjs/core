@@ -2,6 +2,8 @@
 
 module away.library
 {
+	import URLRequest				= away.net.URLRequest;
+
 	/**
 	 * AssetLibraryBundle enforces a multiton pattern and is not intended to be instanced directly.
 	 * Its purpose is to create a container for 3D data management, both before and after parsing.
@@ -9,13 +11,13 @@ module away.library
 	 */
 	export class AssetLibraryBundle extends away.events.EventDispatcher
 	{
-		private _loadingSessions:Array<away.net.AssetLoader>;
+		private _loadingSessions:Array<AssetLoader>;
 		private _strategy:ConflictStrategyBase;
 		private _strategyPreference:string;
 		private _assets:Array<IAsset>;
 		private _assetDictionary:Object;
 		private _assetDictDirty:boolean;
-		private _loadingSessionsGarbage:Array<away.net.AssetLoader> = new Array<away.net.AssetLoader>();
+		private _loadingSessionsGarbage:Array<AssetLoader> = new Array<AssetLoader>();
 		private _gcTimeoutIID:number;
 
 		private _onAssetRenameDelegate:Function;
@@ -37,7 +39,7 @@ module away.library
 
 			this._assets = new Array<IAsset>();//new Vector.<IAsset>;
 			this._assetDictionary = new Object();
-			this._loadingSessions = new Array<away.net.AssetLoader>();
+			this._loadingSessions = new Array<AssetLoader>();
 
 			this.conflictStrategy = ConflictStrategy.IGNORE.create();
 			this.conflictPrecedence = ConflictPrecedence.FAVOR_NEW;
@@ -77,7 +79,7 @@ module away.library
 		 */
 		public enableParser(parserClass:Object)
 		{
-			away.net.AssetLoader.enableParser(parserClass);
+			AssetLoader.enableParser(parserClass);
 		}
 
 		/**
@@ -85,7 +87,7 @@ module away.library
 		 */
 		public enableParsers(parserClasses:Object[])
 		{
-			away.net.AssetLoader.enableParsers(parserClasses);
+			AssetLoader.enableParsers(parserClasses);
 		}
 
 		/**
@@ -163,12 +165,12 @@ module away.library
 		 * @param parser An optional parser object for translating the loaded data into a usable resource. If not provided, AssetLoader will attempt to auto-detect the file type.
 		 * @return A handle to the retrieved resource.
 		 */
-		public load(req:away.net.URLRequest, context:away.net.AssetLoaderContext = null, ns:string = null, parser:away.parsers.ParserBase = null):away.net.AssetLoaderToken
+		public load(req:URLRequest, context:AssetLoaderContext = null, ns:string = null, parser:away.parsers.ParserBase = null):AssetLoaderToken
 		{
-			var loader:away.net.AssetLoader = new away.net.AssetLoader();
+			var loader:AssetLoader = new AssetLoader();
 
 			if (!this._loadingSessions)
-				this._loadingSessions = new Array<away.net.AssetLoader>();
+				this._loadingSessions = new Array<AssetLoader>();
 
 			this._loadingSessions.push(loader);
 
@@ -192,12 +194,12 @@ module away.library
 		 * @param parser An optional parser object for translating the loaded data into a usable resource. If not provided, AssetLoader will attempt to auto-detect the file type.
 		 * @return A handle to the retrieved resource.
 		 */
-		public loadData(data:any, context:away.net.AssetLoaderContext = null, ns:string = null, parser:away.parsers.ParserBase = null):away.net.AssetLoaderToken
+		public loadData(data:any, context:AssetLoaderContext = null, ns:string = null, parser:away.parsers.ParserBase = null):AssetLoaderToken
 		{
-			var loader:away.net.AssetLoader = new away.net.AssetLoader();
+			var loader:AssetLoader = new AssetLoader();
 
 			if (!this._loadingSessions)
-				this._loadingSessions = new Array<away.net.AssetLoader>();
+				this._loadingSessions = new Array<AssetLoader>();
 
 			this._loadingSessions.push(loader);
 
@@ -435,7 +437,7 @@ module away.library
 			var i:number;
 
 			if (!this._loadingSessions)
-				this._loadingSessions = new Array<away.net.AssetLoader>();
+				this._loadingSessions = new Array<AssetLoader>();
 
 			var length:number = this._loadingSessions.length;
 
@@ -513,7 +515,7 @@ module away.library
 		 */
 		private onResourceComplete(event:away.events.LoaderEvent)
 		{
-			var loader:away.net.AssetLoader = <away.net.AssetLoader> event.target;
+			var loader:AssetLoader = <AssetLoader> event.target;
 
 			this.dispatchEvent(event);
 
@@ -527,7 +529,7 @@ module away.library
 
 		private loadingSessionGC():void
 		{
-			var loader:away.net.AssetLoader;
+			var loader:AssetLoader;
 
 			while (this._loadingSessionsGarbage.length > 0) {
 				loader = this._loadingSessionsGarbage.pop();
@@ -539,7 +541,7 @@ module away.library
 
 		}
 
-		private killLoadingSession(loader:away.net.AssetLoader)
+		private killLoadingSession(loader:AssetLoader)
 		{
 			loader.removeEventListener(away.events.LoaderEvent.RESOURCE_COMPLETE, this._onResourceCompleteDelegate);
 			loader.removeEventListener(away.events.AssetEvent.TEXTURE_SIZE_ERROR, this._onTextureSizeErrorDelegate);

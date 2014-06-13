@@ -10914,7 +10914,7 @@ declare module away.ui {
 * <i>ActionScript 3.0 Developer's Guide</i>.</p>
 */
 declare module away.containers {
-    class DisplayObjectContainer extends DisplayObject implements IAsset {
+    class DisplayObjectContainer extends base.DisplayObject implements library.IAsset {
         private _mouseChildren;
         private _children;
         public _iIsRoot: boolean;
@@ -14654,7 +14654,7 @@ declare module away.animators {
     *
     * @see away.animators.IAnimationSet
     */
-    interface IAnimator extends IAsset {
+    interface IAnimator extends library.IAsset {
         /**
         *
         */

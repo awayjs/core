@@ -21287,7 +21287,6 @@ var away;
     * <i>ActionScript 3.0 Developer's Guide</i>.</p>
     */
     (function (containers) {
-        var DisplayObject = away.base.DisplayObject;
         var ArgumentError = away.errors.ArgumentError;
         var Error = away.errors.Error;
         var RangeError = away.errors.RangeError;
@@ -21794,7 +21793,7 @@ var away;
                 return child;
             };
             return DisplayObjectContainer;
-        })(DisplayObject);
+        })(away.base.DisplayObject);
         containers.DisplayObjectContainer = DisplayObjectContainer;
     })(away.containers || (away.containers = {}));
     var containers = away.containers;

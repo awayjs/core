@@ -29,9 +29,9 @@ module away.containers
 	import RangeError					= away.errors.RangeError;
 	import Point						= away.geom.Point;
 	import AssetType					= away.library.AssetType;
-	import IAsset						= away.library.IAsset;
+
 	
-	export class DisplayObjectContainer extends DisplayObject implements IAsset
+	export class DisplayObjectContainer extends away.base.DisplayObject implements away.library.IAsset
 	{
 		private _mouseChildren:boolean = true;
 		private _children:Array<DisplayObject> = new Array<DisplayObject>();

@@ -4,7 +4,6 @@ module away.animators
 {
 	import SubGeometryBase				= away.base.SubGeometryBase;
 	import IEntity						= away.entities.IEntity;
-	import IAsset						= away.library.IAsset;
 	import IRenderable					= away.pool.IRenderable;
 
 	/**
@@ -12,7 +11,7 @@ module away.animators
 	 *
 	 * @see away.animators.IAnimationSet
 	 */
-	export interface IAnimator extends IAsset
+	export interface IAnimator extends away.library.IAsset
 	{
 		/**
 		 *

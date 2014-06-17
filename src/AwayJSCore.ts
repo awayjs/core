@@ -5,7 +5,6 @@ away.Debug.LOG_PI_ERRORS = false;
 
 module away
 {
-
 	export class AwayJSCore extends away.events.EventDispatcher
 	{
 		constructor()
@@ -14,5 +13,3 @@ module away
 		}
 	}
 }
-
-

@@ -31,15 +31,16 @@
 ///<reference path="events/HTTPStatusEvent.ts" />
 ///<reference path="events/IEventDispatcher.ts" />
 ///<reference path="events/IOErrorEvent.ts" />
-///<reference path="events/ProjectionEvent.ts" />
+///<reference path="events/LightEvent.ts" />
 ///<reference path="events/LoaderEvent.ts" />
 ///<reference path="events/ParserEvent.ts" />
 ///<reference path="events/MouseEvent.ts"/>
 ///<reference path="events/MaterialEvent.ts" />
 ///<reference path="events/ProgressEvent.ts" />
+///<reference path="events/ProjectionEvent.ts" />
 ///<reference path="events/RendererEvent.ts" />
 ///<reference path="events/SceneEvent.ts"/>
-///<reference path="events/StageGLEvent.ts"/>
+///<reference path="events/StageEvent.ts"/>
 ///<reference path="events/SubGeometryEvent.ts"/>
 ///<reference path="events/TimerEvent.ts" />
 
@@ -74,6 +75,11 @@
 ///<reference path="core/geom/UVTransform.ts" />
 ///<reference path="core/geom/Vector3D.ts" />
 
+///<reference path="bounds/BoundingVolumeBase.ts" />
+///<reference path="bounds/NullBounds.ts" />
+///<reference path="bounds/BoundingSphere.ts" />
+///<reference path="bounds/AxisAlignedBoundingBox.ts" />
+
 ///<reference path="core/net/URLRequest.ts" />
 ///<reference path="core/net/URLLoaderDataFormat.ts" />
 ///<reference path="core/net/URLRequestMethod.ts" />
@@ -82,6 +88,10 @@
 
 ///<reference path="core/library/IAsset.ts" />
 ///<reference path="core/library/NamedAssetBase.ts" />
+///<reference path="core/library/AssetType.ts" />
+
+///<reference path="core/display/ContextMode.ts" />
+///<reference path="core/display/IContext.ts" />
 
 ///<reference path="core/base/BlendMode.ts"/>
 ///<reference path="core/base/AlignmentMode.ts"/>
@@ -98,7 +108,6 @@
 ///<reference path="core/base/IGraphicsData.ts" />
 ///<reference path="core/base/IMaterialOwner.ts" />
 ///<reference path="core/base/InterpolationMethod.ts" />
-///<reference path="core/base/IStage.ts" />
 ///<reference path="core/base/ISubMesh.ts" />
 ///<reference path="core/base/ISubMeshClass.ts" />
 ///<reference path="core/base/SubGeometryBase.ts" />
@@ -110,6 +119,7 @@
 ///<reference path="core/base/LoaderInfo.ts" />
 ///<reference path="core/base/PixelSnapping.ts" />
 ///<reference path="core/base/SpreadMethod.ts" />
+///<reference path="core/base/Stage.ts" />
 ///<reference path="core/base/TriangleCulling.ts" />
 ///<reference path="core/base/TriangleSubGeometry.ts" />
 ///<reference path="core/base/TriangleSubMesh.ts" />
@@ -136,7 +146,6 @@
 ///<reference path="core/library/AssetLoader.ts" />
 ///<reference path="core/library/AssetLoaderToken.ts" />
 ///<reference path="core/library/IDUtil.ts" />
-///<reference path="core/library/AssetType.ts" />
 ///<reference path="core/library/AssetLibraryIterator.ts" />
 ///<reference path="core/library/ConflictStrategyBase.ts" />
 ///<reference path="core/library/NumSuffixConflictStrategy.ts" />
@@ -161,14 +170,19 @@
 
 ///<reference path="core/traverse/ICollector.ts" />
 ///<reference path="core/traverse/CollectorBase.ts" />
+///<reference path="core/traverse/EntityCollector.ts" />
 ///<reference path="core/traverse/RaycastCollector.ts" />
 ///<reference path="core/traverse/CSSEntityCollector.ts" />
+///<reference path="core/traverse/ShadowCasterCollector.ts" />
 
 ///<reference path="core/partition/NodeBase.ts" />
 ///<reference path="core/partition/NullNode.ts" />
 ///<reference path="core/partition/Partition.ts" />
 ///<reference path="core/partition/EntityNode.ts" />
 ///<reference path="core/partition/CameraNode.ts" />
+///<reference path="core/partition/DirectionalLightNode.ts" />
+///<reference path="core/partition/LightProbeNode.ts" />
+///<reference path="core/partition/PointLightNode.ts" />
 ///<reference path="core/partition/SkyboxNode.ts" />
 
 ///<reference path="core/pick/IPickingCollider.ts" />
@@ -195,15 +209,7 @@
 ///<reference path="core/ui/Keyboard.ts"/>
 
 ///<reference path="containers/DisplayObjectContainer.ts" />
-
-///<reference path="entities/IEntity.ts" />
-///<reference path="entities/Billboard.ts" />
-///<reference path="entities/Camera.ts" />
-///<reference path="entities/LineSegment.ts" />
-///<reference path="entities/Mesh.ts" />
-///<reference path="entities/Shape.ts" />
-///<reference path="entities/Skybox.ts" />
-///<reference path="entities/TextField.ts" />
+///<reference path="core/base/LightBase.ts" />
 
 ///<reference path="projections/CoordinateSystem.ts" />
 ///<reference path="projections/IProjection.ts" />
@@ -214,16 +220,31 @@
 ///<reference path="projections/OrthographicOffCenterProjection.ts" />
 ///<reference path="projections/ObliqueNearPlaneProjection.ts" />
 
+///<reference path="entities/Camera.ts" />
+
+///<reference path="materials/shadowmappers/ShadowMapperBase.ts"/>
+///<reference path="materials/shadowmappers/CubeMapShadowMapper.ts"/>
+///<reference path="materials/shadowmappers/DirectionalShadowMapper.ts"/>
+///<reference path="materials/shadowmappers/CascadeShadowMapper.ts"/>
+///<reference path="materials/shadowmappers/NearDirectionalShadowMapper.ts"/>
+
+///<reference path="entities/IEntity.ts" />
+///<reference path="entities/Billboard.ts" />
+///<reference path="entities/DirectionalLight.ts" />
+///<reference path="entities/LightProbe.ts" />
+///<reference path="entities/LineSegment.ts" />
+///<reference path="entities/Mesh.ts" />
+///<reference path="entities/PointLight.ts" />
+///<reference path="entities/Shape.ts" />
+///<reference path="entities/Skybox.ts" />
+///<reference path="entities/TextField.ts" />
+
 ///<reference path="managers/MouseManager.ts"/>
+///<reference path="managers/StageManager.ts"/>
 
 ///<reference path="containers/Loader.ts" />
 ///<reference path="containers/Scene.ts" />
 ///<reference path="containers/View.ts" />
-
-///<reference path="bounds/BoundingVolumeBase.ts" />
-///<reference path="bounds/NullBounds.ts" />
-///<reference path="bounds/BoundingSphere.ts" />
-///<reference path="bounds/AxisAlignedBoundingBox.ts" />
 
 ///<reference path="controllers/ControllerBase.ts"/>
 ///<reference path="controllers/LookAtController.ts"/>
@@ -232,7 +253,12 @@
 ///<reference path="controllers/FollowController.ts"/>
 ///<reference path="controllers/SpringController.ts"/>
 
-///<reference path="materials/IMaterial.ts"/>
+///<reference path="materials/lightpickers/LightPickerBase.ts"/>
+///<reference path="materials/lightpickers/StaticLightPicker.ts"/>
+
+///<reference path="materials/passes/IMaterialPass.ts"/>
+
+///<reference path="materials/MaterialBase.ts"/>
 ///<reference path="materials/CSSMaterialBase.ts"/>
 
 ///<reference path="prefabs/PrefabBase.ts"/>

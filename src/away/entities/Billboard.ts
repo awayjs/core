@@ -40,14 +40,15 @@ module away.entities
 	import MaterialEvent				= away.events.MaterialEvent;
 	import Matrix3D						= away.geom.Matrix3D;
 	import UVTransform					= away.geom.UVTransform;
-	import IMaterial					= away.materials.IMaterial;
+	import MaterialBase					= away.materials.MaterialBase;
+	import IRenderer					= away.render.IRenderer;
 
 	export class Billboard extends away.base.DisplayObject implements IEntity, away.base.IMaterialOwner
 	{
 		private _animator:IAnimator;
 		private _billboardWidth:number;
 		private _billboardHeight:number;
-		private _material:IMaterial;
+		private _material:MaterialBase;
 		private _uvTransform:UVTransform;
 
 		private onSizeChangedDelegate:(event:MaterialEvent) => void;
@@ -92,12 +93,12 @@ module away.entities
 		/**
 		 *
 		 */
-		public get material():IMaterial
+		public get material():MaterialBase
 		{
 			return this._material;
 		}
 
-		public set material(value:IMaterial)
+		public set material(value:MaterialBase)
 		{
 			if (value == this._material)
 				return;
@@ -154,7 +155,7 @@ module away.entities
 			this._uvTransform = value;
 		}
 
-		constructor(material:IMaterial, pixelSnapping:string = "auto", smoothing:boolean = false)
+		constructor(material:MaterialBase, pixelSnapping:string = "auto", smoothing:boolean = false)
 		{
 			super();
 
@@ -215,7 +216,7 @@ module away.entities
 				this._pRenderables[i].invalidateVertexData("vertices"); //TODO
 		}
 
-		public _iCollectRenderables(renderer:away.render.IRenderer)
+		public _iCollectRenderables(renderer:IRenderer)
 		{
 			// Since this getter is invoked every iteration of the render loop, and
 			// the prefab construct could affect the sub-meshes, the prefab is
@@ -226,7 +227,7 @@ module away.entities
 			this._iCollectRenderable(renderer);
 		}
 
-		public _iCollectRenderable(renderer:away.render.IRenderer)
+		public _iCollectRenderable(renderer:IRenderer)
 		{
 			renderer.applyBillboard(this);
 		}

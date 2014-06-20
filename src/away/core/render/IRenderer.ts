@@ -5,6 +5,16 @@
  */
 module away.render
 {
+	import LineSubMesh				= away.base.LineSubMesh;
+	import TriangleSubMesh			= away.base.TriangleSubMesh;
+	import Billboard				= away.entities.Billboard;
+	import Camera					= away.entities.Camera;
+	import Skybox					= away.entities.Skybox;
+	import Rectangle				= away.geom.Rectangle;
+	import IEntitySorter			= away.sort.IEntitySorter;
+	import TextureProxyBase			= away.textures.TextureProxyBase;
+	import ICollector				= away.traverse.ICollector;
+
 	/**
 	 * IRenderer is an interface for classes that are used in the rendering pipeline to render the
 	 * contents of a partition
@@ -16,7 +26,7 @@ module away.render
 		/**
 		 *
 		 */
-		renderableSorter:away.sort.IEntitySorter;
+		renderableSorter:IEntitySorter;
 
 		/**
 		 *
@@ -46,36 +56,30 @@ module away.render
 		/**
 		 *
 		 */
-		viewPort:away.geom.Rectangle;
+		viewPort:Rectangle;
 
 		/**
 		 *
 		 */
-		scissorRect:away.geom.Rectangle;
+		scissorRect:Rectangle;
 
 		/**
 		 *
 		 * @param billboard
 		 */
-		applyBillboard(billboard:away.entities.Billboard);
+		applyBillboard(billboard:Billboard);
 
 		/**
 		 *
 		 * @param triangleSubMesh
 		 */
-		applyLineSubMesh(triangleSubMesh:away.base.LineSubMesh);
-
-		/**
-		 *
-		 * @param skybox
-		 */
-		applySkybox(skybox:away.entities.Skybox);
+		applyLineSubMesh(triangleSubMesh:LineSubMesh);
 
 		/**
 		 *
 		 * @param triangleSubMesh
 		 */
-		applyTriangleSubMesh(triangleSubMesh:away.base.TriangleSubMesh);
+		applyTriangleSubMesh(triangleSubMesh:TriangleSubMesh);
 
 		/**
 		 *
@@ -86,7 +90,7 @@ module away.render
 		 *
 		 * @param entityCollector
 		 */
-		render(entityCollector:away.traverse.ICollector);
+		render(entityCollector:ICollector);
 
 		/**
 		 * @internal
@@ -111,6 +115,10 @@ module away.render
 		/**
 		 * @internal
 		 */
-		_iCreateEntityCollector():away.traverse.ICollector;
+		_iCreateEntityCollector():ICollector;
+
+		_iRender(entityCollector:ICollector, target?:TextureProxyBase, scissorRect?:Rectangle, surfaceSelector?:number);
+
+		_iRenderCascades(entityCollector:ICollector, target:TextureProxyBase, numCascades:number, scissorRects:Array<Rectangle>, cameras:Array<Camera>)
 	}
 }

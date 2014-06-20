@@ -5,37 +5,44 @@
  */
 module away.traverse
 {
+	import Scene					= away.containers.Scene;
+	import Camera					= away.entities.Camera;
+	import IEntity					= away.entities.IEntity;
+	import Plane3D					= away.geom.Plane3D;
+	import NodeBase					= away.partition.NodeBase;
+	import EntityListItem			= away.pool.EntityListItem;
+	import EntityListItemPool		= away.pool.EntityListItemPool;
 
 	/**
 	 * @class away.traverse.CollectorBase
 	 */
 	export class CollectorBase implements ICollector
 	{
-		public scene:away.containers.Scene;
+		public scene:Scene;
 
-		public _pEntityHead:away.pool.EntityListItem;
-		public _pEntityListItemPool:away.pool.EntityListItemPool;
-		public _pCamera:away.entities.Camera;
-		private _customCullPlanes:away.geom.Plane3D[];
-		private _cullPlanes:away.geom.Plane3D[];
+		public _pEntityHead:EntityListItem;
+		public _pEntityListItemPool:EntityListItemPool;
+		public _pCamera:Camera;
+		private _customCullPlanes:Array<Plane3D>;
+		private _cullPlanes:Array<Plane3D>;
 		private _numCullPlanes:number = 0;
 		public _pNumEntities:number = 0;
 		public _pNumInteractiveEntities:number = 0;
 
 		constructor()
 		{
-			this._pEntityListItemPool = new away.pool.EntityListItemPool();
+			this._pEntityListItemPool = new EntityListItemPool();
 		}
 
 		/**
 		 *
 		 */
-		public get camera():away.entities.Camera
+		public get camera():Camera
 		{
 			return this._pCamera;
 		}
 
-		public set camera(value:away.entities.Camera)
+		public set camera(value:Camera)
 		{
 			this._pCamera = value;
 			this._cullPlanes = this._pCamera.frustumPlanes;
@@ -44,12 +51,12 @@ module away.traverse
 		/**
 		 *
 		 */
-		public get cullPlanes():away.geom.Plane3D[]
+		public get cullPlanes():Array<Plane3D>
 		{
 			return this._customCullPlanes;
 		}
 
-		public set cullPlanes(value:away.geom.Plane3D[])
+		public set cullPlanes(value:Array<Plane3D>)
 		{
 			this._customCullPlanes = value;
 		}
@@ -57,7 +64,7 @@ module away.traverse
 		/**
 		 *
 		 */
-		public get entityHead():away.pool.EntityListItem
+		public get entityHead():EntityListItem
 		{
 			return this._pEntityHead;
 		}
@@ -95,7 +102,7 @@ module away.traverse
 		 * @param node
 		 * @returns {boolean}
 		 */
-		public enterNode(node:away.partition.NodeBase):boolean
+		public enterNode(node:NodeBase):boolean
 		{
 			var enter:boolean = this.scene._iCollectionMark != node._iCollectionMark && node.isInFrustum(this._cullPlanes, this._numCullPlanes);
 
@@ -108,7 +115,7 @@ module away.traverse
 		 *
 		 * @param entity
 		 */
-		public applyDirectionalLight(entity:away.entities.IEntity)
+		public applyDirectionalLight(entity:IEntity)
 		{
 			//don't do anything here
 		}
@@ -117,14 +124,14 @@ module away.traverse
 		 *
 		 * @param entity
 		 */
-		public applyEntity(entity:away.entities.IEntity)
+		public applyEntity(entity:IEntity)
 		{
 			this._pNumEntities++;
 
 			if (entity._iIsMouseEnabled())
 				this._pNumInteractiveEntities++;
 
-			var item:away.pool.EntityListItem = this._pEntityListItemPool.getItem();
+			var item:EntityListItem = this._pEntityListItemPool.getItem();
 			item.entity = entity;
 
 			item.next = this._pEntityHead;
@@ -135,7 +142,7 @@ module away.traverse
 		 *
 		 * @param entity
 		 */
-		public applyLightProbe(entity:away.entities.IEntity)
+		public applyLightProbe(entity:IEntity)
 		{
 			//don't do anything here
 		}
@@ -144,7 +151,16 @@ module away.traverse
 		 *
 		 * @param entity
 		 */
-		public applyPointLight(entity:away.entities.IEntity)
+		public applyPointLight(entity:IEntity)
+		{
+			//don't do anything here
+		}
+
+		/**
+		 *
+		 * @param entity
+		 */
+		public applySkybox(entity:IEntity)
 		{
 			//don't do anything here
 		}

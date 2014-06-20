@@ -4,6 +4,7 @@ module away.animators
 {
 	import SubGeometryBase				= away.base.SubGeometryBase;
 	import IEntity						= away.entities.IEntity;
+	import IMaterialPass				= away.materials.IMaterialPass;
 	import IRenderable					= away.pool.IRenderable;
 
 	/**
@@ -48,5 +49,11 @@ module away.animators
 		 * @param sourceSubGeometry
 		 */
 		getRenderableSubGeometry(renderable:IRenderable, sourceSubGeometry:SubGeometryBase):SubGeometryBase;
+
+		/**
+		 *
+		 * @param pass
+		 */
+		testGPUCompatibility(pass:IMaterialPass)
 	}
 }

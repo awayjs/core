@@ -2,8 +2,6 @@
 
 module away.textures
 {
-	import IStage						= away.base.IStage;
-
 	/**
 	 *
 	 */
@@ -70,15 +68,6 @@ module away.textures
 		public get assetType():string
 		{
 			return away.library.AssetType.TEXTURE;
-		}
-
-		/**
-		 *
-		 * @param stage
-		 */
-		public activateTextureForStage(index:number, stage:IStage)
-		{
-			throw new away.errors.AbstractMethodError();
 		}
 
 		/**

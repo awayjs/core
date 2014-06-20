@@ -5,6 +5,11 @@
  */
 module away.base
 {
+	import Mesh							= away.entities.Mesh;
+	import AssetType					= away.library.AssetType;
+	import MaterialBase					= away.materials.MaterialBase;
+	import IRenderer					= away.render.IRenderer;
+	
 	/**
 	 * LineSubMesh wraps a LineSubGeometry as a scene graph instantiation. A LineSubMesh is owned by a Mesh object.
 	 *
@@ -23,7 +28,7 @@ module away.base
 		 */
 		public get assetType():string
 		{
-			return away.library.AssetType.LINE_SUB_MESH;
+			return AssetType.LINE_SUB_MESH;
 		}
 
 		/**
@@ -40,7 +45,7 @@ module away.base
 		 * @param parentMesh The Mesh object to which this LineSubMesh belongs.
 		 * @param material An optional material used to render this LineSubMesh.
 		 */
-		constructor(subGeometry:LineSubGeometry, parentMesh:away.entities.Mesh, material:away.materials.IMaterial = null)
+		constructor(subGeometry:LineSubGeometry, parentMesh:Mesh, material:MaterialBase = null)
 		{
 			super();
 
@@ -59,7 +64,7 @@ module away.base
 			super.dispose();
 		}
 
-		public _iCollectRenderable(renderer:away.render.IRenderer)
+		public _iCollectRenderable(renderer:IRenderer)
 		{
 			renderer.applyLineSubMesh(this);
 		}

@@ -69,5 +69,12 @@ module away.traverse
 		 * @param entity
 		 */
 		applyPointLight(entity:away.entities.IEntity);
+
+
+		/**
+		 *
+		 * @param entity
+		 */
+		applySkybox(entity:away.entities.IEntity);
 	}
 }

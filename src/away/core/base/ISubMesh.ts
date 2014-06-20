@@ -5,22 +5,25 @@
  */
 module away.base
 {
+	import Mesh							= away.entities.Mesh;
+	import MaterialBase					= away.materials.MaterialBase;
+
 	/**
-	 * ISubMeshClass is an interface for the constructable class definition SubMesh that is used to
-	 * create apply a marterial to a SubGeometry class
+	 * ISubMesh is an interface for object SubMesh that is used to
+	 * apply a material to a SubGeometry class
 	 *
-	 * @class away.base.ISubMeshClass
+	 * @class away.base.ISubMesh
 	 */
 	export interface ISubMesh extends IMaterialOwner
 	{
 		subGeometry:SubGeometryBase;
 
-		parentMesh:away.entities.Mesh;
+		parentMesh:Mesh;
 
 		_iIndex:number;
 
 		_iInvalidateRenderableGeometry();
 
-		_iGetExplicitMaterial():away.materials.IMaterial;
+		_iGetExplicitMaterial():MaterialBase;
 	}
 }

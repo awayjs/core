@@ -2,9 +2,14 @@
 
 module away.entities
 {
+	import IMaterialOwner				= away.base.IMaterialOwner;
+	import BoundingVolumeBase			= away.bounds.BoundingVolumeBase;
+	import NullBounds					= away.bounds.NullBounds;
 	import IAnimator					= away.animators.IAnimator;
 	import UVTransform					= away.geom.UVTransform;
-	import IMaterial					= away.materials.IMaterial;
+	import MaterialBase					= away.materials.MaterialBase;
+	import SkyboxNode					= away.partition.SkyboxNode;
+	import IRenderer					= away.render.IRenderer;
 
 	/**
 	 * A Skybox class is used to render a sky in the scene. It's always considered static and 'at infinity', and as
@@ -15,7 +20,7 @@ module away.entities
 	{
 		private _uvTransform:UVTransform;
 
-		private _material:IMaterial;
+		private _material:MaterialBase;
 		private _animator:IAnimator;
 
 		public get animator():IAnimator
@@ -31,7 +36,7 @@ module away.entities
 			return this._uvTransform;
 		}
 
-		public set uvTransform(value:away.geom.UVTransform)
+		public set uvTransform(value:UVTransform)
 		{
 			this._uvTransform = value;
 		}
@@ -41,7 +46,7 @@ module away.entities
 		 *
 		 * @param material	The material with which to render the Skybox.
 		 */
-		constructor(material:IMaterial)
+		constructor(material:MaterialBase)
 		{
 			super();
 
@@ -53,23 +58,23 @@ module away.entities
 	/**
 	 * The material with which to render the Skybox.
 	 */
-		public get material():IMaterial
+		public get material():MaterialBase
 		{
 			return this._material;
 		}
 
-		public set material(value:IMaterial)
+		public set material(value:MaterialBase)
 		{
 			if (value == this._material)
 				return;
 
 			if (this._material)
-				this._material.iRemoveOwner(<away.base.IMaterialOwner> this);
+				this._material.iRemoveOwner(<IMaterialOwner> this);
 
 			this._material = value;
 
 			if (this._material)
-				this._material.iAddOwner(<away.base.IMaterialOwner> this);
+				this._material.iAddOwner(<IMaterialOwner> this);
 		}
 
 		public get assetType():string
@@ -88,17 +93,17 @@ module away.entities
 		/**
 		 * @protected
 		 */
-		public pCreateEntityPartitionNode():away.partition.EntityNode
+		public pCreateEntityPartitionNode():SkyboxNode
 		{
-			return new away.partition.SkyboxNode(this);
+			return new SkyboxNode(this);
 		}
 
 		/**
 		 * @protected
 		 */
-		public pGetDefaultBoundingVolume():away.bounds.BoundingVolumeBase
+		public pGetDefaultBoundingVolume():BoundingVolumeBase
 		{
-			return <away.bounds.BoundingVolumeBase> new away.bounds.NullBounds();
+			return <BoundingVolumeBase> new NullBounds();
 		}
 
 		/**
@@ -114,20 +119,14 @@ module away.entities
 			return false; //TODO
 		}
 
-		public _iCollectRenderables(renderer:away.render.IRenderer)
+		public _iCollectRenderables(renderer:IRenderer)
 		{
-			// Since this getter is invoked every iteration of the render loop, and
-			// the prefab construct could affect the sub-meshes, the prefab is
-			// validated here to give it a chance to rebuild.
-			if (this._iSourcePrefab)
-				this._iSourcePrefab._iValidate();
-
-			this._iCollectRenderable(renderer);
+			//skybox do not get collected in the standard entity list
 		}
 
-		public _iCollectRenderable(renderer:away.render.IRenderer)
+		public _iCollectRenderable(renderer:IRenderer)
 		{
-			renderer.applySkybox(this);
+
 		}
 	}
 }

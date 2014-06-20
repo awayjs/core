@@ -5,6 +5,14 @@
  */
 module away.base
 {
+	import IAnimator					= away.animators.IAnimator;
+	import Camera						= away.entities.Camera;
+	import Mesh							= away.entities.Mesh;
+	import Matrix3D						= away.geom.Matrix3D;
+	import UVTransform					= away.geom.UVTransform;
+	import MaterialBase					= away.materials.MaterialBase;
+	import IRenderable					= away.pool.IRenderable;
+
 	/**
 	 * SubMeshBase wraps a TriangleSubGeometry as a scene graph instantiation. A SubMeshBase is owned by a Mesh object.
 	 *
@@ -16,13 +24,13 @@ module away.base
 	 */
 	export class SubMeshBase extends away.library.NamedAssetBase
 	{
-		public _pParentMesh:away.entities.Mesh;
-		public _uvTransform:away.geom.UVTransform;
+		public _pParentMesh:Mesh;
+		public _uvTransform:UVTransform;
 
 		public _iIndex:number = 0;
 
-		public _material:away.materials.IMaterial;
-		private _renderables:Array<away.pool.IRenderable> = new Array<away.pool.IRenderable>();
+		public _material:MaterialBase;
+		private _renderables:Array<IRenderable> = new Array<IRenderable>();
 
 		//TODO test shader picking
 //		public get shaderPickingDetails():boolean
@@ -34,7 +42,7 @@ module away.base
 		/**
 		 * The animator object that provides the state for the TriangleSubMesh's animation.
 		 */
-		public get animator():away.animators.IAnimator
+		public get animator():IAnimator
 		{
 			return this._pParentMesh.animator;
 		}
@@ -42,12 +50,12 @@ module away.base
 		/**
 		 * The material used to render the current TriangleSubMesh. If set to null, its parent Mesh's material will be used instead.
 		 */
-		public get material():away.materials.IMaterial
+		public get material():MaterialBase
 		{
 			return this._material || this._pParentMesh.material;
 		}
 
-		public set material(value:away.materials.IMaterial)
+		public set material(value:MaterialBase)
 		{
 			if (this.material)
 				this.material.iRemoveOwner(this);
@@ -61,7 +69,7 @@ module away.base
 		/**
 		 * The scene transform object that transforms from model to world space.
 		 */
-		public get sceneTransform():away.geom.Matrix3D
+		public get sceneTransform():Matrix3D
 		{
 			return this._pParentMesh.sceneTransform;
 		}
@@ -69,7 +77,7 @@ module away.base
 		/**
 		 * The entity that that initially provided the IRenderable to the render pipeline (ie: the owning Mesh object).
 		 */
-		public get parentMesh():away.entities.Mesh
+		public get parentMesh():Mesh
 		{
 			return this._pParentMesh;
 		}
@@ -77,12 +85,12 @@ module away.base
 		/**
 		 *
 		 */
-		public get uvTransform():away.geom.UVTransform
+		public get uvTransform():UVTransform
 		{
 			return this._uvTransform || this._pParentMesh.uvTransform;
 		}
 
-		public set uvTransform(value:away.geom.UVTransform)
+		public set uvTransform(value:UVTransform)
 		{
 			this._uvTransform = value;
 		}
@@ -112,12 +120,12 @@ module away.base
 		 * @param camera
 		 * @returns {away.geom.Matrix3D}
 		 */
-		public getRenderSceneTransform(camera:away.entities.Camera):away.geom.Matrix3D
+		public getRenderSceneTransform(camera:Camera):Matrix3D
 		{
 			return this._pParentMesh.getRenderSceneTransform(camera);
 		}
 
-		public _iAddRenderable(renderable:away.pool.IRenderable):away.pool.IRenderable
+		public _iAddRenderable(renderable:IRenderable):IRenderable
 		{
 			this._renderables.push(renderable);
 
@@ -125,7 +133,7 @@ module away.base
 		}
 
 
-		public _iRemoveRenderable(renderable:away.pool.IRenderable):away.pool.IRenderable
+		public _iRemoveRenderable(renderable:IRenderable):IRenderable
 		{
 			var index:number = this._renderables.indexOf(renderable);
 
@@ -146,7 +154,7 @@ module away.base
 			throw new away.errors.AbstractMethodError();
 		}
 
-		public _iGetExplicitMaterial():away.materials.IMaterial
+		public _iGetExplicitMaterial():MaterialBase
 		{
 			return this._material;
 		}

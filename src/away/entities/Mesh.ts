@@ -2,8 +2,6 @@
 
 module away.entities
 {
-	import Delegate						= away.utils.Delegate;
-
 	import IAnimator					= away.animators.IAnimator;
 	import SubGeometryBase				= away.base.SubGeometryBase;
 	import SubGeometry					= away.base.TriangleSubGeometry;
@@ -12,7 +10,7 @@ module away.entities
 	import Geometry						= away.base.Geometry;
 	import GeometryEvent				= away.events.GeometryEvent;
 	import UVTransform					= away.geom.UVTransform;
-	import IMaterial					= away.materials.IMaterial;
+	import MaterialBase					= away.materials.MaterialBase;
 	import EntityNode					= away.partition.EntityNode;
 	import IRenderer					= away.render.IRenderer;
 
@@ -27,7 +25,7 @@ module away.entities
 
 		private _subMeshes:Array<ISubMesh>;
 		private _geometry:Geometry;
-		private _material:IMaterial;
+		private _material:MaterialBase;
 		private _animator:IAnimator;
 		private _castsShadows:boolean = true;
 		private _shareAnimationGeometry:boolean = true;
@@ -136,12 +134,12 @@ module away.entities
 		/**
 		 * The material with which to render the Mesh.
 		 */
-		public get material():IMaterial
+		public get material():MaterialBase
 		{
 			return this._material;
 		}
 
-		public set material(value:IMaterial)
+		public set material(value:MaterialBase)
 		{
 			if (value == this._material)
 				return;
@@ -208,7 +206,7 @@ module away.entities
 		 * @param geometry                    The geometry used by the mesh that provides it with its shape.
 		 * @param material    [optional]        The material with which to render the Mesh.
 		 */
-		constructor(geometry:Geometry, material:IMaterial = null)
+		constructor(geometry:Geometry, material:MaterialBase = null)
 		{
 			super();
 
@@ -216,9 +214,9 @@ module away.entities
 
 			this._subMeshes = new Array<ISubMesh>();
 
-			this._onGeometryBoundsInvalidDelegate = Delegate.create(this, this.onGeometryBoundsInvalid);
-			this._onSubGeometryAddedDelegate = Delegate.create(this, this.onSubGeometryAdded);
-			this._onSubGeometryRemovedDelegate = Delegate.create(this, this.onSubGeometryRemoved);
+			this._onGeometryBoundsInvalidDelegate = (event:GeometryEvent) => this.onGeometryBoundsInvalid(event);
+			this._onSubGeometryAddedDelegate = (event:GeometryEvent) => this.onSubGeometryAdded(event);
+			this._onSubGeometryRemovedDelegate = (event:GeometryEvent) => this.onSubGeometryRemoved(event);
 
 			//this should never happen, but if people insist on trying to create their meshes before they have geometry to fill it, it becomes necessary
 			this.geometry = geometry || new Geometry();

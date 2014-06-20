@@ -67,7 +67,7 @@ module away.partition
 		 */
 		public acceptTraverser(traverser:ICollector)
 		{
-			if (traverser.enterNode(<NodeBase> this))
+			if (traverser.enterNode(this))
 				traverser.applyEntity(this._entity);
 		}
 

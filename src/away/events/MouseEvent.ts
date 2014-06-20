@@ -4,15 +4,21 @@
  */
 module away.events
 {
+	import DisplayObject				= away.base.DisplayObject;
+	import IMaterialOwner				= away.base.IMaterialOwner;
+	import Point						= away.geom.Point;
+	import Vector3D						= away.geom.Vector3D;
+	import MaterialBase					= away.materials.MaterialBase;
+
 	/**
 	 * A MouseEvent is dispatched when a mouse event occurs over a mouseEnabled object in View.
 	 * TODO: we don't have screenZ data, tho this should be easy to implement
 	 */
-	export class MouseEvent extends Event
+	export class MouseEvent extends away.events.Event
 	{
 		// Private.
 		public _iAllowedToPropagate:boolean = true;
-		public _iParentEvent:away.events.MouseEvent;
+		public _iParentEvent:MouseEvent;
 
 		/**
 		 * Defines the value of the type property of a mouseOver3d event object.
@@ -82,22 +88,22 @@ module away.events
 		/**
 		 * The 3d object inside which the event took place.
 		 */
-		public object:away.base.DisplayObject;
+		public object:DisplayObject;
 
 		/**
 		 * The material owner inside which the event took place.
 		 */
-		public materialOwner:away.base.IMaterialOwner;
+		public materialOwner:IMaterialOwner;
 
 		/**
 		 * The material of the 3d element inside which the event took place.
 		 */
-		public material:away.materials.IMaterial;
+		public material:MaterialBase;
 
 		/**
 		 * The uv coordinate inside the draw primitive where the event took place.
 		 */
-		public uv:away.geom.Point;
+		public uv:Point;
 
 		/**
 		 * The index of the face where the event took place.
@@ -112,12 +118,12 @@ module away.events
 		/**
 		 * The position in object space where the event took place
 		 */
-		public localPosition:away.geom.Vector3D;
+		public localPosition:Vector3D;
 
 		/**
 		 * The normal in object space where the event took place
 		 */
-		public localNormal:away.geom.Vector3D;
+		public localNormal:Vector3D;
 
 		/**
 		 * Indicates whether the Control key is active (true) or inactive (false).
@@ -187,7 +193,7 @@ module away.events
 		 */
 		public clone():Event
 		{
-			var result:MouseEvent = new away.events.MouseEvent(this.type);
+			var result:MouseEvent = new MouseEvent(this.type);
 
 			/* TODO: Debug / test - look into isDefaultPrevented
 			 if (isDefaultPrevented())
@@ -220,7 +226,7 @@ module away.events
 		/**
 		 * The position in scene space where the event took place
 		 */
-		public get scenePosition():away.geom.Vector3D
+		public get scenePosition():Vector3D
 		{
 			return this.object.sceneTransform.transformVector(this.localPosition);
 		}
@@ -228,9 +234,9 @@ module away.events
 		/**
 		 * The normal in scene space where the event took place
 		 */
-		public get sceneNormal():away.geom.Vector3D
+		public get sceneNormal():Vector3D
 		{
-			var sceneNormal:away.geom.Vector3D = this.object.sceneTransform.deltaTransformVector(this.localNormal);
+			var sceneNormal:Vector3D = this.object.sceneTransform.deltaTransformVector(this.localNormal);
 			sceneNormal.normalize();
 
 			return sceneNormal;

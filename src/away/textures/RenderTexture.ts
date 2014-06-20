@@ -2,8 +2,6 @@
 
 module away.textures
 {
-	import IStage						= away.base.IStage;
-
 	export class RenderTexture extends Texture2DBase
 	{
 		/**
@@ -54,15 +52,6 @@ module away.textures
 			super(false);
 
 			this._pSetSize(width, height);
-		}
-
-		/**
-		 *
-		 * @param stage
-		 */
-		public activateTextureForStage(index:number, stage:IStage)
-		{
-			stage.activateRenderTexture(index, this);
 		}
 	}
 }

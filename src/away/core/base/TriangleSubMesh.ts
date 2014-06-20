@@ -5,6 +5,11 @@
  */
 module away.base
 {
+	import Mesh							= away.entities.Mesh;
+	import AssetType					= away.library.AssetType;
+	import MaterialBase					= away.materials.MaterialBase;
+	import IRenderer					= away.render.IRenderer;
+	
 	/**
 	 * TriangleSubMesh wraps a TriangleSubGeometry as a scene graph instantiation. A TriangleSubMesh is owned by a Mesh object.
 	 *
@@ -23,7 +28,7 @@ module away.base
 		 */
 		public get assetType():string
 		{
-			return away.library.AssetType.TRIANGLE_SUB_MESH;
+			return AssetType.TRIANGLE_SUB_MESH;
 		}
 
 		/**
@@ -40,7 +45,7 @@ module away.base
 		 * @param parentMesh The Mesh object to which this TriangleSubMesh belongs.
 		 * @param material An optional material used to render this TriangleSubMesh.
 		 */
-		constructor(subGeometry:TriangleSubGeometry, parentMesh:away.entities.Mesh, material:away.materials.IMaterial = null)
+		constructor(subGeometry:TriangleSubGeometry, parentMesh:Mesh, material:MaterialBase = null)
 		{
 			super();
 
@@ -57,7 +62,7 @@ module away.base
 			super.dispose();
 		}
 
-		public _iCollectRenderable(renderer:away.render.IRenderer)
+		public _iCollectRenderable(renderer:IRenderer)
 		{
 			renderer.applyTriangleSubMesh(this);
 		}

@@ -10,7 +10,7 @@ module away.prefabs
 	import LineSubGeometry			= away.base.LineSubGeometry;
 	import Mesh						= away.entities.Mesh;
 	import AbstractMethodError		= away.errors.AbstractMethodError;
-	import IMaterial				= away.materials.IMaterial;
+	import MaterialBase				= away.materials.MaterialBase;
 
 	/**
 	 * PrimitivePrefabBase is an abstract base class for polytope prefabs, which are simple pre-built geometric shapes
@@ -20,7 +20,7 @@ module away.prefabs
 		public _geomDirty:boolean = true;
 		public _uvDirty:boolean = true;
 
-		private _material:IMaterial;
+		private _material:MaterialBase;
 		private _geometry:Geometry;
 		private _subGeometry:SubGeometryBase;
 		private _geometryType:string;
@@ -63,12 +63,12 @@ module away.prefabs
 		/**
 		 * The material with which to render the primitive.
 		 */
-		public get material():IMaterial
+		public get material():MaterialBase
 		{
 			return this._material;
 		}
 
-		public set material(value:IMaterial)
+		public set material(value:MaterialBase)
 		{
 			if (value == this._material)
 				return;
@@ -85,7 +85,7 @@ module away.prefabs
 		 *
 		 * @param material The material with which to render the object
 		 */
-		constructor(material:IMaterial = null, geometryType:string = "triangleSubGeometry")
+		constructor(material:MaterialBase = null, geometryType:string = "triangleSubGeometry")
 		{
 			super();
 

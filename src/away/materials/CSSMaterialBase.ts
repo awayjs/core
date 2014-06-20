@@ -3,12 +3,10 @@
 module away.materials
 {
 	import BlendMode					= away.base.BlendMode;
+	import IMaterialOwner				= away.base.IMaterialOwner;
 	import MaterialEvent				= away.events.MaterialEvent;
 	import Matrix3D						= away.geom.Matrix3D;
 	import AssetType					= away.library.AssetType;
-	import Delegate						= away.utils.Delegate;
-
-	import IMaterialOwner				= away.base.IMaterialOwner;
 
 	/**
 	 * MaterialBase forms an abstract base class for any material.
@@ -21,60 +19,14 @@ module away.materials
 	 * methods to build the shader code. MaterialBase can be extended to build specific and high-performant custom
 	 * shaders, or entire new material frameworks.
 	 */
-	export class CSSMaterialBase extends away.library.NamedAssetBase implements IMaterial
+	export class CSSMaterialBase extends MaterialBase
 	{
-		private _height:number;
 		private _sizeChanged:MaterialEvent;
-		private _width:number;
-
-		/**
-		 * An object to contain any extra data.
-		 */
-		public extra:Object;
-
-		/**
-		 * An id for this material used to sort the renderables by shader program, which reduces Program state changes.
-		 *
-		 * @private
-		 */
-		public _iMaterialId:number;
-
-		/**
-		 * An id for this material used to sort the renderables by shader program, which reduces Program state changes.
-		 *
-		 * @private
-		 */
-		public _iRenderOrderId:number = 0;
-
-		/**
-		 * The same as _renderOrderId, but applied to the depth shader passes.
-		 *
-		 * @private
-		 */
-		public _iDepthPassId:number;
-
-		private _bothSides:boolean = false; // update
-
-		/**
-		 * A list of material owners, renderables or custom Entities.
-		 */
-		private _owners:Array<IMaterialOwner>;
-
-		public _pBlendMode:string = BlendMode.NORMAL;
 
 		private _imageElement:HTMLImageElement;
 		private _imageStyle:MSStyleCSSProperties;
-		private _repeat:boolean = false;
-		private _smooth:boolean = true;
 		private _texture:away.textures.Texture2DBase;
 
-		/**
-		 *
-		 */
-		public get height():number
-		{
-			return this._height;
-		}
 
 		public get imageElement():HTMLImageElement
 		{
@@ -84,37 +36,6 @@ module away.materials
 		public get imageStyle():MSStyleCSSProperties
 		{
 			return this._imageStyle;
-		}
-
-		/**
-		 * Indicates whether or not any used textures should be tiled. If set to false, texture samples are clamped to
-		 * the texture's borders when the uv coordinates are outside the [0, 1] interval.
-		 */
-		public get repeat():boolean
-		{
-			return this._repeat;
-		}
-
-		public set repeat(value:boolean)
-		{
-			this._repeat = value;
-
-			//TODO
-		}
-
-		/**
-		 * Indicates whether or not any used textures should use smoothing.
-		 */
-		public get smooth():boolean
-		{
-			return this._smooth;
-		}
-
-		public set smooth(value:boolean)
-		{
-			this._smooth = value;
-
-			//TODO
 		}
 
 		/**
@@ -154,20 +75,11 @@ module away.materials
 					= style["-o-transform-origin"]
 					= style["-ms-transform-origin"] = "0% 0%";
 
-				this._height = this._imageElement.height;
-				this._width = this._imageElement.width;
+				this._pHeight = this._imageElement.height;
+				this._pWidth = this._imageElement.width;
 
 				this.notifySizeChanged();
 			}
-		}
-
-
-		/**
-		 *
-		 */
-		public get width():number
-		{
-			return this._width;
 		}
 
 		/**
@@ -183,125 +95,12 @@ module away.materials
 
 			this.smooth = smooth;
 			this.repeat = repeat;
-
-			this._owners = new Array<IMaterialOwner>();
-
-
-		}
-
-		/**
-		 * @inheritDoc
-		 */
-		public get assetType():string
-		{
-			return AssetType.MATERIAL;
-		}
-
-		/**
-		 * Cleans up resources owned by the material, including passes. Textures are not owned by the material since they
-		 * could be used by other materials and will not be disposed.
-		 */
-		public dispose()
-		{
-			//TODO
-
-		}
-
-		/**
-		 * Defines whether or not the material should cull triangles facing away from the camera.
-		 */
-		public get bothSides():boolean
-		{
-			return this._bothSides;
-		}
-
-		public set bothSides(value:boolean)
-		{
-			this._bothSides = value;
-
-			//TODO
-
-		}
-
-		/**
-		 * The blend mode to use when drawing this renderable. The following blend modes are supported:
-		 * <ul>
-		 * <li>BlendMode.NORMAL: No blending, unless the material inherently needs it</li>
-		 * <li>BlendMode.LAYER: Force blending. This will draw the object the same as NORMAL, but without writing depth writes.</li>
-		 * <li>BlendMode.MULTIPLY</li>
-		 * <li>BlendMode.ADD</li>
-		 * <li>BlendMode.ALPHA</li>
-		 * </ul>
-		 */
-		public get blendMode():string
-		{
-			return this._pBlendMode;
-		}
-
-		public set blendMode(value:string)
-		{
-			this._pBlendMode = value;
-
-			//TODO
-		}
-
-		/**
-		 * Indicates whether or not the material requires alpha blending during rendering.
-		 */
-		public get requiresBlending():boolean
-		{
-			return this._pBlendMode != away.base.BlendMode.NORMAL;
-
-		}
-
-		//
-		// MATERIAL MANAGEMENT
-		//
-		/**
-		 * Mark an IMaterialOwner as owner of this material.
-		 * Assures we're not using the same material across renderables with different animations, since the
-		 * Programs depend on animation. This method needs to be called when a material is assigned.
-		 *
-		 * @param owner The IMaterialOwner that had this material assigned
-		 *
-		 * @private
-		 */
-		public iAddOwner(owner:away.base.IMaterialOwner)
-		{
-			var index:number = this._owners.indexOf(owner);
-
-			if (index == -1)
-				this._owners.push(owner);
-		}
-
-		/**
-		 * Removes an IMaterialOwner as owner.
-		 * @param owner
-		 *
-		 * @internal
-		 */
-		public iRemoveOwner(owner:away.base.IMaterialOwner)
-		{
-			var index:number = this._owners.indexOf(owner);
-
-			if (index != -1)
-				this._owners.splice(index, 1);
-		}
-
-		/**
-		 * A list of the IMaterialOwners that use this material
-		 *
-		 * @internal
-		 */
-		public get iOwners():Array<IMaterialOwner>
-		{
-			return this._owners;
 		}
 
 		private notifySizeChanged()
 		{
 			if (!this._sizeChanged)
-				this._sizeChanged = new away.events.MaterialEvent(away.events.MaterialEvent.SIZE_CHANGED);
+				this._sizeChanged = new MaterialEvent(MaterialEvent.SIZE_CHANGED);
 
 			this.dispatchEvent(this._sizeChanged);
 		}

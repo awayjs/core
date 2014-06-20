@@ -67,7 +67,7 @@ module away.render
 			if (this._pBackBufferInvalid)// reset or update render settings
 				this.pUpdateBackBuffer();
 
-			this._iRender(<away.traverse.CSSEntityCollector> entityCollector);
+			this._iRender(<away.traverse.EntityCollector> entityCollector);
 
 			this._pBackBufferInvalid = false;
 		}
@@ -75,7 +75,7 @@ module away.render
 		/**
 		 * @inheritDoc
 		 */
-		public pDraw(entityCollector:away.traverse.CSSEntityCollector)
+		public pDraw(entityCollector:away.traverse.EntityCollector)
 		{
 //			if (entityCollector.skyBox) {
 //				if (this._activeMaterial)
@@ -84,7 +84,7 @@ module away.render
 //				this._activeMaterial = null;
 //
 //				this._pContext.setDepthTest(false, away.gl.ContextGLCompareMode.ALWAYS);
-//				this.drawSkyBox(entityCollector);
+//				this.drawSkybox(entityCollector);
 //
 //			}
 //
@@ -139,7 +139,7 @@ module away.render
 		 * Draw the skybox if present.
 		 * @param entityCollector The EntityCollector containing all potentially visible information.
 		 */
-		private drawSkyBox(entityCollector:away.traverse.CSSEntityCollector)
+		private drawSkybox(entityCollector:away.traverse.CSSEntityCollector)
 		{
 			//TODO
 		}
@@ -149,7 +149,7 @@ module away.render
 		 * @param renderables The renderables to draw.
 		 * @param entityCollector The EntityCollector containing all potentially visible information.
 		 */
-		private drawRenderables(item:away.pool.CSSRenderableBase, entityCollector:away.traverse.CSSEntityCollector)
+		private drawRenderables(item:away.pool.CSSRenderableBase, entityCollector:away.traverse.EntityCollector)
 		{
 			var viewProjection:away.geom.Matrix3D = entityCollector.camera.viewProjection.clone();
 

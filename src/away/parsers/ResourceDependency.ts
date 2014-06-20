@@ -21,7 +21,7 @@ module away.parsers
 		private _data:any;
 		private _retrieveAsRawData:boolean;
 		private _suppressAssetEvents:boolean;
-		private _dependencies:ResourceDependency[];
+		private _dependencies:Array<ResourceDependency>;
 
 		public _iLoader:URLLoader;
 		public _iSuccess:boolean;

@@ -5,6 +5,8 @@
  */
 module away.base
 {
+	import SubGeometryEvent				= away.events.SubGeometryEvent;
+
 	/**
 	 * @class away.base.TriangleSubGeometry
 	 */
@@ -63,13 +65,13 @@ module away.base
 		private _scaleU:number = 1;
 		private _scaleV:number = 1;
 
-		private _positionsUpdated:away.events.SubGeometryEvent;
-		private _normalsUpdated:away.events.SubGeometryEvent;
-		private _tangentsUpdated:away.events.SubGeometryEvent;
-		private _uvsUpdated:away.events.SubGeometryEvent;
-		private _secondaryUVsUpdated:away.events.SubGeometryEvent;
-		private _jointIndicesUpdated:away.events.SubGeometryEvent;
-		private _jointWeightsUpdated:away.events.SubGeometryEvent;
+		private _positionsUpdated:SubGeometryEvent;
+		private _normalsUpdated:SubGeometryEvent;
+		private _tangentsUpdated:SubGeometryEvent;
+		private _uvsUpdated:SubGeometryEvent;
+		private _secondaryUVsUpdated:SubGeometryEvent;
+		private _jointIndicesUpdated:SubGeometryEvent;
+		private _jointWeightsUpdated:SubGeometryEvent;
 
 		/**
 		 * 
@@ -1368,7 +1370,7 @@ module away.base
 			this._positionsDirty = true;
 
 			if (!this._positionsUpdated)
-				this._positionsUpdated = new away.events.SubGeometryEvent(away.events.SubGeometryEvent.VERTICES_UPDATED, TriangleSubGeometry.POSITION_DATA);
+				this._positionsUpdated = new SubGeometryEvent(SubGeometryEvent.VERTICES_UPDATED, TriangleSubGeometry.POSITION_DATA);
 
 			this.dispatchEvent(this._positionsUpdated);
 		}
@@ -1381,7 +1383,7 @@ module away.base
 			this._vertexNormalsDirty = true;
 
 			if (!this._normalsUpdated)
-				this._normalsUpdated = new away.events.SubGeometryEvent(away.events.SubGeometryEvent.VERTICES_UPDATED, TriangleSubGeometry.NORMAL_DATA);
+				this._normalsUpdated = new SubGeometryEvent(SubGeometryEvent.VERTICES_UPDATED, TriangleSubGeometry.NORMAL_DATA);
 
 			this.dispatchEvent(this._normalsUpdated);
 		}
@@ -1394,7 +1396,7 @@ module away.base
 			this._vertexTangentsDirty = true;
 
 			if (!this._tangentsUpdated)
-				this._tangentsUpdated = new away.events.SubGeometryEvent(away.events.SubGeometryEvent.VERTICES_UPDATED, TriangleSubGeometry.TANGENT_DATA);
+				this._tangentsUpdated = new SubGeometryEvent(SubGeometryEvent.VERTICES_UPDATED, TriangleSubGeometry.TANGENT_DATA);
 
 			this.dispatchEvent(this._tangentsUpdated);
 		}
@@ -1407,7 +1409,7 @@ module away.base
 			this._uvsDirty = true;
 
 			if (!this._uvsUpdated)
-				this._uvsUpdated = new away.events.SubGeometryEvent(away.events.SubGeometryEvent.VERTICES_UPDATED, TriangleSubGeometry.UV_DATA);
+				this._uvsUpdated = new SubGeometryEvent(SubGeometryEvent.VERTICES_UPDATED, TriangleSubGeometry.UV_DATA);
 
 			this.dispatchEvent(this._uvsUpdated);
 		}
@@ -1420,7 +1422,7 @@ module away.base
 			this._secondaryUVsDirty = true;
 
 			if (!this._secondaryUVsUpdated)
-				this._secondaryUVsUpdated = new away.events.SubGeometryEvent(away.events.SubGeometryEvent.VERTICES_UPDATED, TriangleSubGeometry.SECONDARY_UV_DATA);
+				this._secondaryUVsUpdated = new SubGeometryEvent(SubGeometryEvent.VERTICES_UPDATED, TriangleSubGeometry.SECONDARY_UV_DATA);
 
 			this.dispatchEvent(this._secondaryUVsUpdated);
 		}
@@ -1433,7 +1435,7 @@ module away.base
 			this._jointIndicesDirty = true;
 
 			if (!this._jointIndicesUpdated)
-				this._jointIndicesUpdated = new away.events.SubGeometryEvent(away.events.SubGeometryEvent.VERTICES_UPDATED, TriangleSubGeometry.JOINT_INDEX_DATA);
+				this._jointIndicesUpdated = new SubGeometryEvent(SubGeometryEvent.VERTICES_UPDATED, TriangleSubGeometry.JOINT_INDEX_DATA);
 
 			this.dispatchEvent(this._jointIndicesUpdated);
 		}
@@ -1446,7 +1448,7 @@ module away.base
 			this._jointWeightsDirty = true;
 
 			if (!this._jointWeightsUpdated)
-				this._jointWeightsUpdated = new away.events.SubGeometryEvent(away.events.SubGeometryEvent.VERTICES_UPDATED, TriangleSubGeometry.JOINT_WEIGHT_DATA);
+				this._jointWeightsUpdated = new SubGeometryEvent(SubGeometryEvent.VERTICES_UPDATED, TriangleSubGeometry.JOINT_WEIGHT_DATA);
 
 			this.dispatchEvent(this._jointWeightsUpdated);
 		}

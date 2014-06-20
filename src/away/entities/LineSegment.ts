@@ -5,7 +5,9 @@
 	import Matrix3D						= away.geom.Matrix3D;
 	import UVTransform					= away.geom.UVTransform;
 	import Vector3D						= away.geom.Vector3D;
-	import IMaterial					= away.materials.IMaterial;
+	import MaterialBase					= away.materials.MaterialBase;
+	import EntityNode					= away.partition.EntityNode;
+	import IRenderer					= away.render.IRenderer;
 
 	/**
 	 * A Line Segment primitive.
@@ -13,7 +15,7 @@
 	export class LineSegment extends away.base.DisplayObject implements IEntity, away.base.IMaterialOwner
 	{
 		private _animator:IAnimator;
-		private _material:IMaterial;
+		private _material:MaterialBase;
 		private _uvTransform:UVTransform;
 
 		private onSizeChangedDelegate:(event:MaterialEvent) => void;
@@ -78,12 +80,12 @@
 		/**
 		 *
 		 */
-		public get material():IMaterial
+		public get material():MaterialBase
 		{
 			return this._material;
 		}
 
-		public set material(value:IMaterial)
+		public set material(value:MaterialBase)
 		{
 			if (value == this._material)
 				return;
@@ -128,7 +130,7 @@
 			return this._uvTransform;
 		}
 
-		public set uvTransform(value:away.geom.UVTransform)
+		public set uvTransform(value:UVTransform)
 		{
 			this._uvTransform = value;
 		}
@@ -140,7 +142,7 @@
 		 * @param endPosition Ending position of the line segment
 		 * @param thickness Thickness of the line
 		 */
-		constructor(material:IMaterial, startPosition:Vector3D, endPosition:Vector3D, thickness:number = 1)
+		constructor(material:MaterialBase, startPosition:Vector3D, endPosition:Vector3D, thickness:number = 1)
 		{
 			super();
 
@@ -164,9 +166,9 @@
 		/**
 		 * @protected
 		 */
-		public pCreateEntityPartitionNode():away.partition.EntityNode
+		public pCreateEntityPartitionNode():EntityNode
 		{
-			return new away.partition.EntityNode(this);
+			return new EntityNode(this);
 		}
 
 		/**
@@ -197,7 +199,7 @@
 				this._pRenderables[i].invalidateVertexData("vertices"); //TODO
 		}
 
-		public _iCollectRenderables(renderer:away.render.IRenderer)
+		public _iCollectRenderables(renderer:IRenderer)
 		{
 			// Since this getter is invoked every iteration of the render loop, and
 			// the prefab construct could affect the sub-meshes, the prefab is
@@ -208,7 +210,7 @@
 			this._iCollectRenderable(renderer);
 		}
 
-		public _iCollectRenderable(renderer:away.render.IRenderer)
+		public _iCollectRenderable(renderer:IRenderer)
 		{
 			//TODO
 		}

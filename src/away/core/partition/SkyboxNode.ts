@@ -7,6 +7,7 @@ module away.partition
 {
 	import IEntity						= away.entities.IEntity;
 	import Plane3D						= away.geom.Plane3D;
+	import ICollector					= away.traverse.ICollector;
 
 	/**
 	 * SkyboxNode is a space partitioning leaf node that contains a Skybox object.
@@ -26,6 +27,15 @@ module away.partition
 			super(skyBox);
 
 			this._skyBox = skyBox;
+		}
+
+		/**
+		 * @inheritDoc
+		 */
+		public acceptTraverser(traverser:ICollector)
+		{
+			if (traverser.enterNode(<NodeBase> this))
+				traverser.applySkybox(this._skyBox);
 		}
 
 		/**

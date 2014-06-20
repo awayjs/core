@@ -3,7 +3,6 @@
 module away.textures
 {
 	import BitmapData					= away.base.BitmapData;
-	import IStage						= away.base.IStage;
 
 	export class Texture2DBase extends TextureProxyBase
 	{
@@ -79,15 +78,6 @@ module away.textures
 
 			this._pWidth = width;
 			this._pHeight = height;
-		}
-
-		/**
-		 *
-		 * @param stage
-		 */
-		public activateTextureForStage(index:number, stage:IStage)
-		{
-			stage.activateTexture(index, this);
 		}
 
 		public _iGetMipmapData():Array<BitmapData>

@@ -266,7 +266,7 @@ module away.render
 		 * @param entityCollector The EntityCollector object containing the potentially visible geometry.
 		 * @param scissorRect
 		 */
-		public _iRender(entityCollector:away.traverse.CSSEntityCollector, scissorRect:away.geom.Rectangle = null)
+		public _iRender(entityCollector:away.traverse.EntityCollector, target:away.textures.TextureProxyBase = null, scissorRect:away.geom.Rectangle = null, surfaceSelector:number = 0)
 		{
 			if (!entityCollector.entityHead)
 				return;
@@ -274,6 +274,10 @@ module away.render
 			this.pExecuteRender(entityCollector, scissorRect);
 		}
 
+		public _iRenderCascades(entityCollector:away.traverse.ICollector, target:away.textures.TextureProxyBase, numCascades:number, scissorRects:Array<away.geom.Rectangle>, cameras:Array<away.entities.Camera>)
+		{
+
+		}
 		public pCollectRenderables(entityCollector:away.traverse.ICollector)
 		{
 			//reset head values

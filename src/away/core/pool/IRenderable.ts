@@ -27,6 +27,16 @@ module away.pool
 		/**
 		 *
 		 */
+		materialOwner:away.base.IMaterialOwner;
+
+		/**
+		 *
+		 */
+		sourceEntity:away.entities.IEntity;
+
+		/**
+		 *
+		 */
 		renderOrderId:number;
 
 		/**

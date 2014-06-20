@@ -5,6 +5,8 @@
  */
 module away.traverse
 {
+	import Vector3D					= away.geom.Vector3D;
+	import NodeBase					= away.partition.NodeBase;
 
 	/**
 	 * The RaycastCollector class is a traverser for scene partitions that collects all scene graph entities that are
@@ -15,22 +17,22 @@ module away.traverse
 	 *
 	 * @class away.traverse.RaycastCollector
 	 */
-	export class RaycastCollector extends CollectorBase implements ICollector
+	export class RaycastCollector extends CollectorBase
 	{
-		private _rayPosition:away.geom.Vector3D = new away.geom.Vector3D();
-		private _rayDirection:away.geom.Vector3D = new away.geom.Vector3D();
+		private _rayPosition:Vector3D = new Vector3D();
+		private _rayDirection:Vector3D = new Vector3D();
 
 		public _iCollectionMark:number = 0;
 
 		/**
 		 * Provides the starting position of the ray.
 		 */
-		public get rayPosition():away.geom.Vector3D
+		public get rayPosition():Vector3D
 		{
 			return this._rayPosition;
 		}
 
-		public set rayPosition(value:away.geom.Vector3D)
+		public set rayPosition(value:Vector3D)
 		{
 			this._rayPosition = value;
 		}
@@ -38,12 +40,12 @@ module away.traverse
 		/**
 		 * Provides the direction vector of the ray.
 		 */
-		public get rayDirection():away.geom.Vector3D
+		public get rayDirection():Vector3D
 		{
 			return this._rayDirection;
 		}
 
-		public set rayDirection(value:away.geom.Vector3D)
+		public set rayDirection(value:Vector3D)
 		{
 			this._rayDirection = value;
 		}
@@ -61,7 +63,7 @@ module away.traverse
 		 *
 		 * @param node The Partition3DNode object to frustum-test.
 		 */
-		public enterNode(node:away.partition.NodeBase):boolean
+		public enterNode(node:NodeBase):boolean
 		{
 			return node.isIntersectingRay(this._rayPosition, this._rayDirection);
 		}

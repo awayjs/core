@@ -3,7 +3,6 @@
 module away.textures
 {
 	import BitmapData					= away.base.BitmapData;
-	import IStage						= away.base.IStage;
 	import AbstractMethodError			=  away.errors.AbstractMethodError;
 
 	export class CubeTextureBase extends TextureProxyBase
@@ -57,15 +56,6 @@ module away.textures
 
 			for (var i:number = 0; i < 6; i++)
 				this._mipmapDataDirtyArray[i] = true;
-		}
-
-		/**
-		 *
-		 * @param stage
-		 */
-		public activateTextureForStage(index:number, stage:IStage)
-		{
-			stage.activateCubeTexture(index, this);
 		}
 
 		public _iGetMipmapData(side:number):Array<BitmapData>

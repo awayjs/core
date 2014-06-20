@@ -5,6 +5,12 @@
  */
 module away.base
 {
+	import IAnimator					= away.animators.IAnimator;
+	import UVTransform					= away.geom.UVTransform;
+	import MaterialBase					= away.materials.MaterialBase;
+	import IRenderable					= away.pool.IRenderable;
+	import IRenderer					= away.render.IRenderer;
+
 	/**
 	 * IMaterialOwner provides an interface for objects that can use materials.
 	 *
@@ -15,38 +21,38 @@ module away.base
 		/**
 		 * The animation used by the material owner to assemble the vertex code.
 		 */
-		animator:away.animators.IAnimator; // in most cases, this will in fact be null
+		animator:IAnimator;
 
 		/**
 		 * The material with which to render the object.
 		 */
-		material:away.materials.IMaterial; // GET / SET
+		material:MaterialBase;
 
 		/**
 		 *
 		 */
-		uvTransform:away.geom.UVTransform; // GET / SET
-
-		/**
-		 *
-		 * @param renderable
-		 * @private
-		 */
-		_iAddRenderable(renderable:away.pool.IRenderable):away.pool.IRenderable;
-
+		uvTransform:UVTransform;
 
 		/**
 		 *
 		 * @param renderable
 		 * @private
 		 */
-		_iRemoveRenderable(renderable:away.pool.IRenderable):away.pool.IRenderable;
+		_iAddRenderable(renderable:IRenderable):IRenderable;
+
+
+		/**
+		 *
+		 * @param renderable
+		 * @private
+		 */
+		_iRemoveRenderable(renderable:IRenderable):IRenderable;
 
 		/**
 		 *
 		 * @param renderer
 		 * @private
 		 */
-		_iCollectRenderable(renderer:away.render.IRenderer)
+		_iCollectRenderable(renderer:IRenderer)
 	}
 }

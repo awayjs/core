@@ -5,6 +5,9 @@
  */
 module away.base
 {
+	import Mesh							= away.entities.Mesh;
+	import MaterialBase					= away.materials.MaterialBase;
+
 	/**
 	 * ISubMeshClass is an interface for the constructable class definition ISubMesh that is used to
 	 * apply a material to a SubGeometry class
@@ -16,6 +19,6 @@ module away.base
 		/**
 		 *
 		 */
-		new(subGeometry:SubGeometryBase, parentMesh:away.entities.Mesh, material?:away.materials.IMaterial):ISubMesh;
+		new(subGeometry:SubGeometryBase, parentMesh:Mesh, material?:MaterialBase):ISubMesh;
 	}
 }

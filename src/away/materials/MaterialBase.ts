@@ -463,6 +463,9 @@ module away.materials
 			var l:number;
 			var c:number;
 
+			if (this._animationSet)
+				this._animationSet.resetGPUCompatibility();
+
 			// test all passes support animating the animation set in the vertex shader
 			// if any object using this material fails to support accelerated animations for any of the passes,
 			// we should do everything on cpu (otherwise we have the cost of both gpu + cpu animations)

@@ -88,7 +88,7 @@ module away.managers
 
 			stage.removeEventListener(StageEvent.CONTEXT_CREATED, this._onContextCreatedDelegate);
 
-			this._stages[ stage._iStageIndex ] = null;
+			this._stages[stage.stageIndex] = null;
 		}
 
 		/**

@@ -32,7 +32,7 @@ module away.base
 
 		//private static _frameEventDriver:Shape = new Shape(); // TODO: add frame driver / request animation frame
 
-		public _iStageIndex:number = -1;
+		private _stageIndex:number = -1;
 
 		private _usesSoftwareRendering:boolean;
 		private _profile:string;
@@ -66,7 +66,7 @@ module away.base
 
 			this._container = container;
 
-			this._iStageIndex = stageIndex;
+			this._stageIndex = stageIndex;
 
 			this._stageManager = stageManager;
 
@@ -97,14 +97,14 @@ module away.base
 
 			try {
 				if (mode == ContextMode.FLASH)
-					new away["stagegl"]["ContextStage3D"](<HTMLCanvasElement> this._container, (context:IContext) => this._callback(context));
+					new away["stagegl"]["ContextStage3D"](<HTMLCanvasElement> this._container, this._stageIndex, (context:IContext) => this._callback(context));
 				else
-					this._context = new away["stagegl"]["ContextWebGL"](<HTMLCanvasElement> this._container);
+					this._context = new away["stagegl"]["ContextWebGL"](<HTMLCanvasElement> this._container, this._stageIndex);
 
 			} catch (e) {
 				try {
 					if (mode == ContextMode.AUTO)
-						new away["stagegl"]["ContextStage3D"](<HTMLCanvasElement> this._container, (context:IContext) => this._callback(context));
+						new away["stagegl"]["ContextStage3D"](<HTMLCanvasElement> this._container, this._stageIndex, (context:IContext) => this._callback(context));
 					else
 						this.dispatchEvent(new Event(Event.ERROR));
 				} catch (e) {
@@ -276,7 +276,7 @@ module away.base
 			this._stageManager.iRemoveStage(this);
 			this.freeContext();
 			this._stageManager = null;
-			this._iStageIndex = -1;
+			this._stageIndex = -1;
 		}
 
 		/**
@@ -419,7 +419,7 @@ module away.base
 		 */
 		public get stageIndex():number
 		{
-			return this._iStageIndex;
+			return this._stageIndex;
 		}
 
 		/**

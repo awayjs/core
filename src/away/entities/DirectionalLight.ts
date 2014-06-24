@@ -62,7 +62,7 @@ module away.entities
 		 *
 		 * @returns {away.bounds.NullBounds}
 		 */
-		public pGetDefaultBoundingVolume():BoundingVolumeBase
+		public pCreateDefaultBoundingVolume():BoundingVolumeBase
 		{
 			//directional lights are to be considered global, hence always in view
 			return new NullBounds();

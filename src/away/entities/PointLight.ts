@@ -90,7 +90,7 @@ module away.entities
 			this._pBoundsInvalid = false;
 		}
 
-		public pGetDefaultBoundingVolume():BoundingVolumeBase
+		public pCreateDefaultBoundingVolume():BoundingVolumeBase
 		{
 			//point lights are culled based on their falloff radius
 			return new BoundingSphere();

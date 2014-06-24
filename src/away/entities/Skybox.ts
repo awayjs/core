@@ -101,7 +101,7 @@ module away.entities
 		/**
 		 * @protected
 		 */
-		public pGetDefaultBoundingVolume():BoundingVolumeBase
+		public pCreateDefaultBoundingVolume():BoundingVolumeBase
 		{
 			return <BoundingVolumeBase> new NullBounds();
 		}

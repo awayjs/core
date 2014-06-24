@@ -63,7 +63,7 @@ module away.entities
 		}
 
 		//@override
-		public pGetDefaultBoundingVolume():BoundingVolumeBase
+		public pCreateDefaultBoundingVolume():BoundingVolumeBase
 		{
 			return new NullBounds();
 		}

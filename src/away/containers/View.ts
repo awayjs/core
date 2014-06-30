@@ -381,7 +381,8 @@ module away.containers
 			if (this._pRenderer.x == value)
 				return;
 
-			this._pRenderer.x == value;
+			this._pRenderer.x = value;
+			this._pRenderer._pStageGL.x = value;
 			this._htmlElement.style.left = value + "px";
 		}
 
@@ -398,7 +399,8 @@ module away.containers
 			if (this._pRenderer.y == value)
 				return;
 
-			this._pRenderer.y == value;
+			this._pRenderer.y = value;
+			this._pRenderer._pStageGL.y = value;
 			this._htmlElement.style.top = value + "px";
 		}
 

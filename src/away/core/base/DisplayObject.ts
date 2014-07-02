@@ -1958,8 +1958,9 @@ module away.base
 			} else {
 				this._pUpdateImplicitMouseEnabled(true);
 				this._pUpdateImplicitVisibility(true);
-				this._iSetScene(null);
 				this._pUpdateImplicitPartition(null);
+
+				this._iSetScene(null);
 			}
 		}
 

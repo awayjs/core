@@ -116,7 +116,7 @@ module away.containers
 			if (displayObject.partition)
 				this.iUnregisterPartition(displayObject.partition);
 
-			if (displayObject.isEntity)
+			if ((displayObject.isEntity) && (displayObject._iAssignedPartition))
 				displayObject._iAssignedPartition.iRemoveEntity(displayObject);
 		}
 

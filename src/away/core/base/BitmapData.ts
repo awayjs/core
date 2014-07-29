@@ -179,14 +179,15 @@ module away.base
 			if (this._imageData) {
 				inputByteArray.position = 0;
 				var i:number /*uint*/, j:number /*uint*/, index:number /*uint*/;
-				for (i = 0; i < rect.width; ++i) {
-					for (j = 0; j < rect.height; ++j) {
-						index = (i + rect.x + (j + rect.y)*this._imageCanvas.width)*4;
+				for (i = rect.height-1; i >= 0; --i) { // height counter has to be in the outer loop, reversed y orientation
+					for (j = 0; j < rect.width; ++j) {
+						index = (j + rect.x + (i + rect.y)*this._imageCanvas.width)*4;
 
-						this._imageData.data[index + 0] = inputByteArray.readUnsignedInt();
-						this._imageData.data[index + 1] = inputByteArray.readUnsignedInt();
-						this._imageData.data[index + 2] = inputByteArray.readUnsignedInt();
-						this._imageData.data[index + 3] = inputByteArray.readUnsignedInt();
+						var argb = away.utils.ColorUtils.float32ColorToARGB(inputByteArray.readUnsignedInt()); // readUnsignedInt returns a 32 bit color value
+						this._imageData.data[index + 0] = argb[3]; // B
+						this._imageData.data[index + 1] = argb[2]; // G
+						this._imageData.data[index + 2] = argb[1]; // R
+						this._imageData.data[index + 3] = argb[0]; // A
 					}
 				}
 			}

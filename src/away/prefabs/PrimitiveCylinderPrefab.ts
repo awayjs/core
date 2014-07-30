@@ -319,7 +319,7 @@ module away.prefabs
 
 						if (i > 0) {
 							// add triangle
-							indices[fidx++] = nextVertexIndex;
+							indices[fidx++] = nextVertexIndex + 3;
 							indices[fidx++] = nextVertexIndex + 1;
 							indices[fidx++] = nextVertexIndex + 2;
 
@@ -394,9 +394,9 @@ module away.prefabs
 
 						if (i > 0) {
 							// add triangle
-							indices[fidx++] = nextVertexIndex;
 							indices[fidx++] = nextVertexIndex + 2;
 							indices[fidx++] = nextVertexIndex + 1;
+							indices[fidx++] = nextVertexIndex + 3;
 
 							nextVertexIndex += 2;
 						}

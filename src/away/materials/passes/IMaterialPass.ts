@@ -13,6 +13,7 @@ module away.materials
 	import Rectangle					= away.geom.Rectangle;
 	import Matrix3D						= away.geom.Matrix3D;
 	import LightPickerBase				= away.materials.LightPickerBase;
+	import MaterialBase					= away.materials.MaterialBase;
 	import IRenderable					= away.pool.IRenderable;
 	import TextureProxyBase				= away.textures.TextureProxyBase;
 
@@ -28,44 +29,9 @@ module away.materials
 		_iPasses:Array<IMaterialPass>;
 
 		/**
-		 *
-		 */
-		_iProgramids:Array<number>;
-
-		/**
-		 * The material to which this pass belongs.
-		 */
-		material:MaterialBase;
-
-		/**
 		 * Indicate whether this pass should write to the depth buffer or not. Ignored when blending is enabled.
 		 */
 		writeDepth:boolean;
-
-		/**
-		 * Defines whether any used textures should use mipmapping.
-		 */
-		mipmap:boolean;
-
-		/**
-		 * Defines whether smoothing should be applied to any used textures.
-		 */
-		smooth:boolean;
-
-		/**
-		 * Defines whether textures should be tiled.
-		 */
-		repeat:boolean;
-
-		/**
-		 * Defines whether or not the material should perform backface culling.
-		 */
-		bothSides:boolean;
-
-		/**
-		 * Returns the animation data set adding animations to the material.
-		 */
-		animationSet:IAnimationSet;
 
 		/**
 		 * Specifies whether this pass renders to texture
@@ -77,13 +43,6 @@ module away.materials
 		 * @param deep Indicates whether other resources should be cleaned up, that could potentially be shared across different instances.
 		 */
 		dispose();
-		
-		/**
-		 * Sets up the animation state. This needs to be called before render()
-		 *
-		 * @private
-		 */
-		iUpdateAnimationState(renderable:IRenderable, stage:Stage, camera:Camera);
 
 		/**
 		 * Renders an object to the current render target.
@@ -99,7 +58,7 @@ module away.materials
 		 * @param camera The camera from which the scene is viewed.
 		 * @private
 		 */
-		iActivate(stage:Stage, camera:Camera);
+		iActivate(material:MaterialBase, stage:Stage, camera:Camera);
 
 		/**
 		 * Clears the render state for the pass. This needs to be called before activating another pass.
@@ -107,7 +66,7 @@ module away.materials
 		 *
 		 * @private
 		 */
-		iDeactivate(stage:Stage);
+		iDeactivate(material:MaterialBase, stage:Stage);
 
 		/**
 		 * Marks the shader program as invalid, so it will be recompiled before the next render.
@@ -124,11 +83,7 @@ module away.materials
 		 */
 		lightPicker:LightPickerBase;
 
-		/**
-		 * Indicates whether visible textures (or other pixels) used by this material have
-		 * already been premultiplied. Toggle this if you are seeing black halos around your
-		 * blended alpha edges.
-		 */
-		alphaPremultiplied:boolean;
+		_iAddOwner(material:MaterialBase);
+		_iRemoveOwner(material:MaterialBase);
 	}
 }

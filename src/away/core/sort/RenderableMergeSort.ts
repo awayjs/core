@@ -59,14 +59,16 @@ module away.sort
 				}
 
 				if (!result)
-					result = l; else
+					result = l;
+				else
 					curr.next = l;
 
 				curr = l;
 			}
 
 			if (head)
-				curr.next = head; else if (headB)
+				curr.next = head;
+			else if (headB)
 				curr.next = headB;
 
 			return result;
@@ -125,14 +127,19 @@ module away.sort
 
 					if (ma == mb) {
 						if (head.zIndex < headB.zIndex)
-							cmp = 1; else
+							cmp = 1;
+						else
 							cmp = -1;
-					} else if (ma > mb)
-						cmp = 1; else
+					} else if (ma > mb) {
+						cmp = 1;
+					} else {
 						cmp = -1;
-				} else if (aid > bid)
-					cmp = 1; else
+					}
+				} else if (aid > bid) {
+					cmp = 1;
+				} else {
 					cmp = -1;
+				}
 
 				if (cmp < 0) {
 					l = head;
@@ -152,7 +159,8 @@ module away.sort
 			}
 
 			if (head)
-				curr.next = head; else if (headB)
+				curr.next = head;
+			else if (headB)
 				curr.next = headB;
 
 			return result;

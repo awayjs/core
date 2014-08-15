@@ -13,6 +13,7 @@ module away.materials
 	import AssetType					= away.library.AssetType;
 	import IMaterialPass				= away.materials.IMaterialPass;
 	import IRenderable					= away.pool.IRenderable;
+	import IRenderOrderData				= away.pool.IRenderOrderData;
 	import ICollector					= away.traverse.ICollector;
 
 	/**
@@ -28,6 +29,13 @@ module away.materials
 	 */
 	export class MaterialBase extends away.library.NamedAssetBase implements away.library.IAsset
 	{
+		private _renderOrderData:Array<IRenderOrderData> = new Array<IRenderOrderData>();
+		public _pAlphaThreshold:number = 0;
+		public _pAnimateUVs:boolean = false;
+		private _enableLightFallOff:boolean = true;
+		private _specularLightSources:number = 0x01;
+		private _diffuseLightSources:number = 0x03;
+
 		/**
 		 * An object to contain any extra data.
 		 */
@@ -55,7 +63,7 @@ module away.materials
 		 *
 		 * @private
 		 */
-		public _iRenderOrderId:number = 0;
+		private _renderOrderId:Array<number> = new Array<number>(0, 0, 0, 0, 0, 0, 0, 0);
 
 		public _iBaseScreenPassIndex:number = 0;
 
@@ -123,6 +131,15 @@ module away.materials
 		}
 
 		/**
+		 *
+		 */
+		public get animationSet():IAnimationSet
+		{
+			return this._animationSet;
+		}
+
+
+		/**
 		 * The light picker used by the material to provide lights to the material if it supports lighting.
 		 *
 		 * @see LightPickerBase
@@ -147,6 +164,7 @@ module away.materials
 				this._pLightPicker.addEventListener(Event.CHANGE, this._onLightChangeDelegate);
 
 			this.pInvalidateScreenPasses();
+			this.pResetRenderOrder();
 		}
 
 		/**
@@ -164,8 +182,7 @@ module away.materials
 
 			this._pMipmap = value;
 
-			for (var i:number = 0; i < this._numPasses; ++i)
-				this._passes[i].mipmap = value;
+			this.iInvalidatePasses(null);
 		}
 
 		/**
@@ -178,10 +195,12 @@ module away.materials
 
 		public set smooth(value:boolean)
 		{
+			if (this._smooth == value)
+				return;
+
 			this._smooth = value;
 
-			for (var i:number = 0; i < this._numPasses; ++i)
-				this._passes[i].smooth = value;
+			this.iInvalidatePasses(null);
 		}
 
 		/**
@@ -195,10 +214,91 @@ module away.materials
 
 		public set repeat(value:boolean)
 		{
+			if (this._repeat == value)
+				return;
+
 			this._repeat = value;
 
-			for (var i:number = 0; i < this._numPasses; ++i)
-				this._passes[i].repeat = value;
+			this.iInvalidatePasses(null);
+		}
+
+		/**
+		 * Specifies whether or not the UV coordinates should be animated using a transformation matrix.
+		 */
+		public get animateUVs():boolean
+		{
+			return this._pAnimateUVs;
+		}
+
+		public set animateUVs(value:boolean)
+		{
+			if (this._pAnimateUVs == value)
+				return;
+
+			this._pAnimateUVs = value;
+
+			this.iInvalidatePasses(null);
+		}
+
+		/**
+		 * Whether or not to use fallOff and radius properties for lights. This can be used to improve performance and
+		 * compatibility for constrained mode.
+		 */
+		public get enableLightFallOff():boolean
+		{
+			return this._enableLightFallOff;
+		}
+
+		public set enableLightFallOff(value:boolean)
+		{
+			if (this._enableLightFallOff == value)
+				return;
+
+			this._enableLightFallOff = value;
+
+			this.iInvalidatePasses(null);
+		}
+
+		/**
+		 * Define which light source types to use for diffuse reflections. This allows choosing between regular lights
+		 * and/or light probes for diffuse reflections.
+		 *
+		 * @see away3d.materials.LightSources
+		 */
+		public get diffuseLightSources():number
+		{
+			return this._diffuseLightSources;
+		}
+
+		public set diffuseLightSources(value:number)
+		{
+			if (this._diffuseLightSources == value)
+				return;
+
+			this._diffuseLightSources = value;
+
+			this.iInvalidatePasses(null);
+		}
+
+		/**
+		 * Define which light source types to use for specular reflections. This allows choosing between regular lights
+		 * and/or light probes for specular reflections.
+		 *
+		 * @see away3d.materials.LightSources
+		 */
+		public get specularLightSources():number
+		{
+			return this._specularLightSources;
+		}
+
+		public set specularLightSources(value:number)
+		{
+			if (this._specularLightSources == value)
+				return;
+
+			this._specularLightSources = value;
+
+			this.iInvalidatePasses(null);
 		}
 
 		/**
@@ -211,6 +311,14 @@ module away.materials
 
 			for (i = 0; i < this._numPasses; ++i)
 				this._passes[i].dispose();
+
+			this._passes = null;
+
+			var len:number = this._renderOrderData.length;
+			for (i = 0; i < len; i++)
+				this._renderOrderData[i].dispose();
+
+			this._renderOrderData = null;
 		}
 
 		/**
@@ -223,10 +331,12 @@ module away.materials
 
 		public set bothSides(value:boolean)
 		{
+			if (this._bothSides = value)
+				return;
+
 			this._bothSides = value;
 
-			for (var i:number = 0; i < this._numPasses; ++i)
-				this._passes[i].bothSides = value;
+			this.iInvalidatePasses(null);
 		}
 
 		/**
@@ -251,7 +361,7 @@ module away.materials
 
 			this._pBlendMode = value;
 
-			this.pInvalidateScreenPasses();
+			this.iInvalidatePasses(null);
 		}
 
 		/**
@@ -266,10 +376,37 @@ module away.materials
 
 		public set alphaPremultiplied(value:boolean)
 		{
+			if (this._alphaPremultiplied == value)
+				return;
+
 			this._alphaPremultiplied = value;
 
-			for (var i:number = 0; i < this._numPasses; ++i)
-				this._passes[i].alphaPremultiplied = value;
+			this.iInvalidatePasses(null);
+		}
+
+		/**
+		 * The minimum alpha value for which pixels should be drawn. This is used for transparency that is either
+		 * invisible or entirely opaque, often used with textures for foliage, etc.
+		 * Recommended values are 0 to disable alpha, or 0.5 to create smooth edges. Default value is 0 (disabled).
+		 */
+		public get alphaThreshold():number
+		{
+			return this._pAlphaThreshold;
+		}
+
+		public set alphaThreshold(value:number)
+		{
+			if (value < 0)
+				value = 0;
+			else if (value > 1)
+				value = 1;
+
+			if (this._pAlphaThreshold == value)
+				return;
+
+			this._pAlphaThreshold = value;
+
+			this.iInvalidatePasses(null);
 		}
 
 		/**
@@ -293,9 +430,19 @@ module away.materials
 		 *
 		 * @private
 		 */
-		public get _iNumPasses():number // ARCANE
+		public getNumPasses():number
 		{
 			return this._numPasses;
+		}
+
+		/**
+		 *
+		 * @param index
+		 * @returns {IMaterialPass}
+		 */
+		public getPass(index:number):IMaterialPass
+		{
+			return this._passes[index];
 		}
 
 		/**
@@ -320,7 +467,7 @@ module away.materials
 		 */
 		public iActivatePass(index:number, stage:Stage, camera:Camera) // ARCANE
 		{
-			this._passes[index].iActivate(stage, camera);
+			this._passes[index].iActivate(this, stage, camera);
 		}
 
 		/**
@@ -332,7 +479,7 @@ module away.materials
 		 */
 		public iDeactivatePass(index:number, stage:Stage) // ARCANE
 		{
-			this._passes[index].iDeactivate(stage);
+			this._passes[index].iDeactivate(this, stage);
 		}
 
 		/**
@@ -351,13 +498,7 @@ module away.materials
 			if (this._pLightPicker)
 				this._pLightPicker.collectLights(renderable, entityCollector);
 
-			var pass:IMaterialPass = this._passes[index];
-
-			if (renderable.materialOwner.animator)
-				pass.iUpdateAnimationState(renderable, stage, entityCollector.camera);
-
-			pass.iRender(renderable, stage, entityCollector.camera, viewProjection);
-
+			this._passes[index].iRender(renderable, stage, entityCollector.camera, viewProjection);
 		}
 
 		//
@@ -390,10 +531,7 @@ module away.materials
 
 						this._animationSet = animationSet;
 
-						for (var i:number = 0; i < this._numPasses; ++i)
-							this._passes[i].animationSet = this._animationSet;
-
-						this.iInvalidatePasses(null);
+						this.iInvalidateAnimation();
 					}
 				}
 			}
@@ -412,10 +550,7 @@ module away.materials
 			if (this._owners.length == 0) {
 				this._animationSet = null;
 
-				for (var i:number = 0; i < this._numPasses; ++i)
-					this._passes[i].animationSet = this._animationSet;
-
-				this.iInvalidatePasses(null);
+				this.iInvalidateAnimation();
 			}
 		}
 
@@ -427,6 +562,16 @@ module away.materials
 		public get iOwners():Array<IMaterialOwner>
 		{
 			return this._owners;
+		}
+
+		/**
+		 * A list of the passes used in this material
+		 *
+		 * @private
+		 */
+		public get iPasses():Array<IMaterialPass>
+		{
+			return this._passes;
 		}
 
 		/**
@@ -445,7 +590,8 @@ module away.materials
 		 */
 		public iDeactivate(stage:Stage)
 		{
-			this._passes[this._numPasses - 1].iDeactivate(stage);
+			//TODO discover why this is needed for shadows
+			this._passes[this._numPasses - 1].iDeactivate(this, stage);
 		}
 
 		/**
@@ -457,40 +603,18 @@ module away.materials
 		 */
 		public iInvalidatePasses(triggerPass:IMaterialPass)
 		{
-			var owner:IMaterialOwner;
-			var animator:IAnimator;
-
-			var l:number;
-			var c:number;
-
-			if (this._animationSet)
-				this._animationSet.resetGPUCompatibility();
-
-			// test all passes support animating the animation set in the vertex shader
-			// if any object using this material fails to support accelerated animations for any of the passes,
-			// we should do everything on cpu (otherwise we have the cost of both gpu + cpu animations)
 			for (var i:number = 0; i < this._numPasses; ++i) {
 				// only invalidate the pass if it wasn't the triggering pass
 				if (this._passes[i] != triggerPass)
 					this._passes[i].iInvalidateShaderProgram(false);
-
-				// test if animation will be able to run on gpu BEFORE compiling materials
-				// test if the pass supports animating the animation set in the vertex shader
-				// if any object using this material fails to support accelerated animations for any of the passes,
-				// we should do everything on cpu (otherwise we have the cost of both gpu + cpu animations)
-				if (this._animationSet) {
-					l = this._owners.length;
-
-					for (c = 0; c < l; c++) {
-						owner = this._owners[c];
-						animator = <IAnimator> owner.animator;
-
-						if (animator)
-							animator.testGPUCompatibility(this._passes[i]);
-					}
-				}
-
 			}
+		}
+
+		public iInvalidateAnimation()
+		{
+			var len:number = this._renderOrderData.length;
+			for (var i:number = 0; i < len; i++)
+				this._renderOrderData[i].invalidate();
 		}
 
 		/**
@@ -499,7 +623,9 @@ module away.materials
 		 */
 		public pRemovePass(pass:IMaterialPass)
 		{
+			pass.removeEventListener(Event.CHANGE, this._onPassChangeDelegate);
 			this._passes.splice(this._passes.indexOf(pass), 1);
+			pass._iRemoveOwner(this);
 			--this._numPasses;
 		}
 
@@ -508,8 +634,10 @@ module away.materials
 		 */
 		public pClearPasses()
 		{
-			for (var i:number = 0; i < this._numPasses; ++i)
+			for (var i:number = 0; i < this._numPasses; ++i) {
 				this._passes[i].removeEventListener(Event.CHANGE, this._onPassChangeDelegate);
+				this._passes[i]._iRemoveOwner(this);
+			}
 
 			this._passes.length = 0;
 			this._numPasses = 0;
@@ -523,14 +651,10 @@ module away.materials
 		{
 			this._passes[this._numPasses++] = pass;
 
-			pass.animationSet = this._animationSet;
-			pass.alphaPremultiplied = this._alphaPremultiplied;
-			pass.mipmap = this._pMipmap;
-			pass.smooth = this._smooth;
-			pass.repeat = this._repeat;
 			pass.lightPicker = this._pLightPicker;
-			pass.bothSides = this._bothSides;
 			pass.addEventListener(Event.CHANGE, this._onPassChangeDelegate);
+
+			pass._iAddOwner(this);
 
 			this.iInvalidatePasses(null);
 		}
@@ -558,26 +682,7 @@ module away.materials
 		 */
 		private onPassChange(event:Event)
 		{
-			var mult:number = 1;
-			var ids:Array<number>;
-			var len:number;
-
-			this._iRenderOrderId = 0;
-
-			for (var i:number = 0; i < this._numPasses; ++i) {
-
-				ids = this._passes[i]._iProgramids;
-				len = ids.length;
-
-				for (var j:number = 0; j < len; ++j) {
-					if (ids[j] != -1) {
-						this._iRenderOrderId += mult*ids[j];
-						j = len;
-					}
-				}
-
-				mult *= 1000;
-			}
+			this.pResetRenderOrder();
 		}
 
 		/**
@@ -588,12 +693,35 @@ module away.materials
 			this._pScreenPassesInvalid = true;
 		}
 
+		public pResetRenderOrder()
+		{
+			var len:number = this._renderOrderData.length;
+			for (var i:number = 0; i < len; i++)
+				this._renderOrderData[i].reset();
+		}
+
 		/**
 		 * Called when the light picker's configuration changed.
 		 */
 		private onLightsChange(event:Event)
 		{
 			this.pInvalidateScreenPasses();
+			this.pResetRenderOrder();
+		}
+
+
+		public _iAddRenderOrderData(renderOrderData:IRenderOrderData):IRenderOrderData
+		{
+			this._renderOrderData.push(renderOrderData);
+
+			return renderOrderData;
+		}
+
+		public _iRemoveRenderOrderData(renderOrderData:IRenderOrderData):IRenderOrderData
+		{
+			this._renderOrderData.splice(this._renderOrderData.indexOf(renderOrderData), 1);
+
+			return renderOrderData;
 		}
 	}
 }

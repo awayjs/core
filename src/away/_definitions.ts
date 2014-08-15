@@ -160,8 +160,9 @@
 ///<reference path="core/pool/EntityListItemPool.ts"/>
 ///<reference path="core/pool/IRenderable.ts"/>
 ///<reference path="core/pool/IRenderableClass.ts"/>
-///<reference path="core/pool/RenderablePool.ts"/>
+///<reference path="core/pool/IRenderOrderData.ts"/>
 ///<reference path="core/pool/ITextureData.ts"/>
+///<reference path="core/pool/RenderablePool.ts"/>
 
 ///<reference path="core/pool/CSSRenderableBase.ts"/>
 ///<reference path="core/pool/CSSBillboardRenderable.ts"/>
@@ -258,6 +259,7 @@
 
 ///<reference path="materials/passes/IMaterialPass.ts"/>
 
+///<reference path="materials/LightSources.ts"/>
 ///<reference path="materials/MaterialBase.ts"/>
 ///<reference path="materials/CSSMaterialBase.ts"/>
 

@@ -49,11 +49,5 @@ module away.animators
 		 * @param sourceSubGeometry
 		 */
 		getRenderableSubGeometry(renderable:IRenderable, sourceSubGeometry:SubGeometryBase):SubGeometryBase;
-
-		/**
-		 *
-		 * @param pass
-		 */
-		testGPUCompatibility(pass:IMaterialPass)
 	}
 }

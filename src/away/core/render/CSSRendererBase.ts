@@ -385,7 +385,7 @@ module away.render
 			if (material) {
 				//set ids for faster referencing
 				renderable.materialId = material._iMaterialId;
-				renderable.renderOrderId = material._iRenderOrderId;
+//				renderable.renderOrderId = material._iRenderOrderId;
 				renderable.cascaded = false;
 
 				// project onto camera's z-axis

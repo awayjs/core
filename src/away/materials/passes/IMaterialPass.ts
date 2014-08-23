@@ -24,19 +24,9 @@ module away.materials
 	export interface IMaterialPass extends away.events.IEventDispatcher
 	{
 		/**
-		 *
-		 */
-		_iPasses:Array<IMaterialPass>;
-
-		/**
 		 * Indicate whether this pass should write to the depth buffer or not. Ignored when blending is enabled.
 		 */
 		writeDepth:boolean;
-
-		/**
-		 * Specifies whether this pass renders to texture
-		 */
-		renderToTexture:boolean; //GET
 
 		/**
 		 * Cleans up any resources used by the current object.
@@ -69,21 +59,11 @@ module away.materials
 		iDeactivate(material:MaterialBase, stage:Stage);
 
 		/**
-		 * Marks the shader program as invalid, so it will be recompiled before the next render.
-		 *
-		 * @param updateMaterial Indicates whether the invalidation should be performed on the entire material. Should always pass "true" unless it's called from the material itself.
-		 */
-		iInvalidateShaderProgram(updateMaterial?:boolean);
-
-		/**
 		 * The light picker used by the material to provide lights to the material if it supports lighting.
 		 *
 		 * @see away.materials.LightPickerBase
 		 * @see away.materials.StaticLightPicker
 		 */
 		lightPicker:LightPickerBase;
-
-		_iAddOwner(material:MaterialBase);
-		_iRemoveOwner(material:MaterialBase);
 	}
 }

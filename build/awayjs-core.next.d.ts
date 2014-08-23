@@ -8830,12 +8830,12 @@ declare module away.pool {
 */
 declare module away.pool {
     /**
-    * IRenderOrderData is an interface for classes that are used in the rendering pipeline to render the
+    * IMaterialData is an interface for classes that are used in the rendering pipeline to render the
     * contents of a texture
     *
-    * @class away.pool.IRenderOrderData
+    * @class away.pool.IMaterialData
     */
-    interface IRenderOrderData {
+    interface IMaterialData {
         /**
         *
         */
@@ -8843,11 +8843,15 @@ declare module away.pool {
         /**
         *
         */
-        reset(): any;
+        invalidatePasses(): any;
         /**
         *
         */
-        invalidate(): any;
+        invalidateMaterial(): any;
+        /**
+        *
+        */
+        invalidateAnimation(): any;
     }
 }
 /**
@@ -14666,17 +14670,9 @@ declare module away.materials {
     */
     interface IMaterialPass extends events.IEventDispatcher {
         /**
-        *
-        */
-        _iPasses: IMaterialPass[];
-        /**
         * Indicate whether this pass should write to the depth buffer or not. Ignored when blending is enabled.
         */
         writeDepth: boolean;
-        /**
-        * Specifies whether this pass renders to texture
-        */
-        renderToTexture: boolean;
         /**
         * Cleans up any resources used by the current object.
         * @param deep Indicates whether other resources should be cleaned up, that could potentially be shared across different instances.
@@ -14704,20 +14700,12 @@ declare module away.materials {
         */
         iDeactivate(material: MaterialBase, stage: base.Stage): any;
         /**
-        * Marks the shader program as invalid, so it will be recompiled before the next render.
-        *
-        * @param updateMaterial Indicates whether the invalidation should be performed on the entire material. Should always pass "true" unless it's called from the material itself.
-        */
-        iInvalidateShaderProgram(updateMaterial?: boolean): any;
-        /**
         * The light picker used by the material to provide lights to the material if it supports lighting.
         *
         * @see away.materials.LightPickerBase
         * @see away.materials.StaticLightPicker
         */
         lightPicker: LightPickerBase;
-        _iAddOwner(material: MaterialBase): any;
-        _iRemoveOwner(material: MaterialBase): any;
     }
 }
 declare module away.materials {
@@ -14763,7 +14751,7 @@ declare module away.materials {
     * shaders, or entire new material frameworks.
     */
     class MaterialBase extends library.NamedAssetBase implements library.IAsset {
-        private _renderOrderData;
+        private _materialData;
         public _pAlphaThreshold: number;
         public _pAnimateUVs: boolean;
         private _enableLightFallOff;
@@ -14787,12 +14775,6 @@ declare module away.materials {
         * @private
         */
         public _iMaterialId: number;
-        /**
-        * An id for this material used to sort the renderables by shader program, which reduces Program state changes.
-        *
-        * @private
-        */
-        private _renderOrderId;
         public _iBaseScreenPassIndex: number;
         private _bothSides;
         private _animationSet;
@@ -14926,14 +14908,6 @@ declare module away.materials {
         */
         public getPass(index: number): IMaterialPass;
         /**
-        * Indicates whether or not the pass with the given index renders to texture or not.
-        * @param index The index of the pass.
-        * @return True if the pass renders to texture, false otherwise.
-        *
-        * @internal
-        */
-        public iPassRendersToTexture(index: number): boolean;
-        /**
         * Sets the render state for a pass that is independent of the rendered object. This needs to be called before
         * calling renderPass. Before activating a pass, the previously used pass needs to be deactivated.
         * @param index The index of the pass to activate.
@@ -15010,42 +14984,37 @@ declare module away.materials {
         *
         * @private
         */
-        public iInvalidatePasses(triggerPass: IMaterialPass): void;
-        public iInvalidateAnimation(): void;
+        public _pInvalidatePasses(): void;
+        private invalidateAnimation();
         /**
         * Removes a pass from the material.
         * @param pass The pass to be removed.
         */
-        public pRemovePass(pass: IMaterialPass): void;
+        public pRemoveScreenPass(pass: IMaterialPass): void;
         /**
         * Removes all passes from the material
         */
-        public pClearPasses(): void;
+        public _pClearScreenPasses(): void;
         /**
         * Adds a pass to the material
         * @param pass
         */
-        public pAddPass(pass: IMaterialPass): void;
-        /**
-        * Adds any additional passes on which the given pass is dependent.
-        * @param pass The pass that my need additional passes.
-        */
-        public pAddChildPassesFor(pass: IMaterialPass): void;
+        public _pAddScreenPass(pass: IMaterialPass): void;
         /**
         * Listener for when a pass's shader code changes. It recalculates the render order id.
         */
         private onPassChange(event);
         /**
-        * Flags that the screen passes have become invalid.
+        * Flags that the screen passes have become invalid and need possible re-ordering / adding / deleting
         */
-        public pInvalidateScreenPasses(): void;
-        public pResetRenderOrder(): void;
+        public _pInvalidateScreenPasses(): void;
+        private invalidateMaterial();
         /**
         * Called when the light picker's configuration changed.
         */
         private onLightsChange(event);
-        public _iAddRenderOrderData(renderOrderData: pool.IRenderOrderData): pool.IRenderOrderData;
-        public _iRemoveRenderOrderData(renderOrderData: pool.IRenderOrderData): pool.IRenderOrderData;
+        public _iAddMaterialData(materialData: pool.IMaterialData): pool.IMaterialData;
+        public _iRemoveMaterialData(materialData: pool.IMaterialData): pool.IMaterialData;
     }
 }
 declare module away.materials {

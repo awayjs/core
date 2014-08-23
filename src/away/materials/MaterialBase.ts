@@ -13,7 +13,7 @@ module away.materials
 	import AssetType					= away.library.AssetType;
 	import IMaterialPass				= away.materials.IMaterialPass;
 	import IRenderable					= away.pool.IRenderable;
-	import IRenderOrderData				= away.pool.IRenderOrderData;
+	import IMaterialData				= away.pool.IMaterialData;
 	import ICollector					= away.traverse.ICollector;
 
 	/**
@@ -29,7 +29,7 @@ module away.materials
 	 */
 	export class MaterialBase extends away.library.NamedAssetBase implements away.library.IAsset
 	{
-		private _renderOrderData:Array<IRenderOrderData> = new Array<IRenderOrderData>();
+		private _materialData:Array<IMaterialData> = new Array<IMaterialData>();
 		public _pAlphaThreshold:number = 0;
 		public _pAnimateUVs:boolean = false;
 		private _enableLightFallOff:boolean = true;
@@ -57,13 +57,6 @@ module away.materials
 		 * @private
 		 */
 		public _iMaterialId:number = 0;
-
-		/**
-		 * An id for this material used to sort the renderables by shader program, which reduces Program state changes.
-		 *
-		 * @private
-		 */
-		private _renderOrderId:Array<number> = new Array<number>(0, 0, 0, 0, 0, 0, 0, 0);
 
 		public _iBaseScreenPassIndex:number = 0;
 
@@ -163,8 +156,7 @@ module away.materials
 			if (this._pLightPicker)
 				this._pLightPicker.addEventListener(Event.CHANGE, this._onLightChangeDelegate);
 
-			this.pInvalidateScreenPasses();
-			this.pResetRenderOrder();
+			this._pInvalidateScreenPasses();
 		}
 
 		/**
@@ -182,7 +174,7 @@ module away.materials
 
 			this._pMipmap = value;
 
-			this.iInvalidatePasses(null);
+			this._pInvalidatePasses();
 		}
 
 		/**
@@ -200,7 +192,7 @@ module away.materials
 
 			this._smooth = value;
 
-			this.iInvalidatePasses(null);
+			this._pInvalidatePasses();
 		}
 
 		/**
@@ -219,7 +211,7 @@ module away.materials
 
 			this._repeat = value;
 
-			this.iInvalidatePasses(null);
+			this._pInvalidatePasses();
 		}
 
 		/**
@@ -237,7 +229,7 @@ module away.materials
 
 			this._pAnimateUVs = value;
 
-			this.iInvalidatePasses(null);
+			this._pInvalidatePasses();
 		}
 
 		/**
@@ -256,7 +248,7 @@ module away.materials
 
 			this._enableLightFallOff = value;
 
-			this.iInvalidatePasses(null);
+			this._pInvalidatePasses();
 		}
 
 		/**
@@ -277,7 +269,7 @@ module away.materials
 
 			this._diffuseLightSources = value;
 
-			this.iInvalidatePasses(null);
+			this._pInvalidatePasses();
 		}
 
 		/**
@@ -298,7 +290,7 @@ module away.materials
 
 			this._specularLightSources = value;
 
-			this.iInvalidatePasses(null);
+			this._pInvalidatePasses();
 		}
 
 		/**
@@ -314,11 +306,11 @@ module away.materials
 
 			this._passes = null;
 
-			var len:number = this._renderOrderData.length;
+			var len:number = this._materialData.length;
 			for (i = 0; i < len; i++)
-				this._renderOrderData[i].dispose();
+				this._materialData[i].dispose();
 
-			this._renderOrderData = null;
+			this._materialData = null;
 		}
 
 		/**
@@ -336,7 +328,7 @@ module away.materials
 
 			this._bothSides = value;
 
-			this.iInvalidatePasses(null);
+			this._pInvalidatePasses();
 		}
 
 		/**
@@ -361,7 +353,7 @@ module away.materials
 
 			this._pBlendMode = value;
 
-			this.iInvalidatePasses(null);
+			this._pInvalidatePasses();
 		}
 
 		/**
@@ -381,7 +373,7 @@ module away.materials
 
 			this._alphaPremultiplied = value;
 
-			this.iInvalidatePasses(null);
+			this._pInvalidatePasses();
 		}
 
 		/**
@@ -406,7 +398,7 @@ module away.materials
 
 			this._pAlphaThreshold = value;
 
-			this.iInvalidatePasses(null);
+			this._pInvalidatePasses();
 		}
 
 		/**
@@ -443,18 +435,6 @@ module away.materials
 		public getPass(index:number):IMaterialPass
 		{
 			return this._passes[index];
-		}
-
-		/**
-		 * Indicates whether or not the pass with the given index renders to texture or not.
-		 * @param index The index of the pass.
-		 * @return True if the pass renders to texture, false otherwise.
-		 *
-		 * @internal
-		 */
-		public iPassRendersToTexture(index:number):boolean
-		{
-			return this._passes[index].renderToTexture;
 		}
 
 		/**
@@ -531,7 +511,7 @@ module away.materials
 
 						this._animationSet = animationSet;
 
-						this.iInvalidateAnimation();
+						this.invalidateAnimation();
 					}
 				}
 			}
@@ -550,7 +530,7 @@ module away.materials
 			if (this._owners.length == 0) {
 				this._animationSet = null;
 
-				this.iInvalidateAnimation();
+				this.invalidateAnimation();
 			}
 		}
 
@@ -601,43 +581,39 @@ module away.materials
 		 *
 		 * @private
 		 */
-		public iInvalidatePasses(triggerPass:IMaterialPass)
+		public _pInvalidatePasses()
 		{
-			for (var i:number = 0; i < this._numPasses; ++i) {
-				// only invalidate the pass if it wasn't the triggering pass
-				if (this._passes[i] != triggerPass)
-					this._passes[i].iInvalidateShaderProgram(false);
-			}
+			var len:number = this._materialData.length;
+			for (var i:number = 0; i < len; i++)
+				this._materialData[i].invalidatePasses();
 		}
 
-		public iInvalidateAnimation()
+		private invalidateAnimation()
 		{
-			var len:number = this._renderOrderData.length;
+			var len:number = this._materialData.length;
 			for (var i:number = 0; i < len; i++)
-				this._renderOrderData[i].invalidate();
+				this._materialData[i].invalidateAnimation();
 		}
 
 		/**
 		 * Removes a pass from the material.
 		 * @param pass The pass to be removed.
 		 */
-		public pRemovePass(pass:IMaterialPass)
+		public pRemoveScreenPass(pass:IMaterialPass)
 		{
 			pass.removeEventListener(Event.CHANGE, this._onPassChangeDelegate);
 			this._passes.splice(this._passes.indexOf(pass), 1);
-			pass._iRemoveOwner(this);
-			--this._numPasses;
+			
+			this._numPasses--;
 		}
 
 		/**
 		 * Removes all passes from the material
 		 */
-		public pClearPasses()
+		public _pClearScreenPasses()
 		{
-			for (var i:number = 0; i < this._numPasses; ++i) {
+			for (var i:number = 0; i < this._numPasses; ++i)
 				this._passes[i].removeEventListener(Event.CHANGE, this._onPassChangeDelegate);
-				this._passes[i]._iRemoveOwner(this);
-			}
 
 			this._passes.length = 0;
 			this._numPasses = 0;
@@ -647,34 +623,14 @@ module away.materials
 		 * Adds a pass to the material
 		 * @param pass
 		 */
-		public pAddPass(pass:IMaterialPass)
+		public _pAddScreenPass(pass:IMaterialPass)
 		{
 			this._passes[this._numPasses++] = pass;
 
 			pass.lightPicker = this._pLightPicker;
 			pass.addEventListener(Event.CHANGE, this._onPassChangeDelegate);
 
-			pass._iAddOwner(this);
-
-			this.iInvalidatePasses(null);
-		}
-
-
-		/**
-		 * Adds any additional passes on which the given pass is dependent.
-		 * @param pass The pass that my need additional passes.
-		 */
-		public pAddChildPassesFor(pass:IMaterialPass)
-		{
-			if (!pass)
-				return;
-
-			if (pass._iPasses) {
-				var len:number = pass._iPasses.length;
-
-				for (var i:number = 0; i < len; ++i)
-					this.pAddPass(pass._iPasses[i]);
-			}
+			this.invalidateMaterial();
 		}
 
 		/**
@@ -682,22 +638,22 @@ module away.materials
 		 */
 		private onPassChange(event:Event)
 		{
-			this.pResetRenderOrder();
+			this.invalidateMaterial();
 		}
 
 		/**
-		 * Flags that the screen passes have become invalid.
+		 * Flags that the screen passes have become invalid and need possible re-ordering / adding / deleting
 		 */
-		public pInvalidateScreenPasses()
+		public _pInvalidateScreenPasses()
 		{
 			this._pScreenPassesInvalid = true;
 		}
 
-		public pResetRenderOrder()
+		private invalidateMaterial()
 		{
-			var len:number = this._renderOrderData.length;
+			var len:number = this._materialData.length;
 			for (var i:number = 0; i < len; i++)
-				this._renderOrderData[i].reset();
+				this._materialData[i].invalidateMaterial();
 		}
 
 		/**
@@ -705,23 +661,22 @@ module away.materials
 		 */
 		private onLightsChange(event:Event)
 		{
-			this.pInvalidateScreenPasses();
-			this.pResetRenderOrder();
+			this._pInvalidateScreenPasses();
 		}
 
 
-		public _iAddRenderOrderData(renderOrderData:IRenderOrderData):IRenderOrderData
+		public _iAddMaterialData(materialData:IMaterialData):IMaterialData
 		{
-			this._renderOrderData.push(renderOrderData);
+			this._materialData.push(materialData);
 
-			return renderOrderData;
+			return materialData;
 		}
 
-		public _iRemoveRenderOrderData(renderOrderData:IRenderOrderData):IRenderOrderData
+		public _iRemoveMaterialData(materialData:IMaterialData):IMaterialData
 		{
-			this._renderOrderData.splice(this._renderOrderData.indexOf(renderOrderData), 1);
+			this._materialData.splice(this._materialData.indexOf(materialData), 1);
 
-			return renderOrderData;
+			return materialData;
 		}
 	}
 }

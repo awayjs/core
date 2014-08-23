@@ -30843,7 +30843,7 @@ var away;
             function MaterialBase() {
                 var _this = this;
                 _super.call(this);
-                this._renderOrderData = new Array();
+                this._materialData = new Array();
                 this._pAlphaThreshold = 0;
                 this._pAnimateUVs = false;
                 this._enableLightFallOff = true;
@@ -30855,12 +30855,6 @@ var away;
                 * @private
                 */
                 this._iMaterialId = 0;
-                /**
-                * An id for this material used to sort the renderables by shader program, which reduces Program state changes.
-                *
-                * @private
-                */
-                this._renderOrderId = new Array(0, 0, 0, 0, 0, 0, 0, 0);
                 this._iBaseScreenPassIndex = 0;
                 this._bothSides = false;
                 this._pScreenPassesInvalid = true;
@@ -30942,8 +30936,7 @@ var away;
                     if (this._pLightPicker)
                         this._pLightPicker.addEventListener(Event.CHANGE, this._onLightChangeDelegate);
 
-                    this.pInvalidateScreenPasses();
-                    this.pResetRenderOrder();
+                    this._pInvalidateScreenPasses();
                 },
                 enumerable: true,
                 configurable: true
@@ -30963,7 +30956,7 @@ var away;
 
                     this._pMipmap = value;
 
-                    this.iInvalidatePasses(null);
+                    this._pInvalidatePasses();
                 },
                 enumerable: true,
                 configurable: true
@@ -30983,7 +30976,7 @@ var away;
 
                     this._smooth = value;
 
-                    this.iInvalidatePasses(null);
+                    this._pInvalidatePasses();
                 },
                 enumerable: true,
                 configurable: true
@@ -31004,7 +30997,7 @@ var away;
 
                     this._repeat = value;
 
-                    this.iInvalidatePasses(null);
+                    this._pInvalidatePasses();
                 },
                 enumerable: true,
                 configurable: true
@@ -31024,7 +31017,7 @@ var away;
 
                     this._pAnimateUVs = value;
 
-                    this.iInvalidatePasses(null);
+                    this._pInvalidatePasses();
                 },
                 enumerable: true,
                 configurable: true
@@ -31045,7 +31038,7 @@ var away;
 
                     this._enableLightFallOff = value;
 
-                    this.iInvalidatePasses(null);
+                    this._pInvalidatePasses();
                 },
                 enumerable: true,
                 configurable: true
@@ -31068,7 +31061,7 @@ var away;
 
                     this._diffuseLightSources = value;
 
-                    this.iInvalidatePasses(null);
+                    this._pInvalidatePasses();
                 },
                 enumerable: true,
                 configurable: true
@@ -31091,7 +31084,7 @@ var away;
 
                     this._specularLightSources = value;
 
-                    this.iInvalidatePasses(null);
+                    this._pInvalidatePasses();
                 },
                 enumerable: true,
                 configurable: true
@@ -31110,11 +31103,11 @@ var away;
 
                 this._passes = null;
 
-                var len = this._renderOrderData.length;
+                var len = this._materialData.length;
                 for (i = 0; i < len; i++)
-                    this._renderOrderData[i].dispose();
+                    this._materialData[i].dispose();
 
-                this._renderOrderData = null;
+                this._materialData = null;
             };
 
             Object.defineProperty(MaterialBase.prototype, "bothSides", {
@@ -31130,7 +31123,7 @@ var away;
 
                     this._bothSides = value;
 
-                    this.iInvalidatePasses(null);
+                    this._pInvalidatePasses();
                 },
                 enumerable: true,
                 configurable: true
@@ -31157,7 +31150,7 @@ var away;
 
                     this._pBlendMode = value;
 
-                    this.iInvalidatePasses(null);
+                    this._pInvalidatePasses();
                 },
                 enumerable: true,
                 configurable: true
@@ -31179,7 +31172,7 @@ var away;
 
                     this._alphaPremultiplied = value;
 
-                    this.iInvalidatePasses(null);
+                    this._pInvalidatePasses();
                 },
                 enumerable: true,
                 configurable: true
@@ -31206,7 +31199,7 @@ var away;
 
                     this._pAlphaThreshold = value;
 
-                    this.iInvalidatePasses(null);
+                    this._pInvalidatePasses();
                 },
                 enumerable: true,
                 configurable: true
@@ -31251,17 +31244,6 @@ var away;
             */
             MaterialBase.prototype.getPass = function (index) {
                 return this._passes[index];
-            };
-
-            /**
-            * Indicates whether or not the pass with the given index renders to texture or not.
-            * @param index The index of the pass.
-            * @return True if the pass renders to texture, false otherwise.
-            *
-            * @internal
-            */
-            MaterialBase.prototype.iPassRendersToTexture = function (index) {
-                return this._passes[index].renderToTexture;
             };
 
             /**
@@ -31333,7 +31315,7 @@ var away;
                         if (this._animationSet != animationSet) {
                             this._animationSet = animationSet;
 
-                            this.iInvalidateAnimation();
+                            this.invalidateAnimation();
                         }
                     }
                 }
@@ -31351,7 +31333,7 @@ var away;
                 if (this._owners.length == 0) {
                     this._animationSet = null;
 
-                    this.iInvalidateAnimation();
+                    this.invalidateAnimation();
                 }
             };
 
@@ -31406,39 +31388,35 @@ var away;
             *
             * @private
             */
-            MaterialBase.prototype.iInvalidatePasses = function (triggerPass) {
-                for (var i = 0; i < this._numPasses; ++i) {
-                    // only invalidate the pass if it wasn't the triggering pass
-                    if (this._passes[i] != triggerPass)
-                        this._passes[i].iInvalidateShaderProgram(false);
-                }
+            MaterialBase.prototype._pInvalidatePasses = function () {
+                var len = this._materialData.length;
+                for (var i = 0; i < len; i++)
+                    this._materialData[i].invalidatePasses();
             };
 
-            MaterialBase.prototype.iInvalidateAnimation = function () {
-                var len = this._renderOrderData.length;
+            MaterialBase.prototype.invalidateAnimation = function () {
+                var len = this._materialData.length;
                 for (var i = 0; i < len; i++)
-                    this._renderOrderData[i].invalidate();
+                    this._materialData[i].invalidateAnimation();
             };
 
             /**
             * Removes a pass from the material.
             * @param pass The pass to be removed.
             */
-            MaterialBase.prototype.pRemovePass = function (pass) {
+            MaterialBase.prototype.pRemoveScreenPass = function (pass) {
                 pass.removeEventListener(Event.CHANGE, this._onPassChangeDelegate);
                 this._passes.splice(this._passes.indexOf(pass), 1);
-                pass._iRemoveOwner(this);
-                --this._numPasses;
+
+                this._numPasses--;
             };
 
             /**
             * Removes all passes from the material
             */
-            MaterialBase.prototype.pClearPasses = function () {
-                for (var i = 0; i < this._numPasses; ++i) {
+            MaterialBase.prototype._pClearScreenPasses = function () {
+                for (var i = 0; i < this._numPasses; ++i)
                     this._passes[i].removeEventListener(Event.CHANGE, this._onPassChangeDelegate);
-                    this._passes[i]._iRemoveOwner(this);
-                }
 
                 this._passes.length = 0;
                 this._numPasses = 0;
@@ -31448,71 +31426,52 @@ var away;
             * Adds a pass to the material
             * @param pass
             */
-            MaterialBase.prototype.pAddPass = function (pass) {
+            MaterialBase.prototype._pAddScreenPass = function (pass) {
                 this._passes[this._numPasses++] = pass;
 
                 pass.lightPicker = this._pLightPicker;
                 pass.addEventListener(Event.CHANGE, this._onPassChangeDelegate);
 
-                pass._iAddOwner(this);
-
-                this.iInvalidatePasses(null);
-            };
-
-            /**
-            * Adds any additional passes on which the given pass is dependent.
-            * @param pass The pass that my need additional passes.
-            */
-            MaterialBase.prototype.pAddChildPassesFor = function (pass) {
-                if (!pass)
-                    return;
-
-                if (pass._iPasses) {
-                    var len = pass._iPasses.length;
-
-                    for (var i = 0; i < len; ++i)
-                        this.pAddPass(pass._iPasses[i]);
-                }
+                this.invalidateMaterial();
             };
 
             /**
             * Listener for when a pass's shader code changes. It recalculates the render order id.
             */
             MaterialBase.prototype.onPassChange = function (event) {
-                this.pResetRenderOrder();
+                this.invalidateMaterial();
             };
 
             /**
-            * Flags that the screen passes have become invalid.
+            * Flags that the screen passes have become invalid and need possible re-ordering / adding / deleting
             */
-            MaterialBase.prototype.pInvalidateScreenPasses = function () {
+            MaterialBase.prototype._pInvalidateScreenPasses = function () {
                 this._pScreenPassesInvalid = true;
             };
 
-            MaterialBase.prototype.pResetRenderOrder = function () {
-                var len = this._renderOrderData.length;
+            MaterialBase.prototype.invalidateMaterial = function () {
+                var len = this._materialData.length;
                 for (var i = 0; i < len; i++)
-                    this._renderOrderData[i].reset();
+                    this._materialData[i].invalidateMaterial();
             };
 
             /**
             * Called when the light picker's configuration changed.
             */
             MaterialBase.prototype.onLightsChange = function (event) {
-                this.pInvalidateScreenPasses();
-                this.pResetRenderOrder();
+                this._pInvalidateScreenPasses();
             };
 
-            MaterialBase.prototype._iAddRenderOrderData = function (renderOrderData) {
-                this._renderOrderData.push(renderOrderData);
+            MaterialBase.prototype._iAddMaterialData = function (materialData) {
+                this._materialData.push(materialData);
 
-                return renderOrderData;
+                return materialData;
             };
 
-            MaterialBase.prototype._iRemoveRenderOrderData = function (renderOrderData) {
-                this._renderOrderData.splice(this._renderOrderData.indexOf(renderOrderData), 1);
+            MaterialBase.prototype._iRemoveMaterialData = function (materialData) {
+                this._materialData.splice(this._materialData.indexOf(materialData), 1);
 
-                return renderOrderData;
+                return materialData;
             };
             return MaterialBase;
         })(away.library.NamedAssetBase);
@@ -34823,7 +34782,7 @@ var away;
 ///<reference path="core/pool/EntityListItemPool.ts"/>
 ///<reference path="core/pool/IRenderable.ts"/>
 ///<reference path="core/pool/IRenderableClass.ts"/>
-///<reference path="core/pool/IRenderOrderData.ts"/>
+///<reference path="core/pool/IMaterialData.ts"/>
 ///<reference path="core/pool/ITextureData.ts"/>
 ///<reference path="core/pool/RenderablePool.ts"/>
 ///<reference path="core/pool/CSSRenderableBase.ts"/>

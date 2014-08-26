@@ -596,13 +596,11 @@ module away.materials
 		 */
 		public _pInvalidatePasses()
 		{
-			var len:number = this._materialData.length;
+			var len:number = this._materialPassData.length;
 			for (var i:number = 0; i < len; i++)
-				this._materialData[i].invalidatePasses();
-
-			len = this._materialPassData.length;
-			for (i = 0; i < len; i++)
 				this._materialPassData[i].invalidate();
+
+			this.invalidateMaterial();
 		}
 
 		/**

@@ -8843,10 +8843,6 @@ declare module away.pool {
         /**
         *
         */
-        invalidatePasses(): any;
-        /**
-        *
-        */
         invalidateMaterial(): any;
         /**
         *

@@ -21,11 +21,6 @@ module away.pool
 		/**
 		 *
 		 */
-		invalidatePasses();
-
-		/**
-		 *
-		 */
 		invalidateMaterial();
 
 		/**

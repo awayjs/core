@@ -31417,13 +31417,11 @@ var away;
             * @private
             */
             MaterialBase.prototype._pInvalidatePasses = function () {
-                var len = this._materialData.length;
+                var len = this._materialPassData.length;
                 for (var i = 0; i < len; i++)
-                    this._materialData[i].invalidatePasses();
-
-                len = this._materialPassData.length;
-                for (i = 0; i < len; i++)
                     this._materialPassData[i].invalidate();
+
+                this.invalidateMaterial();
             };
 
             /**

@@ -14812,6 +14812,8 @@ declare module away.materials {
         private _mipmap;
         private _smooth;
         private _repeat;
+        private _color;
+        public _pTexture: textures.Texture2DBase;
         public _pLightPicker: LightPickerBase;
         public _pHeight: number;
         public _pWidth: number;
@@ -14854,6 +14856,14 @@ declare module away.materials {
         * the texture's borders when the uv coordinates are outside the [0, 1] interval.
         */
         public repeat : boolean;
+        /**
+        * The diffuse reflectivity color of the surface.
+        */
+        public color : number;
+        /**
+        * The texture object to use for the albedo colour.
+        */
+        public texture : textures.Texture2DBase;
         /**
         * Specifies whether or not the UV coordinates should be animated using a transformation matrix.
         */
@@ -15043,7 +15053,6 @@ declare module away.materials {
         private _sizeChanged;
         private _imageElement;
         private _imageStyle;
-        private _texture;
         public imageElement : HTMLImageElement;
         public imageStyle : MSStyleCSSProperties;
         /**

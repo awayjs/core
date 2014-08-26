@@ -25,7 +25,6 @@ module away.materials
 
 		private _imageElement:HTMLImageElement;
 		private _imageStyle:MSStyleCSSProperties;
-		private _texture:away.textures.Texture2DBase;
 
 
 		public get imageElement():HTMLImageElement
@@ -43,15 +42,15 @@ module away.materials
 		 */
 		public get texture():away.textures.Texture2DBase
 		{
-			return this._texture;
+			return this._pTexture;
 		}
 
 		public set texture(value:away.textures.Texture2DBase)
 		{
-			if (this._texture == value)
+			if (this._pTexture == value)
 				return;
 
-			this._texture = value;
+			this._pTexture = value;
 
 			if (value instanceof away.textures.ImageTexture) {
 				this._imageElement = (<away.textures.ImageTexture> value).htmlImageElement;

@@ -15,6 +15,7 @@ module away.materials
 	import IRenderable					= away.pool.IRenderable;
 	import IMaterialData				= away.pool.IMaterialData;
 	import IMaterialPassData			= away.pool.IMaterialPassData;
+	import Texture2DBase				= away.textures.Texture2DBase;
 
 	/**
 	 * MaterialBase forms an abstract base class for any material.
@@ -81,6 +82,8 @@ module away.materials
 		private _mipmap:boolean = false;
 		private _smooth:boolean = true;
 		private _repeat:boolean = false;
+		private _color:number = 0xFFFFFF;
+		public _pTexture:Texture2DBase;
 
 		public _pLightPicker:LightPickerBase;
 
@@ -212,6 +215,42 @@ module away.materials
 				return;
 
 			this._repeat = value;
+
+			this._pInvalidatePasses();
+		}
+
+		/**
+		 * The diffuse reflectivity color of the surface.
+		 */
+		public get color():number
+		{
+			return this._color;
+		}
+
+		public set color(value:number)
+		{
+			if (this._color == value)
+				return;
+
+			this._color = value;
+
+			this._pInvalidatePasses();
+		}
+
+		/**
+		 * The texture object to use for the albedo colour.
+		 */
+		public get texture():Texture2DBase
+		{
+			return this._pTexture;
+		}
+
+		public set texture(value:Texture2DBase)
+		{
+			if (this._pTexture == value)
+				return;
+
+			this._pTexture = value;
 
 			this._pInvalidatePasses();
 		}

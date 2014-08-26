@@ -30875,6 +30875,7 @@ var away;
                 this._mipmap = false;
                 this._smooth = true;
                 this._repeat = false;
+                this._color = 0xFFFFFF;
                 this._pHeight = 1;
                 this._pWidth = 1;
                 this._pRequiresBlending = false;
@@ -31008,6 +31009,46 @@ var away;
                         return;
 
                     this._repeat = value;
+
+                    this._pInvalidatePasses();
+                },
+                enumerable: true,
+                configurable: true
+            });
+
+
+            Object.defineProperty(MaterialBase.prototype, "color", {
+                /**
+                * The diffuse reflectivity color of the surface.
+                */
+                get: function () {
+                    return this._color;
+                },
+                set: function (value) {
+                    if (this._color == value)
+                        return;
+
+                    this._color = value;
+
+                    this._pInvalidatePasses();
+                },
+                enumerable: true,
+                configurable: true
+            });
+
+
+            Object.defineProperty(MaterialBase.prototype, "texture", {
+                /**
+                * The texture object to use for the albedo colour.
+                */
+                get: function () {
+                    return this._pTexture;
+                },
+                set: function (value) {
+                    if (this._pTexture == value)
+                        return;
+
+                    this._pTexture = value;
 
                     this._pInvalidatePasses();
                 },
@@ -31545,13 +31586,13 @@ var away;
                 * The texture object to use for the albedo colour.
                 */
                 get: function () {
-                    return this._texture;
+                    return this._pTexture;
                 },
                 set: function (value) {
-                    if (this._texture == value)
+                    if (this._pTexture == value)
                         return;
 
-                    this._texture = value;
+                    this._pTexture = value;
 
                     if (value instanceof away.textures.ImageTexture) {
                         this._imageElement = value.htmlImageElement;

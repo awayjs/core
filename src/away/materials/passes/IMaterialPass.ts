@@ -13,7 +13,7 @@ module away.materials
 	import Rectangle					= away.geom.Rectangle;
 	import Matrix3D						= away.geom.Matrix3D;
 	import LightPickerBase				= away.materials.LightPickerBase;
-	import MaterialBase					= away.materials.MaterialBase;
+	import IMaterialPassData			= away.pool.IMaterialPassData;
 	import IRenderable					= away.pool.IRenderable;
 	import TextureProxyBase				= away.textures.TextureProxyBase;
 
@@ -23,11 +23,6 @@ module away.materials
 	 */
 	export interface IMaterialPass extends away.events.IEventDispatcher
 	{
-		/**
-		 * Indicate whether this pass should write to the depth buffer or not. Ignored when blending is enabled.
-		 */
-		writeDepth:boolean;
-
 		/**
 		 * Cleans up any resources used by the current object.
 		 * @param deep Indicates whether other resources should be cleaned up, that could potentially be shared across different instances.
@@ -39,7 +34,7 @@ module away.materials
 		 *
 		 * @private
 		 */
-		iRender(renderable:IRenderable, stage:Stage, camera:Camera, viewProjection:Matrix3D);
+		_iRender(pass:IMaterialPassData, renderable:IRenderable, stage:Stage, camera:Camera, viewProjection:Matrix3D);
 
 		/**
 		 * Sets the render state for the pass that is independent of the rendered object. This needs to be called before
@@ -48,7 +43,7 @@ module away.materials
 		 * @param camera The camera from which the scene is viewed.
 		 * @private
 		 */
-		iActivate(material:MaterialBase, stage:Stage, camera:Camera);
+		_iActivate(pass:IMaterialPassData, stage:Stage, camera:Camera);
 
 		/**
 		 * Clears the render state for the pass. This needs to be called before activating another pass.
@@ -56,7 +51,7 @@ module away.materials
 		 *
 		 * @private
 		 */
-		iDeactivate(material:MaterialBase, stage:Stage);
+		_iDeactivate(pass:IMaterialPassData, stage:Stage);
 
 		/**
 		 * The light picker used by the material to provide lights to the material if it supports lighting.

@@ -14,7 +14,7 @@ module away.materials
 	import IMaterialPass				= away.materials.IMaterialPass;
 	import IRenderable					= away.pool.IRenderable;
 	import IMaterialData				= away.pool.IMaterialData;
-	import ICollector					= away.traverse.ICollector;
+	import IMaterialPassData			= away.pool.IMaterialPassData;
 
 	/**
 	 * MaterialBase forms an abstract base class for any material.
@@ -29,7 +29,9 @@ module away.materials
 	 */
 	export class MaterialBase extends away.library.NamedAssetBase implements away.library.IAsset
 	{
+		private _materialPassData:Array<IMaterialPassData> = new Array<IMaterialPassData>();
 		private _materialData:Array<IMaterialData> = new Array<IMaterialData>();
+
 		public _pAlphaThreshold:number = 0;
 		public _pAnimateUVs:boolean = false;
 		private _enableLightFallOff:boolean = true;
@@ -76,9 +78,9 @@ module away.materials
 		private _numPasses:number = 0;
 		private _passes:Array<IMaterialPass>;
 
-		public _pMipmap:boolean = false; // Update
+		private _mipmap:boolean = false;
 		private _smooth:boolean = true;
-		private _repeat:boolean = false; // Update
+		private _repeat:boolean = false;
 
 		public _pLightPicker:LightPickerBase;
 
@@ -164,15 +166,15 @@ module away.materials
 		 */
 		public get mipmap():boolean
 		{
-			return this._pMipmap;
+			return this._mipmap;
 		}
 
 		public set mipmap(value:boolean)
 		{
-			if (this._pMipmap == value)
+			if (this._mipmap == value)
 				return;
 
-			this._pMipmap = value;
+			this._mipmap = value;
 
 			this._pInvalidatePasses();
 		}
@@ -300,17 +302,21 @@ module away.materials
 		public dispose()
 		{
 			var i:number;
+			var len:number;
 
-			for (i = 0; i < this._numPasses; ++i)
-				this._passes[i].dispose();
+			this._pClearScreenPasses();
 
-			this._passes = null;
-
-			var len:number = this._materialData.length;
+			len = this._materialData.length;
 			for (i = 0; i < len; i++)
 				this._materialData[i].dispose();
 
-			this._materialData = null;
+			this._materialData = new Array<IMaterialData>();
+
+			len = this._materialPassData.length;
+			for (i = 0; i < len; i++)
+				this._materialPassData[i].dispose();
+
+			this._materialPassData = new Array<IMaterialPassData>();
 		}
 
 		/**
@@ -418,53 +424,33 @@ module away.materials
 		}
 
 		/**
-		 * The amount of passes used by the material.
-		 *
-		 * @private
-		 */
-		public getNumPasses():number
-		{
-			return this._numPasses;
-		}
-
-		/**
-		 *
-		 * @param index
-		 * @returns {IMaterialPass}
-		 */
-		public getPass(index:number):IMaterialPass
-		{
-			return this._passes[index];
-		}
-
-		/**
 		 * Sets the render state for a pass that is independent of the rendered object. This needs to be called before
 		 * calling renderPass. Before activating a pass, the previously used pass needs to be deactivated.
-		 * @param index The index of the pass to activate.
+		 * @param pass The pass data to activate.
 		 * @param stage The Stage object which is currently used for rendering.
 		 * @param camera The camera from which the scene is viewed.
 		 * @private
 		 */
-		public iActivatePass(index:number, stage:Stage, camera:Camera) // ARCANE
+		public _iActivatePass(pass:IMaterialPassData, stage:Stage, camera:Camera) // ARCANE
 		{
-			this._passes[index].iActivate(this, stage, camera);
+			pass.materialPass._iActivate(pass, stage, camera);
 		}
 
 		/**
 		 * Clears the render state for a pass. This needs to be called before activating another pass.
-		 * @param index The index of the pass to deactivate.
+		 * @param pass The pass to deactivate.
 		 * @param stage The Stage used for rendering
 		 *
 		 * @internal
 		 */
-		public iDeactivatePass(index:number, stage:Stage) // ARCANE
+		public _iDeactivatePass(pass:IMaterialPassData, stage:Stage) // ARCANE
 		{
-			this._passes[index].iDeactivate(this, stage);
+			pass.materialPass._iDeactivate(pass, stage);
 		}
 
 		/**
 		 * Renders the current pass. Before calling renderPass, activatePass needs to be called with the same index.
-		 * @param index The index of the pass used to render the renderable.
+		 * @param pass The pass used to render the renderable.
 		 * @param renderable The IRenderable object to draw.
 		 * @param stage The Stage object used for rendering.
 		 * @param entityCollector The EntityCollector object that contains the visible scene data.
@@ -473,12 +459,12 @@ module away.materials
 		 *
 		 * @internal
 		 */
-		public iRenderPass(index:number, renderable:IRenderable, stage:Stage, entityCollector:ICollector, viewProjection:Matrix3D)
+		public _iRenderPass(pass:IMaterialPassData, renderable:IRenderable, stage:Stage, camera:Camera, viewProjection:Matrix3D)
 		{
 			if (this._pLightPicker)
-				this._pLightPicker.collectLights(renderable, entityCollector);
+				this._pLightPicker.collectLights(renderable);
 
-			this._passes[index].iRender(renderable, stage, entityCollector.camera, viewProjection);
+			pass.materialPass._iRender(pass, renderable, stage, camera, viewProjection);
 		}
 
 		//
@@ -545,39 +531,27 @@ module away.materials
 		}
 
 		/**
-		 * A list of the passes used in this material
+		 * The amount of passes used by the material.
 		 *
 		 * @private
 		 */
-		public get iPasses():Array<IMaterialPass>
+		public _iNumScreenPasses():number
+		{
+			return this._numPasses;
+		}
+
+		/**
+		 * A list of the screen passes used in this material
+		 *
+		 * @private
+		 */
+		public get _iScreenPasses():Array<IMaterialPass>
 		{
 			return this._passes;
 		}
 
 		/**
-		 * Performs any processing that needs to occur before any of its passes are used.
-		 *
-		 * @private
-		 */
-		public iUpdateMaterial()
-		{
-		}
-
-		/**
-		 * Deactivates the last pass of the material.
-		 *
-		 * @private
-		 */
-		public iDeactivate(stage:Stage)
-		{
-			//TODO discover why this is needed for shadows
-			this._passes[this._numPasses - 1].iDeactivate(this, stage);
-		}
-
-		/**
 		 * Marks the shader programs for all passes as invalid, so they will be recompiled before the next use.
-		 * @param triggerPass The pass triggering the invalidation, if any. This is passed to prevent invalidating the
-		 * triggering pass, which would result in an infinite loop.
 		 *
 		 * @private
 		 */
@@ -586,24 +560,29 @@ module away.materials
 			var len:number = this._materialData.length;
 			for (var i:number = 0; i < len; i++)
 				this._materialData[i].invalidatePasses();
+
+			len = this._materialPassData.length;
+			for (i = 0; i < len; i++)
+				this._materialPassData[i].invalidate();
 		}
 
-		private invalidateAnimation()
+		/**
+		 * Flags that the screen passes have become invalid and need possible re-ordering / adding / deleting
+		 */
+		public _pInvalidateScreenPasses()
 		{
-			var len:number = this._materialData.length;
-			for (var i:number = 0; i < len; i++)
-				this._materialData[i].invalidateAnimation();
+			this._pScreenPassesInvalid = true;
 		}
 
 		/**
 		 * Removes a pass from the material.
 		 * @param pass The pass to be removed.
 		 */
-		public pRemoveScreenPass(pass:IMaterialPass)
+		public _pRemoveScreenPass(pass:IMaterialPass)
 		{
 			pass.removeEventListener(Event.CHANGE, this._onPassChangeDelegate);
 			this._passes.splice(this._passes.indexOf(pass), 1);
-			
+
 			this._numPasses--;
 		}
 
@@ -615,8 +594,7 @@ module away.materials
 			for (var i:number = 0; i < this._numPasses; ++i)
 				this._passes[i].removeEventListener(Event.CHANGE, this._onPassChangeDelegate);
 
-			this._passes.length = 0;
-			this._numPasses = 0;
+			this._passes.length = this._numPasses = 0;
 		}
 
 		/**
@@ -633,6 +611,29 @@ module away.materials
 			this.invalidateMaterial();
 		}
 
+		public _iAddMaterialData(materialData:IMaterialData):IMaterialData
+		{
+			this._materialData.push(materialData);
+
+			return materialData;
+		}
+
+		public _iRemoveMaterialData(materialData:IMaterialData):IMaterialData
+		{
+			this._materialData.splice(this._materialData.indexOf(materialData), 1);
+
+			return materialData;
+		}
+
+		/**
+		 * Performs any processing that needs to occur before any of its passes are used.
+		 *
+		 * @private
+		 */
+		public _iUpdateMaterial()
+		{
+		}
+		
 		/**
 		 * Listener for when a pass's shader code changes. It recalculates the render order id.
 		 */
@@ -641,14 +642,13 @@ module away.materials
 			this.invalidateMaterial();
 		}
 
-		/**
-		 * Flags that the screen passes have become invalid and need possible re-ordering / adding / deleting
-		 */
-		public _pInvalidateScreenPasses()
+		private invalidateAnimation()
 		{
-			this._pScreenPassesInvalid = true;
+			var len:number = this._materialData.length;
+			for (var i:number = 0; i < len; i++)
+				this._materialData[i].invalidateAnimation();
 		}
-
+		
 		private invalidateMaterial()
 		{
 			var len:number = this._materialData.length;
@@ -665,18 +665,18 @@ module away.materials
 		}
 
 
-		public _iAddMaterialData(materialData:IMaterialData):IMaterialData
+		public _iAddMaterialPassData(materialPassData:IMaterialPassData):IMaterialPassData
 		{
-			this._materialData.push(materialData);
+			this._materialPassData.push(materialPassData);
 
-			return materialData;
+			return materialPassData;
 		}
 
-		public _iRemoveMaterialData(materialData:IMaterialData):IMaterialData
+		public _iRemoveMaterialPassData(materialPassData:IMaterialPassData):IMaterialPassData
 		{
-			this._materialData.splice(this._materialData.indexOf(materialData), 1);
+			this._materialPassData.splice(this._materialPassData.indexOf(materialPassData), 1);
 
-			return materialData;
+			return materialPassData;
 		}
 	}
 }

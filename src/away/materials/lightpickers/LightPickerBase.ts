@@ -155,7 +155,7 @@ module away.materials
 		/**
 		 * Updates set of lights for a given renderable and EntityCollector. Always call super.collectLights() after custom overridden code.
 		 */
-		public collectLights(renderable:IRenderable, entityCollector:ICollector)
+		public collectLights(renderable:IRenderable)
 		{
 			this.updateProbeWeights(renderable);
 		}

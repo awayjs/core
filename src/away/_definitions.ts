@@ -161,6 +161,7 @@
 ///<reference path="core/pool/IRenderable.ts"/>
 ///<reference path="core/pool/IRenderableClass.ts"/>
 ///<reference path="core/pool/IMaterialData.ts"/>
+///<reference path="core/pool/IMaterialPassData.ts"/>
 ///<reference path="core/pool/ITextureData.ts"/>
 ///<reference path="core/pool/RenderablePool.ts"/>
 

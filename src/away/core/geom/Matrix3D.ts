@@ -354,18 +354,12 @@ module away.geom
 
 					break;
 				case Orientation3D.EULER_ANGLES:
-
-					rot.y = Math.asin(-mr[2]);
-
-					//var cos:number = Math.cos(rot.y);
-
-					if (mr[2] != 1 && mr[2] != -1) {
-						rot.x = Math.atan2(mr[6], mr[10]);
-						rot.z = Math.atan2(mr[1], mr[0]);
-					} else {
-						rot.z = 0;
-						rot.x = Math.atan2(mr[4], mr[5]);
-					}
+				
+					rot.x = Math.atan2(mr[6], mr[10]);
+					rot.y = Math.atan2(-mr[2], Math.sqrt(mr[0]*mr[0] + mr[1]*mr[1]));
+					var s1:number = Math.sin(rot.x);
+					var c1:number = Math.cos(rot.x);
+					rot.z = Math.atan2(s1*mr[8] - c1*mr[4], c1*mr[5] - s1*mr[9]);
 
 					break;
 			}

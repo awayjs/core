@@ -1,96 +1,233 @@
-///<reference path="../../build/awayjs-core.next.d.ts" />
-///<reference path="../parsers/JSONTextureParser.ts" />
+import AssetEvent			= require("awayjs-core/lib/events/AssetEvent");
+import LoaderEvent			= require("awayjs-core/lib/events/LoaderEvent");
+import ParserEvent			= require("awayjs-core/lib/events/ParserEvent");
+import AssetLoader			= require("awayjs-core/lib/core/library/AssetLoader");
+import AssetLoaderToken		= require("awayjs-core/lib/core/library/AssetLoaderToken");
+import IAsset				= require("awayjs-core/lib/core/library/IAsset");
+import URLRequest			= require("awayjs-core/lib/core/net/URLRequest");
+import Texture2DBase		= require("awayjs-core/lib/textures/Texture2DBase");
+import ParserBase			= require("awayjs-core/lib/parsers/ParserBase");
+import ParserDataFormat		= require("awayjs-core/lib/parsers/ParserDataFormat");
+import ResourceDependency	= require("awayjs-core/lib/parsers/ResourceDependency");
 
-module tests.net
+class AssetLoaderTest
 {
-	import AssetEvent			= away.events.AssetEvent;
-	import LoaderEvent			= away.events.LoaderEvent;
-	import ParserEvent			= away.events.ParserEvent;
-	import AssetLoader			= away.net.AssetLoader;
-	import AssetLoaderToken		= away.net.AssetLoaderToken;
-	import URLRequest			= away.net.URLRequest;
-	import Delegate				= away.utils.Delegate;
+	private alJson:AssetLoader;
+	private alImage:AssetLoader;
+	private alErrorImage:AssetLoader;
 
-    export class AssetLoaderTest
-    {
+	constructor()
+	{
+		//---------------------------------------------------------------------------------------------------------------------
+		// Enable Custom Parser ( JSON file format with multiple texture dependencies )
+		AssetLoader.enableParser(JSONTextureParser);
 
-        private alJson          : AssetLoader;
-        private alImage         : AssetLoader;
-        private alErrorImage    : AssetLoader;
+		var token:AssetLoaderToken;
+		var urlRq:URLRequest;
 
-        constructor()
-        {
+		//---------------------------------------------------------------------------------------------------------------------
+		// LOAD A SINGLE IMAGE
 
-            //---------------------------------------------------------------------------------------------------------------------
-            // Enable Custom Parser ( JSON file format with multiple texture dependencies )
-            AssetLoader.enableParser( parsers.JSONTextureParser );
+		this.alImage  = new AssetLoader();
+		urlRq = new URLRequest('assets/1024x1024.png');
+		token = this.alImage.load(urlRq);
 
-            var token : AssetLoaderToken;
-            var urlRq : URLRequest;
+		token.addEventListener(AssetEvent.ASSET_COMPLETE, (event:AssetEvent) => this.onAssetComplete(event));
+		token.addEventListener(AssetEvent.TEXTURE_SIZE_ERROR, (event:AssetEvent) => this.onTextureSizeError(event));
 
-            //---------------------------------------------------------------------------------------------------------------------
-            // LOAD A SINGLE IMAGE
+		//---------------------------------------------------------------------------------------------------------------------
+		// LOAD A SINGLE IMAGE - With wrong dimensions
 
-            this.alImage  = new AssetLoader();
-            urlRq         = new URLRequest('assets/1024x1024.png');
-            token         = this.alImage.load( urlRq );
+		this.alErrorImage = new AssetLoader();
+		urlRq = new URLRequest('assets/2.png');
+		token = this.alErrorImage.load(urlRq);
 
-            token.addEventListener( AssetEvent.ASSET_COMPLETE, Delegate.create(this, this.onAssetComplete) );
-            token.addEventListener( AssetEvent.TEXTURE_SIZE_ERROR, Delegate.create(this, this.onTextureSizeError) );
+		token.addEventListener(AssetEvent.ASSET_COMPLETE, (event:AssetEvent) => this.onAssetComplete(event));
+		token.addEventListener(AssetEvent.TEXTURE_SIZE_ERROR, (event:AssetEvent) => this.onTextureSizeError(event));
 
-            //---------------------------------------------------------------------------------------------------------------------
-            // LOAD A SINGLE IMAGE - With wrong dimensions
+		//---------------------------------------------------------------------------------------------------------------------
+		// LOAD WITH A JSON PARSER
 
-            this.alErrorImage    = new AssetLoader();
-            urlRq                = new URLRequest('assets/2.png');
-            token                = this.alErrorImage.load( urlRq );
+		this.alJson    = new AssetLoader();
+		urlRq          = new URLRequest('assets/JSNParserTest.json');
+		token          = this.alJson.load( urlRq );
 
-            token.addEventListener( AssetEvent.ASSET_COMPLETE, Delegate.create(this, this.onAssetComplete) );
-            token.addEventListener( AssetEvent.TEXTURE_SIZE_ERROR, Delegate.create(this, this.onTextureSizeError) );
+		token.addEventListener( AssetEvent.ASSET_COMPLETE, (event:AssetEvent) => this.onAssetComplete(event));
+		token.addEventListener( AssetEvent.TEXTURE_SIZE_ERROR, (event:AssetEvent) => this.onTextureSizeError(event));
+		token.addEventListener( ParserEvent.PARSE_COMPLETE, (event:ParserEvent) => this.onParseComplete(event));
 
-            //---------------------------------------------------------------------------------------------------------------------
-            // LOAD WITH A JSON PARSER
+	}
 
-            this.alJson    = new AssetLoader();
-            urlRq          = new URLRequest('assets/JSNParserTest.json');
-            token          = this.alJson.load( urlRq );
+	public onParseComplete(event:ParserEvent):void
+	{
+		console.log( '--------------------------------------------------------------------------------');
+		console.log( 'AssetLoaderTest.onParseComplete' , event );
+		console.log( '--------------------------------------------------------------------------------');
+	}
 
-            token.addEventListener( AssetEvent.ASSET_COMPLETE, Delegate.create(this, this.onAssetComplete) );
-            token.addEventListener( AssetEvent.TEXTURE_SIZE_ERROR, Delegate.create(this, this.onTextureSizeError) );
-            token.addEventListener( ParserEvent.PARSE_COMPLETE, Delegate.create(this, this.onParseComplete) );
+	public onTextureSizeError(event:AssetEvent):void
+	{
+		var assetLoader:AssetLoader = <AssetLoader> event.target;
 
-        }
+		console.log( '--------------------------------------------------------------------------------');
+		console.log( 'AssetLoaderTest.onTextureSizeError' , assetLoader.baseDependency._iLoader.url , event );
+		console.log( '--------------------------------------------------------------------------------');
+	}
 
-        public onParseComplete ( e : ParserEvent ) : void
-        {
+	public onAssetComplete(event:AssetEvent):void
+	{
+		var assetLoader:AssetLoader = <AssetLoader> event.target;
 
-            console.log( '--------------------------------------------------------------------------------');
-            console.log( 'AssetLoaderTest.onParseComplete' , e );
-            console.log( '--------------------------------------------------------------------------------');
-        }
+		console.log( '--------------------------------------------------------------------------------');
+		console.log( 'AssetLoaderTest.onAssetComplete', assetLoader.baseDependency._iLoader.url , event );
+		console.log( '--------------------------------------------------------------------------------');
+	}
+}
 
-        public onTextureSizeError ( e : AssetEvent ) : void
-        {
+/**
+ * ImageParser provides a "parser" for natively supported image types (jpg, png). While it simply loads bytes into
+ * a loader object, it wraps it in a BitmapDataResource so resource management can happen consistently without
+ * exception cases.
+ */
+class JSONTextureParser extends ParserBase
+{
+	private STATE_PARSE_DATA:number = 0;
+	private STATE_LOAD_IMAGES:number = 1;
+	private STATE_COMPLETE:number = 2;
 
-            var assetLoader : AssetLoader = <AssetLoader> e.target;
+	private _state:number = -1;
+	private _startedParsing:boolean;
+	private _doneParsing:boolean;
+	private _dependencyCount:number = 0;
+	private _loadedTextures:Array<Texture2DBase>;
 
-            console.log( '--------------------------------------------------------------------------------');
-            console.log( 'AssetLoaderTest.onTextureSizeError' , assetLoader.baseDependency._iLoader.url , e );
-            console.log( '--------------------------------------------------------------------------------');
+	/**
+	 * Creates a new ImageParser object.
+	 * @param uri The url or id of the data or file to be parsed.
+	 * @param extra The holder for extra contextual data that the parser might need.
+	 */
+	constructor()
+	{
+		super(ParserDataFormat.PLAIN_TEXT);
 
-        }
+		this._loadedTextures = new Array<Texture2DBase>();
+		this._state = this.STATE_PARSE_DATA;
+	}
 
-        public onAssetComplete ( e : AssetEvent ) : void
-        {
+	/**
+	 * Indicates whether or not a given file extension is supported by the parser.
+	 * @param extension The file extension of a potential file to be parsed.
+	 * @return Whether or not the given file type is supported.
+	 */
 
-            var assetLoader : AssetLoader = <AssetLoader> e.target;
+	public static supportsType(extension : string) : boolean
+	{
+		extension = extension.toLowerCase();
+		return extension == "json";
+	}
 
-            console.log( '--------------------------------------------------------------------------------');
-            console.log( 'AssetLoaderTest.onAssetComplete', assetLoader.baseDependency._iLoader.url , e );
-            console.log( '--------------------------------------------------------------------------------');
+	/**
+	 * Tests whether a data block can be parsed by the parser.
+	 * @param data The data block to potentially be parsed.
+	 * @return Whether or not the given data is supported.
+	 */
+	public static supportsData(data : any) : boolean
+	{
+		try {
+			var obj = JSON.parse(data);
 
-        }
-    }
+			if (obj)
+				return true;
 
+			return false;
+		} catch ( e ) {
+			return false;
+		}
 
+		return false;
+	}
+
+	/**
+	 * @inheritDoc
+	 */
+	public _iResolveDependency(resourceDependency:ResourceDependency)
+	{
+		var resource : Texture2DBase = <Texture2DBase> resourceDependency.assets[0];
+
+		this._pFinalizeAsset(<IAsset> resource, resourceDependency._iLoader.url);
+
+		this._loadedTextures.push( resource );
+
+		//console.log( 'JSONTextureParser._iResolveDependency' , resourceDependency );
+		//console.log( 'JSONTextureParser._iResolveDependency resource: ' , resource );
+
+		this._dependencyCount--;
+
+		if ( this._dependencyCount == 0)
+			this._state = this.STATE_COMPLETE;
+	}
+
+	/**
+	 * @inheritDoc
+	 */
+	public _iResolveDependencyFailure(resourceDependency:ResourceDependency)
+	{
+		this._dependencyCount--;
+
+		if ( this._dependencyCount == 0)
+			this._state = this.STATE_COMPLETE;
+	}
+
+	private parseJson( ) : void
+	{
+		if (JSONTextureParser.supportsData(this.data)) {
+			try {
+				var json:any = JSON.parse(this.data);
+				var data:Array<any> = <Array<any>> json.data;
+
+				var rec:any;
+				var rq:URLRequest;
+
+				for (var c : number = 0; c < data.length; c ++) {
+					rec = data[c];
+
+					var uri:string = <string> rec.image;
+					var id:string = <string> rec.id;
+
+					rq = new URLRequest(uri);
+
+					this._pAddDependency('JSON_ID_' + id, rq, false, null, true);
+				}
+
+				this._dependencyCount = data.length;
+				this._state = this.STATE_LOAD_IMAGES;
+
+				this._pPauseAndRetrieveDependencies();
+
+			} catch (e) {
+				this._state = this.STATE_COMPLETE;
+			}
+		}
+	}
+	/**
+	 * @inheritDoc
+	 */
+	public _pProceedParsing() : boolean
+	{
+		console.log( 'JSONTextureParser._pProceedParsing' , this._state );
+
+		switch (this._state) {
+			case this.STATE_PARSE_DATA:
+				this.parseJson();
+				return ParserBase.MORE_TO_PARSE;
+				break;
+			case this.STATE_LOAD_IMAGES:
+				break;
+			case this.STATE_COMPLETE:
+				return ParserBase.PARSING_DONE;
+				break;
+		}
+
+		return ParserBase.MORE_TO_PARSE;
+	}
 }

@@ -1,32 +1,21 @@
-///<reference path="../../build/awayjs-core.next.d.ts" />
+import Event					= require("awayjs-core/lib/events/Event");
+import EventDispatcher			= require("awayjs-core/lib/events/EventDispatcher");
 
-module tests.events
+class EDTest extends EventDispatcher
 {
-	import Delegate				= away.utils.Delegate;
+	constructor()
+	{
+		super();
 
-    export class EDTest extends away.events.EventDispatcher
-    {
+		console.log('Before addEventListener: ', this.hasEventListener(Event.COMPLETE));
+		this.addEventListener(Event.COMPLETE, (event:Event) => this.onComplete(event));
+		console.log('After addEventListener: ', this.hasEventListener(Event.COMPLETE));
+		this.removeEventListener(Event.COMPLETE, (event:Event) => this.onComplete(event));
+		console.log('After removeEventListener: ', this.hasEventListener(Event.COMPLETE));
+	}
 
-        constructor()
-        {
+	public onComplete(event:Event)
+	{
 
-            super();
-
-            console.log( 'Before addEventListener: ' , this.hasEventListener( away.events.Event.COMPLETE  ) ) ;
-            this.addEventListener( away.events.Event.COMPLETE , Delegate.create(this, this.onComplete) );
-            console.log( 'After addEventListener: ' , this.hasEventListener( away.events.Event.COMPLETE  ) ) ;
-            this.removeEventListener( away.events.Event.COMPLETE , Delegate.create(this, this.onComplete) );
-            console.log( 'After removeEventListener: ' , this.hasEventListener( away.events.Event.COMPLETE  ) )  ;
-
-        }
-
-        public onComplete( e )
-        {
-
-
-        }
-
-    }
-
-
+	}
 }

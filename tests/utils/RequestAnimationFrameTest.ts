@@ -1,51 +1,29 @@
-///<reference path="../../build/awayjs-core.next.d.ts" />
+import RequestAnimationFrame	= require("awayjs-core/lib/utils/RequestAnimationFrame");
 
-module tests.utils{
+class RequestAnimationFrameTest
+{
+	private requestAnimationFrameTimer:RequestAnimationFrame;
 
-    export class RequestAnimationFrameTest
-    {
+	constructor()
+	{
+		this.requestAnimationFrameTimer = new RequestAnimationFrame(this.tick, this);
+		this.requestAnimationFrameTimer.start()
 
-        private requestAnimationFrameTimer : away.utils.RequestAnimationFrame;
+		document.onmousedown = (event:Event) => this.onMouseDown(event);
+	}
 
+	private onMouseDown(event:Event)
+	{
+		console.log('mouseDown');
 
-        constructor()
-        {
+		if (this.requestAnimationFrameTimer.active)
+			this.requestAnimationFrameTimer.stop();
+		else
+			this.requestAnimationFrameTimer.start();
+	}
 
-            this.requestAnimationFrameTimer = new away.utils.RequestAnimationFrame( this.tick , this );
-            this.requestAnimationFrameTimer.start()
-
-            document.onmousedown = ( e ) => this.onMouseDown( e );
-
-        }
-
-        private onMouseDown( e )
-        {
-
-            console.log( 'mouseDown');
-
-            if ( this.requestAnimationFrameTimer.active )
-            {
-
-                this.requestAnimationFrameTimer.stop();
-
-            }
-            else
-            {
-
-                this.requestAnimationFrameTimer.start();
-
-            }
-
-        }
-
-        private tick( dt : number )
-        {
-
-            console.log( 'tick' );
-
-        }
-
-
-    }
-
+	private tick(dt:number)
+	{
+		console.log('tick');
+	}
 }

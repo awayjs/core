@@ -1,55 +1,42 @@
-///<reference path="../../build/awayjs-core.next.d.ts" />
+import TimerEvent				= require("awayjs-core/lib/events/TimerEvent");
+import getTimer					= require("awayjs-core/lib/utils/getTimer");
+import Timer					= require("awayjs-core/lib/utils/Timer");
 
-module tests.utils
+/**
+ * 
+ */
+class TimerTest
 {
+	private oneSecondTimer:Timer;
+	private repeatTenTimes:Timer;
 
-	import Delegate				= away.utils.Delegate;
+	constructor()
+	{
+		this.oneSecondTimer = new Timer(1000);
+		this.oneSecondTimer.addEventListener(TimerEvent.TIMER, (event:TimerEvent) => this.onSecTimerEvent(event));
+		this.oneSecondTimer.start();
 
-    export class TimerTest
-    {
+		this.repeatTenTimes = new Timer(100, 10);
+		this.repeatTenTimes.addEventListener(TimerEvent.TIMER, (event:TimerEvent) => this.repeatTenTimesEvent(event));
+		this.repeatTenTimes.addEventListener(TimerEvent.TIMER_COMPLETE, (event:TimerEvent) => this.repeatTenTimesComplete(event));
+		this.repeatTenTimes.start();
+	}
 
-        private oneSecondTimer  : away.utils.Timer;
-        private repeatTenTimes  : away.utils.Timer;
+	private repeatTenTimesEvent(event:TimerEvent):void
+	{
+		var t:Timer = <Timer> event.target;
+		console.log('repeatTenTimesEvent', t.currentCount);
+	}
 
-        constructor()
-        {
+	private repeatTenTimesComplete(event:TimerEvent):void
+	{
+		var t:Timer = <Timer> event.target;
+		console.log('repeatTenTimesComplete', t.currentCount);
+	}
 
-            this.oneSecondTimer = new away.utils.Timer( 1000 );
-            this.oneSecondTimer.addEventListener(away.events.TimerEvent.TIMER , Delegate.create(this, this.onSecTimerEvent) );
-            this.oneSecondTimer.start();
-
-            this.repeatTenTimes = new away.utils.Timer( 100 , 10 );
-            this.repeatTenTimes.addEventListener(away.events.TimerEvent.TIMER , Delegate.create(this, this.repeatTenTimesEvent) );
-            this.repeatTenTimes.addEventListener(away.events.TimerEvent.TIMER_COMPLETE, Delegate.create(this, this.repeatTenTimesComplete) );
-            this.repeatTenTimes.start();
-
-        }
-
-        private repeatTenTimesEvent( e : away.events.TimerEvent ) : void
-        {
-
-
-            var t : away.utils.Timer = <away.utils.Timer> e.target;
-            console.log('repeatTenTimesEvent' , t.currentCount );
-
-        }
-
-        private repeatTenTimesComplete( e : away.events.TimerEvent ) : void
-        {
-
-            var t : away.utils.Timer = <away.utils.Timer> e.target;
-            console.log('repeatTenTimesComplete' , t.currentCount );
-
-        }
-
-        private onSecTimerEvent( e : away.events.TimerEvent ) : void
-        {
-
-            console.log('onSecTimerEvent, tick');
-            console.log( 'getTimer() : ' , away.utils.getTimer() );
-
-        }
-
-    }
-
+	private onSecTimerEvent(event:TimerEvent):void
+	{
+		console.log('onSecTimerEvent, tick');
+		console.log('getTimer() : ', getTimer());
+	}
 }

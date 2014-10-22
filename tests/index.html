@@ -12,83 +12,83 @@
 
     </style>
 
-    <script type="text/javascript" language="javascript" src="js/AppHarness.js"></script>
+    <script type="text/javascript" language="javascript" src="AppHarness.js"></script>
 
     <script type="text/javascript">
 
 
         window.onload = function ()
         {
-            var harness = new away.AppHarness();
+            var harness = new AppHarness();
 
             //---------------------------------------------------------------------------
             // Test - Utils
             //---------------------------------------------------------------------------
 
             harness.addSeperator( 'Utils' );
-            harness.addTest( 'Utils.MipMapTest'                 , 'tests.utils.MipMapTest'                  , 'js/MipMapTest.js'                 , 'utils/MipMapTest.ts'  );
-            harness.addTest( '(Console) Utils.ByteArrayTest'    , 'tests.utils.ByteArrayTest'               , 'js/ByteArrayTest.js'              , 'utils/ByteArrayTest.ts'  );
-            harness.addTest( '(Console) Utils.IDUtilTest '      , 'tests.utils.IDUtilTest'                  , 'js/IDUtilTest.js'                 , 'utils/IDUtilTest.ts'  );
-            harness.addTest( '(Console) Utils.RAF '             , 'tests.utils.RequestAnimationFrameTest'   , 'js/RequestAnimationFrameTest.js'  , 'utils/RequestAnimationFrameTest.ts'  );
-            harness.addTest( '(Console) Utils.TimerTest'        , 'tests.utils.TimerTest'                   , 'js/TimerTest.js'                  , 'utils/TimerTest.ts'  );
+            harness.addTest( 'Utils.MipMapTest'                 , 'tests.utils.MipMapTest'                  , 'utils/MipMapTest.js'                 , 'utils/MipMapTest.ts'  );
+            harness.addTest( '(Console) Utils.ByteArrayTest'    , 'tests.utils.ByteArrayTest'               , 'utils/ByteArrayTest.js'              , 'utils/ByteArrayTest.ts'  );
+            harness.addTest( '(Console) Utils.IDUtilTest '      , 'tests.utils.IDUtilTest'                  , 'utils/IDUtilTest.js'                 , 'utils/IDUtilTest.ts'  );
+            harness.addTest( '(Console) Utils.RAF '             , 'tests.utils.RequestAnimationFrameTest'   , 'utils/RequestAnimationFrameTest.js'  , 'utils/RequestAnimationFrameTest.ts'  );
+            harness.addTest( '(Console) Utils.TimerTest'        , 'tests.utils.TimerTest'                   , 'utils/TimerTest.js'                  , 'utils/TimerTest.ts'  );
 
             //---------------------------------------------------------------------------
             // Test - Textures
             //---------------------------------------------------------------------------
 
             harness.addSeperator( 'Textures' );
-            harness.addTest( '(Console) Textures.BitmapTextureTest'                 , 'tests.textures.BitmapTextureTest'            , 'js/BitmapTextureTest.js'              , 'textures/BitmapTextureTest.ts'  );
+            harness.addTest( '(Console) Textures.BitmapTextureTest'                 , 'tests.textures.BitmapTextureTest'            , 'textures/BitmapTextureTest.js'              , 'textures/BitmapTextureTest.ts'  );
 
             //---------------------------------------------------------------------------
             // Test - Net
             //---------------------------------------------------------------------------
 
             harness.addSeperator( 'Net' );
-            harness.addTest( 'Net.URLLoader'       , 'tests.net.LoaderTest'  , 'js/URLLoaderTests.js' , 'net/URLLoaderTests.ts'  );
-            harness.addTest( '(Console) Loaders.AssetLoaderTest'    ,  'tests.net.AssetLoaderTest'  , 'js/AssetLoaderTest.js'    , 'loaders/AssetLoaderTest.ts'  );
-            harness.addTest( 'Loaders.IMGLoaderTest'                ,  'tests.net.IMGLoaderTest'    , 'js/IMGLoaderTest.js'      , 'loaders/IMGLoaderTest.ts'  );
+            harness.addTest( 'Net.URLLoader'       , 'tests.net.LoaderTest'  , 'net/URLLoaderTests.js' , 'net/URLLoaderTests.ts'  );
+            harness.addTest( '(Console) Test'    ,  'Test'  , 'net/Test.js'    , 'net/AssetLoaderTest.ts'  );
+            harness.addTest( 'Loaders.IMGLoaderTest'                ,  'tests.net.IMGLoaderTest'    , 'net/IMGLoaderTest.js'      , 'net/IMGLoaderTest.ts'  );
 
             //---------------------------------------------------------------------------
             // Test - Entities
             //---------------------------------------------------------------------------
 
             harness.addSeperator( 'Entities' );
-            harness.addTest( 'Entities.BillboardEntityTest'    ,  'tests.entities.BillboardEntityTest'  , 'js/BillboardEntityTest.js'    , 'entities/BillboardEntityTest.ts'  );
-            harness.addTest( 'Entities.LayoutTest'    ,  'tests.entities.LayoutTest'  , 'js/LayoutTest.js'    , 'entities/LayoutTest.ts'  );
+            harness.addTest( 'Entities.BillboardEntityTest'    ,  'tests.entities.BillboardEntityTest'  , 'entities/BillboardEntityTest.js'    , 'entities/BillboardEntityTest.ts'  );
+            harness.addTest( 'Entities.LayoutTest'    ,  'tests.entities.LayoutTest'  , 'entities/LayoutTest.js'    , 'entities/LayoutTest.ts'  );
 
             //---------------------------------------------------------------------------
             // Test - Library
             //---------------------------------------------------------------------------
 
             harness.addSeperator( 'Library' );
-            harness.addTest( 'Library.AssetLibraryTest'     ,  'tests.library.AssetLibraryTest'  , 'js/AssetLibraryTest.js'  , 'library/AssetLibraryTest.ts'  );
+            harness.addTest( 'Library.AssetLibraryTest'     ,  'tests.library.AssetLibraryTest'  , 'library/AssetLibraryTest.js'  , 'library/AssetLibraryTest.ts'  );
 
             //---------------------------------------------------------------------------
             // Test - Geom
             //---------------------------------------------------------------------------
 
             harness.addSeperator( 'Geom' );
-            harness.addTest( '(Console) Geom.ColorUtils'          ,  'tests.geom.ColorUtils'      , 'js/ColorUtils.js'     , 'geom/ColorUtils.ts'  );
-            harness.addTest( '(Console) Geom.MatrixTest'          ,  'tests.geom.MatrixTest'      , 'js/MatrixTest.js'     , 'geom/MatrixTest.ts'  );
-            harness.addTest( '(Console) Geom.VextMat3DTests'      ,  'tests.geom.VextMat3DTests'  , 'js/VextMat3DTests.js' , 'geom/VextMat3DTests.ts'  );
+            harness.addTest( '(Console) Geom.ColorUtilsTest'          ,  'tests.geom.ColorUtilsTest'      , 'geom/ColorUtilsTest.js'     , 'geom/ColorUtilsTest.ts'  );
+            harness.addTest( '(Console) Geom.MatrixTest'          ,  'tests.geom.MatrixTest'      , 'geom/MatrixTest.js'     , 'geom/MatrixTest.ts'  );
+            harness.addTest( '(Console) Geom.VextMat3DTests'      ,  'tests.geom.VextMat3DTests'  , 'geom/VextMat3DTests.js' , 'geom/VextMat3DTests.ts'  );
 
             //---------------------------------------------------------------------------
             // Test - Events
             //---------------------------------------------------------------------------
 
             harness.addSeperator( 'Events' );
-            harness.addTest( '(Console) Events'      ,  'tests.events.EDTest'      , 'js/EDTest.js'     , 'events/EDTest.ts'  );
+            harness.addTest( '(Console) Events'      ,  'tests.events.EDTest'      , 'events/EDTest.js'     , 'events/EDTest.ts'  );
 
             //---------------------------------------------------------------------------
             // Test - Display
             //---------------------------------------------------------------------------
 
             harness.addSeperator( 'Base' );
-            harness.addTest( 'Base.BitmapDataTest'  ,  'tests.base.BitmapDataTest'      , 'js/BitmapDataTest.js'    , 'base/BitmapDataTest.ts'  );
+            harness.addTest( 'Base.BitmapDataTest'  ,  'tests.base.BitmapDataTest'      , 'base/BitmapDataTest.js'    , 'base/BitmapDataTest.ts'  );
 
             //---------------------------------------------------------------------------
             // Load a default
-            harness.load( 'tests.textures.BitmapTextureTest', 'js/BitmapTextureTest.js'     , 'textures/BitmapTextureTest.ts'  );
+            harness.load( 'tests.textures.BitmapTextureTest', 'textures/BitmapTextureTest.js'     , 'textures/BitmapTextureTest.ts'  );
             harness.start(); // Start
 
         }

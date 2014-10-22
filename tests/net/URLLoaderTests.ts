@@ -1,242 +1,211 @@
-///<reference path="../../build/awayjs-core.next.d.ts" />
+import URLLoader			= require("awayjs-core/lib/core/net/URLLoader");
+import URLLoaderDataFormat	= require("awayjs-core/lib/core/net/URLLoaderDataFormat");
+import URLRequest			= require("awayjs-core/lib/core/net/URLRequest");
+import URLRequestMethod		= require("awayjs-core/lib/core/net/URLRequestMethod");
+import URLVariables			= require("awayjs-core/lib/core/net/URLVariables");
+import Event				= require("awayjs-core/lib/events/Event");
+import IOErrorEvent			= require("awayjs-core/lib/events/IOErrorEvent");
+import HTTPStatusEvent		= require("awayjs-core/lib/events/HTTPStatusEvent");
 
-module tests.net
+/**
+ * 
+ */
+class LoaderTest
 {
-	import Delegate				= away.utils.Delegate;
 
-    export class LoaderTest //extends away.events.EventDispatcher
-    {
+	private urlLoaderPostURLVars:URLLoader;
+	private urlLoaderGetCSV:URLLoader;
+	private urlLoaderErrorTest:URLLoader;
+	private urlLoaderGetURLVars:URLLoader;
+	private urlLoaderBinary:URLLoader;
+	private urlLoaderBlob:URLLoader;
+	private urlLoaderArrb:URLLoader;
 
-        private urlLoaderPostURLVars        : away.net.URLLoader;
-        private urlLoaderGetCSV             : away.net.URLLoader;
-        private urlLoaderErrorTest          : away.net.URLLoader;
-        private urlLoaderGetURLVars         : away.net.URLLoader;
-        private urlLoaderBinary             : away.net.URLLoader;
-        private urlLoaderBlob               : away.net.URLLoader;
-        private urlLoaderArrb               : away.net.URLLoader;
+	constructor()
+	{
 
-        constructor()
-        {
+		console.log( 'start');
 
-            console.log( 'start');
+		//---------------------------------------------------------------------------------------------------------------------------------------------------------
+		// POST URL Variables to PHP script
+		//---------------------------------------------------------------------------------------------------------------------------------------------------------
 
-            //---------------------------------------------------------------------------------------------------------------------------------------------------------
-            // POST URL Variables to PHP script
-            //---------------------------------------------------------------------------------------------------------------------------------------------------------
+		this.urlLoaderPostURLVars = new URLLoader();
+		this.urlLoaderPostURLVars.dataFormat = URLLoaderDataFormat.VARIABLES;
 
-            this.urlLoaderPostURLVars               = new away.net.URLLoader();
-            this.urlLoaderPostURLVars.dataFormat    = away.net.URLLoaderDataFormat.VARIABLES;
+		var urlStr:string = 'fname=karim&lname=' + Math.floor( Math.random() * 100 );
+		var urlVars = new URLVariables( urlStr );
+
+		var req = new URLRequest( 'assets/saveData.php' );
+			req.method = URLRequestMethod.POST;
+			req.data = urlVars;
+
+		this.urlLoaderPostURLVars.addEventListener(Event.COMPLETE, (event:Event) => this.postURLTestComplete(event));
+		this.urlLoaderPostURLVars.addEventListener(IOErrorEvent.IO_ERROR, (event:IOErrorEvent) => this.ioError(event));
+		this.urlLoaderPostURLVars.load( req );
 
-            var urlStr : string     = 'fname=karim&lname=' + Math.floor( Math.random() * 100 );
-            var urlVars             = new away.net.URLVariables( urlStr );
-
-            var req                 = new away.net.URLRequest( 'assets/saveData.php' );
-                req.method          = away.net.URLRequestMethod.POST;
-                req.data            = urlVars;
-
-            this.urlLoaderPostURLVars.addEventListener( away.events.Event.COMPLETE , Delegate.create(this, this.postURLTestComplete) );
-            this.urlLoaderPostURLVars.addEventListener( away.events.IOErrorEvent.IO_ERROR, Delegate.create(this, this.ioError) );
-            this.urlLoaderPostURLVars.load( req );
-
-            //---------------------------------------------------------------------------------------------------------------------------------------------------------
-            // GET CSV File
-            //---------------------------------------------------------------------------------------------------------------------------------------------------------
-
-            var csrReq = new away.net.URLRequest( 'assets/airports.csv' );
-
-            this.urlLoaderGetCSV                    = new away.net.URLLoader();
-            this.urlLoaderGetCSV.dataFormat         = away.net.URLLoaderDataFormat.TEXT;
-            this.urlLoaderGetCSV.addEventListener( away.events.Event.COMPLETE , Delegate.create(this, this.getCsvComplete ) );
-            this.urlLoaderGetCSV.addEventListener( away.events.Event.OPEN, Delegate.create(this, this.getCsvOpen ) );
-            this.urlLoaderGetCSV.addEventListener( away.events.IOErrorEvent.IO_ERROR, Delegate.create(this, this.ioError) );
-            this.urlLoaderGetCSV.load( csrReq );
-
-            //---------------------------------------------------------------------------------------------------------------------------------------------------------
-            // ERROR test - load a non-existing object
-            //---------------------------------------------------------------------------------------------------------------------------------------------------------
-
-            var errorReq = new away.net.URLRequest( 'assets/generatingError' );
-
-            this.urlLoaderErrorTest                    = new away.net.URLLoader();
-            this.urlLoaderErrorTest.dataFormat         = away.net.URLLoaderDataFormat.TEXT;
-            this.urlLoaderErrorTest.addEventListener( away.events.Event.COMPLETE , Delegate.create(this, this.errorComplete ) );
-            this.urlLoaderErrorTest.addEventListener( away.events.IOErrorEvent.IO_ERROR, Delegate.create(this, this.ioError) );
-            this.urlLoaderErrorTest.addEventListener( away.events.HTTPStatusEvent.HTTP_STATUS, Delegate.create(this, this.httpStatusChange) );
-            this.urlLoaderErrorTest.load( errorReq );
-
-            //---------------------------------------------------------------------------------------------------------------------------------------------------------
-            // GET URL Vars - get URL variables
-            //---------------------------------------------------------------------------------------------------------------------------------------------------------
-
-            var csrReq = new away.net.URLRequest( 'assets/getUrlVars.php' );
-
-            this.urlLoaderGetURLVars                    = new away.net.URLLoader();
-            this.urlLoaderGetURLVars.dataFormat         = away.net.URLLoaderDataFormat.VARIABLES;
-            this.urlLoaderGetURLVars.addEventListener( away.events.IOErrorEvent.IO_ERROR, Delegate.create(this, this.ioError) );
-            this.urlLoaderGetURLVars.addEventListener( away.events.Event.COMPLETE , Delegate.create(this, this.getURLVarsComplete ) );
-            this.urlLoaderGetURLVars.load( csrReq );
-
-            //---------------------------------------------------------------------------------------------------------------------------------------------------------
-            // LOAD Binary file
-            //---------------------------------------------------------------------------------------------------------------------------------------------------------
-
-            var binReq = new away.net.URLRequest( 'assets/suzanne.awd' );
-
-            this.urlLoaderBinary                    = new away.net.URLLoader(  );
-            this.urlLoaderBinary.dataFormat         = away.net.URLLoaderDataFormat.BINARY;
-            this.urlLoaderBinary.addEventListener( away.events.IOErrorEvent.IO_ERROR, Delegate.create(this, this.ioError) );
-            this.urlLoaderBinary.addEventListener( away.events.Event.COMPLETE , Delegate.create(this, this.binFileLoaded ) );
-            this.urlLoaderBinary.load( binReq );
-
-            //---------------------------------------------------------------------------------------------------------------------------------------------------------
-            // LOAD Blob file
-            //---------------------------------------------------------------------------------------------------------------------------------------------------------
-
-            var blobReq = new away.net.URLRequest( 'assets/2.png' );
-
-            this.urlLoaderBlob                    = new away.net.URLLoader(  );
-            this.urlLoaderBlob.dataFormat         = away.net.URLLoaderDataFormat.BLOB;
-            this.urlLoaderBlob.addEventListener( away.events.Event.COMPLETE , Delegate.create(this, this.blobFileLoaded ) );
-            this.urlLoaderBlob.load( blobReq );
-
-            //---------------------------------------------------------------------------------------------------------------------------------------------------------
-            // ARRAY_BUFFER Test
-            //---------------------------------------------------------------------------------------------------------------------------------------------------------
-
-            var arrBReq = new away.net.URLRequest( 'assets/1.jpg' );
-
-            this.urlLoaderArrb                    = new away.net.URLLoader(  );
-            this.urlLoaderArrb.dataFormat         = away.net.URLLoaderDataFormat.ARRAY_BUFFER;
-            this.urlLoaderArrb.addEventListener( away.events.Event.COMPLETE , Delegate.create(this, this.arrayBufferLoaded ) );
-            this.urlLoaderArrb.load( arrBReq );
-
-        }
-
-        private arrayBufferLoaded( event : away.events.Event ) : void
-        {
-
-            var arrayBuffer = this.urlLoaderArrb.data;
-            var byteArray = new Uint8Array(arrayBuffer);
-
-            console.log( 'LoaderTest.arrayBufferLoaded' , byteArray[1]);
-
-            for (var i = 0; i < byteArray.byteLength; i++) {
-                //console.log( byteArray[i] );
-            }
-
-        }
-
-        private blobFileLoaded( event : away.events.Event ) : void
-        {
-
-            var blob        = new Blob([this.urlLoaderBlob.data], {type: 'image/png'});
-            var img         = document.createElement('img');
-                img.src     = this.createObjectURL( blob );//window['URL']['createObjectURL'](blob);
-                img.onload  = function(e) {
-
-                    window['URL']['revokeObjectURL'](img.src); // Clean up after yourself.
-
-                };
-
-            console.log( 'LoaderTest.blobFileLoaded' , blob );
-
-            document.body.appendChild( img );
-
-        }
-
-        private createObjectURL( fileBlob )
-        {
-
-            // For some reason TypeScript has "window.URL.createObjectURL" in it's dictionary -
-            // but window.URL causes an error
-            // cannot make my own .d.ts file either ( results in duplicate definition error )
-            // This HACK gets it to work: window['URL']['createObjectURL']
-
-            if( window['URL'] ){
-
-                if ( window['URL']['createObjectURL'] ) {
-
-                    return window['URL']['createObjectURL']( fileBlob );
-
-                }
-
-            } else {
-
-                if ( window['webkitURL'] ){
-
-                    return window['webkitURL']['createObjectURL']( fileBlob );
-
-                }
-
-            }
-
-            return null;
-
-        }
-
-        private binFileLoaded( event : away.events.Event ) : void
-        {
-
-            var loader : away.net.URLLoader = <away.net.URLLoader> event.target;
-            console.log( 'LoaderTest.binFileLoaded' , loader.data.length );
-
-        }
-
-        private getURLVarsComplete( event : away.events.Event ) : void
-        {
-
-            var loader : away.net.URLLoader = <away.net.URLLoader> event.target;
-            console.log( 'LoaderTest.getURLVarsComplete' , loader.data );
-
-
-        }
-
-        private httpStatusChange( event : away.events.HTTPStatusEvent ) : void
-        {
-
-            console.log( 'LoaderTest.httpStatusChange' , event.status );
-
-        }
-
-        private ioError( event ) : void
-        {
-
-            var loader : away.net.URLLoader = <away.net.URLLoader> event.target;
-            console.log( 'LoaderTest.ioError' , loader.url );
-
-        }
-
-        private errorComplete( event ) : void
-        {
-
-            var loader : away.net.URLLoader = <away.net.URLLoader> event.target;
-            console.log( 'LoaderTest.errorComplete' );//, loader.data );
-
-        }
-
-        private postURLTestComplete( event ) : void
-        {
-
-            var loader : away.net.URLLoader = <away.net.URLLoader> event.target;
-            console.log( 'LoaderTest.postURLTestComplete' , loader.data );
-
-        }
-
-        private getCsvComplete( event ) : void
-        {
-
-            var loader : away.net.URLLoader = <away.net.URLLoader> event.target;
-            console.log( 'LoaderTest.getCsvComplete' );//, loader.data );
-
-        }
-
-        private getCsvOpen( event ) : void
-        {
-
-            var loader : away.net.URLLoader = <away.net.URLLoader> event.target;
-            console.log( 'LoaderTest.getCsvOpen' );
-
-        }
-
-    }
+		//---------------------------------------------------------------------------------------------------------------------------------------------------------
+		// GET CSV File
+		//---------------------------------------------------------------------------------------------------------------------------------------------------------
+
+		var csrReq = new URLRequest( 'assets/airports.csv' );
+
+		this.urlLoaderGetCSV = new URLLoader();
+		this.urlLoaderGetCSV.dataFormat = URLLoaderDataFormat.TEXT;
+		this.urlLoaderGetCSV.addEventListener(Event.COMPLETE, (event:Event) => this.getCsvComplete(event));
+		this.urlLoaderGetCSV.addEventListener(Event.OPEN, (event:Event) => this.getCsvOpen(event));
+		this.urlLoaderGetCSV.addEventListener(IOErrorEvent.IO_ERROR, (event:IOErrorEvent) => this.ioError(event));
+		this.urlLoaderGetCSV.load( csrReq );
+
+		//---------------------------------------------------------------------------------------------------------------------------------------------------------
+		// ERROR test - load a non-existing object
+		//---------------------------------------------------------------------------------------------------------------------------------------------------------
+
+		var errorReq = new URLRequest( 'assets/generatingError' );
+
+		this.urlLoaderErrorTest = new URLLoader();
+		this.urlLoaderErrorTest.dataFormat = URLLoaderDataFormat.TEXT;
+		this.urlLoaderErrorTest.addEventListener(Event.COMPLETE, (event:Event) =>  this.errorComplete(event));
+		this.urlLoaderErrorTest.addEventListener(IOErrorEvent.IO_ERROR, (event:IOErrorEvent) => this.ioError(event));
+		this.urlLoaderErrorTest.addEventListener(HTTPStatusEvent.HTTP_STATUS, (event:HTTPStatusEvent) => this.httpStatusChange(event));
+		this.urlLoaderErrorTest.load( errorReq );
+
+		//---------------------------------------------------------------------------------------------------------------------------------------------------------
+		// GET URL Vars - get URL variables
+		//---------------------------------------------------------------------------------------------------------------------------------------------------------
+
+		var csrReq = new URLRequest( 'assets/getUrlVars.php' );
+
+		this.urlLoaderGetURLVars = new URLLoader();
+		this.urlLoaderGetURLVars.dataFormat = URLLoaderDataFormat.VARIABLES;
+		this.urlLoaderGetURLVars.addEventListener(IOErrorEvent.IO_ERROR, (event:IOErrorEvent) => this.ioError(event));
+		this.urlLoaderGetURLVars.addEventListener(Event.COMPLETE, (event:Event) => this.getURLVarsComplete(event));
+		this.urlLoaderGetURLVars.load( csrReq );
+
+		//---------------------------------------------------------------------------------------------------------------------------------------------------------
+		// LOAD Binary file
+		//---------------------------------------------------------------------------------------------------------------------------------------------------------
+
+		var binReq = new URLRequest( 'assets/suzanne.awd' );
+
+		this.urlLoaderBinary = new URLLoader(  );
+		this.urlLoaderBinary.dataFormat = URLLoaderDataFormat.BINARY;
+		this.urlLoaderBinary.addEventListener(IOErrorEvent.IO_ERROR, (event:IOErrorEvent) => this.ioError(event));
+		this.urlLoaderBinary.addEventListener(Event.COMPLETE, (event:Event) => this.binFileLoaded(event));
+		this.urlLoaderBinary.load( binReq );
+
+		//---------------------------------------------------------------------------------------------------------------------------------------------------------
+		// LOAD Blob file
+		//---------------------------------------------------------------------------------------------------------------------------------------------------------
+
+		var blobReq = new URLRequest( 'assets/2.png' );
+
+		this.urlLoaderBlob = new URLLoader(  );
+		this.urlLoaderBlob.dataFormat = URLLoaderDataFormat.BLOB;
+		this.urlLoaderBlob.addEventListener(Event.COMPLETE, (event:Event) => this.blobFileLoaded(event));
+		this.urlLoaderBlob.load( blobReq );
+
+		//---------------------------------------------------------------------------------------------------------------------------------------------------------
+		// ARRAY_BUFFER Test
+		//---------------------------------------------------------------------------------------------------------------------------------------------------------
+
+		var arrBReq = new URLRequest( 'assets/1.jpg' );
+
+		this.urlLoaderArrb = new URLLoader(  );
+		this.urlLoaderArrb.dataFormat = URLLoaderDataFormat.ARRAY_BUFFER;
+		this.urlLoaderArrb.addEventListener(Event.COMPLETE, (event:Event) => this.arrayBufferLoaded(event));
+		this.urlLoaderArrb.load( arrBReq );
+	}
+
+	private arrayBufferLoaded( event:Event ):void
+	{
+		var arrayBuffer = this.urlLoaderArrb.data;
+		var byteArray = new Uint8Array(arrayBuffer);
+
+		console.log( 'LoaderTest.arrayBufferLoaded' , byteArray[1]);
+
+		for (var i = 0; i < byteArray.byteLength; i++) {
+			//console.log( byteArray[i] );
+		}
+	}
+
+	private blobFileLoaded( event:Event ):void
+	{
+		var blob= new Blob([this.urlLoaderBlob.data], {type: 'image/png'});
+		var img = document.createElement('img');
+			img.src  = this.createObjectURL( blob );//window['URL']['createObjectURL'](blob);
+			img.onload  = function(e) {
+				window['URL']['revokeObjectURL'](img.src); // Clean up after yourself.
+			};
+
+		console.log( 'LoaderTest.blobFileLoaded' , blob );
+
+		document.body.appendChild( img );
+	}
+
+	private createObjectURL( fileBlob )
+	{
+		// For some reason TypeScript has "window.URL.createObjectURL" in it's dictionary -
+		// but window.URL causes an error
+		// cannot make my own .d.ts file either ( results in duplicate definition error )
+		// This HACK gets it to work: window['URL']['createObjectURL']
+		if( window['URL'] ){
+			if ( window['URL']['createObjectURL'] ) {
+				return window['URL']['createObjectURL']( fileBlob );
+			}
+		} else {
+			if ( window['webkitURL'] ){
+				return window['webkitURL']['createObjectURL']( fileBlob );
+			}
+		}
+
+		return null;
+	}
+
+	private binFileLoaded(event:Event):void
+	{
+		var loader:URLLoader = <URLLoader> event.target;
+		console.log( 'LoaderTest.binFileLoaded' , loader.data.length );
+	}
+
+	private getURLVarsComplete(event:Event):void
+	{
+		var loader:URLLoader = <URLLoader> event.target;
+		console.log( 'LoaderTest.getURLVarsComplete' , loader.data );
+	}
+
+	private httpStatusChange(event:HTTPStatusEvent):void
+	{
+		console.log( 'LoaderTest.httpStatusChange' , event.status );
+	}
+
+	private ioError(event:IOErrorEvent):void
+	{
+		var loader:URLLoader = <URLLoader> event.target;
+		console.log( 'LoaderTest.ioError' , loader.url );
+	}
+
+	private errorComplete( event ):void
+	{
+		var loader:URLLoader = <URLLoader> event.target;
+		console.log( 'Loader.errorComplete' );//, loader.data );
+	}
+
+	private postURLTestComplete(event:Event):void
+	{
+		var loader:URLLoader = <URLLoader> event.target;
+		console.log( 'LoaderTest.postURLTestComplete' , loader.data );
+	}
+
+	private getCsvComplete(event:Event):void
+	{
+		var loader:URLLoader = <URLLoader> event.target;
+		console.log( 'LoaderTest.getCsvComplete' );//, loader.data );
+	}
+
+	private getCsvOpen( event ):void
+	{
+		var loader:URLLoader = <URLLoader> event.target;
+		console.log( 'LoaderTest.getCsvOpen' );
+	}
 }

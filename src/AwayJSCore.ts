@@ -1,15 +1,15 @@
-///<reference path="away/_definitions.ts"/>
+import EventDispatcher			= require("away/events/EventDispatcher");
+import Debug					= require("away/utils/Debug");
 
-away.Debug.THROW_ERRORS = false;
-away.Debug.LOG_PI_ERRORS = false;
+Debug.THROW_ERRORS = false;
+Debug.LOG_PI_ERRORS = false;
 
-module away
+class AwayJSCore extends EventDispatcher
 {
-	export class AwayJSCore extends away.events.EventDispatcher
+	constructor()
 	{
-		constructor()
-		{
-			super();
-		}
+		super();
 	}
 }
+
+export = AwayJSCore;

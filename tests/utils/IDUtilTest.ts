@@ -1,17 +1,9 @@
-///<reference path="../../build/awayjs-core.next.d.ts" />
+import IDUtil				= require("awayjs-core/lib/core/library/IDUtil");
 
-module tests.utils{
-
-    export class IDUtilTest
-    {
-
-
-        constructor()
-        {
-            console.log( away.library.IDUtil.createUID() );
-        }
-
-
-    }
-
+class IDUtilTest
+{
+	constructor()
+	{
+		console.log(IDUtil.createUID());
+	}
 }

@@ -1,57 +1,57 @@
-///<reference path="../../build/awayjs-core.next.d.ts" />
+import BitmapData			= require("awayjs-core/lib/core/base/BitmapData");
+import Rectangle			= require("awayjs-core/lib/core/geom/Rectangle");
+import URLLoader			= require("awayjs-core/lib/core/net/URLLoader");
+import URLLoaderDataFormat	= require("awayjs-core/lib/core/net/URLLoaderDataFormat");
+import URLRequest			= require("awayjs-core/lib/core/net/URLRequest");
+import Event				= require("awayjs-core/lib/events/Event");
+import ParserUtils			= require("awayjs-core/lib/parsers/ParserUtils");
+import BitmapTexture		= require("awayjs-core/lib/textures/BitmapTexture");
+import Debug				= require("awayjs-core/lib/utils/Debug");
 
-module tests.textures
+class BitmapTextureTest
 {
-	import Delegate				= away.utils.Delegate;
 
+	private mipLoader       : URLLoader;
+	private bitmapData      : BitmapData;
+	private target          : BitmapTexture;
 
-    export class BitmapTextureTest
-    {
+	constructor()
+	{
 
-        private mipLoader       : away.net.URLLoader;
-        private bitmapData      : away.base.BitmapData;
-        private target          : away.textures.BitmapTexture;
-        private texture         : away.gl.Texture;
+		//---------------------------------------
+		// Load a PNG
 
-        constructor()
-        {
+		var mipUrlRequest = new URLRequest( 'assets/1024x1024.png');
+		this.mipLoader  = new URLLoader();
+		this.mipLoader.dataFormat = URLLoaderDataFormat.BLOB;
+		this.mipLoader.load( mipUrlRequest );
+		this.mipLoader.addEventListener( Event.COMPLETE , (e) => this.mipImgLoaded(e) );
 
-            //---------------------------------------
-            // Load a PNG
+	}
 
-            var mipUrlRequest = new away.net.URLRequest( 'assets/1024x1024.png');
-            this.mipLoader  = new away.net.URLLoader();
-			this.mipLoader.dataFormat = away.net.URLLoaderDataFormat.BLOB;
-            this.mipLoader.load( mipUrlRequest );
-            this.mipLoader.addEventListener( away.events.Event.COMPLETE , Delegate.create(this, this.mipImgLoaded) );
+	private mipImgLoaded( e )
+	{
 
-        }
+		var loader  : URLLoader        = <URLLoader > e.target;
+		var image : HTMLImageElement = ParserUtils.blobToImage(loader.data);
+		image.onload = ( event ) => this.onImageLoad( event );
+	}
 
-        private mipImgLoaded( e )
-        {
+	private onImageLoad (event)
+	{
+		var image : HTMLImageElement = <HTMLImageElement> event.target;
 
-            var loader  : away.net.URLLoader        = <away.net.URLLoader > e.target;
-			var image : HTMLImageElement = away.parsers.ParserUtils.blobToImage(loader.data);
-			image.onload = ( event ) => this.onImageLoad( event );
-		}
+		var rect    : Rectangle       = new Rectangle( 0 , 0 , image.width , image.height );
 
-		private onImageLoad (event)
-		{
-			var image : HTMLImageElement = <HTMLImageElement> event.target;
+		console.log( 'Event' , image );
 
-            var rect    : away.geom.Rectangle       = new away.geom.Rectangle( 0 , 0 , image.width , image.height );
+		this.bitmapData                         = new BitmapData( image.width , image.height );
+		this.bitmapData.drawImage( image , rect ,  rect );
 
-            console.log( 'away.events.Event.COMPLETE' , image );
+		this.target                             = new BitmapTexture( this.bitmapData , true );//new HTMLImageElementTexture( loader.image , false );
 
-            this.bitmapData                         = new away.base.BitmapData( image.width , image.height );
-            this.bitmapData.drawImage( image , rect ,  rect );
+		Debug.log( 'BitmapData'           , this.bitmapData );
+		Debug.log( 'BitmapTexture'       , this.target );
 
-            this.target                             = new away.textures.BitmapTexture( this.bitmapData , true );//new away.textures.HTMLImageElementTexture( loader.image , false );
-
-            away.Debug.log( 'away.base.BitmapData'           , this.bitmapData );
-            away.Debug.log( 'away.textures.BitmapTexture'       , this.target );
-
-        }
-
-    }
+	}
 }

@@ -1,128 +1,127 @@
-///<reference path="../../build/awayjs-core.next.d.ts" />
+import URLLoader			= require("awayjs-core/lib/core/net/URLLoader");
+import URLLoaderDataFormat	= require("awayjs-core/lib/core/net/URLLoaderDataFormat");
+import URLRequest			= require("awayjs-core/lib/core/net/URLRequest");
+import Event				= require("awayjs-core/lib/events/Event");
+import IOErrorEvent			= require("awayjs-core/lib/events/IOErrorEvent");
+import ParserUtils			= require("awayjs-core/lib/parsers/ParserUtils");
 
-module tests.net
+class IMGLoaderTest
 {
-	import Delegate				= away.utils.Delegate;
 
-    export class URLLoaderTest
-    {
+	private pngLoader       : URLLoader;
+	private jpgLoader       : URLLoader;
+	private noAnImageLoader : URLLoader;
+	private wrongURLLoader  : URLLoader;
 
-        private pngLoader       : away.net.URLLoader;
-        private jpgLoader       : away.net.URLLoader;
-        private noAnImageLoader : away.net.URLLoader;
-        private wrongURLLoader  : away.net.URLLoader;
+	constructor()
+	{
 
-        constructor()
-        {
+		//-----------------------------------------------------------------------------------------------
+		// load a png
+		//-----------------------------------------------------------------------------------------------
 
-            //-----------------------------------------------------------------------------------------------
-            // load a png
-            //-----------------------------------------------------------------------------------------------
+		var pngURLrq            = new URLRequest( 'assets/2.png');
 
-            var pngURLrq            = new away.net.URLRequest( 'assets/2.png');
+		this.pngLoader          = new URLLoader();
+		this.pngLoader.dataFormat = URLLoaderDataFormat.BLOB;
+		this.pngLoader.addEventListener( Event.COMPLETE , ( event : Event) => this.pngLoaderComplete(event) );
+		this.pngLoader.addEventListener( IOErrorEvent.IO_ERROR , ( event : IOErrorEvent ) => this.ioError(event) );
+		this.pngLoader.load( pngURLrq );
 
-            this.pngLoader          = new away.net.URLLoader();
-			this.pngLoader.dataFormat = away.net.URLLoaderDataFormat.BLOB;
-            this.pngLoader.addEventListener( away.events.Event.COMPLETE , Delegate.create(this, this.pngLoaderComplete) );
-            this.pngLoader.addEventListener( away.events.IOErrorEvent.IO_ERROR , Delegate.create(this, this.ioError) );
-            this.pngLoader.load( pngURLrq );
+		//-----------------------------------------------------------------------------------------------
+		// Load a jpg
+		//-----------------------------------------------------------------------------------------------
 
-            //-----------------------------------------------------------------------------------------------
-            // Load a jpg
-            //-----------------------------------------------------------------------------------------------
+		var jpgURLrq            = new URLRequest( 'assets/1.jpg');
 
-            var jpgURLrq            = new away.net.URLRequest( 'assets/1.jpg');
+		this.jpgLoader          = new URLLoader();
+		this.jpgLoader.dataFormat = URLLoaderDataFormat.BLOB;
+		this.jpgLoader.addEventListener( Event.COMPLETE , ( event : Event) => this.jpgLoaderComplete(event) );
+		this.jpgLoader.addEventListener( IOErrorEvent.IO_ERROR , ( event : IOErrorEvent ) => this.ioError(event) );
+		this.jpgLoader.load( jpgURLrq );
 
-            this.jpgLoader          = new away.net.URLLoader();
-			this.jpgLoader.dataFormat = away.net.URLLoaderDataFormat.BLOB;
-            this.jpgLoader.addEventListener( away.events.Event.COMPLETE , Delegate.create(this, this.jpgLoaderComplete) );
-            this.jpgLoader.addEventListener( away.events.IOErrorEvent.IO_ERROR , Delegate.create(this, this.ioError) );
-            this.jpgLoader.load( jpgURLrq );
+		//-----------------------------------------------------------------------------------------------
+		// Load file of wrong format
+		//-----------------------------------------------------------------------------------------------
 
-            //-----------------------------------------------------------------------------------------------
-            // Load file of wrong format
-            //-----------------------------------------------------------------------------------------------
+		var notURLrq            = new URLRequest( 'assets/data.txt');
 
-            var notURLrq            = new away.net.URLRequest( 'assets/data.txt');
+		this.noAnImageLoader    = new URLLoader();
+		this.noAnImageLoader.dataFormat = URLLoaderDataFormat.BLOB;
+		this.noAnImageLoader.addEventListener( Event.COMPLETE , ( event : Event) => this.noAnImageLoaderComplete(event) );
+		this.noAnImageLoader.addEventListener( IOErrorEvent.IO_ERROR , ( event : IOErrorEvent ) => this.ioError(event) );
+		this.noAnImageLoader.load( notURLrq )
 
-            this.noAnImageLoader    = new away.net.URLLoader();
-			this.noAnImageLoader.dataFormat = away.net.URLLoaderDataFormat.BLOB;
-            this.noAnImageLoader.addEventListener( away.events.Event.COMPLETE , Delegate.create(this, this.noAnImageLoaderComplete) );
-            this.noAnImageLoader.addEventListener( away.events.IOErrorEvent.IO_ERROR , Delegate.create(this, this.ioError) );
-            this.noAnImageLoader.load( notURLrq )
+		//-----------------------------------------------------------------------------------------------
+		// Load image that does not exist
+		//-----------------------------------------------------------------------------------------------
 
-            //-----------------------------------------------------------------------------------------------
-            // Load image that does not exist
-            //-----------------------------------------------------------------------------------------------
+		var wrongURLrq            = new URLRequest( 'assets/iDontExist.png');
 
-            var wrongURLrq            = new away.net.URLRequest( 'assets/iDontExist.png');
+		this.wrongURLLoader     = new URLLoader();
+		this.wrongURLLoader.dataFormat = URLLoaderDataFormat.BLOB;
+		this.wrongURLLoader.addEventListener( Event.COMPLETE , ( event : Event) => this.wrongURLLoaderComplete(event) );
+		this.wrongURLLoader.addEventListener( IOErrorEvent.IO_ERROR , ( event : IOErrorEvent ) => this.ioError(event) );
+		this.wrongURLLoader.load( wrongURLrq );
+	}
 
-            this.wrongURLLoader     = new away.net.URLLoader();
-			this.wrongURLLoader.dataFormat = away.net.URLLoaderDataFormat.BLOB;
-            this.wrongURLLoader.addEventListener( away.events.Event.COMPLETE , Delegate.create(this, this.wrongURLLoaderComplete) );
-            this.wrongURLLoader.addEventListener( away.events.IOErrorEvent.IO_ERROR , Delegate.create(this, this.ioError) );
-            this.wrongURLLoader.load( wrongURLrq );
-        }
+	private pngLoaderComplete ( e : Event ) : void
+	{
 
-        private pngLoaderComplete ( e : away.events.Event ) : void
-        {
-
-            this.logSuccessfullLoad( e );
+		this.logSuccessfullLoad( e );
 
 
-            var imgLoader : away.net.URLLoader = <away.net.URLLoader> e.target;
-            document.body.appendChild( away.parsers.ParserUtils.blobToImage(imgLoader.data) );
+		var imgLoader : URLLoader = <URLLoader> e.target;
+		document.body.appendChild( ParserUtils.blobToImage(imgLoader.data) );
 
-        }
+	}
 
-        private jpgLoaderComplete ( e : away.events.Event ) : void
-        {
+	private jpgLoaderComplete ( e : Event ) : void
+	{
 
-            this.logSuccessfullLoad( e );
+		this.logSuccessfullLoad( e );
 
-            var imgLoader : away.net.URLLoader = <away.net.URLLoader> e.target;
-            document.body.appendChild( away.parsers.ParserUtils.blobToImage(imgLoader.data) );
+		var imgLoader : URLLoader = <URLLoader> e.target;
+		document.body.appendChild( ParserUtils.blobToImage(imgLoader.data) );
 
-        }
+	}
 
-        private noAnImageLoaderComplete ( e : away.events.Event ) : void
-        {
+	private noAnImageLoaderComplete ( e : Event ) : void
+	{
 
-            this.logSuccessfullLoad( e );
+		this.logSuccessfullLoad( e );
 
-        }
+	}
 
-        private wrongURLLoaderComplete ( e : away.events.Event ) : void
-        {
+	private wrongURLLoaderComplete ( e : Event ) : void
+	{
 
-            this.logSuccessfullLoad( e );
+		this.logSuccessfullLoad( e );
 
-        }
+	}
 
-        private logSuccessfullLoad( e : away.events.Event) : void
-        {
+	private logSuccessfullLoad( event : Event) : void
+	{
 
-            var imgLoader : away.net.URLLoader = <away.net.URLLoader> e.target;
-            console.log( 'IMG.Event.Complete' , imgLoader.url );
+		var imgLoader : URLLoader = <URLLoader> event.target;
+		console.log( 'IMG.Event.Complete' , imgLoader.url );
 
-        }
+	}
 
-        private ioError ( e : away.events.IOErrorEvent ) : void
-        {
+	private ioError ( event : IOErrorEvent ) : void
+	{
 
-            var imgLoader : away.net.URLLoader = <away.net.URLLoader> e.target;
-            console.log( 'ioError' , imgLoader.url );
+		var imgLoader : URLLoader = <URLLoader> event.target;
+		console.log( 'ioError' , imgLoader.url );
 
-        }
+	}
 
-        private abortError ( e : away.events.Event ) : void
-        {
+	private abortError ( event : Event ) : void
+	{
 
-            var imgLoader : away.net.URLLoader = <away.net.URLLoader> e.target;
-            console.log( 'abortError' , imgLoader.url );
+		var imgLoader : URLLoader = <URLLoader> event.target;
+		console.log( 'abortError' , imgLoader.url );
 
-        }
+	}
 
-
-    }
 }

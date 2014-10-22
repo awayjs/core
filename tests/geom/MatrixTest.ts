@@ -1,21 +1,14 @@
-///<reference path="../../build/awayjs-core.next.d.ts" />
+import Matrix					= require("awayjs-core/lib/core/geom/Matrix");
 
-module tests.geom {
+class MatrixTest
+{
 
-    export class MatrixTest
-    {
+	private ma:Matrix = new Matrix(10, 11, 12, 13, 14, 15);
+	private mb:Matrix = new Matrix(0, 1, 2, 3, 4, 5);
 
-        private ma : away.geom.Matrix = new away.geom.Matrix( 10 , 11, 12 , 13 , 14 , 15);
-        private mb : away.geom.Matrix = new away.geom.Matrix( 0 , 1, 2 , 3 , 4 , 5);
-
-        constructor()
-        {
-
-            this.ma.concat( this.mb );
-            console.log( this.ma );
-
-        }
-
-
-    }
+	constructor()
+	{
+		this.ma.concat(this.mb);
+		console.log(this.ma);
+	}
 }

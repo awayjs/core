@@ -17,7 +17,8 @@ gulp.task('compile', function() {
         declarationFiles: true,
         noExternalResolve: true,
         target: 'ES5',
-        module: 'commonjs'
+        module: 'commonjs',
+        sourceRoot: './awayjs-core/lib/'
     });
 
     var ambientWrap = map(function(code, filename) {
@@ -38,7 +39,7 @@ gulp.task('compile', function() {
         .pipe(gulp.dest('./build'));
 
     return tsResult.js
-        .pipe(sourcemaps.write())
+        .pipe(sourcemaps.write({sourceRoot: '../'}))
         .pipe(gulp.dest('./lib'));
 });
 
@@ -62,9 +63,8 @@ gulp.task('package', ['compile'], function(callback){
         b.bundle()
             .pipe(exorcist('./build/awayjs-core.js.map'))
             .pipe(source('awayjs-core.js'))
-            .pipe(gulp.dest('./build'));
-
-        callback();
+            .pipe(gulp.dest('./build'))
+            .on('end', callback);
     });
 });
 
@@ -74,7 +74,8 @@ gulp.task('tests', function () {
         declarationFiles: true,
         noExternalResolve: true,
         target: 'ES5',
-        module: 'commonjs'
+        module: 'commonjs',
+        sourceRoot: './'
     });
 
     var tsResult = gulp.src(['./tests/**/*.ts', './build/awayjs-core.d.ts'])
@@ -83,6 +84,6 @@ gulp.task('tests', function () {
         .pipe(typescript(tsProject));
 
     return tsResult.js
-        .pipe(sourcemaps.write())
+        .pipe(sourcemaps.write({sourceRoot: './tests'}))
         .pipe(gulp.dest('./tests'));
 });

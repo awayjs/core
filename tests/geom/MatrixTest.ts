@@ -1,4 +1,4 @@
-import Matrix					= require("awayjs-core/lib/core/geom/Matrix");
+import Matrix					= require("awayjs-core/lib/geom/Matrix");
 
 class MatrixTest
 {

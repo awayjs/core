@@ -1,11 +1,9 @@
 import BoundingVolumeBase			= require("awayjs-core/lib/bounds/BoundingVolumeBase");
-import Matrix3D						= require("awayjs-core/lib/core/geom/Matrix3D");
-import Matrix3DUtils				= require("awayjs-core/lib/core/geom/Matrix3DUtils");
-import PlaneClassification			= require("awayjs-core/lib/core/geom/PlaneClassification");
-import Plane3D						= require("awayjs-core/lib/core/geom/Plane3D");
-import Transform					= require("awayjs-core/lib/core/geom/Transform");
-import Vector3D						= require("awayjs-core/lib/core/geom/Vector3D");
-import IEntity						= require("awayjs-core/lib/entities/IEntity");
+import Matrix3D						= require("awayjs-core/lib/geom/Matrix3D");
+import Matrix3DUtils				= require("awayjs-core/lib/geom/Matrix3DUtils");
+import PlaneClassification			= require("awayjs-core/lib/geom/PlaneClassification");
+import Plane3D						= require("awayjs-core/lib/geom/Plane3D");
+import Vector3D						= require("awayjs-core/lib/geom/Vector3D");
 
 class BoundingSphere extends BoundingVolumeBase
 {
@@ -58,9 +56,6 @@ class BoundingSphere extends BoundingVolumeBase
 		this._aabb.y = this._centerY + radius;
 		this._aabb.z = this._centerZ - radius;
 		this._pAabbPointsDirty = true;
-
-		if (this._pBoundingEntity)
-			this.pUpdateBoundingEntity();
 	}
 
 	public fromExtremes(minX:number, minY:number, minZ:number, maxX:number, maxY:number, maxZ:number)
@@ -130,25 +125,6 @@ class BoundingSphere extends BoundingVolumeBase
 		var distance:number = Math.sqrt(px*px + py*py + pz*pz);
 		return distance <= this._radius;
 	}
-
-	public pUpdateBoundingEntity()
-	{
-		var sc:number = this._radius;
-		if (sc == 0)
-			sc = 0.001;
-
-		var transform:Transform = this._pBoundingEntity.transform;
-		transform.scale = new Vector3D(sc, sc, sc);
-		transform.position = new Vector3D(this._centerX, this._centerY, this._centerZ);
-	}
-
-	// TODO pCreateBoundingRenderable():WireframePrimitiveBase
-
-	public pCreateBoundingEntity():IEntity
-	{
-		return null;//new away.primitives.WireframeSphere(1, 16, 12, 0xffffff, 0.5);
-	}
-
 
 	//@override
 	public classifyToPlane(plane:Plane3D):number

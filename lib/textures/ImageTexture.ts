@@ -2,6 +2,7 @@
 import Texture2DBase			= require("awayjs-core/lib/textures/Texture2DBase");
 import TextureUtils				= require("awayjs-core/lib/utils/TextureUtils");
 
+
 class ImageTexture extends Texture2DBase
 {
 	private _htmlImageElement:HTMLImageElement;

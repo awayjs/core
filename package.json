@@ -10,7 +10,7 @@
     "gulp": "^3.8.8",
     "gulp-changed": "^1.0.0",
     "gulp-concat": "^2.4.1",
-    "gulp-sourcemaps": "^1.2.2",
+    "gulp-sourcemaps": "git://github.com/rob-bateman/gulp-sourcemaps.git",
     "gulp-typescript": "^2.0.0",
     "path": "^0.4.9",
     "uglify-js": "~2.3.5",

@@ -1,6 +1,6 @@
-import BitmapData				= require("awayjs-core/lib/core/base/BitmapData");
-import Matrix					= require("awayjs-core/lib/core/geom/Matrix");
-import Rectangle				= require("awayjs-core/lib/core/geom/Rectangle");
+import BitmapData				= require("awayjs-core/lib/base/BitmapData");
+import Matrix					= require("awayjs-core/lib/geom/Matrix");
+import Rectangle				= require("awayjs-core/lib/geom/Rectangle");
 
 /**
  * MipmapGenerator is a helper class that uploads BitmapData to a Texture including mipmap levels.

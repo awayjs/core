@@ -1,10 +1,7 @@
-import Geometry						= require("awayjs-core/lib/core/base/Geometry");
-import SubGeometryBase				= require("awayjs-core/lib/core/base/SubGeometryBase");
-import Box							= require("awayjs-core/lib/core/geom/Box");
-import Matrix3D						= require("awayjs-core/lib/core/geom/Matrix3D");
-import Plane3D						= require("awayjs-core/lib/core/geom/Plane3D");
-import Vector3D						= require("awayjs-core/lib/core/geom/Vector3D");
-import IEntity						= require("awayjs-core/lib/entities/IEntity");
+import Box							= require("awayjs-core/lib/geom/Box");
+import Matrix3D						= require("awayjs-core/lib/geom/Matrix3D");
+import Plane3D						= require("awayjs-core/lib/geom/Plane3D");
+import Vector3D						= require("awayjs-core/lib/geom/Vector3D");
 import AbstractMethodError			= require("awayjs-core/lib/errors/AbstractMethodError");
 
 class BoundingVolumeBase
@@ -12,7 +9,6 @@ class BoundingVolumeBase
 	public _aabb:Box;
 	public _pAabbPoints:Array<number> = new Array<number>();
 	public _pAabbPointsDirty:boolean = true;
-	public _pBoundingEntity:IEntity;
 
 	constructor()
 	{
@@ -32,32 +28,11 @@ class BoundingVolumeBase
 		return this._pAabbPoints;
 	}
 
-	public get boundingEntity():IEntity
-	{
-		if (!this._pBoundingEntity) {
-			this._pBoundingEntity = this.pCreateBoundingEntity();
-			this.pUpdateBoundingEntity();
-		}
-
-		return this._pBoundingEntity;
-	}
-
 	public nullify()
 	{
 		this._aabb.x = this._aabb.y = this._aabb.z = 0;
 		this._aabb.width = this._aabb.height = this._aabb.depth = 0;
 		this._pAabbPointsDirty = true;
-
-		if (this._pBoundingEntity)
-			this.pUpdateBoundingEntity();
-	}
-
-	public disposeRenderable()
-	{
-		if (this._pBoundingEntity)
-			this._pBoundingEntity.dispose();
-
-		this._pBoundingEntity = null;
 	}
 
 	public fromVertices(vertices:Array<number>)
@@ -96,63 +71,6 @@ class BoundingVolumeBase
 		this.fromExtremes(minX, minY, minZ, maxX, maxY, maxZ);
 	}
 
-	/**
-	 * Updates the bounds to fit a Geometry object.
-	 *
-	 * @param geometry The Geometry object to be bounded.
-	 */
-	public fromGeometry(geometry:Geometry):void
-	{
-		var i:number, j:number, p:number;
-		var subGeoms:Array<SubGeometryBase> = geometry.subGeometries;
-		var subGeom:SubGeometryBase;
-		var boundingPositions:Array<number>;
-		var numSubGeoms:number = subGeoms.length;
-		var minX:number, minY:number, minZ:number;
-		var maxX:number, maxY:number, maxZ:number;
-
-		if (numSubGeoms > 0) {
-			i = 0;
-			subGeom = subGeoms[0];
-			boundingPositions = subGeom.getBoundingPositions();
-			minX = maxX = boundingPositions[i];
-			minY = maxY = boundingPositions[i + 1];
-			minZ = maxZ = boundingPositions[i + 2];
-
-			j = numSubGeoms;
-			while (j--) {
-				subGeom = subGeoms[j];
-				boundingPositions = subGeom.getBoundingPositions();
-				i = boundingPositions.length;
-				while (i--) {
-					p = boundingPositions[i];
-					if (p < minX)
-						minX = p;
-					else if (p > maxX)
-						maxX = p;
-
-					p = boundingPositions[i + 1];
-
-					if (p < minY)
-						minY = p;
-					else if (p > maxY)
-						maxY = p;
-
-					p = boundingPositions[i + 2];
-
-					if (p < minZ)
-						minZ = p;
-					else if (p > maxZ)
-						maxZ = p;
-				}
-			}
-
-			this.fromExtremes(minX, minY, minZ, maxX, maxY, maxZ);
-		} else {
-			this.fromExtremes(0, 0, 0, 0, 0, 0);
-		}
-	}
-
 	public fromSphere(center:Vector3D, radius:number)
 	{
 		this.fromExtremes(center.x - radius, center.y - radius, center.z - radius, center.x + radius, center.y + radius, center.z + radius);
@@ -167,9 +85,6 @@ class BoundingVolumeBase
 		this._aabb.height = maxY - minY;
 		this._aabb.depth = maxZ - minZ;
 		this._pAabbPointsDirty = true;
-
-		if (this._pBoundingEntity)
-			this.pUpdateBoundingEntity();
 	}
 
 	public isInFrustum(planes:Array<Plane3D>, numPlanes:number):boolean
@@ -231,16 +146,6 @@ class BoundingVolumeBase
 		this._pAabbPoints[22] = maxY;
 		this._pAabbPoints[23] = maxZ;
 		this._pAabbPointsDirty = false;
-	}
-
-	public pUpdateBoundingEntity()
-	{
-		throw new AbstractMethodError();
-	}
-
-	public pCreateBoundingEntity():IEntity
-	{
-		throw new AbstractMethodError();
 	}
 
 	public classifyToPlane(plane:Plane3D):number

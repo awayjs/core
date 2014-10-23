@@ -1,4 +1,4 @@
-import ColorTransform			= require("awayjs-core/lib/core/geom/ColorTransform");
+import ColorTransform			= require("awayjs-core/lib/geom/ColorTransform");
 import ColorUtils				= require("awayjs-core/lib/utils/ColorUtils");
 
 class ColorUtilsTest

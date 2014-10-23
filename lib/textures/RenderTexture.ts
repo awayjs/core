@@ -2,6 +2,7 @@
 import Texture2DBase			= require("awayjs-core/lib/textures/Texture2DBase");
 import TextureUtils				= require("awayjs-core/lib/utils/TextureUtils");
 
+
 class RenderTexture extends Texture2DBase
 {
 	/**

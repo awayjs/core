@@ -1,4 +1,4 @@
-import IAsset					= require("awayjs-core/lib/core/library/IAsset");
+import IAsset					= require("awayjs-core/lib/library/IAsset");
 import Event					= require("awayjs-core/lib/events/Event");
 
 /**

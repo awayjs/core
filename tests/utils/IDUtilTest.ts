@@ -1,4 +1,4 @@
-import IDUtil				= require("awayjs-core/lib/core/library/IDUtil");
+import IDUtil				= require("awayjs-core/lib/library/IDUtil");
 
 class IDUtilTest
 {

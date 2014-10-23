@@ -1,5 +1,5 @@
-import Matrix3D					= require("awayjs-core/lib/core/geom/Matrix3D");
-import Vector3D					= require("awayjs-core/lib/core/geom/Vector3D");
+import Matrix3D					= require("awayjs-core/lib/geom/Matrix3D");
+import Vector3D					= require("awayjs-core/lib/geom/Vector3D");
 import IEventDispatcher			= require("awayjs-core/lib/events/IEventDispatcher");
 
 /**

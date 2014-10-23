@@ -1,4 +1,4 @@
-import BitmapData				= require("awayjs-core/lib/core/base/BitmapData");
+import BitmapData				= require("awayjs-core/lib/base/BitmapData");
 import AbstractMethodError		= require("awayjs-core/lib/errors/AbstractMethodError");
 import MipmapGenerator			= require("awayjs-core/lib/textures/MipmapGenerator");
 import TextureProxyBase			= require("awayjs-core/lib/textures/TextureProxyBase");

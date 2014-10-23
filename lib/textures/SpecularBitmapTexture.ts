@@ -1,7 +1,7 @@
-import BitmapData				= require("awayjs-core/lib/core/base/BitmapData");
-import BitmapDataChannel		= require("awayjs-core/lib/core/base/BitmapDataChannel");
-import Point					= require("awayjs-core/lib/core/geom/Point");
-import Rectangle				= require("awayjs-core/lib/core/geom/Rectangle");
+import BitmapData				= require("awayjs-core/lib/base/BitmapData");
+import BitmapDataChannel		= require("awayjs-core/lib/base/BitmapDataChannel");
+import Point					= require("awayjs-core/lib/geom/Point");
+import Rectangle				= require("awayjs-core/lib/geom/Rectangle");
 import BitmapTexture			= require("awayjs-core/lib/textures/BitmapTexture");
 
 /**

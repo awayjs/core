@@ -1,4 +1,4 @@
-import Vector3D					= require("awayjs-core/lib/core/geom/Vector3D");
+import Vector3D					= require("awayjs-core/lib/geom/Vector3D");
 import ProjectionBase			= require("awayjs-core/lib/projections/ProjectionBase");
 
 class OrthographicOffCenterProjection extends ProjectionBase

@@ -1,10 +1,9 @@
 import BoundingVolumeBase			= require("awayjs-core/lib/bounds/BoundingVolumeBase");
-import Matrix3D						= require("awayjs-core/lib/core/geom/Matrix3D");
-import Matrix3DUtils				= require("awayjs-core/lib/core/geom/Matrix3DUtils");
-import PlaneClassification			= require("awayjs-core/lib/core/geom/PlaneClassification");
-import Plane3D						= require("awayjs-core/lib/core/geom/Plane3D");
-import Vector3D						= require("awayjs-core/lib/core/geom/Vector3D");
-import IEntity						= require("awayjs-core/lib/entities/IEntity");
+import Matrix3D						= require("awayjs-core/lib/geom/Matrix3D");
+import Matrix3DUtils				= require("awayjs-core/lib/geom/Matrix3DUtils");
+import PlaneClassification			= require("awayjs-core/lib/geom/PlaneClassification");
+import Plane3D						= require("awayjs-core/lib/geom/Plane3D");
+import Vector3D						= require("awayjs-core/lib/geom/Vector3D");
 
 /**
  * AxisAlignedBoundingBox represents a bounding box volume that has its planes aligned to the local coordinate axes of the bounded object.
@@ -251,21 +250,6 @@ class AxisAlignedBoundingBox extends BoundingVolumeBase
 		target.z = p;
 
 		return target;
-	}
-
-	public pUpdateBoundingRenderable()
-	{
-		this._pBoundingEntity.transform.scale.x = Math.max(this._halfExtentsX*2, 0.001);
-		this._pBoundingEntity.transform.scale.y = Math.max(this._halfExtentsY*2, 0.001);
-		this._pBoundingEntity.transform.scale.z = Math.max(this._halfExtentsZ*2, 0.001);
-		this._pBoundingEntity.transform.position.x = this._centerX;
-		this._pBoundingEntity.transform.position.y = this._centerY;
-		this._pBoundingEntity.transform.position.z = this._centerZ;
-	}
-
-	public pCreateBoundingEntity():IEntity
-	{
-		return null;//<away.primitives.WireframePrimitiveBase> new away.primitives.WireframeCube(1, 1, 1, 0xffffff, 0.5);
 	}
 
 	public classifyToPlane(plane:Plane3D):number

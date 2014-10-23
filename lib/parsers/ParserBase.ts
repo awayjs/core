@@ -1,7 +1,6 @@
-import BitmapData				= require("awayjs-core/lib/core/base/BitmapData");
-import DisplayObject			= require("awayjs-core/lib/core/base/DisplayObject");
-import IAsset					= require("awayjs-core/lib/core/library/IAsset");
-import URLRequest				= require("awayjs-core/lib/core/net/URLRequest");
+import BitmapData				= require("awayjs-core/lib/base/BitmapData");
+import IAsset					= require("awayjs-core/lib/library/IAsset");
+import URLRequest				= require("awayjs-core/lib/net/URLRequest");
 import AbstractMethodError		= require("awayjs-core/lib/errors/AbstractMethodError");
 import AssetEvent				= require("awayjs-core/lib/events/AssetEvent");
 import EventDispatcher			= require("awayjs-core/lib/events/EventDispatcher");
@@ -41,7 +40,7 @@ class ParserBase extends EventDispatcher
 	private _frameLimit:number;
 	private _lastFrameTime:number;
 	private _pOnIntervalDelegate:(event:TimerEvent) => void;
-	public _pContent:DisplayObject;
+	public _pContent:IAsset;
 
 	//----------------------------------------------------------------------------------------------------------------------------------------------------------------
 	// TODO: add error checking for the following ( could cause a problem if this function is not implemented )
@@ -87,7 +86,7 @@ class ParserBase extends EventDispatcher
 	/* Protected */
 
 
-	public get content():DisplayObject
+	public get content():IAsset
 	{
 		return this._pContent;
 	}

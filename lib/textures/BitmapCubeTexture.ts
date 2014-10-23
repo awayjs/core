@@ -1,7 +1,8 @@
-import BitmapData				= require("awayjs-core/lib/core/base/BitmapData");
+import BitmapData				= require("awayjs-core/lib/base/BitmapData");
 import Error					= require("awayjs-core/lib/errors/Error");
 import CubeTextureBase			= require("awayjs-core/lib/textures/CubeTextureBase");
 import TextureUtils				= require("awayjs-core/lib/utils/TextureUtils");
+
 
 class BitmapCubeTexture extends CubeTextureBase
 {

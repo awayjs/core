@@ -1,13 +1,11 @@
-import IAsset					= require("awayjs-core/lib/core/library/IAsset");
-import URLLoaderDataFormat		= require("awayjs-core/lib/core/net/URLLoaderDataFormat");
-import Billboard				= require("awayjs-core/lib/entities/Billboard");
-import CSSMaterialBase			= require("awayjs-core/lib/materials/CSSMaterialBase");
+import IAsset					= require("awayjs-core/lib/library/IAsset");
+import URLLoaderDataFormat		= require("awayjs-core/lib/net/URLLoaderDataFormat");
 import ParserBase				= require("awayjs-core/lib/parsers/ParserBase");
 import ParserUtils				= require("awayjs-core/lib/parsers/ParserUtils");
-import ImageTexture				= require("awayjs-core/lib/textures/ImageTexture");
-import Texture2DBase			= require("awayjs-core/lib/textures/Texture2DBase");
 import ByteArray				= require("awayjs-core/lib/utils/ByteArray");
 import TextureUtils				= require("awayjs-core/lib/utils/TextureUtils");
+import ImageTexture				= require("awayjs-core/lib/textures/ImageTexture");
+import Texture2DBase			= require("awayjs-core/lib/textures/Texture2DBase");
 
 /**
  * Texture2DParser provides a "parser" for natively supported image types (jpg, png). While it simply loads bytes into
@@ -146,7 +144,7 @@ class Texture2DParser extends ParserBase
 //				this.dispatchEvent(new away.events.AssetEvent(away.events.AssetEvent.TEXTURE_SIZE_ERROR, <IAsset> asset));
 		}
 
-		this._pContent = new Billboard(new CSSMaterialBase(asset));
+		this._pContent = asset;
 
 		return ParserBase.PARSING_DONE;
 

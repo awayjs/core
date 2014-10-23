@@ -1,5 +1,4 @@
-import DisplayObject			= require("awayjs-core/lib/core/base/DisplayObject");
-import IAsset					= require("awayjs-core/lib/core/library/IAsset");
+import IAsset					= require("awayjs-core/lib/library/IAsset");
 import Event					= require("awayjs-core/lib/events/Event");
 
 class LoaderEvent extends Event
@@ -10,7 +9,7 @@ class LoaderEvent extends Event
 	public static RESOURCE_COMPLETE:string = "resourceComplete";
 
 	private _url:string;
-	private _content:DisplayObject;
+	private _content:IAsset;
 	private _assets:IAsset[];
 
 	/**
@@ -20,7 +19,7 @@ class LoaderEvent extends Event
 	 * @param url The url of the loaded resource.
 	 * @param assets The assets of the loaded resource.
 	 */
-	constructor(type:string, url:string = null, content:DisplayObject = null, assets:Array<IAsset> = null)
+	constructor(type:string, url:string = null, content:IAsset = null, assets:Array<IAsset> = null)
 	{
 		super(type);
 
@@ -32,7 +31,7 @@ class LoaderEvent extends Event
 	/**
 	 * The content returned if the resource has been loaded inside a <code>Loader</code> object.
 	 */
-	public get content():DisplayObject
+	public get content():IAsset
 	{
 		return this._content;
 	}

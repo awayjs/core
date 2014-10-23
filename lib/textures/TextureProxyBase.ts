@@ -1,7 +1,7 @@
-import AssetType				= require("awayjs-core/lib/core/library/AssetType");
-import IAsset					= require("awayjs-core/lib/core/library/IAsset");
-import NamedAssetBase			= require("awayjs-core/lib/core/library/NamedAssetBase");
-import ITextureData				= require("awayjs-core/lib/core/pool/ITextureData");
+import AssetType				= require("awayjs-core/lib/library/AssetType");
+import IAsset					= require("awayjs-core/lib/library/IAsset");
+import NamedAssetBase			= require("awayjs-core/lib/library/NamedAssetBase");
+import ITextureData				= require("awayjs-core/lib/pool/ITextureData");
 
 /**
  *

@@ -1,6 +1,6 @@
-﻿import IAsset					= require("awayjs-core/lib/core/library/IAsset");
-import URLLoader				= require("awayjs-core/lib/core/net/URLLoader");
-import URLRequest				= require("awayjs-core/lib/core/net/URLRequest");
+﻿import IAsset					= require("awayjs-core/lib/library/IAsset");
+import URLLoader				= require("awayjs-core/lib/net/URLLoader");
+import URLRequest				= require("awayjs-core/lib/net/URLRequest");
 import ParserBase				= require("awayjs-core/lib/parsers/ParserBase");
 
 /**

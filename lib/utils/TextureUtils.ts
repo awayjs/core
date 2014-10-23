@@ -1,4 +1,4 @@
-import BitmapData				= require("awayjs-core/lib/core/base/BitmapData");
+import BitmapData				= require("awayjs-core/lib/base/BitmapData");
 
 class TextureUtils
 {

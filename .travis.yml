@@ -2,8 +2,7 @@ language: node_js
 node_js:
   - "0.11"
 install:
-  - "npm install -g typescript"
-  - "npm install -g grunt-cli"
+  - "npm install -g gulp"
   - "npm install"
 script:
-  - "grunt lib"
+  - "gulp package"

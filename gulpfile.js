@@ -9,6 +9,8 @@ var map = require('vinyl-map');
 var transform = require('vinyl-transform');
 var exorcist = require('exorcist');
 var sourcemaps = require('gulp-sourcemaps');
+var uglify = require('gulp-uglify');
+var rename = require('gulp-rename');
 
 var typescript = require('gulp-typescript');
 
@@ -66,6 +68,17 @@ gulp.task('package', ['compile'], function(callback){
             .pipe(gulp.dest('./build'))
             .on('end', callback);
     });
+});
+
+gulp.task('package-min', ['package'], function(callback){
+    return gulp.src('./build/awayjs-core.js')
+        .pipe(sourcemaps.init({loadMaps:true}))
+        .pipe(uglify())
+        .pipe(rename(function (path) {
+            path.basename += '.min';
+        }))
+        .pipe(sourcemaps.write('./', {sourceRoot: './'}))
+        .pipe(gulp.dest('./build'));
 });
 
 gulp.task('tests', function () {

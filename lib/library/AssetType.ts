@@ -24,6 +24,7 @@ class AssetType
 	public static STATE_TRANSITION:string = 'stateTransition';
 	public static TEXTURE:string = 'texture';
 	public static TEXTURE_PROJECTOR:string = 'textureProjector';
+	public static TIMELINE:string = 'timeline';
 }
 
 export = AssetType;

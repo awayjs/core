@@ -7299,6 +7299,7 @@ var AssetType = (function () {
     AssetType.STATE_TRANSITION = 'stateTransition';
     AssetType.TEXTURE = 'texture';
     AssetType.TEXTURE_PROJECTOR = 'textureProjector';
+    AssetType.TIMELINE = 'timeline';
     return AssetType;
 })();
 module.exports = AssetType;

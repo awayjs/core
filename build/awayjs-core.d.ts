@@ -4049,6 +4049,7 @@ declare module "awayjs-core/lib/library/AssetType" {
 	    static STATE_TRANSITION: string;
 	    static TEXTURE: string;
 	    static TEXTURE_PROJECTOR: string;
+	    static TIMELINE: string;
 	}
 	export = AssetType;
 	

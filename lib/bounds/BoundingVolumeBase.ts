@@ -10,6 +10,13 @@ class BoundingVolumeBase
 	public _pAabbPoints:Array<number> = new Array<number>();
 	public _pAabbPointsDirty:boolean = true;
 
+	public minX:number;
+	public minY:number;
+	public minZ:number;
+	public maxX:number;
+	public maxY:number;
+	public maxZ:number;
+
 	constructor()
 	{
 		this._aabb = new Box();
@@ -39,8 +46,6 @@ class BoundingVolumeBase
 	{
 		var i:number;
 		var len:number = vertices.length;
-		var minX:number, minY:number, minZ:number;
-		var maxX:number, maxY:number, maxZ:number;
 
 		if (len == 0) {
 			this.nullify();
@@ -49,26 +54,26 @@ class BoundingVolumeBase
 
 		var v:number;
 
-		minX = maxX = vertices[i++];
-		minY = maxY = vertices[i++];
-		minZ = maxZ = vertices[i++];
+		this.minX = this.maxX = vertices[i++];
+		this.minY = this.maxY = vertices[i++];
+		this.minZ = this.maxZ = vertices[i++];
 
 		while (i < len) {
 			v = vertices[i++];
-			if (v < minX)
-				minX = v; else if (v > maxX)
-				maxX = v;
+			if (v < this.minX)
+				this.minX = v; else if (v > this.maxX)
+				this.maxX = v;
 			v = vertices[i++];
-			if (v < minY)
-				minY = v; else if (v > maxY)
-				maxY = v;
+			if (v < this.minY)
+				this.minY = v; else if (v > this.maxY)
+				this.maxY = v;
 			v = vertices[i++];
-			if (v < minZ)
-				minZ = v; else if (v > maxZ)
-				maxZ = v;
+			if (v < this.minZ)
+				this.minZ = v; else if (v > this.maxZ)
+				this.maxZ = v;
 		}
 
-		this.fromExtremes(minX, minY, minZ, maxX, maxY, maxZ);
+		this.fromExtremes(this.minX, this.minY, this.minZ, this.maxX, this.maxY, this.maxZ);
 	}
 
 	public fromSphere(center:Vector3D, radius:number)
@@ -114,37 +119,37 @@ class BoundingVolumeBase
 
 	public pUpdateAABBPoints()
 	{
-		var minX:number = this._aabb.x;
-		var minY:number = this._aabb.y - this._aabb.height;
-		var minZ:number = this._aabb.z;
-		var maxX:number = this._aabb.x + this._aabb.width;
-		var maxY:number = this._aabb.y;
-		var maxZ:number = this._aabb.z + this._aabb.depth;
+		this.minX = this._aabb.x;
+		this.minY = this._aabb.y - this._aabb.height;
+		this.minZ = this._aabb.z;
+		this.maxX = this._aabb.x + this._aabb.width;
+		this.maxY = this._aabb.y;
+		this.maxZ = this._aabb.z + this._aabb.depth;
 
-		this._pAabbPoints[0] = minX;
-		this._pAabbPoints[1] = minY;
-		this._pAabbPoints[2] = minZ;
-		this._pAabbPoints[3] = maxX;
-		this._pAabbPoints[4] = minY;
-		this._pAabbPoints[5] = minZ;
-		this._pAabbPoints[6] = minX;
-		this._pAabbPoints[7] = maxY;
-		this._pAabbPoints[8] = minZ;
-		this._pAabbPoints[9] = maxX;
-		this._pAabbPoints[10] = maxY;
-		this._pAabbPoints[11] = minZ;
-		this._pAabbPoints[12] = minX;
-		this._pAabbPoints[13] = minY;
-		this._pAabbPoints[14] = maxZ;
-		this._pAabbPoints[15] = maxX;
-		this._pAabbPoints[16] = minY;
-		this._pAabbPoints[17] = maxZ;
-		this._pAabbPoints[18] = minX;
-		this._pAabbPoints[19] = maxY;
-		this._pAabbPoints[20] = maxZ;
-		this._pAabbPoints[21] = maxX;
-		this._pAabbPoints[22] = maxY;
-		this._pAabbPoints[23] = maxZ;
+		this._pAabbPoints[0] = this.minX;
+		this._pAabbPoints[1] = this.minY;
+		this._pAabbPoints[2] = this.minZ;
+		this._pAabbPoints[3] = this.maxX;
+		this._pAabbPoints[4] = this.minY;
+		this._pAabbPoints[5] = this.minZ;
+		this._pAabbPoints[6] = this.minX;
+		this._pAabbPoints[7] = this.maxY;
+		this._pAabbPoints[8] = this.minZ;
+		this._pAabbPoints[9] = this.maxX;
+		this._pAabbPoints[10] = this.maxY;
+		this._pAabbPoints[11] = this.minZ;
+		this._pAabbPoints[12] = this.minX;
+		this._pAabbPoints[13] = this.minY;
+		this._pAabbPoints[14] = this.maxZ;
+		this._pAabbPoints[15] = this.maxX;
+		this._pAabbPoints[16] = this.minY;
+		this._pAabbPoints[17] = this.maxZ;
+		this._pAabbPoints[18] = this.minX;
+		this._pAabbPoints[19] = this.maxY;
+		this._pAabbPoints[20] = this.maxZ;
+		this._pAabbPoints[21] = this.maxX;
+		this._pAabbPoints[22] = this.maxY;
+		this._pAabbPoints[23] = this.maxZ;
 		this._pAabbPointsDirty = false;
 	}
 

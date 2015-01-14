@@ -18,6 +18,18 @@ class AxisAlignedBoundingBox extends BoundingVolumeBase
 	private _halfExtentsY:number = 0;
 	private _halfExtentsZ:number = 0;
 
+	public get centerX():number {
+		return this._centerX;
+	}
+
+	public get centerY():number {
+		return this._centerY;
+	}
+
+	public get centerZ():number {
+		return this._centerZ;
+	}
+
 	/**
 	 * Creates a new <code>AxisAlignedBoundingBox</code> object.
 	 */

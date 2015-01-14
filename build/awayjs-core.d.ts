@@ -1477,6 +1477,7 @@ declare module "awayjs-core/lib/base/BitmapData" {
 	    private _transparent;
 	    private _alpha;
 	    private _locked;
+	    transparent: boolean;
 	    /**
 	     *
 	     * @param width
@@ -1609,6 +1610,7 @@ declare module "awayjs-core/lib/base/BitmapData" {
 	     * convert decimal value to Hex
 	     */
 	    private hexToRGBACSS(d);
+	    clone(): BitmapData;
 	}
 	export = BitmapData;
 	
@@ -2403,6 +2405,12 @@ declare module "awayjs-core/lib/bounds/BoundingVolumeBase" {
 	    _aabb: Box;
 	    _pAabbPoints: number[];
 	    _pAabbPointsDirty: boolean;
+	    minX: number;
+	    minY: number;
+	    minZ: number;
+	    maxX: number;
+	    maxY: number;
+	    maxZ: number;
 	    constructor();
 	    aabb: Box;
 	    aabbPoints: number[];
@@ -2438,6 +2446,9 @@ declare module "awayjs-core/lib/bounds/AxisAlignedBoundingBox" {
 	    private _halfExtentsX;
 	    private _halfExtentsY;
 	    private _halfExtentsZ;
+	    centerX: number;
+	    centerY: number;
+	    centerZ: number;
 	    /**
 	     * Creates a new <code>AxisAlignedBoundingBox</code> object.
 	     */

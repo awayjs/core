@@ -46,6 +46,13 @@ var BitmapData = (function () {
             this.fillRect(this._rect, fillColor);
         }
     }
+    Object.defineProperty(BitmapData.prototype, "transparent", {
+        get: function () {
+            return this._transparent;
+        },
+        enumerable: true,
+        configurable: true
+    });
     /**
      *
      */
@@ -451,6 +458,11 @@ var BitmapData = (function () {
         }
         return 'rgba(' + argb[1] + ',' + argb[2] + ',' + argb[3] + ',' + argb[0] / 255 + ')';
     };
+    BitmapData.prototype.clone = function () {
+        var t = new BitmapData(this.width, this.height, this.transparent);
+        t.draw(this);
+        return t;
+    };
     return BitmapData;
 })();
 module.exports = BitmapData;
@@ -485,6 +497,27 @@ var AxisAlignedBoundingBox = (function (_super) {
         this._halfExtentsY = 0;
         this._halfExtentsZ = 0;
     }
+    Object.defineProperty(AxisAlignedBoundingBox.prototype, "centerX", {
+        get: function () {
+            return this._centerX;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(AxisAlignedBoundingBox.prototype, "centerY", {
+        get: function () {
+            return this._centerY;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(AxisAlignedBoundingBox.prototype, "centerZ", {
+        get: function () {
+            return this._centerZ;
+        },
+        enumerable: true,
+        configurable: true
+    });
     /**
      * @inheritDoc
      */
@@ -946,34 +979,32 @@ var BoundingVolumeBase = (function () {
     BoundingVolumeBase.prototype.fromVertices = function (vertices) {
         var i;
         var len = vertices.length;
-        var minX, minY, minZ;
-        var maxX, maxY, maxZ;
         if (len == 0) {
             this.nullify();
             return;
         }
         var v;
-        minX = maxX = vertices[i++];
-        minY = maxY = vertices[i++];
-        minZ = maxZ = vertices[i++];
+        this.minX = this.maxX = vertices[i++];
+        this.minY = this.maxY = vertices[i++];
+        this.minZ = this.maxZ = vertices[i++];
         while (i < len) {
             v = vertices[i++];
-            if (v < minX)
-                minX = v;
-            else if (v > maxX)
-                maxX = v;
+            if (v < this.minX)
+                this.minX = v;
+            else if (v > this.maxX)
+                this.maxX = v;
             v = vertices[i++];
-            if (v < minY)
-                minY = v;
-            else if (v > maxY)
-                maxY = v;
+            if (v < this.minY)
+                this.minY = v;
+            else if (v > this.maxY)
+                this.maxY = v;
             v = vertices[i++];
-            if (v < minZ)
-                minZ = v;
-            else if (v > maxZ)
-                maxZ = v;
+            if (v < this.minZ)
+                this.minZ = v;
+            else if (v > this.maxZ)
+                this.maxZ = v;
         }
-        this.fromExtremes(minX, minY, minZ, maxX, maxY, maxZ);
+        this.fromExtremes(this.minX, this.minY, this.minZ, this.maxX, this.maxY, this.maxZ);
     };
     BoundingVolumeBase.prototype.fromSphere = function (center, radius) {
         this.fromExtremes(center.x - radius, center.y - radius, center.z - radius, center.x + radius, center.y + radius, center.z + radius);
@@ -1003,36 +1034,36 @@ var BoundingVolumeBase = (function () {
         return false;
     };
     BoundingVolumeBase.prototype.pUpdateAABBPoints = function () {
-        var minX = this._aabb.x;
-        var minY = this._aabb.y - this._aabb.height;
-        var minZ = this._aabb.z;
-        var maxX = this._aabb.x + this._aabb.width;
-        var maxY = this._aabb.y;
-        var maxZ = this._aabb.z + this._aabb.depth;
-        this._pAabbPoints[0] = minX;
-        this._pAabbPoints[1] = minY;
-        this._pAabbPoints[2] = minZ;
-        this._pAabbPoints[3] = maxX;
-        this._pAabbPoints[4] = minY;
-        this._pAabbPoints[5] = minZ;
-        this._pAabbPoints[6] = minX;
-        this._pAabbPoints[7] = maxY;
-        this._pAabbPoints[8] = minZ;
-        this._pAabbPoints[9] = maxX;
-        this._pAabbPoints[10] = maxY;
-        this._pAabbPoints[11] = minZ;
-        this._pAabbPoints[12] = minX;
-        this._pAabbPoints[13] = minY;
-        this._pAabbPoints[14] = maxZ;
-        this._pAabbPoints[15] = maxX;
-        this._pAabbPoints[16] = minY;
-        this._pAabbPoints[17] = maxZ;
-        this._pAabbPoints[18] = minX;
-        this._pAabbPoints[19] = maxY;
-        this._pAabbPoints[20] = maxZ;
-        this._pAabbPoints[21] = maxX;
-        this._pAabbPoints[22] = maxY;
-        this._pAabbPoints[23] = maxZ;
+        this.minX = this._aabb.x;
+        this.minY = this._aabb.y - this._aabb.height;
+        this.minZ = this._aabb.z;
+        this.maxX = this._aabb.x + this._aabb.width;
+        this.maxY = this._aabb.y;
+        this.maxZ = this._aabb.z + this._aabb.depth;
+        this._pAabbPoints[0] = this.minX;
+        this._pAabbPoints[1] = this.minY;
+        this._pAabbPoints[2] = this.minZ;
+        this._pAabbPoints[3] = this.maxX;
+        this._pAabbPoints[4] = this.minY;
+        this._pAabbPoints[5] = this.minZ;
+        this._pAabbPoints[6] = this.minX;
+        this._pAabbPoints[7] = this.maxY;
+        this._pAabbPoints[8] = this.minZ;
+        this._pAabbPoints[9] = this.maxX;
+        this._pAabbPoints[10] = this.maxY;
+        this._pAabbPoints[11] = this.minZ;
+        this._pAabbPoints[12] = this.minX;
+        this._pAabbPoints[13] = this.minY;
+        this._pAabbPoints[14] = this.maxZ;
+        this._pAabbPoints[15] = this.maxX;
+        this._pAabbPoints[16] = this.minY;
+        this._pAabbPoints[17] = this.maxZ;
+        this._pAabbPoints[18] = this.minX;
+        this._pAabbPoints[19] = this.maxY;
+        this._pAabbPoints[20] = this.maxZ;
+        this._pAabbPoints[21] = this.maxX;
+        this._pAabbPoints[22] = this.maxY;
+        this._pAabbPoints[23] = this.maxZ;
         this._pAabbPointsDirty = false;
     };
     BoundingVolumeBase.prototype.classifyToPlane = function (plane) {

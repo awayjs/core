@@ -18,6 +18,9 @@ class BitmapData
 	private _alpha:number = 0;
 	private _locked:boolean = false;
 
+	public get transparent():boolean {
+		return this._transparent;
+	}
 
 	/**
 	 *
@@ -569,6 +572,12 @@ class BitmapData
 		}
 
 		return 'rgba(' + argb[1] + ',' + argb[2] + ',' + argb[3] + ',' + argb[0]/255 + ')';
+	}
+
+	public clone():BitmapData {
+		var t:BitmapData = new BitmapData(this.width, this.height, this.transparent);
+		t.draw(this);
+		return t;
 	}
 }
 

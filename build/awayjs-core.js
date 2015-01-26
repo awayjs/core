@@ -28,7 +28,6 @@ var BitmapData = (function () {
     function BitmapData(width, height, transparent, fillColor) {
         if (transparent === void 0) { transparent = true; }
         if (fillColor === void 0) { fillColor = null; }
-        this._alpha = 0;
         this._locked = false;
         this._transparent = transparent;
         this._imageCanvas = document.createElement("canvas");
@@ -36,15 +35,8 @@ var BitmapData = (function () {
         this._imageCanvas.height = height;
         this._context = this._imageCanvas.getContext("2d");
         this._rect = new Rectangle(0, 0, width, height);
-        if (fillColor != null) {
-            if (this._transparent) {
-                this._alpha = ColorUtils.float32ColorToARGB(fillColor)[0] / 255;
-            }
-            else {
-                this._alpha = 1;
-            }
+        if (fillColor != null)
             this.fillRect(this._rect, fillColor);
-        }
     }
     Object.defineProperty(BitmapData.prototype, "transparent", {
         get: function () {
@@ -211,13 +203,11 @@ var BitmapData = (function () {
             //      1) copy image data back to canvas
             //      2) draw object
             //      3) read _imageData back out
-            if (this._imageData) {
+            if (this._imageData)
                 this._context.putImageData(this._imageData, 0, 0); // at coords 0,0
-            }
             this._drawImage(img, sourceRect, destRect);
-            if (this._imageData) {
+            if (this._imageData)
                 this._imageData = this._context.getImageData(0, 0, this._rect.width, this._rect.height);
-            }
         }
         else {
             this._drawImage(img, sourceRect, destRect);
@@ -236,13 +226,11 @@ var BitmapData = (function () {
             //      1) copy image data back to canvas
             //      2) draw object
             //      3) read _imageData back out
-            if (this._imageData) {
+            if (this._imageData)
                 this._context.putImageData(this._imageData, 0, 0); // at coords 0,0
-            }
             this._copyPixels(bmpd, sourceRect, destRect);
-            if (this._imageData) {
+            if (this._imageData)
                 this._imageData = this._context.getImageData(0, 0, this._rect.width, this._rect.height);
-            }
         }
         else {
             this._copyPixels(bmpd, sourceRect, destRect);
@@ -270,13 +258,29 @@ var BitmapData = (function () {
             //      3) read _imageData back out
             if (this._imageData)
                 this._context.putImageData(this._imageData, 0, 0); // at coords 0,0
-            this._context.fillStyle = this.hexToRGBACSS(color);
-            this._context.fillRect(rect.x, rect.y, rect.width, rect.height);
+            this._fillRect(rect, color);
             if (this._imageData)
                 this._imageData = this._context.getImageData(0, 0, this._rect.width, this._rect.height);
         }
         else {
-            this._context.fillStyle = this.hexToRGBACSS(color);
+            this._fillRect(rect, color);
+        }
+    };
+    /**
+     *
+     * @param rect
+     * @param color
+     */
+    BitmapData.prototype._fillRect = function (rect, color) {
+        if (color == 0x0 && this._transparent) {
+            this._context.clearRect(rect.x, rect.y, rect.width, rect.height);
+        }
+        else {
+            var argb = ColorUtils.float32ColorToARGB(color);
+            if (this._transparent)
+                this._context.fillStyle = 'rgba(' + argb[1] + ',' + argb[2] + ',' + argb[3] + ',' + argb[0] / 255 + ')';
+            else
+                this._context.fillStyle = 'rgba(' + argb[1] + ',' + argb[2] + ',' + argb[3] + ',1)';
             this._context.fillRect(rect.x, rect.y, rect.width, rect.height);
         }
     };
@@ -446,18 +450,6 @@ var BitmapData = (function () {
         enumerable: true,
         configurable: true
     });
-    // Private
-    /**
-     * convert decimal value to Hex
-     */
-    BitmapData.prototype.hexToRGBACSS = function (d) {
-        var argb = ColorUtils.float32ColorToARGB(d);
-        if (this._transparent == false) {
-            argb[0] = 1;
-            return 'rgba(' + argb[1] + ',' + argb[2] + ',' + argb[3] + ',' + argb[0] + ')';
-        }
-        return 'rgba(' + argb[1] + ',' + argb[2] + ',' + argb[3] + ',' + argb[0] / 255 + ')';
-    };
     BitmapData.prototype.clone = function () {
         var t = new BitmapData(this.width, this.height, this.transparent);
         t.draw(this);

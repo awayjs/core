@@ -1,6 +1,6 @@
 {
   "name": "awayjs-core",
-  "version": "0.2.4",
+  "version": "0.2.5",
   "description": "AwayJS core classes",
   "url": "http://www.away3d.com",
   "devDependencies": {

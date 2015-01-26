@@ -15,10 +15,10 @@ class BitmapData
 	private _imageData:ImageData;
 	private _rect:Rectangle;
 	private _transparent:boolean;
-	private _alpha:number = 0;
 	private _locked:boolean = false;
 
-	public get transparent():boolean {
+	public get transparent():boolean
+	{
 		return this._transparent;
 	}
 
@@ -31,7 +31,6 @@ class BitmapData
 	 */
 	constructor(width:number, height:number, transparent:boolean = true, fillColor:number = null)
 	{
-
 		this._transparent = transparent;
 		this._imageCanvas = <HTMLCanvasElement> document.createElement("canvas");
 		this._imageCanvas.width = width;
@@ -39,18 +38,8 @@ class BitmapData
 		this._context = this._imageCanvas.getContext("2d");
 		this._rect = new Rectangle(0, 0, width, height);
 
-		if (fillColor != null) {
-
-			if (this._transparent) {
-				this._alpha = ColorUtils.float32ColorToARGB(fillColor)[0]/255;
-			} else {
-				this._alpha = 1;
-			}
-
+		if (fillColor != null)
 			this.fillRect(this._rect, fillColor);
-
-		}
-
 	}
 
 	/**
@@ -260,15 +249,13 @@ class BitmapData
 			//      2) draw object
 			//      3) read _imageData back out
 
-			if (this._imageData) {
+			if (this._imageData)
 				this._context.putImageData(this._imageData, 0, 0); // at coords 0,0
-			}
 
 			this._drawImage(img, sourceRect, destRect);
 
-			if (this._imageData) {
+			if (this._imageData)
 				this._imageData = this._context.getImageData(0, 0, this._rect.width, this._rect.height);
-			}
 
 		} else {
 			this._drawImage(img, sourceRect, destRect)
@@ -304,15 +291,14 @@ class BitmapData
 			//      2) draw object
 			//      3) read _imageData back out
 
-			if (this._imageData) {
+			if (this._imageData)
 				this._context.putImageData(this._imageData, 0, 0); // at coords 0,0
-			}
 
 			this._copyPixels(bmpd, sourceRect, destRect);
 
-			if (this._imageData) {
+			if (this._imageData)
 				this._imageData = this._context.getImageData(0, 0, this._rect.width, this._rect.height);
-			}
+
 		} else {
 			this._copyPixels(bmpd, sourceRect, destRect);
 		}
@@ -350,13 +336,33 @@ class BitmapData
 			if (this._imageData)
 				this._context.putImageData(this._imageData, 0, 0); // at coords 0,0
 
-			this._context.fillStyle = this.hexToRGBACSS(color);
-			this._context.fillRect(rect.x, rect.y, rect.width, rect.height);
+			this._fillRect(rect, color);
 
 			if (this._imageData)
 				this._imageData = this._context.getImageData(0, 0, this._rect.width, this._rect.height);
+		}
+		else {
+			this._fillRect(rect, color);
+		}
+	}
+
+	/**
+	 *
+	 * @param rect
+	 * @param color
+	 */
+	private _fillRect(rect:Rectangle, color:number)
+	{
+		if (color == 0x0 && this._transparent) {
+			this._context.clearRect(rect.x, rect.y, rect.width, rect.height);
 		} else {
-			this._context.fillStyle = this.hexToRGBACSS(color);
+			var argb:number[] = ColorUtils.float32ColorToARGB(color);
+
+			if (this._transparent)
+				this._context.fillStyle = 'rgba(' + argb[1] + ',' + argb[2] + ',' + argb[3] + ',' + argb[0]/255 + ')';
+			else
+				this._context.fillStyle = 'rgba(' + argb[1] + ',' + argb[2] + ',' + argb[3] + ',1)';
+
 			this._context.fillRect(rect.x, rect.y, rect.width, rect.height);
 		}
 	}
@@ -400,7 +406,7 @@ class BitmapData
 			if (matrix != null)
 				this._context.setTransform(matrix.a, matrix.b, matrix.c, matrix.d, matrix.tx, matrix.ty);
 
-			this._context.drawImage(source.canvas, 0, 0)
+			this._context.drawImage(source.canvas, 0, 0);
 			this._context.restore();
 
 		} else if (source instanceof HTMLImageElement) {
@@ -409,7 +415,7 @@ class BitmapData
 			if (matrix != null)
 				this._context.setTransform(matrix.a, matrix.b, matrix.c, matrix.d, matrix.tx, matrix.ty);
 
-			this._context.drawImage(source, 0, 0)
+			this._context.drawImage(source, 0, 0);
 			this._context.restore();
 		}
 
@@ -554,24 +560,6 @@ class BitmapData
 	public get context():CanvasRenderingContext2D
 	{
 		return this._context;
-	}
-
-	// Private
-
-	/**
-	 * convert decimal value to Hex
-	 */
-	private hexToRGBACSS(d:number):string
-	{
-		var argb:number[] = ColorUtils.float32ColorToARGB(d);
-
-		if (this._transparent == false) {
-			argb[0] = 1;
-
-			return 'rgba(' + argb[1] + ',' + argb[2] + ',' + argb[3] + ',' + argb[0] + ')';
-		}
-
-		return 'rgba(' + argb[1] + ',' + argb[2] + ',' + argb[3] + ',' + argb[0]/255 + ')';
 	}
 
 	public clone():BitmapData {

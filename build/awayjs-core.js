@@ -761,7 +761,9 @@ var AxisAlignedBoundingBox = (function (_super) {
         this._halfExtentsX = hx * m11 + hy * m12 + hz * m13;
         this._halfExtentsY = hx * m21 + hy * m22 + hz * m23;
         this._halfExtentsZ = hx * m31 + hy * m32 + hz * m33;
-        this._aabb.width = this._aabb.height = this._aabb.depth = this._halfExtentsX * 2;
+        this._aabb.width = this._halfExtentsX * 2;
+        this._aabb.height = this._halfExtentsY * 2;
+        this._aabb.depth = this._halfExtentsZ * 2;
         this._aabb.x = this._centerX - this._halfExtentsX;
         this._aabb.y = this._centerY + this._halfExtentsY;
         this._aabb.z = this._centerZ - this._halfExtentsZ;
@@ -3193,6 +3195,8 @@ var Matrix3D = (function () {
         return true;
     };
     Matrix3D.prototype.transformVector = function (v) {
+        if (v == null)
+            return new Vector3D();
         var x = v.x;
         var y = v.y;
         var z = v.z;

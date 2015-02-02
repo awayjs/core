@@ -2534,6 +2534,50 @@ declare module "awayjs-core/lib/bounds/NullBounds" {
 	export = NullBounds;
 	
 }
+declare module "awayjs-core/lib/errors/DocumentError" {
+	import Error = require("awayjs-core/lib/errors/Error");
+	class DocumentError extends Error {
+	    static DOCUMENT_DOES_NOT_EXIST: string;
+	    constructor(message?: string, id?: number);
+	}
+	export = DocumentError;
+	
+}
+declare module "awayjs-core/lib/errors/PartialImplementationError" {
+	import Error = require("awayjs-core/lib/errors/Error");
+	/**
+	 * AbstractMethodError is thrown when an abstract method is called. The method in question should be overridden
+	 * by a concrete subclass.
+	 */
+	class PartialImplementationError extends Error {
+	    /**
+	     * Create a new AbstractMethodError.
+	     * @param message An optional message to override the default error message.
+	     * @param id The id of the error.
+	     */
+	    constructor(dependency?: string, id?: number);
+	}
+	export = PartialImplementationError;
+	
+}
+declare module "awayjs-core/lib/errors/RangeError" {
+	import Error = require("awayjs-core/lib/errors/Error");
+	/**
+	 * RangeError is thrown when an index is accessed out of range of the number of
+	 * available indices on an Array.
+	 */
+	class RangeError extends Error {
+	    /**
+	     * Create a new RangeError.
+	     *
+	     * @param message An optional message to override the default error message.
+	     * @param id The id of the error.
+	     */
+	    constructor(message?: string, id?: number);
+	}
+	export = RangeError;
+	
+}
 declare module "awayjs-core/lib/events/Event" {
 	class Event {
 	    static COMPLETE: string;
@@ -2893,50 +2937,6 @@ declare module "awayjs-core/lib/events/TimerEvent" {
 	    constructor(type: string);
 	}
 	export = TimerEvent;
-	
-}
-declare module "awayjs-core/lib/errors/DocumentError" {
-	import Error = require("awayjs-core/lib/errors/Error");
-	class DocumentError extends Error {
-	    static DOCUMENT_DOES_NOT_EXIST: string;
-	    constructor(message?: string, id?: number);
-	}
-	export = DocumentError;
-	
-}
-declare module "awayjs-core/lib/errors/PartialImplementationError" {
-	import Error = require("awayjs-core/lib/errors/Error");
-	/**
-	 * AbstractMethodError is thrown when an abstract method is called. The method in question should be overridden
-	 * by a concrete subclass.
-	 */
-	class PartialImplementationError extends Error {
-	    /**
-	     * Create a new AbstractMethodError.
-	     * @param message An optional message to override the default error message.
-	     * @param id The id of the error.
-	     */
-	    constructor(dependency?: string, id?: number);
-	}
-	export = PartialImplementationError;
-	
-}
-declare module "awayjs-core/lib/errors/RangeError" {
-	import Error = require("awayjs-core/lib/errors/Error");
-	/**
-	 * RangeError is thrown when an index is accessed out of range of the number of
-	 * available indices on an Array.
-	 */
-	class RangeError extends Error {
-	    /**
-	     * Create a new RangeError.
-	     *
-	     * @param message An optional message to override the default error message.
-	     * @param id The id of the error.
-	     */
-	    constructor(message?: string, id?: number);
-	}
-	export = RangeError;
 	
 }
 declare module "awayjs-core/lib/geom/MathConsts" {
@@ -5284,6 +5284,101 @@ declare module "awayjs-core/lib/projections/OrthographicProjection" {
 	export = OrthographicProjection;
 	
 }
+declare module "awayjs-core/lib/textures/BitmapCubeTexture" {
+	import BitmapData = require("awayjs-core/lib/base/BitmapData");
+	import CubeTextureBase = require("awayjs-core/lib/textures/CubeTextureBase");
+	class BitmapCubeTexture extends CubeTextureBase {
+	    private _bitmapDatas;
+	    /**
+	     * The texture on the cube's right face.
+	     */
+	    positiveX: BitmapData;
+	    /**
+	     * The texture on the cube's left face.
+	     */
+	    negativeX: BitmapData;
+	    /**
+	     * The texture on the cube's top face.
+	     */
+	    positiveY: BitmapData;
+	    /**
+	     * The texture on the cube's bottom face.
+	     */
+	    negativeY: BitmapData;
+	    /**
+	     * The texture on the cube's far face.
+	     */
+	    positiveZ: BitmapData;
+	    /**
+	     * The texture on the cube's near face.
+	     */
+	    negativeZ: BitmapData;
+	    constructor(posX: BitmapData, negX: BitmapData, posY: BitmapData, negY: BitmapData, posZ: BitmapData, negZ: BitmapData, generateMipmaps?: boolean);
+	    /**
+	     *
+	     * @param value
+	     * @private
+	     */
+	    private _testSize(value);
+	    dispose(): void;
+	    _iGetTextureData(side: number): BitmapData;
+	}
+	export = BitmapCubeTexture;
+	
+}
+declare module "awayjs-core/lib/textures/BitmapTexture" {
+	import BitmapData = require("awayjs-core/lib/base/BitmapData");
+	import Texture2DBase = require("awayjs-core/lib/textures/Texture2DBase");
+	class BitmapTexture extends Texture2DBase {
+	    _bitmapData: BitmapData;
+	    /**
+	     *
+	     * @returns {BitmapData}
+	     */
+	    bitmapData: BitmapData;
+	    constructor(bitmapData: BitmapData, generateMipmaps?: boolean);
+	    dispose(): void;
+	    _iGetTextureData(): BitmapData;
+	}
+	export = BitmapTexture;
+	
+}
+declare module "awayjs-core/lib/textures/RenderTexture" {
+	import Texture2DBase = require("awayjs-core/lib/textures/Texture2DBase");
+	class RenderTexture extends Texture2DBase {
+	    /**
+	     *
+	     * @returns {number}
+	     */
+	    width: number;
+	    /**
+	     *
+	     * @returns {number}
+	     */
+	    height: number;
+	    constructor(width: number, height: number);
+	}
+	export = RenderTexture;
+	
+}
+declare module "awayjs-core/lib/textures/SpecularBitmapTexture" {
+	import BitmapData = require("awayjs-core/lib/base/BitmapData");
+	import BitmapTexture = require("awayjs-core/lib/textures/BitmapTexture");
+	/**
+	 * A convenience texture that encodes a specular map in the red channel, and the gloss map in the green channel, as expected by BasicSpecularMapMethod
+	 */
+	class SpecularBitmapTexture extends BitmapTexture {
+	    private _specularMap;
+	    private _glossMap;
+	    constructor(specularMap?: BitmapData, glossMap?: BitmapData, generateMipmaps?: boolean);
+	    specularMap: BitmapData;
+	    glossMap: BitmapData;
+	    private _testSize();
+	    _iGetTextureData(): BitmapData;
+	}
+	export = SpecularBitmapTexture;
+	
+}
 declare module "awayjs-core/lib/ui/Keyboard" {
 	class Keyboard {
 	    /**
@@ -6105,101 +6200,6 @@ declare module "awayjs-core/lib/ui/Keyboard" {
 	    static Z: number;
 	}
 	export = Keyboard;
-	
-}
-declare module "awayjs-core/lib/textures/BitmapCubeTexture" {
-	import BitmapData = require("awayjs-core/lib/base/BitmapData");
-	import CubeTextureBase = require("awayjs-core/lib/textures/CubeTextureBase");
-	class BitmapCubeTexture extends CubeTextureBase {
-	    private _bitmapDatas;
-	    /**
-	     * The texture on the cube's right face.
-	     */
-	    positiveX: BitmapData;
-	    /**
-	     * The texture on the cube's left face.
-	     */
-	    negativeX: BitmapData;
-	    /**
-	     * The texture on the cube's top face.
-	     */
-	    positiveY: BitmapData;
-	    /**
-	     * The texture on the cube's bottom face.
-	     */
-	    negativeY: BitmapData;
-	    /**
-	     * The texture on the cube's far face.
-	     */
-	    positiveZ: BitmapData;
-	    /**
-	     * The texture on the cube's near face.
-	     */
-	    negativeZ: BitmapData;
-	    constructor(posX: BitmapData, negX: BitmapData, posY: BitmapData, negY: BitmapData, posZ: BitmapData, negZ: BitmapData, generateMipmaps?: boolean);
-	    /**
-	     *
-	     * @param value
-	     * @private
-	     */
-	    private _testSize(value);
-	    dispose(): void;
-	    _iGetTextureData(side: number): BitmapData;
-	}
-	export = BitmapCubeTexture;
-	
-}
-declare module "awayjs-core/lib/textures/BitmapTexture" {
-	import BitmapData = require("awayjs-core/lib/base/BitmapData");
-	import Texture2DBase = require("awayjs-core/lib/textures/Texture2DBase");
-	class BitmapTexture extends Texture2DBase {
-	    _bitmapData: BitmapData;
-	    /**
-	     *
-	     * @returns {BitmapData}
-	     */
-	    bitmapData: BitmapData;
-	    constructor(bitmapData: BitmapData, generateMipmaps?: boolean);
-	    dispose(): void;
-	    _iGetTextureData(): BitmapData;
-	}
-	export = BitmapTexture;
-	
-}
-declare module "awayjs-core/lib/textures/RenderTexture" {
-	import Texture2DBase = require("awayjs-core/lib/textures/Texture2DBase");
-	class RenderTexture extends Texture2DBase {
-	    /**
-	     *
-	     * @returns {number}
-	     */
-	    width: number;
-	    /**
-	     *
-	     * @returns {number}
-	     */
-	    height: number;
-	    constructor(width: number, height: number);
-	}
-	export = RenderTexture;
-	
-}
-declare module "awayjs-core/lib/textures/SpecularBitmapTexture" {
-	import BitmapData = require("awayjs-core/lib/base/BitmapData");
-	import BitmapTexture = require("awayjs-core/lib/textures/BitmapTexture");
-	/**
-	 * A convenience texture that encodes a specular map in the red channel, and the gloss map in the green channel, as expected by BasicSpecularMapMethod
-	 */
-	class SpecularBitmapTexture extends BitmapTexture {
-	    private _specularMap;
-	    private _glossMap;
-	    constructor(specularMap?: BitmapData, glossMap?: BitmapData, generateMipmaps?: boolean);
-	    specularMap: BitmapData;
-	    glossMap: BitmapData;
-	    private _testSize();
-	    _iGetTextureData(): BitmapData;
-	}
-	export = SpecularBitmapTexture;
 	
 }
 declare module "awayjs-core/lib/utils/ByteArrayBuffer" {

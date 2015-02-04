@@ -1,17 +1,4 @@
-require=(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({"awayjs-core/lib/base/BitmapDataChannel":[function(require,module,exports){
-var BitmapDataChannel = (function () {
-    function BitmapDataChannel() {
-    }
-    BitmapDataChannel.ALPHA = 8;
-    BitmapDataChannel.BLUE = 4;
-    BitmapDataChannel.GREEN = 2;
-    BitmapDataChannel.RED = 1;
-    return BitmapDataChannel;
-})();
-module.exports = BitmapDataChannel;
-
-
-},{}],"awayjs-core/lib/base/BitmapData":[function(require,module,exports){
+require=(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 var Rectangle = require("awayjs-core/lib/geom/Rectangle");
 var ColorUtils = require("awayjs-core/lib/utils/ColorUtils");
 /**
@@ -468,485 +455,20 @@ var BitmapData = (function () {
 module.exports = BitmapData;
 
 
-},{"awayjs-core/lib/geom/Rectangle":undefined,"awayjs-core/lib/utils/ColorUtils":undefined}],"awayjs-core/lib/bounds/AxisAlignedBoundingBox":[function(require,module,exports){
-var __extends = this.__extends || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    __.prototype = b.prototype;
-    d.prototype = new __();
-};
-var BoundingVolumeBase = require("awayjs-core/lib/bounds/BoundingVolumeBase");
-var Matrix3DUtils = require("awayjs-core/lib/geom/Matrix3DUtils");
-var PlaneClassification = require("awayjs-core/lib/geom/PlaneClassification");
-var Vector3D = require("awayjs-core/lib/geom/Vector3D");
-/**
- * AxisAlignedBoundingBox represents a bounding box volume that has its planes aligned to the local coordinate axes of the bounded object.
- * This is useful for most meshes.
- */
-var AxisAlignedBoundingBox = (function (_super) {
-    __extends(AxisAlignedBoundingBox, _super);
-    /**
-     * Creates a new <code>AxisAlignedBoundingBox</code> object.
-     */
-    function AxisAlignedBoundingBox() {
-        _super.call(this);
-        this._centerX = 0;
-        this._centerY = 0;
-        this._centerZ = 0;
-        this._halfExtentsX = 0;
-        this._halfExtentsY = 0;
-        this._halfExtentsZ = 0;
+},{"awayjs-core/lib/geom/Rectangle":25,"awayjs-core/lib/utils/ColorUtils":61}],2:[function(require,module,exports){
+var BitmapDataChannel = (function () {
+    function BitmapDataChannel() {
     }
-    Object.defineProperty(AxisAlignedBoundingBox.prototype, "centerX", {
-        get: function () {
-            return this._centerX;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(AxisAlignedBoundingBox.prototype, "centerY", {
-        get: function () {
-            return this._centerY;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(AxisAlignedBoundingBox.prototype, "centerZ", {
-        get: function () {
-            return this._centerZ;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    /**
-     * @inheritDoc
-     */
-    AxisAlignedBoundingBox.prototype.nullify = function () {
-        _super.prototype.nullify.call(this);
-        this._centerX = this._centerY = this._centerZ = 0;
-        this._halfExtentsX = this._halfExtentsY = this._halfExtentsZ = 0;
-    };
-    /**
-     * @inheritDoc
-     */
-    AxisAlignedBoundingBox.prototype.isInFrustum = function (planes, numPlanes) {
-        for (var i = 0; i < numPlanes; ++i) {
-            var plane = planes[i];
-            var a = plane.a;
-            var b = plane.b;
-            var c = plane.c;
-            var flippedExtentX = a < 0 ? -this._halfExtentsX : this._halfExtentsX;
-            var flippedExtentY = b < 0 ? -this._halfExtentsY : this._halfExtentsY;
-            var flippedExtentZ = c < 0 ? -this._halfExtentsZ : this._halfExtentsZ;
-            var projDist = a * (this._centerX + flippedExtentX) + b * (this._centerY + flippedExtentY) + c * (this._centerZ + flippedExtentZ) - plane.d;
-            if (projDist < 0)
-                return false;
-        }
-        return true;
-    };
-    AxisAlignedBoundingBox.prototype.rayIntersection = function (position, direction, targetNormal) {
-        if (this.containsPoint(position))
-            return 0;
-        var px = position.x - this._centerX;
-        var py = position.y - this._centerY;
-        var pz = position.z - this._centerZ;
-        var vx = direction.x;
-        var vy = direction.y;
-        var vz = direction.z;
-        var ix;
-        var iy;
-        var iz;
-        var rayEntryDistance;
-        // ray-plane tests
-        var intersects;
-        if (vx < 0) {
-            rayEntryDistance = (this._halfExtentsX - px) / vx;
-            if (rayEntryDistance > 0) {
-                iy = py + rayEntryDistance * vy;
-                iz = pz + rayEntryDistance * vz;
-                if (iy > -this._halfExtentsY && iy < this._halfExtentsY && iz > -this._halfExtentsZ && iz < this._halfExtentsZ) {
-                    targetNormal.x = 1;
-                    targetNormal.y = 0;
-                    targetNormal.z = 0;
-                    intersects = true;
-                }
-            }
-        }
-        if (!intersects && vx > 0) {
-            rayEntryDistance = (-this._halfExtentsX - px) / vx;
-            if (rayEntryDistance > 0) {
-                iy = py + rayEntryDistance * vy;
-                iz = pz + rayEntryDistance * vz;
-                if (iy > -this._halfExtentsY && iy < this._halfExtentsY && iz > -this._halfExtentsZ && iz < this._halfExtentsZ) {
-                    targetNormal.x = -1;
-                    targetNormal.y = 0;
-                    targetNormal.z = 0;
-                    intersects = true;
-                }
-            }
-        }
-        if (!intersects && vy < 0) {
-            rayEntryDistance = (this._halfExtentsY - py) / vy;
-            if (rayEntryDistance > 0) {
-                ix = px + rayEntryDistance * vx;
-                iz = pz + rayEntryDistance * vz;
-                if (ix > -this._halfExtentsX && ix < this._halfExtentsX && iz > -this._halfExtentsZ && iz < this._halfExtentsZ) {
-                    targetNormal.x = 0;
-                    targetNormal.y = 1;
-                    targetNormal.z = 0;
-                    intersects = true;
-                }
-            }
-        }
-        if (!intersects && vy > 0) {
-            rayEntryDistance = (-this._halfExtentsY - py) / vy;
-            if (rayEntryDistance > 0) {
-                ix = px + rayEntryDistance * vx;
-                iz = pz + rayEntryDistance * vz;
-                if (ix > -this._halfExtentsX && ix < this._halfExtentsX && iz > -this._halfExtentsZ && iz < this._halfExtentsZ) {
-                    targetNormal.x = 0;
-                    targetNormal.y = -1;
-                    targetNormal.z = 0;
-                    intersects = true;
-                }
-            }
-        }
-        if (!intersects && vz < 0) {
-            rayEntryDistance = (this._halfExtentsZ - pz) / vz;
-            if (rayEntryDistance > 0) {
-                ix = px + rayEntryDistance * vx;
-                iy = py + rayEntryDistance * vy;
-                if (iy > -this._halfExtentsY && iy < this._halfExtentsY && ix > -this._halfExtentsX && ix < this._halfExtentsX) {
-                    targetNormal.x = 0;
-                    targetNormal.y = 0;
-                    targetNormal.z = 1;
-                    intersects = true;
-                }
-            }
-        }
-        if (!intersects && vz > 0) {
-            rayEntryDistance = (-this._halfExtentsZ - pz) / vz;
-            if (rayEntryDistance > 0) {
-                ix = px + rayEntryDistance * vx;
-                iy = py + rayEntryDistance * vy;
-                if (iy > -this._halfExtentsY && iy < this._halfExtentsY && ix > -this._halfExtentsX && ix < this._halfExtentsX) {
-                    targetNormal.x = 0;
-                    targetNormal.y = 0;
-                    targetNormal.z = -1;
-                    intersects = true;
-                }
-            }
-        }
-        return intersects ? rayEntryDistance : -1;
-    };
-    /**
-     * @inheritDoc
-     */
-    AxisAlignedBoundingBox.prototype.containsPoint = function (position) {
-        var px = position.x - this._centerX, py = position.y - this._centerY, pz = position.z - this._centerZ;
-        return px <= this._halfExtentsX && px >= -this._halfExtentsX && py <= this._halfExtentsY && py >= -this._halfExtentsY && pz <= this._halfExtentsZ && pz >= -this._halfExtentsZ;
-    };
-    /**
-     * @inheritDoc
-     */
-    AxisAlignedBoundingBox.prototype.fromExtremes = function (minX, minY, minZ, maxX, maxY, maxZ) {
-        this._centerX = (maxX + minX) * .5;
-        this._centerY = (maxY + minY) * .5;
-        this._centerZ = (maxZ + minZ) * .5;
-        this._halfExtentsX = (maxX - minX) * .5;
-        this._halfExtentsY = (maxY - minY) * .5;
-        this._halfExtentsZ = (maxZ - minZ) * .5;
-        _super.prototype.fromExtremes.call(this, minX, minY, minZ, maxX, maxY, maxZ);
-    };
-    /**
-     * @inheritDoc
-     */
-    AxisAlignedBoundingBox.prototype.clone = function () {
-        var clone = new AxisAlignedBoundingBox();
-        clone.fromExtremes(this._aabb.x, this._aabb.y + this._aabb.height, this._aabb.z, this._aabb.x + this._aabb.width, this._aabb.y, this._aabb.z + this._aabb.depth);
-        return clone;
-    };
-    Object.defineProperty(AxisAlignedBoundingBox.prototype, "halfExtentsX", {
-        get: function () {
-            return this._halfExtentsX;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(AxisAlignedBoundingBox.prototype, "halfExtentsY", {
-        get: function () {
-            return this._halfExtentsY;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(AxisAlignedBoundingBox.prototype, "halfExtentsZ", {
-        get: function () {
-            return this._halfExtentsZ;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    /**
-     * Finds the closest point on the bounding volume to another given point. This can be used for maximum error calculations for content within a given bound.
-     * @param point The point for which to find the closest point on the bounding volume
-     * @param target An optional Vector3D to store the result to prevent creating a new object.
-     * @return
-     */
-    AxisAlignedBoundingBox.prototype.closestPointToPoint = function (point, target) {
-        if (target === void 0) { target = null; }
-        var p;
-        if (target == null)
-            target = new Vector3D();
-        p = point.x;
-        if (p < this._aabb.x)
-            p = this._aabb.x;
-        if (p > this._aabb.x + this._aabb.width)
-            p = this._aabb.x + this._aabb.width;
-        target.x = p;
-        p = point.y;
-        if (p < this._aabb.y + this._aabb.height)
-            p = this._aabb.y + this._aabb.height;
-        if (p > this._aabb.y)
-            p = this._aabb.y;
-        target.y = p;
-        p = point.z;
-        if (p < this._aabb.z)
-            p = this._aabb.z;
-        if (p > this._aabb.z + this._aabb.depth)
-            p = this._aabb.z + this._aabb.depth;
-        target.z = p;
-        return target;
-    };
-    AxisAlignedBoundingBox.prototype.classifyToPlane = function (plane) {
-        var a = plane.a;
-        var b = plane.b;
-        var c = plane.c;
-        var centerDistance = a * this._centerX + b * this._centerY + c * this._centerZ - plane.d;
-        if (a < 0)
-            a = -a;
-        if (b < 0)
-            b = -b;
-        if (c < 0)
-            c = -c;
-        var boundOffset = a * this._halfExtentsX + b * this._halfExtentsY + c * this._halfExtentsZ;
-        return centerDistance > boundOffset ? PlaneClassification.FRONT : centerDistance < -boundOffset ? PlaneClassification.BACK : PlaneClassification.INTERSECT;
-    };
-    AxisAlignedBoundingBox.prototype.transformFrom = function (bounds, matrix) {
-        var aabb = bounds;
-        var cx = aabb._centerX;
-        var cy = aabb._centerY;
-        var cz = aabb._centerZ;
-        var raw = Matrix3DUtils.RAW_DATA_CONTAINER;
-        matrix.copyRawDataTo(raw);
-        var m11 = raw[0], m12 = raw[4], m13 = raw[8], m14 = raw[12];
-        var m21 = raw[1], m22 = raw[5], m23 = raw[9], m24 = raw[13];
-        var m31 = raw[2], m32 = raw[6], m33 = raw[10], m34 = raw[14];
-        this._centerX = cx * m11 + cy * m12 + cz * m13 + m14;
-        this._centerY = cx * m21 + cy * m22 + cz * m23 + m24;
-        this._centerZ = cx * m31 + cy * m32 + cz * m33 + m34;
-        if (m11 < 0)
-            m11 = -m11;
-        if (m12 < 0)
-            m12 = -m12;
-        if (m13 < 0)
-            m13 = -m13;
-        if (m21 < 0)
-            m21 = -m21;
-        if (m22 < 0)
-            m22 = -m22;
-        if (m23 < 0)
-            m23 = -m23;
-        if (m31 < 0)
-            m31 = -m31;
-        if (m32 < 0)
-            m32 = -m32;
-        if (m33 < 0)
-            m33 = -m33;
-        var hx = aabb._halfExtentsX;
-        var hy = aabb._halfExtentsY;
-        var hz = aabb._halfExtentsZ;
-        this._halfExtentsX = hx * m11 + hy * m12 + hz * m13;
-        this._halfExtentsY = hx * m21 + hy * m22 + hz * m23;
-        this._halfExtentsZ = hx * m31 + hy * m32 + hz * m33;
-        this._aabb.width = this._aabb.height = this._aabb.depth = this._halfExtentsX * 2;
-        this._aabb.x = this._centerX - this._halfExtentsX;
-        this._aabb.y = this._centerY + this._halfExtentsY;
-        this._aabb.z = this._centerZ - this._halfExtentsZ;
-    };
-    return AxisAlignedBoundingBox;
-})(BoundingVolumeBase);
-module.exports = AxisAlignedBoundingBox;
+    BitmapDataChannel.ALPHA = 8;
+    BitmapDataChannel.BLUE = 4;
+    BitmapDataChannel.GREEN = 2;
+    BitmapDataChannel.RED = 1;
+    return BitmapDataChannel;
+})();
+module.exports = BitmapDataChannel;
 
 
-},{"awayjs-core/lib/bounds/BoundingVolumeBase":undefined,"awayjs-core/lib/geom/Matrix3DUtils":undefined,"awayjs-core/lib/geom/PlaneClassification":undefined,"awayjs-core/lib/geom/Vector3D":undefined}],"awayjs-core/lib/bounds/BoundingSphere":[function(require,module,exports){
-var __extends = this.__extends || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    __.prototype = b.prototype;
-    d.prototype = new __();
-};
-var BoundingVolumeBase = require("awayjs-core/lib/bounds/BoundingVolumeBase");
-var PlaneClassification = require("awayjs-core/lib/geom/PlaneClassification");
-var Vector3D = require("awayjs-core/lib/geom/Vector3D");
-var BoundingSphere = (function (_super) {
-    __extends(BoundingSphere, _super);
-    function BoundingSphere() {
-        _super.call(this);
-        this._radius = 0;
-        this._centerX = 0;
-        this._centerY = 0;
-        this._centerZ = 0;
-    }
-    Object.defineProperty(BoundingSphere.prototype, "radius", {
-        get: function () {
-            return this._radius;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    BoundingSphere.prototype.nullify = function () {
-        _super.prototype.nullify.call(this);
-        this._centerX = this._centerY = this._centerZ = 0;
-        this._radius = 0;
-    };
-    BoundingSphere.prototype.isInFrustum = function (planes, numPlanes) {
-        for (var i = 0; i < numPlanes; ++i) {
-            var plane = planes[i];
-            var flippedExtentX = plane.a < 0 ? -this._radius : this._radius;
-            var flippedExtentY = plane.b < 0 ? -this._radius : this._radius;
-            var flippedExtentZ = plane.c < 0 ? -this._radius : this._radius;
-            var projDist = plane.a * (this._centerX + flippedExtentX) + plane.b * (this._centerY + flippedExtentY) + plane.c * (this._centerZ + flippedExtentZ) - plane.d;
-            if (projDist < 0) {
-                return false;
-            }
-        }
-        return true;
-    };
-    BoundingSphere.prototype.fromSphere = function (center, radius) {
-        this._centerX = center.x;
-        this._centerY = center.y;
-        this._centerZ = center.z;
-        this._radius = radius;
-        this._aabb.width = this._aabb.height = this._aabb.depth = radius * 2;
-        this._aabb.x = this._centerX - radius;
-        this._aabb.y = this._centerY + radius;
-        this._aabb.z = this._centerZ - radius;
-        this._pAabbPointsDirty = true;
-    };
-    BoundingSphere.prototype.fromExtremes = function (minX, minY, minZ, maxX, maxY, maxZ) {
-        this._centerX = (maxX + minX) * .5;
-        this._centerY = (maxY + minY) * .5;
-        this._centerZ = (maxZ + minZ) * .5;
-        var d = maxX - minX;
-        var y = maxY - minY;
-        var z = maxZ - minZ;
-        if (y > d)
-            d = y;
-        if (z > d)
-            d = z;
-        this._radius = d * Math.sqrt(.5);
-        _super.prototype.fromExtremes.call(this, minX, minY, minZ, maxX, maxY, maxZ);
-    };
-    BoundingSphere.prototype.clone = function () {
-        var clone = new BoundingSphere();
-        clone.fromSphere(new Vector3D(this._centerX, this._centerY, this._centerZ), this._radius);
-        return clone;
-    };
-    BoundingSphere.prototype.rayIntersection = function (position, direction, targetNormal) {
-        if (this.containsPoint(position)) {
-            return 0;
-        }
-        var px = position.x - this._centerX, py = position.y - this._centerY, pz = position.z - this._centerZ;
-        var vx = direction.x, vy = direction.y, vz = direction.z;
-        var rayEntryDistance;
-        var a = vx * vx + vy * vy + vz * vz;
-        var b = 2 * (px * vx + py * vy + pz * vz);
-        var c = px * px + py * py + pz * pz - this._radius * this._radius;
-        var det = b * b - 4 * a * c;
-        if (det >= 0) {
-            var sqrtDet = Math.sqrt(det);
-            rayEntryDistance = (-b - sqrtDet) / (2 * a);
-            if (rayEntryDistance >= 0) {
-                targetNormal.x = px + rayEntryDistance * vx;
-                targetNormal.y = py + rayEntryDistance * vy;
-                targetNormal.z = pz + rayEntryDistance * vz;
-                targetNormal.normalize();
-                return rayEntryDistance;
-            }
-        }
-        // ray misses sphere
-        return -1;
-    };
-    BoundingSphere.prototype.containsPoint = function (position) {
-        var px = position.x - this._centerX;
-        var py = position.y - this._centerY;
-        var pz = position.z - this._centerZ;
-        var distance = Math.sqrt(px * px + py * py + pz * pz);
-        return distance <= this._radius;
-    };
-    //@override
-    BoundingSphere.prototype.classifyToPlane = function (plane) {
-        var a = plane.a;
-        var b = plane.b;
-        var c = plane.c;
-        var dd = a * this._centerX + b * this._centerY + c * this._centerZ - plane.d;
-        if (a < 0)
-            a = -a;
-        if (b < 0)
-            b = -b;
-        if (c < 0)
-            c = -c;
-        var rr = (a + b + c) * this._radius;
-        return dd > rr ? PlaneClassification.FRONT : dd < -rr ? PlaneClassification.BACK : PlaneClassification.INTERSECT;
-    };
-    BoundingSphere.prototype.transformFrom = function (bounds, matrix) {
-        var sphere = bounds;
-        var cx = sphere._centerX;
-        var cy = sphere._centerY;
-        var cz = sphere._centerZ;
-        var raw = new Array(16);
-        matrix.copyRawDataTo(raw);
-        var m11 = raw[0], m12 = raw[4], m13 = raw[8], m14 = raw[12];
-        var m21 = raw[1], m22 = raw[5], m23 = raw[9], m24 = raw[13];
-        var m31 = raw[2], m32 = raw[6], m33 = raw[10], m34 = raw[14];
-        this._centerX = cx * m11 + cy * m12 + cz * m13 + m14;
-        this._centerY = cx * m21 + cy * m22 + cz * m23 + m24;
-        this._centerZ = cx * m31 + cy * m32 + cz * m33 + m34;
-        if (m11 < 0)
-            m11 = -m11;
-        if (m12 < 0)
-            m12 = -m12;
-        if (m13 < 0)
-            m13 = -m13;
-        if (m21 < 0)
-            m21 = -m21;
-        if (m22 < 0)
-            m22 = -m22;
-        if (m23 < 0)
-            m23 = -m23;
-        if (m31 < 0)
-            m31 = -m31;
-        if (m32 < 0)
-            m32 = -m32;
-        if (m33 < 0)
-            m33 = -m33;
-        var r = sphere._radius;
-        var rx = m11 + m12 + m13;
-        var ry = m21 + m22 + m23;
-        var rz = m31 + m32 + m33;
-        this._radius = r * Math.sqrt(rx * rx + ry * ry + rz * rz);
-        this._aabb.width = this._aabb.height = this._aabb.depth = this._radius * 2;
-        this._aabb.x = this._centerX - this._radius;
-        this._aabb.y = this._centerY + this._radius;
-        this._aabb.z = this._centerZ - this._radius;
-    };
-    return BoundingSphere;
-})(BoundingVolumeBase);
-module.exports = BoundingSphere;
-
-
-},{"awayjs-core/lib/bounds/BoundingVolumeBase":undefined,"awayjs-core/lib/geom/PlaneClassification":undefined,"awayjs-core/lib/geom/Vector3D":undefined}],"awayjs-core/lib/bounds/BoundingVolumeBase":[function(require,module,exports){
+},{}],3:[function(require,module,exports){
 var Box = require("awayjs-core/lib/geom/Box");
 var AbstractMethodError = require("awayjs-core/lib/errors/AbstractMethodError");
 var BoundingVolumeBase = (function () {
@@ -1077,55 +599,7 @@ var BoundingVolumeBase = (function () {
 module.exports = BoundingVolumeBase;
 
 
-},{"awayjs-core/lib/errors/AbstractMethodError":undefined,"awayjs-core/lib/geom/Box":undefined}],"awayjs-core/lib/bounds/NullBounds":[function(require,module,exports){
-var __extends = this.__extends || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    __.prototype = b.prototype;
-    d.prototype = new __();
-};
-var BoundingVolumeBase = require("awayjs-core/lib/bounds/BoundingVolumeBase");
-var PlaneClassification = require("awayjs-core/lib/geom/PlaneClassification");
-var NullBounds = (function (_super) {
-    __extends(NullBounds, _super);
-    function NullBounds(alwaysIn) {
-        if (alwaysIn === void 0) { alwaysIn = true; }
-        _super.call(this);
-        this._alwaysIn = alwaysIn;
-        this._aabb.width = this._aabb.height = this._aabb.depth = Number.POSITIVE_INFINITY;
-        this._aabb.x = this._aabb.y = this._aabb.z = this._alwaysIn ? Number.NEGATIVE_INFINITY / 2 : Number.POSITIVE_INFINITY;
-    }
-    //@override
-    NullBounds.prototype.clone = function () {
-        return new NullBounds(this._alwaysIn);
-    };
-    //@override
-    NullBounds.prototype.isInFrustum = function (planes, numPlanes) {
-        return this._alwaysIn;
-    };
-    //		//@override
-    //		public fromGeometry(geometry:away.base.Geometry)
-    //		{
-    //		}
-    //@override
-    NullBounds.prototype.fromSphere = function (center, radius) {
-    };
-    //@override
-    NullBounds.prototype.fromExtremes = function (minX, minY, minZ, maxX, maxY, maxZ) {
-    };
-    NullBounds.prototype.classifyToPlane = function (plane) {
-        return PlaneClassification.INTERSECT;
-    };
-    //@override
-    NullBounds.prototype.transformFrom = function (bounds, matrix) {
-        this._alwaysIn = bounds._alwaysIn;
-    };
-    return NullBounds;
-})(BoundingVolumeBase);
-module.exports = NullBounds;
-
-
-},{"awayjs-core/lib/bounds/BoundingVolumeBase":undefined,"awayjs-core/lib/geom/PlaneClassification":undefined}],"awayjs-core/lib/errors/AbstractMethodError":[function(require,module,exports){
+},{"awayjs-core/lib/errors/AbstractMethodError":4,"awayjs-core/lib/geom/Box":18}],4:[function(require,module,exports){
 var __extends = this.__extends || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
@@ -1154,7 +628,7 @@ var AbstractMethodError = (function (_super) {
 module.exports = AbstractMethodError;
 
 
-},{"awayjs-core/lib/errors/Error":undefined}],"awayjs-core/lib/errors/ArgumentError":[function(require,module,exports){
+},{"awayjs-core/lib/errors/Error":6}],5:[function(require,module,exports){
 var __extends = this.__extends || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
@@ -1184,28 +658,7 @@ var ArgumentError = (function (_super) {
 module.exports = ArgumentError;
 
 
-},{"awayjs-core/lib/errors/Error":undefined}],"awayjs-core/lib/errors/DocumentError":[function(require,module,exports){
-var __extends = this.__extends || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    __.prototype = b.prototype;
-    d.prototype = new __();
-};
-var Error = require("awayjs-core/lib/errors/Error");
-var DocumentError = (function (_super) {
-    __extends(DocumentError, _super);
-    function DocumentError(message, id) {
-        if (message === void 0) { message = "DocumentError"; }
-        if (id === void 0) { id = 0; }
-        _super.call(this, message, id);
-    }
-    DocumentError.DOCUMENT_DOES_NOT_EXIST = "documentDoesNotExist";
-    return DocumentError;
-})(Error);
-module.exports = DocumentError;
-
-
-},{"awayjs-core/lib/errors/Error":undefined}],"awayjs-core/lib/errors/Error":[function(require,module,exports){
+},{"awayjs-core/lib/errors/Error":6}],6:[function(require,module,exports){
 var Error = (function () {
     function Error(message, id, _name) {
         if (message === void 0) { message = ''; }
@@ -1270,7 +723,7 @@ var Error = (function () {
 module.exports = Error;
 
 
-},{}],"awayjs-core/lib/errors/PartialImplementationError":[function(require,module,exports){
+},{}],7:[function(require,module,exports){
 var __extends = this.__extends || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
@@ -1299,37 +752,7 @@ var PartialImplementationError = (function (_super) {
 module.exports = PartialImplementationError;
 
 
-},{"awayjs-core/lib/errors/Error":undefined}],"awayjs-core/lib/errors/RangeError":[function(require,module,exports){
-var __extends = this.__extends || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    __.prototype = b.prototype;
-    d.prototype = new __();
-};
-var Error = require("awayjs-core/lib/errors/Error");
-/**
- * RangeError is thrown when an index is accessed out of range of the number of
- * available indices on an Array.
- */
-var RangeError = (function (_super) {
-    __extends(RangeError, _super);
-    /**
-     * Create a new RangeError.
-     *
-     * @param message An optional message to override the default error message.
-     * @param id The id of the error.
-     */
-    function RangeError(message, id) {
-        if (message === void 0) { message = null; }
-        if (id === void 0) { id = 0; }
-        _super.call(this, message || "RangeError", id);
-    }
-    return RangeError;
-})(Error);
-module.exports = RangeError;
-
-
-},{"awayjs-core/lib/errors/Error":undefined}],"awayjs-core/lib/events/AssetEvent":[function(require,module,exports){
+},{"awayjs-core/lib/errors/Error":6}],8:[function(require,module,exports){
 var __extends = this.__extends || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
@@ -1399,7 +822,43 @@ var AssetEvent = (function (_super) {
 module.exports = AssetEvent;
 
 
-},{"awayjs-core/lib/events/Event":undefined}],"awayjs-core/lib/events/EventDispatcher":[function(require,module,exports){
+},{"awayjs-core/lib/events/Event":9}],9:[function(require,module,exports){
+var Event = (function () {
+    function Event(type) {
+        /**
+         * Type of event
+         * @property type
+         * @type String
+         */
+        this.type = undefined;
+        /**
+         * Reference to target object
+         * @property target
+         * @type Object
+         */
+        this.target = undefined;
+        this.type = type;
+    }
+    /**
+     * Clones the current event.
+     * @return An exact duplicate of the current event.
+     */
+    Event.prototype.clone = function () {
+        return new Event(this.type);
+    };
+    Event.COMPLETE = 'complete';
+    Event.OPEN = 'open';
+    Event.ENTER_FRAME = 'enterFrame';
+    Event.EXIT_FRAME = 'exitFrame';
+    Event.RESIZE = "resize";
+    Event.ERROR = "error";
+    Event.CHANGE = "change";
+    return Event;
+})();
+module.exports = Event;
+
+
+},{}],10:[function(require,module,exports){
 /**
  * Base class for dispatching events
 *
@@ -1487,43 +946,7 @@ var EventDispatcher = (function () {
 module.exports = EventDispatcher;
 
 
-},{}],"awayjs-core/lib/events/Event":[function(require,module,exports){
-var Event = (function () {
-    function Event(type) {
-        /**
-         * Type of event
-         * @property type
-         * @type String
-         */
-        this.type = undefined;
-        /**
-         * Reference to target object
-         * @property target
-         * @type Object
-         */
-        this.target = undefined;
-        this.type = type;
-    }
-    /**
-     * Clones the current event.
-     * @return An exact duplicate of the current event.
-     */
-    Event.prototype.clone = function () {
-        return new Event(this.type);
-    };
-    Event.COMPLETE = 'complete';
-    Event.OPEN = 'open';
-    Event.ENTER_FRAME = 'enterFrame';
-    Event.EXIT_FRAME = 'exitFrame';
-    Event.RESIZE = "resize";
-    Event.ERROR = "error";
-    Event.CHANGE = "change";
-    return Event;
-})();
-module.exports = Event;
-
-
-},{}],"awayjs-core/lib/events/HTTPStatusEvent":[function(require,module,exports){
+},{}],11:[function(require,module,exports){
 var __extends = this.__extends || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
@@ -1547,11 +970,7 @@ var HTTPStatusEvent = (function (_super) {
 module.exports = HTTPStatusEvent;
 
 
-},{"awayjs-core/lib/events/Event":undefined}],"awayjs-core/lib/events/IEventDispatcher":[function(require,module,exports){
-
-
-
-},{}],"awayjs-core/lib/events/IOErrorEvent":[function(require,module,exports){
+},{"awayjs-core/lib/events/Event":9}],12:[function(require,module,exports){
 var __extends = this.__extends || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
@@ -1570,7 +989,7 @@ var IOErrorEvent = (function (_super) {
 module.exports = IOErrorEvent;
 
 
-},{"awayjs-core/lib/events/Event":undefined}],"awayjs-core/lib/events/LoaderEvent":[function(require,module,exports){
+},{"awayjs-core/lib/events/Event":9}],13:[function(require,module,exports){
 var __extends = this.__extends || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
@@ -1642,7 +1061,7 @@ var LoaderEvent = (function (_super) {
 module.exports = LoaderEvent;
 
 
-},{"awayjs-core/lib/events/Event":undefined}],"awayjs-core/lib/events/ParserEvent":[function(require,module,exports){
+},{"awayjs-core/lib/events/Event":9}],14:[function(require,module,exports){
 var __extends = this.__extends || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
@@ -1690,7 +1109,7 @@ var ParserEvent = (function (_super) {
 module.exports = ParserEvent;
 
 
-},{"awayjs-core/lib/events/Event":undefined}],"awayjs-core/lib/events/ProgressEvent":[function(require,module,exports){
+},{"awayjs-core/lib/events/Event":9}],15:[function(require,module,exports){
 var __extends = this.__extends || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
@@ -1709,7 +1128,7 @@ var ProgressEvent = (function (_super) {
 module.exports = ProgressEvent;
 
 
-},{"awayjs-core/lib/events/Event":undefined}],"awayjs-core/lib/events/ProjectionEvent":[function(require,module,exports){
+},{"awayjs-core/lib/events/Event":9}],16:[function(require,module,exports){
 var __extends = this.__extends || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
@@ -1736,7 +1155,7 @@ var ProjectionEvent = (function (_super) {
 module.exports = ProjectionEvent;
 
 
-},{"awayjs-core/lib/events/Event":undefined}],"awayjs-core/lib/events/TimerEvent":[function(require,module,exports){
+},{"awayjs-core/lib/events/Event":9}],17:[function(require,module,exports){
 var __extends = this.__extends || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
@@ -1756,7 +1175,7 @@ var TimerEvent = (function (_super) {
 module.exports = TimerEvent;
 
 
-},{"awayjs-core/lib/events/Event":undefined}],"awayjs-core/lib/geom/Box":[function(require,module,exports){
+},{"awayjs-core/lib/events/Event":9}],18:[function(require,module,exports){
 var Vector3D = require("awayjs-core/lib/geom/Vector3D");
 /**
  * A Box object is an area defined by its position, as indicated by its
@@ -2306,432 +1725,519 @@ var Box = (function () {
 module.exports = Box;
 
 
-},{"awayjs-core/lib/geom/Vector3D":undefined}],"awayjs-core/lib/geom/ColorTransform":[function(require,module,exports){
-var ColorUtils = require("awayjs-core/lib/utils/ColorUtils");
+},{"awayjs-core/lib/geom/Vector3D":26}],19:[function(require,module,exports){
+var Point = require("awayjs-core/lib/geom/Point");
+var ArgumentError = require("awayjs-core/lib/errors/ArgumentError");
 /**
- * The ColorTransform class lets you adjust the color values in a display
- * object. The color adjustment or <i>color transformation</i> can be applied
- * to all four channels: red, green, blue, and alpha transparency.
+ * The Matrix class represents a transformation matrix that determines how to
+ * map points from one coordinate space to another. You can perform various
+ * graphical transformations on a display object by setting the properties of
+ * a Matrix object, applying that Matrix object to the <code>matrix</code>
+ * property of a Transform object, and then applying that Transform object as
+ * the <code>transform</code> property of the display object. These
+ * transformation functions include translation(<i>x</i> and <i>y</i>
+ * repositioning), rotation, scaling, and skewing.
  *
- * <p>When a ColorTransform object is applied to a display object, a new value
- * for each color channel is calculated like this:</p>
+ * <p>Together these types of transformations are known as <i>affine
+ * transformations</i>. Affine transformations preserve the straightness of
+ * lines while transforming, so that parallel lines stay parallel.</p>
+ *
+ * <p>To apply a transformation matrix to a display object, you create a
+ * Transform object, set its <code>matrix</code> property to the
+ * transformation matrix, and then set the <code>transform</code> property of
+ * the display object to the Transform object. Matrix objects are also used as
+ * parameters of some methods, such as the following:</p>
  *
  * <ul>
- *   <li>New red value = (old red value * <code>redMultiplier</code>) +
- * <code>redOffset</code></li>
- *   <li>New green value = (old green value * <code>greenMultiplier</code>) +
- * <code>greenOffset</code></li>
- *   <li>New blue value = (old blue value * <code>blueMultiplier</code>) +
- * <code>blueOffset</code></li>
- *   <li>New alpha value = (old alpha value * <code>alphaMultiplier</code>) +
- * <code>alphaOffset</code></li>
+ *   <li>The <code>draw()</code> method of a BitmapData object</li>
+ *   <li>The <code>beginBitmapFill()</code> method,
+ * <code>beginGradientFill()</code> method, or
+ * <code>lineGradientStyle()</code> method of a Graphics object</li>
  * </ul>
  *
- * <p>If any of the color channel values is greater than 255 after the
- * calculation, it is set to 255. If it is less than 0, it is set to 0.</p>
+ * <p>A transformation matrix object is a 3 x 3 matrix with the following
+ * contents:</p>
  *
- * <p>You can use ColorTransform objects in the following ways:</p>
+ * <p>In traditional transformation matrixes, the <code>u</code>,
+ * <code>v</code>, and <code>w</code> properties provide extra capabilities.
+ * The Matrix class can only operate in two-dimensional space, so it always
+ * assumes that the property values <code>u</code> and <code>v</code> are 0.0,
+ * and that the property value <code>w</code> is 1.0. The effective values of
+ * the matrix are as follows:</p>
  *
- * <ul>
- *   <li>In the <code>colorTransform</code> parameter of the
- * <code>colorTransform()</code> method of the BitmapData class</li>
- *   <li>As the <code>colorTransform</code> property of a Transform object
- * (which can be used as the <code>transform</code> property of a display
- * object)</li>
- * </ul>
+ * <p>You can get and set the values of all six of the other properties in a
+ * Matrix object: <code>a</code>, <code>b</code>, <code>c</code>,
+ * <code>d</code>, <code>tx</code>, and <code>ty</code>.</p>
  *
- * <p>You must use the <code>new ColorTransform()</code> constructor to create
- * a ColorTransform object before you can call the methods of the
- * ColorTransform object.</p>
+ * <p>The Matrix class supports the four major types of transformations:
+ * translation, scaling, rotation, and skewing. You can set three of these
+ * transformations by using specialized methods, as described in the following
+ * table: </p>
  *
- * <p>Color transformations do not apply to the background color of a movie
- * clip(such as a loaded SWF object). They apply only to graphics and symbols
- * that are attached to the movie clip.</p>
+ * <p>Each transformation function alters the current matrix properties so
+ * that you can effectively combine multiple transformations. To do this, you
+ * call more than one transformation function before applying the matrix to
+ * its display object target(by using the <code>transform</code> property of
+ * that display object).</p>
+ *
+ * <p>Use the <code>new Matrix()</code> constructor to create a Matrix object
+ * before you can call the methods of the Matrix object.</p>
  */
-var ColorTransform = (function () {
+var Matrix = (function () {
     /**
-     * Creates a ColorTransform object for a display object with the specified
-     * color channel values and alpha values.
+     * Creates a new Matrix object with the specified parameters. In matrix
+     * notation, the properties are organized like this:
      *
-     * @param redMultiplier   The value for the red multiplier, in the range from
-     *                        0 to 1.
-     * @param greenMultiplier The value for the green multiplier, in the range
-     *                        from 0 to 1.
-     * @param blueMultiplier  The value for the blue multiplier, in the range
-     *                        from 0 to 1.
-     * @param alphaMultiplier The value for the alpha transparency multiplier, in
-     *                        the range from 0 to 1.
-     * @param redOffset       The offset value for the red color channel, in the
-     *                        range from -255 to 255.
-     * @param greenOffset     The offset value for the green color channel, in
-     *                        the range from -255 to 255.
-     * @param blueOffset      The offset for the blue color channel value, in the
-     *                        range from -255 to 255.
-     * @param alphaOffset     The offset for alpha transparency channel value, in
-     *                        the range from -255 to 255.
-     */
-    function ColorTransform(redMultiplier, greenMultiplier, blueMultiplier, alphaMultiplier, redOffset, greenOffset, blueOffset, alphaOffset) {
-        if (redMultiplier === void 0) { redMultiplier = 1; }
-        if (greenMultiplier === void 0) { greenMultiplier = 1; }
-        if (blueMultiplier === void 0) { blueMultiplier = 1; }
-        if (alphaMultiplier === void 0) { alphaMultiplier = 1; }
-        if (redOffset === void 0) { redOffset = 0; }
-        if (greenOffset === void 0) { greenOffset = 0; }
-        if (blueOffset === void 0) { blueOffset = 0; }
-        if (alphaOffset === void 0) { alphaOffset = 0; }
-        this.redMultiplier = redMultiplier;
-        this.greenMultiplier = greenMultiplier;
-        this.blueMultiplier = blueMultiplier;
-        this.alphaMultiplier = alphaMultiplier;
-        this.redOffset = redOffset;
-        this.greenOffset = greenOffset;
-        this.blueOffset = blueOffset;
-        this.alphaOffset = alphaOffset;
-    }
-    Object.defineProperty(ColorTransform.prototype, "color", {
-        /**
-         * The RGB color value for a ColorTransform object.
-         *
-         * <p>When you set this property, it changes the three color offset values
-         * (<code>redOffset</code>, <code>greenOffset</code>, and
-         * <code>blueOffset</code>) accordingly, and it sets the three color
-         * multiplier values(<code>redMultiplier</code>,
-         * <code>greenMultiplier</code>, and <code>blueMultiplier</code>) to 0. The
-         * alpha transparency multiplier and offset values do not change.</p>
-         *
-         * <p>When you pass a value for this property, use the format
-         * 0x<i>RRGGBB</i>. <i>RR</i>, <i>GG</i>, and <i>BB</i> each consist of two
-         * hexadecimal digits that specify the offset of each color component. The 0x
-         * tells the ActionScript compiler that the number is a hexadecimal
-         * value.</p>
-         */
-        get: function () {
-            return ((this.redOffset << 16) | (this.greenOffset << 8) | this.blueOffset);
-        },
-        set: function (value) {
-            var argb = ColorUtils.float32ColorToARGB(value);
-            this.redOffset = argb[1]; //(value >> 16) & 0xFF;
-            this.greenOffset = argb[2]; //(value >> 8) & 0xFF;
-            this.blueOffset = argb[3]; //value & 0xFF;
-            this.redMultiplier = 0;
-            this.greenMultiplier = 0;
-            this.blueMultiplier = 0;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    /**
-     * Concatenates the ColorTranform object specified by the <code>second</code>
-     * parameter with the current ColorTransform object and sets the current
-     * object as the result, which is an additive combination of the two color
-     * transformations. When you apply the concatenated ColorTransform object,
-     * the effect is the same as applying the <code>second</code> color
-     * transformation after the <i>original</i> color transformation.
+     * <p>If you do not provide any parameters to the <code>new Matrix()</code>
+     * constructor, it creates an <i>identity matrix</i> with the following
+     * values:</p>
      *
-     * @param second The ColorTransform object to be combined with the current
-     *               ColorTransform object.
+     * <p>In matrix notation, the identity matrix looks like this:</p>
+     *
+     * @param a  The value that affects the positioning of pixels along the
+     *           <i>x</i> axis when scaling or rotating an image.
+     * @param b  The value that affects the positioning of pixels along the
+     *           <i>y</i> axis when rotating or skewing an image.
+     * @param c  The value that affects the positioning of pixels along the
+     *           <i>x</i> axis when rotating or skewing an image.
+     * @param d  The value that affects the positioning of pixels along the
+     *           <i>y</i> axis when scaling or rotating an image..
+     * @param tx The distance by which to translate each point along the <i>x</i>
+     *           axis.
+     * @param ty The distance by which to translate each point along the <i>y</i>
+     *           axis.
      */
-    ColorTransform.prototype.concat = function (second) {
-        this.redMultiplier += second.redMultiplier;
-        this.greenMultiplier += second.greenMultiplier;
-        this.blueMultiplier += second.blueMultiplier;
-        this.alphaMultiplier += second.alphaMultiplier;
-    };
-    return ColorTransform;
-})();
-module.exports = ColorTransform;
-
-
-},{"awayjs-core/lib/utils/ColorUtils":undefined}],"awayjs-core/lib/geom/MathConsts":[function(require,module,exports){
-/**
-* MathConsts provides some commonly used mathematical constants
-*/
-var MathConsts = (function () {
-    function MathConsts() {
+    function Matrix(a, b, c, d, tx, ty) {
+        if (a === void 0) { a = 1; }
+        if (b === void 0) { b = 0; }
+        if (c === void 0) { c = 0; }
+        if (d === void 0) { d = 1; }
+        if (tx === void 0) { tx = 0; }
+        if (ty === void 0) { ty = 0; }
+        this.a = a;
+        this.b = b;
+        this.c = c;
+        this.d = d;
+        this.tx = tx;
+        this.ty = ty;
     }
     /**
-     * The amount to multiply with when converting radians to degrees.
-     */
-    MathConsts.RADIANS_TO_DEGREES = 180 / Math.PI;
-    /**
-     * The amount to multiply with when converting degrees to radians.
-     */
-    MathConsts.DEGREES_TO_RADIANS = Math.PI / 180;
-    return MathConsts;
-})();
-module.exports = MathConsts;
-
-
-},{}],"awayjs-core/lib/geom/Matrix3DUtils":[function(require,module,exports){
-var Matrix3D = require("awayjs-core/lib/geom/Matrix3D");
-var Vector3D = require("awayjs-core/lib/geom/Vector3D");
-/**
- * away.geom.Matrix3DUtils provides additional Matrix3D functions.
- */
-var Matrix3DUtils = (function () {
-    function Matrix3DUtils() {
-    }
-    /**
-     * Fills the 3d matrix object with values representing the transformation made by the given quaternion.
+     * Returns a new Matrix object that is a clone of this matrix, with an exact
+     * copy of the contained object.
      *
-     * @param    quarternion    The quarterion object to convert.
+     * @return A Matrix object.
      */
-    Matrix3DUtils.quaternion2matrix = function (quarternion, m) {
-        if (m === void 0) { m = null; }
-        var x = quarternion.x;
-        var y = quarternion.y;
-        var z = quarternion.z;
-        var w = quarternion.w;
-        var xx = x * x;
-        var xy = x * y;
-        var xz = x * z;
-        var xw = x * w;
-        var yy = y * y;
-        var yz = y * z;
-        var yw = y * w;
-        var zz = z * z;
-        var zw = z * w;
-        var raw = Matrix3DUtils.RAW_DATA_CONTAINER;
-        raw[0] = 1 - 2 * (yy + zz);
-        raw[1] = 2 * (xy + zw);
-        raw[2] = 2 * (xz - yw);
-        raw[4] = 2 * (xy - zw);
-        raw[5] = 1 - 2 * (xx + zz);
-        raw[6] = 2 * (yz + xw);
-        raw[8] = 2 * (xz + yw);
-        raw[9] = 2 * (yz - xw);
-        raw[10] = 1 - 2 * (xx + yy);
-        raw[3] = raw[7] = raw[11] = raw[12] = raw[13] = raw[14] = 0;
-        raw[15] = 1;
-        if (m) {
-            m.copyRawDataFrom(raw);
-            return m;
-        }
-        else
-            return new Matrix3D(raw);
+    Matrix.prototype.clone = function () {
+        return new Matrix(this.a, this.b, this.c, this.d, this.tx, this.ty);
     };
     /**
-     * Returns a normalised <code>Vector3D</code> object representing the forward vector of the given matrix.
-     * @param    m        The Matrix3D object to use to get the forward vector
-     * @param    v        [optional] A vector holder to prevent make new Vector3D instance if already exists. Default is null.
-     * @return            The forward vector
+     * Concatenates a matrix with the current matrix, effectively combining the
+     * geometric effects of the two. In mathematical terms, concatenating two
+     * matrixes is the same as combining them using matrix multiplication.
+     *
+     * <p>For example, if matrix <code>m1</code> scales an object by a factor of
+     * four, and matrix <code>m2</code> rotates an object by 1.5707963267949
+     * radians(<code>Math.PI/2</code>), then <code>m1.concat(m2)</code>
+     * transforms <code>m1</code> into a matrix that scales an object by a factor
+     * of four and rotates the object by <code>Math.PI/2</code> radians. </p>
+     *
+     * <p>This method replaces the source matrix with the concatenated matrix. If
+     * you want to concatenate two matrixes without altering either of the two
+     * source matrixes, first copy the source matrix by using the
+     * <code>clone()</code> method, as shown in the Class Examples section.</p>
+     *
+     * @param matrix The matrix to be concatenated to the source matrix.
      */
-    Matrix3DUtils.getForward = function (m, v) {
-        if (v === void 0) { v = null; }
-        //v ||= new Vector3D(0.0, 0.0, 0.0);
-        if (v === null) {
-            v = new Vector3D(0.0, 0.0, 0.0);
-        }
-        m.copyColumnTo(2, v);
-        v.normalize();
-        return v;
+    Matrix.prototype.concat = function (matrix) {
+        var a1 = this.a * matrix.a + this.b * matrix.c;
+        this.b = this.a * matrix.b + this.b * matrix.d;
+        this.a = a1;
+        var c1 = this.c * matrix.a + this.d * matrix.c;
+        this.d = this.c * matrix.b + this.d * matrix.d;
+        this.c = c1;
+        var tx1 = this.tx * matrix.a + this.ty * matrix.c + matrix.tx;
+        this.ty = this.tx * matrix.b + this.ty * matrix.d + matrix.ty;
+        this.tx = tx1;
     };
     /**
-     * Returns a normalised <code>Vector3D</code> object representing the up vector of the given matrix.
-     * @param    m        The Matrix3D object to use to get the up vector
-     * @param    v        [optional] A vector holder to prevent make new Vector3D instance if already exists. Default is null.
-     * @return            The up vector
+     * Copies a Vector3D object into specific column of the calling Matrix3D
+     * object.
+     *
+     * @param column   The column from which to copy the data from.
+     * @param vector3D The Vector3D object from which to copy the data.
      */
-    Matrix3DUtils.getUp = function (m, v) {
-        //v ||= new Vector3D(0.0, 0.0, 0.0);
-        if (v === void 0) { v = null; }
-        if (v === null) {
-            v = new Vector3D(0.0, 0.0, 0.0);
+    Matrix.prototype.copyColumnFrom = function (column, vector3D) {
+        if (column > 2) {
+            throw "Column " + column + " out of bounds (2)";
         }
-        m.copyColumnTo(1, v);
-        v.normalize();
-        return v;
+        else if (column == 0) {
+            this.a = vector3D.x;
+            this.c = vector3D.y;
+        }
+        else if (column == 1) {
+            this.b = vector3D.x;
+            this.d = vector3D.y;
+        }
+        else {
+            this.tx = vector3D.x;
+            this.ty = vector3D.y;
+        }
     };
     /**
-     * Returns a normalised <code>Vector3D</code> object representing the right vector of the given matrix.
-     * @param    m        The Matrix3D object to use to get the right vector
-     * @param    v        [optional] A vector holder to prevent make new Vector3D instance if already exists. Default is null.
-     * @return            The right vector
+     * Copies specific column of the calling Matrix object into the Vector3D
+     * object. The w element of the Vector3D object will not be changed.
+     *
+     * @param column   The column from which to copy the data from.
+     * @param vector3D The Vector3D object from which to copy the data.
      */
-    Matrix3DUtils.getRight = function (m, v) {
-        if (v === void 0) { v = null; }
-        //v ||= new Vector3D(0.0, 0.0, 0.0);
-        if (v === null) {
-            v = new Vector3D(0.0, 0.0, 0.0);
+    Matrix.prototype.copyColumnTo = function (column, vector3D) {
+        if (column > 2) {
+            throw new ArgumentError("ArgumentError, Column " + column + " out of bounds [0, ..., 2]");
         }
-        m.copyColumnTo(0, v);
-        v.normalize();
-        return v;
+        else if (column == 0) {
+            vector3D.x = this.a;
+            vector3D.y = this.c;
+            vector3D.z = 0;
+        }
+        else if (column == 1) {
+            vector3D.x = this.b;
+            vector3D.y = this.d;
+            vector3D.z = 0;
+        }
+        else {
+            vector3D.x = this.tx;
+            vector3D.y = this.ty;
+            vector3D.z = 1;
+        }
     };
     /**
-     * Returns a boolean value representing whether there is any significant difference between the two given 3d matrices.
+     * Copies all of the matrix data from the source Point object into the
+     * calling Matrix object.
+     *
+     * @param sourceMatrix The Matrix object from which to copy the data.
      */
-    Matrix3DUtils.compare = function (m1, m2) {
-        var r1 = Matrix3DUtils.RAW_DATA_CONTAINER;
-        var r2 = m2.rawData;
-        m1.copyRawDataTo(r1);
-        for (var i = 0; i < 16; ++i) {
-            if (r1[i] != r2[i])
-                return false;
+    Matrix.prototype.copyFrom = function (sourceMatrix) {
+        this.a = sourceMatrix.a;
+        this.b = sourceMatrix.b;
+        this.c = sourceMatrix.c;
+        this.d = sourceMatrix.d;
+        this.tx = sourceMatrix.tx;
+        this.ty = sourceMatrix.ty;
+    };
+    /**
+     * Copies a Vector3D object into specific row of the calling Matrix object.
+     *
+     * @param row      The row from which to copy the data from.
+     * @param vector3D The Vector3D object from which to copy the data.
+     */
+    Matrix.prototype.copyRowFrom = function (row, vector3D) {
+        if (row > 2) {
+            throw new ArgumentError("ArgumentError, Row " + row + " out of bounds [0, ..., 2]");
         }
-        return true;
+        else if (row == 0) {
+            this.a = vector3D.x;
+            this.c = vector3D.y;
+        }
+        else if (row == 1) {
+            this.b = vector3D.x;
+            this.d = vector3D.y;
+        }
+        else {
+            this.tx = vector3D.x;
+            this.ty = vector3D.y;
+        }
     };
-    Matrix3DUtils.lookAt = function (matrix, pos, dir, up) {
-        var dirN;
-        var upN;
-        var lftN;
-        var raw = Matrix3DUtils.RAW_DATA_CONTAINER;
-        lftN = dir.crossProduct(up);
-        lftN.normalize();
-        upN = lftN.crossProduct(dir);
-        upN.normalize();
-        dirN = dir.clone();
-        dirN.normalize();
-        raw[0] = lftN.x;
-        raw[1] = upN.x;
-        raw[2] = -dirN.x;
-        raw[3] = 0.0;
-        raw[4] = lftN.y;
-        raw[5] = upN.y;
-        raw[6] = -dirN.y;
-        raw[7] = 0.0;
-        raw[8] = lftN.z;
-        raw[9] = upN.z;
-        raw[10] = -dirN.z;
-        raw[11] = 0.0;
-        raw[12] = -lftN.dotProduct(pos);
-        raw[13] = -upN.dotProduct(pos);
-        raw[14] = dirN.dotProduct(pos);
-        raw[15] = 1.0;
-        matrix.copyRawDataFrom(raw);
+    /**
+     * Copies specific row of the calling Matrix object into the Vector3D object.
+     * The w element of the Vector3D object will not be changed.
+     *
+     * @param row      The row from which to copy the data from.
+     * @param vector3D The Vector3D object from which to copy the data.
+     */
+    Matrix.prototype.copyRowTo = function (row, vector3D) {
+        if (row > 2) {
+            throw new ArgumentError("ArgumentError, Row " + row + " out of bounds [0, ..., 2]");
+        }
+        else if (row == 0) {
+            vector3D.x = this.a;
+            vector3D.y = this.b;
+            vector3D.z = this.tx;
+        }
+        else if (row == 1) {
+            vector3D.x = this.c;
+            vector3D.y = this.d;
+            vector3D.z = this.ty;
+        }
+        else {
+            vector3D.setTo(0, 0, 1);
+        }
     };
-    Matrix3DUtils.reflection = function (plane, target) {
-        if (target === void 0) { target = null; }
-        if (target === null)
-            target = new Matrix3D();
-        var a = plane.a, b = plane.b, c = plane.c, d = plane.d;
-        var rawData = Matrix3DUtils.RAW_DATA_CONTAINER;
-        var ab2 = -2 * a * b;
-        var ac2 = -2 * a * c;
-        var bc2 = -2 * b * c;
-        // reflection matrix
-        rawData[0] = 1 - 2 * a * a;
-        rawData[4] = ab2;
-        rawData[8] = ac2;
-        rawData[12] = -2 * a * d;
-        rawData[1] = ab2;
-        rawData[5] = 1 - 2 * b * b;
-        rawData[9] = bc2;
-        rawData[13] = -2 * b * d;
-        rawData[2] = ac2;
-        rawData[6] = bc2;
-        rawData[10] = 1 - 2 * c * c;
-        rawData[14] = -2 * c * d;
-        rawData[3] = 0;
-        rawData[7] = 0;
-        rawData[11] = 0;
-        rawData[15] = 1;
-        target.copyRawDataFrom(rawData);
-        return target;
+    /**
+     * Includes parameters for scaling, rotation, and translation. When applied
+     * to a matrix it sets the matrix's values based on those parameters.
+     *
+     * <p>Using the <code>createBox()</code> method lets you obtain the same
+     * matrix as you would if you applied the <code>identity()</code>,
+     * <code>rotate()</code>, <code>scale()</code>, and <code>translate()</code>
+     * methods in succession. For example, <code>mat1.createBox(2,2,Math.PI/4,
+     * 100, 100)</code> has the same effect as the following:</p>
+     *
+     * @param scaleX   The factor by which to scale horizontally.
+     * @param scaleY   The factor by which scale vertically.
+     * @param rotation The amount to rotate, in radians.
+     * @param tx       The number of pixels to translate(move) to the right
+     *                 along the <i>x</i> axis.
+     * @param ty       The number of pixels to translate(move) down along the
+     *                 <i>y</i> axis.
+     */
+    Matrix.prototype.createBox = function (scaleX, scaleY, rotation, tx, ty) {
+        if (rotation === void 0) { rotation = 0; }
+        if (tx === void 0) { tx = 0; }
+        if (ty === void 0) { ty = 0; }
+        this.a = scaleX;
+        this.d = scaleY;
+        this.b = rotation;
+        this.tx = tx;
+        this.ty = ty;
     };
-    Matrix3DUtils.transformVector = function (matrix, vector, result) {
-        if (result === void 0) { result = null; }
-        if (!result)
-            result = new Vector3D();
-        var raw = Matrix3DUtils.RAW_DATA_CONTAINER;
-        matrix.copyRawDataTo(raw);
-        var a = raw[0];
-        var e = raw[1];
-        var i = raw[2];
-        var m = raw[3];
-        var b = raw[4];
-        var f = raw[5];
-        var j = raw[6];
-        var n = raw[7];
-        var c = raw[8];
-        var g = raw[9];
-        var k = raw[10];
-        var o = raw[11];
-        var d = raw[12];
-        var h = raw[13];
-        var l = raw[14];
-        var p = raw[15];
-        var x = vector.x;
-        var y = vector.y;
-        var z = vector.z;
-        result.x = a * x + b * y + c * z + d;
-        result.y = e * x + f * y + g * z + h;
-        result.z = i * x + j * y + k * z + l;
-        result.w = m * x + n * y + o * z + p;
+    /**
+     * Creates the specific style of matrix expected by the
+     * <code>beginGradientFill()</code> and <code>lineGradientStyle()</code>
+     * methods of the Graphics class. Width and height are scaled to a
+     * <code>scaleX</code>/<code>scaleY</code> pair and the
+     * <code>tx</code>/<code>ty</code> values are offset by half the width and
+     * height.
+     *
+     * <p>For example, consider a gradient with the following
+     * characteristics:</p>
+     *
+     * <ul>
+     *   <li><code>GradientType.LINEAR</code></li>
+     *   <li>Two colors, green and blue, with the ratios array set to <code>[0,
+     * 255]</code></li>
+     *   <li><code>SpreadMethod.PAD</code></li>
+     *   <li><code>InterpolationMethod.LINEAR_RGB</code></li>
+     * </ul>
+     *
+     * <p>The following illustrations show gradients in which the matrix was
+     * defined using the <code>createGradientBox()</code> method with different
+     * parameter settings:</p>
+     *
+     * @param width    The width of the gradient box.
+     * @param height   The height of the gradient box.
+     * @param rotation The amount to rotate, in radians.
+     * @param tx       The distance, in pixels, to translate to the right along
+     *                 the <i>x</i> axis. This value is offset by half of the
+     *                 <code>width</code> parameter.
+     * @param ty       The distance, in pixels, to translate down along the
+     *                 <i>y</i> axis. This value is offset by half of the
+     *                 <code>height</code> parameter.
+     */
+    Matrix.prototype.createGradientBox = function (width, height, rotation, tx, ty) {
+        if (rotation === void 0) { rotation = 0; }
+        if (tx === void 0) { tx = 0; }
+        if (ty === void 0) { ty = 0; }
+        this.a = width / 1638.4;
+        this.d = height / 1638.4;
+        if (rotation != 0.0) {
+            var cos = Math.cos(rotation);
+            var sin = Math.sin(rotation);
+            this.b = sin * this.d;
+            this.c = -sin * this.a;
+            this.a *= cos;
+            this.d *= cos;
+        }
+        else {
+            this.b = this.c = 0;
+        }
+        this.tx = tx + width / 2;
+        this.ty = ty + height / 2;
+    };
+    /**
+     * Given a point in the pretransform coordinate space, returns the
+     * coordinates of that point after the transformation occurs. Unlike the
+     * standard transformation applied using the <code>transformPoint()</code>
+     * method, the <code>deltaTransformPoint()</code> method's transformation
+     * does not consider the translation parameters <code>tx</code> and
+     * <code>ty</code>.
+     *
+     * @param point The point for which you want to get the result of the matrix
+     *              transformation.
+     * @return The point resulting from applying the matrix transformation.
+     */
+    Matrix.prototype.deltaTransformPoint = function (point) {
+        return new Point(point.x * this.a + point.y * this.c, point.x * this.b + point.y * this.d);
+    };
+    /**
+     * Sets each matrix property to a value that causes a null transformation. An
+     * object transformed by applying an identity matrix will be identical to the
+     * original.
+     *
+     * <p>After calling the <code>identity()</code> method, the resulting matrix
+     * has the following properties: <code>a</code>=1, <code>b</code>=0,
+     * <code>c</code>=0, <code>d</code>=1, <code>tx</code>=0,
+     * <code>ty</code>=0.</p>
+     *
+     * <p>In matrix notation, the identity matrix looks like this:</p>
+     *
+     */
+    Matrix.prototype.identity = function () {
+        this.a = 1;
+        this.b = 0;
+        this.c = 0;
+        this.d = 1;
+        this.tx = 0;
+        this.ty = 0;
+    };
+    /**
+     * Performs the opposite transformation of the original matrix. You can apply
+     * an inverted matrix to an object to undo the transformation performed when
+     * applying the original matrix.
+     */
+    Matrix.prototype.invert = function () {
+        var norm = this.a * this.d - this.b * this.c;
+        if (norm == 0) {
+            this.a = this.b = this.c = this.d = 0;
+            this.tx = -this.tx;
+            this.ty = -this.ty;
+        }
+        else {
+            norm = 1.0 / norm;
+            var a1 = this.d * norm;
+            this.d = this.a * norm;
+            this.a = a1;
+            this.b *= -norm;
+            this.c *= -norm;
+            var tx1 = -this.a * this.tx - this.c * this.ty;
+            this.ty = -this.b * this.tx - this.d * this.ty;
+            this.tx = tx1;
+        }
+    };
+    /**
+     * Returns a new Matrix object that is a clone of this matrix, with an exact
+     * copy of the contained object.
+     *
+     * @param matrix The matrix for which you want to get the result of the matrix
+     *               transformation.
+     * @return A Matrix object.
+     */
+    Matrix.prototype.multiply = function (matrix) {
+        var result = new Matrix();
+        result.a = this.a * matrix.a + this.b * matrix.c;
+        result.b = this.a * matrix.b + this.b * matrix.d;
+        result.c = this.c * matrix.a + this.d * matrix.c;
+        result.d = this.c * matrix.b + this.d * matrix.d;
+        result.tx = this.tx * matrix.a + this.ty * matrix.c + matrix.tx;
+        result.ty = this.tx * matrix.b + this.ty * matrix.d + matrix.ty;
         return result;
     };
-    Matrix3DUtils.deltaTransformVector = function (matrix, vector, result) {
-        if (result === void 0) { result = null; }
-        if (!result)
-            result = new Vector3D();
-        var raw = Matrix3DUtils.RAW_DATA_CONTAINER;
-        matrix.copyRawDataTo(raw);
-        var a = raw[0];
-        var e = raw[1];
-        var i = raw[2];
-        var m = raw[3];
-        var b = raw[4];
-        var f = raw[5];
-        var j = raw[6];
-        var n = raw[7];
-        var c = raw[8];
-        var g = raw[9];
-        var k = raw[10];
-        var o = raw[11];
-        var x = vector.x;
-        var y = vector.y;
-        var z = vector.z;
-        result.x = a * x + b * y + c * z;
-        result.y = e * x + f * y + g * z;
-        result.z = i * x + j * y + k * z;
-        result.w = m * x + n * y + o * z;
-        return result;
-    };
-    Matrix3DUtils.getTranslation = function (transform, result) {
-        if (result === void 0) { result = null; }
-        if (!result)
-            result = new Vector3D();
-        transform.copyColumnTo(3, result);
-        return result;
-    };
-    Matrix3DUtils.deltaTransformVectors = function (matrix, vin, vout) {
-        var raw = Matrix3DUtils.RAW_DATA_CONTAINER;
-        matrix.copyRawDataTo(raw);
-        var a = raw[0];
-        var e = raw[1];
-        var i = raw[2];
-        var m = raw[3];
-        var b = raw[4];
-        var f = raw[5];
-        var j = raw[6];
-        var n = raw[7];
-        var c = raw[8];
-        var g = raw[9];
-        var k = raw[10];
-        var o = raw[11];
-        var outIndex = 0;
-        var length = vin.length;
-        for (var index = 0; index < length; index += 3) {
-            var x = vin[index];
-            var y = vin[index + 1];
-            var z = vin[index + 2];
-            vout[outIndex++] = a * x + b * y + c * z;
-            vout[outIndex++] = e * x + f * y + g * z;
-            vout[outIndex++] = i * x + j * y + k * z;
-        }
+    /**
+     * Applies a rotation transformation to the Matrix object.
+     *
+     * <p>The <code>rotate()</code> method alters the <code>a</code>,
+     * <code>b</code>, <code>c</code>, and <code>d</code> properties of the
+     * Matrix object. In matrix notation, this is the same as concatenating the
+     * current matrix with the following:</p>
+     *
+     * @param angle The rotation angle in radians.
+     */
+    Matrix.prototype.rotate = function (angle) {
+        var cos = Math.cos(angle);
+        var sin = Math.sin(angle);
+        var a1 = this.a * cos - this.b * sin;
+        this.b = this.a * sin + this.b * cos;
+        this.a = a1;
+        var c1 = this.c * cos - this.d * sin;
+        this.d = this.c * sin + this.d * cos;
+        this.c = c1;
+        var tx1 = this.tx * cos - this.ty * sin;
+        this.ty = this.tx * sin + this.ty * cos;
+        this.tx = tx1;
     };
     /**
-     * A reference to a Vector to be used as a temporary raw data container, to prevent object creation.
+     * Applies a scaling transformation to the matrix. The <i>x</i> axis is
+     * multiplied by <code>sx</code>, and the <i>y</i> axis it is multiplied by
+     * <code>sy</code>.
+     *
+     * <p>The <code>scale()</code> method alters the <code>a</code> and
+     * <code>d</code> properties of the Matrix object. In matrix notation, this
+     * is the same as concatenating the current matrix with the following
+     * matrix:</p>
+     *
+     * @param sx A multiplier used to scale the object along the <i>x</i> axis.
+     * @param sy A multiplier used to scale the object along the <i>y</i> axis.
      */
-    Matrix3DUtils.RAW_DATA_CONTAINER = new Array(16);
-    //public static RAW_DATA_CONTAINER:number[] = new Array<number>(16);
-    Matrix3DUtils.CALCULATION_MATRIX = new Matrix3D();
-    return Matrix3DUtils;
+    Matrix.prototype.scale = function (sx, sy) {
+        this.a *= sx;
+        this.b *= sy;
+        this.c *= sx;
+        this.d *= sy;
+        this.tx *= sx;
+        this.ty *= sy;
+    };
+    /**
+     * Sets the members of Matrix to the specified values.
+     *
+     * @param a  The value that affects the positioning of pixels along the
+     *           <i>x</i> axis when scaling or rotating an image.
+     * @param b  The value that affects the positioning of pixels along the
+     *           <i>y</i> axis when rotating or skewing an image.
+     * @param c  The value that affects the positioning of pixels along the
+     *           <i>x</i> axis when rotating or skewing an image.
+     * @param d  The value that affects the positioning of pixels along the
+     *           <i>y</i> axis when scaling or rotating an image..
+     * @param tx The distance by which to translate each point along the <i>x</i>
+     *           axis.
+     * @param ty The distance by which to translate each point along the <i>y</i>
+     *           axis.
+     */
+    Matrix.prototype.setTo = function (a, b, c, d, tx, ty) {
+        this.a = a;
+        this.b = b;
+        this.c = c;
+        this.d = d;
+        this.tx = tx;
+        this.ty = ty;
+    };
+    /**
+     * Returns a text value listing the properties of the Matrix object.
+     *
+     * @return A string containing the values of the properties of the Matrix
+     *         object: <code>a</code>, <code>b</code>, <code>c</code>,
+     *         <code>d</code>, <code>tx</code>, and <code>ty</code>.
+     */
+    Matrix.prototype.toString = function () {
+        return "[Matrix] (a=" + this.a + ", b=" + this.b + ", c=" + this.c + ", d=" + this.d + ", tx=" + this.tx + ", ty=" + this.ty + ")";
+    };
+    /**
+     * Returns the result of applying the geometric transformation represented by
+     * the Matrix object to the specified point.
+     *
+     * @param point The point for which you want to get the result of the Matrix
+     *              transformation.
+     * @return The point resulting from applying the Matrix transformation.
+     */
+    Matrix.prototype.transformPoint = function (point) {
+        return new Point(point.x * this.a + point.y * this.c + this.tx, point.x * this.b + point.y * this.d + this.ty);
+    };
+    /**
+     * Translates the matrix along the <i>x</i> and <i>y</i> axes, as specified
+     * by the <code>dx</code> and <code>dy</code> parameters.
+     *
+     * @param dx The amount of movement along the <i>x</i> axis to the right, in
+     *           pixels.
+     * @param dy The amount of movement down along the <i>y</i> axis, in pixels.
+     */
+    Matrix.prototype.translate = function (dx, dy) {
+        this.tx += dx;
+        this.ty += dy;
+    };
+    return Matrix;
 })();
-module.exports = Matrix3DUtils;
+module.exports = Matrix;
 
 
-},{"awayjs-core/lib/geom/Matrix3D":undefined,"awayjs-core/lib/geom/Vector3D":undefined}],"awayjs-core/lib/geom/Matrix3D":[function(require,module,exports){
+},{"awayjs-core/lib/errors/ArgumentError":5,"awayjs-core/lib/geom/Point":24}],20:[function(require,module,exports){
 var Orientation3D = require("awayjs-core/lib/geom/Orientation3D");
 var Vector3D = require("awayjs-core/lib/geom/Vector3D");
 var ArgumentError = require("awayjs-core/lib/errors/ArgumentError");
@@ -3305,519 +2811,276 @@ var Matrix3D = (function () {
 module.exports = Matrix3D;
 
 
-},{"awayjs-core/lib/errors/ArgumentError":undefined,"awayjs-core/lib/geom/Orientation3D":undefined,"awayjs-core/lib/geom/Vector3D":undefined}],"awayjs-core/lib/geom/Matrix":[function(require,module,exports){
-var Point = require("awayjs-core/lib/geom/Point");
-var ArgumentError = require("awayjs-core/lib/errors/ArgumentError");
+},{"awayjs-core/lib/errors/ArgumentError":5,"awayjs-core/lib/geom/Orientation3D":22,"awayjs-core/lib/geom/Vector3D":26}],21:[function(require,module,exports){
+var Matrix3D = require("awayjs-core/lib/geom/Matrix3D");
+var Vector3D = require("awayjs-core/lib/geom/Vector3D");
 /**
- * The Matrix class represents a transformation matrix that determines how to
- * map points from one coordinate space to another. You can perform various
- * graphical transformations on a display object by setting the properties of
- * a Matrix object, applying that Matrix object to the <code>matrix</code>
- * property of a Transform object, and then applying that Transform object as
- * the <code>transform</code> property of the display object. These
- * transformation functions include translation(<i>x</i> and <i>y</i>
- * repositioning), rotation, scaling, and skewing.
- *
- * <p>Together these types of transformations are known as <i>affine
- * transformations</i>. Affine transformations preserve the straightness of
- * lines while transforming, so that parallel lines stay parallel.</p>
- *
- * <p>To apply a transformation matrix to a display object, you create a
- * Transform object, set its <code>matrix</code> property to the
- * transformation matrix, and then set the <code>transform</code> property of
- * the display object to the Transform object. Matrix objects are also used as
- * parameters of some methods, such as the following:</p>
- *
- * <ul>
- *   <li>The <code>draw()</code> method of a BitmapData object</li>
- *   <li>The <code>beginBitmapFill()</code> method,
- * <code>beginGradientFill()</code> method, or
- * <code>lineGradientStyle()</code> method of a Graphics object</li>
- * </ul>
- *
- * <p>A transformation matrix object is a 3 x 3 matrix with the following
- * contents:</p>
- *
- * <p>In traditional transformation matrixes, the <code>u</code>,
- * <code>v</code>, and <code>w</code> properties provide extra capabilities.
- * The Matrix class can only operate in two-dimensional space, so it always
- * assumes that the property values <code>u</code> and <code>v</code> are 0.0,
- * and that the property value <code>w</code> is 1.0. The effective values of
- * the matrix are as follows:</p>
- *
- * <p>You can get and set the values of all six of the other properties in a
- * Matrix object: <code>a</code>, <code>b</code>, <code>c</code>,
- * <code>d</code>, <code>tx</code>, and <code>ty</code>.</p>
- *
- * <p>The Matrix class supports the four major types of transformations:
- * translation, scaling, rotation, and skewing. You can set three of these
- * transformations by using specialized methods, as described in the following
- * table: </p>
- *
- * <p>Each transformation function alters the current matrix properties so
- * that you can effectively combine multiple transformations. To do this, you
- * call more than one transformation function before applying the matrix to
- * its display object target(by using the <code>transform</code> property of
- * that display object).</p>
- *
- * <p>Use the <code>new Matrix()</code> constructor to create a Matrix object
- * before you can call the methods of the Matrix object.</p>
+ * away.geom.Matrix3DUtils provides additional Matrix3D functions.
  */
-var Matrix = (function () {
-    /**
-     * Creates a new Matrix object with the specified parameters. In matrix
-     * notation, the properties are organized like this:
-     *
-     * <p>If you do not provide any parameters to the <code>new Matrix()</code>
-     * constructor, it creates an <i>identity matrix</i> with the following
-     * values:</p>
-     *
-     * <p>In matrix notation, the identity matrix looks like this:</p>
-     *
-     * @param a  The value that affects the positioning of pixels along the
-     *           <i>x</i> axis when scaling or rotating an image.
-     * @param b  The value that affects the positioning of pixels along the
-     *           <i>y</i> axis when rotating or skewing an image.
-     * @param c  The value that affects the positioning of pixels along the
-     *           <i>x</i> axis when rotating or skewing an image.
-     * @param d  The value that affects the positioning of pixels along the
-     *           <i>y</i> axis when scaling or rotating an image..
-     * @param tx The distance by which to translate each point along the <i>x</i>
-     *           axis.
-     * @param ty The distance by which to translate each point along the <i>y</i>
-     *           axis.
-     */
-    function Matrix(a, b, c, d, tx, ty) {
-        if (a === void 0) { a = 1; }
-        if (b === void 0) { b = 0; }
-        if (c === void 0) { c = 0; }
-        if (d === void 0) { d = 1; }
-        if (tx === void 0) { tx = 0; }
-        if (ty === void 0) { ty = 0; }
-        this.a = a;
-        this.b = b;
-        this.c = c;
-        this.d = d;
-        this.tx = tx;
-        this.ty = ty;
+var Matrix3DUtils = (function () {
+    function Matrix3DUtils() {
     }
     /**
-     * Returns a new Matrix object that is a clone of this matrix, with an exact
-     * copy of the contained object.
+     * Fills the 3d matrix object with values representing the transformation made by the given quaternion.
      *
-     * @return A Matrix object.
+     * @param    quarternion    The quarterion object to convert.
      */
-    Matrix.prototype.clone = function () {
-        return new Matrix(this.a, this.b, this.c, this.d, this.tx, this.ty);
+    Matrix3DUtils.quaternion2matrix = function (quarternion, m) {
+        if (m === void 0) { m = null; }
+        var x = quarternion.x;
+        var y = quarternion.y;
+        var z = quarternion.z;
+        var w = quarternion.w;
+        var xx = x * x;
+        var xy = x * y;
+        var xz = x * z;
+        var xw = x * w;
+        var yy = y * y;
+        var yz = y * z;
+        var yw = y * w;
+        var zz = z * z;
+        var zw = z * w;
+        var raw = Matrix3DUtils.RAW_DATA_CONTAINER;
+        raw[0] = 1 - 2 * (yy + zz);
+        raw[1] = 2 * (xy + zw);
+        raw[2] = 2 * (xz - yw);
+        raw[4] = 2 * (xy - zw);
+        raw[5] = 1 - 2 * (xx + zz);
+        raw[6] = 2 * (yz + xw);
+        raw[8] = 2 * (xz + yw);
+        raw[9] = 2 * (yz - xw);
+        raw[10] = 1 - 2 * (xx + yy);
+        raw[3] = raw[7] = raw[11] = raw[12] = raw[13] = raw[14] = 0;
+        raw[15] = 1;
+        if (m) {
+            m.copyRawDataFrom(raw);
+            return m;
+        }
+        else
+            return new Matrix3D(raw);
     };
     /**
-     * Concatenates a matrix with the current matrix, effectively combining the
-     * geometric effects of the two. In mathematical terms, concatenating two
-     * matrixes is the same as combining them using matrix multiplication.
-     *
-     * <p>For example, if matrix <code>m1</code> scales an object by a factor of
-     * four, and matrix <code>m2</code> rotates an object by 1.5707963267949
-     * radians(<code>Math.PI/2</code>), then <code>m1.concat(m2)</code>
-     * transforms <code>m1</code> into a matrix that scales an object by a factor
-     * of four and rotates the object by <code>Math.PI/2</code> radians. </p>
-     *
-     * <p>This method replaces the source matrix with the concatenated matrix. If
-     * you want to concatenate two matrixes without altering either of the two
-     * source matrixes, first copy the source matrix by using the
-     * <code>clone()</code> method, as shown in the Class Examples section.</p>
-     *
-     * @param matrix The matrix to be concatenated to the source matrix.
+     * Returns a normalised <code>Vector3D</code> object representing the forward vector of the given matrix.
+     * @param    m        The Matrix3D object to use to get the forward vector
+     * @param    v        [optional] A vector holder to prevent make new Vector3D instance if already exists. Default is null.
+     * @return            The forward vector
      */
-    Matrix.prototype.concat = function (matrix) {
-        var a1 = this.a * matrix.a + this.b * matrix.c;
-        this.b = this.a * matrix.b + this.b * matrix.d;
-        this.a = a1;
-        var c1 = this.c * matrix.a + this.d * matrix.c;
-        this.d = this.c * matrix.b + this.d * matrix.d;
-        this.c = c1;
-        var tx1 = this.tx * matrix.a + this.ty * matrix.c + matrix.tx;
-        this.ty = this.tx * matrix.b + this.ty * matrix.d + matrix.ty;
-        this.tx = tx1;
+    Matrix3DUtils.getForward = function (m, v) {
+        if (v === void 0) { v = null; }
+        //v ||= new Vector3D(0.0, 0.0, 0.0);
+        if (v === null) {
+            v = new Vector3D(0.0, 0.0, 0.0);
+        }
+        m.copyColumnTo(2, v);
+        v.normalize();
+        return v;
     };
     /**
-     * Copies a Vector3D object into specific column of the calling Matrix3D
-     * object.
-     *
-     * @param column   The column from which to copy the data from.
-     * @param vector3D The Vector3D object from which to copy the data.
+     * Returns a normalised <code>Vector3D</code> object representing the up vector of the given matrix.
+     * @param    m        The Matrix3D object to use to get the up vector
+     * @param    v        [optional] A vector holder to prevent make new Vector3D instance if already exists. Default is null.
+     * @return            The up vector
      */
-    Matrix.prototype.copyColumnFrom = function (column, vector3D) {
-        if (column > 2) {
-            throw "Column " + column + " out of bounds (2)";
+    Matrix3DUtils.getUp = function (m, v) {
+        //v ||= new Vector3D(0.0, 0.0, 0.0);
+        if (v === void 0) { v = null; }
+        if (v === null) {
+            v = new Vector3D(0.0, 0.0, 0.0);
         }
-        else if (column == 0) {
-            this.a = vector3D.x;
-            this.c = vector3D.y;
-        }
-        else if (column == 1) {
-            this.b = vector3D.x;
-            this.d = vector3D.y;
-        }
-        else {
-            this.tx = vector3D.x;
-            this.ty = vector3D.y;
-        }
+        m.copyColumnTo(1, v);
+        v.normalize();
+        return v;
     };
     /**
-     * Copies specific column of the calling Matrix object into the Vector3D
-     * object. The w element of the Vector3D object will not be changed.
-     *
-     * @param column   The column from which to copy the data from.
-     * @param vector3D The Vector3D object from which to copy the data.
+     * Returns a normalised <code>Vector3D</code> object representing the right vector of the given matrix.
+     * @param    m        The Matrix3D object to use to get the right vector
+     * @param    v        [optional] A vector holder to prevent make new Vector3D instance if already exists. Default is null.
+     * @return            The right vector
      */
-    Matrix.prototype.copyColumnTo = function (column, vector3D) {
-        if (column > 2) {
-            throw new ArgumentError("ArgumentError, Column " + column + " out of bounds [0, ..., 2]");
+    Matrix3DUtils.getRight = function (m, v) {
+        if (v === void 0) { v = null; }
+        //v ||= new Vector3D(0.0, 0.0, 0.0);
+        if (v === null) {
+            v = new Vector3D(0.0, 0.0, 0.0);
         }
-        else if (column == 0) {
-            vector3D.x = this.a;
-            vector3D.y = this.c;
-            vector3D.z = 0;
-        }
-        else if (column == 1) {
-            vector3D.x = this.b;
-            vector3D.y = this.d;
-            vector3D.z = 0;
-        }
-        else {
-            vector3D.x = this.tx;
-            vector3D.y = this.ty;
-            vector3D.z = 1;
-        }
+        m.copyColumnTo(0, v);
+        v.normalize();
+        return v;
     };
     /**
-     * Copies all of the matrix data from the source Point object into the
-     * calling Matrix object.
-     *
-     * @param sourceMatrix The Matrix object from which to copy the data.
+     * Returns a boolean value representing whether there is any significant difference between the two given 3d matrices.
      */
-    Matrix.prototype.copyFrom = function (sourceMatrix) {
-        this.a = sourceMatrix.a;
-        this.b = sourceMatrix.b;
-        this.c = sourceMatrix.c;
-        this.d = sourceMatrix.d;
-        this.tx = sourceMatrix.tx;
-        this.ty = sourceMatrix.ty;
+    Matrix3DUtils.compare = function (m1, m2) {
+        var r1 = Matrix3DUtils.RAW_DATA_CONTAINER;
+        var r2 = m2.rawData;
+        m1.copyRawDataTo(r1);
+        for (var i = 0; i < 16; ++i) {
+            if (r1[i] != r2[i])
+                return false;
+        }
+        return true;
     };
-    /**
-     * Copies a Vector3D object into specific row of the calling Matrix object.
-     *
-     * @param row      The row from which to copy the data from.
-     * @param vector3D The Vector3D object from which to copy the data.
-     */
-    Matrix.prototype.copyRowFrom = function (row, vector3D) {
-        if (row > 2) {
-            throw new ArgumentError("ArgumentError, Row " + row + " out of bounds [0, ..., 2]");
-        }
-        else if (row == 0) {
-            this.a = vector3D.x;
-            this.c = vector3D.y;
-        }
-        else if (row == 1) {
-            this.b = vector3D.x;
-            this.d = vector3D.y;
-        }
-        else {
-            this.tx = vector3D.x;
-            this.ty = vector3D.y;
-        }
+    Matrix3DUtils.lookAt = function (matrix, pos, dir, up) {
+        var dirN;
+        var upN;
+        var lftN;
+        var raw = Matrix3DUtils.RAW_DATA_CONTAINER;
+        lftN = dir.crossProduct(up);
+        lftN.normalize();
+        upN = lftN.crossProduct(dir);
+        upN.normalize();
+        dirN = dir.clone();
+        dirN.normalize();
+        raw[0] = lftN.x;
+        raw[1] = upN.x;
+        raw[2] = -dirN.x;
+        raw[3] = 0.0;
+        raw[4] = lftN.y;
+        raw[5] = upN.y;
+        raw[6] = -dirN.y;
+        raw[7] = 0.0;
+        raw[8] = lftN.z;
+        raw[9] = upN.z;
+        raw[10] = -dirN.z;
+        raw[11] = 0.0;
+        raw[12] = -lftN.dotProduct(pos);
+        raw[13] = -upN.dotProduct(pos);
+        raw[14] = dirN.dotProduct(pos);
+        raw[15] = 1.0;
+        matrix.copyRawDataFrom(raw);
     };
-    /**
-     * Copies specific row of the calling Matrix object into the Vector3D object.
-     * The w element of the Vector3D object will not be changed.
-     *
-     * @param row      The row from which to copy the data from.
-     * @param vector3D The Vector3D object from which to copy the data.
-     */
-    Matrix.prototype.copyRowTo = function (row, vector3D) {
-        if (row > 2) {
-            throw new ArgumentError("ArgumentError, Row " + row + " out of bounds [0, ..., 2]");
-        }
-        else if (row == 0) {
-            vector3D.x = this.a;
-            vector3D.y = this.b;
-            vector3D.z = this.tx;
-        }
-        else if (row == 1) {
-            vector3D.x = this.c;
-            vector3D.y = this.d;
-            vector3D.z = this.ty;
-        }
-        else {
-            vector3D.setTo(0, 0, 1);
-        }
+    Matrix3DUtils.reflection = function (plane, target) {
+        if (target === void 0) { target = null; }
+        if (target === null)
+            target = new Matrix3D();
+        var a = plane.a, b = plane.b, c = plane.c, d = plane.d;
+        var rawData = Matrix3DUtils.RAW_DATA_CONTAINER;
+        var ab2 = -2 * a * b;
+        var ac2 = -2 * a * c;
+        var bc2 = -2 * b * c;
+        // reflection matrix
+        rawData[0] = 1 - 2 * a * a;
+        rawData[4] = ab2;
+        rawData[8] = ac2;
+        rawData[12] = -2 * a * d;
+        rawData[1] = ab2;
+        rawData[5] = 1 - 2 * b * b;
+        rawData[9] = bc2;
+        rawData[13] = -2 * b * d;
+        rawData[2] = ac2;
+        rawData[6] = bc2;
+        rawData[10] = 1 - 2 * c * c;
+        rawData[14] = -2 * c * d;
+        rawData[3] = 0;
+        rawData[7] = 0;
+        rawData[11] = 0;
+        rawData[15] = 1;
+        target.copyRawDataFrom(rawData);
+        return target;
     };
-    /**
-     * Includes parameters for scaling, rotation, and translation. When applied
-     * to a matrix it sets the matrix's values based on those parameters.
-     *
-     * <p>Using the <code>createBox()</code> method lets you obtain the same
-     * matrix as you would if you applied the <code>identity()</code>,
-     * <code>rotate()</code>, <code>scale()</code>, and <code>translate()</code>
-     * methods in succession. For example, <code>mat1.createBox(2,2,Math.PI/4,
-     * 100, 100)</code> has the same effect as the following:</p>
-     *
-     * @param scaleX   The factor by which to scale horizontally.
-     * @param scaleY   The factor by which scale vertically.
-     * @param rotation The amount to rotate, in radians.
-     * @param tx       The number of pixels to translate(move) to the right
-     *                 along the <i>x</i> axis.
-     * @param ty       The number of pixels to translate(move) down along the
-     *                 <i>y</i> axis.
-     */
-    Matrix.prototype.createBox = function (scaleX, scaleY, rotation, tx, ty) {
-        if (rotation === void 0) { rotation = 0; }
-        if (tx === void 0) { tx = 0; }
-        if (ty === void 0) { ty = 0; }
-        this.a = scaleX;
-        this.d = scaleY;
-        this.b = rotation;
-        this.tx = tx;
-        this.ty = ty;
-    };
-    /**
-     * Creates the specific style of matrix expected by the
-     * <code>beginGradientFill()</code> and <code>lineGradientStyle()</code>
-     * methods of the Graphics class. Width and height are scaled to a
-     * <code>scaleX</code>/<code>scaleY</code> pair and the
-     * <code>tx</code>/<code>ty</code> values are offset by half the width and
-     * height.
-     *
-     * <p>For example, consider a gradient with the following
-     * characteristics:</p>
-     *
-     * <ul>
-     *   <li><code>GradientType.LINEAR</code></li>
-     *   <li>Two colors, green and blue, with the ratios array set to <code>[0,
-     * 255]</code></li>
-     *   <li><code>SpreadMethod.PAD</code></li>
-     *   <li><code>InterpolationMethod.LINEAR_RGB</code></li>
-     * </ul>
-     *
-     * <p>The following illustrations show gradients in which the matrix was
-     * defined using the <code>createGradientBox()</code> method with different
-     * parameter settings:</p>
-     *
-     * @param width    The width of the gradient box.
-     * @param height   The height of the gradient box.
-     * @param rotation The amount to rotate, in radians.
-     * @param tx       The distance, in pixels, to translate to the right along
-     *                 the <i>x</i> axis. This value is offset by half of the
-     *                 <code>width</code> parameter.
-     * @param ty       The distance, in pixels, to translate down along the
-     *                 <i>y</i> axis. This value is offset by half of the
-     *                 <code>height</code> parameter.
-     */
-    Matrix.prototype.createGradientBox = function (width, height, rotation, tx, ty) {
-        if (rotation === void 0) { rotation = 0; }
-        if (tx === void 0) { tx = 0; }
-        if (ty === void 0) { ty = 0; }
-        this.a = width / 1638.4;
-        this.d = height / 1638.4;
-        if (rotation != 0.0) {
-            var cos = Math.cos(rotation);
-            var sin = Math.sin(rotation);
-            this.b = sin * this.d;
-            this.c = -sin * this.a;
-            this.a *= cos;
-            this.d *= cos;
-        }
-        else {
-            this.b = this.c = 0;
-        }
-        this.tx = tx + width / 2;
-        this.ty = ty + height / 2;
-    };
-    /**
-     * Given a point in the pretransform coordinate space, returns the
-     * coordinates of that point after the transformation occurs. Unlike the
-     * standard transformation applied using the <code>transformPoint()</code>
-     * method, the <code>deltaTransformPoint()</code> method's transformation
-     * does not consider the translation parameters <code>tx</code> and
-     * <code>ty</code>.
-     *
-     * @param point The point for which you want to get the result of the matrix
-     *              transformation.
-     * @return The point resulting from applying the matrix transformation.
-     */
-    Matrix.prototype.deltaTransformPoint = function (point) {
-        return new Point(point.x * this.a + point.y * this.c, point.x * this.b + point.y * this.d);
-    };
-    /**
-     * Sets each matrix property to a value that causes a null transformation. An
-     * object transformed by applying an identity matrix will be identical to the
-     * original.
-     *
-     * <p>After calling the <code>identity()</code> method, the resulting matrix
-     * has the following properties: <code>a</code>=1, <code>b</code>=0,
-     * <code>c</code>=0, <code>d</code>=1, <code>tx</code>=0,
-     * <code>ty</code>=0.</p>
-     *
-     * <p>In matrix notation, the identity matrix looks like this:</p>
-     *
-     */
-    Matrix.prototype.identity = function () {
-        this.a = 1;
-        this.b = 0;
-        this.c = 0;
-        this.d = 1;
-        this.tx = 0;
-        this.ty = 0;
-    };
-    /**
-     * Performs the opposite transformation of the original matrix. You can apply
-     * an inverted matrix to an object to undo the transformation performed when
-     * applying the original matrix.
-     */
-    Matrix.prototype.invert = function () {
-        var norm = this.a * this.d - this.b * this.c;
-        if (norm == 0) {
-            this.a = this.b = this.c = this.d = 0;
-            this.tx = -this.tx;
-            this.ty = -this.ty;
-        }
-        else {
-            norm = 1.0 / norm;
-            var a1 = this.d * norm;
-            this.d = this.a * norm;
-            this.a = a1;
-            this.b *= -norm;
-            this.c *= -norm;
-            var tx1 = -this.a * this.tx - this.c * this.ty;
-            this.ty = -this.b * this.tx - this.d * this.ty;
-            this.tx = tx1;
-        }
-    };
-    /**
-     * Returns a new Matrix object that is a clone of this matrix, with an exact
-     * copy of the contained object.
-     *
-     * @param matrix The matrix for which you want to get the result of the matrix
-     *               transformation.
-     * @return A Matrix object.
-     */
-    Matrix.prototype.multiply = function (matrix) {
-        var result = new Matrix();
-        result.a = this.a * matrix.a + this.b * matrix.c;
-        result.b = this.a * matrix.b + this.b * matrix.d;
-        result.c = this.c * matrix.a + this.d * matrix.c;
-        result.d = this.c * matrix.b + this.d * matrix.d;
-        result.tx = this.tx * matrix.a + this.ty * matrix.c + matrix.tx;
-        result.ty = this.tx * matrix.b + this.ty * matrix.d + matrix.ty;
+    Matrix3DUtils.transformVector = function (matrix, vector, result) {
+        if (result === void 0) { result = null; }
+        if (!result)
+            result = new Vector3D();
+        var raw = Matrix3DUtils.RAW_DATA_CONTAINER;
+        matrix.copyRawDataTo(raw);
+        var a = raw[0];
+        var e = raw[1];
+        var i = raw[2];
+        var m = raw[3];
+        var b = raw[4];
+        var f = raw[5];
+        var j = raw[6];
+        var n = raw[7];
+        var c = raw[8];
+        var g = raw[9];
+        var k = raw[10];
+        var o = raw[11];
+        var d = raw[12];
+        var h = raw[13];
+        var l = raw[14];
+        var p = raw[15];
+        var x = vector.x;
+        var y = vector.y;
+        var z = vector.z;
+        result.x = a * x + b * y + c * z + d;
+        result.y = e * x + f * y + g * z + h;
+        result.z = i * x + j * y + k * z + l;
+        result.w = m * x + n * y + o * z + p;
         return result;
     };
-    /**
-     * Applies a rotation transformation to the Matrix object.
-     *
-     * <p>The <code>rotate()</code> method alters the <code>a</code>,
-     * <code>b</code>, <code>c</code>, and <code>d</code> properties of the
-     * Matrix object. In matrix notation, this is the same as concatenating the
-     * current matrix with the following:</p>
-     *
-     * @param angle The rotation angle in radians.
-     */
-    Matrix.prototype.rotate = function (angle) {
-        var cos = Math.cos(angle);
-        var sin = Math.sin(angle);
-        var a1 = this.a * cos - this.b * sin;
-        this.b = this.a * sin + this.b * cos;
-        this.a = a1;
-        var c1 = this.c * cos - this.d * sin;
-        this.d = this.c * sin + this.d * cos;
-        this.c = c1;
-        var tx1 = this.tx * cos - this.ty * sin;
-        this.ty = this.tx * sin + this.ty * cos;
-        this.tx = tx1;
+    Matrix3DUtils.deltaTransformVector = function (matrix, vector, result) {
+        if (result === void 0) { result = null; }
+        if (!result)
+            result = new Vector3D();
+        var raw = Matrix3DUtils.RAW_DATA_CONTAINER;
+        matrix.copyRawDataTo(raw);
+        var a = raw[0];
+        var e = raw[1];
+        var i = raw[2];
+        var m = raw[3];
+        var b = raw[4];
+        var f = raw[5];
+        var j = raw[6];
+        var n = raw[7];
+        var c = raw[8];
+        var g = raw[9];
+        var k = raw[10];
+        var o = raw[11];
+        var x = vector.x;
+        var y = vector.y;
+        var z = vector.z;
+        result.x = a * x + b * y + c * z;
+        result.y = e * x + f * y + g * z;
+        result.z = i * x + j * y + k * z;
+        result.w = m * x + n * y + o * z;
+        return result;
+    };
+    Matrix3DUtils.getTranslation = function (transform, result) {
+        if (result === void 0) { result = null; }
+        if (!result)
+            result = new Vector3D();
+        transform.copyColumnTo(3, result);
+        return result;
+    };
+    Matrix3DUtils.deltaTransformVectors = function (matrix, vin, vout) {
+        var raw = Matrix3DUtils.RAW_DATA_CONTAINER;
+        matrix.copyRawDataTo(raw);
+        var a = raw[0];
+        var e = raw[1];
+        var i = raw[2];
+        var m = raw[3];
+        var b = raw[4];
+        var f = raw[5];
+        var j = raw[6];
+        var n = raw[7];
+        var c = raw[8];
+        var g = raw[9];
+        var k = raw[10];
+        var o = raw[11];
+        var outIndex = 0;
+        var length = vin.length;
+        for (var index = 0; index < length; index += 3) {
+            var x = vin[index];
+            var y = vin[index + 1];
+            var z = vin[index + 2];
+            vout[outIndex++] = a * x + b * y + c * z;
+            vout[outIndex++] = e * x + f * y + g * z;
+            vout[outIndex++] = i * x + j * y + k * z;
+        }
     };
     /**
-     * Applies a scaling transformation to the matrix. The <i>x</i> axis is
-     * multiplied by <code>sx</code>, and the <i>y</i> axis it is multiplied by
-     * <code>sy</code>.
-     *
-     * <p>The <code>scale()</code> method alters the <code>a</code> and
-     * <code>d</code> properties of the Matrix object. In matrix notation, this
-     * is the same as concatenating the current matrix with the following
-     * matrix:</p>
-     *
-     * @param sx A multiplier used to scale the object along the <i>x</i> axis.
-     * @param sy A multiplier used to scale the object along the <i>y</i> axis.
+     * A reference to a Vector to be used as a temporary raw data container, to prevent object creation.
      */
-    Matrix.prototype.scale = function (sx, sy) {
-        this.a *= sx;
-        this.b *= sy;
-        this.c *= sx;
-        this.d *= sy;
-        this.tx *= sx;
-        this.ty *= sy;
-    };
-    /**
-     * Sets the members of Matrix to the specified values.
-     *
-     * @param a  The value that affects the positioning of pixels along the
-     *           <i>x</i> axis when scaling or rotating an image.
-     * @param b  The value that affects the positioning of pixels along the
-     *           <i>y</i> axis when rotating or skewing an image.
-     * @param c  The value that affects the positioning of pixels along the
-     *           <i>x</i> axis when rotating or skewing an image.
-     * @param d  The value that affects the positioning of pixels along the
-     *           <i>y</i> axis when scaling or rotating an image..
-     * @param tx The distance by which to translate each point along the <i>x</i>
-     *           axis.
-     * @param ty The distance by which to translate each point along the <i>y</i>
-     *           axis.
-     */
-    Matrix.prototype.setTo = function (a, b, c, d, tx, ty) {
-        this.a = a;
-        this.b = b;
-        this.c = c;
-        this.d = d;
-        this.tx = tx;
-        this.ty = ty;
-    };
-    /**
-     * Returns a text value listing the properties of the Matrix object.
-     *
-     * @return A string containing the values of the properties of the Matrix
-     *         object: <code>a</code>, <code>b</code>, <code>c</code>,
-     *         <code>d</code>, <code>tx</code>, and <code>ty</code>.
-     */
-    Matrix.prototype.toString = function () {
-        return "[Matrix] (a=" + this.a + ", b=" + this.b + ", c=" + this.c + ", d=" + this.d + ", tx=" + this.tx + ", ty=" + this.ty + ")";
-    };
-    /**
-     * Returns the result of applying the geometric transformation represented by
-     * the Matrix object to the specified point.
-     *
-     * @param point The point for which you want to get the result of the Matrix
-     *              transformation.
-     * @return The point resulting from applying the Matrix transformation.
-     */
-    Matrix.prototype.transformPoint = function (point) {
-        return new Point(point.x * this.a + point.y * this.c + this.tx, point.x * this.b + point.y * this.d + this.ty);
-    };
-    /**
-     * Translates the matrix along the <i>x</i> and <i>y</i> axes, as specified
-     * by the <code>dx</code> and <code>dy</code> parameters.
-     *
-     * @param dx The amount of movement along the <i>x</i> axis to the right, in
-     *           pixels.
-     * @param dy The amount of movement down along the <i>y</i> axis, in pixels.
-     */
-    Matrix.prototype.translate = function (dx, dy) {
-        this.tx += dx;
-        this.ty += dy;
-    };
-    return Matrix;
+    Matrix3DUtils.RAW_DATA_CONTAINER = new Array(16);
+    //public static RAW_DATA_CONTAINER:number[] = new Array<number>(16);
+    Matrix3DUtils.CALCULATION_MATRIX = new Matrix3D();
+    return Matrix3DUtils;
 })();
-module.exports = Matrix;
+module.exports = Matrix3DUtils;
 
 
-},{"awayjs-core/lib/errors/ArgumentError":undefined,"awayjs-core/lib/geom/Point":undefined}],"awayjs-core/lib/geom/Orientation3D":[function(require,module,exports){
+},{"awayjs-core/lib/geom/Matrix3D":20,"awayjs-core/lib/geom/Vector3D":26}],22:[function(require,module,exports){
 /**
  * A Quaternion object which can be used to represent rotations.
  */
@@ -3844,248 +3107,7 @@ var Orientation3D = (function () {
 module.exports = Orientation3D;
 
 
-},{}],"awayjs-core/lib/geom/PerspectiveProjection":[function(require,module,exports){
-/**
- * <p>The PerspectiveProjection class provides an easy way to assign or modify
- * the perspective transformations of a display object and all of its
- * children. For more complex or custom perspective transformations, use the
- * Matrix3D class. While the PerspectiveProjection class provides basic
- * three-dimensional presentation properties, the Matrix3D class provides more
- * detailed control over the three-dimensional presentation of display objects.
- * </p>
- *
- * <p>Projection is a way of representing a three-dimensional object in a
- * two-dimensional space, like a cube projected onto a computer screen.
- * Perspective projection uses a viewing frustum (a rectangular pyramid) to
- * model and project a three-dimensional world and its objects on the screen.
- * The viewing frustum becomes increasingly wider as it moves further from the
- * origin of the viewpoint. The origin of the viewpoint could be a camera or
- * the eyes of an observer facing the screen. The projected perspective
- * produces the illusion of three dimensions with depth and distance, where
- * the objects closer to the screen appear larger than the objects farther
- * from the screen.</p>
- *
- * <p>A default PerspectiveProjection object is a framework defined for
- * perspective transformation of the root object, based on the field of view
- * and aspect ratio (dimensions) of the stage. The projection center, the
- * vanishing point, is set to the center of the stage, which means the
- * three-dimensional display objects disappear toward the center of the stage
- * as they move back in the z axis. The default viewpoint is at point (0,0)
- * looking down the positive z axis. The y-axis points down toward the bottom
- * of the screen. You can gain access to the root display object's perspective
- * projection settings and change the field of view and projection center
- * properties of the perspectiveProjection property through the root object's
- * <code>DisplayObject.transform</code> property.</p>
- *
- * <p>You can also set a different perspective projection setting for a
- * display object through the parent's perspective projection. First, create a
- * PerspectiveProjection object and set its <code>fieldOfView</code> and
- * <code>projectionCenter</code> properties. Next, assign the
- * PerspectiveProjection object to the parent display object using the
- * <code>DisplayObject.transform</code> property. The specified projection
- * matrix and transformation will then apply to all the display object's
- * three-dimensional children.</p>
- *
- * <p>To modify a perspective projection of the stage or root object: use the
- * <code>transform.matrix</code> property of the root display object to gain
- * access to the PerspectiveProjection object. Or, apply different perspective
- * projection properties to a display object by setting the perspective
- * projection properties of the display object's parent. The child display
- * object inherits the new properties. Specifically, create a
- * PerspectiveProjection object and set its properties, then assign the
- * PerspectiveProjection object to the <code>perspectiveProjection</code>
- * property of the parent display object's <code>transform</code> property.
- * The specified projection transformation then applies to all the display
- * object's three-dimensional children.</p>
- *
- * <p>Since both PerspectiveProjection and Matrix3D objects perform
- * perspective transformations, do not assign both to a display object at the
- * same time. Use the PerspectiveProjection object for focal length and
- * projection center changes. For more control over the perspective
- * transformation, create a perspective projection Matrix3D object.</p>
- */
-var PerspectiveProjection = (function () {
-    /**
-     * Creates an instance of a PerspectiveProjection object.
-     */
-    function PerspectiveProjection() {
-    }
-    /**
-     * Returns the underlying Matrix3D object of the display object.
-     *
-     * <p>A display object, like the root object, can have a
-     * PerspectiveProjection object without needing a Matrix3D property
-     * defined for its transformations. In fact, use either a
-     * PerspectiveProjection or a Matrix3D object to specify the
-     * perspective transformation. If when using the PerspectiveProjection
-     * object, a Matrix3D object was needed, the <code>toMatrix3D()</code>
-     * method can retrieve the underlying Matrix3D object of the display
-     * object. For example, the <code>toMatrix3D()</code> method can be
-     * used with the <code>Utils3D.projectVectors()</code> method.</p>
-     *
-     * @see away.geom.Matrix3D
-     */
-    PerspectiveProjection.prototype.toMatrix3D = function () {
-        return this._matrix3D;
-    };
-    return PerspectiveProjection;
-})();
-module.exports = PerspectiveProjection;
-
-
-},{}],"awayjs-core/lib/geom/Plane3D":[function(require,module,exports){
-var PlaneClassification = require("awayjs-core/lib/geom/PlaneClassification");
-var Plane3D = (function () {
-    /**
-     * Create a Plane3D with ABCD coefficients
-     */
-    function Plane3D(a, b, c, d) {
-        if (a === void 0) { a = 0; }
-        if (b === void 0) { b = 0; }
-        if (c === void 0) { c = 0; }
-        if (d === void 0) { d = 0; }
-        this.a = a;
-        this.b = b;
-        this.c = c;
-        this.d = d;
-        if (a == 0 && b == 0) {
-            this._iAlignment = Plane3D.ALIGN_XY_AXIS;
-        }
-        else if (b == 0 && c == 0) {
-            this._iAlignment = Plane3D.ALIGN_YZ_AXIS;
-        }
-        else if (a == 0 && c == 0) {
-            this._iAlignment = Plane3D.ALIGN_XZ_AXIS;
-        }
-        else {
-            this._iAlignment = Plane3D.ALIGN_ANY;
-        }
-    }
-    /**
-     * Fills this Plane3D with the coefficients from 3 points in 3d space.
-     * @param p0 Vector3D
-     * @param p1 Vector3D
-     * @param p2 Vector3D
-     */
-    Plane3D.prototype.fromPoints = function (p0, p1, p2) {
-        var d1x = p1.x - p0.x;
-        var d1y = p1.y - p0.y;
-        var d1z = p1.z - p0.z;
-        var d2x = p2.x - p0.x;
-        var d2y = p2.y - p0.y;
-        var d2z = p2.z - p0.z;
-        this.a = d1y * d2z - d1z * d2y;
-        this.b = d1z * d2x - d1x * d2z;
-        this.c = d1x * d2y - d1y * d2x;
-        this.d = this.a * p0.x + this.b * p0.y + this.c * p0.z;
-        // not using epsilon, since a plane is infinite and a small incorrection can grow very large
-        if (this.a == 0 && this.b == 0) {
-            this._iAlignment = Plane3D.ALIGN_XY_AXIS;
-        }
-        else if (this.b == 0 && this.c == 0) {
-            this._iAlignment = Plane3D.ALIGN_YZ_AXIS;
-        }
-        else if (this.a == 0 && this.c == 0) {
-            this._iAlignment = Plane3D.ALIGN_XZ_AXIS;
-        }
-        else {
-            this._iAlignment = Plane3D.ALIGN_ANY;
-        }
-    };
-    /**
-     * Fills this Plane3D with the coefficients from the plane's normal and a point in 3d space.
-     * @param normal Vector3D
-     * @param point  Vector3D
-     */
-    Plane3D.prototype.fromNormalAndPoint = function (normal, point) {
-        this.a = normal.x;
-        this.b = normal.y;
-        this.c = normal.z;
-        this.d = this.a * point.x + this.b * point.y + this.c * point.z;
-        if (this.a == 0 && this.b == 0) {
-            this._iAlignment = Plane3D.ALIGN_XY_AXIS;
-        }
-        else if (this.b == 0 && this.c == 0) {
-            this._iAlignment = Plane3D.ALIGN_YZ_AXIS;
-        }
-        else if (this.a == 0 && this.c == 0) {
-            this._iAlignment = Plane3D.ALIGN_XZ_AXIS;
-        }
-        else {
-            this._iAlignment = Plane3D.ALIGN_ANY;
-        }
-    };
-    /**
-     * Normalize this Plane3D
-     * @return Plane3D This Plane3D.
-     */
-    Plane3D.prototype.normalize = function () {
-        var len = 1 / Math.sqrt(this.a * this.a + this.b * this.b + this.c * this.c);
-        this.a *= len;
-        this.b *= len;
-        this.c *= len;
-        this.d *= len;
-        return this;
-    };
-    /**
-     * Returns the signed distance between this Plane3D and the point p.
-     * @param p Vector3D
-     * @returns Number
-     */
-    Plane3D.prototype.distance = function (p) {
-        if (this._iAlignment == Plane3D.ALIGN_YZ_AXIS) {
-            return this.a * p.x - this.d;
-        }
-        else if (this._iAlignment == Plane3D.ALIGN_XZ_AXIS) {
-            return this.b * p.y - this.d;
-        }
-        else if (this._iAlignment == Plane3D.ALIGN_XY_AXIS) {
-            return this.c * p.z - this.d;
-        }
-        else {
-            return this.a * p.x + this.b * p.y + this.c * p.z - this.d;
-        }
-    };
-    /**
-     * Classify a point against this Plane3D. (in front, back or intersecting)
-     * @param p Vector3D
-     * @return int Plane3.FRONT or Plane3D.BACK or Plane3D.INTERSECT
-     */
-    Plane3D.prototype.classifyPoint = function (p, epsilon) {
-        if (epsilon === void 0) { epsilon = 0.01; }
-        // check NaN
-        if (this.d != this.d)
-            return PlaneClassification.FRONT;
-        var len;
-        if (this._iAlignment == Plane3D.ALIGN_YZ_AXIS)
-            len = this.a * p.x - this.d;
-        else if (this._iAlignment == Plane3D.ALIGN_XZ_AXIS)
-            len = this.b * p.y - this.d;
-        else if (this._iAlignment == Plane3D.ALIGN_XY_AXIS)
-            len = this.c * p.z - this.d;
-        else
-            len = this.a * p.x + this.b * p.y + this.c * p.z - this.d;
-        if (len < -epsilon)
-            return PlaneClassification.BACK;
-        else if (len > epsilon)
-            return PlaneClassification.FRONT;
-        else
-            return PlaneClassification.INTERSECT;
-    };
-    Plane3D.prototype.toString = function () {
-        return "Plane3D [a:" + this.a + ", b:" + this.b + ", c:" + this.c + ", d:" + this.d + "]";
-    };
-    // indicates the alignment of the plane
-    Plane3D.ALIGN_ANY = 0;
-    Plane3D.ALIGN_XY_AXIS = 1;
-    Plane3D.ALIGN_YZ_AXIS = 2;
-    Plane3D.ALIGN_XZ_AXIS = 3;
-    return Plane3D;
-})();
-module.exports = Plane3D;
-
-
-},{"awayjs-core/lib/geom/PlaneClassification":undefined}],"awayjs-core/lib/geom/PlaneClassification":[function(require,module,exports){
+},{}],23:[function(require,module,exports){
 var PlaneClassification = (function () {
     function PlaneClassification() {
     }
@@ -4100,7 +3122,7 @@ var PlaneClassification = (function () {
 module.exports = PlaneClassification;
 
 
-},{}],"awayjs-core/lib/geom/Point":[function(require,module,exports){
+},{}],24:[function(require,module,exports){
 /**
  * The Point object represents a location in a two-dimensional coordinate
  * system, where <i>x</i> represents the horizontal axis and <i>y</i>
@@ -4282,390 +3304,7 @@ var Point = (function () {
 module.exports = Point;
 
 
-},{}],"awayjs-core/lib/geom/PoissonLookup":[function(require,module,exports){
-var PoissonLookup = (function () {
-    function PoissonLookup() {
-    }
-    PoissonLookup.initDistributions = function () {
-        // precalculated for best control
-        this._distributions = new Array();
-        this._distributions[0] = new Array(0.3082841, 0.4320919);
-        this._distributions[1] = new Array(0.3082841, 0.4320919, -0.2274942, -0.6640266);
-        this._distributions[2] = new Array(0.8742689, 0.0009265686, -0.6864116, -0.5536607, -0.2325206, 0.7678371);
-        this._distributions[3] = new Array(0.3913446, -0.7084417, -0.7511101, -0.5935929, -0.2323436, 0.5320091, 0.8435315, 0.5035911);
-        this._distributions[4] = new Array(0.2122471, -0.5771395, -0.8543506, -0.1763534, 0.5189021, 0.8323698, -0.3616908, 0.5865368, 0.9523004, -0.04948437);
-        this._distributions[5] = new Array(0.5791035, 0.3496495, 0.2959551, -0.6006749, -0.2419119, -0.06879545, -0.7403072, 0.6110353, -0.04555973, 0.8059174, -0.5275017, -0.737129);
-        this._distributions[6] = new Array(0.06941478, 0.8519508, -0.7441907, 0.2426432, 0.6439992, -0.2405252, -0.1007523, -0.2327587, -0.6427067, -0.7248485, 0.8050759, 0.5492936, 0.3573822, -0.8824506);
-        this._distributions[7] = new Array(0.8509863, 0.4452587, -0.09507271, 0.2073005, 0.1706571, -0.6434793, 0.8029777, -0.2718274, -0.4401725, 0.8196304, 0.2715359, 0.8598521, -0.8121575, -0.006447683, -0.6486837, -0.7237598);
-        this._distributions[8] = new Array(0.6951686, -0.2680728, -0.04933243, 0.3710589, 0.6592212, 0.3661054, -0.01579228, -0.6909603, -0.3275101, -0.1756866, 0.3811549, 0.9218544, -0.216032, 0.9755028, -0.7065172, 0.3355389, -0.6579109, -0.6798355);
-        this._distributions[9] = new Array(0.6181276, -0.09790418, -0.2537868, -0.5570995, -0.1964931, 0.3459414, 0.3474613, -0.8885581, 0.5135743, 0.5753114, -0.9549091, 0.1480672, -0.8711916, -0.4293123, -0.6928071, 0.6190156, -0.13369, 0.8892705, 0.0548224, -0.1246777);
-        this._distributions[10] = new Array(0.4853027, -0.5080479, -0.1331675, -0.506597, 0.139575, 0.01316885, 0.803486, -0.07568797, 0.5240274, 0.4883182, -0.4334005, 0.1207938, -0.7794577, -0.3985141, 0.1576432, -0.9861221, -0.3712867, 0.6959021, 0.1517378, 0.9847429, -0.9762396, 0.1661073);
-        this._distributions[11] = new Array(-0.2790166, -0.01252619, 0.3389016, 0.3921154, 0.2408341, -0.313211, -0.8151779, -0.3898362, -0.6347761, 0.3486495, 0.09471484, -0.7722448, -0.1385674, 0.6364574, 0.2456331, 0.9295807, -0.3864306, -0.8247881, 0.6111673, -0.7164014, 0.8287669, 0.05466961, 0.837706, 0.5415626);
-        this._distributions[12] = new Array(0.056417, 0.3185693, -0.8245888, 0.1882799, 0.8575996, 0.1136829, 0.1070375, 0.875332, 0.4076743, -0.06000621, -0.4311306, 0.7239349, 0.2677574, -0.538472, -0.08486642, -0.2083647, -0.888989, -0.3906443, -0.4768958, -0.6664082, 0.09334993, -0.9861541, 0.808736, -0.455949, 0.5889823, 0.7660807);
-        this._distributions[13] = new Array(-0.2681346, -0.3955857, -0.1315102, -0.8852947, -0.5143692, 0.09551838, 0.4344836, -0.546945, -0.8620899, -0.3813288, 0.1650431, 0.02034803, -0.1543657, 0.3842218, -0.828457, 0.5376903, -0.6145, -0.7818927, -0.2639062, 0.8784655, 0.1912684, 0.9720125, 0.3135219, 0.5224229, 0.7850655, 0.4592297, 0.7465045, -0.1368916);
-        this._distributions[14] = new Array(0.4241029, 0.695281, 0.150511, -0.02304107, -0.2482675, 0.9120338, 0.8057325, 0.2622084, -0.2445909, 0.2765962, 0.8588713, -0.1772072, 0.3117845, -0.4385471, -0.3923851, -0.3298936, -0.1751254, -0.7405846, 0.6926506, -0.684163, -0.9304563, -0.3254691, -0.8533293, 0.1523024, 0.2510415, -0.917345, -0.6239773, -0.7105472, -0.6104624, 0.6041355);
-        this._distributions[15] = new Array(0.5844554, 0.06651045, 0.1343258, 0.6756578, 0.3799674, -0.6301104, 0.5590436, 0.7940555, 0.09574714, 0.02262517, 0.8697868, 0.393301, 0.003945862, -0.421735, 0.9043913, -0.2432393, -0.4844007, 0.7190998, -0.3201078, 0.2972371, -0.3852352, -0.6341155, -0.5413069, -0.09223081, -0.8468984, -0.5126905, 0.004156174, -0.8633173, -0.9681889, -0.03305046, -0.846509, 0.4414353);
-        this._distributions[16] = new Array(0.4506488, 0.657668, 0.4621297, 0.07441051, -0.2782125, 0.6201044, 0.9750003, 0.09110117, 0.1019436, 0.2986514, 0.03457398, 0.9631706, 0.542098, -0.5505635, 0.8675668, 0.4938077, -0.5414361, 0.2655292, -0.7941836, 0.6003053, -0.09847672, -0.1001604, -0.9316511, -0.08572888, 0.07286467, -0.611899, -0.5232627, -0.4082253, -0.5481608, -0.827938, -0.1551939, -0.9621193, 0.9220031, -0.3315949);
-        this._distributions[17] = new Array(0.197908, -0.4697656, -0.4474689, -0.3428435, 0.8529873, -0.2228634, 0.6022478, -0.5469642, 0.2545276, -0.931133, -0.1507547, -0.7855865, -0.07606658, 0.1011628, 0.3046715, 0.2785755, 0.4698432, -0.1064076, 0.6831254, 0.4152522, 0.1374381, 0.8363233, -0.2166121, 0.6682042, 0.5511393, 0.7996449, -0.4278994, 0.28836, -0.8875198, 0.2181732, -0.8772842, -0.2818254, -0.7000262, 0.5762185, -0.6062385, -0.7439126);
-        this._distributions[18] = new Array(0.6645703, -0.05678739, 0.5720971, 0.4533803, -0.07660709, 0.08802763, 0.5163431, -0.4426552, 0.1163455, -0.3404382, -0.4004807, -0.5046007, 0.2932099, -0.8201418, -0.5322125, 0.03834766, -0.1490209, -0.8817304, -0.8000439, -0.3509448, 0.5260983, 0.8421043, 0.1197811, 0.6963812, 0.9498612, 0.3122156, -0.9285746, 0.02120355, -0.6670724, 0.7217396, 0.9155889, -0.3510147, -0.271941, 0.4727852, 0.318879, 0.1634057, -0.2686755, 0.9253026);
-        this._distributions[19] = new Array(0.5064292, 0.422527, 0.8935515, -0.06610427, 0.1199719, 0.175568, 0.403388, -0.2003276, 0.1657927, 0.8154403, 0.9301245, 0.2929218, -0.1644068, 0.6201534, 0.7113559, -0.6589743, -0.3364046, -0.1799502, 0.02109996, -0.392765, -0.382213, 0.3219992, -0.9201946, 0.1207967, -0.726185, 0.4291916, -0.7443482, -0.2480059, -0.5147594, 0.7418784, 0.1935272, -0.7406143, -0.3643523, -0.5559214, -0.7147766, -0.6326278, -0.2524151, -0.9096627, 0.5161405, 0.7908453);
-        this._distributions[20] = new Array(0.7921003, -0.3032096, 0.5992879, -0.009052323, 0.2538549, -0.1872749, 0.7053444, 0.3677175, 0.5417761, -0.8170255, 0.9749611, 0.1210478, 0.1969143, -0.6117041, -0.1824499, -0.4634196, -0.1181338, -0.8668742, -0.3050112, -0.1352596, -0.4409327, -0.7082354, -0.03225285, 0.1171548, 0.3113096, 0.3250439, -0.8166144, -0.463995, -0.01014475, 0.4715334, -0.6868284, 0.05091889, -0.4011163, 0.2717285, -0.06756835, 0.8307694, -0.7938535, 0.4352129, -0.4663842, 0.7165329, 0.559729, 0.8093995);
-        this._distributions[21] = new Array(0.07832243, 0.426151, -0.3856795, 0.5799953, 0.01970797, 0.06706189, 0.4822682, 0.3014512, -0.1532982, 0.87485, -0.4959527, 0.07888043, 0.260601, -0.2304784, 0.4996209, 0.7167382, 0.585986, -0.04265174, -0.7679967, 0.5509416, -0.9041753, 0.1802134, -0.8407655, -0.4442826, -0.2058258, -0.2636995, -0.4984115, -0.5928579, 0.2926032, -0.7886473, -0.06933882, -0.621177, 0.578115, -0.4813387, 0.8981777, -0.3291056, 0.1942733, 0.9255584, 0.8084362, 0.5066984, 0.9920095, 0.03103104, -0.2403206, -0.9389018);
-        this._distributions[22] = new Array(-0.5691095, 0.1014316, -0.7788262, 0.384012, -0.8253665, -0.1645582, -0.1830993, 0.002997211, -0.2555013, -0.4177977, -0.6640869, -0.4794711, -0.2351242, 0.5850121, 0.02436554, 0.2825883, 0.006061143, -0.8200245, 0.1618791, -0.3063331, -0.3765897, -0.7249815, 0.6092919, -0.6769328, -0.5956934, 0.6957655, 0.5383642, 0.4522677, -0.1489165, 0.9125596, 0.4167473, 0.1335986, 0.1898309, 0.5874342, 0.2288171, 0.9624356, 0.7540846, -0.07672304, 0.8986252, 0.2788797, 0.3555991, -0.9262139, 0.8454325, -0.4027667, 0.4945236, -0.2935512);
-        this._distributions[23] = new Array(-0.4481403, -0.3758374, -0.8877251, 0.08739938, 0.05015831, -0.1339983, -0.4070427, -0.8534173, 0.1019274, -0.5503222, -0.445998, 0.1997541, -0.8686263, -0.2788867, -0.7695944, -0.6033704, -0.05515742, -0.885711, -0.7714347, 0.5790485, 0.3466263, -0.8799297, 0.4487582, -0.5321087, -0.2461368, 0.6053771, -0.05568117, 0.2457351, -0.4668669, 0.8523816, 0.8103387, -0.4255538, 0.4054182, -0.175663, -0.2802011, -0.08920153, 0.2665959, 0.382935, 0.555679, 0.1621837, 0.105246, 0.8420411, 0.6921161, 0.6902903, 0.880946, 0.2483067, 0.9699264, -0.1021767);
-        this._distributions[24] = new Array(-0.1703323, -0.3119385, 0.2916039, -0.2988263, -0.008472982, -0.9277695, -0.7730271, -0.3277904, 0.3440474, -0.6815342, -0.2910278, 0.03461745, -0.6764899, -0.657078, -0.3505501, -0.7311988, -0.03478927, 0.3258755, -0.6048835, 0.159423, 0.2035525, 0.02212214, 0.5116573, 0.2226856, 0.6664805, -0.2500189, 0.7147882, -0.6609634, 0.03030632, -0.5763278, -0.2516585, 0.6116219, -0.9434413, -0.0116792, 0.9061816, 0.2491155, 0.182867, 0.6076167, 0.286593, 0.9485695, -0.5992439, 0.6970096, -0.2082874, 0.9416641, 0.9880044, -0.1541709, -0.9122881, 0.331555, 0.7324886, 0.6725098);
-        this._distributions[25] = new Array(0.3869598, -0.04974834, 0.7168844, -0.0693711, -0.07166742, 0.1725325, 0.4599592, 0.3232779, 0.5872094, -0.4198674, 0.2442266, -0.625667, 0.1254557, 0.4500048, -0.2290154, -0.1803567, 0.890583, 0.3373493, 0.1256081, 0.7853789, -0.2676466, 0.5305805, -0.7063224, 0.252168, -0.3989835, 0.1189921, 0.09617215, -0.2451447, 0.6302541, 0.6085876, 0.9380925, -0.3234899, 0.5086241, -0.8573482, 0.03576187, -0.9876697, -0.0876712, -0.6365195, -0.5276513, 0.823456, -0.6935764, -0.2240411, -0.5212318, -0.5383121, -0.2116208, 0.9639363, -0.9840096, 0.02743555, -0.3991577, -0.8994547, -0.7830126, 0.614068);
-        this._distributions[26] = new Array(-0.8366601, 0.4464895, -0.5917366, -0.02073906, -0.9845258, 0.1635625, -0.3097973, 0.4379579, -0.5478154, 0.7173221, -0.1685888, 0.9261969, 0.01503595, 0.6046097, 0.4452421, 0.5449086, 0.0315687, 0.1944619, 0.3753404, 0.8688548, 0.4143643, 0.1396648, 0.8711032, 0.4304703, 0.7328773, 0.1461501, 0.6374492, -0.3521495, 0.145613, -0.1341466, 0.9040975, -0.135123, -0.7839059, -0.5450199, -0.516019, -0.3320859, -0.206158, -0.4431106, -0.9703014, -0.2368356, -0.2473119, -0.0864351, 0.2130725, -0.4604077, -0.003726701, -0.7122303, -0.4072131, -0.6833169, 0.1632999, -0.9776646, 0.4686888, -0.680495, -0.2293511, -0.9509777);
-        this._distributions[27] = new Array(0.107311, -0.1311369, -0.4194764, -0.3148777, 0.6171439, -0.2745973, 0.2796618, 0.1937153, -0.09106886, 0.4180236, 0.6044006, 0.05577846, 0.02927299, -0.6738263, -0.2580845, 0.1179939, -0.09023564, -0.3830024, 0.3570953, -0.5000587, 0.81591, -0.5518309, 0.9300217, -0.1257987, 0.4904627, -0.8381903, -0.3163182, -0.8632009, 0.1137595, -0.9875998, 0.8390043, 0.3538185, 0.2149114, 0.4993694, 0.5191584, 0.3833552, 0.5002763, 0.7061465, -0.2567276, 0.9068756, -0.5197366, 0.3467845, 0.03668867, 0.9734009, -0.5347553, 0.66747, -0.9028882, 0.1023768, -0.8967977, 0.412834, -0.5821944, 0.0426479, -0.8032165, -0.2397038, -0.5597343, -0.6358021);
-        this._distributions[28] = new Array(-0.6562496, -0.1781036, -0.9301494, 0.1185208, -0.3861143, -0.4153562, -0.1560799, -0.1099607, -0.5587025, 0.395218, -0.5322112, -0.699701, -0.5008639, 0.08726846, -0.970524, -0.1963461, -0.813577, -0.5185111, -0.1644458, 0.298, -0.3216791, 0.639982, 0.3315373, 0.3339162, 0.2383235, -0.00105722, 0.1137828, 0.5450742, -0.01899921, 0.8798413, 0.2849685, 0.8255596, 0.6974412, 0.2123175, 0.7588523, 0.5470437, 0.5102502, -0.1687844, 0.5853448, 0.8033476, 0.2590716, -0.5262504, 0.5607718, -0.6342825, 0.8666443, -0.1491841, 0.8341052, -0.4935003, -0.1568441, -0.6634066, 0.2512113, -0.8769391, -0.2559827, -0.9572457, -0.01928852, -0.3966542, -0.750667, 0.6409678);
-        this._distributions[29] = new Array(0.3454786, -0.04837726, 0.2649553, 0.2406852, 0.5599093, -0.3839145, -0.1111814, -0.05502108, 0.7586042, -0.05818377, 0.2519488, -0.4665135, -0.1264972, 0.2602723, -0.08766216, -0.3671907, 0.6428129, 0.3999204, -0.6105871, -0.1246869, -0.4589451, -0.7646643, -0.03021116, -0.7899352, -0.6036922, -0.4293956, -0.2481938, 0.6534185, 0.102798, 0.6784465, -0.6392644, 0.4821358, -0.6789002, 0.1779133, -0.9140783, -0.1989647, -0.9262617, 0.3381507, 0.4794891, -0.8093274, 0.3959447, 0.668478, 0.9602883, 0.2272305, -0.123672, 0.9210883, 0.2375148, 0.9523395, -0.52898, 0.7973378, -0.382433, 0.1228794, 0.695015, 0.6948439, 0.7530277, -0.6458191, 0.8777987, -0.3272956, 0.2318525, -0.962768);
-        this._distributions[30] = new Array(0.4518921, -0.1146195, 0.4720805, -0.4238748, 0.3655423, 0.1806341, 0.1589939, -0.23568, 0.7673324, -0.5149941, 0.01163658, 0.09045836, 0.7010971, 0.1245747, 0.7518286, -0.1855433, 0.4960719, 0.4601022, 0.2566979, -0.6308268, -0.0654714, -0.5126389, -0.1823319, -0.1343282, -0.1464312, 0.4883236, -0.3858738, 0.203523, 0.1484799, 0.4432284, -0.477109, -0.116241, 0.2719092, 0.7208626, 0.9104174, 0.3578536, -0.5956199, 0.7662588, -0.6996251, 0.3678654, -0.2514512, 0.9251933, 0.1275825, -0.9478135, -0.204608, -0.8611552, 0.4264838, -0.877443, 0.9854161, 0.05521112, 0.5912951, 0.7997434, 0.1140349, 0.982093, -0.9324368, -0.2094094, -0.42436, -0.6441524, -0.6722705, -0.3554261, -0.7844236, 0.08587621);
-        this._distributions[31] = new Array(-0.4206714, -0.5613642, -0.8733016, -0.3373051, -0.1046226, -0.2902999, -0.1318562, -0.8434365, 0.1145093, -0.5962623, -0.4965627, -0.1873259, -0.5011808, -0.8546229, -0.7165636, -0.5743566, 0.1090901, 0.2017643, 0.3404809, -0.220455, -0.1989015, 0.2372122, -0.4538706, 0.0979171, 0.4514146, -0.572846, 0.2314168, -0.8514503, -0.4247236, 0.5650803, -0.943347, 0.04514639, -0.1309718, 0.5221877, -0.7004157, 0.4561877, 0.6306441, 0.04448673, 0.4301621, 0.5766876, 0.1078042, 0.7245752, 0.3875354, 0.2794483, 0.702876, -0.2924213, 0.7360667, -0.6210318, 0.7486517, 0.6531103, 0.4898235, 0.8591025, 0.6549174, 0.3854057, -0.2596106, 0.7916998, 0.9251194, -0.05296265, -0.5620695, 0.820877, -0.01228026, 0.9937211, 0.9612103, 0.2628758);
-    };
-    PoissonLookup.getDistribution = function (n /*int*/) {
-        if (!this._distributions)
-            this.initDistributions();
-        if (n < 2 || n > 32)
-            return null;
-        return this._distributions[n - 1];
-    };
-    return PoissonLookup;
-})();
-module.exports = PoissonLookup;
-
-
-},{}],"awayjs-core/lib/geom/Quaternion":[function(require,module,exports){
-var Matrix3DUtils = require("awayjs-core/lib/geom/Matrix3DUtils");
-var Orientation3D = require("awayjs-core/lib/geom/Orientation3D");
-var Matrix3D = require("awayjs-core/lib/geom/Matrix3D");
-var Vector3D = require("awayjs-core/lib/geom/Vector3D");
-/**
- * A Quaternion object which can be used to represent rotations.
- */
-var Quaternion = (function () {
-    /**
-     * Creates a new Quaternion object.
-     * @param x The x value of the quaternion.
-     * @param y The y value of the quaternion.
-     * @param z The z value of the quaternion.
-     * @param w The w value of the quaternion.
-     */
-    function Quaternion(x, y, z, w) {
-        if (x === void 0) { x = 0; }
-        if (y === void 0) { y = 0; }
-        if (z === void 0) { z = 0; }
-        if (w === void 0) { w = 1; }
-        /**
-         * The x value of the quaternion.
-         */
-        this.x = 0;
-        /**
-         * The y value of the quaternion.
-         */
-        this.y = 0;
-        /**
-         * The z value of the quaternion.
-         */
-        this.z = 0;
-        /**
-         * The w value of the quaternion.
-         */
-        this.w = 1;
-        this.x = x;
-        this.y = y;
-        this.z = z;
-        this.w = w;
-    }
-    Object.defineProperty(Quaternion.prototype, "magnitude", {
-        /**
-         * Returns the magnitude of the quaternion object.
-         */
-        get: function () {
-            return Math.sqrt(this.w * this.w + this.x * this.x + this.y * this.y + this.z * this.z);
-        },
-        enumerable: true,
-        configurable: true
-    });
-    /**
-     * Fills the quaternion object with the result from a multiplication of two quaternion objects.
-     *
-     * @param    qa    The first quaternion in the multiplication.
-     * @param    qb    The second quaternion in the multiplication.
-     */
-    Quaternion.prototype.multiply = function (qa, qb) {
-        var w1 = qa.w, x1 = qa.x, y1 = qa.y, z1 = qa.z;
-        var w2 = qb.w, x2 = qb.x, y2 = qb.y, z2 = qb.z;
-        this.w = w1 * w2 - x1 * x2 - y1 * y2 - z1 * z2;
-        this.x = w1 * x2 + x1 * w2 + y1 * z2 - z1 * y2;
-        this.y = w1 * y2 - x1 * z2 + y1 * w2 + z1 * x2;
-        this.z = w1 * z2 + x1 * y2 - y1 * x2 + z1 * w2;
-    };
-    Quaternion.prototype.multiplyVector = function (vector, target) {
-        if (target === void 0) { target = null; }
-        //target ||= new Quaternion();
-        if (target === null) {
-            target = new Quaternion();
-        }
-        var x2 = vector.x;
-        var y2 = vector.y;
-        var z2 = vector.z;
-        target.w = -this.x * x2 - this.y * y2 - this.z * z2;
-        target.x = this.w * x2 + this.y * z2 - this.z * y2;
-        target.y = this.w * y2 - this.x * z2 + this.z * x2;
-        target.z = this.w * z2 + this.x * y2 - this.y * x2;
-        return target;
-    };
-    /**
-     * Fills the quaternion object with values representing the given rotation around a vector.
-     *
-     * @param    axis    The axis around which to rotate
-     * @param    angle    The angle in radians of the rotation.
-     */
-    Quaternion.prototype.fromAxisAngle = function (axis, angle) {
-        var sin_a = Math.sin(angle / 2);
-        var cos_a = Math.cos(angle / 2);
-        this.x = axis.x * sin_a;
-        this.y = axis.y * sin_a;
-        this.z = axis.z * sin_a;
-        this.w = cos_a;
-        this.normalize();
-    };
-    /**
-     * Spherically interpolates between two quaternions, providing an interpolation between rotations with constant angle change rate.
-     * @param qa The first quaternion to interpolate.
-     * @param qb The second quaternion to interpolate.
-     * @param t The interpolation weight, a value between 0 and 1.
-     */
-    Quaternion.prototype.slerp = function (qa, qb, t) {
-        var w1 = qa.w, x1 = qa.x, y1 = qa.y, z1 = qa.z;
-        var w2 = qb.w, x2 = qb.x, y2 = qb.y, z2 = qb.z;
-        var dot = w1 * w2 + x1 * x2 + y1 * y2 + z1 * z2;
-        // shortest direction
-        if (dot < 0) {
-            dot = -dot;
-            w2 = -w2;
-            x2 = -x2;
-            y2 = -y2;
-            z2 = -z2;
-        }
-        if (dot < 0.95) {
-            // interpolate angle linearly
-            var angle = Math.acos(dot);
-            var s = 1 / Math.sin(angle);
-            var s1 = Math.sin(angle * (1 - t)) * s;
-            var s2 = Math.sin(angle * t) * s;
-            this.w = w1 * s1 + w2 * s2;
-            this.x = x1 * s1 + x2 * s2;
-            this.y = y1 * s1 + y2 * s2;
-            this.z = z1 * s1 + z2 * s2;
-        }
-        else {
-            // nearly identical angle, interpolate linearly
-            this.w = w1 + t * (w2 - w1);
-            this.x = x1 + t * (x2 - x1);
-            this.y = y1 + t * (y2 - y1);
-            this.z = z1 + t * (z2 - z1);
-            var len = 1.0 / Math.sqrt(this.w * this.w + this.x * this.x + this.y * this.y + this.z * this.z);
-            this.w *= len;
-            this.x *= len;
-            this.y *= len;
-            this.z *= len;
-        }
-    };
-    /**
-     * Linearly interpolates between two quaternions.
-     * @param qa The first quaternion to interpolate.
-     * @param qb The second quaternion to interpolate.
-     * @param t The interpolation weight, a value between 0 and 1.
-     */
-    Quaternion.prototype.lerp = function (qa, qb, t) {
-        var w1 = qa.w, x1 = qa.x, y1 = qa.y, z1 = qa.z;
-        var w2 = qb.w, x2 = qb.x, y2 = qb.y, z2 = qb.z;
-        var len;
-        // shortest direction
-        if (w1 * w2 + x1 * x2 + y1 * y2 + z1 * z2 < 0) {
-            w2 = -w2;
-            x2 = -x2;
-            y2 = -y2;
-            z2 = -z2;
-        }
-        this.w = w1 + t * (w2 - w1);
-        this.x = x1 + t * (x2 - x1);
-        this.y = y1 + t * (y2 - y1);
-        this.z = z1 + t * (z2 - z1);
-        len = 1.0 / Math.sqrt(this.w * this.w + this.x * this.x + this.y * this.y + this.z * this.z);
-        this.w *= len;
-        this.x *= len;
-        this.y *= len;
-        this.z *= len;
-    };
-    /**
-     * Fills the quaternion object with values representing the given euler rotation.
-     *
-     * @param    ax        The angle in radians of the rotation around the ax axis.
-     * @param    ay        The angle in radians of the rotation around the ay axis.
-     * @param    az        The angle in radians of the rotation around the az axis.
-     */
-    Quaternion.prototype.fromEulerAngles = function (ax, ay, az) {
-        var halfX = ax * .5, halfY = ay * .5, halfZ = az * .5;
-        var cosX = Math.cos(halfX), sinX = Math.sin(halfX);
-        var cosY = Math.cos(halfY), sinY = Math.sin(halfY);
-        var cosZ = Math.cos(halfZ), sinZ = Math.sin(halfZ);
-        this.w = cosX * cosY * cosZ + sinX * sinY * sinZ;
-        this.x = sinX * cosY * cosZ - cosX * sinY * sinZ;
-        this.y = cosX * sinY * cosZ + sinX * cosY * sinZ;
-        this.z = cosX * cosY * sinZ - sinX * sinY * cosZ;
-    };
-    /**
-     * Fills a target Vector3D object with the Euler angles that form the rotation represented by this quaternion.
-     * @param target An optional Vector3D object to contain the Euler angles. If not provided, a new object is created.
-     * @return The Vector3D containing the Euler angles.
-     */
-    Quaternion.prototype.toEulerAngles = function (target) {
-        if (target === void 0) { target = null; }
-        //target ||= new Vector3D();
-        if (target === null) {
-            target = new Vector3D();
-        }
-        target.x = Math.atan2(2 * (this.w * this.x + this.y * this.z), 1 - 2 * (this.x * this.x + this.y * this.y));
-        target.y = Math.asin(2 * (this.w * this.y - this.z * this.x));
-        target.z = Math.atan2(2 * (this.w * this.z + this.x * this.y), 1 - 2 * (this.y * this.y + this.z * this.z));
-        return target;
-    };
-    /**
-     * Normalises the quaternion object.
-     */
-    Quaternion.prototype.normalize = function (val) {
-        if (val === void 0) { val = 1; }
-        var mag = val / Math.sqrt(this.x * this.x + this.y * this.y + this.z * this.z + this.w * this.w);
-        this.x *= mag;
-        this.y *= mag;
-        this.z *= mag;
-        this.w *= mag;
-    };
-    /**
-     * Used to trace the values of a quaternion.
-     *
-     * @return A string representation of the quaternion object.
-     */
-    Quaternion.prototype.toString = function () {
-        return "{x:" + this.x + " y:" + this.y + " z:" + this.z + " w:" + this.w + "}";
-    };
-    /**
-     * Converts the quaternion to a Matrix3D object representing an equivalent rotation.
-     * @param target An optional Matrix3D container to store the transformation in. If not provided, a new object is created.
-     * @return A Matrix3D object representing an equivalent rotation.
-     */
-    Quaternion.prototype.toMatrix3D = function (target) {
-        if (target === void 0) { target = null; }
-        var rawData = Matrix3DUtils.RAW_DATA_CONTAINER;
-        var xy2 = 2.0 * this.x * this.y, xz2 = 2.0 * this.x * this.z, xw2 = 2.0 * this.x * this.w;
-        var yz2 = 2.0 * this.y * this.z, yw2 = 2.0 * this.y * this.w, zw2 = 2.0 * this.z * this.w;
-        var xx = this.x * this.x, yy = this.y * this.y, zz = this.z * this.z, ww = this.w * this.w;
-        rawData[0] = xx - yy - zz + ww;
-        rawData[4] = xy2 - zw2;
-        rawData[8] = xz2 + yw2;
-        rawData[12] = 0;
-        rawData[1] = xy2 + zw2;
-        rawData[5] = -xx + yy - zz + ww;
-        rawData[9] = yz2 - xw2;
-        rawData[13] = 0;
-        rawData[2] = xz2 - yw2;
-        rawData[6] = yz2 + xw2;
-        rawData[10] = -xx - yy + zz + ww;
-        rawData[14] = 0;
-        rawData[3] = 0.0;
-        rawData[7] = 0.0;
-        rawData[11] = 0;
-        rawData[15] = 1;
-        if (!target)
-            return new Matrix3D(rawData);
-        target.copyRawDataFrom(rawData);
-        return target;
-    };
-    /**
-     * Extracts a quaternion rotation matrix out of a given Matrix3D object.
-     * @param matrix The Matrix3D out of which the rotation will be extracted.
-     */
-    Quaternion.prototype.fromMatrix = function (matrix) {
-        var v = matrix.decompose(Orientation3D.QUATERNION)[1];
-        this.x = v.x;
-        this.y = v.y;
-        this.z = v.z;
-        this.w = v.w;
-    };
-    /**
-     * Converts the quaternion to a Vector.&lt;Number&gt; matrix representation of a rotation equivalent to this quaternion.
-     * @param target The Vector.&lt;Number&gt; to contain the raw matrix data.
-     * @param exclude4thRow If true, the last row will be omitted, and a 4x3 matrix will be generated instead of a 4x4.
-     */
-    Quaternion.prototype.toRawData = function (target, exclude4thRow) {
-        if (exclude4thRow === void 0) { exclude4thRow = false; }
-        var xy2 = 2.0 * this.x * this.y, xz2 = 2.0 * this.x * this.z, xw2 = 2.0 * this.x * this.w;
-        var yz2 = 2.0 * this.y * this.z, yw2 = 2.0 * this.y * this.w, zw2 = 2.0 * this.z * this.w;
-        var xx = this.x * this.x, yy = this.y * this.y, zz = this.z * this.z, ww = this.w * this.w;
-        target[0] = xx - yy - zz + ww;
-        target[1] = xy2 - zw2;
-        target[2] = xz2 + yw2;
-        target[4] = xy2 + zw2;
-        target[5] = -xx + yy - zz + ww;
-        target[6] = yz2 - xw2;
-        target[8] = xz2 - yw2;
-        target[9] = yz2 + xw2;
-        target[10] = -xx - yy + zz + ww;
-        target[3] = target[7] = target[11] = 0;
-        if (!exclude4thRow) {
-            target[12] = target[13] = target[14] = 0;
-            target[15] = 1;
-        }
-    };
-    /**
-     * Clones the quaternion.
-     * @return An exact duplicate of the current Quaternion.
-     */
-    Quaternion.prototype.clone = function () {
-        return new Quaternion(this.x, this.y, this.z, this.w);
-    };
-    /**
-     * Rotates a point.
-     * @param vector The Vector3D object to be rotated.
-     * @param target An optional Vector3D object that will contain the rotated coordinates. If not provided, a new object will be created.
-     * @return A Vector3D object containing the rotated point.
-     */
-    Quaternion.prototype.rotatePoint = function (vector, target) {
-        if (target === void 0) { target = null; }
-        var x1, y1, z1, w1;
-        var x2 = vector.x, y2 = vector.y, z2 = vector.z;
-        //target ||= new Vector3D();
-        if (target === null) {
-            target = new Vector3D();
-        }
-        // p*q'
-        w1 = -this.x * x2 - this.y * y2 - this.z * z2;
-        x1 = this.w * x2 + this.y * z2 - this.z * y2;
-        y1 = this.w * y2 - this.x * z2 + this.z * x2;
-        z1 = this.w * z2 + this.x * y2 - this.y * x2;
-        target.x = -w1 * this.x + x1 * this.w - y1 * this.z + z1 * this.y;
-        target.y = -w1 * this.y + x1 * this.z + y1 * this.w - z1 * this.x;
-        target.z = -w1 * this.z - x1 * this.y + y1 * this.x + z1 * this.w;
-        return target;
-    };
-    /**
-     * Copies the data from a quaternion into this instance.
-     * @param q The quaternion to copy from.
-     */
-    Quaternion.prototype.copyFrom = function (q) {
-        this.x = q.x;
-        this.y = q.y;
-        this.z = q.z;
-        this.w = q.w;
-    };
-    return Quaternion;
-})();
-module.exports = Quaternion;
-
-
-},{"awayjs-core/lib/geom/Matrix3D":undefined,"awayjs-core/lib/geom/Matrix3DUtils":undefined,"awayjs-core/lib/geom/Orientation3D":undefined,"awayjs-core/lib/geom/Vector3D":undefined}],"awayjs-core/lib/geom/Rectangle":[function(require,module,exports){
+},{}],25:[function(require,module,exports){
 var Point = require("awayjs-core/lib/geom/Point");
 /**
  * A Rectangle object is an area defined by its position, as indicated by its
@@ -5126,127 +3765,7 @@ var Rectangle = (function () {
 module.exports = Rectangle;
 
 
-},{"awayjs-core/lib/geom/Point":undefined}],"awayjs-core/lib/geom/UVTransform":[function(require,module,exports){
-var Matrix = require("awayjs-core/lib/geom/Matrix");
-var UVTransform = (function () {
-    function UVTransform() {
-        this._uvMatrix = new Matrix();
-        this._rotation = 0;
-        this._scaleU = 1;
-        this._scaleV = 1;
-        this._offsetU = 0;
-        this._offsetV = 0;
-    }
-    Object.defineProperty(UVTransform.prototype, "offsetU", {
-        /**
-         *
-         */
-        get: function () {
-            return this._offsetU;
-        },
-        set: function (value) {
-            if (value == this._offsetU)
-                return;
-            this._offsetU = value;
-            this._uvMatrixDirty = true;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(UVTransform.prototype, "offsetV", {
-        /**
-         *
-         */
-        get: function () {
-            return this._offsetV;
-        },
-        set: function (value) {
-            if (value == this._offsetV)
-                return;
-            this._offsetV = value;
-            this._uvMatrixDirty = true;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(UVTransform.prototype, "rotation", {
-        /**
-         *
-         */
-        get: function () {
-            return this._rotation;
-        },
-        set: function (value) {
-            if (value == this._rotation)
-                return;
-            this._rotation = value;
-            this._uvMatrixDirty = true;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(UVTransform.prototype, "scaleU", {
-        /**
-         *
-         */
-        get: function () {
-            return this._scaleU;
-        },
-        set: function (value) {
-            if (value == this._scaleU)
-                return;
-            this._scaleU = value;
-            this._uvMatrixDirty = true;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(UVTransform.prototype, "scaleV", {
-        /**
-         *
-         */
-        get: function () {
-            return this._scaleV;
-        },
-        set: function (value) {
-            if (value == this._scaleV)
-                return;
-            this._scaleV = value;
-            this._uvMatrixDirty = true;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(UVTransform.prototype, "matrix", {
-        /**
-         *
-         */
-        get: function () {
-            if (this._uvMatrixDirty)
-                this.updateUVMatrix();
-            return this._uvMatrix;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    /**
-     * @private
-     */
-    UVTransform.prototype.updateUVMatrix = function () {
-        this._uvMatrix.identity();
-        if (this._rotation != 0)
-            this._uvMatrix.rotate(this._rotation);
-        if (this._scaleU != 1 || this._scaleV != 1)
-            this._uvMatrix.scale(this._scaleU, this._scaleV);
-        this._uvMatrix.translate(this._offsetU, this._offsetV);
-        this._uvMatrixDirty = false;
-    };
-    return UVTransform;
-})();
-module.exports = UVTransform;
-
-
-},{"awayjs-core/lib/geom/Matrix":undefined}],"awayjs-core/lib/geom/Vector3D":[function(require,module,exports){
+},{"awayjs-core/lib/geom/Point":24}],26:[function(require,module,exports){
 /**
  * The Vector3D class represents a point or a location in the three-dimensional
  * space using the Cartesian coordinates x, y, and z. As in a two-dimensional
@@ -5657,7 +4176,7 @@ var Vector3D = (function () {
 module.exports = Vector3D;
 
 
-},{}],"awayjs-core/lib/library/AssetLibraryBundle":[function(require,module,exports){
+},{}],27:[function(require,module,exports){
 var __extends = this.__extends || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
@@ -6143,7 +4662,7 @@ var AssetLibraryBundle = (function (_super) {
 module.exports = AssetLibraryBundle;
 
 
-},{"awayjs-core/lib/errors/Error":undefined,"awayjs-core/lib/events/AssetEvent":undefined,"awayjs-core/lib/events/EventDispatcher":undefined,"awayjs-core/lib/events/IOErrorEvent":undefined,"awayjs-core/lib/events/LoaderEvent":undefined,"awayjs-core/lib/events/ParserEvent":undefined,"awayjs-core/lib/library/AssetLibraryIterator":undefined,"awayjs-core/lib/library/AssetLoader":undefined,"awayjs-core/lib/library/ConflictPrecedence":undefined,"awayjs-core/lib/library/ConflictStrategy":undefined,"awayjs-core/lib/library/NamedAssetBase":undefined}],"awayjs-core/lib/library/AssetLibraryIterator":[function(require,module,exports){
+},{"awayjs-core/lib/errors/Error":6,"awayjs-core/lib/events/AssetEvent":8,"awayjs-core/lib/events/EventDispatcher":10,"awayjs-core/lib/events/IOErrorEvent":12,"awayjs-core/lib/events/LoaderEvent":13,"awayjs-core/lib/events/ParserEvent":14,"awayjs-core/lib/library/AssetLibraryIterator":28,"awayjs-core/lib/library/AssetLoader":29,"awayjs-core/lib/library/ConflictPrecedence":32,"awayjs-core/lib/library/ConflictStrategy":33,"awayjs-core/lib/library/NamedAssetBase":37}],28:[function(require,module,exports){
 var AssetLibraryIterator = (function () {
     function AssetLibraryIterator(assets, assetTypeFilter, namespaceFilter, filterFunc) {
         this._assets = assets;
@@ -6207,549 +4726,7 @@ var AssetLibraryIterator = (function () {
 module.exports = AssetLibraryIterator;
 
 
-},{}],"awayjs-core/lib/library/AssetLibrary":[function(require,module,exports){
-var AssetLibraryBundle = require("awayjs-core/lib/library/AssetLibraryBundle");
-var AssetLoader = require("awayjs-core/lib/library/AssetLoader");
-/**
- * AssetLibrary enforces a singleton pattern and is not intended to be instanced.
- * It's purpose is to allow access to the default library bundle through a set of static shortcut methods.
- * If you are interested in creating multiple library bundles, please use the <code>getBundle()</code> method.
- */
-var AssetLibrary = (function () {
-    /**
-     * Creates a new <code>AssetLibrary</code> object.
-     *
-     */
-    function AssetLibrary() {
-    }
-    //*/
-    /**
-     * Returns an AssetLibrary bundle instance. If no key is given, returns the default bundle (which is
-     * similar to using the AssetLibraryBundle as a singleton). To keep several separated library bundles,
-     * pass a string key to this method to define which bundle should be returned. This is
-     * referred to as using the AssetLibraryBundle as a multiton.
-     *
-     * @param key Defines which multiton instance should be returned.
-     * @return An instance of the asset library
-     */
-    AssetLibrary.getBundle = function (key) {
-        if (key === void 0) { key = 'default'; }
-        return AssetLibraryBundle.getInstance(key);
-    };
-    /**
-     *
-     */
-    AssetLibrary.enableParser = function (parserClass) {
-        AssetLoader.enableParser(parserClass);
-    };
-    /**
-     *
-     */
-    AssetLibrary.enableParsers = function (parserClasses) {
-        AssetLoader.enableParsers(parserClasses);
-    };
-    Object.defineProperty(AssetLibrary, "conflictStrategy", {
-        /**
-         * Short-hand for conflictStrategy property on default asset library bundle.
-         *
-         * @see AssetLibraryBundle.conflictStrategy
-         */
-        get: function () {
-            return AssetLibrary.getBundle().conflictStrategy;
-        },
-        set: function (val) {
-            AssetLibrary.getBundle().conflictStrategy = val;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(AssetLibrary, "conflictPrecedence", {
-        /**
-         * Short-hand for conflictPrecedence property on default asset library bundle.
-         *
-         * @see AssetLibraryBundle.conflictPrecedence
-         */
-        get: function () {
-            return AssetLibrary.getBundle().conflictPrecedence;
-        },
-        set: function (val) {
-            AssetLibrary.getBundle().conflictPrecedence = val;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    /**
-     * Short-hand for createIterator() method on default asset library bundle.
-     *
-     * @see AssetLibraryBundle.createIterator()
-     */
-    AssetLibrary.createIterator = function (assetTypeFilter, namespaceFilter, filterFunc) {
-        if (assetTypeFilter === void 0) { assetTypeFilter = null; }
-        if (namespaceFilter === void 0) { namespaceFilter = null; }
-        if (filterFunc === void 0) { filterFunc = null; }
-        return AssetLibrary.getBundle().createIterator(assetTypeFilter, namespaceFilter, filterFunc);
-    };
-    /**
-     * Short-hand for load() method on default asset library bundle.
-     *
-     * @see AssetLibraryBundle.load()
-     */
-    AssetLibrary.load = function (req, context, ns, parser) {
-        if (context === void 0) { context = null; }
-        if (ns === void 0) { ns = null; }
-        if (parser === void 0) { parser = null; }
-        return AssetLibrary.getBundle().load(req, context, ns, parser);
-    };
-    /**
-     * Short-hand for loadData() method on default asset library bundle.
-     *
-     * @see AssetLibraryBundle.loadData()
-     */
-    AssetLibrary.loadData = function (data, context, ns, parser) {
-        if (context === void 0) { context = null; }
-        if (ns === void 0) { ns = null; }
-        if (parser === void 0) { parser = null; }
-        return AssetLibrary.getBundle().loadData(data, context, ns, parser);
-    };
-    AssetLibrary.stopLoad = function () {
-        AssetLibrary.getBundle().stopAllLoadingSessions();
-    };
-    /**
-     * Short-hand for getAsset() method on default asset library bundle.
-     *
-     * @see AssetLibraryBundle.getAsset()
-     */
-    AssetLibrary.getAsset = function (name, ns) {
-        if (ns === void 0) { ns = null; }
-        return AssetLibrary.getBundle().getAsset(name, ns);
-    };
-    /**
-     * Short-hand for addEventListener() method on default asset library bundle.
-     */
-    AssetLibrary.addEventListener = function (type, listener) {
-        AssetLibrary.getBundle().addEventListener(type, listener);
-    };
-    /**
-     * Short-hand for removeEventListener() method on default asset library bundle.
-     */
-    AssetLibrary.removeEventListener = function (type, listener) {
-        AssetLibrary.getBundle().removeEventListener(type, listener);
-    };
-    /**
-     * Short-hand for hasEventListener() method on default asset library bundle.
-
-     public static hasEventListener(type:string):boolean
-     {
-        return AssetLibrary.getBundle().hasEventListener(type);
-    }
-
-     public static willTrigger(type:string):boolean
-     {
-        return getBundle().willTrigger(type);
-    }
-     */
-    /**
-     * Short-hand for addAsset() method on default asset library bundle.
-     *
-     * @see AssetLibraryBundle.addAsset()
-     */
-    AssetLibrary.addAsset = function (asset) {
-        AssetLibrary.getBundle().addAsset(asset);
-    };
-    /**
-     * Short-hand for removeAsset() method on default asset library bundle.
-     *
-     * @param asset The asset which should be removed from the library.
-     * @param dispose Defines whether the assets should also be disposed.
-     *
-     * @see AssetLibraryBundle.removeAsset()
-     */
-    AssetLibrary.removeAsset = function (asset, dispose) {
-        if (dispose === void 0) { dispose = true; }
-        AssetLibrary.getBundle().removeAsset(asset, dispose);
-    };
-    /**
-     * Short-hand for removeAssetByName() method on default asset library bundle.
-     *
-     * @param name The name of the asset to be removed.
-     * @param ns The namespace to which the desired asset belongs.
-     * @param dispose Defines whether the assets should also be disposed.
-     *
-     * @see AssetLibraryBundle.removeAssetByName()
-     */
-    AssetLibrary.removeAssetByName = function (name, ns, dispose) {
-        if (ns === void 0) { ns = null; }
-        if (dispose === void 0) { dispose = true; }
-        return AssetLibrary.getBundle().removeAssetByName(name, ns, dispose);
-    };
-    /**
-     * Short-hand for removeAllAssets() method on default asset library bundle.
-     *
-     * @param dispose Defines whether the assets should also be disposed.
-     *
-     * @see AssetLibraryBundle.removeAllAssets()
-     */
-    AssetLibrary.removeAllAssets = function (dispose) {
-        if (dispose === void 0) { dispose = true; }
-        AssetLibrary.getBundle().removeAllAssets(dispose);
-    };
-    /**
-     * Short-hand for removeNamespaceAssets() method on default asset library bundle.
-     *
-     * @see AssetLibraryBundle.removeNamespaceAssets()
-     */
-    AssetLibrary.removeNamespaceAssets = function (ns, dispose) {
-        if (ns === void 0) { ns = null; }
-        if (dispose === void 0) { dispose = true; }
-        AssetLibrary.getBundle().removeNamespaceAssets(ns, dispose);
-    };
-    return AssetLibrary;
-})();
-module.exports = AssetLibrary;
-
-
-},{"awayjs-core/lib/library/AssetLibraryBundle":undefined,"awayjs-core/lib/library/AssetLoader":undefined}],"awayjs-core/lib/library/AssetLoaderContext":[function(require,module,exports){
-var AssetLoaderContext = (function () {
-    /**
-     * AssetLoaderContext provides configuration for the AssetLoader load() and parse() operations.
-     * Use it to configure how (and if) dependencies are loaded, or to map dependency URLs to
-     * embedded data.
-     *
-     * @see away.loading.AssetLoader
-     */
-    function AssetLoaderContext(includeDependencies, dependencyBaseUrl) {
-        if (includeDependencies === void 0) { includeDependencies = true; }
-        if (dependencyBaseUrl === void 0) { dependencyBaseUrl = null; }
-        this._includeDependencies = includeDependencies;
-        this._dependencyBaseUrl = dependencyBaseUrl || '';
-        this._embeddedDataByUrl = {};
-        this._remappedUrls = {};
-        this._materialMode = AssetLoaderContext.UNDEFINED;
-    }
-    Object.defineProperty(AssetLoaderContext.prototype, "includeDependencies", {
-        /**
-         * Defines whether dependencies (all files except the one at the URL given to the load() or
-         * parseData() operations) should be automatically loaded. Defaults to true.
-         */
-        get: function () {
-            return this._includeDependencies;
-        },
-        set: function (val) {
-            this._includeDependencies = val;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(AssetLoaderContext.prototype, "materialMode", {
-        /**
-         * MaterialMode defines, if the Parser should create SinglePass or MultiPass Materials
-         * Options:
-         * 0 (Default / undefined) - All Parsers will create SinglePassMaterials, but the AWD2.1parser will create Materials as they are defined in the file
-         * 1 (Force SinglePass) - All Parsers create SinglePassMaterials
-         * 2 (Force MultiPass) - All Parsers will create MultiPassMaterials
-         *
-         */
-        get: function () {
-            return this._materialMode;
-        },
-        set: function (materialMode) {
-            this._materialMode = materialMode;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(AssetLoaderContext.prototype, "dependencyBaseUrl", {
-        /**
-         * A base URL that will be prepended to all relative dependency URLs found in a loaded resource.
-         * Absolute paths will not be affected by the value of this property.
-         */
-        get: function () {
-            return this._dependencyBaseUrl;
-        },
-        set: function (val) {
-            this._dependencyBaseUrl = val;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(AssetLoaderContext.prototype, "overrideAbsolutePaths", {
-        /**
-         * Defines whether absolute paths (defined as paths that begin with a "/") should be overridden
-         * with the dependencyBaseUrl defined in this context. If this is true, and the base path is
-         * "base", /path/to/asset.jpg will be resolved as base/path/to/asset.jpg.
-         */
-        get: function () {
-            return this._overrideAbsPath;
-        },
-        set: function (val) {
-            this._overrideAbsPath = val;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(AssetLoaderContext.prototype, "overrideFullURLs", {
-        /**
-         * Defines whether "full" URLs (defined as a URL that includes a scheme, e.g. http://) should be
-         * overridden with the dependencyBaseUrl defined in this context. If this is true, and the base
-         * path is "base", http://example.com/path/to/asset.jpg will be resolved as base/path/to/asset.jpg.
-         */
-        get: function () {
-            return this._overrideFullUrls;
-        },
-        set: function (val) {
-            this._overrideFullUrls = val;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    /**
-     * Map a URL to another URL, so that files that are referred to by the original URL will instead
-     * be loaded from the new URL. Use this when your file structure does not match the one that is
-     * expected by the loaded file.
-     *
-     * @param originalUrl The original URL which is referenced in the loaded resource.
-     * @param newUrl The URL from which away.should load the resource instead.
-     *
-     * @see mapUrlToData()
-     */
-    AssetLoaderContext.prototype.mapUrl = function (originalUrl, newUrl) {
-        this._remappedUrls[originalUrl] = newUrl;
-    };
-    /**
-     * Map a URL to embedded data, so that instead of trying to load a dependency from the URL at
-     * which it's referenced, the dependency data will be retrieved straight from the memory instead.
-     *
-     * @param originalUrl The original URL which is referenced in the loaded resource.
-     * @param data The embedded data. Can be ByteArray or a class which can be used to create a bytearray.
-     */
-    AssetLoaderContext.prototype.mapUrlToData = function (originalUrl, data) {
-        this._embeddedDataByUrl[originalUrl] = data;
-    };
-    /**
-     * @private
-     * Defines whether embedded data has been mapped to a particular URL.
-     */
-    AssetLoaderContext.prototype._iHasDataForUrl = function (url) {
-        return this._embeddedDataByUrl.hasOwnProperty(url);
-    };
-    /**
-     * @private
-     * Returns embedded data for a particular URL.
-     */
-    AssetLoaderContext.prototype._iGetDataForUrl = function (url) {
-        return this._embeddedDataByUrl[url];
-    };
-    /**
-     * @private
-     * Defines whether a replacement URL has been mapped to a particular URL.
-     */
-    AssetLoaderContext.prototype._iHasMappingForUrl = function (url) {
-        return this._remappedUrls.hasOwnProperty(url);
-    };
-    /**
-     * @private
-     * Returns new (replacement) URL for a particular original URL.
-     */
-    AssetLoaderContext.prototype._iGetRemappedUrl = function (originalUrl) {
-        return this._remappedUrls[originalUrl];
-    };
-    AssetLoaderContext.UNDEFINED = 0;
-    AssetLoaderContext.SINGLEPASS_MATERIALS = 1;
-    AssetLoaderContext.MULTIPASS_MATERIALS = 2;
-    return AssetLoaderContext;
-})();
-module.exports = AssetLoaderContext;
-
-
-},{}],"awayjs-core/lib/library/AssetLoaderToken":[function(require,module,exports){
-var __extends = this.__extends || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    __.prototype = b.prototype;
-    d.prototype = new __();
-};
-var EventDispatcher = require("awayjs-core/lib/events/EventDispatcher");
-/**
- * Dispatched when any asset finishes parsing. Also see specific events for each
- * individual asset type (meshes, materials et c.)
- *
- * @eventType away.events.AssetEvent
- */
-//[Event(name="assetComplete", type="away3d.events.AssetEvent")]
-/**
- * Dispatched when a full resource (including dependencies) finishes loading.
- *
- * @eventType away.events.LoaderEvent
- */
-//[Event(name="resourceComplete", type="away3d.events.LoaderEvent")]
-/**
- * Dispatched when a single dependency (which may be the main file of a resource)
- * finishes loading.
- *
- * @eventType away.events.LoaderEvent
- */
-//[Event(name="dependencyComplete", type="away3d.events.LoaderEvent")]
-/**
- * Dispatched when an error occurs during loading. I
- *
- * @eventType away.events.LoaderEvent
- */
-//[Event(name="loadError", type="away3d.events.LoaderEvent")]
-/**
- * Dispatched when an error occurs during parsing.
- *
- * @eventType away.events.ParserEvent
- */
-//[Event(name="parseError", type="away3d.events.ParserEvent")]
-/**
- * Dispatched when a skybox asset has been costructed from a ressource.
- *
- * @eventType away.events.AssetEvent
- */
-//[Event(name="skyboxComplete", type="away3d.events.AssetEvent")]
-/**
- * Dispatched when a camera3d asset has been costructed from a ressource.
- *
- * @eventType away.events.AssetEvent
- */
-//[Event(name="cameraComplete", type="away3d.events.AssetEvent")]
-/**
- * Dispatched when a mesh asset has been costructed from a ressource.
- *
- * @eventType away.events.AssetEvent
- */
-//[Event(name="meshComplete", type="away3d.events.AssetEvent")]
-/**
- * Dispatched when a geometry asset has been constructed from a resource.
- *
- * @eventType away.events.AssetEvent
- */
-//[Event(name="geometryComplete", type="away3d.events.AssetEvent")]
-/**
- * Dispatched when a skeleton asset has been constructed from a resource.
- *
- * @eventType away.events.AssetEvent
- */
-//[Event(name="skeletonComplete", type="away3d.events.AssetEvent")]
-/**
- * Dispatched when a skeleton pose asset has been constructed from a resource.
- *
- * @eventType away.events.AssetEvent
- */
-//[Event(name="skeletonPoseComplete", type="away3d.events.AssetEvent")]
-/**
- * Dispatched when a container asset has been constructed from a resource.
- *
- * @eventType away.events.AssetEvent
- */
-//[Event(name="containerComplete", type="away3d.events.AssetEvent")]
-/**
- * Dispatched when a texture asset has been constructed from a resource.
- *
- * @eventType away.events.AssetEvent
- */
-//[Event(name="textureComplete", type="away3d.events.AssetEvent")]
-/**
- * Dispatched when a texture projector asset has been constructed from a resource.
- *
- * @eventType away.events.AssetEvent
- */
-//[Event(name="textureProjectorComplete", type="away3d.events.AssetEvent")]
-/**
- * Dispatched when a material asset has been constructed from a resource.
- *
- * @eventType away.events.AssetEvent
- */
-//[Event(name="materialComplete", type="away3d.events.AssetEvent")]
-/**
- * Dispatched when a animator asset has been constructed from a resource.
- *
- * @eventType away.events.AssetEvent
- */
-//[Event(name="animatorComplete", type="away3d.events.AssetEvent")]
-/**
- * Dispatched when an animation set has been constructed from a group of animation state resources.
- *
- * @eventType away.events.AssetEvent
- */
-//[Event(name="animationSetComplete", type="away3d.events.AssetEvent")]
-/**
- * Dispatched when an animation state has been constructed from a group of animation node resources.
- *
- * @eventType away.events.AssetEvent
- */
-//[Event(name="animationStateComplete", type="away3d.events.AssetEvent")]
-/**
- * Dispatched when an animation node has been constructed from a resource.
- *
- * @eventType away.events.AssetEvent
- */
-//[Event(name="animationNodeComplete", type="away3d.events.AssetEvent")]
-/**
- * Dispatched when an animation state transition has been constructed from a group of animation node resources.
- *
- * @eventType away.events.AssetEvent
- */
-//[Event(name="stateTransitionComplete", type="away3d.events.AssetEvent")]
-/**
- * Dispatched when an light asset has been constructed from a resources.
- *
- * @eventType away.events.AssetEvent
- */
-//[Event(name="lightComplete", type="away3d.events.AssetEvent")]
-/**
- * Dispatched when an light picker asset has been constructed from a resources.
- *
- * @eventType away.events.AssetEvent
- */
-//[Event(name="lightPickerComplete", type="away3d.events.AssetEvent")]
-/**
- * Dispatched when an effect method asset has been constructed from a resources.
- *
- * @eventType away.events.AssetEvent
- */
-//[Event(name="effectMethodComplete", type="away3d.events.AssetEvent")]
-/**
- * Dispatched when an shadow map method asset has been constructed from a resources.
- *
- * @eventType away.events.AssetEvent
- */
-//[Event(name="shadowMapMethodComplete", type="away3d.events.AssetEvent")]
-/**
- * Instances of this class are returned as tokens by loading operations
- * to provide an object on which events can be listened for in cases where
- * the actual asset loader is not directly available (e.g. when using the
- * AssetLibrary to perform the load.)
- *
- * By listening for events on this class instead of directly on the
- * AssetLibrary, one can distinguish different loads from each other.
- *
- * The token will dispatch all events that the original AssetLoader dispatches,
- * while not providing an interface to obstruct the load and is as such a
- * safer return value for loader wrappers than the loader itself.
- */
-var AssetLoaderToken = (function (_super) {
-    __extends(AssetLoaderToken, _super);
-    function AssetLoaderToken(loader) {
-        _super.call(this);
-        this._iLoader = loader;
-    }
-    AssetLoaderToken.prototype.addEventListener = function (type, listener) {
-        this._iLoader.addEventListener(type, listener);
-    };
-    AssetLoaderToken.prototype.removeEventListener = function (type, listener) {
-        this._iLoader.removeEventListener(type, listener);
-    };
-    AssetLoaderToken.prototype.hasEventListener = function (type, listener) {
-        if (listener === void 0) { listener = null; }
-        return this._iLoader.hasEventListener(type, listener);
-    };
-    return AssetLoaderToken;
-})(EventDispatcher);
-module.exports = AssetLoaderToken;
-
-
-},{"awayjs-core/lib/events/EventDispatcher":undefined}],"awayjs-core/lib/library/AssetLoader":[function(require,module,exports){
+},{}],29:[function(require,module,exports){
 var __extends = this.__extends || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
@@ -7302,7 +5279,195 @@ var AssetLoader = (function (_super) {
 module.exports = AssetLoader;
 
 
-},{"awayjs-core/lib/errors/Error":undefined,"awayjs-core/lib/events/AssetEvent":undefined,"awayjs-core/lib/events/Event":undefined,"awayjs-core/lib/events/EventDispatcher":undefined,"awayjs-core/lib/events/IOErrorEvent":undefined,"awayjs-core/lib/events/LoaderEvent":undefined,"awayjs-core/lib/events/ParserEvent":undefined,"awayjs-core/lib/library/AssetLoaderToken":undefined,"awayjs-core/lib/net/URLLoader":undefined,"awayjs-core/lib/net/URLLoaderDataFormat":undefined,"awayjs-core/lib/parsers/CubeTextureParser":undefined,"awayjs-core/lib/parsers/ResourceDependency":undefined,"awayjs-core/lib/parsers/Texture2DParser":undefined}],"awayjs-core/lib/library/AssetType":[function(require,module,exports){
+},{"awayjs-core/lib/errors/Error":6,"awayjs-core/lib/events/AssetEvent":8,"awayjs-core/lib/events/Event":9,"awayjs-core/lib/events/EventDispatcher":10,"awayjs-core/lib/events/IOErrorEvent":12,"awayjs-core/lib/events/LoaderEvent":13,"awayjs-core/lib/events/ParserEvent":14,"awayjs-core/lib/library/AssetLoaderToken":30,"awayjs-core/lib/net/URLLoader":39,"awayjs-core/lib/net/URLLoaderDataFormat":40,"awayjs-core/lib/parsers/CubeTextureParser":44,"awayjs-core/lib/parsers/ResourceDependency":47,"awayjs-core/lib/parsers/Texture2DParser":48}],30:[function(require,module,exports){
+var __extends = this.__extends || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    __.prototype = b.prototype;
+    d.prototype = new __();
+};
+var EventDispatcher = require("awayjs-core/lib/events/EventDispatcher");
+/**
+ * Dispatched when any asset finishes parsing. Also see specific events for each
+ * individual asset type (meshes, materials et c.)
+ *
+ * @eventType away.events.AssetEvent
+ */
+//[Event(name="assetComplete", type="away3d.events.AssetEvent")]
+/**
+ * Dispatched when a full resource (including dependencies) finishes loading.
+ *
+ * @eventType away.events.LoaderEvent
+ */
+//[Event(name="resourceComplete", type="away3d.events.LoaderEvent")]
+/**
+ * Dispatched when a single dependency (which may be the main file of a resource)
+ * finishes loading.
+ *
+ * @eventType away.events.LoaderEvent
+ */
+//[Event(name="dependencyComplete", type="away3d.events.LoaderEvent")]
+/**
+ * Dispatched when an error occurs during loading. I
+ *
+ * @eventType away.events.LoaderEvent
+ */
+//[Event(name="loadError", type="away3d.events.LoaderEvent")]
+/**
+ * Dispatched when an error occurs during parsing.
+ *
+ * @eventType away.events.ParserEvent
+ */
+//[Event(name="parseError", type="away3d.events.ParserEvent")]
+/**
+ * Dispatched when a skybox asset has been costructed from a ressource.
+ *
+ * @eventType away.events.AssetEvent
+ */
+//[Event(name="skyboxComplete", type="away3d.events.AssetEvent")]
+/**
+ * Dispatched when a camera3d asset has been costructed from a ressource.
+ *
+ * @eventType away.events.AssetEvent
+ */
+//[Event(name="cameraComplete", type="away3d.events.AssetEvent")]
+/**
+ * Dispatched when a mesh asset has been costructed from a ressource.
+ *
+ * @eventType away.events.AssetEvent
+ */
+//[Event(name="meshComplete", type="away3d.events.AssetEvent")]
+/**
+ * Dispatched when a geometry asset has been constructed from a resource.
+ *
+ * @eventType away.events.AssetEvent
+ */
+//[Event(name="geometryComplete", type="away3d.events.AssetEvent")]
+/**
+ * Dispatched when a skeleton asset has been constructed from a resource.
+ *
+ * @eventType away.events.AssetEvent
+ */
+//[Event(name="skeletonComplete", type="away3d.events.AssetEvent")]
+/**
+ * Dispatched when a skeleton pose asset has been constructed from a resource.
+ *
+ * @eventType away.events.AssetEvent
+ */
+//[Event(name="skeletonPoseComplete", type="away3d.events.AssetEvent")]
+/**
+ * Dispatched when a container asset has been constructed from a resource.
+ *
+ * @eventType away.events.AssetEvent
+ */
+//[Event(name="containerComplete", type="away3d.events.AssetEvent")]
+/**
+ * Dispatched when a texture asset has been constructed from a resource.
+ *
+ * @eventType away.events.AssetEvent
+ */
+//[Event(name="textureComplete", type="away3d.events.AssetEvent")]
+/**
+ * Dispatched when a texture projector asset has been constructed from a resource.
+ *
+ * @eventType away.events.AssetEvent
+ */
+//[Event(name="textureProjectorComplete", type="away3d.events.AssetEvent")]
+/**
+ * Dispatched when a material asset has been constructed from a resource.
+ *
+ * @eventType away.events.AssetEvent
+ */
+//[Event(name="materialComplete", type="away3d.events.AssetEvent")]
+/**
+ * Dispatched when a animator asset has been constructed from a resource.
+ *
+ * @eventType away.events.AssetEvent
+ */
+//[Event(name="animatorComplete", type="away3d.events.AssetEvent")]
+/**
+ * Dispatched when an animation set has been constructed from a group of animation state resources.
+ *
+ * @eventType away.events.AssetEvent
+ */
+//[Event(name="animationSetComplete", type="away3d.events.AssetEvent")]
+/**
+ * Dispatched when an animation state has been constructed from a group of animation node resources.
+ *
+ * @eventType away.events.AssetEvent
+ */
+//[Event(name="animationStateComplete", type="away3d.events.AssetEvent")]
+/**
+ * Dispatched when an animation node has been constructed from a resource.
+ *
+ * @eventType away.events.AssetEvent
+ */
+//[Event(name="animationNodeComplete", type="away3d.events.AssetEvent")]
+/**
+ * Dispatched when an animation state transition has been constructed from a group of animation node resources.
+ *
+ * @eventType away.events.AssetEvent
+ */
+//[Event(name="stateTransitionComplete", type="away3d.events.AssetEvent")]
+/**
+ * Dispatched when an light asset has been constructed from a resources.
+ *
+ * @eventType away.events.AssetEvent
+ */
+//[Event(name="lightComplete", type="away3d.events.AssetEvent")]
+/**
+ * Dispatched when an light picker asset has been constructed from a resources.
+ *
+ * @eventType away.events.AssetEvent
+ */
+//[Event(name="lightPickerComplete", type="away3d.events.AssetEvent")]
+/**
+ * Dispatched when an effect method asset has been constructed from a resources.
+ *
+ * @eventType away.events.AssetEvent
+ */
+//[Event(name="effectMethodComplete", type="away3d.events.AssetEvent")]
+/**
+ * Dispatched when an shadow map method asset has been constructed from a resources.
+ *
+ * @eventType away.events.AssetEvent
+ */
+//[Event(name="shadowMapMethodComplete", type="away3d.events.AssetEvent")]
+/**
+ * Instances of this class are returned as tokens by loading operations
+ * to provide an object on which events can be listened for in cases where
+ * the actual asset loader is not directly available (e.g. when using the
+ * AssetLibrary to perform the load.)
+ *
+ * By listening for events on this class instead of directly on the
+ * AssetLibrary, one can distinguish different loads from each other.
+ *
+ * The token will dispatch all events that the original AssetLoader dispatches,
+ * while not providing an interface to obstruct the load and is as such a
+ * safer return value for loader wrappers than the loader itself.
+ */
+var AssetLoaderToken = (function (_super) {
+    __extends(AssetLoaderToken, _super);
+    function AssetLoaderToken(loader) {
+        _super.call(this);
+        this._iLoader = loader;
+    }
+    AssetLoaderToken.prototype.addEventListener = function (type, listener) {
+        this._iLoader.addEventListener(type, listener);
+    };
+    AssetLoaderToken.prototype.removeEventListener = function (type, listener) {
+        this._iLoader.removeEventListener(type, listener);
+    };
+    AssetLoaderToken.prototype.hasEventListener = function (type, listener) {
+        if (listener === void 0) { listener = null; }
+        return this._iLoader.hasEventListener(type, listener);
+    };
+    return AssetLoaderToken;
+})(EventDispatcher);
+module.exports = AssetLoaderToken;
+
+
+},{"awayjs-core/lib/events/EventDispatcher":10}],31:[function(require,module,exports){
 var AssetType = (function () {
     function AssetType() {
     }
@@ -7336,7 +5501,7 @@ var AssetType = (function () {
 module.exports = AssetType;
 
 
-},{}],"awayjs-core/lib/library/ConflictPrecedence":[function(require,module,exports){
+},{}],32:[function(require,module,exports){
 /**
  * Enumaration class for precedence when resolving naming conflicts in the library.
  *
@@ -7364,7 +5529,48 @@ var ConflictPrecedence = (function () {
 module.exports = ConflictPrecedence;
 
 
-},{}],"awayjs-core/lib/library/ConflictStrategyBase":[function(require,module,exports){
+},{}],33:[function(require,module,exports){
+var ErrorConflictStrategy = require("awayjs-core/lib/library/ErrorConflictStrategy");
+var IgnoreConflictStrategy = require("awayjs-core/lib/library/IgnoreConflictStrategy");
+var NumSuffixConflictStrategy = require("awayjs-core/lib/library/NumSuffixConflictStrategy");
+/**
+ * Enumeration class for bundled conflict strategies. Set one of these values (or an
+ * instance of a self-defined sub-class of ConflictStrategyBase) to the conflictStrategy
+ * property on an AssetLibrary to define how that library resolves naming conflicts.
+ *
+ * The value of the <code>AssetLibrary.conflictPrecedence</code> property defines which
+ * of the conflicting assets will get to keep it's name, and which is renamed (if any.)
+ *
+ * @see away.library.AssetLibrary.conflictStrategy
+ * @see away.library.naming.ConflictStrategyBase
+ */
+var ConflictStrategy = (function () {
+    function ConflictStrategy(include) {
+        //TODO: find out why typescript d.ts files do not include this class
+    }
+    /**
+     * Specifies that in case of a naming conflict, one of the assets will be renamed and
+     * a numeric suffix appended to the base name.
+     */
+    ConflictStrategy.APPEND_NUM_SUFFIX = new NumSuffixConflictStrategy();
+    /**
+     * Specifies that naming conflicts should be ignored. This is not recommended in most
+     * cases, unless it can be 100% guaranteed that the application does not cause naming
+     * conflicts in the library (i.e. when an app-level system is in place to prevent this.)
+     */
+    ConflictStrategy.IGNORE = new IgnoreConflictStrategy();
+    /**
+     * Specifies that an error should be thrown if a naming conflict is discovered. Use this
+     * to be 100% sure that naming conflicts never occur unnoticed, and when it's undesirable
+     * to have the library automatically rename assets to avoid such conflicts.
+     */
+    ConflictStrategy.THROW_ERROR = new ErrorConflictStrategy();
+    return ConflictStrategy;
+})();
+module.exports = ConflictStrategy;
+
+
+},{"awayjs-core/lib/library/ErrorConflictStrategy":35,"awayjs-core/lib/library/IgnoreConflictStrategy":36,"awayjs-core/lib/library/NumSuffixConflictStrategy":38}],34:[function(require,module,exports){
 var ConflictPrecedence = require("awayjs-core/lib/library/ConflictPrecedence");
 var AbstractMethodError = require("awayjs-core/lib/errors/AbstractMethodError");
 var AssetEvent = require("awayjs-core/lib/events/AssetEvent");
@@ -7424,48 +5630,7 @@ var ConflictStrategyBase = (function () {
 module.exports = ConflictStrategyBase;
 
 
-},{"awayjs-core/lib/errors/AbstractMethodError":undefined,"awayjs-core/lib/events/AssetEvent":undefined,"awayjs-core/lib/library/ConflictPrecedence":undefined}],"awayjs-core/lib/library/ConflictStrategy":[function(require,module,exports){
-var ErrorConflictStrategy = require("awayjs-core/lib/library/ErrorConflictStrategy");
-var IgnoreConflictStrategy = require("awayjs-core/lib/library/IgnoreConflictStrategy");
-var NumSuffixConflictStrategy = require("awayjs-core/lib/library/NumSuffixConflictStrategy");
-/**
- * Enumeration class for bundled conflict strategies. Set one of these values (or an
- * instance of a self-defined sub-class of ConflictStrategyBase) to the conflictStrategy
- * property on an AssetLibrary to define how that library resolves naming conflicts.
- *
- * The value of the <code>AssetLibrary.conflictPrecedence</code> property defines which
- * of the conflicting assets will get to keep it's name, and which is renamed (if any.)
- *
- * @see away.library.AssetLibrary.conflictStrategy
- * @see away.library.naming.ConflictStrategyBase
- */
-var ConflictStrategy = (function () {
-    function ConflictStrategy(include) {
-        //TODO: find out why typescript d.ts files do not include this class
-    }
-    /**
-     * Specifies that in case of a naming conflict, one of the assets will be renamed and
-     * a numeric suffix appended to the base name.
-     */
-    ConflictStrategy.APPEND_NUM_SUFFIX = new NumSuffixConflictStrategy();
-    /**
-     * Specifies that naming conflicts should be ignored. This is not recommended in most
-     * cases, unless it can be 100% guaranteed that the application does not cause naming
-     * conflicts in the library (i.e. when an app-level system is in place to prevent this.)
-     */
-    ConflictStrategy.IGNORE = new IgnoreConflictStrategy();
-    /**
-     * Specifies that an error should be thrown if a naming conflict is discovered. Use this
-     * to be 100% sure that naming conflicts never occur unnoticed, and when it's undesirable
-     * to have the library automatically rename assets to avoid such conflicts.
-     */
-    ConflictStrategy.THROW_ERROR = new ErrorConflictStrategy();
-    return ConflictStrategy;
-})();
-module.exports = ConflictStrategy;
-
-
-},{"awayjs-core/lib/library/ErrorConflictStrategy":undefined,"awayjs-core/lib/library/IgnoreConflictStrategy":undefined,"awayjs-core/lib/library/NumSuffixConflictStrategy":undefined}],"awayjs-core/lib/library/ErrorConflictStrategy":[function(require,module,exports){
+},{"awayjs-core/lib/errors/AbstractMethodError":4,"awayjs-core/lib/events/AssetEvent":8,"awayjs-core/lib/library/ConflictPrecedence":32}],35:[function(require,module,exports){
 var __extends = this.__extends || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
@@ -7490,71 +5655,7 @@ var ErrorConflictStrategy = (function (_super) {
 module.exports = ErrorConflictStrategy;
 
 
-},{"awayjs-core/lib/errors/Error":undefined,"awayjs-core/lib/library/ConflictStrategyBase":undefined}],"awayjs-core/lib/library/IAsset":[function(require,module,exports){
-
-
-
-},{}],"awayjs-core/lib/library/IDUtil":[function(require,module,exports){
-var IDUtil = (function () {
-    function IDUtil() {
-    }
-    /**
-     *  Generates a UID (unique identifier) based on ActionScript's
-     *  pseudo-random number generator and the current time.
-     *
-     *  <p>The UID has the form
-     *  <code>"XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX"</code>
-     *  where X is a hexadecimal digit (0-9, A-F).</p>
-     *
-     *  <p>This UID will not be truly globally unique; but it is the best
-     *  we can do without player support for UID generation.</p>
-     *
-     *  @return The newly-generated UID.
-     *
-     *  @langversion 3.0
-     *  @playerversion Flash 9
-     *  @playerversion AIR 1.1
-     *  @productversion Flex 3
-     */
-    IDUtil.createUID = function () {
-        var uid = new Array(36);
-        var index = 0;
-        var i;
-        var j;
-        for (i = 0; i < 8; i++)
-            uid[index++] = IDUtil.ALPHA_CHAR_CODES[Math.floor(Math.random() * 16)];
-        for (i = 0; i < 3; i++) {
-            uid[index++] = 45; // charCode for "-"
-            for (j = 0; j < 4; j++)
-                uid[index++] = IDUtil.ALPHA_CHAR_CODES[Math.floor(Math.random() * 16)];
-        }
-        uid[index++] = 45; // charCode for "-"
-        var time = new Date().getTime();
-        // Note: time is the number of milliseconds since 1970,
-        // which is currently more than one trillion.
-        // We use the low 8 hex digits of this number in the UID.
-        // Just in case the system clock has been reset to
-        // Jan 1-4, 1970 (in which case this number could have only
-        // 1-7 hex digits), we pad on the left with 7 zeros
-        // before taking the low digits.
-        var timeString = ("0000000" + time.toString(16).toUpperCase()).substr(-8);
-        for (i = 0; i < 8; i++)
-            uid[index++] = timeString.charCodeAt(i);
-        for (i = 0; i < 4; i++)
-            uid[index++] = IDUtil.ALPHA_CHAR_CODES[Math.floor(Math.random() * 16)];
-        return String.fromCharCode.apply(null, uid);
-    };
-    /**
-     *  @private
-     *  Char codes for 0123456789ABCDEF
-     */
-    IDUtil.ALPHA_CHAR_CODES = [48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 65, 66, 67, 68, 69, 70];
-    return IDUtil;
-})();
-module.exports = IDUtil;
-
-
-},{}],"awayjs-core/lib/library/IgnoreConflictStrategy":[function(require,module,exports){
+},{"awayjs-core/lib/errors/Error":6,"awayjs-core/lib/library/ConflictStrategyBase":34}],36:[function(require,module,exports){
 var __extends = this.__extends || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
@@ -7579,7 +5680,7 @@ var IgnoreConflictStrategy = (function (_super) {
 module.exports = IgnoreConflictStrategy;
 
 
-},{"awayjs-core/lib/library/ConflictStrategyBase":undefined}],"awayjs-core/lib/library/NamedAssetBase":[function(require,module,exports){
+},{"awayjs-core/lib/library/ConflictStrategyBase":34}],37:[function(require,module,exports){
 var __extends = this.__extends || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
@@ -7689,7 +5790,7 @@ var NamedAssetBase = (function (_super) {
 module.exports = NamedAssetBase;
 
 
-},{"awayjs-core/lib/errors/AbstractMethodError":undefined,"awayjs-core/lib/events/AssetEvent":undefined,"awayjs-core/lib/events/EventDispatcher":undefined}],"awayjs-core/lib/library/NumSuffixConflictStrategy":[function(require,module,exports){
+},{"awayjs-core/lib/errors/AbstractMethodError":4,"awayjs-core/lib/events/AssetEvent":8,"awayjs-core/lib/events/EventDispatcher":10}],38:[function(require,module,exports){
 var __extends = this.__extends || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
@@ -7744,52 +5845,7 @@ var NumSuffixConflictStrategy = (function (_super) {
 module.exports = NumSuffixConflictStrategy;
 
 
-},{"awayjs-core/lib/library/ConflictStrategyBase":undefined}],"awayjs-core/lib/net/CrossDomainPolicy":[function(require,module,exports){
-var CrossDomainPolicy = (function () {
-    function CrossDomainPolicy() {
-    }
-    CrossDomainPolicy.ANONYMOUS = 'anonymous';
-    CrossDomainPolicy.USE_CREDENTIALS = 'use-credentials';
-    return CrossDomainPolicy;
-})();
-module.exports = CrossDomainPolicy;
-
-
-},{}],"awayjs-core/lib/net/URLLoaderDataFormat":[function(require,module,exports){
-var URLLoaderDataFormat = (function () {
-    function URLLoaderDataFormat() {
-    }
-    /**
-     * TEXT
-     * @type {string}
-     */
-    URLLoaderDataFormat.TEXT = "text";
-    /**
-     * Variables / Value Pairs
-     * @type {string}
-     */
-    URLLoaderDataFormat.VARIABLES = "variables";
-    /**
-     *
-     * @type {string}
-     */
-    URLLoaderDataFormat.BLOB = "blob";
-    /**
-     *
-     * @type {string}
-     */
-    URLLoaderDataFormat.ARRAY_BUFFER = "arraybuffer";
-    /**
-     *
-     * @type {string}
-     */
-    URLLoaderDataFormat.BINARY = "binary";
-    return URLLoaderDataFormat;
-})();
-module.exports = URLLoaderDataFormat;
-
-
-},{}],"awayjs-core/lib/net/URLLoader":[function(require,module,exports){
+},{"awayjs-core/lib/library/ConflictStrategyBase":34}],39:[function(require,module,exports){
 var __extends = this.__extends || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
@@ -8137,26 +6193,41 @@ var URLLoader = (function (_super) {
 module.exports = URLLoader;
 
 
-},{"awayjs-core/lib/events/Event":undefined,"awayjs-core/lib/events/EventDispatcher":undefined,"awayjs-core/lib/events/HTTPStatusEvent":undefined,"awayjs-core/lib/events/IOErrorEvent":undefined,"awayjs-core/lib/events/ProgressEvent":undefined,"awayjs-core/lib/net/URLLoaderDataFormat":undefined,"awayjs-core/lib/net/URLRequestMethod":undefined,"awayjs-core/lib/net/URLVariables":undefined}],"awayjs-core/lib/net/URLRequestMethod":[function(require,module,exports){
-var URLRequestMethod = (function () {
-    function URLRequestMethod() {
+},{"awayjs-core/lib/events/Event":9,"awayjs-core/lib/events/EventDispatcher":10,"awayjs-core/lib/events/HTTPStatusEvent":11,"awayjs-core/lib/events/IOErrorEvent":12,"awayjs-core/lib/events/ProgressEvent":15,"awayjs-core/lib/net/URLLoaderDataFormat":40,"awayjs-core/lib/net/URLRequestMethod":42,"awayjs-core/lib/net/URLVariables":43}],40:[function(require,module,exports){
+var URLLoaderDataFormat = (function () {
+    function URLLoaderDataFormat() {
     }
     /**
-     *
+     * TEXT
      * @type {string}
      */
-    URLRequestMethod.POST = 'POST';
+    URLLoaderDataFormat.TEXT = "text";
+    /**
+     * Variables / Value Pairs
+     * @type {string}
+     */
+    URLLoaderDataFormat.VARIABLES = "variables";
     /**
      *
      * @type {string}
      */
-    URLRequestMethod.GET = 'GET';
-    return URLRequestMethod;
+    URLLoaderDataFormat.BLOB = "blob";
+    /**
+     *
+     * @type {string}
+     */
+    URLLoaderDataFormat.ARRAY_BUFFER = "arraybuffer";
+    /**
+     *
+     * @type {string}
+     */
+    URLLoaderDataFormat.BINARY = "binary";
+    return URLLoaderDataFormat;
 })();
-module.exports = URLRequestMethod;
+module.exports = URLLoaderDataFormat;
 
 
-},{}],"awayjs-core/lib/net/URLRequest":[function(require,module,exports){
+},{}],41:[function(require,module,exports){
 var URLRequestMethod = require("awayjs-core/lib/net/URLRequestMethod");
 var URLRequest = (function () {
     /**
@@ -8210,7 +6281,26 @@ var URLRequest = (function () {
 module.exports = URLRequest;
 
 
-},{"awayjs-core/lib/net/URLRequestMethod":undefined}],"awayjs-core/lib/net/URLVariables":[function(require,module,exports){
+},{"awayjs-core/lib/net/URLRequestMethod":42}],42:[function(require,module,exports){
+var URLRequestMethod = (function () {
+    function URLRequestMethod() {
+    }
+    /**
+     *
+     * @type {string}
+     */
+    URLRequestMethod.POST = 'POST';
+    /**
+     *
+     * @type {string}
+     */
+    URLRequestMethod.GET = 'GET';
+    return URLRequestMethod;
+})();
+module.exports = URLRequestMethod;
+
+
+},{}],43:[function(require,module,exports){
 var URLVariables = (function () {
     /**
      *
@@ -8276,7 +6366,7 @@ var URLVariables = (function () {
 module.exports = URLVariables;
 
 
-},{}],"awayjs-core/lib/parsers/CubeTextureParser":[function(require,module,exports){
+},{}],44:[function(require,module,exports){
 var __extends = this.__extends || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
@@ -8397,7 +6487,7 @@ var CubeTextureParser = (function (_super) {
 module.exports = CubeTextureParser;
 
 
-},{"awayjs-core/lib/net/URLLoaderDataFormat":undefined,"awayjs-core/lib/net/URLRequest":undefined,"awayjs-core/lib/parsers/ParserBase":undefined,"awayjs-core/lib/textures/ImageCubeTexture":undefined}],"awayjs-core/lib/parsers/ParserBase":[function(require,module,exports){
+},{"awayjs-core/lib/net/URLLoaderDataFormat":40,"awayjs-core/lib/net/URLRequest":41,"awayjs-core/lib/parsers/ParserBase":45,"awayjs-core/lib/textures/ImageCubeTexture":54}],45:[function(require,module,exports){
 var __extends = this.__extends || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
@@ -8695,31 +6785,7 @@ var ParserBase = (function (_super) {
 module.exports = ParserBase;
 
 
-},{"awayjs-core/lib/errors/AbstractMethodError":undefined,"awayjs-core/lib/events/AssetEvent":undefined,"awayjs-core/lib/events/EventDispatcher":undefined,"awayjs-core/lib/events/ParserEvent":undefined,"awayjs-core/lib/events/TimerEvent":undefined,"awayjs-core/lib/parsers/ParserUtils":undefined,"awayjs-core/lib/parsers/ResourceDependency":undefined,"awayjs-core/lib/utils/TextureUtils":undefined,"awayjs-core/lib/utils/Timer":undefined,"awayjs-core/lib/utils/getTimer":undefined}],"awayjs-core/lib/parsers/ParserDataFormat":[function(require,module,exports){
-/**
- * An enumeration providing values to describe the data format of parsed data.
- */
-var ParserDataFormat = (function () {
-    function ParserDataFormat() {
-    }
-    /**
-     * Describes the format of a binary file.
-     */
-    ParserDataFormat.BINARY = "binary";
-    /**
-     * Describes the format of a plain text file.
-     */
-    ParserDataFormat.PLAIN_TEXT = "plainText";
-    /**
-     * Describes the format of an image file
-     */
-    ParserDataFormat.IMAGE = "image";
-    return ParserDataFormat;
-})();
-module.exports = ParserDataFormat;
-
-
-},{}],"awayjs-core/lib/parsers/ParserUtils":[function(require,module,exports){
+},{"awayjs-core/lib/errors/AbstractMethodError":4,"awayjs-core/lib/events/AssetEvent":8,"awayjs-core/lib/events/EventDispatcher":10,"awayjs-core/lib/events/ParserEvent":14,"awayjs-core/lib/events/TimerEvent":17,"awayjs-core/lib/parsers/ParserUtils":46,"awayjs-core/lib/parsers/ResourceDependency":47,"awayjs-core/lib/utils/TextureUtils":62,"awayjs-core/lib/utils/Timer":63,"awayjs-core/lib/utils/getTimer":64}],46:[function(require,module,exports){
 var ByteArray = require("awayjs-core/lib/utils/ByteArray");
 var ParserUtils = (function () {
     function ParserUtils() {
@@ -8837,7 +6903,7 @@ var ParserUtils = (function () {
 module.exports = ParserUtils;
 
 
-},{"awayjs-core/lib/utils/ByteArray":undefined}],"awayjs-core/lib/parsers/ResourceDependency":[function(require,module,exports){
+},{"awayjs-core/lib/utils/ByteArray":59}],47:[function(require,module,exports){
 /**
  * ResourceDependency represents the data required to load, parse and resolve additional files ("dependencies")
  * required by a parser, used by ResourceLoadSession.
@@ -8990,7 +7056,7 @@ var ResourceDependency = (function () {
 module.exports = ResourceDependency;
 
 
-},{}],"awayjs-core/lib/parsers/Texture2DParser":[function(require,module,exports){
+},{}],48:[function(require,module,exports){
 var __extends = this.__extends || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
@@ -9116,11 +7182,7 @@ var Texture2DParser = (function (_super) {
 module.exports = Texture2DParser;
 
 
-},{"awayjs-core/lib/net/URLLoaderDataFormat":undefined,"awayjs-core/lib/parsers/ParserBase":undefined,"awayjs-core/lib/parsers/ParserUtils":undefined,"awayjs-core/lib/textures/ImageTexture":undefined,"awayjs-core/lib/utils/ByteArray":undefined,"awayjs-core/lib/utils/TextureUtils":undefined}],"awayjs-core/lib/pool/ITextureData":[function(require,module,exports){
-
-
-
-},{}],"awayjs-core/lib/projections/CoordinateSystem":[function(require,module,exports){
+},{"awayjs-core/lib/net/URLLoaderDataFormat":40,"awayjs-core/lib/parsers/ParserBase":45,"awayjs-core/lib/parsers/ParserUtils":46,"awayjs-core/lib/textures/ImageTexture":55,"awayjs-core/lib/utils/ByteArray":59,"awayjs-core/lib/utils/TextureUtils":62}],49:[function(require,module,exports){
 /**
  * Provides constant values for camera lens projection options use the the <code>coordinateSystem</code> property
  *
@@ -9142,389 +7204,7 @@ var CoordinateSystem = (function () {
 module.exports = CoordinateSystem;
 
 
-},{}],"awayjs-core/lib/projections/FreeMatrixProjection":[function(require,module,exports){
-var __extends = this.__extends || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    __.prototype = b.prototype;
-    d.prototype = new __();
-};
-var PerspectiveProjection = require("awayjs-core/lib/projections/PerspectiveProjection");
-var ProjectionBase = require("awayjs-core/lib/projections/ProjectionBase");
-var FreeMatrixProjection = (function (_super) {
-    __extends(FreeMatrixProjection, _super);
-    function FreeMatrixProjection() {
-        _super.call(this);
-        this._pMatrix.copyFrom(new PerspectiveProjection().matrix);
-    }
-    Object.defineProperty(FreeMatrixProjection.prototype, "near", {
-        //@override
-        set: function (value) {
-            this._pNear = value;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(FreeMatrixProjection.prototype, "far", {
-        //@override
-        set: function (value) {
-            this._pFar = value;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(FreeMatrixProjection.prototype, "iAspectRatio", {
-        //@override
-        set: function (value) {
-            this._pAspectRatio = value;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    //@override
-    FreeMatrixProjection.prototype.clone = function () {
-        var clone = new FreeMatrixProjection();
-        clone._pMatrix.copyFrom(this._pMatrix);
-        clone._pNear = this._pNear;
-        clone._pFar = this._pFar;
-        clone._pAspectRatio = this._pAspectRatio;
-        clone.pInvalidateMatrix();
-        return clone;
-    };
-    //@override
-    FreeMatrixProjection.prototype.pUpdateMatrix = function () {
-        this._pMatrixInvalid = false;
-    };
-    return FreeMatrixProjection;
-})(ProjectionBase);
-module.exports = FreeMatrixProjection;
-
-
-},{"awayjs-core/lib/projections/PerspectiveProjection":undefined,"awayjs-core/lib/projections/ProjectionBase":undefined}],"awayjs-core/lib/projections/IProjection":[function(require,module,exports){
-
-
-
-},{}],"awayjs-core/lib/projections/ObliqueNearPlaneProjection":[function(require,module,exports){
-var __extends = this.__extends || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    __.prototype = b.prototype;
-    d.prototype = new __();
-};
-var Vector3D = require("awayjs-core/lib/geom/Vector3D");
-var ProjectionEvent = require("awayjs-core/lib/events/ProjectionEvent");
-var ProjectionBase = require("awayjs-core/lib/projections/ProjectionBase");
-var ObliqueNearPlaneProjection = (function (_super) {
-    __extends(ObliqueNearPlaneProjection, _super);
-    function ObliqueNearPlaneProjection(baseProjection, plane) {
-        var _this = this;
-        _super.call(this);
-        this.baseProjection = baseProjection;
-        this.plane = plane;
-        this._onProjectionMatrixChangedDelegate = function (event) { return _this.onProjectionMatrixChanged(event); };
-    }
-    Object.defineProperty(ObliqueNearPlaneProjection.prototype, "frustumCorners", {
-        //@override
-        get: function () {
-            return this._baseProjection.frustumCorners;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(ObliqueNearPlaneProjection.prototype, "near", {
-        //@override
-        get: function () {
-            return this._baseProjection.near;
-        },
-        //@override
-        set: function (value) {
-            this._baseProjection.near = value;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(ObliqueNearPlaneProjection.prototype, "far", {
-        //@override
-        get: function () {
-            return this._baseProjection.far;
-        },
-        //@override
-        set: function (value) {
-            this._baseProjection.far = value;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(ObliqueNearPlaneProjection.prototype, "iAspectRatio", {
-        //@override
-        get: function () {
-            return this._baseProjection._iAspectRatio;
-        },
-        //@override
-        set: function (value) {
-            this._baseProjection._iAspectRatio = value;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(ObliqueNearPlaneProjection.prototype, "plane", {
-        get: function () {
-            return this._plane;
-        },
-        set: function (value) {
-            this._plane = value;
-            this.pInvalidateMatrix();
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(ObliqueNearPlaneProjection.prototype, "baseProjection", {
-        set: function (value) {
-            if (this._baseProjection) {
-                this._baseProjection.removeEventListener(ProjectionEvent.MATRIX_CHANGED, this._onProjectionMatrixChangedDelegate);
-            }
-            this._baseProjection = value;
-            if (this._baseProjection) {
-                this._baseProjection.addEventListener(ProjectionEvent.MATRIX_CHANGED, this._onProjectionMatrixChangedDelegate);
-            }
-            this.pInvalidateMatrix();
-        },
-        enumerable: true,
-        configurable: true
-    });
-    ObliqueNearPlaneProjection.prototype.onProjectionMatrixChanged = function (event) {
-        this.pInvalidateMatrix();
-    };
-    //@override
-    ObliqueNearPlaneProjection.prototype.pUpdateMatrix = function () {
-        this._pMatrix.copyFrom(this._baseProjection.matrix);
-        var cx = this._plane.a;
-        var cy = this._plane.b;
-        var cz = this._plane.c;
-        var cw = -this._plane.d + .05;
-        var signX = cx >= 0 ? 1 : -1;
-        var signY = cy >= 0 ? 1 : -1;
-        var p = new Vector3D(signX, signY, 1, 1);
-        var inverse = this._pMatrix.clone();
-        inverse.invert();
-        var q = inverse.transformVector(p);
-        this._pMatrix.copyRowTo(3, p);
-        var a = (q.x * p.x + q.y * p.y + q.z * p.z + q.w * p.w) / (cx * q.x + cy * q.y + cz * q.z + cw * q.w);
-        this._pMatrix.copyRowFrom(2, new Vector3D(cx * a, cy * a, cz * a, cw * a));
-    };
-    return ObliqueNearPlaneProjection;
-})(ProjectionBase);
-module.exports = ObliqueNearPlaneProjection;
-
-
-},{"awayjs-core/lib/events/ProjectionEvent":undefined,"awayjs-core/lib/geom/Vector3D":undefined,"awayjs-core/lib/projections/ProjectionBase":undefined}],"awayjs-core/lib/projections/OrthographicOffCenterProjection":[function(require,module,exports){
-var __extends = this.__extends || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    __.prototype = b.prototype;
-    d.prototype = new __();
-};
-var Vector3D = require("awayjs-core/lib/geom/Vector3D");
-var ProjectionBase = require("awayjs-core/lib/projections/ProjectionBase");
-var OrthographicOffCenterProjection = (function (_super) {
-    __extends(OrthographicOffCenterProjection, _super);
-    function OrthographicOffCenterProjection(minX, maxX, minY, maxY) {
-        _super.call(this);
-        this._minX = minX;
-        this._maxX = maxX;
-        this._minY = minY;
-        this._maxY = maxY;
-    }
-    Object.defineProperty(OrthographicOffCenterProjection.prototype, "minX", {
-        get: function () {
-            return this._minX;
-        },
-        set: function (value) {
-            this._minX = value;
-            this.pInvalidateMatrix();
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(OrthographicOffCenterProjection.prototype, "maxX", {
-        get: function () {
-            return this._maxX;
-        },
-        set: function (value) {
-            this._maxX = value;
-            this.pInvalidateMatrix();
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(OrthographicOffCenterProjection.prototype, "minY", {
-        get: function () {
-            return this._minY;
-        },
-        set: function (value) {
-            this._minY = value;
-            this.pInvalidateMatrix();
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(OrthographicOffCenterProjection.prototype, "maxY", {
-        get: function () {
-            return this._maxY;
-        },
-        set: function (value) {
-            this._maxY = value;
-            this.pInvalidateMatrix();
-        },
-        enumerable: true,
-        configurable: true
-    });
-    //@override
-    OrthographicOffCenterProjection.prototype.unproject = function (nX, nY, sZ) {
-        var v = new Vector3D(nX, -nY, sZ, 1.0);
-        v = this.unprojectionMatrix.transformVector(v);
-        //z is unaffected by transform
-        v.z = sZ;
-        return v;
-    };
-    //@override
-    OrthographicOffCenterProjection.prototype.clone = function () {
-        var clone = new OrthographicOffCenterProjection(this._minX, this._maxX, this._minY, this._maxY);
-        clone._pNear = this._pNear;
-        clone._pFar = this._pFar;
-        clone._pAspectRatio = this._pAspectRatio;
-        return clone;
-    };
-    //@override
-    OrthographicOffCenterProjection.prototype.pUpdateMatrix = function () {
-        var raw = [];
-        var w = 1 / (this._maxX - this._minX);
-        var h = 1 / (this._maxY - this._minY);
-        var d = 1 / (this._pFar - this._pNear);
-        raw[0] = 2 * w;
-        raw[5] = 2 * h;
-        raw[10] = d;
-        raw[12] = -(this._maxX + this._minX) * w;
-        raw[13] = -(this._maxY + this._minY) * h;
-        raw[14] = -this._pNear * d;
-        raw[15] = 1;
-        raw[1] = raw[2] = raw[3] = raw[4] = raw[6] = raw[7] = raw[8] = raw[9] = raw[11] = 0;
-        this._pMatrix.copyRawDataFrom(raw);
-        this._pFrustumCorners[0] = this._pFrustumCorners[9] = this._pFrustumCorners[12] = this._pFrustumCorners[21] = this._minX;
-        this._pFrustumCorners[3] = this._pFrustumCorners[6] = this._pFrustumCorners[15] = this._pFrustumCorners[18] = this._maxX;
-        this._pFrustumCorners[1] = this._pFrustumCorners[4] = this._pFrustumCorners[13] = this._pFrustumCorners[16] = this._minY;
-        this._pFrustumCorners[7] = this._pFrustumCorners[10] = this._pFrustumCorners[19] = this._pFrustumCorners[22] = this._maxY;
-        this._pFrustumCorners[2] = this._pFrustumCorners[5] = this._pFrustumCorners[8] = this._pFrustumCorners[11] = this._pNear;
-        this._pFrustumCorners[14] = this._pFrustumCorners[17] = this._pFrustumCorners[20] = this._pFrustumCorners[23] = this._pFar;
-        this._pMatrixInvalid = false;
-    };
-    return OrthographicOffCenterProjection;
-})(ProjectionBase);
-module.exports = OrthographicOffCenterProjection;
-
-
-},{"awayjs-core/lib/geom/Vector3D":undefined,"awayjs-core/lib/projections/ProjectionBase":undefined}],"awayjs-core/lib/projections/OrthographicProjection":[function(require,module,exports){
-var __extends = this.__extends || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    __.prototype = b.prototype;
-    d.prototype = new __();
-};
-var Vector3D = require("awayjs-core/lib/geom/Vector3D");
-var ProjectionBase = require("awayjs-core/lib/projections/ProjectionBase");
-var OrthographicProjection = (function (_super) {
-    __extends(OrthographicProjection, _super);
-    function OrthographicProjection(projectionHeight) {
-        if (projectionHeight === void 0) { projectionHeight = 500; }
-        _super.call(this);
-        this._projectionHeight = projectionHeight;
-    }
-    Object.defineProperty(OrthographicProjection.prototype, "projectionHeight", {
-        get: function () {
-            return this._projectionHeight;
-        },
-        set: function (value) {
-            if (value == this._projectionHeight) {
-                return;
-            }
-            this._projectionHeight = value;
-            this.pInvalidateMatrix();
-        },
-        enumerable: true,
-        configurable: true
-    });
-    //@override
-    OrthographicProjection.prototype.unproject = function (nX, nY, sZ) {
-        var v = new Vector3D(nX + this.matrix.rawData[12], -nY + this.matrix.rawData[13], sZ, 1.0);
-        v = this.unprojectionMatrix.transformVector(v);
-        //z is unaffected by transform
-        v.z = sZ;
-        return v;
-    };
-    //@override
-    OrthographicProjection.prototype.clone = function () {
-        var clone = new OrthographicProjection();
-        clone._pNear = this._pNear;
-        clone._pFar = this._pFar;
-        clone._pAspectRatio = this._pAspectRatio;
-        clone.projectionHeight = this._projectionHeight;
-        return clone;
-    };
-    //@override
-    OrthographicProjection.prototype.pUpdateMatrix = function () {
-        var raw = [];
-        this._yMax = this._projectionHeight * .5;
-        this._xMax = this._yMax * this._pAspectRatio;
-        var left;
-        var right;
-        var top;
-        var bottom;
-        if (this._pScissorRect.x == 0 && this._pScissorRect.y == 0 && this._pScissorRect.width == this._pViewPort.width && this._pScissorRect.height == this._pViewPort.height) {
-            // assume symmetric frustum
-            left = -this._xMax;
-            right = this._xMax;
-            top = -this._yMax;
-            bottom = this._yMax;
-            raw[0] = 2 / (this._projectionHeight * this._pAspectRatio);
-            raw[5] = 2 / this._projectionHeight;
-            raw[10] = 1 / (this._pFar - this._pNear);
-            raw[14] = this._pNear / (this._pNear - this._pFar);
-            raw[1] = raw[2] = raw[3] = raw[4] = raw[6] = raw[7] = raw[8] = raw[9] = raw[11] = raw[12] = raw[13] = 0;
-            raw[15] = 1;
-        }
-        else {
-            var xWidth = this._xMax * (this._pViewPort.width / this._pScissorRect.width);
-            var yHgt = this._yMax * (this._pViewPort.height / this._pScissorRect.height);
-            var center = this._xMax * (this._pScissorRect.x * 2 - this._pViewPort.width) / this._pScissorRect.width + this._xMax;
-            var middle = -this._yMax * (this._pScissorRect.y * 2 - this._pViewPort.height) / this._pScissorRect.height - this._yMax;
-            left = center - xWidth;
-            right = center + xWidth;
-            top = middle - yHgt;
-            bottom = middle + yHgt;
-            raw[0] = 2 * 1 / (right - left);
-            raw[5] = -2 * 1 / (top - bottom);
-            raw[10] = 1 / (this._pFar - this._pNear);
-            raw[12] = (right + left) / (right - left);
-            raw[13] = (bottom + top) / (bottom - top);
-            raw[14] = this._pNear / (this.near - this.far);
-            raw[1] = raw[2] = raw[3] = raw[4] = raw[6] = raw[7] = raw[8] = raw[9] = raw[11] = 0;
-            raw[15] = 1;
-        }
-        this._pFrustumCorners[0] = this._pFrustumCorners[9] = this._pFrustumCorners[12] = this._pFrustumCorners[21] = left;
-        this._pFrustumCorners[3] = this._pFrustumCorners[6] = this._pFrustumCorners[15] = this._pFrustumCorners[18] = right;
-        this._pFrustumCorners[1] = this._pFrustumCorners[4] = this._pFrustumCorners[13] = this._pFrustumCorners[16] = top;
-        this._pFrustumCorners[7] = this._pFrustumCorners[10] = this._pFrustumCorners[19] = this._pFrustumCorners[22] = bottom;
-        this._pFrustumCorners[2] = this._pFrustumCorners[5] = this._pFrustumCorners[8] = this._pFrustumCorners[11] = this._pNear;
-        this._pFrustumCorners[14] = this._pFrustumCorners[17] = this._pFrustumCorners[20] = this._pFrustumCorners[23] = this._pFar;
-        this._pMatrix.copyRawDataFrom(raw);
-        this._pMatrixInvalid = false;
-    };
-    return OrthographicProjection;
-})(ProjectionBase);
-module.exports = OrthographicProjection;
-
-
-},{"awayjs-core/lib/geom/Vector3D":undefined,"awayjs-core/lib/projections/ProjectionBase":undefined}],"awayjs-core/lib/projections/PerspectiveProjection":[function(require,module,exports){
+},{}],50:[function(require,module,exports){
 var __extends = this.__extends || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
@@ -9724,7 +7404,7 @@ var PerspectiveProjection = (function (_super) {
 module.exports = PerspectiveProjection;
 
 
-},{"awayjs-core/lib/geom/Vector3D":undefined,"awayjs-core/lib/projections/CoordinateSystem":undefined,"awayjs-core/lib/projections/ProjectionBase":undefined}],"awayjs-core/lib/projections/ProjectionBase":[function(require,module,exports){
+},{"awayjs-core/lib/geom/Vector3D":26,"awayjs-core/lib/projections/CoordinateSystem":49,"awayjs-core/lib/projections/ProjectionBase":51}],51:[function(require,module,exports){
 var __extends = this.__extends || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
@@ -9915,7 +7595,3570 @@ var ProjectionBase = (function (_super) {
 module.exports = ProjectionBase;
 
 
-},{"awayjs-core/lib/errors/AbstractMethodError":undefined,"awayjs-core/lib/events/EventDispatcher":undefined,"awayjs-core/lib/events/ProjectionEvent":undefined,"awayjs-core/lib/geom/Matrix3D":undefined,"awayjs-core/lib/geom/Rectangle":undefined}],"awayjs-core/lib/textures/BitmapCubeTexture":[function(require,module,exports){
+},{"awayjs-core/lib/errors/AbstractMethodError":4,"awayjs-core/lib/events/EventDispatcher":10,"awayjs-core/lib/events/ProjectionEvent":16,"awayjs-core/lib/geom/Matrix3D":20,"awayjs-core/lib/geom/Rectangle":25}],52:[function(require,module,exports){
+var __extends = this.__extends || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    __.prototype = b.prototype;
+    d.prototype = new __();
+};
+var Error = require("awayjs-core/lib/errors/Error");
+var Texture2DBase = require("awayjs-core/lib/textures/Texture2DBase");
+var TextureUtils = require("awayjs-core/lib/utils/TextureUtils");
+var BitmapTexture = (function (_super) {
+    __extends(BitmapTexture, _super);
+    function BitmapTexture(bitmapData, generateMipmaps) {
+        if (generateMipmaps === void 0) { generateMipmaps = false; }
+        _super.call(this, generateMipmaps);
+        this.bitmapData = bitmapData;
+    }
+    Object.defineProperty(BitmapTexture.prototype, "bitmapData", {
+        /**
+         *
+         * @returns {BitmapData}
+         */
+        get: function () {
+            return this._bitmapData;
+        },
+        set: function (value) {
+            if (this._bitmapData == value)
+                return;
+            if (!TextureUtils.isBitmapDataValid(value))
+                throw new Error("Invalid bitmapData: Width and height must be power of 2 and cannot exceed 2048");
+            this._bitmapData = value;
+            this.invalidateContent();
+            this._pSetSize(value.width, value.height);
+        },
+        enumerable: true,
+        configurable: true
+    });
+    BitmapTexture.prototype.dispose = function () {
+        _super.prototype.dispose.call(this);
+        this._bitmapData.dispose();
+        this._bitmapData = null;
+    };
+    BitmapTexture.prototype._iGetTextureData = function () {
+        return this._bitmapData;
+    };
+    return BitmapTexture;
+})(Texture2DBase);
+module.exports = BitmapTexture;
+
+
+},{"awayjs-core/lib/errors/Error":6,"awayjs-core/lib/textures/Texture2DBase":57,"awayjs-core/lib/utils/TextureUtils":62}],53:[function(require,module,exports){
+var __extends = this.__extends || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    __.prototype = b.prototype;
+    d.prototype = new __();
+};
+var AbstractMethodError = require("awayjs-core/lib/errors/AbstractMethodError");
+var MipmapGenerator = require("awayjs-core/lib/textures/MipmapGenerator");
+var TextureProxyBase = require("awayjs-core/lib/textures/TextureProxyBase");
+var CubeTextureBase = (function (_super) {
+    __extends(CubeTextureBase, _super);
+    function CubeTextureBase(generateMipmaps) {
+        if (generateMipmaps === void 0) { generateMipmaps = false; }
+        _super.call(this, generateMipmaps);
+        this._mipmapDataArray = new Array(6);
+        this._mipmapDataDirtyArray = new Array(6);
+    }
+    /**
+     *
+     * @param width
+     * @param height
+     * @private
+     */
+    CubeTextureBase.prototype._pSetSize = function (size) {
+        if (this._pSize != size)
+            this.invalidateSize();
+        for (var i = 0; i < 6; i++)
+            this._mipmapDataDirtyArray[i] = true;
+        this._pSize = size;
+    };
+    /**
+     * @inheritDoc
+     */
+    CubeTextureBase.prototype.dispose = function () {
+        _super.prototype.dispose.call(this);
+        for (var i = 0; i < 6; i++) {
+            var mipmapData = this._mipmapDataArray[i];
+            var len = mipmapData.length;
+            for (var j = 0; j < len; j++)
+                MipmapGenerator.freeMipMapHolder(mipmapData[j]);
+        }
+    };
+    /**
+     *
+     */
+    CubeTextureBase.prototype.invalidateContent = function () {
+        _super.prototype.invalidateContent.call(this);
+        for (var i = 0; i < 6; i++)
+            this._mipmapDataDirtyArray[i] = true;
+    };
+    CubeTextureBase.prototype._iGetMipmapData = function (side) {
+        if (this._mipmapDataDirtyArray[side]) {
+            this._mipmapDataDirtyArray[side] = false;
+            var mipmapData = this._mipmapDataArray[side] || (this._mipmapDataArray[side] = new Array());
+            MipmapGenerator.generateMipMaps(this._iGetTextureData(side), mipmapData, true);
+        }
+        return this._mipmapDataArray[side];
+    };
+    CubeTextureBase.prototype._iGetTextureData = function (side) {
+        throw new AbstractMethodError();
+    };
+    return CubeTextureBase;
+})(TextureProxyBase);
+module.exports = CubeTextureBase;
+
+
+},{"awayjs-core/lib/errors/AbstractMethodError":4,"awayjs-core/lib/textures/MipmapGenerator":56,"awayjs-core/lib/textures/TextureProxyBase":58}],54:[function(require,module,exports){
+var __extends = this.__extends || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    __.prototype = b.prototype;
+    d.prototype = new __();
+};
+var Error = require("awayjs-core/lib/errors/Error");
+var CubeTextureBase = require("awayjs-core/lib/textures/CubeTextureBase");
+var TextureUtils = require("awayjs-core/lib/utils/TextureUtils");
+var ImageCubeTexture = (function (_super) {
+    __extends(ImageCubeTexture, _super);
+    function ImageCubeTexture(posX, negX, posY, negY, posZ, negZ, generateMipmaps) {
+        if (generateMipmaps === void 0) { generateMipmaps = false; }
+        _super.call(this, generateMipmaps);
+        this._htmlImageElements = new Array(6);
+        this._testSize(this._htmlImageElements[0] = posX);
+        this._testSize(this._htmlImageElements[1] = negX);
+        this._testSize(this._htmlImageElements[2] = posY);
+        this._testSize(this._htmlImageElements[3] = negY);
+        this._testSize(this._htmlImageElements[4] = posZ);
+        this._testSize(this._htmlImageElements[5] = negZ);
+        this.invalidateContent();
+        this._pSetSize(posX.width);
+    }
+    Object.defineProperty(ImageCubeTexture.prototype, "positiveX", {
+        /**
+         * The texture on the cube's right face.
+         */
+        get: function () {
+            return this._htmlImageElements[0];
+        },
+        set: function (value) {
+            this._testSize(value);
+            this.invalidateContent();
+            this._pSetSize(value.width);
+            this._htmlImageElements[0] = value;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(ImageCubeTexture.prototype, "negativeX", {
+        /**
+         * The texture on the cube's left face.
+         */
+        get: function () {
+            return this._htmlImageElements[1];
+        },
+        set: function (value) {
+            this._testSize(value);
+            this.invalidateContent();
+            this._pSetSize(value.width);
+            this._htmlImageElements[1] = value;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(ImageCubeTexture.prototype, "positiveY", {
+        /**
+         * The texture on the cube's top face.
+         */
+        get: function () {
+            return this._htmlImageElements[2];
+        },
+        set: function (value) {
+            this._testSize(value);
+            this.invalidateContent();
+            this._pSetSize(value.width);
+            this._htmlImageElements[2] = value;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(ImageCubeTexture.prototype, "negativeY", {
+        /**
+         * The texture on the cube's bottom face.
+         */
+        get: function () {
+            return this._htmlImageElements[3];
+        },
+        set: function (value) {
+            this._testSize(value);
+            this.invalidateContent();
+            this._pSetSize(value.width);
+            this._htmlImageElements[3] = value;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(ImageCubeTexture.prototype, "positiveZ", {
+        /**
+         * The texture on the cube's far face.
+         */
+        get: function () {
+            return this._htmlImageElements[4];
+        },
+        set: function (value) {
+            this._testSize(value);
+            this.invalidateContent();
+            this._pSetSize(value.width);
+            this._htmlImageElements[4] = value;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(ImageCubeTexture.prototype, "negativeZ", {
+        /**
+         * The texture on the cube's near face.
+         */
+        get: function () {
+            return this._htmlImageElements[5];
+        },
+        set: function (value) {
+            this._testSize(value);
+            this.invalidateContent();
+            this._pSetSize(value.width);
+            this._htmlImageElements[5] = value;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    ImageCubeTexture.prototype._testSize = function (value) {
+        if (value.width != value.height)
+            throw new Error("BitmapData should have equal width and height!");
+        if (!TextureUtils.isHTMLImageElementValid(value))
+            throw new Error("Invalid bitmapData: Width and height must be power of 2 and cannot exceed 2048");
+    };
+    ImageCubeTexture.prototype._iGetTextureData = function (side) {
+        return this._htmlImageElements[side];
+    };
+    return ImageCubeTexture;
+})(CubeTextureBase);
+module.exports = ImageCubeTexture;
+
+
+},{"awayjs-core/lib/errors/Error":6,"awayjs-core/lib/textures/CubeTextureBase":53,"awayjs-core/lib/utils/TextureUtils":62}],55:[function(require,module,exports){
+var __extends = this.__extends || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    __.prototype = b.prototype;
+    d.prototype = new __();
+};
+var Error = require("awayjs-core/lib/errors/Error");
+var Texture2DBase = require("awayjs-core/lib/textures/Texture2DBase");
+var TextureUtils = require("awayjs-core/lib/utils/TextureUtils");
+var ImageTexture = (function (_super) {
+    __extends(ImageTexture, _super);
+    /**
+     *
+     * @param htmlImageElement
+     * @param generateMipmaps
+     */
+    function ImageTexture(htmlImageElement, generateMipmaps) {
+        if (generateMipmaps === void 0) { generateMipmaps = false; }
+        _super.call(this, generateMipmaps);
+        this.htmlImageElement = htmlImageElement;
+    }
+    Object.defineProperty(ImageTexture.prototype, "htmlImageElement", {
+        /**
+         *
+         */
+        get: function () {
+            return this._htmlImageElement;
+        },
+        set: function (value) {
+            if (this._htmlImageElement == value)
+                return;
+            if (!TextureUtils.isHTMLImageElementValid(value))
+                throw new Error("Invalid bitmapData: Width and height must be power of 2 and cannot exceed 2048");
+            this._htmlImageElement = value;
+            this.invalidateContent();
+            this._pSetSize(value.width, value.height);
+        },
+        enumerable: true,
+        configurable: true
+    });
+    ImageTexture.prototype._iGetTextureData = function () {
+        return this._htmlImageElement;
+    };
+    return ImageTexture;
+})(Texture2DBase);
+module.exports = ImageTexture;
+
+
+},{"awayjs-core/lib/errors/Error":6,"awayjs-core/lib/textures/Texture2DBase":57,"awayjs-core/lib/utils/TextureUtils":62}],56:[function(require,module,exports){
+var BitmapData = require("awayjs-core/lib/base/BitmapData");
+var Matrix = require("awayjs-core/lib/geom/Matrix");
+var Rectangle = require("awayjs-core/lib/geom/Rectangle");
+/**
+ * MipmapGenerator is a helper class that uploads BitmapData to a Texture including mipmap levels.
+ */
+var MipmapGenerator = (function () {
+    function MipmapGenerator() {
+    }
+    MipmapGenerator.generateMipMaps = function (source, output, alpha) {
+        if (alpha === void 0) { alpha = false; }
+        var w = source.width;
+        var h = source.height;
+        var i = 0;
+        var mipmap;
+        MipmapGenerator._rect.width = w;
+        MipmapGenerator._rect.height = h;
+        while (w >= 1 && h >= 1) {
+            mipmap = output[i] = MipmapGenerator._getMipmapHolder(output[i], w, h);
+            if (alpha)
+                mipmap.fillRect(MipmapGenerator._rect, 0);
+            MipmapGenerator._matrix.a = MipmapGenerator._rect.width / source.width;
+            MipmapGenerator._matrix.d = MipmapGenerator._rect.height / source.height;
+            mipmap.draw(source, MipmapGenerator._matrix); //TODO: smoothing?
+            w >>= 1;
+            h >>= 1;
+            MipmapGenerator._rect.width = w > 1 ? w : 1;
+            MipmapGenerator._rect.height = h > 1 ? h : 1;
+            i++;
+        }
+    };
+    MipmapGenerator._getMipmapHolder = function (mipMapHolder, newW, newH) {
+        if (mipMapHolder) {
+            if (mipMapHolder.width == newW && mipMapHolder.height == newH)
+                return mipMapHolder;
+            MipmapGenerator.freeMipMapHolder(mipMapHolder);
+        }
+        if (!MipmapGenerator._mipMaps[newW]) {
+            MipmapGenerator._mipMaps[newW] = [];
+            MipmapGenerator._mipMapUses[newW] = [];
+        }
+        if (!MipmapGenerator._mipMaps[newW][newH]) {
+            mipMapHolder = MipmapGenerator._mipMaps[newW][newH] = new BitmapData(newW, newH, true);
+            MipmapGenerator._mipMapUses[newW][newH] = 1;
+        }
+        else {
+            MipmapGenerator._mipMapUses[newW][newH] = MipmapGenerator._mipMapUses[newW][newH] + 1;
+            mipMapHolder = MipmapGenerator._mipMaps[newW][newH];
+        }
+        return mipMapHolder;
+    };
+    MipmapGenerator.freeMipMapHolder = function (mipMapHolder) {
+        var holderWidth = mipMapHolder.width;
+        var holderHeight = mipMapHolder.height;
+        if (--MipmapGenerator._mipMapUses[holderWidth][holderHeight] == 0) {
+            MipmapGenerator._mipMaps[holderWidth][holderHeight].dispose();
+            MipmapGenerator._mipMaps[holderWidth][holderHeight] = null;
+        }
+    };
+    MipmapGenerator._mipMaps = [];
+    MipmapGenerator._mipMapUses = [];
+    MipmapGenerator._matrix = new Matrix();
+    MipmapGenerator._rect = new Rectangle();
+    return MipmapGenerator;
+})();
+module.exports = MipmapGenerator;
+
+
+},{"awayjs-core/lib/base/BitmapData":1,"awayjs-core/lib/geom/Matrix":19,"awayjs-core/lib/geom/Rectangle":25}],57:[function(require,module,exports){
+var __extends = this.__extends || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    __.prototype = b.prototype;
+    d.prototype = new __();
+};
+var AbstractMethodError = require("awayjs-core/lib/errors/AbstractMethodError");
+var MipmapGenerator = require("awayjs-core/lib/textures/MipmapGenerator");
+var TextureProxyBase = require("awayjs-core/lib/textures/TextureProxyBase");
+var Texture2DBase = (function (_super) {
+    __extends(Texture2DBase, _super);
+    function Texture2DBase(generateMipmaps) {
+        if (generateMipmaps === void 0) { generateMipmaps = false; }
+        _super.call(this, generateMipmaps);
+    }
+    Object.defineProperty(Texture2DBase.prototype, "width", {
+        /**
+         *
+         * @returns {number}
+         */
+        get: function () {
+            return this._pWidth;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Texture2DBase.prototype, "height", {
+        /**
+         *
+         * @returns {number}
+         */
+        get: function () {
+            return this._pHeight;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Texture2DBase.prototype, "size", {
+        get: function () {
+            return this._pWidth;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    /**
+     * @inheritDoc
+     */
+    Texture2DBase.prototype.dispose = function () {
+        _super.prototype.dispose.call(this);
+        if (this._mipmapData) {
+            var len = this._mipmapData.length;
+            for (var i = 0; i < len; i++)
+                MipmapGenerator.freeMipMapHolder(this._mipmapData[i]);
+        }
+    };
+    /**
+     *
+     */
+    Texture2DBase.prototype.invalidateContent = function () {
+        _super.prototype.invalidateContent.call(this);
+        this._mipmapDataDirty = true;
+    };
+    /**
+     *
+     * @param width
+     * @param height
+     * @private
+     */
+    Texture2DBase.prototype._pSetSize = function (width, height) {
+        if (this._pWidth != width || this._pHeight != height)
+            this.invalidateSize();
+        this._mipmapDataDirty = true;
+        this._pWidth = width;
+        this._pHeight = height;
+    };
+    Texture2DBase.prototype._iGetMipmapData = function () {
+        if (this._mipmapDataDirty) {
+            this._mipmapDataDirty = false;
+            if (!this._mipmapData)
+                this._mipmapData = new Array();
+            MipmapGenerator.generateMipMaps(this._iGetTextureData(), this._mipmapData, true);
+        }
+        return this._mipmapData;
+    };
+    Texture2DBase.prototype._iGetTextureData = function () {
+        throw new AbstractMethodError();
+    };
+    return Texture2DBase;
+})(TextureProxyBase);
+module.exports = Texture2DBase;
+
+
+},{"awayjs-core/lib/errors/AbstractMethodError":4,"awayjs-core/lib/textures/MipmapGenerator":56,"awayjs-core/lib/textures/TextureProxyBase":58}],58:[function(require,module,exports){
+var __extends = this.__extends || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    __.prototype = b.prototype;
+    d.prototype = new __();
+};
+var AssetType = require("awayjs-core/lib/library/AssetType");
+var NamedAssetBase = require("awayjs-core/lib/library/NamedAssetBase");
+/**
+ *
+ */
+var TextureProxyBase = (function (_super) {
+    __extends(TextureProxyBase, _super);
+    /**
+     *
+     */
+    function TextureProxyBase(generateMipmaps) {
+        if (generateMipmaps === void 0) { generateMipmaps = false; }
+        _super.call(this);
+        this._pFormat = "bgra";
+        this._textureData = new Array();
+        this._generateMipmaps = this._hasMipmaps = generateMipmaps;
+    }
+    Object.defineProperty(TextureProxyBase.prototype, "size", {
+        get: function () {
+            return this._pSize;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(TextureProxyBase.prototype, "hasMipmaps", {
+        get: function () {
+            return this._hasMipmaps;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(TextureProxyBase.prototype, "format", {
+        /**
+         *
+         * @returns {string}
+         */
+        get: function () {
+            return this._pFormat;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(TextureProxyBase.prototype, "generateMipmaps", {
+        /**
+         *
+         * @returns {boolean}
+         */
+        get: function () {
+            return this._generateMipmaps;
+        },
+        set: function (value) {
+            if (this._generateMipmaps == value)
+                return;
+            this._generateMipmaps = this._hasMipmaps = value;
+            this.invalidateContent();
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(TextureProxyBase.prototype, "assetType", {
+        /**
+         *
+         * @returns {string}
+         */
+        get: function () {
+            return AssetType.TEXTURE;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    /**
+     *
+     */
+    TextureProxyBase.prototype.invalidateContent = function () {
+        var len = this._textureData.length;
+        for (var i = 0; i < len; i++)
+            this._textureData[i].invalidate();
+    };
+    /**
+     *
+     * @private
+     */
+    TextureProxyBase.prototype.invalidateSize = function () {
+        while (this._textureData.length)
+            this._textureData[0].dispose();
+    };
+    /**
+     * @inheritDoc
+     */
+    TextureProxyBase.prototype.dispose = function () {
+        while (this._textureData.length)
+            this._textureData[0].dispose();
+    };
+    TextureProxyBase.prototype._iAddTextureData = function (textureData) {
+        this._textureData.push(textureData);
+        return textureData;
+    };
+    TextureProxyBase.prototype._iRemoveTextureData = function (textureData) {
+        this._textureData.splice(this._textureData.indexOf(textureData), 1);
+        return textureData;
+    };
+    return TextureProxyBase;
+})(NamedAssetBase);
+module.exports = TextureProxyBase;
+
+
+},{"awayjs-core/lib/library/AssetType":31,"awayjs-core/lib/library/NamedAssetBase":37}],59:[function(require,module,exports){
+var __extends = this.__extends || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    __.prototype = b.prototype;
+    d.prototype = new __();
+};
+var ByteArrayBase = require("awayjs-core/lib/utils/ByteArrayBase");
+var ByteArray = (function (_super) {
+    __extends(ByteArray, _super);
+    function ByteArray() {
+        _super.call(this);
+        this.maxlength = 0;
+        this._mode = "Typed array";
+        this.maxlength = 4;
+        this.arraybytes = new ArrayBuffer(this.maxlength);
+        this.unalignedarraybytestemp = new ArrayBuffer(16);
+    }
+    ByteArray.prototype.ensureWriteableSpace = function (n) {
+        this.ensureSpace(n + this.position);
+    };
+    ByteArray.prototype.setArrayBuffer = function (aBuffer) {
+        this.ensureSpace(aBuffer.byteLength);
+        this.length = aBuffer.byteLength;
+        var inInt8AView = new Int8Array(aBuffer);
+        var localInt8View = new Int8Array(this.arraybytes, 0, this.length);
+        localInt8View.set(inInt8AView);
+        this.position = 0;
+    };
+    ByteArray.prototype.getBytesAvailable = function () {
+        return (this.length) - (this.position);
+    };
+    ByteArray.prototype.ensureSpace = function (n) {
+        if (n > this.maxlength) {
+            var newmaxlength = (n + 255) & (~255);
+            var newarraybuffer = new ArrayBuffer(newmaxlength);
+            var view = new Uint8Array(this.arraybytes, 0, this.length);
+            var newview = new Uint8Array(newarraybuffer, 0, this.length);
+            newview.set(view); // memcpy
+            this.arraybytes = newarraybuffer;
+            this.maxlength = newmaxlength;
+        }
+    };
+    ByteArray.prototype.writeByte = function (b) {
+        this.ensureWriteableSpace(1);
+        var view = new Int8Array(this.arraybytes);
+        view[this.position++] = (~~b); // ~~ is cast to int in js...
+        if (this.position > this.length) {
+            this.length = this.position;
+        }
+    };
+    ByteArray.prototype.readByte = function () {
+        if (this.position >= this.length) {
+            throw "ByteArray out of bounds read. Positon=" + this.position + ", Length=" + this.length;
+        }
+        var view = new Int8Array(this.arraybytes);
+        return view[this.position++];
+    };
+    ByteArray.prototype.readBytes = function (bytes, offset, length) {
+        if (offset === void 0) { offset = 0; }
+        if (length === void 0) { length = 0; }
+        if (length == null) {
+            length = bytes.length;
+        }
+        bytes.ensureWriteableSpace(offset + length);
+        var byteView = new Int8Array(bytes.arraybytes);
+        var localByteView = new Int8Array(this.arraybytes);
+        byteView.set(localByteView.subarray(this.position, this.position + length), offset);
+        this.position += length;
+        if (length + offset > bytes.length) {
+            bytes.length += (length + offset) - bytes.length;
+        }
+    };
+    ByteArray.prototype.writeUnsignedByte = function (b) {
+        this.ensureWriteableSpace(1);
+        var view = new Uint8Array(this.arraybytes);
+        view[this.position++] = (~~b) & 0xff; // ~~ is cast to int in js...
+        if (this.position > this.length) {
+            this.length = this.position;
+        }
+    };
+    ByteArray.prototype.readUnsignedByte = function () {
+        if (this.position >= this.length) {
+            throw "ByteArray out of bounds read. Positon=" + this.position + ", Length=" + this.length;
+        }
+        var view = new Uint8Array(this.arraybytes);
+        return view[this.position++];
+    };
+    ByteArray.prototype.writeUnsignedShort = function (b) {
+        this.ensureWriteableSpace(2);
+        if ((this.position & 1) == 0) {
+            var view = new Uint16Array(this.arraybytes);
+            view[this.position >> 1] = (~~b) & 0xffff; // ~~ is cast to int in js...
+        }
+        else {
+            var view = new Uint16Array(this.unalignedarraybytestemp, 0, 1);
+            view[0] = (~~b) & 0xffff;
+            var view2 = new Uint8Array(this.arraybytes, this.position, 2);
+            var view3 = new Uint8Array(this.unalignedarraybytestemp, 0, 2);
+            view2.set(view3);
+        }
+        this.position += 2;
+        if (this.position > this.length) {
+            this.length = this.position;
+        }
+    };
+    ByteArray.prototype.readUTFBytes = function (len) {
+        var value = "";
+        var max = this.position + len;
+        var data = new DataView(this.arraybytes);
+        while (this.position < max) {
+            var c = data.getUint8(this.position++);
+            if (c < 0x80) {
+                if (c == 0)
+                    break;
+                value += String.fromCharCode(c);
+            }
+            else if (c < 0xE0) {
+                value += String.fromCharCode(((c & 0x3F) << 6) | (data.getUint8(this.position++) & 0x7F));
+            }
+            else if (c < 0xF0) {
+                var c2 = data.getUint8(this.position++);
+                value += String.fromCharCode(((c & 0x1F) << 12) | ((c2 & 0x7F) << 6) | (data.getUint8(this.position++) & 0x7F));
+            }
+            else {
+                var c2 = data.getUint8(this.position++);
+                var c3 = data.getUint8(this.position++);
+                value += String.fromCharCode(((c & 0x0F) << 18) | ((c2 & 0x7F) << 12) | ((c3 << 6) & 0x7F) | (data.getUint8(this.position++) & 0x7F));
+            }
+        }
+        return value;
+    };
+    ByteArray.prototype.readInt = function () {
+        var data = new DataView(this.arraybytes);
+        var int = data.getInt32(this.position, true);
+        this.position += 4;
+        return int;
+    };
+    ByteArray.prototype.readShort = function () {
+        var data = new DataView(this.arraybytes);
+        var short = data.getInt16(this.position, true);
+        this.position += 2;
+        return short;
+    };
+    ByteArray.prototype.readDouble = function () {
+        var data = new DataView(this.arraybytes);
+        var double = data.getFloat64(this.position, true);
+        this.position += 8;
+        return double;
+    };
+    ByteArray.prototype.readUnsignedShort = function () {
+        if (this.position > this.length + 2) {
+            throw "ByteArray out of bounds read. Position=" + this.position + ", Length=" + this.length;
+        }
+        if ((this.position & 1) == 0) {
+            var view = new Uint16Array(this.arraybytes);
+            var pa = this.position >> 1;
+            this.position += 2;
+            return view[pa];
+        }
+        else {
+            var view = new Uint16Array(this.unalignedarraybytestemp, 0, 1);
+            var view2 = new Uint8Array(this.arraybytes, this.position, 2);
+            var view3 = new Uint8Array(this.unalignedarraybytestemp, 0, 2);
+            view3.set(view2);
+            this.position += 2;
+            return view[0];
+        }
+    };
+    ByteArray.prototype.writeUnsignedInt = function (b) {
+        this.ensureWriteableSpace(4);
+        if ((this.position & 3) == 0) {
+            var view = new Uint32Array(this.arraybytes);
+            view[this.position >> 2] = (~~b) & 0xffffffff; // ~~ is cast to int in js...
+        }
+        else {
+            var view = new Uint32Array(this.unalignedarraybytestemp, 0, 1);
+            view[0] = (~~b) & 0xffffffff;
+            var view2 = new Uint8Array(this.arraybytes, this.position, 4);
+            var view3 = new Uint8Array(this.unalignedarraybytestemp, 0, 4);
+            view2.set(view3);
+        }
+        this.position += 4;
+        if (this.position > this.length) {
+            this.length = this.position;
+        }
+    };
+    ByteArray.prototype.readUnsignedInt = function () {
+        if (this.position > this.length + 4) {
+            throw "ByteArray out of bounds read. Position=" + this.position + ", Length=" + this.length;
+        }
+        if ((this.position & 3) == 0) {
+            var view = new Uint32Array(this.arraybytes);
+            var pa = this.position >> 2;
+            this.position += 4;
+            return view[pa];
+        }
+        else {
+            var view = new Uint32Array(this.unalignedarraybytestemp, 0, 1);
+            var view2 = new Uint8Array(this.arraybytes, this.position, 4);
+            var view3 = new Uint8Array(this.unalignedarraybytestemp, 0, 4);
+            view3.set(view2);
+            this.position += 4;
+            return view[0];
+        }
+    };
+    ByteArray.prototype.writeFloat = function (b) {
+        this.ensureWriteableSpace(4);
+        if ((this.position & 3) == 0) {
+            var view = new Float32Array(this.arraybytes);
+            view[this.position >> 2] = b;
+        }
+        else {
+            var view = new Float32Array(this.unalignedarraybytestemp, 0, 1);
+            view[0] = b;
+            var view2 = new Uint8Array(this.arraybytes, this.position, 4);
+            var view3 = new Uint8Array(this.unalignedarraybytestemp, 0, 4);
+            view2.set(view3);
+        }
+        this.position += 4;
+        if (this.position > this.length) {
+            this.length = this.position;
+        }
+    };
+    ByteArray.prototype.readFloat = function () {
+        if (this.position > this.length + 4) {
+            throw "ByteArray out of bounds read. Positon=" + this.position + ", Length=" + this.length;
+        }
+        if ((this.position & 3) == 0) {
+            var view = new Float32Array(this.arraybytes);
+            var pa = this.position >> 2;
+            this.position += 4;
+            return view[pa];
+        }
+        else {
+            var view = new Float32Array(this.unalignedarraybytestemp, 0, 1);
+            var view2 = new Uint8Array(this.arraybytes, this.position, 4);
+            var view3 = new Uint8Array(this.unalignedarraybytestemp, 0, 4);
+            view3.set(view2);
+            this.position += 4;
+            return view[0];
+        }
+    };
+    return ByteArray;
+})(ByteArrayBase);
+module.exports = ByteArray;
+
+
+},{"awayjs-core/lib/utils/ByteArrayBase":60}],60:[function(require,module,exports){
+var AbstractMethodError = require("awayjs-core/lib/errors/AbstractMethodError");
+var ByteArrayBase = (function () {
+    function ByteArrayBase() {
+        this.position = 0;
+        this.length = 0;
+        this._mode = "";
+    }
+    ByteArrayBase.prototype.writeByte = function (b) {
+        throw "Virtual method";
+    };
+    ByteArrayBase.prototype.readByte = function () {
+        throw "Virtual method";
+    };
+    ByteArrayBase.prototype.writeUnsignedByte = function (b) {
+        throw "Virtual method";
+    };
+    ByteArrayBase.prototype.readUnsignedByte = function () {
+        throw "Virtual method";
+    };
+    ByteArrayBase.prototype.writeUnsignedShort = function (b) {
+        throw "Virtual method";
+    };
+    ByteArrayBase.prototype.readUnsignedShort = function () {
+        throw "Virtual method";
+    };
+    ByteArrayBase.prototype.writeUnsignedInt = function (b) {
+        throw "Virtual method";
+    };
+    ByteArrayBase.prototype.readUnsignedInt = function () {
+        throw "Virtual method";
+    };
+    ByteArrayBase.prototype.writeFloat = function (b) {
+        throw "Virtual method";
+    };
+    ByteArrayBase.prototype.toFloatBits = function (x) {
+        throw "Virtual method";
+    };
+    ByteArrayBase.prototype.readFloat = function (b) {
+        throw "Virtual method";
+    };
+    ByteArrayBase.prototype.fromFloatBits = function (x) {
+        throw "Virtual method";
+    };
+    ByteArrayBase.prototype.getBytesAvailable = function () {
+        throw new AbstractMethodError('ByteArrayBase, getBytesAvailable() not implemented ');
+    };
+    ByteArrayBase.prototype.toString = function () {
+        return "[ByteArray] ( " + this._mode + " ) position=" + this.position + " length=" + this.length;
+    };
+    ByteArrayBase.prototype.compareEqual = function (other, count) {
+        if (count == undefined || count > this.length - this.position)
+            count = this.length - this.position;
+        if (count > other.length - other.position)
+            count = other.length - other.position;
+        var co0 = count;
+        var r = true;
+        while (r && count >= 4) {
+            count -= 4;
+            if (this.readUnsignedInt() != other.readUnsignedInt())
+                r = false;
+        }
+        while (r && count >= 1) {
+            count--;
+            if (this.readUnsignedByte() != other.readUnsignedByte())
+                r = false;
+        }
+        var c0;
+        this.position -= (c0 - count);
+        other.position -= (c0 - count);
+        return r;
+    };
+    ByteArrayBase.prototype.writeBase64String = function (s) {
+        for (var i = 0; i < s.length; i++) {
+            var v = s.charAt(i);
+        }
+    };
+    ByteArrayBase.prototype.dumpToConsole = function () {
+        var oldpos = this.position;
+        this.position = 0;
+        var nstep = 8;
+        function asHexString(x, digits) {
+            var lut = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "a", "b", "c", "d", "e", "f"];
+            var sh = "";
+            for (var d = 0; d < digits; d++) {
+                sh = lut[(x >> (d << 2)) & 0xf] + sh;
+            }
+            return sh;
+        }
+        for (var i = 0; i < this.length; i += nstep) {
+            var s = asHexString(i, 4) + ":";
+            for (var j = 0; j < nstep && i + j < this.length; j++) {
+                s += " " + asHexString(this.readUnsignedByte(), 2);
+            }
+            console.log(s);
+        }
+        this.position = oldpos;
+    };
+    ByteArrayBase.prototype.readBase64String = function (count) {
+        if (count == undefined || count > this.length - this.position)
+            count = this.length - this.position;
+        if (!(count > 0))
+            return "";
+        return ByteArrayBase.internalGetBase64String(count, this.readUnsignedByte, this);
+    };
+    ByteArrayBase.internalGetBase64String = function (count, getUnsignedByteFunc, self) {
+        var r = "";
+        var b0, b1, b2, enc1, enc2, enc3, enc4;
+        var base64Key = ByteArrayBase.Base64Key;
+        while (count >= 3) {
+            b0 = getUnsignedByteFunc.apply(self);
+            b1 = getUnsignedByteFunc.apply(self);
+            b2 = getUnsignedByteFunc.apply(self);
+            enc1 = b0 >> 2;
+            enc2 = ((b0 & 3) << 4) | (b1 >> 4);
+            enc3 = ((b1 & 15) << 2) | (b2 >> 6);
+            enc4 = b2 & 63;
+            r += base64Key.charAt(enc1) + base64Key.charAt(enc2) + base64Key.charAt(enc3) + base64Key.charAt(enc4);
+            count -= 3;
+        }
+        // pad
+        if (count == 2) {
+            b0 = getUnsignedByteFunc.apply(self);
+            b1 = getUnsignedByteFunc.apply(self);
+            enc1 = b0 >> 2;
+            enc2 = ((b0 & 3) << 4) | (b1 >> 4);
+            enc3 = ((b1 & 15) << 2);
+            r += base64Key.charAt(enc1) + base64Key.charAt(enc2) + base64Key.charAt(enc3) + "=";
+        }
+        else if (count == 1) {
+            b0 = getUnsignedByteFunc.apply(self);
+            enc1 = b0 >> 2;
+            enc2 = ((b0 & 3) << 4);
+            r += base64Key.charAt(enc1) + base64Key.charAt(enc2) + "==";
+        }
+        return r;
+    };
+    ByteArrayBase.Base64Key = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+    return ByteArrayBase;
+})();
+module.exports = ByteArrayBase;
+
+
+},{"awayjs-core/lib/errors/AbstractMethodError":4}],61:[function(require,module,exports){
+/**
+ *
+ */
+var ColorUtils = (function () {
+    function ColorUtils() {
+    }
+    ColorUtils.float32ColorToARGB = function (float32Color) {
+        var a = (float32Color & 0xff000000) >>> 24;
+        var r = (float32Color & 0xff0000) >>> 16;
+        var g = (float32Color & 0xff00) >>> 8;
+        var b = float32Color & 0xff;
+        var result = [a, r, g, b];
+        return result;
+    };
+    ColorUtils.componentToHex = function (c) {
+        var hex = c.toString(16);
+        return hex.length == 1 ? "0" + hex : hex;
+    };
+    ColorUtils.RGBToHexString = function (argb) {
+        return "#" + ColorUtils.componentToHex(argb[1]) + ColorUtils.componentToHex(argb[2]) + ColorUtils.componentToHex(argb[3]);
+    };
+    ColorUtils.ARGBToHexString = function (argb) {
+        return "#" + ColorUtils.componentToHex(argb[0]) + ColorUtils.componentToHex(argb[1]) + ColorUtils.componentToHex(argb[2]) + ColorUtils.componentToHex(argb[3]);
+    };
+    return ColorUtils;
+})();
+module.exports = ColorUtils;
+
+
+},{}],62:[function(require,module,exports){
+var TextureUtils = (function () {
+    function TextureUtils() {
+    }
+    TextureUtils.isBitmapDataValid = function (bitmapData) {
+        if (bitmapData == null) {
+            return true;
+        }
+        return TextureUtils.isDimensionValid(bitmapData.width) && TextureUtils.isDimensionValid(bitmapData.height);
+    };
+    TextureUtils.isHTMLImageElementValid = function (image) {
+        if (image == null)
+            return true;
+        return TextureUtils.isDimensionValid(image.width) && TextureUtils.isDimensionValid(image.height);
+    };
+    TextureUtils.isDimensionValid = function (d) {
+        return d >= 1 && d <= TextureUtils.MAX_SIZE && TextureUtils.isPowerOfTwo(d);
+    };
+    TextureUtils.isPowerOfTwo = function (value) {
+        return value ? ((value & -value) == value) : false;
+    };
+    TextureUtils.getBestPowerOf2 = function (value) {
+        var p = 1;
+        while (p < value)
+            p <<= 1;
+        if (p > TextureUtils.MAX_SIZE)
+            p = TextureUtils.MAX_SIZE;
+        return p;
+    };
+    TextureUtils.MAX_SIZE = 2048;
+    return TextureUtils;
+})();
+module.exports = TextureUtils;
+
+
+},{}],63:[function(require,module,exports){
+var __extends = this.__extends || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    __.prototype = b.prototype;
+    d.prototype = new __();
+};
+var Error = require("awayjs-core/lib/errors/Error");
+var EventDispatcher = require("awayjs-core/lib/events/EventDispatcher");
+var TimerEvent = require("awayjs-core/lib/events/TimerEvent");
+var Timer = (function (_super) {
+    __extends(Timer, _super);
+    function Timer(delay, repeatCount) {
+        if (repeatCount === void 0) { repeatCount = 0; }
+        _super.call(this);
+        this._repeatCount = 0;
+        this._currentCount = 0;
+        this._running = false;
+        this._delay = delay;
+        this._repeatCount = repeatCount;
+        if (isNaN(delay) || delay < 0) {
+            throw new Error("Delay is negative or not a number");
+        }
+    }
+    Object.defineProperty(Timer.prototype, "currentCount", {
+        get: function () {
+            return this._currentCount;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Timer.prototype, "delay", {
+        get: function () {
+            return this._delay;
+        },
+        set: function (value) {
+            this._delay = value;
+            if (this._running) {
+                this.stop();
+                this.start();
+            }
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Timer.prototype, "repeatCount", {
+        get: function () {
+            return this._repeatCount;
+        },
+        set: function (value) {
+            this._repeatCount = value;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Timer.prototype.reset = function () {
+        if (this._running) {
+            this.stop();
+        }
+        this._currentCount = 0;
+    };
+    Object.defineProperty(Timer.prototype, "running", {
+        get: function () {
+            return this._running;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Timer.prototype.start = function () {
+        var _this = this;
+        this._running = true;
+        clearInterval(this._iid);
+        this._iid = setInterval(function () { return _this.tick(); }, this._delay);
+    };
+    Timer.prototype.stop = function () {
+        this._running = false;
+        clearInterval(this._iid);
+    };
+    Timer.prototype.tick = function () {
+        this._currentCount++;
+        if ((this._repeatCount > 0) && this._currentCount >= this._repeatCount) {
+            this.stop();
+            this.dispatchEvent(new TimerEvent(TimerEvent.TIMER));
+            this.dispatchEvent(new TimerEvent(TimerEvent.TIMER_COMPLETE));
+        }
+        else {
+            this.dispatchEvent(new TimerEvent(TimerEvent.TIMER));
+        }
+    };
+    return Timer;
+})(EventDispatcher);
+module.exports = Timer;
+
+
+},{"awayjs-core/lib/errors/Error":6,"awayjs-core/lib/events/EventDispatcher":10,"awayjs-core/lib/events/TimerEvent":17}],64:[function(require,module,exports){
+/**
+ *
+ *
+ * @returns {number}
+ */
+function getTimer() {
+    // number milliseconds of 1970/01/01
+    // this different to AS3 implementation which gets the number of milliseconds
+    // since instance of Flash player was initialised
+    return Date.now();
+}
+module.exports = getTimer;
+
+
+},{}],"awayjs-core\\lib\\base\\BitmapDataChannel":[function(require,module,exports){
+module.exports=require(2)
+},{"..\\awayjs-core\\lib\\base\\BitmapDataChannel.js":2}],"awayjs-core\\lib\\base\\BitmapData":[function(require,module,exports){
+module.exports=require(1)
+},{"..\\awayjs-core\\lib\\base\\BitmapData.js":1,"awayjs-core/lib/geom/Rectangle":25,"awayjs-core/lib/utils/ColorUtils":61}],"awayjs-core\\lib\\bounds\\AxisAlignedBoundingBox":[function(require,module,exports){
+var __extends = this.__extends || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    __.prototype = b.prototype;
+    d.prototype = new __();
+};
+var BoundingVolumeBase = require("awayjs-core/lib/bounds/BoundingVolumeBase");
+var Matrix3DUtils = require("awayjs-core/lib/geom/Matrix3DUtils");
+var PlaneClassification = require("awayjs-core/lib/geom/PlaneClassification");
+var Vector3D = require("awayjs-core/lib/geom/Vector3D");
+/**
+ * AxisAlignedBoundingBox represents a bounding box volume that has its planes aligned to the local coordinate axes of the bounded object.
+ * This is useful for most meshes.
+ */
+var AxisAlignedBoundingBox = (function (_super) {
+    __extends(AxisAlignedBoundingBox, _super);
+    /**
+     * Creates a new <code>AxisAlignedBoundingBox</code> object.
+     */
+    function AxisAlignedBoundingBox() {
+        _super.call(this);
+        this._centerX = 0;
+        this._centerY = 0;
+        this._centerZ = 0;
+        this._halfExtentsX = 0;
+        this._halfExtentsY = 0;
+        this._halfExtentsZ = 0;
+    }
+    Object.defineProperty(AxisAlignedBoundingBox.prototype, "centerX", {
+        get: function () {
+            return this._centerX;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(AxisAlignedBoundingBox.prototype, "centerY", {
+        get: function () {
+            return this._centerY;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(AxisAlignedBoundingBox.prototype, "centerZ", {
+        get: function () {
+            return this._centerZ;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    /**
+     * @inheritDoc
+     */
+    AxisAlignedBoundingBox.prototype.nullify = function () {
+        _super.prototype.nullify.call(this);
+        this._centerX = this._centerY = this._centerZ = 0;
+        this._halfExtentsX = this._halfExtentsY = this._halfExtentsZ = 0;
+    };
+    /**
+     * @inheritDoc
+     */
+    AxisAlignedBoundingBox.prototype.isInFrustum = function (planes, numPlanes) {
+        for (var i = 0; i < numPlanes; ++i) {
+            var plane = planes[i];
+            var a = plane.a;
+            var b = plane.b;
+            var c = plane.c;
+            var flippedExtentX = a < 0 ? -this._halfExtentsX : this._halfExtentsX;
+            var flippedExtentY = b < 0 ? -this._halfExtentsY : this._halfExtentsY;
+            var flippedExtentZ = c < 0 ? -this._halfExtentsZ : this._halfExtentsZ;
+            var projDist = a * (this._centerX + flippedExtentX) + b * (this._centerY + flippedExtentY) + c * (this._centerZ + flippedExtentZ) - plane.d;
+            if (projDist < 0)
+                return false;
+        }
+        return true;
+    };
+    AxisAlignedBoundingBox.prototype.rayIntersection = function (position, direction, targetNormal) {
+        if (this.containsPoint(position))
+            return 0;
+        var px = position.x - this._centerX;
+        var py = position.y - this._centerY;
+        var pz = position.z - this._centerZ;
+        var vx = direction.x;
+        var vy = direction.y;
+        var vz = direction.z;
+        var ix;
+        var iy;
+        var iz;
+        var rayEntryDistance;
+        // ray-plane tests
+        var intersects;
+        if (vx < 0) {
+            rayEntryDistance = (this._halfExtentsX - px) / vx;
+            if (rayEntryDistance > 0) {
+                iy = py + rayEntryDistance * vy;
+                iz = pz + rayEntryDistance * vz;
+                if (iy > -this._halfExtentsY && iy < this._halfExtentsY && iz > -this._halfExtentsZ && iz < this._halfExtentsZ) {
+                    targetNormal.x = 1;
+                    targetNormal.y = 0;
+                    targetNormal.z = 0;
+                    intersects = true;
+                }
+            }
+        }
+        if (!intersects && vx > 0) {
+            rayEntryDistance = (-this._halfExtentsX - px) / vx;
+            if (rayEntryDistance > 0) {
+                iy = py + rayEntryDistance * vy;
+                iz = pz + rayEntryDistance * vz;
+                if (iy > -this._halfExtentsY && iy < this._halfExtentsY && iz > -this._halfExtentsZ && iz < this._halfExtentsZ) {
+                    targetNormal.x = -1;
+                    targetNormal.y = 0;
+                    targetNormal.z = 0;
+                    intersects = true;
+                }
+            }
+        }
+        if (!intersects && vy < 0) {
+            rayEntryDistance = (this._halfExtentsY - py) / vy;
+            if (rayEntryDistance > 0) {
+                ix = px + rayEntryDistance * vx;
+                iz = pz + rayEntryDistance * vz;
+                if (ix > -this._halfExtentsX && ix < this._halfExtentsX && iz > -this._halfExtentsZ && iz < this._halfExtentsZ) {
+                    targetNormal.x = 0;
+                    targetNormal.y = 1;
+                    targetNormal.z = 0;
+                    intersects = true;
+                }
+            }
+        }
+        if (!intersects && vy > 0) {
+            rayEntryDistance = (-this._halfExtentsY - py) / vy;
+            if (rayEntryDistance > 0) {
+                ix = px + rayEntryDistance * vx;
+                iz = pz + rayEntryDistance * vz;
+                if (ix > -this._halfExtentsX && ix < this._halfExtentsX && iz > -this._halfExtentsZ && iz < this._halfExtentsZ) {
+                    targetNormal.x = 0;
+                    targetNormal.y = -1;
+                    targetNormal.z = 0;
+                    intersects = true;
+                }
+            }
+        }
+        if (!intersects && vz < 0) {
+            rayEntryDistance = (this._halfExtentsZ - pz) / vz;
+            if (rayEntryDistance > 0) {
+                ix = px + rayEntryDistance * vx;
+                iy = py + rayEntryDistance * vy;
+                if (iy > -this._halfExtentsY && iy < this._halfExtentsY && ix > -this._halfExtentsX && ix < this._halfExtentsX) {
+                    targetNormal.x = 0;
+                    targetNormal.y = 0;
+                    targetNormal.z = 1;
+                    intersects = true;
+                }
+            }
+        }
+        if (!intersects && vz > 0) {
+            rayEntryDistance = (-this._halfExtentsZ - pz) / vz;
+            if (rayEntryDistance > 0) {
+                ix = px + rayEntryDistance * vx;
+                iy = py + rayEntryDistance * vy;
+                if (iy > -this._halfExtentsY && iy < this._halfExtentsY && ix > -this._halfExtentsX && ix < this._halfExtentsX) {
+                    targetNormal.x = 0;
+                    targetNormal.y = 0;
+                    targetNormal.z = -1;
+                    intersects = true;
+                }
+            }
+        }
+        return intersects ? rayEntryDistance : -1;
+    };
+    /**
+     * @inheritDoc
+     */
+    AxisAlignedBoundingBox.prototype.containsPoint = function (position) {
+        var px = position.x - this._centerX, py = position.y - this._centerY, pz = position.z - this._centerZ;
+        return px <= this._halfExtentsX && px >= -this._halfExtentsX && py <= this._halfExtentsY && py >= -this._halfExtentsY && pz <= this._halfExtentsZ && pz >= -this._halfExtentsZ;
+    };
+    /**
+     * @inheritDoc
+     */
+    AxisAlignedBoundingBox.prototype.fromExtremes = function (minX, minY, minZ, maxX, maxY, maxZ) {
+        this._centerX = (maxX + minX) * .5;
+        this._centerY = (maxY + minY) * .5;
+        this._centerZ = (maxZ + minZ) * .5;
+        this._halfExtentsX = (maxX - minX) * .5;
+        this._halfExtentsY = (maxY - minY) * .5;
+        this._halfExtentsZ = (maxZ - minZ) * .5;
+        _super.prototype.fromExtremes.call(this, minX, minY, minZ, maxX, maxY, maxZ);
+    };
+    /**
+     * @inheritDoc
+     */
+    AxisAlignedBoundingBox.prototype.clone = function () {
+        var clone = new AxisAlignedBoundingBox();
+        clone.fromExtremes(this._aabb.x, this._aabb.y + this._aabb.height, this._aabb.z, this._aabb.x + this._aabb.width, this._aabb.y, this._aabb.z + this._aabb.depth);
+        return clone;
+    };
+    Object.defineProperty(AxisAlignedBoundingBox.prototype, "halfExtentsX", {
+        get: function () {
+            return this._halfExtentsX;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(AxisAlignedBoundingBox.prototype, "halfExtentsY", {
+        get: function () {
+            return this._halfExtentsY;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(AxisAlignedBoundingBox.prototype, "halfExtentsZ", {
+        get: function () {
+            return this._halfExtentsZ;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    /**
+     * Finds the closest point on the bounding volume to another given point. This can be used for maximum error calculations for content within a given bound.
+     * @param point The point for which to find the closest point on the bounding volume
+     * @param target An optional Vector3D to store the result to prevent creating a new object.
+     * @return
+     */
+    AxisAlignedBoundingBox.prototype.closestPointToPoint = function (point, target) {
+        if (target === void 0) { target = null; }
+        var p;
+        if (target == null)
+            target = new Vector3D();
+        p = point.x;
+        if (p < this._aabb.x)
+            p = this._aabb.x;
+        if (p > this._aabb.x + this._aabb.width)
+            p = this._aabb.x + this._aabb.width;
+        target.x = p;
+        p = point.y;
+        if (p < this._aabb.y + this._aabb.height)
+            p = this._aabb.y + this._aabb.height;
+        if (p > this._aabb.y)
+            p = this._aabb.y;
+        target.y = p;
+        p = point.z;
+        if (p < this._aabb.z)
+            p = this._aabb.z;
+        if (p > this._aabb.z + this._aabb.depth)
+            p = this._aabb.z + this._aabb.depth;
+        target.z = p;
+        return target;
+    };
+    AxisAlignedBoundingBox.prototype.classifyToPlane = function (plane) {
+        var a = plane.a;
+        var b = plane.b;
+        var c = plane.c;
+        var centerDistance = a * this._centerX + b * this._centerY + c * this._centerZ - plane.d;
+        if (a < 0)
+            a = -a;
+        if (b < 0)
+            b = -b;
+        if (c < 0)
+            c = -c;
+        var boundOffset = a * this._halfExtentsX + b * this._halfExtentsY + c * this._halfExtentsZ;
+        return centerDistance > boundOffset ? PlaneClassification.FRONT : centerDistance < -boundOffset ? PlaneClassification.BACK : PlaneClassification.INTERSECT;
+    };
+    AxisAlignedBoundingBox.prototype.transformFrom = function (bounds, matrix) {
+        var aabb = bounds;
+        var cx = aabb._centerX;
+        var cy = aabb._centerY;
+        var cz = aabb._centerZ;
+        var raw = Matrix3DUtils.RAW_DATA_CONTAINER;
+        matrix.copyRawDataTo(raw);
+        var m11 = raw[0], m12 = raw[4], m13 = raw[8], m14 = raw[12];
+        var m21 = raw[1], m22 = raw[5], m23 = raw[9], m24 = raw[13];
+        var m31 = raw[2], m32 = raw[6], m33 = raw[10], m34 = raw[14];
+        this._centerX = cx * m11 + cy * m12 + cz * m13 + m14;
+        this._centerY = cx * m21 + cy * m22 + cz * m23 + m24;
+        this._centerZ = cx * m31 + cy * m32 + cz * m33 + m34;
+        if (m11 < 0)
+            m11 = -m11;
+        if (m12 < 0)
+            m12 = -m12;
+        if (m13 < 0)
+            m13 = -m13;
+        if (m21 < 0)
+            m21 = -m21;
+        if (m22 < 0)
+            m22 = -m22;
+        if (m23 < 0)
+            m23 = -m23;
+        if (m31 < 0)
+            m31 = -m31;
+        if (m32 < 0)
+            m32 = -m32;
+        if (m33 < 0)
+            m33 = -m33;
+        var hx = aabb._halfExtentsX;
+        var hy = aabb._halfExtentsY;
+        var hz = aabb._halfExtentsZ;
+        this._halfExtentsX = hx * m11 + hy * m12 + hz * m13;
+        this._halfExtentsY = hx * m21 + hy * m22 + hz * m23;
+        this._halfExtentsZ = hx * m31 + hy * m32 + hz * m33;
+        this._aabb.width = this._aabb.height = this._aabb.depth = this._halfExtentsX * 2;
+        this._aabb.x = this._centerX - this._halfExtentsX;
+        this._aabb.y = this._centerY + this._halfExtentsY;
+        this._aabb.z = this._centerZ - this._halfExtentsZ;
+    };
+    return AxisAlignedBoundingBox;
+})(BoundingVolumeBase);
+module.exports = AxisAlignedBoundingBox;
+
+
+},{"awayjs-core/lib/bounds/BoundingVolumeBase":3,"awayjs-core/lib/geom/Matrix3DUtils":21,"awayjs-core/lib/geom/PlaneClassification":23,"awayjs-core/lib/geom/Vector3D":26}],"awayjs-core\\lib\\bounds\\BoundingSphere":[function(require,module,exports){
+var __extends = this.__extends || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    __.prototype = b.prototype;
+    d.prototype = new __();
+};
+var BoundingVolumeBase = require("awayjs-core/lib/bounds/BoundingVolumeBase");
+var PlaneClassification = require("awayjs-core/lib/geom/PlaneClassification");
+var Vector3D = require("awayjs-core/lib/geom/Vector3D");
+var BoundingSphere = (function (_super) {
+    __extends(BoundingSphere, _super);
+    function BoundingSphere() {
+        _super.call(this);
+        this._radius = 0;
+        this._centerX = 0;
+        this._centerY = 0;
+        this._centerZ = 0;
+    }
+    Object.defineProperty(BoundingSphere.prototype, "radius", {
+        get: function () {
+            return this._radius;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    BoundingSphere.prototype.nullify = function () {
+        _super.prototype.nullify.call(this);
+        this._centerX = this._centerY = this._centerZ = 0;
+        this._radius = 0;
+    };
+    BoundingSphere.prototype.isInFrustum = function (planes, numPlanes) {
+        for (var i = 0; i < numPlanes; ++i) {
+            var plane = planes[i];
+            var flippedExtentX = plane.a < 0 ? -this._radius : this._radius;
+            var flippedExtentY = plane.b < 0 ? -this._radius : this._radius;
+            var flippedExtentZ = plane.c < 0 ? -this._radius : this._radius;
+            var projDist = plane.a * (this._centerX + flippedExtentX) + plane.b * (this._centerY + flippedExtentY) + plane.c * (this._centerZ + flippedExtentZ) - plane.d;
+            if (projDist < 0) {
+                return false;
+            }
+        }
+        return true;
+    };
+    BoundingSphere.prototype.fromSphere = function (center, radius) {
+        this._centerX = center.x;
+        this._centerY = center.y;
+        this._centerZ = center.z;
+        this._radius = radius;
+        this._aabb.width = this._aabb.height = this._aabb.depth = radius * 2;
+        this._aabb.x = this._centerX - radius;
+        this._aabb.y = this._centerY + radius;
+        this._aabb.z = this._centerZ - radius;
+        this._pAabbPointsDirty = true;
+    };
+    BoundingSphere.prototype.fromExtremes = function (minX, minY, minZ, maxX, maxY, maxZ) {
+        this._centerX = (maxX + minX) * .5;
+        this._centerY = (maxY + minY) * .5;
+        this._centerZ = (maxZ + minZ) * .5;
+        var d = maxX - minX;
+        var y = maxY - minY;
+        var z = maxZ - minZ;
+        if (y > d)
+            d = y;
+        if (z > d)
+            d = z;
+        this._radius = d * Math.sqrt(.5);
+        _super.prototype.fromExtremes.call(this, minX, minY, minZ, maxX, maxY, maxZ);
+    };
+    BoundingSphere.prototype.clone = function () {
+        var clone = new BoundingSphere();
+        clone.fromSphere(new Vector3D(this._centerX, this._centerY, this._centerZ), this._radius);
+        return clone;
+    };
+    BoundingSphere.prototype.rayIntersection = function (position, direction, targetNormal) {
+        if (this.containsPoint(position)) {
+            return 0;
+        }
+        var px = position.x - this._centerX, py = position.y - this._centerY, pz = position.z - this._centerZ;
+        var vx = direction.x, vy = direction.y, vz = direction.z;
+        var rayEntryDistance;
+        var a = vx * vx + vy * vy + vz * vz;
+        var b = 2 * (px * vx + py * vy + pz * vz);
+        var c = px * px + py * py + pz * pz - this._radius * this._radius;
+        var det = b * b - 4 * a * c;
+        if (det >= 0) {
+            var sqrtDet = Math.sqrt(det);
+            rayEntryDistance = (-b - sqrtDet) / (2 * a);
+            if (rayEntryDistance >= 0) {
+                targetNormal.x = px + rayEntryDistance * vx;
+                targetNormal.y = py + rayEntryDistance * vy;
+                targetNormal.z = pz + rayEntryDistance * vz;
+                targetNormal.normalize();
+                return rayEntryDistance;
+            }
+        }
+        // ray misses sphere
+        return -1;
+    };
+    BoundingSphere.prototype.containsPoint = function (position) {
+        var px = position.x - this._centerX;
+        var py = position.y - this._centerY;
+        var pz = position.z - this._centerZ;
+        var distance = Math.sqrt(px * px + py * py + pz * pz);
+        return distance <= this._radius;
+    };
+    //@override
+    BoundingSphere.prototype.classifyToPlane = function (plane) {
+        var a = plane.a;
+        var b = plane.b;
+        var c = plane.c;
+        var dd = a * this._centerX + b * this._centerY + c * this._centerZ - plane.d;
+        if (a < 0)
+            a = -a;
+        if (b < 0)
+            b = -b;
+        if (c < 0)
+            c = -c;
+        var rr = (a + b + c) * this._radius;
+        return dd > rr ? PlaneClassification.FRONT : dd < -rr ? PlaneClassification.BACK : PlaneClassification.INTERSECT;
+    };
+    BoundingSphere.prototype.transformFrom = function (bounds, matrix) {
+        var sphere = bounds;
+        var cx = sphere._centerX;
+        var cy = sphere._centerY;
+        var cz = sphere._centerZ;
+        var raw = new Array(16);
+        matrix.copyRawDataTo(raw);
+        var m11 = raw[0], m12 = raw[4], m13 = raw[8], m14 = raw[12];
+        var m21 = raw[1], m22 = raw[5], m23 = raw[9], m24 = raw[13];
+        var m31 = raw[2], m32 = raw[6], m33 = raw[10], m34 = raw[14];
+        this._centerX = cx * m11 + cy * m12 + cz * m13 + m14;
+        this._centerY = cx * m21 + cy * m22 + cz * m23 + m24;
+        this._centerZ = cx * m31 + cy * m32 + cz * m33 + m34;
+        if (m11 < 0)
+            m11 = -m11;
+        if (m12 < 0)
+            m12 = -m12;
+        if (m13 < 0)
+            m13 = -m13;
+        if (m21 < 0)
+            m21 = -m21;
+        if (m22 < 0)
+            m22 = -m22;
+        if (m23 < 0)
+            m23 = -m23;
+        if (m31 < 0)
+            m31 = -m31;
+        if (m32 < 0)
+            m32 = -m32;
+        if (m33 < 0)
+            m33 = -m33;
+        var r = sphere._radius;
+        var rx = m11 + m12 + m13;
+        var ry = m21 + m22 + m23;
+        var rz = m31 + m32 + m33;
+        this._radius = r * Math.sqrt(rx * rx + ry * ry + rz * rz);
+        this._aabb.width = this._aabb.height = this._aabb.depth = this._radius * 2;
+        this._aabb.x = this._centerX - this._radius;
+        this._aabb.y = this._centerY + this._radius;
+        this._aabb.z = this._centerZ - this._radius;
+    };
+    return BoundingSphere;
+})(BoundingVolumeBase);
+module.exports = BoundingSphere;
+
+
+},{"awayjs-core/lib/bounds/BoundingVolumeBase":3,"awayjs-core/lib/geom/PlaneClassification":23,"awayjs-core/lib/geom/Vector3D":26}],"awayjs-core\\lib\\bounds\\BoundingVolumeBase":[function(require,module,exports){
+module.exports=require(3)
+},{"..\\awayjs-core\\lib\\bounds\\BoundingVolumeBase.js":3,"awayjs-core/lib/errors/AbstractMethodError":4,"awayjs-core/lib/geom/Box":18}],"awayjs-core\\lib\\bounds\\NullBounds":[function(require,module,exports){
+var __extends = this.__extends || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    __.prototype = b.prototype;
+    d.prototype = new __();
+};
+var BoundingVolumeBase = require("awayjs-core/lib/bounds/BoundingVolumeBase");
+var PlaneClassification = require("awayjs-core/lib/geom/PlaneClassification");
+var NullBounds = (function (_super) {
+    __extends(NullBounds, _super);
+    function NullBounds(alwaysIn) {
+        if (alwaysIn === void 0) { alwaysIn = true; }
+        _super.call(this);
+        this._alwaysIn = alwaysIn;
+        this._aabb.width = this._aabb.height = this._aabb.depth = Number.POSITIVE_INFINITY;
+        this._aabb.x = this._aabb.y = this._aabb.z = this._alwaysIn ? Number.NEGATIVE_INFINITY / 2 : Number.POSITIVE_INFINITY;
+    }
+    //@override
+    NullBounds.prototype.clone = function () {
+        return new NullBounds(this._alwaysIn);
+    };
+    //@override
+    NullBounds.prototype.isInFrustum = function (planes, numPlanes) {
+        return this._alwaysIn;
+    };
+    //		//@override
+    //		public fromGeometry(geometry:away.base.Geometry)
+    //		{
+    //		}
+    //@override
+    NullBounds.prototype.fromSphere = function (center, radius) {
+    };
+    //@override
+    NullBounds.prototype.fromExtremes = function (minX, minY, minZ, maxX, maxY, maxZ) {
+    };
+    NullBounds.prototype.classifyToPlane = function (plane) {
+        return PlaneClassification.INTERSECT;
+    };
+    //@override
+    NullBounds.prototype.transformFrom = function (bounds, matrix) {
+        this._alwaysIn = bounds._alwaysIn;
+    };
+    return NullBounds;
+})(BoundingVolumeBase);
+module.exports = NullBounds;
+
+
+},{"awayjs-core/lib/bounds/BoundingVolumeBase":3,"awayjs-core/lib/geom/PlaneClassification":23}],"awayjs-core\\lib\\errors\\AbstractMethodError":[function(require,module,exports){
+module.exports=require(4)
+},{"..\\awayjs-core\\lib\\errors\\AbstractMethodError.js":4,"awayjs-core/lib/errors/Error":6}],"awayjs-core\\lib\\errors\\ArgumentError":[function(require,module,exports){
+module.exports=require(5)
+},{"..\\awayjs-core\\lib\\errors\\ArgumentError.js":5,"awayjs-core/lib/errors/Error":6}],"awayjs-core\\lib\\errors\\DocumentError":[function(require,module,exports){
+var __extends = this.__extends || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    __.prototype = b.prototype;
+    d.prototype = new __();
+};
+var Error = require("awayjs-core/lib/errors/Error");
+var DocumentError = (function (_super) {
+    __extends(DocumentError, _super);
+    function DocumentError(message, id) {
+        if (message === void 0) { message = "DocumentError"; }
+        if (id === void 0) { id = 0; }
+        _super.call(this, message, id);
+    }
+    DocumentError.DOCUMENT_DOES_NOT_EXIST = "documentDoesNotExist";
+    return DocumentError;
+})(Error);
+module.exports = DocumentError;
+
+
+},{"awayjs-core/lib/errors/Error":6}],"awayjs-core\\lib\\errors\\Error":[function(require,module,exports){
+module.exports=require(6)
+},{"..\\awayjs-core\\lib\\errors\\Error.js":6}],"awayjs-core\\lib\\errors\\PartialImplementationError":[function(require,module,exports){
+module.exports=require(7)
+},{"..\\awayjs-core\\lib\\errors\\PartialImplementationError.js":7,"awayjs-core/lib/errors/Error":6}],"awayjs-core\\lib\\errors\\RangeError":[function(require,module,exports){
+var __extends = this.__extends || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    __.prototype = b.prototype;
+    d.prototype = new __();
+};
+var Error = require("awayjs-core/lib/errors/Error");
+/**
+ * RangeError is thrown when an index is accessed out of range of the number of
+ * available indices on an Array.
+ */
+var RangeError = (function (_super) {
+    __extends(RangeError, _super);
+    /**
+     * Create a new RangeError.
+     *
+     * @param message An optional message to override the default error message.
+     * @param id The id of the error.
+     */
+    function RangeError(message, id) {
+        if (message === void 0) { message = null; }
+        if (id === void 0) { id = 0; }
+        _super.call(this, message || "RangeError", id);
+    }
+    return RangeError;
+})(Error);
+module.exports = RangeError;
+
+
+},{"awayjs-core/lib/errors/Error":6}],"awayjs-core\\lib\\events\\AssetEvent":[function(require,module,exports){
+module.exports=require(8)
+},{"..\\awayjs-core\\lib\\events\\AssetEvent.js":8,"awayjs-core/lib/events/Event":9}],"awayjs-core\\lib\\events\\EventDispatcher":[function(require,module,exports){
+module.exports=require(10)
+},{"..\\awayjs-core\\lib\\events\\EventDispatcher.js":10}],"awayjs-core\\lib\\events\\Event":[function(require,module,exports){
+module.exports=require(9)
+},{"..\\awayjs-core\\lib\\events\\Event.js":9}],"awayjs-core\\lib\\events\\HTTPStatusEvent":[function(require,module,exports){
+module.exports=require(11)
+},{"..\\awayjs-core\\lib\\events\\HTTPStatusEvent.js":11,"awayjs-core/lib/events/Event":9}],"awayjs-core\\lib\\events\\IEventDispatcher":[function(require,module,exports){
+
+
+
+},{}],"awayjs-core\\lib\\events\\IOErrorEvent":[function(require,module,exports){
+module.exports=require(12)
+},{"..\\awayjs-core\\lib\\events\\IOErrorEvent.js":12,"awayjs-core/lib/events/Event":9}],"awayjs-core\\lib\\events\\LoaderEvent":[function(require,module,exports){
+module.exports=require(13)
+},{"..\\awayjs-core\\lib\\events\\LoaderEvent.js":13,"awayjs-core/lib/events/Event":9}],"awayjs-core\\lib\\events\\ParserEvent":[function(require,module,exports){
+module.exports=require(14)
+},{"..\\awayjs-core\\lib\\events\\ParserEvent.js":14,"awayjs-core/lib/events/Event":9}],"awayjs-core\\lib\\events\\ProgressEvent":[function(require,module,exports){
+module.exports=require(15)
+},{"..\\awayjs-core\\lib\\events\\ProgressEvent.js":15,"awayjs-core/lib/events/Event":9}],"awayjs-core\\lib\\events\\ProjectionEvent":[function(require,module,exports){
+module.exports=require(16)
+},{"..\\awayjs-core\\lib\\events\\ProjectionEvent.js":16,"awayjs-core/lib/events/Event":9}],"awayjs-core\\lib\\events\\TimerEvent":[function(require,module,exports){
+module.exports=require(17)
+},{"..\\awayjs-core\\lib\\events\\TimerEvent.js":17,"awayjs-core/lib/events/Event":9}],"awayjs-core\\lib\\geom\\Box":[function(require,module,exports){
+module.exports=require(18)
+},{"..\\awayjs-core\\lib\\geom\\Box.js":18,"awayjs-core/lib/geom/Vector3D":26}],"awayjs-core\\lib\\geom\\ColorTransform":[function(require,module,exports){
+var ColorUtils = require("awayjs-core/lib/utils/ColorUtils");
+/**
+ * The ColorTransform class lets you adjust the color values in a display
+ * object. The color adjustment or <i>color transformation</i> can be applied
+ * to all four channels: red, green, blue, and alpha transparency.
+ *
+ * <p>When a ColorTransform object is applied to a display object, a new value
+ * for each color channel is calculated like this:</p>
+ *
+ * <ul>
+ *   <li>New red value = (old red value * <code>redMultiplier</code>) +
+ * <code>redOffset</code></li>
+ *   <li>New green value = (old green value * <code>greenMultiplier</code>) +
+ * <code>greenOffset</code></li>
+ *   <li>New blue value = (old blue value * <code>blueMultiplier</code>) +
+ * <code>blueOffset</code></li>
+ *   <li>New alpha value = (old alpha value * <code>alphaMultiplier</code>) +
+ * <code>alphaOffset</code></li>
+ * </ul>
+ *
+ * <p>If any of the color channel values is greater than 255 after the
+ * calculation, it is set to 255. If it is less than 0, it is set to 0.</p>
+ *
+ * <p>You can use ColorTransform objects in the following ways:</p>
+ *
+ * <ul>
+ *   <li>In the <code>colorTransform</code> parameter of the
+ * <code>colorTransform()</code> method of the BitmapData class</li>
+ *   <li>As the <code>colorTransform</code> property of a Transform object
+ * (which can be used as the <code>transform</code> property of a display
+ * object)</li>
+ * </ul>
+ *
+ * <p>You must use the <code>new ColorTransform()</code> constructor to create
+ * a ColorTransform object before you can call the methods of the
+ * ColorTransform object.</p>
+ *
+ * <p>Color transformations do not apply to the background color of a movie
+ * clip(such as a loaded SWF object). They apply only to graphics and symbols
+ * that are attached to the movie clip.</p>
+ */
+var ColorTransform = (function () {
+    /**
+     * Creates a ColorTransform object for a display object with the specified
+     * color channel values and alpha values.
+     *
+     * @param redMultiplier   The value for the red multiplier, in the range from
+     *                        0 to 1.
+     * @param greenMultiplier The value for the green multiplier, in the range
+     *                        from 0 to 1.
+     * @param blueMultiplier  The value for the blue multiplier, in the range
+     *                        from 0 to 1.
+     * @param alphaMultiplier The value for the alpha transparency multiplier, in
+     *                        the range from 0 to 1.
+     * @param redOffset       The offset value for the red color channel, in the
+     *                        range from -255 to 255.
+     * @param greenOffset     The offset value for the green color channel, in
+     *                        the range from -255 to 255.
+     * @param blueOffset      The offset for the blue color channel value, in the
+     *                        range from -255 to 255.
+     * @param alphaOffset     The offset for alpha transparency channel value, in
+     *                        the range from -255 to 255.
+     */
+    function ColorTransform(redMultiplier, greenMultiplier, blueMultiplier, alphaMultiplier, redOffset, greenOffset, blueOffset, alphaOffset) {
+        if (redMultiplier === void 0) { redMultiplier = 1; }
+        if (greenMultiplier === void 0) { greenMultiplier = 1; }
+        if (blueMultiplier === void 0) { blueMultiplier = 1; }
+        if (alphaMultiplier === void 0) { alphaMultiplier = 1; }
+        if (redOffset === void 0) { redOffset = 0; }
+        if (greenOffset === void 0) { greenOffset = 0; }
+        if (blueOffset === void 0) { blueOffset = 0; }
+        if (alphaOffset === void 0) { alphaOffset = 0; }
+        this.redMultiplier = redMultiplier;
+        this.greenMultiplier = greenMultiplier;
+        this.blueMultiplier = blueMultiplier;
+        this.alphaMultiplier = alphaMultiplier;
+        this.redOffset = redOffset;
+        this.greenOffset = greenOffset;
+        this.blueOffset = blueOffset;
+        this.alphaOffset = alphaOffset;
+    }
+    Object.defineProperty(ColorTransform.prototype, "color", {
+        /**
+         * The RGB color value for a ColorTransform object.
+         *
+         * <p>When you set this property, it changes the three color offset values
+         * (<code>redOffset</code>, <code>greenOffset</code>, and
+         * <code>blueOffset</code>) accordingly, and it sets the three color
+         * multiplier values(<code>redMultiplier</code>,
+         * <code>greenMultiplier</code>, and <code>blueMultiplier</code>) to 0. The
+         * alpha transparency multiplier and offset values do not change.</p>
+         *
+         * <p>When you pass a value for this property, use the format
+         * 0x<i>RRGGBB</i>. <i>RR</i>, <i>GG</i>, and <i>BB</i> each consist of two
+         * hexadecimal digits that specify the offset of each color component. The 0x
+         * tells the ActionScript compiler that the number is a hexadecimal
+         * value.</p>
+         */
+        get: function () {
+            return ((this.redOffset << 16) | (this.greenOffset << 8) | this.blueOffset);
+        },
+        set: function (value) {
+            var argb = ColorUtils.float32ColorToARGB(value);
+            this.redOffset = argb[1]; //(value >> 16) & 0xFF;
+            this.greenOffset = argb[2]; //(value >> 8) & 0xFF;
+            this.blueOffset = argb[3]; //value & 0xFF;
+            this.redMultiplier = 0;
+            this.greenMultiplier = 0;
+            this.blueMultiplier = 0;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    /**
+     * Concatenates the ColorTranform object specified by the <code>second</code>
+     * parameter with the current ColorTransform object and sets the current
+     * object as the result, which is an additive combination of the two color
+     * transformations. When you apply the concatenated ColorTransform object,
+     * the effect is the same as applying the <code>second</code> color
+     * transformation after the <i>original</i> color transformation.
+     *
+     * @param second The ColorTransform object to be combined with the current
+     *               ColorTransform object.
+     */
+    ColorTransform.prototype.concat = function (second) {
+        this.redMultiplier += second.redMultiplier;
+        this.greenMultiplier += second.greenMultiplier;
+        this.blueMultiplier += second.blueMultiplier;
+        this.alphaMultiplier += second.alphaMultiplier;
+    };
+    return ColorTransform;
+})();
+module.exports = ColorTransform;
+
+
+},{"awayjs-core/lib/utils/ColorUtils":61}],"awayjs-core\\lib\\geom\\MathConsts":[function(require,module,exports){
+/**
+* MathConsts provides some commonly used mathematical constants
+*/
+var MathConsts = (function () {
+    function MathConsts() {
+    }
+    /**
+     * The amount to multiply with when converting radians to degrees.
+     */
+    MathConsts.RADIANS_TO_DEGREES = 180 / Math.PI;
+    /**
+     * The amount to multiply with when converting degrees to radians.
+     */
+    MathConsts.DEGREES_TO_RADIANS = Math.PI / 180;
+    return MathConsts;
+})();
+module.exports = MathConsts;
+
+
+},{}],"awayjs-core\\lib\\geom\\Matrix3DUtils":[function(require,module,exports){
+module.exports=require(21)
+},{"..\\awayjs-core\\lib\\geom\\Matrix3DUtils.js":21,"awayjs-core/lib/geom/Matrix3D":20,"awayjs-core/lib/geom/Vector3D":26}],"awayjs-core\\lib\\geom\\Matrix3D":[function(require,module,exports){
+module.exports=require(20)
+},{"..\\awayjs-core\\lib\\geom\\Matrix3D.js":20,"awayjs-core/lib/errors/ArgumentError":5,"awayjs-core/lib/geom/Orientation3D":22,"awayjs-core/lib/geom/Vector3D":26}],"awayjs-core\\lib\\geom\\Matrix":[function(require,module,exports){
+module.exports=require(19)
+},{"..\\awayjs-core\\lib\\geom\\Matrix.js":19,"awayjs-core/lib/errors/ArgumentError":5,"awayjs-core/lib/geom/Point":24}],"awayjs-core\\lib\\geom\\Orientation3D":[function(require,module,exports){
+module.exports=require(22)
+},{"..\\awayjs-core\\lib\\geom\\Orientation3D.js":22}],"awayjs-core\\lib\\geom\\PerspectiveProjection":[function(require,module,exports){
+/**
+ * <p>The PerspectiveProjection class provides an easy way to assign or modify
+ * the perspective transformations of a display object and all of its
+ * children. For more complex or custom perspective transformations, use the
+ * Matrix3D class. While the PerspectiveProjection class provides basic
+ * three-dimensional presentation properties, the Matrix3D class provides more
+ * detailed control over the three-dimensional presentation of display objects.
+ * </p>
+ *
+ * <p>Projection is a way of representing a three-dimensional object in a
+ * two-dimensional space, like a cube projected onto a computer screen.
+ * Perspective projection uses a viewing frustum (a rectangular pyramid) to
+ * model and project a three-dimensional world and its objects on the screen.
+ * The viewing frustum becomes increasingly wider as it moves further from the
+ * origin of the viewpoint. The origin of the viewpoint could be a camera or
+ * the eyes of an observer facing the screen. The projected perspective
+ * produces the illusion of three dimensions with depth and distance, where
+ * the objects closer to the screen appear larger than the objects farther
+ * from the screen.</p>
+ *
+ * <p>A default PerspectiveProjection object is a framework defined for
+ * perspective transformation of the root object, based on the field of view
+ * and aspect ratio (dimensions) of the stage. The projection center, the
+ * vanishing point, is set to the center of the stage, which means the
+ * three-dimensional display objects disappear toward the center of the stage
+ * as they move back in the z axis. The default viewpoint is at point (0,0)
+ * looking down the positive z axis. The y-axis points down toward the bottom
+ * of the screen. You can gain access to the root display object's perspective
+ * projection settings and change the field of view and projection center
+ * properties of the perspectiveProjection property through the root object's
+ * <code>DisplayObject.transform</code> property.</p>
+ *
+ * <p>You can also set a different perspective projection setting for a
+ * display object through the parent's perspective projection. First, create a
+ * PerspectiveProjection object and set its <code>fieldOfView</code> and
+ * <code>projectionCenter</code> properties. Next, assign the
+ * PerspectiveProjection object to the parent display object using the
+ * <code>DisplayObject.transform</code> property. The specified projection
+ * matrix and transformation will then apply to all the display object's
+ * three-dimensional children.</p>
+ *
+ * <p>To modify a perspective projection of the stage or root object: use the
+ * <code>transform.matrix</code> property of the root display object to gain
+ * access to the PerspectiveProjection object. Or, apply different perspective
+ * projection properties to a display object by setting the perspective
+ * projection properties of the display object's parent. The child display
+ * object inherits the new properties. Specifically, create a
+ * PerspectiveProjection object and set its properties, then assign the
+ * PerspectiveProjection object to the <code>perspectiveProjection</code>
+ * property of the parent display object's <code>transform</code> property.
+ * The specified projection transformation then applies to all the display
+ * object's three-dimensional children.</p>
+ *
+ * <p>Since both PerspectiveProjection and Matrix3D objects perform
+ * perspective transformations, do not assign both to a display object at the
+ * same time. Use the PerspectiveProjection object for focal length and
+ * projection center changes. For more control over the perspective
+ * transformation, create a perspective projection Matrix3D object.</p>
+ */
+var PerspectiveProjection = (function () {
+    /**
+     * Creates an instance of a PerspectiveProjection object.
+     */
+    function PerspectiveProjection() {
+    }
+    /**
+     * Returns the underlying Matrix3D object of the display object.
+     *
+     * <p>A display object, like the root object, can have a
+     * PerspectiveProjection object without needing a Matrix3D property
+     * defined for its transformations. In fact, use either a
+     * PerspectiveProjection or a Matrix3D object to specify the
+     * perspective transformation. If when using the PerspectiveProjection
+     * object, a Matrix3D object was needed, the <code>toMatrix3D()</code>
+     * method can retrieve the underlying Matrix3D object of the display
+     * object. For example, the <code>toMatrix3D()</code> method can be
+     * used with the <code>Utils3D.projectVectors()</code> method.</p>
+     *
+     * @see away.geom.Matrix3D
+     */
+    PerspectiveProjection.prototype.toMatrix3D = function () {
+        return this._matrix3D;
+    };
+    return PerspectiveProjection;
+})();
+module.exports = PerspectiveProjection;
+
+
+},{}],"awayjs-core\\lib\\geom\\Plane3D":[function(require,module,exports){
+var PlaneClassification = require("awayjs-core/lib/geom/PlaneClassification");
+var Plane3D = (function () {
+    /**
+     * Create a Plane3D with ABCD coefficients
+     */
+    function Plane3D(a, b, c, d) {
+        if (a === void 0) { a = 0; }
+        if (b === void 0) { b = 0; }
+        if (c === void 0) { c = 0; }
+        if (d === void 0) { d = 0; }
+        this.a = a;
+        this.b = b;
+        this.c = c;
+        this.d = d;
+        if (a == 0 && b == 0) {
+            this._iAlignment = Plane3D.ALIGN_XY_AXIS;
+        }
+        else if (b == 0 && c == 0) {
+            this._iAlignment = Plane3D.ALIGN_YZ_AXIS;
+        }
+        else if (a == 0 && c == 0) {
+            this._iAlignment = Plane3D.ALIGN_XZ_AXIS;
+        }
+        else {
+            this._iAlignment = Plane3D.ALIGN_ANY;
+        }
+    }
+    /**
+     * Fills this Plane3D with the coefficients from 3 points in 3d space.
+     * @param p0 Vector3D
+     * @param p1 Vector3D
+     * @param p2 Vector3D
+     */
+    Plane3D.prototype.fromPoints = function (p0, p1, p2) {
+        var d1x = p1.x - p0.x;
+        var d1y = p1.y - p0.y;
+        var d1z = p1.z - p0.z;
+        var d2x = p2.x - p0.x;
+        var d2y = p2.y - p0.y;
+        var d2z = p2.z - p0.z;
+        this.a = d1y * d2z - d1z * d2y;
+        this.b = d1z * d2x - d1x * d2z;
+        this.c = d1x * d2y - d1y * d2x;
+        this.d = this.a * p0.x + this.b * p0.y + this.c * p0.z;
+        // not using epsilon, since a plane is infinite and a small incorrection can grow very large
+        if (this.a == 0 && this.b == 0) {
+            this._iAlignment = Plane3D.ALIGN_XY_AXIS;
+        }
+        else if (this.b == 0 && this.c == 0) {
+            this._iAlignment = Plane3D.ALIGN_YZ_AXIS;
+        }
+        else if (this.a == 0 && this.c == 0) {
+            this._iAlignment = Plane3D.ALIGN_XZ_AXIS;
+        }
+        else {
+            this._iAlignment = Plane3D.ALIGN_ANY;
+        }
+    };
+    /**
+     * Fills this Plane3D with the coefficients from the plane's normal and a point in 3d space.
+     * @param normal Vector3D
+     * @param point  Vector3D
+     */
+    Plane3D.prototype.fromNormalAndPoint = function (normal, point) {
+        this.a = normal.x;
+        this.b = normal.y;
+        this.c = normal.z;
+        this.d = this.a * point.x + this.b * point.y + this.c * point.z;
+        if (this.a == 0 && this.b == 0) {
+            this._iAlignment = Plane3D.ALIGN_XY_AXIS;
+        }
+        else if (this.b == 0 && this.c == 0) {
+            this._iAlignment = Plane3D.ALIGN_YZ_AXIS;
+        }
+        else if (this.a == 0 && this.c == 0) {
+            this._iAlignment = Plane3D.ALIGN_XZ_AXIS;
+        }
+        else {
+            this._iAlignment = Plane3D.ALIGN_ANY;
+        }
+    };
+    /**
+     * Normalize this Plane3D
+     * @return Plane3D This Plane3D.
+     */
+    Plane3D.prototype.normalize = function () {
+        var len = 1 / Math.sqrt(this.a * this.a + this.b * this.b + this.c * this.c);
+        this.a *= len;
+        this.b *= len;
+        this.c *= len;
+        this.d *= len;
+        return this;
+    };
+    /**
+     * Returns the signed distance between this Plane3D and the point p.
+     * @param p Vector3D
+     * @returns Number
+     */
+    Plane3D.prototype.distance = function (p) {
+        if (this._iAlignment == Plane3D.ALIGN_YZ_AXIS) {
+            return this.a * p.x - this.d;
+        }
+        else if (this._iAlignment == Plane3D.ALIGN_XZ_AXIS) {
+            return this.b * p.y - this.d;
+        }
+        else if (this._iAlignment == Plane3D.ALIGN_XY_AXIS) {
+            return this.c * p.z - this.d;
+        }
+        else {
+            return this.a * p.x + this.b * p.y + this.c * p.z - this.d;
+        }
+    };
+    /**
+     * Classify a point against this Plane3D. (in front, back or intersecting)
+     * @param p Vector3D
+     * @return int Plane3.FRONT or Plane3D.BACK or Plane3D.INTERSECT
+     */
+    Plane3D.prototype.classifyPoint = function (p, epsilon) {
+        if (epsilon === void 0) { epsilon = 0.01; }
+        // check NaN
+        if (this.d != this.d)
+            return PlaneClassification.FRONT;
+        var len;
+        if (this._iAlignment == Plane3D.ALIGN_YZ_AXIS)
+            len = this.a * p.x - this.d;
+        else if (this._iAlignment == Plane3D.ALIGN_XZ_AXIS)
+            len = this.b * p.y - this.d;
+        else if (this._iAlignment == Plane3D.ALIGN_XY_AXIS)
+            len = this.c * p.z - this.d;
+        else
+            len = this.a * p.x + this.b * p.y + this.c * p.z - this.d;
+        if (len < -epsilon)
+            return PlaneClassification.BACK;
+        else if (len > epsilon)
+            return PlaneClassification.FRONT;
+        else
+            return PlaneClassification.INTERSECT;
+    };
+    Plane3D.prototype.toString = function () {
+        return "Plane3D [a:" + this.a + ", b:" + this.b + ", c:" + this.c + ", d:" + this.d + "]";
+    };
+    // indicates the alignment of the plane
+    Plane3D.ALIGN_ANY = 0;
+    Plane3D.ALIGN_XY_AXIS = 1;
+    Plane3D.ALIGN_YZ_AXIS = 2;
+    Plane3D.ALIGN_XZ_AXIS = 3;
+    return Plane3D;
+})();
+module.exports = Plane3D;
+
+
+},{"awayjs-core/lib/geom/PlaneClassification":23}],"awayjs-core\\lib\\geom\\PlaneClassification":[function(require,module,exports){
+module.exports=require(23)
+},{"..\\awayjs-core\\lib\\geom\\PlaneClassification.js":23}],"awayjs-core\\lib\\geom\\Point":[function(require,module,exports){
+module.exports=require(24)
+},{"..\\awayjs-core\\lib\\geom\\Point.js":24}],"awayjs-core\\lib\\geom\\PoissonLookup":[function(require,module,exports){
+var PoissonLookup = (function () {
+    function PoissonLookup() {
+    }
+    PoissonLookup.initDistributions = function () {
+        // precalculated for best control
+        this._distributions = new Array();
+        this._distributions[0] = new Array(0.3082841, 0.4320919);
+        this._distributions[1] = new Array(0.3082841, 0.4320919, -0.2274942, -0.6640266);
+        this._distributions[2] = new Array(0.8742689, 0.0009265686, -0.6864116, -0.5536607, -0.2325206, 0.7678371);
+        this._distributions[3] = new Array(0.3913446, -0.7084417, -0.7511101, -0.5935929, -0.2323436, 0.5320091, 0.8435315, 0.5035911);
+        this._distributions[4] = new Array(0.2122471, -0.5771395, -0.8543506, -0.1763534, 0.5189021, 0.8323698, -0.3616908, 0.5865368, 0.9523004, -0.04948437);
+        this._distributions[5] = new Array(0.5791035, 0.3496495, 0.2959551, -0.6006749, -0.2419119, -0.06879545, -0.7403072, 0.6110353, -0.04555973, 0.8059174, -0.5275017, -0.737129);
+        this._distributions[6] = new Array(0.06941478, 0.8519508, -0.7441907, 0.2426432, 0.6439992, -0.2405252, -0.1007523, -0.2327587, -0.6427067, -0.7248485, 0.8050759, 0.5492936, 0.3573822, -0.8824506);
+        this._distributions[7] = new Array(0.8509863, 0.4452587, -0.09507271, 0.2073005, 0.1706571, -0.6434793, 0.8029777, -0.2718274, -0.4401725, 0.8196304, 0.2715359, 0.8598521, -0.8121575, -0.006447683, -0.6486837, -0.7237598);
+        this._distributions[8] = new Array(0.6951686, -0.2680728, -0.04933243, 0.3710589, 0.6592212, 0.3661054, -0.01579228, -0.6909603, -0.3275101, -0.1756866, 0.3811549, 0.9218544, -0.216032, 0.9755028, -0.7065172, 0.3355389, -0.6579109, -0.6798355);
+        this._distributions[9] = new Array(0.6181276, -0.09790418, -0.2537868, -0.5570995, -0.1964931, 0.3459414, 0.3474613, -0.8885581, 0.5135743, 0.5753114, -0.9549091, 0.1480672, -0.8711916, -0.4293123, -0.6928071, 0.6190156, -0.13369, 0.8892705, 0.0548224, -0.1246777);
+        this._distributions[10] = new Array(0.4853027, -0.5080479, -0.1331675, -0.506597, 0.139575, 0.01316885, 0.803486, -0.07568797, 0.5240274, 0.4883182, -0.4334005, 0.1207938, -0.7794577, -0.3985141, 0.1576432, -0.9861221, -0.3712867, 0.6959021, 0.1517378, 0.9847429, -0.9762396, 0.1661073);
+        this._distributions[11] = new Array(-0.2790166, -0.01252619, 0.3389016, 0.3921154, 0.2408341, -0.313211, -0.8151779, -0.3898362, -0.6347761, 0.3486495, 0.09471484, -0.7722448, -0.1385674, 0.6364574, 0.2456331, 0.9295807, -0.3864306, -0.8247881, 0.6111673, -0.7164014, 0.8287669, 0.05466961, 0.837706, 0.5415626);
+        this._distributions[12] = new Array(0.056417, 0.3185693, -0.8245888, 0.1882799, 0.8575996, 0.1136829, 0.1070375, 0.875332, 0.4076743, -0.06000621, -0.4311306, 0.7239349, 0.2677574, -0.538472, -0.08486642, -0.2083647, -0.888989, -0.3906443, -0.4768958, -0.6664082, 0.09334993, -0.9861541, 0.808736, -0.455949, 0.5889823, 0.7660807);
+        this._distributions[13] = new Array(-0.2681346, -0.3955857, -0.1315102, -0.8852947, -0.5143692, 0.09551838, 0.4344836, -0.546945, -0.8620899, -0.3813288, 0.1650431, 0.02034803, -0.1543657, 0.3842218, -0.828457, 0.5376903, -0.6145, -0.7818927, -0.2639062, 0.8784655, 0.1912684, 0.9720125, 0.3135219, 0.5224229, 0.7850655, 0.4592297, 0.7465045, -0.1368916);
+        this._distributions[14] = new Array(0.4241029, 0.695281, 0.150511, -0.02304107, -0.2482675, 0.9120338, 0.8057325, 0.2622084, -0.2445909, 0.2765962, 0.8588713, -0.1772072, 0.3117845, -0.4385471, -0.3923851, -0.3298936, -0.1751254, -0.7405846, 0.6926506, -0.684163, -0.9304563, -0.3254691, -0.8533293, 0.1523024, 0.2510415, -0.917345, -0.6239773, -0.7105472, -0.6104624, 0.6041355);
+        this._distributions[15] = new Array(0.5844554, 0.06651045, 0.1343258, 0.6756578, 0.3799674, -0.6301104, 0.5590436, 0.7940555, 0.09574714, 0.02262517, 0.8697868, 0.393301, 0.003945862, -0.421735, 0.9043913, -0.2432393, -0.4844007, 0.7190998, -0.3201078, 0.2972371, -0.3852352, -0.6341155, -0.5413069, -0.09223081, -0.8468984, -0.5126905, 0.004156174, -0.8633173, -0.9681889, -0.03305046, -0.846509, 0.4414353);
+        this._distributions[16] = new Array(0.4506488, 0.657668, 0.4621297, 0.07441051, -0.2782125, 0.6201044, 0.9750003, 0.09110117, 0.1019436, 0.2986514, 0.03457398, 0.9631706, 0.542098, -0.5505635, 0.8675668, 0.4938077, -0.5414361, 0.2655292, -0.7941836, 0.6003053, -0.09847672, -0.1001604, -0.9316511, -0.08572888, 0.07286467, -0.611899, -0.5232627, -0.4082253, -0.5481608, -0.827938, -0.1551939, -0.9621193, 0.9220031, -0.3315949);
+        this._distributions[17] = new Array(0.197908, -0.4697656, -0.4474689, -0.3428435, 0.8529873, -0.2228634, 0.6022478, -0.5469642, 0.2545276, -0.931133, -0.1507547, -0.7855865, -0.07606658, 0.1011628, 0.3046715, 0.2785755, 0.4698432, -0.1064076, 0.6831254, 0.4152522, 0.1374381, 0.8363233, -0.2166121, 0.6682042, 0.5511393, 0.7996449, -0.4278994, 0.28836, -0.8875198, 0.2181732, -0.8772842, -0.2818254, -0.7000262, 0.5762185, -0.6062385, -0.7439126);
+        this._distributions[18] = new Array(0.6645703, -0.05678739, 0.5720971, 0.4533803, -0.07660709, 0.08802763, 0.5163431, -0.4426552, 0.1163455, -0.3404382, -0.4004807, -0.5046007, 0.2932099, -0.8201418, -0.5322125, 0.03834766, -0.1490209, -0.8817304, -0.8000439, -0.3509448, 0.5260983, 0.8421043, 0.1197811, 0.6963812, 0.9498612, 0.3122156, -0.9285746, 0.02120355, -0.6670724, 0.7217396, 0.9155889, -0.3510147, -0.271941, 0.4727852, 0.318879, 0.1634057, -0.2686755, 0.9253026);
+        this._distributions[19] = new Array(0.5064292, 0.422527, 0.8935515, -0.06610427, 0.1199719, 0.175568, 0.403388, -0.2003276, 0.1657927, 0.8154403, 0.9301245, 0.2929218, -0.1644068, 0.6201534, 0.7113559, -0.6589743, -0.3364046, -0.1799502, 0.02109996, -0.392765, -0.382213, 0.3219992, -0.9201946, 0.1207967, -0.726185, 0.4291916, -0.7443482, -0.2480059, -0.5147594, 0.7418784, 0.1935272, -0.7406143, -0.3643523, -0.5559214, -0.7147766, -0.6326278, -0.2524151, -0.9096627, 0.5161405, 0.7908453);
+        this._distributions[20] = new Array(0.7921003, -0.3032096, 0.5992879, -0.009052323, 0.2538549, -0.1872749, 0.7053444, 0.3677175, 0.5417761, -0.8170255, 0.9749611, 0.1210478, 0.1969143, -0.6117041, -0.1824499, -0.4634196, -0.1181338, -0.8668742, -0.3050112, -0.1352596, -0.4409327, -0.7082354, -0.03225285, 0.1171548, 0.3113096, 0.3250439, -0.8166144, -0.463995, -0.01014475, 0.4715334, -0.6868284, 0.05091889, -0.4011163, 0.2717285, -0.06756835, 0.8307694, -0.7938535, 0.4352129, -0.4663842, 0.7165329, 0.559729, 0.8093995);
+        this._distributions[21] = new Array(0.07832243, 0.426151, -0.3856795, 0.5799953, 0.01970797, 0.06706189, 0.4822682, 0.3014512, -0.1532982, 0.87485, -0.4959527, 0.07888043, 0.260601, -0.2304784, 0.4996209, 0.7167382, 0.585986, -0.04265174, -0.7679967, 0.5509416, -0.9041753, 0.1802134, -0.8407655, -0.4442826, -0.2058258, -0.2636995, -0.4984115, -0.5928579, 0.2926032, -0.7886473, -0.06933882, -0.621177, 0.578115, -0.4813387, 0.8981777, -0.3291056, 0.1942733, 0.9255584, 0.8084362, 0.5066984, 0.9920095, 0.03103104, -0.2403206, -0.9389018);
+        this._distributions[22] = new Array(-0.5691095, 0.1014316, -0.7788262, 0.384012, -0.8253665, -0.1645582, -0.1830993, 0.002997211, -0.2555013, -0.4177977, -0.6640869, -0.4794711, -0.2351242, 0.5850121, 0.02436554, 0.2825883, 0.006061143, -0.8200245, 0.1618791, -0.3063331, -0.3765897, -0.7249815, 0.6092919, -0.6769328, -0.5956934, 0.6957655, 0.5383642, 0.4522677, -0.1489165, 0.9125596, 0.4167473, 0.1335986, 0.1898309, 0.5874342, 0.2288171, 0.9624356, 0.7540846, -0.07672304, 0.8986252, 0.2788797, 0.3555991, -0.9262139, 0.8454325, -0.4027667, 0.4945236, -0.2935512);
+        this._distributions[23] = new Array(-0.4481403, -0.3758374, -0.8877251, 0.08739938, 0.05015831, -0.1339983, -0.4070427, -0.8534173, 0.1019274, -0.5503222, -0.445998, 0.1997541, -0.8686263, -0.2788867, -0.7695944, -0.6033704, -0.05515742, -0.885711, -0.7714347, 0.5790485, 0.3466263, -0.8799297, 0.4487582, -0.5321087, -0.2461368, 0.6053771, -0.05568117, 0.2457351, -0.4668669, 0.8523816, 0.8103387, -0.4255538, 0.4054182, -0.175663, -0.2802011, -0.08920153, 0.2665959, 0.382935, 0.555679, 0.1621837, 0.105246, 0.8420411, 0.6921161, 0.6902903, 0.880946, 0.2483067, 0.9699264, -0.1021767);
+        this._distributions[24] = new Array(-0.1703323, -0.3119385, 0.2916039, -0.2988263, -0.008472982, -0.9277695, -0.7730271, -0.3277904, 0.3440474, -0.6815342, -0.2910278, 0.03461745, -0.6764899, -0.657078, -0.3505501, -0.7311988, -0.03478927, 0.3258755, -0.6048835, 0.159423, 0.2035525, 0.02212214, 0.5116573, 0.2226856, 0.6664805, -0.2500189, 0.7147882, -0.6609634, 0.03030632, -0.5763278, -0.2516585, 0.6116219, -0.9434413, -0.0116792, 0.9061816, 0.2491155, 0.182867, 0.6076167, 0.286593, 0.9485695, -0.5992439, 0.6970096, -0.2082874, 0.9416641, 0.9880044, -0.1541709, -0.9122881, 0.331555, 0.7324886, 0.6725098);
+        this._distributions[25] = new Array(0.3869598, -0.04974834, 0.7168844, -0.0693711, -0.07166742, 0.1725325, 0.4599592, 0.3232779, 0.5872094, -0.4198674, 0.2442266, -0.625667, 0.1254557, 0.4500048, -0.2290154, -0.1803567, 0.890583, 0.3373493, 0.1256081, 0.7853789, -0.2676466, 0.5305805, -0.7063224, 0.252168, -0.3989835, 0.1189921, 0.09617215, -0.2451447, 0.6302541, 0.6085876, 0.9380925, -0.3234899, 0.5086241, -0.8573482, 0.03576187, -0.9876697, -0.0876712, -0.6365195, -0.5276513, 0.823456, -0.6935764, -0.2240411, -0.5212318, -0.5383121, -0.2116208, 0.9639363, -0.9840096, 0.02743555, -0.3991577, -0.8994547, -0.7830126, 0.614068);
+        this._distributions[26] = new Array(-0.8366601, 0.4464895, -0.5917366, -0.02073906, -0.9845258, 0.1635625, -0.3097973, 0.4379579, -0.5478154, 0.7173221, -0.1685888, 0.9261969, 0.01503595, 0.6046097, 0.4452421, 0.5449086, 0.0315687, 0.1944619, 0.3753404, 0.8688548, 0.4143643, 0.1396648, 0.8711032, 0.4304703, 0.7328773, 0.1461501, 0.6374492, -0.3521495, 0.145613, -0.1341466, 0.9040975, -0.135123, -0.7839059, -0.5450199, -0.516019, -0.3320859, -0.206158, -0.4431106, -0.9703014, -0.2368356, -0.2473119, -0.0864351, 0.2130725, -0.4604077, -0.003726701, -0.7122303, -0.4072131, -0.6833169, 0.1632999, -0.9776646, 0.4686888, -0.680495, -0.2293511, -0.9509777);
+        this._distributions[27] = new Array(0.107311, -0.1311369, -0.4194764, -0.3148777, 0.6171439, -0.2745973, 0.2796618, 0.1937153, -0.09106886, 0.4180236, 0.6044006, 0.05577846, 0.02927299, -0.6738263, -0.2580845, 0.1179939, -0.09023564, -0.3830024, 0.3570953, -0.5000587, 0.81591, -0.5518309, 0.9300217, -0.1257987, 0.4904627, -0.8381903, -0.3163182, -0.8632009, 0.1137595, -0.9875998, 0.8390043, 0.3538185, 0.2149114, 0.4993694, 0.5191584, 0.3833552, 0.5002763, 0.7061465, -0.2567276, 0.9068756, -0.5197366, 0.3467845, 0.03668867, 0.9734009, -0.5347553, 0.66747, -0.9028882, 0.1023768, -0.8967977, 0.412834, -0.5821944, 0.0426479, -0.8032165, -0.2397038, -0.5597343, -0.6358021);
+        this._distributions[28] = new Array(-0.6562496, -0.1781036, -0.9301494, 0.1185208, -0.3861143, -0.4153562, -0.1560799, -0.1099607, -0.5587025, 0.395218, -0.5322112, -0.699701, -0.5008639, 0.08726846, -0.970524, -0.1963461, -0.813577, -0.5185111, -0.1644458, 0.298, -0.3216791, 0.639982, 0.3315373, 0.3339162, 0.2383235, -0.00105722, 0.1137828, 0.5450742, -0.01899921, 0.8798413, 0.2849685, 0.8255596, 0.6974412, 0.2123175, 0.7588523, 0.5470437, 0.5102502, -0.1687844, 0.5853448, 0.8033476, 0.2590716, -0.5262504, 0.5607718, -0.6342825, 0.8666443, -0.1491841, 0.8341052, -0.4935003, -0.1568441, -0.6634066, 0.2512113, -0.8769391, -0.2559827, -0.9572457, -0.01928852, -0.3966542, -0.750667, 0.6409678);
+        this._distributions[29] = new Array(0.3454786, -0.04837726, 0.2649553, 0.2406852, 0.5599093, -0.3839145, -0.1111814, -0.05502108, 0.7586042, -0.05818377, 0.2519488, -0.4665135, -0.1264972, 0.2602723, -0.08766216, -0.3671907, 0.6428129, 0.3999204, -0.6105871, -0.1246869, -0.4589451, -0.7646643, -0.03021116, -0.7899352, -0.6036922, -0.4293956, -0.2481938, 0.6534185, 0.102798, 0.6784465, -0.6392644, 0.4821358, -0.6789002, 0.1779133, -0.9140783, -0.1989647, -0.9262617, 0.3381507, 0.4794891, -0.8093274, 0.3959447, 0.668478, 0.9602883, 0.2272305, -0.123672, 0.9210883, 0.2375148, 0.9523395, -0.52898, 0.7973378, -0.382433, 0.1228794, 0.695015, 0.6948439, 0.7530277, -0.6458191, 0.8777987, -0.3272956, 0.2318525, -0.962768);
+        this._distributions[30] = new Array(0.4518921, -0.1146195, 0.4720805, -0.4238748, 0.3655423, 0.1806341, 0.1589939, -0.23568, 0.7673324, -0.5149941, 0.01163658, 0.09045836, 0.7010971, 0.1245747, 0.7518286, -0.1855433, 0.4960719, 0.4601022, 0.2566979, -0.6308268, -0.0654714, -0.5126389, -0.1823319, -0.1343282, -0.1464312, 0.4883236, -0.3858738, 0.203523, 0.1484799, 0.4432284, -0.477109, -0.116241, 0.2719092, 0.7208626, 0.9104174, 0.3578536, -0.5956199, 0.7662588, -0.6996251, 0.3678654, -0.2514512, 0.9251933, 0.1275825, -0.9478135, -0.204608, -0.8611552, 0.4264838, -0.877443, 0.9854161, 0.05521112, 0.5912951, 0.7997434, 0.1140349, 0.982093, -0.9324368, -0.2094094, -0.42436, -0.6441524, -0.6722705, -0.3554261, -0.7844236, 0.08587621);
+        this._distributions[31] = new Array(-0.4206714, -0.5613642, -0.8733016, -0.3373051, -0.1046226, -0.2902999, -0.1318562, -0.8434365, 0.1145093, -0.5962623, -0.4965627, -0.1873259, -0.5011808, -0.8546229, -0.7165636, -0.5743566, 0.1090901, 0.2017643, 0.3404809, -0.220455, -0.1989015, 0.2372122, -0.4538706, 0.0979171, 0.4514146, -0.572846, 0.2314168, -0.8514503, -0.4247236, 0.5650803, -0.943347, 0.04514639, -0.1309718, 0.5221877, -0.7004157, 0.4561877, 0.6306441, 0.04448673, 0.4301621, 0.5766876, 0.1078042, 0.7245752, 0.3875354, 0.2794483, 0.702876, -0.2924213, 0.7360667, -0.6210318, 0.7486517, 0.6531103, 0.4898235, 0.8591025, 0.6549174, 0.3854057, -0.2596106, 0.7916998, 0.9251194, -0.05296265, -0.5620695, 0.820877, -0.01228026, 0.9937211, 0.9612103, 0.2628758);
+    };
+    PoissonLookup.getDistribution = function (n /*int*/) {
+        if (!this._distributions)
+            this.initDistributions();
+        if (n < 2 || n > 32)
+            return null;
+        return this._distributions[n - 1];
+    };
+    return PoissonLookup;
+})();
+module.exports = PoissonLookup;
+
+
+},{}],"awayjs-core\\lib\\geom\\Quaternion":[function(require,module,exports){
+var Matrix3DUtils = require("awayjs-core/lib/geom/Matrix3DUtils");
+var Orientation3D = require("awayjs-core/lib/geom/Orientation3D");
+var Matrix3D = require("awayjs-core/lib/geom/Matrix3D");
+var Vector3D = require("awayjs-core/lib/geom/Vector3D");
+/**
+ * A Quaternion object which can be used to represent rotations.
+ */
+var Quaternion = (function () {
+    /**
+     * Creates a new Quaternion object.
+     * @param x The x value of the quaternion.
+     * @param y The y value of the quaternion.
+     * @param z The z value of the quaternion.
+     * @param w The w value of the quaternion.
+     */
+    function Quaternion(x, y, z, w) {
+        if (x === void 0) { x = 0; }
+        if (y === void 0) { y = 0; }
+        if (z === void 0) { z = 0; }
+        if (w === void 0) { w = 1; }
+        /**
+         * The x value of the quaternion.
+         */
+        this.x = 0;
+        /**
+         * The y value of the quaternion.
+         */
+        this.y = 0;
+        /**
+         * The z value of the quaternion.
+         */
+        this.z = 0;
+        /**
+         * The w value of the quaternion.
+         */
+        this.w = 1;
+        this.x = x;
+        this.y = y;
+        this.z = z;
+        this.w = w;
+    }
+    Object.defineProperty(Quaternion.prototype, "magnitude", {
+        /**
+         * Returns the magnitude of the quaternion object.
+         */
+        get: function () {
+            return Math.sqrt(this.w * this.w + this.x * this.x + this.y * this.y + this.z * this.z);
+        },
+        enumerable: true,
+        configurable: true
+    });
+    /**
+     * Fills the quaternion object with the result from a multiplication of two quaternion objects.
+     *
+     * @param    qa    The first quaternion in the multiplication.
+     * @param    qb    The second quaternion in the multiplication.
+     */
+    Quaternion.prototype.multiply = function (qa, qb) {
+        var w1 = qa.w, x1 = qa.x, y1 = qa.y, z1 = qa.z;
+        var w2 = qb.w, x2 = qb.x, y2 = qb.y, z2 = qb.z;
+        this.w = w1 * w2 - x1 * x2 - y1 * y2 - z1 * z2;
+        this.x = w1 * x2 + x1 * w2 + y1 * z2 - z1 * y2;
+        this.y = w1 * y2 - x1 * z2 + y1 * w2 + z1 * x2;
+        this.z = w1 * z2 + x1 * y2 - y1 * x2 + z1 * w2;
+    };
+    Quaternion.prototype.multiplyVector = function (vector, target) {
+        if (target === void 0) { target = null; }
+        //target ||= new Quaternion();
+        if (target === null) {
+            target = new Quaternion();
+        }
+        var x2 = vector.x;
+        var y2 = vector.y;
+        var z2 = vector.z;
+        target.w = -this.x * x2 - this.y * y2 - this.z * z2;
+        target.x = this.w * x2 + this.y * z2 - this.z * y2;
+        target.y = this.w * y2 - this.x * z2 + this.z * x2;
+        target.z = this.w * z2 + this.x * y2 - this.y * x2;
+        return target;
+    };
+    /**
+     * Fills the quaternion object with values representing the given rotation around a vector.
+     *
+     * @param    axis    The axis around which to rotate
+     * @param    angle    The angle in radians of the rotation.
+     */
+    Quaternion.prototype.fromAxisAngle = function (axis, angle) {
+        var sin_a = Math.sin(angle / 2);
+        var cos_a = Math.cos(angle / 2);
+        this.x = axis.x * sin_a;
+        this.y = axis.y * sin_a;
+        this.z = axis.z * sin_a;
+        this.w = cos_a;
+        this.normalize();
+    };
+    /**
+     * Spherically interpolates between two quaternions, providing an interpolation between rotations with constant angle change rate.
+     * @param qa The first quaternion to interpolate.
+     * @param qb The second quaternion to interpolate.
+     * @param t The interpolation weight, a value between 0 and 1.
+     */
+    Quaternion.prototype.slerp = function (qa, qb, t) {
+        var w1 = qa.w, x1 = qa.x, y1 = qa.y, z1 = qa.z;
+        var w2 = qb.w, x2 = qb.x, y2 = qb.y, z2 = qb.z;
+        var dot = w1 * w2 + x1 * x2 + y1 * y2 + z1 * z2;
+        // shortest direction
+        if (dot < 0) {
+            dot = -dot;
+            w2 = -w2;
+            x2 = -x2;
+            y2 = -y2;
+            z2 = -z2;
+        }
+        if (dot < 0.95) {
+            // interpolate angle linearly
+            var angle = Math.acos(dot);
+            var s = 1 / Math.sin(angle);
+            var s1 = Math.sin(angle * (1 - t)) * s;
+            var s2 = Math.sin(angle * t) * s;
+            this.w = w1 * s1 + w2 * s2;
+            this.x = x1 * s1 + x2 * s2;
+            this.y = y1 * s1 + y2 * s2;
+            this.z = z1 * s1 + z2 * s2;
+        }
+        else {
+            // nearly identical angle, interpolate linearly
+            this.w = w1 + t * (w2 - w1);
+            this.x = x1 + t * (x2 - x1);
+            this.y = y1 + t * (y2 - y1);
+            this.z = z1 + t * (z2 - z1);
+            var len = 1.0 / Math.sqrt(this.w * this.w + this.x * this.x + this.y * this.y + this.z * this.z);
+            this.w *= len;
+            this.x *= len;
+            this.y *= len;
+            this.z *= len;
+        }
+    };
+    /**
+     * Linearly interpolates between two quaternions.
+     * @param qa The first quaternion to interpolate.
+     * @param qb The second quaternion to interpolate.
+     * @param t The interpolation weight, a value between 0 and 1.
+     */
+    Quaternion.prototype.lerp = function (qa, qb, t) {
+        var w1 = qa.w, x1 = qa.x, y1 = qa.y, z1 = qa.z;
+        var w2 = qb.w, x2 = qb.x, y2 = qb.y, z2 = qb.z;
+        var len;
+        // shortest direction
+        if (w1 * w2 + x1 * x2 + y1 * y2 + z1 * z2 < 0) {
+            w2 = -w2;
+            x2 = -x2;
+            y2 = -y2;
+            z2 = -z2;
+        }
+        this.w = w1 + t * (w2 - w1);
+        this.x = x1 + t * (x2 - x1);
+        this.y = y1 + t * (y2 - y1);
+        this.z = z1 + t * (z2 - z1);
+        len = 1.0 / Math.sqrt(this.w * this.w + this.x * this.x + this.y * this.y + this.z * this.z);
+        this.w *= len;
+        this.x *= len;
+        this.y *= len;
+        this.z *= len;
+    };
+    /**
+     * Fills the quaternion object with values representing the given euler rotation.
+     *
+     * @param    ax        The angle in radians of the rotation around the ax axis.
+     * @param    ay        The angle in radians of the rotation around the ay axis.
+     * @param    az        The angle in radians of the rotation around the az axis.
+     */
+    Quaternion.prototype.fromEulerAngles = function (ax, ay, az) {
+        var halfX = ax * .5, halfY = ay * .5, halfZ = az * .5;
+        var cosX = Math.cos(halfX), sinX = Math.sin(halfX);
+        var cosY = Math.cos(halfY), sinY = Math.sin(halfY);
+        var cosZ = Math.cos(halfZ), sinZ = Math.sin(halfZ);
+        this.w = cosX * cosY * cosZ + sinX * sinY * sinZ;
+        this.x = sinX * cosY * cosZ - cosX * sinY * sinZ;
+        this.y = cosX * sinY * cosZ + sinX * cosY * sinZ;
+        this.z = cosX * cosY * sinZ - sinX * sinY * cosZ;
+    };
+    /**
+     * Fills a target Vector3D object with the Euler angles that form the rotation represented by this quaternion.
+     * @param target An optional Vector3D object to contain the Euler angles. If not provided, a new object is created.
+     * @return The Vector3D containing the Euler angles.
+     */
+    Quaternion.prototype.toEulerAngles = function (target) {
+        if (target === void 0) { target = null; }
+        //target ||= new Vector3D();
+        if (target === null) {
+            target = new Vector3D();
+        }
+        target.x = Math.atan2(2 * (this.w * this.x + this.y * this.z), 1 - 2 * (this.x * this.x + this.y * this.y));
+        target.y = Math.asin(2 * (this.w * this.y - this.z * this.x));
+        target.z = Math.atan2(2 * (this.w * this.z + this.x * this.y), 1 - 2 * (this.y * this.y + this.z * this.z));
+        return target;
+    };
+    /**
+     * Normalises the quaternion object.
+     */
+    Quaternion.prototype.normalize = function (val) {
+        if (val === void 0) { val = 1; }
+        var mag = val / Math.sqrt(this.x * this.x + this.y * this.y + this.z * this.z + this.w * this.w);
+        this.x *= mag;
+        this.y *= mag;
+        this.z *= mag;
+        this.w *= mag;
+    };
+    /**
+     * Used to trace the values of a quaternion.
+     *
+     * @return A string representation of the quaternion object.
+     */
+    Quaternion.prototype.toString = function () {
+        return "{x:" + this.x + " y:" + this.y + " z:" + this.z + " w:" + this.w + "}";
+    };
+    /**
+     * Converts the quaternion to a Matrix3D object representing an equivalent rotation.
+     * @param target An optional Matrix3D container to store the transformation in. If not provided, a new object is created.
+     * @return A Matrix3D object representing an equivalent rotation.
+     */
+    Quaternion.prototype.toMatrix3D = function (target) {
+        if (target === void 0) { target = null; }
+        var rawData = Matrix3DUtils.RAW_DATA_CONTAINER;
+        var xy2 = 2.0 * this.x * this.y, xz2 = 2.0 * this.x * this.z, xw2 = 2.0 * this.x * this.w;
+        var yz2 = 2.0 * this.y * this.z, yw2 = 2.0 * this.y * this.w, zw2 = 2.0 * this.z * this.w;
+        var xx = this.x * this.x, yy = this.y * this.y, zz = this.z * this.z, ww = this.w * this.w;
+        rawData[0] = xx - yy - zz + ww;
+        rawData[4] = xy2 - zw2;
+        rawData[8] = xz2 + yw2;
+        rawData[12] = 0;
+        rawData[1] = xy2 + zw2;
+        rawData[5] = -xx + yy - zz + ww;
+        rawData[9] = yz2 - xw2;
+        rawData[13] = 0;
+        rawData[2] = xz2 - yw2;
+        rawData[6] = yz2 + xw2;
+        rawData[10] = -xx - yy + zz + ww;
+        rawData[14] = 0;
+        rawData[3] = 0.0;
+        rawData[7] = 0.0;
+        rawData[11] = 0;
+        rawData[15] = 1;
+        if (!target)
+            return new Matrix3D(rawData);
+        target.copyRawDataFrom(rawData);
+        return target;
+    };
+    /**
+     * Extracts a quaternion rotation matrix out of a given Matrix3D object.
+     * @param matrix The Matrix3D out of which the rotation will be extracted.
+     */
+    Quaternion.prototype.fromMatrix = function (matrix) {
+        var v = matrix.decompose(Orientation3D.QUATERNION)[1];
+        this.x = v.x;
+        this.y = v.y;
+        this.z = v.z;
+        this.w = v.w;
+    };
+    /**
+     * Converts the quaternion to a Vector.&lt;Number&gt; matrix representation of a rotation equivalent to this quaternion.
+     * @param target The Vector.&lt;Number&gt; to contain the raw matrix data.
+     * @param exclude4thRow If true, the last row will be omitted, and a 4x3 matrix will be generated instead of a 4x4.
+     */
+    Quaternion.prototype.toRawData = function (target, exclude4thRow) {
+        if (exclude4thRow === void 0) { exclude4thRow = false; }
+        var xy2 = 2.0 * this.x * this.y, xz2 = 2.0 * this.x * this.z, xw2 = 2.0 * this.x * this.w;
+        var yz2 = 2.0 * this.y * this.z, yw2 = 2.0 * this.y * this.w, zw2 = 2.0 * this.z * this.w;
+        var xx = this.x * this.x, yy = this.y * this.y, zz = this.z * this.z, ww = this.w * this.w;
+        target[0] = xx - yy - zz + ww;
+        target[1] = xy2 - zw2;
+        target[2] = xz2 + yw2;
+        target[4] = xy2 + zw2;
+        target[5] = -xx + yy - zz + ww;
+        target[6] = yz2 - xw2;
+        target[8] = xz2 - yw2;
+        target[9] = yz2 + xw2;
+        target[10] = -xx - yy + zz + ww;
+        target[3] = target[7] = target[11] = 0;
+        if (!exclude4thRow) {
+            target[12] = target[13] = target[14] = 0;
+            target[15] = 1;
+        }
+    };
+    /**
+     * Clones the quaternion.
+     * @return An exact duplicate of the current Quaternion.
+     */
+    Quaternion.prototype.clone = function () {
+        return new Quaternion(this.x, this.y, this.z, this.w);
+    };
+    /**
+     * Rotates a point.
+     * @param vector The Vector3D object to be rotated.
+     * @param target An optional Vector3D object that will contain the rotated coordinates. If not provided, a new object will be created.
+     * @return A Vector3D object containing the rotated point.
+     */
+    Quaternion.prototype.rotatePoint = function (vector, target) {
+        if (target === void 0) { target = null; }
+        var x1, y1, z1, w1;
+        var x2 = vector.x, y2 = vector.y, z2 = vector.z;
+        //target ||= new Vector3D();
+        if (target === null) {
+            target = new Vector3D();
+        }
+        // p*q'
+        w1 = -this.x * x2 - this.y * y2 - this.z * z2;
+        x1 = this.w * x2 + this.y * z2 - this.z * y2;
+        y1 = this.w * y2 - this.x * z2 + this.z * x2;
+        z1 = this.w * z2 + this.x * y2 - this.y * x2;
+        target.x = -w1 * this.x + x1 * this.w - y1 * this.z + z1 * this.y;
+        target.y = -w1 * this.y + x1 * this.z + y1 * this.w - z1 * this.x;
+        target.z = -w1 * this.z - x1 * this.y + y1 * this.x + z1 * this.w;
+        return target;
+    };
+    /**
+     * Copies the data from a quaternion into this instance.
+     * @param q The quaternion to copy from.
+     */
+    Quaternion.prototype.copyFrom = function (q) {
+        this.x = q.x;
+        this.y = q.y;
+        this.z = q.z;
+        this.w = q.w;
+    };
+    return Quaternion;
+})();
+module.exports = Quaternion;
+
+
+},{"awayjs-core/lib/geom/Matrix3D":20,"awayjs-core/lib/geom/Matrix3DUtils":21,"awayjs-core/lib/geom/Orientation3D":22,"awayjs-core/lib/geom/Vector3D":26}],"awayjs-core\\lib\\geom\\Rectangle":[function(require,module,exports){
+module.exports=require(25)
+},{"..\\awayjs-core\\lib\\geom\\Rectangle.js":25,"awayjs-core/lib/geom/Point":24}],"awayjs-core\\lib\\geom\\UVTransform":[function(require,module,exports){
+var Matrix = require("awayjs-core/lib/geom/Matrix");
+var UVTransform = (function () {
+    function UVTransform() {
+        this._uvMatrix = new Matrix();
+        this._rotation = 0;
+        this._scaleU = 1;
+        this._scaleV = 1;
+        this._offsetU = 0;
+        this._offsetV = 0;
+    }
+    Object.defineProperty(UVTransform.prototype, "offsetU", {
+        /**
+         *
+         */
+        get: function () {
+            return this._offsetU;
+        },
+        set: function (value) {
+            if (value == this._offsetU)
+                return;
+            this._offsetU = value;
+            this._uvMatrixDirty = true;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(UVTransform.prototype, "offsetV", {
+        /**
+         *
+         */
+        get: function () {
+            return this._offsetV;
+        },
+        set: function (value) {
+            if (value == this._offsetV)
+                return;
+            this._offsetV = value;
+            this._uvMatrixDirty = true;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(UVTransform.prototype, "rotation", {
+        /**
+         *
+         */
+        get: function () {
+            return this._rotation;
+        },
+        set: function (value) {
+            if (value == this._rotation)
+                return;
+            this._rotation = value;
+            this._uvMatrixDirty = true;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(UVTransform.prototype, "scaleU", {
+        /**
+         *
+         */
+        get: function () {
+            return this._scaleU;
+        },
+        set: function (value) {
+            if (value == this._scaleU)
+                return;
+            this._scaleU = value;
+            this._uvMatrixDirty = true;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(UVTransform.prototype, "scaleV", {
+        /**
+         *
+         */
+        get: function () {
+            return this._scaleV;
+        },
+        set: function (value) {
+            if (value == this._scaleV)
+                return;
+            this._scaleV = value;
+            this._uvMatrixDirty = true;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(UVTransform.prototype, "matrix", {
+        /**
+         *
+         */
+        get: function () {
+            if (this._uvMatrixDirty)
+                this.updateUVMatrix();
+            return this._uvMatrix;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    /**
+     * @private
+     */
+    UVTransform.prototype.updateUVMatrix = function () {
+        this._uvMatrix.identity();
+        if (this._rotation != 0)
+            this._uvMatrix.rotate(this._rotation);
+        if (this._scaleU != 1 || this._scaleV != 1)
+            this._uvMatrix.scale(this._scaleU, this._scaleV);
+        this._uvMatrix.translate(this._offsetU, this._offsetV);
+        this._uvMatrixDirty = false;
+    };
+    return UVTransform;
+})();
+module.exports = UVTransform;
+
+
+},{"awayjs-core/lib/geom/Matrix":19}],"awayjs-core\\lib\\geom\\Vector3D":[function(require,module,exports){
+module.exports=require(26)
+},{"..\\awayjs-core\\lib\\geom\\Vector3D.js":26}],"awayjs-core\\lib\\library\\AssetLibraryBundle":[function(require,module,exports){
+module.exports=require(27)
+},{"..\\awayjs-core\\lib\\library\\AssetLibraryBundle.js":27,"awayjs-core/lib/errors/Error":6,"awayjs-core/lib/events/AssetEvent":8,"awayjs-core/lib/events/EventDispatcher":10,"awayjs-core/lib/events/IOErrorEvent":12,"awayjs-core/lib/events/LoaderEvent":13,"awayjs-core/lib/events/ParserEvent":14,"awayjs-core/lib/library/AssetLibraryIterator":28,"awayjs-core/lib/library/AssetLoader":29,"awayjs-core/lib/library/ConflictPrecedence":32,"awayjs-core/lib/library/ConflictStrategy":33,"awayjs-core/lib/library/NamedAssetBase":37}],"awayjs-core\\lib\\library\\AssetLibraryIterator":[function(require,module,exports){
+module.exports=require(28)
+},{"..\\awayjs-core\\lib\\library\\AssetLibraryIterator.js":28}],"awayjs-core\\lib\\library\\AssetLibrary":[function(require,module,exports){
+var AssetLibraryBundle = require("awayjs-core/lib/library/AssetLibraryBundle");
+var AssetLoader = require("awayjs-core/lib/library/AssetLoader");
+/**
+ * AssetLibrary enforces a singleton pattern and is not intended to be instanced.
+ * It's purpose is to allow access to the default library bundle through a set of static shortcut methods.
+ * If you are interested in creating multiple library bundles, please use the <code>getBundle()</code> method.
+ */
+var AssetLibrary = (function () {
+    /**
+     * Creates a new <code>AssetLibrary</code> object.
+     *
+     */
+    function AssetLibrary() {
+    }
+    //*/
+    /**
+     * Returns an AssetLibrary bundle instance. If no key is given, returns the default bundle (which is
+     * similar to using the AssetLibraryBundle as a singleton). To keep several separated library bundles,
+     * pass a string key to this method to define which bundle should be returned. This is
+     * referred to as using the AssetLibraryBundle as a multiton.
+     *
+     * @param key Defines which multiton instance should be returned.
+     * @return An instance of the asset library
+     */
+    AssetLibrary.getBundle = function (key) {
+        if (key === void 0) { key = 'default'; }
+        return AssetLibraryBundle.getInstance(key);
+    };
+    /**
+     *
+     */
+    AssetLibrary.enableParser = function (parserClass) {
+        AssetLoader.enableParser(parserClass);
+    };
+    /**
+     *
+     */
+    AssetLibrary.enableParsers = function (parserClasses) {
+        AssetLoader.enableParsers(parserClasses);
+    };
+    Object.defineProperty(AssetLibrary, "conflictStrategy", {
+        /**
+         * Short-hand for conflictStrategy property on default asset library bundle.
+         *
+         * @see AssetLibraryBundle.conflictStrategy
+         */
+        get: function () {
+            return AssetLibrary.getBundle().conflictStrategy;
+        },
+        set: function (val) {
+            AssetLibrary.getBundle().conflictStrategy = val;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(AssetLibrary, "conflictPrecedence", {
+        /**
+         * Short-hand for conflictPrecedence property on default asset library bundle.
+         *
+         * @see AssetLibraryBundle.conflictPrecedence
+         */
+        get: function () {
+            return AssetLibrary.getBundle().conflictPrecedence;
+        },
+        set: function (val) {
+            AssetLibrary.getBundle().conflictPrecedence = val;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    /**
+     * Short-hand for createIterator() method on default asset library bundle.
+     *
+     * @see AssetLibraryBundle.createIterator()
+     */
+    AssetLibrary.createIterator = function (assetTypeFilter, namespaceFilter, filterFunc) {
+        if (assetTypeFilter === void 0) { assetTypeFilter = null; }
+        if (namespaceFilter === void 0) { namespaceFilter = null; }
+        if (filterFunc === void 0) { filterFunc = null; }
+        return AssetLibrary.getBundle().createIterator(assetTypeFilter, namespaceFilter, filterFunc);
+    };
+    /**
+     * Short-hand for load() method on default asset library bundle.
+     *
+     * @see AssetLibraryBundle.load()
+     */
+    AssetLibrary.load = function (req, context, ns, parser) {
+        if (context === void 0) { context = null; }
+        if (ns === void 0) { ns = null; }
+        if (parser === void 0) { parser = null; }
+        return AssetLibrary.getBundle().load(req, context, ns, parser);
+    };
+    /**
+     * Short-hand for loadData() method on default asset library bundle.
+     *
+     * @see AssetLibraryBundle.loadData()
+     */
+    AssetLibrary.loadData = function (data, context, ns, parser) {
+        if (context === void 0) { context = null; }
+        if (ns === void 0) { ns = null; }
+        if (parser === void 0) { parser = null; }
+        return AssetLibrary.getBundle().loadData(data, context, ns, parser);
+    };
+    AssetLibrary.stopLoad = function () {
+        AssetLibrary.getBundle().stopAllLoadingSessions();
+    };
+    /**
+     * Short-hand for getAsset() method on default asset library bundle.
+     *
+     * @see AssetLibraryBundle.getAsset()
+     */
+    AssetLibrary.getAsset = function (name, ns) {
+        if (ns === void 0) { ns = null; }
+        return AssetLibrary.getBundle().getAsset(name, ns);
+    };
+    /**
+     * Short-hand for addEventListener() method on default asset library bundle.
+     */
+    AssetLibrary.addEventListener = function (type, listener) {
+        AssetLibrary.getBundle().addEventListener(type, listener);
+    };
+    /**
+     * Short-hand for removeEventListener() method on default asset library bundle.
+     */
+    AssetLibrary.removeEventListener = function (type, listener) {
+        AssetLibrary.getBundle().removeEventListener(type, listener);
+    };
+    /**
+     * Short-hand for hasEventListener() method on default asset library bundle.
+
+     public static hasEventListener(type:string):boolean
+     {
+        return AssetLibrary.getBundle().hasEventListener(type);
+    }
+
+     public static willTrigger(type:string):boolean
+     {
+        return getBundle().willTrigger(type);
+    }
+     */
+    /**
+     * Short-hand for addAsset() method on default asset library bundle.
+     *
+     * @see AssetLibraryBundle.addAsset()
+     */
+    AssetLibrary.addAsset = function (asset) {
+        AssetLibrary.getBundle().addAsset(asset);
+    };
+    /**
+     * Short-hand for removeAsset() method on default asset library bundle.
+     *
+     * @param asset The asset which should be removed from the library.
+     * @param dispose Defines whether the assets should also be disposed.
+     *
+     * @see AssetLibraryBundle.removeAsset()
+     */
+    AssetLibrary.removeAsset = function (asset, dispose) {
+        if (dispose === void 0) { dispose = true; }
+        AssetLibrary.getBundle().removeAsset(asset, dispose);
+    };
+    /**
+     * Short-hand for removeAssetByName() method on default asset library bundle.
+     *
+     * @param name The name of the asset to be removed.
+     * @param ns The namespace to which the desired asset belongs.
+     * @param dispose Defines whether the assets should also be disposed.
+     *
+     * @see AssetLibraryBundle.removeAssetByName()
+     */
+    AssetLibrary.removeAssetByName = function (name, ns, dispose) {
+        if (ns === void 0) { ns = null; }
+        if (dispose === void 0) { dispose = true; }
+        return AssetLibrary.getBundle().removeAssetByName(name, ns, dispose);
+    };
+    /**
+     * Short-hand for removeAllAssets() method on default asset library bundle.
+     *
+     * @param dispose Defines whether the assets should also be disposed.
+     *
+     * @see AssetLibraryBundle.removeAllAssets()
+     */
+    AssetLibrary.removeAllAssets = function (dispose) {
+        if (dispose === void 0) { dispose = true; }
+        AssetLibrary.getBundle().removeAllAssets(dispose);
+    };
+    /**
+     * Short-hand for removeNamespaceAssets() method on default asset library bundle.
+     *
+     * @see AssetLibraryBundle.removeNamespaceAssets()
+     */
+    AssetLibrary.removeNamespaceAssets = function (ns, dispose) {
+        if (ns === void 0) { ns = null; }
+        if (dispose === void 0) { dispose = true; }
+        AssetLibrary.getBundle().removeNamespaceAssets(ns, dispose);
+    };
+    return AssetLibrary;
+})();
+module.exports = AssetLibrary;
+
+
+},{"awayjs-core/lib/library/AssetLibraryBundle":27,"awayjs-core/lib/library/AssetLoader":29}],"awayjs-core\\lib\\library\\AssetLoaderContext":[function(require,module,exports){
+var AssetLoaderContext = (function () {
+    /**
+     * AssetLoaderContext provides configuration for the AssetLoader load() and parse() operations.
+     * Use it to configure how (and if) dependencies are loaded, or to map dependency URLs to
+     * embedded data.
+     *
+     * @see away.loading.AssetLoader
+     */
+    function AssetLoaderContext(includeDependencies, dependencyBaseUrl) {
+        if (includeDependencies === void 0) { includeDependencies = true; }
+        if (dependencyBaseUrl === void 0) { dependencyBaseUrl = null; }
+        this._includeDependencies = includeDependencies;
+        this._dependencyBaseUrl = dependencyBaseUrl || '';
+        this._embeddedDataByUrl = {};
+        this._remappedUrls = {};
+        this._materialMode = AssetLoaderContext.UNDEFINED;
+    }
+    Object.defineProperty(AssetLoaderContext.prototype, "includeDependencies", {
+        /**
+         * Defines whether dependencies (all files except the one at the URL given to the load() or
+         * parseData() operations) should be automatically loaded. Defaults to true.
+         */
+        get: function () {
+            return this._includeDependencies;
+        },
+        set: function (val) {
+            this._includeDependencies = val;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(AssetLoaderContext.prototype, "materialMode", {
+        /**
+         * MaterialMode defines, if the Parser should create SinglePass or MultiPass Materials
+         * Options:
+         * 0 (Default / undefined) - All Parsers will create SinglePassMaterials, but the AWD2.1parser will create Materials as they are defined in the file
+         * 1 (Force SinglePass) - All Parsers create SinglePassMaterials
+         * 2 (Force MultiPass) - All Parsers will create MultiPassMaterials
+         *
+         */
+        get: function () {
+            return this._materialMode;
+        },
+        set: function (materialMode) {
+            this._materialMode = materialMode;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(AssetLoaderContext.prototype, "dependencyBaseUrl", {
+        /**
+         * A base URL that will be prepended to all relative dependency URLs found in a loaded resource.
+         * Absolute paths will not be affected by the value of this property.
+         */
+        get: function () {
+            return this._dependencyBaseUrl;
+        },
+        set: function (val) {
+            this._dependencyBaseUrl = val;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(AssetLoaderContext.prototype, "overrideAbsolutePaths", {
+        /**
+         * Defines whether absolute paths (defined as paths that begin with a "/") should be overridden
+         * with the dependencyBaseUrl defined in this context. If this is true, and the base path is
+         * "base", /path/to/asset.jpg will be resolved as base/path/to/asset.jpg.
+         */
+        get: function () {
+            return this._overrideAbsPath;
+        },
+        set: function (val) {
+            this._overrideAbsPath = val;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(AssetLoaderContext.prototype, "overrideFullURLs", {
+        /**
+         * Defines whether "full" URLs (defined as a URL that includes a scheme, e.g. http://) should be
+         * overridden with the dependencyBaseUrl defined in this context. If this is true, and the base
+         * path is "base", http://example.com/path/to/asset.jpg will be resolved as base/path/to/asset.jpg.
+         */
+        get: function () {
+            return this._overrideFullUrls;
+        },
+        set: function (val) {
+            this._overrideFullUrls = val;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    /**
+     * Map a URL to another URL, so that files that are referred to by the original URL will instead
+     * be loaded from the new URL. Use this when your file structure does not match the one that is
+     * expected by the loaded file.
+     *
+     * @param originalUrl The original URL which is referenced in the loaded resource.
+     * @param newUrl The URL from which away.should load the resource instead.
+     *
+     * @see mapUrlToData()
+     */
+    AssetLoaderContext.prototype.mapUrl = function (originalUrl, newUrl) {
+        this._remappedUrls[originalUrl] = newUrl;
+    };
+    /**
+     * Map a URL to embedded data, so that instead of trying to load a dependency from the URL at
+     * which it's referenced, the dependency data will be retrieved straight from the memory instead.
+     *
+     * @param originalUrl The original URL which is referenced in the loaded resource.
+     * @param data The embedded data. Can be ByteArray or a class which can be used to create a bytearray.
+     */
+    AssetLoaderContext.prototype.mapUrlToData = function (originalUrl, data) {
+        this._embeddedDataByUrl[originalUrl] = data;
+    };
+    /**
+     * @private
+     * Defines whether embedded data has been mapped to a particular URL.
+     */
+    AssetLoaderContext.prototype._iHasDataForUrl = function (url) {
+        return this._embeddedDataByUrl.hasOwnProperty(url);
+    };
+    /**
+     * @private
+     * Returns embedded data for a particular URL.
+     */
+    AssetLoaderContext.prototype._iGetDataForUrl = function (url) {
+        return this._embeddedDataByUrl[url];
+    };
+    /**
+     * @private
+     * Defines whether a replacement URL has been mapped to a particular URL.
+     */
+    AssetLoaderContext.prototype._iHasMappingForUrl = function (url) {
+        return this._remappedUrls.hasOwnProperty(url);
+    };
+    /**
+     * @private
+     * Returns new (replacement) URL for a particular original URL.
+     */
+    AssetLoaderContext.prototype._iGetRemappedUrl = function (originalUrl) {
+        return this._remappedUrls[originalUrl];
+    };
+    AssetLoaderContext.UNDEFINED = 0;
+    AssetLoaderContext.SINGLEPASS_MATERIALS = 1;
+    AssetLoaderContext.MULTIPASS_MATERIALS = 2;
+    return AssetLoaderContext;
+})();
+module.exports = AssetLoaderContext;
+
+
+},{}],"awayjs-core\\lib\\library\\AssetLoaderToken":[function(require,module,exports){
+module.exports=require(30)
+},{"..\\awayjs-core\\lib\\library\\AssetLoaderToken.js":30,"awayjs-core/lib/events/EventDispatcher":10}],"awayjs-core\\lib\\library\\AssetLoader":[function(require,module,exports){
+module.exports=require(29)
+},{"..\\awayjs-core\\lib\\library\\AssetLoader.js":29,"awayjs-core/lib/errors/Error":6,"awayjs-core/lib/events/AssetEvent":8,"awayjs-core/lib/events/Event":9,"awayjs-core/lib/events/EventDispatcher":10,"awayjs-core/lib/events/IOErrorEvent":12,"awayjs-core/lib/events/LoaderEvent":13,"awayjs-core/lib/events/ParserEvent":14,"awayjs-core/lib/library/AssetLoaderToken":30,"awayjs-core/lib/net/URLLoader":39,"awayjs-core/lib/net/URLLoaderDataFormat":40,"awayjs-core/lib/parsers/CubeTextureParser":44,"awayjs-core/lib/parsers/ResourceDependency":47,"awayjs-core/lib/parsers/Texture2DParser":48}],"awayjs-core\\lib\\library\\AssetType":[function(require,module,exports){
+module.exports=require(31)
+},{"..\\awayjs-core\\lib\\library\\AssetType.js":31}],"awayjs-core\\lib\\library\\ConflictPrecedence":[function(require,module,exports){
+module.exports=require(32)
+},{"..\\awayjs-core\\lib\\library\\ConflictPrecedence.js":32}],"awayjs-core\\lib\\library\\ConflictStrategyBase":[function(require,module,exports){
+module.exports=require(34)
+},{"..\\awayjs-core\\lib\\library\\ConflictStrategyBase.js":34,"awayjs-core/lib/errors/AbstractMethodError":4,"awayjs-core/lib/events/AssetEvent":8,"awayjs-core/lib/library/ConflictPrecedence":32}],"awayjs-core\\lib\\library\\ConflictStrategy":[function(require,module,exports){
+module.exports=require(33)
+},{"..\\awayjs-core\\lib\\library\\ConflictStrategy.js":33,"awayjs-core/lib/library/ErrorConflictStrategy":35,"awayjs-core/lib/library/IgnoreConflictStrategy":36,"awayjs-core/lib/library/NumSuffixConflictStrategy":38}],"awayjs-core\\lib\\library\\ErrorConflictStrategy":[function(require,module,exports){
+module.exports=require(35)
+},{"..\\awayjs-core\\lib\\library\\ErrorConflictStrategy.js":35,"awayjs-core/lib/errors/Error":6,"awayjs-core/lib/library/ConflictStrategyBase":34}],"awayjs-core\\lib\\library\\IAsset":[function(require,module,exports){
+
+
+
+},{}],"awayjs-core\\lib\\library\\IDUtil":[function(require,module,exports){
+var IDUtil = (function () {
+    function IDUtil() {
+    }
+    /**
+     *  Generates a UID (unique identifier) based on ActionScript's
+     *  pseudo-random number generator and the current time.
+     *
+     *  <p>The UID has the form
+     *  <code>"XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX"</code>
+     *  where X is a hexadecimal digit (0-9, A-F).</p>
+     *
+     *  <p>This UID will not be truly globally unique; but it is the best
+     *  we can do without player support for UID generation.</p>
+     *
+     *  @return The newly-generated UID.
+     *
+     *  @langversion 3.0
+     *  @playerversion Flash 9
+     *  @playerversion AIR 1.1
+     *  @productversion Flex 3
+     */
+    IDUtil.createUID = function () {
+        var uid = new Array(36);
+        var index = 0;
+        var i;
+        var j;
+        for (i = 0; i < 8; i++)
+            uid[index++] = IDUtil.ALPHA_CHAR_CODES[Math.floor(Math.random() * 16)];
+        for (i = 0; i < 3; i++) {
+            uid[index++] = 45; // charCode for "-"
+            for (j = 0; j < 4; j++)
+                uid[index++] = IDUtil.ALPHA_CHAR_CODES[Math.floor(Math.random() * 16)];
+        }
+        uid[index++] = 45; // charCode for "-"
+        var time = new Date().getTime();
+        // Note: time is the number of milliseconds since 1970,
+        // which is currently more than one trillion.
+        // We use the low 8 hex digits of this number in the UID.
+        // Just in case the system clock has been reset to
+        // Jan 1-4, 1970 (in which case this number could have only
+        // 1-7 hex digits), we pad on the left with 7 zeros
+        // before taking the low digits.
+        var timeString = ("0000000" + time.toString(16).toUpperCase()).substr(-8);
+        for (i = 0; i < 8; i++)
+            uid[index++] = timeString.charCodeAt(i);
+        for (i = 0; i < 4; i++)
+            uid[index++] = IDUtil.ALPHA_CHAR_CODES[Math.floor(Math.random() * 16)];
+        return String.fromCharCode.apply(null, uid);
+    };
+    /**
+     *  @private
+     *  Char codes for 0123456789ABCDEF
+     */
+    IDUtil.ALPHA_CHAR_CODES = [48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 65, 66, 67, 68, 69, 70];
+    return IDUtil;
+})();
+module.exports = IDUtil;
+
+
+},{}],"awayjs-core\\lib\\library\\IgnoreConflictStrategy":[function(require,module,exports){
+module.exports=require(36)
+},{"..\\awayjs-core\\lib\\library\\IgnoreConflictStrategy.js":36,"awayjs-core/lib/library/ConflictStrategyBase":34}],"awayjs-core\\lib\\library\\NamedAssetBase":[function(require,module,exports){
+module.exports=require(37)
+},{"..\\awayjs-core\\lib\\library\\NamedAssetBase.js":37,"awayjs-core/lib/errors/AbstractMethodError":4,"awayjs-core/lib/events/AssetEvent":8,"awayjs-core/lib/events/EventDispatcher":10}],"awayjs-core\\lib\\library\\NumSuffixConflictStrategy":[function(require,module,exports){
+module.exports=require(38)
+},{"..\\awayjs-core\\lib\\library\\NumSuffixConflictStrategy.js":38,"awayjs-core/lib/library/ConflictStrategyBase":34}],"awayjs-core\\lib\\net\\CrossDomainPolicy":[function(require,module,exports){
+var CrossDomainPolicy = (function () {
+    function CrossDomainPolicy() {
+    }
+    CrossDomainPolicy.ANONYMOUS = 'anonymous';
+    CrossDomainPolicy.USE_CREDENTIALS = 'use-credentials';
+    return CrossDomainPolicy;
+})();
+module.exports = CrossDomainPolicy;
+
+
+},{}],"awayjs-core\\lib\\net\\URLLoaderDataFormat":[function(require,module,exports){
+module.exports=require(40)
+},{"..\\awayjs-core\\lib\\net\\URLLoaderDataFormat.js":40}],"awayjs-core\\lib\\net\\URLLoader":[function(require,module,exports){
+module.exports=require(39)
+},{"..\\awayjs-core\\lib\\net\\URLLoader.js":39,"awayjs-core/lib/events/Event":9,"awayjs-core/lib/events/EventDispatcher":10,"awayjs-core/lib/events/HTTPStatusEvent":11,"awayjs-core/lib/events/IOErrorEvent":12,"awayjs-core/lib/events/ProgressEvent":15,"awayjs-core/lib/net/URLLoaderDataFormat":40,"awayjs-core/lib/net/URLRequestMethod":42,"awayjs-core/lib/net/URLVariables":43}],"awayjs-core\\lib\\net\\URLRequestMethod":[function(require,module,exports){
+module.exports=require(42)
+},{"..\\awayjs-core\\lib\\net\\URLRequestMethod.js":42}],"awayjs-core\\lib\\net\\URLRequest":[function(require,module,exports){
+module.exports=require(41)
+},{"..\\awayjs-core\\lib\\net\\URLRequest.js":41,"awayjs-core/lib/net/URLRequestMethod":42}],"awayjs-core\\lib\\net\\URLVariables":[function(require,module,exports){
+module.exports=require(43)
+},{"..\\awayjs-core\\lib\\net\\URLVariables.js":43}],"awayjs-core\\lib\\parsers\\CubeTextureParser":[function(require,module,exports){
+module.exports=require(44)
+},{"..\\awayjs-core\\lib\\parsers\\CubeTextureParser.js":44,"awayjs-core/lib/net/URLLoaderDataFormat":40,"awayjs-core/lib/net/URLRequest":41,"awayjs-core/lib/parsers/ParserBase":45,"awayjs-core/lib/textures/ImageCubeTexture":54}],"awayjs-core\\lib\\parsers\\ParserBase":[function(require,module,exports){
+module.exports=require(45)
+},{"..\\awayjs-core\\lib\\parsers\\ParserBase.js":45,"awayjs-core/lib/errors/AbstractMethodError":4,"awayjs-core/lib/events/AssetEvent":8,"awayjs-core/lib/events/EventDispatcher":10,"awayjs-core/lib/events/ParserEvent":14,"awayjs-core/lib/events/TimerEvent":17,"awayjs-core/lib/parsers/ParserUtils":46,"awayjs-core/lib/parsers/ResourceDependency":47,"awayjs-core/lib/utils/TextureUtils":62,"awayjs-core/lib/utils/Timer":63,"awayjs-core/lib/utils/getTimer":64}],"awayjs-core\\lib\\parsers\\ParserDataFormat":[function(require,module,exports){
+/**
+ * An enumeration providing values to describe the data format of parsed data.
+ */
+var ParserDataFormat = (function () {
+    function ParserDataFormat() {
+    }
+    /**
+     * Describes the format of a binary file.
+     */
+    ParserDataFormat.BINARY = "binary";
+    /**
+     * Describes the format of a plain text file.
+     */
+    ParserDataFormat.PLAIN_TEXT = "plainText";
+    /**
+     * Describes the format of an image file
+     */
+    ParserDataFormat.IMAGE = "image";
+    return ParserDataFormat;
+})();
+module.exports = ParserDataFormat;
+
+
+},{}],"awayjs-core\\lib\\parsers\\ParserUtils":[function(require,module,exports){
+module.exports=require(46)
+},{"..\\awayjs-core\\lib\\parsers\\ParserUtils.js":46,"awayjs-core/lib/utils/ByteArray":59}],"awayjs-core\\lib\\parsers\\ResourceDependency":[function(require,module,exports){
+module.exports=require(47)
+},{"..\\awayjs-core\\lib\\parsers\\ResourceDependency.js":47}],"awayjs-core\\lib\\parsers\\Texture2DParser":[function(require,module,exports){
+module.exports=require(48)
+},{"..\\awayjs-core\\lib\\parsers\\Texture2DParser.js":48,"awayjs-core/lib/net/URLLoaderDataFormat":40,"awayjs-core/lib/parsers/ParserBase":45,"awayjs-core/lib/parsers/ParserUtils":46,"awayjs-core/lib/textures/ImageTexture":55,"awayjs-core/lib/utils/ByteArray":59,"awayjs-core/lib/utils/TextureUtils":62}],"awayjs-core\\lib\\pool\\ITextureData":[function(require,module,exports){
+
+
+
+},{}],"awayjs-core\\lib\\projections\\CoordinateSystem":[function(require,module,exports){
+module.exports=require(49)
+},{"..\\awayjs-core\\lib\\projections\\CoordinateSystem.js":49}],"awayjs-core\\lib\\projections\\FreeMatrixProjection":[function(require,module,exports){
+var __extends = this.__extends || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    __.prototype = b.prototype;
+    d.prototype = new __();
+};
+var PerspectiveProjection = require("awayjs-core/lib/projections/PerspectiveProjection");
+var ProjectionBase = require("awayjs-core/lib/projections/ProjectionBase");
+var FreeMatrixProjection = (function (_super) {
+    __extends(FreeMatrixProjection, _super);
+    function FreeMatrixProjection() {
+        _super.call(this);
+        this._pMatrix.copyFrom(new PerspectiveProjection().matrix);
+    }
+    Object.defineProperty(FreeMatrixProjection.prototype, "near", {
+        //@override
+        set: function (value) {
+            this._pNear = value;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(FreeMatrixProjection.prototype, "far", {
+        //@override
+        set: function (value) {
+            this._pFar = value;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(FreeMatrixProjection.prototype, "iAspectRatio", {
+        //@override
+        set: function (value) {
+            this._pAspectRatio = value;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    //@override
+    FreeMatrixProjection.prototype.clone = function () {
+        var clone = new FreeMatrixProjection();
+        clone._pMatrix.copyFrom(this._pMatrix);
+        clone._pNear = this._pNear;
+        clone._pFar = this._pFar;
+        clone._pAspectRatio = this._pAspectRatio;
+        clone.pInvalidateMatrix();
+        return clone;
+    };
+    //@override
+    FreeMatrixProjection.prototype.pUpdateMatrix = function () {
+        this._pMatrixInvalid = false;
+    };
+    return FreeMatrixProjection;
+})(ProjectionBase);
+module.exports = FreeMatrixProjection;
+
+
+},{"awayjs-core/lib/projections/PerspectiveProjection":50,"awayjs-core/lib/projections/ProjectionBase":51}],"awayjs-core\\lib\\projections\\IProjection":[function(require,module,exports){
+
+
+
+},{}],"awayjs-core\\lib\\projections\\ObliqueNearPlaneProjection":[function(require,module,exports){
+var __extends = this.__extends || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    __.prototype = b.prototype;
+    d.prototype = new __();
+};
+var Vector3D = require("awayjs-core/lib/geom/Vector3D");
+var ProjectionEvent = require("awayjs-core/lib/events/ProjectionEvent");
+var ProjectionBase = require("awayjs-core/lib/projections/ProjectionBase");
+var ObliqueNearPlaneProjection = (function (_super) {
+    __extends(ObliqueNearPlaneProjection, _super);
+    function ObliqueNearPlaneProjection(baseProjection, plane) {
+        var _this = this;
+        _super.call(this);
+        this.baseProjection = baseProjection;
+        this.plane = plane;
+        this._onProjectionMatrixChangedDelegate = function (event) { return _this.onProjectionMatrixChanged(event); };
+    }
+    Object.defineProperty(ObliqueNearPlaneProjection.prototype, "frustumCorners", {
+        //@override
+        get: function () {
+            return this._baseProjection.frustumCorners;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(ObliqueNearPlaneProjection.prototype, "near", {
+        //@override
+        get: function () {
+            return this._baseProjection.near;
+        },
+        //@override
+        set: function (value) {
+            this._baseProjection.near = value;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(ObliqueNearPlaneProjection.prototype, "far", {
+        //@override
+        get: function () {
+            return this._baseProjection.far;
+        },
+        //@override
+        set: function (value) {
+            this._baseProjection.far = value;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(ObliqueNearPlaneProjection.prototype, "iAspectRatio", {
+        //@override
+        get: function () {
+            return this._baseProjection._iAspectRatio;
+        },
+        //@override
+        set: function (value) {
+            this._baseProjection._iAspectRatio = value;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(ObliqueNearPlaneProjection.prototype, "plane", {
+        get: function () {
+            return this._plane;
+        },
+        set: function (value) {
+            this._plane = value;
+            this.pInvalidateMatrix();
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(ObliqueNearPlaneProjection.prototype, "baseProjection", {
+        set: function (value) {
+            if (this._baseProjection) {
+                this._baseProjection.removeEventListener(ProjectionEvent.MATRIX_CHANGED, this._onProjectionMatrixChangedDelegate);
+            }
+            this._baseProjection = value;
+            if (this._baseProjection) {
+                this._baseProjection.addEventListener(ProjectionEvent.MATRIX_CHANGED, this._onProjectionMatrixChangedDelegate);
+            }
+            this.pInvalidateMatrix();
+        },
+        enumerable: true,
+        configurable: true
+    });
+    ObliqueNearPlaneProjection.prototype.onProjectionMatrixChanged = function (event) {
+        this.pInvalidateMatrix();
+    };
+    //@override
+    ObliqueNearPlaneProjection.prototype.pUpdateMatrix = function () {
+        this._pMatrix.copyFrom(this._baseProjection.matrix);
+        var cx = this._plane.a;
+        var cy = this._plane.b;
+        var cz = this._plane.c;
+        var cw = -this._plane.d + .05;
+        var signX = cx >= 0 ? 1 : -1;
+        var signY = cy >= 0 ? 1 : -1;
+        var p = new Vector3D(signX, signY, 1, 1);
+        var inverse = this._pMatrix.clone();
+        inverse.invert();
+        var q = inverse.transformVector(p);
+        this._pMatrix.copyRowTo(3, p);
+        var a = (q.x * p.x + q.y * p.y + q.z * p.z + q.w * p.w) / (cx * q.x + cy * q.y + cz * q.z + cw * q.w);
+        this._pMatrix.copyRowFrom(2, new Vector3D(cx * a, cy * a, cz * a, cw * a));
+    };
+    return ObliqueNearPlaneProjection;
+})(ProjectionBase);
+module.exports = ObliqueNearPlaneProjection;
+
+
+},{"awayjs-core/lib/events/ProjectionEvent":16,"awayjs-core/lib/geom/Vector3D":26,"awayjs-core/lib/projections/ProjectionBase":51}],"awayjs-core\\lib\\projections\\OrthographicOffCenterProjection":[function(require,module,exports){
+var __extends = this.__extends || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    __.prototype = b.prototype;
+    d.prototype = new __();
+};
+var Vector3D = require("awayjs-core/lib/geom/Vector3D");
+var ProjectionBase = require("awayjs-core/lib/projections/ProjectionBase");
+var OrthographicOffCenterProjection = (function (_super) {
+    __extends(OrthographicOffCenterProjection, _super);
+    function OrthographicOffCenterProjection(minX, maxX, minY, maxY) {
+        _super.call(this);
+        this._minX = minX;
+        this._maxX = maxX;
+        this._minY = minY;
+        this._maxY = maxY;
+    }
+    Object.defineProperty(OrthographicOffCenterProjection.prototype, "minX", {
+        get: function () {
+            return this._minX;
+        },
+        set: function (value) {
+            this._minX = value;
+            this.pInvalidateMatrix();
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(OrthographicOffCenterProjection.prototype, "maxX", {
+        get: function () {
+            return this._maxX;
+        },
+        set: function (value) {
+            this._maxX = value;
+            this.pInvalidateMatrix();
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(OrthographicOffCenterProjection.prototype, "minY", {
+        get: function () {
+            return this._minY;
+        },
+        set: function (value) {
+            this._minY = value;
+            this.pInvalidateMatrix();
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(OrthographicOffCenterProjection.prototype, "maxY", {
+        get: function () {
+            return this._maxY;
+        },
+        set: function (value) {
+            this._maxY = value;
+            this.pInvalidateMatrix();
+        },
+        enumerable: true,
+        configurable: true
+    });
+    //@override
+    OrthographicOffCenterProjection.prototype.unproject = function (nX, nY, sZ) {
+        var v = new Vector3D(nX, -nY, sZ, 1.0);
+        v = this.unprojectionMatrix.transformVector(v);
+        //z is unaffected by transform
+        v.z = sZ;
+        return v;
+    };
+    //@override
+    OrthographicOffCenterProjection.prototype.clone = function () {
+        var clone = new OrthographicOffCenterProjection(this._minX, this._maxX, this._minY, this._maxY);
+        clone._pNear = this._pNear;
+        clone._pFar = this._pFar;
+        clone._pAspectRatio = this._pAspectRatio;
+        return clone;
+    };
+    //@override
+    OrthographicOffCenterProjection.prototype.pUpdateMatrix = function () {
+        var raw = [];
+        var w = 1 / (this._maxX - this._minX);
+        var h = 1 / (this._maxY - this._minY);
+        var d = 1 / (this._pFar - this._pNear);
+        raw[0] = 2 * w;
+        raw[5] = 2 * h;
+        raw[10] = d;
+        raw[12] = -(this._maxX + this._minX) * w;
+        raw[13] = -(this._maxY + this._minY) * h;
+        raw[14] = -this._pNear * d;
+        raw[15] = 1;
+        raw[1] = raw[2] = raw[3] = raw[4] = raw[6] = raw[7] = raw[8] = raw[9] = raw[11] = 0;
+        this._pMatrix.copyRawDataFrom(raw);
+        this._pFrustumCorners[0] = this._pFrustumCorners[9] = this._pFrustumCorners[12] = this._pFrustumCorners[21] = this._minX;
+        this._pFrustumCorners[3] = this._pFrustumCorners[6] = this._pFrustumCorners[15] = this._pFrustumCorners[18] = this._maxX;
+        this._pFrustumCorners[1] = this._pFrustumCorners[4] = this._pFrustumCorners[13] = this._pFrustumCorners[16] = this._minY;
+        this._pFrustumCorners[7] = this._pFrustumCorners[10] = this._pFrustumCorners[19] = this._pFrustumCorners[22] = this._maxY;
+        this._pFrustumCorners[2] = this._pFrustumCorners[5] = this._pFrustumCorners[8] = this._pFrustumCorners[11] = this._pNear;
+        this._pFrustumCorners[14] = this._pFrustumCorners[17] = this._pFrustumCorners[20] = this._pFrustumCorners[23] = this._pFar;
+        this._pMatrixInvalid = false;
+    };
+    return OrthographicOffCenterProjection;
+})(ProjectionBase);
+module.exports = OrthographicOffCenterProjection;
+
+
+},{"awayjs-core/lib/geom/Vector3D":26,"awayjs-core/lib/projections/ProjectionBase":51}],"awayjs-core\\lib\\projections\\OrthographicProjection":[function(require,module,exports){
+var __extends = this.__extends || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    __.prototype = b.prototype;
+    d.prototype = new __();
+};
+var Vector3D = require("awayjs-core/lib/geom/Vector3D");
+var ProjectionBase = require("awayjs-core/lib/projections/ProjectionBase");
+var OrthographicProjection = (function (_super) {
+    __extends(OrthographicProjection, _super);
+    function OrthographicProjection(projectionHeight) {
+        if (projectionHeight === void 0) { projectionHeight = 500; }
+        _super.call(this);
+        this._projectionHeight = projectionHeight;
+    }
+    Object.defineProperty(OrthographicProjection.prototype, "projectionHeight", {
+        get: function () {
+            return this._projectionHeight;
+        },
+        set: function (value) {
+            if (value == this._projectionHeight) {
+                return;
+            }
+            this._projectionHeight = value;
+            this.pInvalidateMatrix();
+        },
+        enumerable: true,
+        configurable: true
+    });
+    //@override
+    OrthographicProjection.prototype.unproject = function (nX, nY, sZ) {
+        var v = new Vector3D(nX + this.matrix.rawData[12], -nY + this.matrix.rawData[13], sZ, 1.0);
+        v = this.unprojectionMatrix.transformVector(v);
+        //z is unaffected by transform
+        v.z = sZ;
+        return v;
+    };
+    //@override
+    OrthographicProjection.prototype.clone = function () {
+        var clone = new OrthographicProjection();
+        clone._pNear = this._pNear;
+        clone._pFar = this._pFar;
+        clone._pAspectRatio = this._pAspectRatio;
+        clone.projectionHeight = this._projectionHeight;
+        return clone;
+    };
+    //@override
+    OrthographicProjection.prototype.pUpdateMatrix = function () {
+        var raw = [];
+        this._yMax = this._projectionHeight * .5;
+        this._xMax = this._yMax * this._pAspectRatio;
+        var left;
+        var right;
+        var top;
+        var bottom;
+        if (this._pScissorRect.x == 0 && this._pScissorRect.y == 0 && this._pScissorRect.width == this._pViewPort.width && this._pScissorRect.height == this._pViewPort.height) {
+            // assume symmetric frustum
+            left = -this._xMax;
+            right = this._xMax;
+            top = -this._yMax;
+            bottom = this._yMax;
+            raw[0] = 2 / (this._projectionHeight * this._pAspectRatio);
+            raw[5] = 2 / this._projectionHeight;
+            raw[10] = 1 / (this._pFar - this._pNear);
+            raw[14] = this._pNear / (this._pNear - this._pFar);
+            raw[1] = raw[2] = raw[3] = raw[4] = raw[6] = raw[7] = raw[8] = raw[9] = raw[11] = raw[12] = raw[13] = 0;
+            raw[15] = 1;
+        }
+        else {
+            var xWidth = this._xMax * (this._pViewPort.width / this._pScissorRect.width);
+            var yHgt = this._yMax * (this._pViewPort.height / this._pScissorRect.height);
+            var center = this._xMax * (this._pScissorRect.x * 2 - this._pViewPort.width) / this._pScissorRect.width + this._xMax;
+            var middle = -this._yMax * (this._pScissorRect.y * 2 - this._pViewPort.height) / this._pScissorRect.height - this._yMax;
+            left = center - xWidth;
+            right = center + xWidth;
+            top = middle - yHgt;
+            bottom = middle + yHgt;
+            raw[0] = 2 * 1 / (right - left);
+            raw[5] = -2 * 1 / (top - bottom);
+            raw[10] = 1 / (this._pFar - this._pNear);
+            raw[12] = (right + left) / (right - left);
+            raw[13] = (bottom + top) / (bottom - top);
+            raw[14] = this._pNear / (this.near - this.far);
+            raw[1] = raw[2] = raw[3] = raw[4] = raw[6] = raw[7] = raw[8] = raw[9] = raw[11] = 0;
+            raw[15] = 1;
+        }
+        this._pFrustumCorners[0] = this._pFrustumCorners[9] = this._pFrustumCorners[12] = this._pFrustumCorners[21] = left;
+        this._pFrustumCorners[3] = this._pFrustumCorners[6] = this._pFrustumCorners[15] = this._pFrustumCorners[18] = right;
+        this._pFrustumCorners[1] = this._pFrustumCorners[4] = this._pFrustumCorners[13] = this._pFrustumCorners[16] = top;
+        this._pFrustumCorners[7] = this._pFrustumCorners[10] = this._pFrustumCorners[19] = this._pFrustumCorners[22] = bottom;
+        this._pFrustumCorners[2] = this._pFrustumCorners[5] = this._pFrustumCorners[8] = this._pFrustumCorners[11] = this._pNear;
+        this._pFrustumCorners[14] = this._pFrustumCorners[17] = this._pFrustumCorners[20] = this._pFrustumCorners[23] = this._pFar;
+        this._pMatrix.copyRawDataFrom(raw);
+        this._pMatrixInvalid = false;
+    };
+    return OrthographicProjection;
+})(ProjectionBase);
+module.exports = OrthographicProjection;
+
+
+},{"awayjs-core/lib/geom/Vector3D":26,"awayjs-core/lib/projections/ProjectionBase":51}],"awayjs-core\\lib\\projections\\PerspectiveProjection":[function(require,module,exports){
+module.exports=require(50)
+},{"..\\awayjs-core\\lib\\projections\\PerspectiveProjection.js":50,"awayjs-core/lib/geom/Vector3D":26,"awayjs-core/lib/projections/CoordinateSystem":49,"awayjs-core/lib/projections/ProjectionBase":51}],"awayjs-core\\lib\\projections\\ProjectionBase":[function(require,module,exports){
+module.exports=require(51)
+},{"..\\awayjs-core\\lib\\projections\\ProjectionBase.js":51,"awayjs-core/lib/errors/AbstractMethodError":4,"awayjs-core/lib/events/EventDispatcher":10,"awayjs-core/lib/events/ProjectionEvent":16,"awayjs-core/lib/geom/Matrix3D":20,"awayjs-core/lib/geom/Rectangle":25}],"awayjs-core\\lib\\textures\\BitmapCubeTexture":[function(require,module,exports){
 var __extends = this.__extends || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
@@ -10064,377 +11307,17 @@ var BitmapCubeTexture = (function (_super) {
 module.exports = BitmapCubeTexture;
 
 
-},{"awayjs-core/lib/errors/Error":undefined,"awayjs-core/lib/textures/CubeTextureBase":undefined,"awayjs-core/lib/utils/TextureUtils":undefined}],"awayjs-core/lib/textures/BitmapTexture":[function(require,module,exports){
-var __extends = this.__extends || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    __.prototype = b.prototype;
-    d.prototype = new __();
-};
-var Error = require("awayjs-core/lib/errors/Error");
-var Texture2DBase = require("awayjs-core/lib/textures/Texture2DBase");
-var TextureUtils = require("awayjs-core/lib/utils/TextureUtils");
-var BitmapTexture = (function (_super) {
-    __extends(BitmapTexture, _super);
-    function BitmapTexture(bitmapData, generateMipmaps) {
-        if (generateMipmaps === void 0) { generateMipmaps = false; }
-        _super.call(this, generateMipmaps);
-        this.bitmapData = bitmapData;
-    }
-    Object.defineProperty(BitmapTexture.prototype, "bitmapData", {
-        /**
-         *
-         * @returns {BitmapData}
-         */
-        get: function () {
-            return this._bitmapData;
-        },
-        set: function (value) {
-            if (this._bitmapData == value)
-                return;
-            if (!TextureUtils.isBitmapDataValid(value))
-                throw new Error("Invalid bitmapData: Width and height must be power of 2 and cannot exceed 2048");
-            this._bitmapData = value;
-            this.invalidateContent();
-            this._pSetSize(value.width, value.height);
-        },
-        enumerable: true,
-        configurable: true
-    });
-    BitmapTexture.prototype.dispose = function () {
-        _super.prototype.dispose.call(this);
-        this._bitmapData.dispose();
-        this._bitmapData = null;
-    };
-    BitmapTexture.prototype._iGetTextureData = function () {
-        return this._bitmapData;
-    };
-    return BitmapTexture;
-})(Texture2DBase);
-module.exports = BitmapTexture;
-
-
-},{"awayjs-core/lib/errors/Error":undefined,"awayjs-core/lib/textures/Texture2DBase":undefined,"awayjs-core/lib/utils/TextureUtils":undefined}],"awayjs-core/lib/textures/CubeTextureBase":[function(require,module,exports){
-var __extends = this.__extends || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    __.prototype = b.prototype;
-    d.prototype = new __();
-};
-var AbstractMethodError = require("awayjs-core/lib/errors/AbstractMethodError");
-var MipmapGenerator = require("awayjs-core/lib/textures/MipmapGenerator");
-var TextureProxyBase = require("awayjs-core/lib/textures/TextureProxyBase");
-var CubeTextureBase = (function (_super) {
-    __extends(CubeTextureBase, _super);
-    function CubeTextureBase(generateMipmaps) {
-        if (generateMipmaps === void 0) { generateMipmaps = false; }
-        _super.call(this, generateMipmaps);
-        this._mipmapDataArray = new Array(6);
-        this._mipmapDataDirtyArray = new Array(6);
-    }
-    /**
-     *
-     * @param width
-     * @param height
-     * @private
-     */
-    CubeTextureBase.prototype._pSetSize = function (size) {
-        if (this._pSize != size)
-            this.invalidateSize();
-        for (var i = 0; i < 6; i++)
-            this._mipmapDataDirtyArray[i] = true;
-        this._pSize = size;
-    };
-    /**
-     * @inheritDoc
-     */
-    CubeTextureBase.prototype.dispose = function () {
-        _super.prototype.dispose.call(this);
-        for (var i = 0; i < 6; i++) {
-            var mipmapData = this._mipmapDataArray[i];
-            var len = mipmapData.length;
-            for (var j = 0; j < len; j++)
-                MipmapGenerator.freeMipMapHolder(mipmapData[j]);
-        }
-    };
-    /**
-     *
-     */
-    CubeTextureBase.prototype.invalidateContent = function () {
-        _super.prototype.invalidateContent.call(this);
-        for (var i = 0; i < 6; i++)
-            this._mipmapDataDirtyArray[i] = true;
-    };
-    CubeTextureBase.prototype._iGetMipmapData = function (side) {
-        if (this._mipmapDataDirtyArray[side]) {
-            this._mipmapDataDirtyArray[side] = false;
-            var mipmapData = this._mipmapDataArray[side] || (this._mipmapDataArray[side] = new Array());
-            MipmapGenerator.generateMipMaps(this._iGetTextureData(side), mipmapData, true);
-        }
-        return this._mipmapDataArray[side];
-    };
-    CubeTextureBase.prototype._iGetTextureData = function (side) {
-        throw new AbstractMethodError();
-    };
-    return CubeTextureBase;
-})(TextureProxyBase);
-module.exports = CubeTextureBase;
-
-
-},{"awayjs-core/lib/errors/AbstractMethodError":undefined,"awayjs-core/lib/textures/MipmapGenerator":undefined,"awayjs-core/lib/textures/TextureProxyBase":undefined}],"awayjs-core/lib/textures/ImageCubeTexture":[function(require,module,exports){
-var __extends = this.__extends || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    __.prototype = b.prototype;
-    d.prototype = new __();
-};
-var Error = require("awayjs-core/lib/errors/Error");
-var CubeTextureBase = require("awayjs-core/lib/textures/CubeTextureBase");
-var TextureUtils = require("awayjs-core/lib/utils/TextureUtils");
-var ImageCubeTexture = (function (_super) {
-    __extends(ImageCubeTexture, _super);
-    function ImageCubeTexture(posX, negX, posY, negY, posZ, negZ, generateMipmaps) {
-        if (generateMipmaps === void 0) { generateMipmaps = false; }
-        _super.call(this, generateMipmaps);
-        this._htmlImageElements = new Array(6);
-        this._testSize(this._htmlImageElements[0] = posX);
-        this._testSize(this._htmlImageElements[1] = negX);
-        this._testSize(this._htmlImageElements[2] = posY);
-        this._testSize(this._htmlImageElements[3] = negY);
-        this._testSize(this._htmlImageElements[4] = posZ);
-        this._testSize(this._htmlImageElements[5] = negZ);
-        this.invalidateContent();
-        this._pSetSize(posX.width);
-    }
-    Object.defineProperty(ImageCubeTexture.prototype, "positiveX", {
-        /**
-         * The texture on the cube's right face.
-         */
-        get: function () {
-            return this._htmlImageElements[0];
-        },
-        set: function (value) {
-            this._testSize(value);
-            this.invalidateContent();
-            this._pSetSize(value.width);
-            this._htmlImageElements[0] = value;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(ImageCubeTexture.prototype, "negativeX", {
-        /**
-         * The texture on the cube's left face.
-         */
-        get: function () {
-            return this._htmlImageElements[1];
-        },
-        set: function (value) {
-            this._testSize(value);
-            this.invalidateContent();
-            this._pSetSize(value.width);
-            this._htmlImageElements[1] = value;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(ImageCubeTexture.prototype, "positiveY", {
-        /**
-         * The texture on the cube's top face.
-         */
-        get: function () {
-            return this._htmlImageElements[2];
-        },
-        set: function (value) {
-            this._testSize(value);
-            this.invalidateContent();
-            this._pSetSize(value.width);
-            this._htmlImageElements[2] = value;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(ImageCubeTexture.prototype, "negativeY", {
-        /**
-         * The texture on the cube's bottom face.
-         */
-        get: function () {
-            return this._htmlImageElements[3];
-        },
-        set: function (value) {
-            this._testSize(value);
-            this.invalidateContent();
-            this._pSetSize(value.width);
-            this._htmlImageElements[3] = value;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(ImageCubeTexture.prototype, "positiveZ", {
-        /**
-         * The texture on the cube's far face.
-         */
-        get: function () {
-            return this._htmlImageElements[4];
-        },
-        set: function (value) {
-            this._testSize(value);
-            this.invalidateContent();
-            this._pSetSize(value.width);
-            this._htmlImageElements[4] = value;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(ImageCubeTexture.prototype, "negativeZ", {
-        /**
-         * The texture on the cube's near face.
-         */
-        get: function () {
-            return this._htmlImageElements[5];
-        },
-        set: function (value) {
-            this._testSize(value);
-            this.invalidateContent();
-            this._pSetSize(value.width);
-            this._htmlImageElements[5] = value;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    ImageCubeTexture.prototype._testSize = function (value) {
-        if (value.width != value.height)
-            throw new Error("BitmapData should have equal width and height!");
-        if (!TextureUtils.isHTMLImageElementValid(value))
-            throw new Error("Invalid bitmapData: Width and height must be power of 2 and cannot exceed 2048");
-    };
-    ImageCubeTexture.prototype._iGetTextureData = function (side) {
-        return this._htmlImageElements[side];
-    };
-    return ImageCubeTexture;
-})(CubeTextureBase);
-module.exports = ImageCubeTexture;
-
-
-},{"awayjs-core/lib/errors/Error":undefined,"awayjs-core/lib/textures/CubeTextureBase":undefined,"awayjs-core/lib/utils/TextureUtils":undefined}],"awayjs-core/lib/textures/ImageTexture":[function(require,module,exports){
-var __extends = this.__extends || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    __.prototype = b.prototype;
-    d.prototype = new __();
-};
-var Error = require("awayjs-core/lib/errors/Error");
-var Texture2DBase = require("awayjs-core/lib/textures/Texture2DBase");
-var TextureUtils = require("awayjs-core/lib/utils/TextureUtils");
-var ImageTexture = (function (_super) {
-    __extends(ImageTexture, _super);
-    /**
-     *
-     * @param htmlImageElement
-     * @param generateMipmaps
-     */
-    function ImageTexture(htmlImageElement, generateMipmaps) {
-        if (generateMipmaps === void 0) { generateMipmaps = false; }
-        _super.call(this, generateMipmaps);
-        this.htmlImageElement = htmlImageElement;
-    }
-    Object.defineProperty(ImageTexture.prototype, "htmlImageElement", {
-        /**
-         *
-         */
-        get: function () {
-            return this._htmlImageElement;
-        },
-        set: function (value) {
-            if (this._htmlImageElement == value)
-                return;
-            if (!TextureUtils.isHTMLImageElementValid(value))
-                throw new Error("Invalid bitmapData: Width and height must be power of 2 and cannot exceed 2048");
-            this._htmlImageElement = value;
-            this.invalidateContent();
-            this._pSetSize(value.width, value.height);
-        },
-        enumerable: true,
-        configurable: true
-    });
-    ImageTexture.prototype._iGetTextureData = function () {
-        return this._htmlImageElement;
-    };
-    return ImageTexture;
-})(Texture2DBase);
-module.exports = ImageTexture;
-
-
-},{"awayjs-core/lib/errors/Error":undefined,"awayjs-core/lib/textures/Texture2DBase":undefined,"awayjs-core/lib/utils/TextureUtils":undefined}],"awayjs-core/lib/textures/MipmapGenerator":[function(require,module,exports){
-var BitmapData = require("awayjs-core/lib/base/BitmapData");
-var Matrix = require("awayjs-core/lib/geom/Matrix");
-var Rectangle = require("awayjs-core/lib/geom/Rectangle");
-/**
- * MipmapGenerator is a helper class that uploads BitmapData to a Texture including mipmap levels.
- */
-var MipmapGenerator = (function () {
-    function MipmapGenerator() {
-    }
-    MipmapGenerator.generateMipMaps = function (source, output, alpha) {
-        if (alpha === void 0) { alpha = false; }
-        var w = source.width;
-        var h = source.height;
-        var i = 0;
-        var mipmap;
-        MipmapGenerator._rect.width = w;
-        MipmapGenerator._rect.height = h;
-        while (w >= 1 && h >= 1) {
-            mipmap = output[i] = MipmapGenerator._getMipmapHolder(output[i], w, h);
-            if (alpha)
-                mipmap.fillRect(MipmapGenerator._rect, 0);
-            MipmapGenerator._matrix.a = MipmapGenerator._rect.width / source.width;
-            MipmapGenerator._matrix.d = MipmapGenerator._rect.height / source.height;
-            mipmap.draw(source, MipmapGenerator._matrix); //TODO: smoothing?
-            w >>= 1;
-            h >>= 1;
-            MipmapGenerator._rect.width = w > 1 ? w : 1;
-            MipmapGenerator._rect.height = h > 1 ? h : 1;
-            i++;
-        }
-    };
-    MipmapGenerator._getMipmapHolder = function (mipMapHolder, newW, newH) {
-        if (mipMapHolder) {
-            if (mipMapHolder.width == newW && mipMapHolder.height == newH)
-                return mipMapHolder;
-            MipmapGenerator.freeMipMapHolder(mipMapHolder);
-        }
-        if (!MipmapGenerator._mipMaps[newW]) {
-            MipmapGenerator._mipMaps[newW] = [];
-            MipmapGenerator._mipMapUses[newW] = [];
-        }
-        if (!MipmapGenerator._mipMaps[newW][newH]) {
-            mipMapHolder = MipmapGenerator._mipMaps[newW][newH] = new BitmapData(newW, newH, true);
-            MipmapGenerator._mipMapUses[newW][newH] = 1;
-        }
-        else {
-            MipmapGenerator._mipMapUses[newW][newH] = MipmapGenerator._mipMapUses[newW][newH] + 1;
-            mipMapHolder = MipmapGenerator._mipMaps[newW][newH];
-        }
-        return mipMapHolder;
-    };
-    MipmapGenerator.freeMipMapHolder = function (mipMapHolder) {
-        var holderWidth = mipMapHolder.width;
-        var holderHeight = mipMapHolder.height;
-        if (--MipmapGenerator._mipMapUses[holderWidth][holderHeight] == 0) {
-            MipmapGenerator._mipMaps[holderWidth][holderHeight].dispose();
-            MipmapGenerator._mipMaps[holderWidth][holderHeight] = null;
-        }
-    };
-    MipmapGenerator._mipMaps = [];
-    MipmapGenerator._mipMapUses = [];
-    MipmapGenerator._matrix = new Matrix();
-    MipmapGenerator._rect = new Rectangle();
-    return MipmapGenerator;
-})();
-module.exports = MipmapGenerator;
-
-
-},{"awayjs-core/lib/base/BitmapData":undefined,"awayjs-core/lib/geom/Matrix":undefined,"awayjs-core/lib/geom/Rectangle":undefined}],"awayjs-core/lib/textures/RenderTexture":[function(require,module,exports){
+},{"awayjs-core/lib/errors/Error":6,"awayjs-core/lib/textures/CubeTextureBase":53,"awayjs-core/lib/utils/TextureUtils":62}],"awayjs-core\\lib\\textures\\BitmapTexture":[function(require,module,exports){
+module.exports=require(52)
+},{"..\\awayjs-core\\lib\\textures\\BitmapTexture.js":52,"awayjs-core/lib/errors/Error":6,"awayjs-core/lib/textures/Texture2DBase":57,"awayjs-core/lib/utils/TextureUtils":62}],"awayjs-core\\lib\\textures\\CubeTextureBase":[function(require,module,exports){
+module.exports=require(53)
+},{"..\\awayjs-core\\lib\\textures\\CubeTextureBase.js":53,"awayjs-core/lib/errors/AbstractMethodError":4,"awayjs-core/lib/textures/MipmapGenerator":56,"awayjs-core/lib/textures/TextureProxyBase":58}],"awayjs-core\\lib\\textures\\ImageCubeTexture":[function(require,module,exports){
+module.exports=require(54)
+},{"..\\awayjs-core\\lib\\textures\\ImageCubeTexture.js":54,"awayjs-core/lib/errors/Error":6,"awayjs-core/lib/textures/CubeTextureBase":53,"awayjs-core/lib/utils/TextureUtils":62}],"awayjs-core\\lib\\textures\\ImageTexture":[function(require,module,exports){
+module.exports=require(55)
+},{"..\\awayjs-core\\lib\\textures\\ImageTexture.js":55,"awayjs-core/lib/errors/Error":6,"awayjs-core/lib/textures/Texture2DBase":57,"awayjs-core/lib/utils/TextureUtils":62}],"awayjs-core\\lib\\textures\\MipmapGenerator":[function(require,module,exports){
+module.exports=require(56)
+},{"..\\awayjs-core\\lib\\textures\\MipmapGenerator.js":56,"awayjs-core/lib/base/BitmapData":1,"awayjs-core/lib/geom/Matrix":19,"awayjs-core/lib/geom/Rectangle":25}],"awayjs-core\\lib\\textures\\RenderTexture":[function(require,module,exports){
 var __extends = this.__extends || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
@@ -10493,7 +11376,7 @@ var RenderTexture = (function (_super) {
 module.exports = RenderTexture;
 
 
-},{"awayjs-core/lib/errors/Error":undefined,"awayjs-core/lib/textures/Texture2DBase":undefined,"awayjs-core/lib/utils/TextureUtils":undefined}],"awayjs-core/lib/textures/SpecularBitmapTexture":[function(require,module,exports){
+},{"awayjs-core/lib/errors/Error":6,"awayjs-core/lib/textures/Texture2DBase":57,"awayjs-core/lib/utils/TextureUtils":62}],"awayjs-core\\lib\\textures\\SpecularBitmapTexture":[function(require,module,exports){
 var __extends = this.__extends || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
@@ -10578,213 +11461,11 @@ var SpecularBitmapTexture = (function (_super) {
 module.exports = SpecularBitmapTexture;
 
 
-},{"awayjs-core/lib/base/BitmapData":undefined,"awayjs-core/lib/base/BitmapDataChannel":undefined,"awayjs-core/lib/geom/Point":undefined,"awayjs-core/lib/textures/BitmapTexture":undefined}],"awayjs-core/lib/textures/Texture2DBase":[function(require,module,exports){
-var __extends = this.__extends || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    __.prototype = b.prototype;
-    d.prototype = new __();
-};
-var AbstractMethodError = require("awayjs-core/lib/errors/AbstractMethodError");
-var MipmapGenerator = require("awayjs-core/lib/textures/MipmapGenerator");
-var TextureProxyBase = require("awayjs-core/lib/textures/TextureProxyBase");
-var Texture2DBase = (function (_super) {
-    __extends(Texture2DBase, _super);
-    function Texture2DBase(generateMipmaps) {
-        if (generateMipmaps === void 0) { generateMipmaps = false; }
-        _super.call(this, generateMipmaps);
-    }
-    Object.defineProperty(Texture2DBase.prototype, "width", {
-        /**
-         *
-         * @returns {number}
-         */
-        get: function () {
-            return this._pWidth;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Texture2DBase.prototype, "height", {
-        /**
-         *
-         * @returns {number}
-         */
-        get: function () {
-            return this._pHeight;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Texture2DBase.prototype, "size", {
-        get: function () {
-            return this._pWidth;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    /**
-     * @inheritDoc
-     */
-    Texture2DBase.prototype.dispose = function () {
-        _super.prototype.dispose.call(this);
-        if (this._mipmapData) {
-            var len = this._mipmapData.length;
-            for (var i = 0; i < len; i++)
-                MipmapGenerator.freeMipMapHolder(this._mipmapData[i]);
-        }
-    };
-    /**
-     *
-     */
-    Texture2DBase.prototype.invalidateContent = function () {
-        _super.prototype.invalidateContent.call(this);
-        this._mipmapDataDirty = true;
-    };
-    /**
-     *
-     * @param width
-     * @param height
-     * @private
-     */
-    Texture2DBase.prototype._pSetSize = function (width, height) {
-        if (this._pWidth != width || this._pHeight != height)
-            this.invalidateSize();
-        this._mipmapDataDirty = true;
-        this._pWidth = width;
-        this._pHeight = height;
-    };
-    Texture2DBase.prototype._iGetMipmapData = function () {
-        if (this._mipmapDataDirty) {
-            this._mipmapDataDirty = false;
-            if (!this._mipmapData)
-                this._mipmapData = new Array();
-            MipmapGenerator.generateMipMaps(this._iGetTextureData(), this._mipmapData, true);
-        }
-        return this._mipmapData;
-    };
-    Texture2DBase.prototype._iGetTextureData = function () {
-        throw new AbstractMethodError();
-    };
-    return Texture2DBase;
-})(TextureProxyBase);
-module.exports = Texture2DBase;
-
-
-},{"awayjs-core/lib/errors/AbstractMethodError":undefined,"awayjs-core/lib/textures/MipmapGenerator":undefined,"awayjs-core/lib/textures/TextureProxyBase":undefined}],"awayjs-core/lib/textures/TextureProxyBase":[function(require,module,exports){
-var __extends = this.__extends || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    __.prototype = b.prototype;
-    d.prototype = new __();
-};
-var AssetType = require("awayjs-core/lib/library/AssetType");
-var NamedAssetBase = require("awayjs-core/lib/library/NamedAssetBase");
-/**
- *
- */
-var TextureProxyBase = (function (_super) {
-    __extends(TextureProxyBase, _super);
-    /**
-     *
-     */
-    function TextureProxyBase(generateMipmaps) {
-        if (generateMipmaps === void 0) { generateMipmaps = false; }
-        _super.call(this);
-        this._pFormat = "bgra";
-        this._textureData = new Array();
-        this._generateMipmaps = this._hasMipmaps = generateMipmaps;
-    }
-    Object.defineProperty(TextureProxyBase.prototype, "size", {
-        get: function () {
-            return this._pSize;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(TextureProxyBase.prototype, "hasMipmaps", {
-        get: function () {
-            return this._hasMipmaps;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(TextureProxyBase.prototype, "format", {
-        /**
-         *
-         * @returns {string}
-         */
-        get: function () {
-            return this._pFormat;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(TextureProxyBase.prototype, "generateMipmaps", {
-        /**
-         *
-         * @returns {boolean}
-         */
-        get: function () {
-            return this._generateMipmaps;
-        },
-        set: function (value) {
-            if (this._generateMipmaps == value)
-                return;
-            this._generateMipmaps = this._hasMipmaps = value;
-            this.invalidateContent();
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(TextureProxyBase.prototype, "assetType", {
-        /**
-         *
-         * @returns {string}
-         */
-        get: function () {
-            return AssetType.TEXTURE;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    /**
-     *
-     */
-    TextureProxyBase.prototype.invalidateContent = function () {
-        var len = this._textureData.length;
-        for (var i = 0; i < len; i++)
-            this._textureData[i].invalidate();
-    };
-    /**
-     *
-     * @private
-     */
-    TextureProxyBase.prototype.invalidateSize = function () {
-        while (this._textureData.length)
-            this._textureData[0].dispose();
-    };
-    /**
-     * @inheritDoc
-     */
-    TextureProxyBase.prototype.dispose = function () {
-        while (this._textureData.length)
-            this._textureData[0].dispose();
-    };
-    TextureProxyBase.prototype._iAddTextureData = function (textureData) {
-        this._textureData.push(textureData);
-        return textureData;
-    };
-    TextureProxyBase.prototype._iRemoveTextureData = function (textureData) {
-        this._textureData.splice(this._textureData.indexOf(textureData), 1);
-        return textureData;
-    };
-    return TextureProxyBase;
-})(NamedAssetBase);
-module.exports = TextureProxyBase;
-
-
-},{"awayjs-core/lib/library/AssetType":undefined,"awayjs-core/lib/library/NamedAssetBase":undefined}],"awayjs-core/lib/ui/Keyboard":[function(require,module,exports){
+},{"awayjs-core/lib/base/BitmapData":1,"awayjs-core/lib/base/BitmapDataChannel":2,"awayjs-core/lib/geom/Point":24,"awayjs-core/lib/textures/BitmapTexture":52}],"awayjs-core\\lib\\textures\\Texture2DBase":[function(require,module,exports){
+module.exports=require(57)
+},{"..\\awayjs-core\\lib\\textures\\Texture2DBase.js":57,"awayjs-core/lib/errors/AbstractMethodError":4,"awayjs-core/lib/textures/MipmapGenerator":56,"awayjs-core/lib/textures/TextureProxyBase":58}],"awayjs-core\\lib\\textures\\TextureProxyBase":[function(require,module,exports){
+module.exports=require(58)
+},{"..\\awayjs-core\\lib\\textures\\TextureProxyBase.js":58,"awayjs-core/lib/library/AssetType":31,"awayjs-core/lib/library/NamedAssetBase":37}],"awayjs-core\\lib\\ui\\Keyboard":[function(require,module,exports){
 var Keyboard = (function () {
     function Keyboard() {
     }
@@ -11606,150 +12287,9 @@ var Keyboard = (function () {
 module.exports = Keyboard;
 
 
-},{}],"awayjs-core/lib/utils/ByteArrayBase":[function(require,module,exports){
-var AbstractMethodError = require("awayjs-core/lib/errors/AbstractMethodError");
-var ByteArrayBase = (function () {
-    function ByteArrayBase() {
-        this.position = 0;
-        this.length = 0;
-        this._mode = "";
-    }
-    ByteArrayBase.prototype.writeByte = function (b) {
-        throw "Virtual method";
-    };
-    ByteArrayBase.prototype.readByte = function () {
-        throw "Virtual method";
-    };
-    ByteArrayBase.prototype.writeUnsignedByte = function (b) {
-        throw "Virtual method";
-    };
-    ByteArrayBase.prototype.readUnsignedByte = function () {
-        throw "Virtual method";
-    };
-    ByteArrayBase.prototype.writeUnsignedShort = function (b) {
-        throw "Virtual method";
-    };
-    ByteArrayBase.prototype.readUnsignedShort = function () {
-        throw "Virtual method";
-    };
-    ByteArrayBase.prototype.writeUnsignedInt = function (b) {
-        throw "Virtual method";
-    };
-    ByteArrayBase.prototype.readUnsignedInt = function () {
-        throw "Virtual method";
-    };
-    ByteArrayBase.prototype.writeFloat = function (b) {
-        throw "Virtual method";
-    };
-    ByteArrayBase.prototype.toFloatBits = function (x) {
-        throw "Virtual method";
-    };
-    ByteArrayBase.prototype.readFloat = function (b) {
-        throw "Virtual method";
-    };
-    ByteArrayBase.prototype.fromFloatBits = function (x) {
-        throw "Virtual method";
-    };
-    ByteArrayBase.prototype.getBytesAvailable = function () {
-        throw new AbstractMethodError('ByteArrayBase, getBytesAvailable() not implemented ');
-    };
-    ByteArrayBase.prototype.toString = function () {
-        return "[ByteArray] ( " + this._mode + " ) position=" + this.position + " length=" + this.length;
-    };
-    ByteArrayBase.prototype.compareEqual = function (other, count) {
-        if (count == undefined || count > this.length - this.position)
-            count = this.length - this.position;
-        if (count > other.length - other.position)
-            count = other.length - other.position;
-        var co0 = count;
-        var r = true;
-        while (r && count >= 4) {
-            count -= 4;
-            if (this.readUnsignedInt() != other.readUnsignedInt())
-                r = false;
-        }
-        while (r && count >= 1) {
-            count--;
-            if (this.readUnsignedByte() != other.readUnsignedByte())
-                r = false;
-        }
-        var c0;
-        this.position -= (c0 - count);
-        other.position -= (c0 - count);
-        return r;
-    };
-    ByteArrayBase.prototype.writeBase64String = function (s) {
-        for (var i = 0; i < s.length; i++) {
-            var v = s.charAt(i);
-        }
-    };
-    ByteArrayBase.prototype.dumpToConsole = function () {
-        var oldpos = this.position;
-        this.position = 0;
-        var nstep = 8;
-        function asHexString(x, digits) {
-            var lut = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "a", "b", "c", "d", "e", "f"];
-            var sh = "";
-            for (var d = 0; d < digits; d++) {
-                sh = lut[(x >> (d << 2)) & 0xf] + sh;
-            }
-            return sh;
-        }
-        for (var i = 0; i < this.length; i += nstep) {
-            var s = asHexString(i, 4) + ":";
-            for (var j = 0; j < nstep && i + j < this.length; j++) {
-                s += " " + asHexString(this.readUnsignedByte(), 2);
-            }
-            console.log(s);
-        }
-        this.position = oldpos;
-    };
-    ByteArrayBase.prototype.readBase64String = function (count) {
-        if (count == undefined || count > this.length - this.position)
-            count = this.length - this.position;
-        if (!(count > 0))
-            return "";
-        return ByteArrayBase.internalGetBase64String(count, this.readUnsignedByte, this);
-    };
-    ByteArrayBase.internalGetBase64String = function (count, getUnsignedByteFunc, self) {
-        var r = "";
-        var b0, b1, b2, enc1, enc2, enc3, enc4;
-        var base64Key = ByteArrayBase.Base64Key;
-        while (count >= 3) {
-            b0 = getUnsignedByteFunc.apply(self);
-            b1 = getUnsignedByteFunc.apply(self);
-            b2 = getUnsignedByteFunc.apply(self);
-            enc1 = b0 >> 2;
-            enc2 = ((b0 & 3) << 4) | (b1 >> 4);
-            enc3 = ((b1 & 15) << 2) | (b2 >> 6);
-            enc4 = b2 & 63;
-            r += base64Key.charAt(enc1) + base64Key.charAt(enc2) + base64Key.charAt(enc3) + base64Key.charAt(enc4);
-            count -= 3;
-        }
-        // pad
-        if (count == 2) {
-            b0 = getUnsignedByteFunc.apply(self);
-            b1 = getUnsignedByteFunc.apply(self);
-            enc1 = b0 >> 2;
-            enc2 = ((b0 & 3) << 4) | (b1 >> 4);
-            enc3 = ((b1 & 15) << 2);
-            r += base64Key.charAt(enc1) + base64Key.charAt(enc2) + base64Key.charAt(enc3) + "=";
-        }
-        else if (count == 1) {
-            b0 = getUnsignedByteFunc.apply(self);
-            enc1 = b0 >> 2;
-            enc2 = ((b0 & 3) << 4);
-            r += base64Key.charAt(enc1) + base64Key.charAt(enc2) + "==";
-        }
-        return r;
-    };
-    ByteArrayBase.Base64Key = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
-    return ByteArrayBase;
-})();
-module.exports = ByteArrayBase;
-
-
-},{"awayjs-core/lib/errors/AbstractMethodError":undefined}],"awayjs-core/lib/utils/ByteArrayBuffer":[function(require,module,exports){
+},{}],"awayjs-core\\lib\\utils\\ByteArrayBase":[function(require,module,exports){
+module.exports=require(60)
+},{"..\\awayjs-core\\lib\\utils\\ByteArrayBase.js":60,"awayjs-core/lib/errors/AbstractMethodError":4}],"awayjs-core\\lib\\utils\\ByteArrayBuffer":[function(require,module,exports){
 var __extends = this.__extends || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
@@ -11871,255 +12411,9 @@ var ByteArrayBuffer = (function (_super) {
 module.exports = ByteArrayBuffer;
 
 
-},{"awayjs-core/lib/utils/ByteArrayBase":undefined}],"awayjs-core/lib/utils/ByteArray":[function(require,module,exports){
-var __extends = this.__extends || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    __.prototype = b.prototype;
-    d.prototype = new __();
-};
-var ByteArrayBase = require("awayjs-core/lib/utils/ByteArrayBase");
-var ByteArray = (function (_super) {
-    __extends(ByteArray, _super);
-    function ByteArray() {
-        _super.call(this);
-        this.maxlength = 0;
-        this._mode = "Typed array";
-        this.maxlength = 4;
-        this.arraybytes = new ArrayBuffer(this.maxlength);
-        this.unalignedarraybytestemp = new ArrayBuffer(16);
-    }
-    ByteArray.prototype.ensureWriteableSpace = function (n) {
-        this.ensureSpace(n + this.position);
-    };
-    ByteArray.prototype.setArrayBuffer = function (aBuffer) {
-        this.ensureSpace(aBuffer.byteLength);
-        this.length = aBuffer.byteLength;
-        var inInt8AView = new Int8Array(aBuffer);
-        var localInt8View = new Int8Array(this.arraybytes, 0, this.length);
-        localInt8View.set(inInt8AView);
-        this.position = 0;
-    };
-    ByteArray.prototype.getBytesAvailable = function () {
-        return (this.length) - (this.position);
-    };
-    ByteArray.prototype.ensureSpace = function (n) {
-        if (n > this.maxlength) {
-            var newmaxlength = (n + 255) & (~255);
-            var newarraybuffer = new ArrayBuffer(newmaxlength);
-            var view = new Uint8Array(this.arraybytes, 0, this.length);
-            var newview = new Uint8Array(newarraybuffer, 0, this.length);
-            newview.set(view); // memcpy
-            this.arraybytes = newarraybuffer;
-            this.maxlength = newmaxlength;
-        }
-    };
-    ByteArray.prototype.writeByte = function (b) {
-        this.ensureWriteableSpace(1);
-        var view = new Int8Array(this.arraybytes);
-        view[this.position++] = (~~b); // ~~ is cast to int in js...
-        if (this.position > this.length) {
-            this.length = this.position;
-        }
-    };
-    ByteArray.prototype.readByte = function () {
-        if (this.position >= this.length) {
-            throw "ByteArray out of bounds read. Positon=" + this.position + ", Length=" + this.length;
-        }
-        var view = new Int8Array(this.arraybytes);
-        return view[this.position++];
-    };
-    ByteArray.prototype.readBytes = function (bytes, offset, length) {
-        if (offset === void 0) { offset = 0; }
-        if (length === void 0) { length = 0; }
-        if (length == null) {
-            length = bytes.length;
-        }
-        bytes.ensureWriteableSpace(offset + length);
-        var byteView = new Int8Array(bytes.arraybytes);
-        var localByteView = new Int8Array(this.arraybytes);
-        byteView.set(localByteView.subarray(this.position, this.position + length), offset);
-        this.position += length;
-        if (length + offset > bytes.length) {
-            bytes.length += (length + offset) - bytes.length;
-        }
-    };
-    ByteArray.prototype.writeUnsignedByte = function (b) {
-        this.ensureWriteableSpace(1);
-        var view = new Uint8Array(this.arraybytes);
-        view[this.position++] = (~~b) & 0xff; // ~~ is cast to int in js...
-        if (this.position > this.length) {
-            this.length = this.position;
-        }
-    };
-    ByteArray.prototype.readUnsignedByte = function () {
-        if (this.position >= this.length) {
-            throw "ByteArray out of bounds read. Positon=" + this.position + ", Length=" + this.length;
-        }
-        var view = new Uint8Array(this.arraybytes);
-        return view[this.position++];
-    };
-    ByteArray.prototype.writeUnsignedShort = function (b) {
-        this.ensureWriteableSpace(2);
-        if ((this.position & 1) == 0) {
-            var view = new Uint16Array(this.arraybytes);
-            view[this.position >> 1] = (~~b) & 0xffff; // ~~ is cast to int in js...
-        }
-        else {
-            var view = new Uint16Array(this.unalignedarraybytestemp, 0, 1);
-            view[0] = (~~b) & 0xffff;
-            var view2 = new Uint8Array(this.arraybytes, this.position, 2);
-            var view3 = new Uint8Array(this.unalignedarraybytestemp, 0, 2);
-            view2.set(view3);
-        }
-        this.position += 2;
-        if (this.position > this.length) {
-            this.length = this.position;
-        }
-    };
-    ByteArray.prototype.readUTFBytes = function (len) {
-        var value = "";
-        var max = this.position + len;
-        var data = new DataView(this.arraybytes);
-        while (this.position < max) {
-            var c = data.getUint8(this.position++);
-            if (c < 0x80) {
-                if (c == 0)
-                    break;
-                value += String.fromCharCode(c);
-            }
-            else if (c < 0xE0) {
-                value += String.fromCharCode(((c & 0x3F) << 6) | (data.getUint8(this.position++) & 0x7F));
-            }
-            else if (c < 0xF0) {
-                var c2 = data.getUint8(this.position++);
-                value += String.fromCharCode(((c & 0x1F) << 12) | ((c2 & 0x7F) << 6) | (data.getUint8(this.position++) & 0x7F));
-            }
-            else {
-                var c2 = data.getUint8(this.position++);
-                var c3 = data.getUint8(this.position++);
-                value += String.fromCharCode(((c & 0x0F) << 18) | ((c2 & 0x7F) << 12) | ((c3 << 6) & 0x7F) | (data.getUint8(this.position++) & 0x7F));
-            }
-        }
-        return value;
-    };
-    ByteArray.prototype.readInt = function () {
-        var data = new DataView(this.arraybytes);
-        var int = data.getInt32(this.position, true);
-        this.position += 4;
-        return int;
-    };
-    ByteArray.prototype.readShort = function () {
-        var data = new DataView(this.arraybytes);
-        var short = data.getInt16(this.position, true);
-        this.position += 2;
-        return short;
-    };
-    ByteArray.prototype.readDouble = function () {
-        var data = new DataView(this.arraybytes);
-        var double = data.getFloat64(this.position, true);
-        this.position += 8;
-        return double;
-    };
-    ByteArray.prototype.readUnsignedShort = function () {
-        if (this.position > this.length + 2) {
-            throw "ByteArray out of bounds read. Position=" + this.position + ", Length=" + this.length;
-        }
-        if ((this.position & 1) == 0) {
-            var view = new Uint16Array(this.arraybytes);
-            var pa = this.position >> 1;
-            this.position += 2;
-            return view[pa];
-        }
-        else {
-            var view = new Uint16Array(this.unalignedarraybytestemp, 0, 1);
-            var view2 = new Uint8Array(this.arraybytes, this.position, 2);
-            var view3 = new Uint8Array(this.unalignedarraybytestemp, 0, 2);
-            view3.set(view2);
-            this.position += 2;
-            return view[0];
-        }
-    };
-    ByteArray.prototype.writeUnsignedInt = function (b) {
-        this.ensureWriteableSpace(4);
-        if ((this.position & 3) == 0) {
-            var view = new Uint32Array(this.arraybytes);
-            view[this.position >> 2] = (~~b) & 0xffffffff; // ~~ is cast to int in js...
-        }
-        else {
-            var view = new Uint32Array(this.unalignedarraybytestemp, 0, 1);
-            view[0] = (~~b) & 0xffffffff;
-            var view2 = new Uint8Array(this.arraybytes, this.position, 4);
-            var view3 = new Uint8Array(this.unalignedarraybytestemp, 0, 4);
-            view2.set(view3);
-        }
-        this.position += 4;
-        if (this.position > this.length) {
-            this.length = this.position;
-        }
-    };
-    ByteArray.prototype.readUnsignedInt = function () {
-        if (this.position > this.length + 4) {
-            throw "ByteArray out of bounds read. Position=" + this.position + ", Length=" + this.length;
-        }
-        if ((this.position & 3) == 0) {
-            var view = new Uint32Array(this.arraybytes);
-            var pa = this.position >> 2;
-            this.position += 4;
-            return view[pa];
-        }
-        else {
-            var view = new Uint32Array(this.unalignedarraybytestemp, 0, 1);
-            var view2 = new Uint8Array(this.arraybytes, this.position, 4);
-            var view3 = new Uint8Array(this.unalignedarraybytestemp, 0, 4);
-            view3.set(view2);
-            this.position += 4;
-            return view[0];
-        }
-    };
-    ByteArray.prototype.writeFloat = function (b) {
-        this.ensureWriteableSpace(4);
-        if ((this.position & 3) == 0) {
-            var view = new Float32Array(this.arraybytes);
-            view[this.position >> 2] = b;
-        }
-        else {
-            var view = new Float32Array(this.unalignedarraybytestemp, 0, 1);
-            view[0] = b;
-            var view2 = new Uint8Array(this.arraybytes, this.position, 4);
-            var view3 = new Uint8Array(this.unalignedarraybytestemp, 0, 4);
-            view2.set(view3);
-        }
-        this.position += 4;
-        if (this.position > this.length) {
-            this.length = this.position;
-        }
-    };
-    ByteArray.prototype.readFloat = function () {
-        if (this.position > this.length + 4) {
-            throw "ByteArray out of bounds read. Positon=" + this.position + ", Length=" + this.length;
-        }
-        if ((this.position & 3) == 0) {
-            var view = new Float32Array(this.arraybytes);
-            var pa = this.position >> 2;
-            this.position += 4;
-            return view[pa];
-        }
-        else {
-            var view = new Float32Array(this.unalignedarraybytestemp, 0, 1);
-            var view2 = new Uint8Array(this.arraybytes, this.position, 4);
-            var view3 = new Uint8Array(this.unalignedarraybytestemp, 0, 4);
-            view3.set(view2);
-            this.position += 4;
-            return view[0];
-        }
-    };
-    return ByteArray;
-})(ByteArrayBase);
-module.exports = ByteArray;
-
-
-},{"awayjs-core/lib/utils/ByteArrayBase":undefined}],"awayjs-core/lib/utils/CSS":[function(require,module,exports){
+},{"awayjs-core/lib/utils/ByteArrayBase":60}],"awayjs-core\\lib\\utils\\ByteArray":[function(require,module,exports){
+module.exports=require(59)
+},{"..\\awayjs-core\\lib\\utils\\ByteArray.js":59,"awayjs-core/lib/utils/ByteArrayBase":60}],"awayjs-core\\lib\\utils\\CSS":[function(require,module,exports){
 var CSS = (function () {
     function CSS() {
     }
@@ -12178,37 +12472,9 @@ var CSS = (function () {
 module.exports = CSS;
 
 
-},{}],"awayjs-core/lib/utils/ColorUtils":[function(require,module,exports){
-/**
- *
- */
-var ColorUtils = (function () {
-    function ColorUtils() {
-    }
-    ColorUtils.float32ColorToARGB = function (float32Color) {
-        var a = (float32Color & 0xff000000) >>> 24;
-        var r = (float32Color & 0xff0000) >>> 16;
-        var g = (float32Color & 0xff00) >>> 8;
-        var b = float32Color & 0xff;
-        var result = [a, r, g, b];
-        return result;
-    };
-    ColorUtils.componentToHex = function (c) {
-        var hex = c.toString(16);
-        return hex.length == 1 ? "0" + hex : hex;
-    };
-    ColorUtils.RGBToHexString = function (argb) {
-        return "#" + ColorUtils.componentToHex(argb[1]) + ColorUtils.componentToHex(argb[2]) + ColorUtils.componentToHex(argb[3]);
-    };
-    ColorUtils.ARGBToHexString = function (argb) {
-        return "#" + ColorUtils.componentToHex(argb[0]) + ColorUtils.componentToHex(argb[1]) + ColorUtils.componentToHex(argb[2]) + ColorUtils.componentToHex(argb[3]);
-    };
-    return ColorUtils;
-})();
-module.exports = ColorUtils;
-
-
-},{}],"awayjs-core/lib/utils/Debug":[function(require,module,exports){
+},{}],"awayjs-core\\lib\\utils\\ColorUtils":[function(require,module,exports){
+module.exports=require(61)
+},{"..\\awayjs-core\\lib\\utils\\ColorUtils.js":61}],"awayjs-core\\lib\\utils\\Debug":[function(require,module,exports){
 var PartialImplementationError = require("awayjs-core/lib/errors/PartialImplementationError");
 /**
  *
@@ -12259,7 +12525,7 @@ var Debug = (function () {
 module.exports = Debug;
 
 
-},{"awayjs-core/lib/errors/PartialImplementationError":undefined}],"awayjs-core/lib/utils/RequestAnimationFrame":[function(require,module,exports){
+},{"awayjs-core/lib/errors/PartialImplementationError":7}],"awayjs-core\\lib\\utils\\RequestAnimationFrame":[function(require,module,exports){
 var getTimer = require("awayjs-core/lib/utils/getTimer");
 var RequestAnimationFrame = (function () {
     function RequestAnimationFrame(callback, callbackContext) {
@@ -12338,151 +12604,13 @@ var RequestAnimationFrame = (function () {
 module.exports = RequestAnimationFrame;
 
 
-},{"awayjs-core/lib/utils/getTimer":undefined}],"awayjs-core/lib/utils/TextureUtils":[function(require,module,exports){
-var TextureUtils = (function () {
-    function TextureUtils() {
-    }
-    TextureUtils.isBitmapDataValid = function (bitmapData) {
-        if (bitmapData == null) {
-            return true;
-        }
-        return TextureUtils.isDimensionValid(bitmapData.width) && TextureUtils.isDimensionValid(bitmapData.height);
-    };
-    TextureUtils.isHTMLImageElementValid = function (image) {
-        if (image == null)
-            return true;
-        return TextureUtils.isDimensionValid(image.width) && TextureUtils.isDimensionValid(image.height);
-    };
-    TextureUtils.isDimensionValid = function (d) {
-        return d >= 1 && d <= TextureUtils.MAX_SIZE && TextureUtils.isPowerOfTwo(d);
-    };
-    TextureUtils.isPowerOfTwo = function (value) {
-        return value ? ((value & -value) == value) : false;
-    };
-    TextureUtils.getBestPowerOf2 = function (value) {
-        var p = 1;
-        while (p < value)
-            p <<= 1;
-        if (p > TextureUtils.MAX_SIZE)
-            p = TextureUtils.MAX_SIZE;
-        return p;
-    };
-    TextureUtils.MAX_SIZE = 2048;
-    return TextureUtils;
-})();
-module.exports = TextureUtils;
-
-
-},{}],"awayjs-core/lib/utils/Timer":[function(require,module,exports){
-var __extends = this.__extends || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    __.prototype = b.prototype;
-    d.prototype = new __();
-};
-var Error = require("awayjs-core/lib/errors/Error");
-var EventDispatcher = require("awayjs-core/lib/events/EventDispatcher");
-var TimerEvent = require("awayjs-core/lib/events/TimerEvent");
-var Timer = (function (_super) {
-    __extends(Timer, _super);
-    function Timer(delay, repeatCount) {
-        if (repeatCount === void 0) { repeatCount = 0; }
-        _super.call(this);
-        this._repeatCount = 0;
-        this._currentCount = 0;
-        this._running = false;
-        this._delay = delay;
-        this._repeatCount = repeatCount;
-        if (isNaN(delay) || delay < 0) {
-            throw new Error("Delay is negative or not a number");
-        }
-    }
-    Object.defineProperty(Timer.prototype, "currentCount", {
-        get: function () {
-            return this._currentCount;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Timer.prototype, "delay", {
-        get: function () {
-            return this._delay;
-        },
-        set: function (value) {
-            this._delay = value;
-            if (this._running) {
-                this.stop();
-                this.start();
-            }
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Timer.prototype, "repeatCount", {
-        get: function () {
-            return this._repeatCount;
-        },
-        set: function (value) {
-            this._repeatCount = value;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Timer.prototype.reset = function () {
-        if (this._running) {
-            this.stop();
-        }
-        this._currentCount = 0;
-    };
-    Object.defineProperty(Timer.prototype, "running", {
-        get: function () {
-            return this._running;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Timer.prototype.start = function () {
-        var _this = this;
-        this._running = true;
-        clearInterval(this._iid);
-        this._iid = setInterval(function () { return _this.tick(); }, this._delay);
-    };
-    Timer.prototype.stop = function () {
-        this._running = false;
-        clearInterval(this._iid);
-    };
-    Timer.prototype.tick = function () {
-        this._currentCount++;
-        if ((this._repeatCount > 0) && this._currentCount >= this._repeatCount) {
-            this.stop();
-            this.dispatchEvent(new TimerEvent(TimerEvent.TIMER));
-            this.dispatchEvent(new TimerEvent(TimerEvent.TIMER_COMPLETE));
-        }
-        else {
-            this.dispatchEvent(new TimerEvent(TimerEvent.TIMER));
-        }
-    };
-    return Timer;
-})(EventDispatcher);
-module.exports = Timer;
-
-
-},{"awayjs-core/lib/errors/Error":undefined,"awayjs-core/lib/events/EventDispatcher":undefined,"awayjs-core/lib/events/TimerEvent":undefined}],"awayjs-core/lib/utils/getTimer":[function(require,module,exports){
-/**
- *
- *
- * @returns {number}
- */
-function getTimer() {
-    // number milliseconds of 1970/01/01
-    // this different to AS3 implementation which gets the number of milliseconds
-    // since instance of Flash player was initialised
-    return Date.now();
-}
-module.exports = getTimer;
-
-
-},{}]},{},[])
+},{"awayjs-core/lib/utils/getTimer":64}],"awayjs-core\\lib\\utils\\TextureUtils":[function(require,module,exports){
+module.exports=require(62)
+},{"..\\awayjs-core\\lib\\utils\\TextureUtils.js":62}],"awayjs-core\\lib\\utils\\Timer":[function(require,module,exports){
+module.exports=require(63)
+},{"..\\awayjs-core\\lib\\utils\\Timer.js":63,"awayjs-core/lib/errors/Error":6,"awayjs-core/lib/events/EventDispatcher":10,"awayjs-core/lib/events/TimerEvent":17}],"awayjs-core\\lib\\utils\\getTimer":[function(require,module,exports){
+module.exports=require(64)
+},{"..\\awayjs-core\\lib\\utils\\getTimer.js":64}]},{},[])
 
 
 //# sourceMappingURL=awayjs-core.js.map

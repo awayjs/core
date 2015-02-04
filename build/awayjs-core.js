@@ -838,7 +838,6 @@ var Event = (function () {
     Event.prototype.clone = function () {
         return new Event(this.type);
     };
-<<<<<<< HEAD
     Event.COMPLETE = 'complete';
     Event.OPEN = 'open';
     Event.ENTER_FRAME = 'enterFrame';
@@ -875,51 +874,6 @@ var EventDispatcher = (function () {
             this.listeners[type] = new Array();
         if (this.getEventListenerIndex(type, listener) === -1)
             this.listeners[type].push(listener);
-=======
-    AxisAlignedBoundingBox.prototype.transformFrom = function (bounds, matrix) {
-        var aabb = bounds;
-        var cx = aabb._centerX;
-        var cy = aabb._centerY;
-        var cz = aabb._centerZ;
-        var raw = Matrix3DUtils.RAW_DATA_CONTAINER;
-        matrix.copyRawDataTo(raw);
-        var m11 = raw[0], m12 = raw[4], m13 = raw[8], m14 = raw[12];
-        var m21 = raw[1], m22 = raw[5], m23 = raw[9], m24 = raw[13];
-        var m31 = raw[2], m32 = raw[6], m33 = raw[10], m34 = raw[14];
-        this._centerX = cx * m11 + cy * m12 + cz * m13 + m14;
-        this._centerY = cx * m21 + cy * m22 + cz * m23 + m24;
-        this._centerZ = cx * m31 + cy * m32 + cz * m33 + m34;
-        if (m11 < 0)
-            m11 = -m11;
-        if (m12 < 0)
-            m12 = -m12;
-        if (m13 < 0)
-            m13 = -m13;
-        if (m21 < 0)
-            m21 = -m21;
-        if (m22 < 0)
-            m22 = -m22;
-        if (m23 < 0)
-            m23 = -m23;
-        if (m31 < 0)
-            m31 = -m31;
-        if (m32 < 0)
-            m32 = -m32;
-        if (m33 < 0)
-            m33 = -m33;
-        var hx = aabb._halfExtentsX;
-        var hy = aabb._halfExtentsY;
-        var hz = aabb._halfExtentsZ;
-        this._halfExtentsX = hx * m11 + hy * m12 + hz * m13;
-        this._halfExtentsY = hx * m21 + hy * m22 + hz * m23;
-        this._halfExtentsZ = hx * m31 + hy * m32 + hz * m33;
-        this._aabb.width = this._halfExtentsX * 2;
-        this._aabb.height = this._halfExtentsY * 2;
-        this._aabb.depth = this._halfExtentsZ * 2;
-        this._aabb.x = this._centerX - this._halfExtentsX;
-        this._aabb.y = this._centerY + this._halfExtentsY;
-        this._aabb.z = this._centerZ - this._halfExtentsZ;
->>>>>>> 14b6a08e136bb1c69e7a24c4e450367bc01eba5a
     };
     /**
      * Remove an event listener
@@ -9081,7 +9035,9 @@ var AxisAlignedBoundingBox = (function (_super) {
         this._halfExtentsX = hx * m11 + hy * m12 + hz * m13;
         this._halfExtentsY = hx * m21 + hy * m22 + hz * m23;
         this._halfExtentsZ = hx * m31 + hy * m32 + hz * m33;
-        this._aabb.width = this._aabb.height = this._aabb.depth = this._halfExtentsX * 2;
+        this._aabb.width = this._halfExtentsX * 2;
+        this._aabb.height = this._halfExtentsY * 2;
+        this._aabb.depth = this._halfExtentsZ * 2;
         this._aabb.x = this._centerX - this._halfExtentsX;
         this._aabb.y = this._centerY + this._halfExtentsY;
         this._aabb.z = this._centerZ - this._halfExtentsZ;

@@ -574,6 +574,9 @@ class Matrix3D
 
 	public transformVector(v:Vector3D):Vector3D
 	{
+		if (v == null)
+			return new Vector3D();
+
 		var x:number = v.x;
 		var y:number = v.y;
 		var z:number = v.z;

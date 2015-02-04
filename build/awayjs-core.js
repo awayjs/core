@@ -15,7 +15,6 @@ var BitmapData = (function () {
     function BitmapData(width, height, transparent, fillColor) {
         if (transparent === void 0) { transparent = true; }
         if (fillColor === void 0) { fillColor = null; }
-        this._alpha = 0;
         this._locked = false;
         this._transparent = transparent;
         this._imageCanvas = document.createElement("canvas");
@@ -23,15 +22,8 @@ var BitmapData = (function () {
         this._imageCanvas.height = height;
         this._context = this._imageCanvas.getContext("2d");
         this._rect = new Rectangle(0, 0, width, height);
-        if (fillColor != null) {
-            if (this._transparent) {
-                this._alpha = ColorUtils.float32ColorToARGB(fillColor)[0] / 255;
-            }
-            else {
-                this._alpha = 1;
-            }
+        if (fillColor != null)
             this.fillRect(this._rect, fillColor);
-        }
     }
     Object.defineProperty(BitmapData.prototype, "transparent", {
         get: function () {
@@ -198,13 +190,11 @@ var BitmapData = (function () {
             //      1) copy image data back to canvas
             //      2) draw object
             //      3) read _imageData back out
-            if (this._imageData) {
+            if (this._imageData)
                 this._context.putImageData(this._imageData, 0, 0); // at coords 0,0
-            }
             this._drawImage(img, sourceRect, destRect);
-            if (this._imageData) {
+            if (this._imageData)
                 this._imageData = this._context.getImageData(0, 0, this._rect.width, this._rect.height);
-            }
         }
         else {
             this._drawImage(img, sourceRect, destRect);
@@ -223,13 +213,11 @@ var BitmapData = (function () {
             //      1) copy image data back to canvas
             //      2) draw object
             //      3) read _imageData back out
-            if (this._imageData) {
+            if (this._imageData)
                 this._context.putImageData(this._imageData, 0, 0); // at coords 0,0
-            }
             this._copyPixels(bmpd, sourceRect, destRect);
-            if (this._imageData) {
+            if (this._imageData)
                 this._imageData = this._context.getImageData(0, 0, this._rect.width, this._rect.height);
-            }
         }
         else {
             this._copyPixels(bmpd, sourceRect, destRect);
@@ -257,13 +245,29 @@ var BitmapData = (function () {
             //      3) read _imageData back out
             if (this._imageData)
                 this._context.putImageData(this._imageData, 0, 0); // at coords 0,0
-            this._context.fillStyle = this.hexToRGBACSS(color);
-            this._context.fillRect(rect.x, rect.y, rect.width, rect.height);
+            this._fillRect(rect, color);
             if (this._imageData)
                 this._imageData = this._context.getImageData(0, 0, this._rect.width, this._rect.height);
         }
         else {
-            this._context.fillStyle = this.hexToRGBACSS(color);
+            this._fillRect(rect, color);
+        }
+    };
+    /**
+     *
+     * @param rect
+     * @param color
+     */
+    BitmapData.prototype._fillRect = function (rect, color) {
+        if (color == 0x0 && this._transparent) {
+            this._context.clearRect(rect.x, rect.y, rect.width, rect.height);
+        }
+        else {
+            var argb = ColorUtils.float32ColorToARGB(color);
+            if (this._transparent)
+                this._context.fillStyle = 'rgba(' + argb[1] + ',' + argb[2] + ',' + argb[3] + ',' + argb[0] / 255 + ')';
+            else
+                this._context.fillStyle = 'rgba(' + argb[1] + ',' + argb[2] + ',' + argb[3] + ',1)';
             this._context.fillRect(rect.x, rect.y, rect.width, rect.height);
         }
     };
@@ -433,18 +437,6 @@ var BitmapData = (function () {
         enumerable: true,
         configurable: true
     });
-    // Private
-    /**
-     * convert decimal value to Hex
-     */
-    BitmapData.prototype.hexToRGBACSS = function (d) {
-        var argb = ColorUtils.float32ColorToARGB(d);
-        if (this._transparent == false) {
-            argb[0] = 1;
-            return 'rgba(' + argb[1] + ',' + argb[2] + ',' + argb[3] + ',' + argb[0] + ')';
-        }
-        return 'rgba(' + argb[1] + ',' + argb[2] + ',' + argb[3] + ',' + argb[0] / 255 + ')';
-    };
     BitmapData.prototype.clone = function () {
         var t = new BitmapData(this.width, this.height, this.transparent);
         t.draw(this);
@@ -846,6 +838,7 @@ var Event = (function () {
     Event.prototype.clone = function () {
         return new Event(this.type);
     };
+<<<<<<< HEAD
     Event.COMPLETE = 'complete';
     Event.OPEN = 'open';
     Event.ENTER_FRAME = 'enterFrame';
@@ -882,6 +875,51 @@ var EventDispatcher = (function () {
             this.listeners[type] = new Array();
         if (this.getEventListenerIndex(type, listener) === -1)
             this.listeners[type].push(listener);
+=======
+    AxisAlignedBoundingBox.prototype.transformFrom = function (bounds, matrix) {
+        var aabb = bounds;
+        var cx = aabb._centerX;
+        var cy = aabb._centerY;
+        var cz = aabb._centerZ;
+        var raw = Matrix3DUtils.RAW_DATA_CONTAINER;
+        matrix.copyRawDataTo(raw);
+        var m11 = raw[0], m12 = raw[4], m13 = raw[8], m14 = raw[12];
+        var m21 = raw[1], m22 = raw[5], m23 = raw[9], m24 = raw[13];
+        var m31 = raw[2], m32 = raw[6], m33 = raw[10], m34 = raw[14];
+        this._centerX = cx * m11 + cy * m12 + cz * m13 + m14;
+        this._centerY = cx * m21 + cy * m22 + cz * m23 + m24;
+        this._centerZ = cx * m31 + cy * m32 + cz * m33 + m34;
+        if (m11 < 0)
+            m11 = -m11;
+        if (m12 < 0)
+            m12 = -m12;
+        if (m13 < 0)
+            m13 = -m13;
+        if (m21 < 0)
+            m21 = -m21;
+        if (m22 < 0)
+            m22 = -m22;
+        if (m23 < 0)
+            m23 = -m23;
+        if (m31 < 0)
+            m31 = -m31;
+        if (m32 < 0)
+            m32 = -m32;
+        if (m33 < 0)
+            m33 = -m33;
+        var hx = aabb._halfExtentsX;
+        var hy = aabb._halfExtentsY;
+        var hz = aabb._halfExtentsZ;
+        this._halfExtentsX = hx * m11 + hy * m12 + hz * m13;
+        this._halfExtentsY = hx * m21 + hy * m22 + hz * m23;
+        this._halfExtentsZ = hx * m31 + hy * m32 + hz * m33;
+        this._aabb.width = this._halfExtentsX * 2;
+        this._aabb.height = this._halfExtentsY * 2;
+        this._aabb.depth = this._halfExtentsZ * 2;
+        this._aabb.x = this._centerX - this._halfExtentsX;
+        this._aabb.y = this._centerY + this._halfExtentsY;
+        this._aabb.z = this._centerZ - this._halfExtentsZ;
+>>>>>>> 14b6a08e136bb1c69e7a24c4e450367bc01eba5a
     };
     /**
      * Remove an event listener
@@ -2707,6 +2745,8 @@ var Matrix3D = (function () {
         return true;
     };
     Matrix3D.prototype.transformVector = function (v) {
+        if (v == null)
+            return new Vector3D();
         var x = v.x;
         var y = v.y;
         var z = v.z;

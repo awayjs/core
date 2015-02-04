@@ -1475,7 +1475,6 @@ declare module "awayjs-core/lib/base/BitmapData" {
 	    private _imageData;
 	    private _rect;
 	    private _transparent;
-	    private _alpha;
 	    private _locked;
 	    transparent: boolean;
 	    /**
@@ -1555,6 +1554,12 @@ declare module "awayjs-core/lib/base/BitmapData" {
 	    fillRect(rect: Rectangle, color: number): void;
 	    /**
 	     *
+	     * @param rect
+	     * @param color
+	     */
+	    private _fillRect(rect, color);
+	    /**
+	     *
 	     * @param source
 	     * @param matrix
 	     */
@@ -1606,10 +1611,6 @@ declare module "awayjs-core/lib/base/BitmapData" {
 	     * @returns {HTMLCanvasElement}
 	     */
 	    context: CanvasRenderingContext2D;
-	    /**
-	     * convert decimal value to Hex
-	     */
-	    private hexToRGBACSS(d);
 	    clone(): BitmapData;
 	}
 	export = BitmapData;

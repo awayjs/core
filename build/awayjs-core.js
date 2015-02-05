@@ -15,15 +15,90 @@ module.exports = BitmapDataChannel;
 var Rectangle = require("awayjs-core/lib/geom/Rectangle");
 var ColorUtils = require("awayjs-core/lib/utils/ColorUtils");
 /**
+ * The BitmapData class lets you work with the data(pixels) of a Bitmap
+ * object. You can use the methods of the BitmapData class to create
+ * arbitrarily sized transparent or opaque bitmap images and manipulate them
+ * in various ways at runtime. You can also access the BitmapData for a bitmap
+ * image that you load with the <code>flash.Assets</code> or
+ * <code>flash.display.Loader</code> classes.
  *
+ * <p>This class lets you separate bitmap rendering operations from the
+ * internal display updating routines of flash. By manipulating a
+ * BitmapData object directly, you can create complex images without incurring
+ * the per-frame overhead of constantly redrawing the content from vector
+ * data.</p>
+ *
+ * <p>The methods of the BitmapData class support effects that are not
+ * available through the filters available to non-bitmap display objects.</p>
+ *
+ * <p>A BitmapData object contains an array of pixel data. This data can
+ * represent either a fully opaque bitmap or a transparent bitmap that
+ * contains alpha channel data. Either type of BitmapData object is stored as
+ * a buffer of 32-bit integers. Each 32-bit integer determines the properties
+ * of a single pixel in the bitmap.</p>
+ *
+ * <p>Each 32-bit integer is a combination of four 8-bit channel values(from
+ * 0 to 255) that describe the alpha transparency and the red, green, and blue
+ * (ARGB) values of the pixel.(For ARGB values, the most significant byte
+ * represents the alpha channel value, followed by red, green, and blue.)</p>
+ *
+ * <p>The four channels(alpha, red, green, and blue) are represented as
+ * numbers when you use them with the <code>BitmapData.copyChannel()</code>
+ * method or the <code>DisplacementMapFilter.componentX</code> and
+ * <code>DisplacementMapFilter.componentY</code> properties, and these numbers
+ * are represented by the following constants in the BitmapDataChannel
+ * class:</p>
+ *
+ * <ul>
+ *   <li><code>BitmapDataChannel.ALPHA</code></li>
+ *   <li><code>BitmapDataChannel.RED</code></li>
+ *   <li><code>BitmapDataChannel.GREEN</code></li>
+ *   <li><code>BitmapDataChannel.BLUE</code></li>
+ * </ul>
+ *
+ * <p>You can attach BitmapData objects to a Bitmap object by using the
+ * <code>bitmapData</code> property of the Bitmap object.</p>
+ *
+ * <p>You can use a BitmapData object to fill a Graphics object by using the
+ * <code>Graphics.beginBitmapFill()</code> method.</p>
+ *
+ * <p>You can also use a BitmapData object to perform batch tile rendering
+ * using the <code>flash.display.Tilesheet</code> class.</p>
+ *
+ * <p>In Flash Player 10, the maximum size for a BitmapData object
+ * is 8,191 pixels in width or height, and the total number of pixels cannot
+ * exceed 16,777,215 pixels.(So, if a BitmapData object is 8,191 pixels wide,
+ * it can only be 2,048 pixels high.) In Flash Player 9 and earlier, the limitation
+ * is 2,880 pixels in height and 2,880 in width.</p>
  */
 var BitmapData = (function () {
     /**
+     * Creates a BitmapData object with a specified width and height. If you
+     * specify a value for the <code>fillColor</code> parameter, every pixel in
+     * the bitmap is set to that color.
      *
-     * @param width
-     * @param height
-     * @param transparent
-     * @param fillColor
+     * <p>By default, the bitmap is created as transparent, unless you pass
+     * the value <code>false</code> for the transparent parameter. After you
+     * create an opaque bitmap, you cannot change it to a transparent bitmap.
+     * Every pixel in an opaque bitmap uses only 24 bits of color channel
+     * information. If you define the bitmap as transparent, every pixel uses 32
+     * bits of color channel information, including an alpha transparency
+     * channel.</p>
+     *
+     * @param width       The width of the bitmap image in pixels.
+     * @param height      The height of the bitmap image in pixels.
+     * @param transparent Specifies whether the bitmap image supports per-pixel
+     *                    transparency. The default value is <code>true</code>
+     *                    (transparent). To create a fully transparent bitmap,
+     *                    set the value of the <code>transparent</code>
+     *                    parameter to <code>true</code> and the value of the
+     *                    <code>fillColor</code> parameter to 0x00000000(or to
+     *                    0). Setting the <code>transparent</code> property to
+     *                    <code>false</code> can result in minor improvements
+     *                    in rendering performance.
+     * @param fillColor   A 32-bit ARGB color value that you use to fill the
+     *                    bitmap image area. The default value is
+     *                    0xFFFFFFFF(solid white).
      */
     function BitmapData(width, height, transparent, fillColor) {
         if (transparent === void 0) { transparent = true; }
@@ -38,114 +113,110 @@ var BitmapData = (function () {
         if (fillColor != null)
             this.fillRect(this._rect, fillColor);
     }
+    Object.defineProperty(BitmapData.prototype, "height", {
+        /**
+         * The height of the bitmap image in pixels.
+         */
+        get: function () {
+            return this._rect.height;
+        },
+        set: function (value) {
+            if (this._rect.height == value)
+                return;
+            this._rect.height = value;
+            if (this._locked)
+                this._context.putImageData(this._imageData, 0, 0);
+            this._imageCanvas.height = value;
+            if (this._locked)
+                this._imageData = this._context.getImageData(0, 0, this._rect.width, this._rect.height);
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(BitmapData.prototype, "rect", {
+        /**
+         * The rectangle that defines the size and location of the bitmap image. The
+         * top and left of the rectangle are 0; the width and height are equal to the
+         * width and height in pixels of the BitmapData object.
+         */
+        get: function () {
+            return this._rect;
+        },
+        enumerable: true,
+        configurable: true
+    });
     Object.defineProperty(BitmapData.prototype, "transparent", {
+        /**
+         * Defines whether the bitmap image supports per-pixel transparency. You can
+         * set this value only when you construct a BitmapData object by passing in
+         * <code>true</code> for the <code>transparent</code> parameter of the
+         * constructor. Then, after you create a BitmapData object, you can check
+         * whether it supports per-pixel transparency by determining if the value of
+         * the <code>transparent</code> property is <code>true</code>.
+         */
         get: function () {
             return this._transparent;
+        },
+        set: function (value) {
+            this._transparent = value;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(BitmapData.prototype, "width", {
+        /**
+         * The width of the bitmap image in pixels.
+         */
+        get: function () {
+            return this._rect.width;
+        },
+        set: function (value) {
+            if (this._rect.width == value)
+                return;
+            this._rect.width = value;
+            if (this._locked)
+                this._context.putImageData(this._imageData, 0, 0);
+            this._imageCanvas.width = value;
+            if (this._locked)
+                this._imageData = this._context.getImageData(0, 0, this._rect.width, this._rect.height);
         },
         enumerable: true,
         configurable: true
     });
     /**
+     * Returns a new BitmapData object that is a clone of the original instance
+     * with an exact copy of the contained bitmap.
      *
+     * @return A new BitmapData object that is identical to the original.
      */
-    BitmapData.prototype.dispose = function () {
-        this._context = null;
-        this._imageCanvas = null;
-        this._imageData = null;
-        this._rect = null;
-        this._transparent = null;
-        this._locked = null;
+    BitmapData.prototype.clone = function () {
+        var t = new BitmapData(this.width, this.height, this.transparent);
+        t.draw(this);
+        return t;
     };
     /**
+     * Adjusts the color values in a specified area of a bitmap image by using a
+     * <code>ColorTransform</code> object. If the rectangle matches the
+     * boundaries of the bitmap image, this method transforms the color values of
+     * the entire image.
      *
+     * @param rect           A Rectangle object that defines the area of the
+     *                       image in which the ColorTransform object is applied.
+     * @param colorTransform A ColorTransform object that describes the color
+     *                       transformation values to apply.
      */
-    BitmapData.prototype.lock = function () {
-        this._locked = true;
-        this._imageData = this._context.getImageData(0, 0, this._rect.width, this._rect.height);
-    };
-    /**
-     *
-     */
-    BitmapData.prototype.unlock = function () {
-        this._locked = false;
-        if (this._imageData) {
-            this._context.putImageData(this._imageData, 0, 0); // at coords 0,0
-            this._imageData = null;
-        }
-    };
-    /**
-     *
-     * @param x
-     * @param y
-     * @param color
-     */
-    BitmapData.prototype.getPixel = function (x, y) {
-        var r;
-        var g;
-        var b;
-        var a;
-        if (!this._locked) {
-            var pixelData = this._context.getImageData(x, y, 1, 1);
-            r = pixelData.data[0];
-            g = pixelData.data[1];
-            b = pixelData.data[2];
-            a = pixelData.data[3];
-        }
-        else {
-            var index = (x + y * this._imageCanvas.width) * 4;
-            if (!this._imageData)
-                this._imageData = this._context.getImageData(0, 0, this._rect.width, this._rect.height);
-            r = this._imageData.data[index + 0];
-            g = this._imageData.data[index + 1];
-            b = this._imageData.data[index + 2];
-            a = this._imageData.data[index + 3];
-        }
-        if (!this._locked) {
-            this._imageData = null;
-        }
-        return (a << 24) | (r << 16) | (g << 8) | b;
-    };
-    /**
-     *
-     * @param x
-     * @param y
-     * @param color
-     */
-    BitmapData.prototype.setPixel = function (x, y, color) {
-        var argb = ColorUtils.float32ColorToARGB(color);
+    BitmapData.prototype.colorTransform = function (rect, colorTransform) {
         if (!this._locked)
             this._imageData = this._context.getImageData(0, 0, this._rect.width, this._rect.height);
-        if (this._imageData) {
-            var index = (x + y * this._imageCanvas.width) * 4;
-            this._imageData.data[index + 0] = argb[1];
-            this._imageData.data[index + 1] = argb[2];
-            this._imageData.data[index + 2] = argb[3];
-            this._imageData.data[index + 3] = 255;
-        }
-        if (!this._locked) {
-            this._context.putImageData(this._imageData, 0, 0);
-            this._imageData = null;
-        }
-    };
-    /**
-     *
-     * @param rect
-     * @param inputByteArray
-     */
-    BitmapData.prototype.setPixels = function (rect, inputByteArray) {
-        if (!this._locked)
-            this._imageData = this._context.getImageData(0, 0, this._rect.width, this._rect.height);
-        if (this._imageData) {
-            inputByteArray.position = 0;
-            var i /*uint*/, j /*uint*/, index /*uint*/;
-            for (i = 0; i < rect.width; ++i) {
-                for (j = 0; j < rect.height; ++j) {
-                    index = (i + rect.x + (j + rect.y) * this._imageCanvas.width) * 4;
-                    this._imageData.data[index + 0] = inputByteArray.readUnsignedInt();
-                    this._imageData.data[index + 1] = inputByteArray.readUnsignedInt();
-                    this._imageData.data[index + 2] = inputByteArray.readUnsignedInt();
-                    this._imageData.data[index + 3] = inputByteArray.readUnsignedInt();
-                }
+        var data = this._imageData.data;
+        var i /*uint*/, j /*uint*/, index /*uint*/;
+        for (i = 0; i < rect.width; ++i) {
+            for (j = 0; j < rect.height; ++j) {
+                index = (i + rect.x + (j + rect.y) * this.width) * 4;
+                data[index] = data[index] * colorTransform.redMultiplier + colorTransform.redOffset;
+                data[index + 1] = data[index + 1] * colorTransform.greenMultiplier + colorTransform.greenOffset;
+                data[index + 2] = data[index + 2] * colorTransform.blueMultiplier + colorTransform.blueOffset;
+                data[index + 3] = data[index + 3] * colorTransform.alphaMultiplier + colorTransform.alphaOffset;
             }
         }
         if (!this._locked) {
@@ -154,70 +225,68 @@ var BitmapData = (function () {
         }
     };
     /**
+     * Transfers data from one channel of another BitmapData object or the
+     * current BitmapData object into a channel of the current BitmapData object.
+     * All of the data in the other channels in the destination BitmapData object
+     * are preserved.
      *
-     * @param x
-     * @param y
-     * @param color
+     * <p>The source channel value and destination channel value can be one of
+     * following values: </p>
+     *
+     * <ul>
+     *   <li><code>BitmapDataChannel.RED</code></li>
+     *   <li><code>BitmapDataChannel.GREEN</code></li>
+     *   <li><code>BitmapDataChannel.BLUE</code></li>
+     *   <li><code>BitmapDataChannel.ALPHA</code></li>
+     * </ul>
+     *
+     * @param sourceBitmapData The input bitmap image to use. The source image
+     *                         can be a different BitmapData object or it can
+     *                         refer to the current BitmapData object.
+     * @param sourceRect       The source Rectangle object. To copy only channel
+     *                         data from a smaller area within the bitmap,
+     *                         specify a source rectangle that is smaller than
+     *                         the overall size of the BitmapData object.
+     * @param destPoint        The destination Point object that represents the
+     *                         upper-left corner of the rectangular area where
+     *                         the new channel data is placed. To copy only
+     *                         channel data from one area to a different area in
+     *                         the destination image, specify a point other than
+     *                        (0,0).
+     * @param sourceChannel    The source channel. Use a value from the
+     *                         BitmapDataChannel class
+     *                        (<code>BitmapDataChannel.RED</code>,
+     *                         <code>BitmapDataChannel.BLUE</code>,
+     *                         <code>BitmapDataChannel.GREEN</code>,
+     *                         <code>BitmapDataChannel.ALPHA</code>).
+     * @param destChannel      The destination channel. Use a value from the
+     *                         BitmapDataChannel class
+     *                        (<code>BitmapDataChannel.RED</code>,
+     *                         <code>BitmapDataChannel.BLUE</code>,
+     *                         <code>BitmapDataChannel.GREEN</code>,
+     *                         <code>BitmapDataChannel.ALPHA</code>).
+     * @throws TypeError The sourceBitmapData, sourceRect or destPoint are null.
      */
-    BitmapData.prototype.setPixel32 = function (x, y, color) {
-        var argb = ColorUtils.float32ColorToARGB(color);
+    BitmapData.prototype.copyChannel = function (sourceBitmap, sourceRect, destPoint, sourceChannel, destChannel) {
+        var imageData = sourceBitmap.imageData;
         if (!this._locked)
             this._imageData = this._context.getImageData(0, 0, this._rect.width, this._rect.height);
-        if (this._imageData) {
-            var index = (x + y * this._imageCanvas.width) * 4;
-            this._imageData.data[index + 0] = argb[1];
-            this._imageData.data[index + 1] = argb[2];
-            this._imageData.data[index + 2] = argb[3];
-            this._imageData.data[index + 3] = argb[0];
-        }
-        if (!this._locked) {
-            this._context.putImageData(this._imageData, 0, 0);
-            this._imageData = null;
-        }
-    };
-    BitmapData.prototype.setVector = function (rect, inputVector) {
-        if (!this._locked)
-            this._imageData = this._context.getImageData(0, 0, this._rect.width, this._rect.height);
-        if (this._imageData) {
-            var i /*uint*/, j /*uint*/, index /*uint*/, argb /*uint*/;
-            for (i = 0; i < rect.width; ++i) {
-                for (j = 0; j < rect.height; ++j) {
-                    argb = ColorUtils.float32ColorToARGB(inputVector[i + j * rect.width]);
-                    index = (i + rect.x + (j + rect.y) * this._imageCanvas.width) * 4;
-                    this._imageData.data[index + 0] = argb[1];
-                    this._imageData.data[index + 1] = argb[2];
-                    this._imageData.data[index + 2] = argb[3];
-                    this._imageData.data[index + 3] = argb[0];
-                }
+        var sourceData = sourceBitmap.imageData.data;
+        var destData = this._imageData.data;
+        var sourceOffset = Math.round(Math.log(sourceChannel) / Math.log(2));
+        var destOffset = Math.round(Math.log(destChannel) / Math.log(2));
+        var i /*uint*/, j /*uint*/, sourceIndex /*uint*/, destIndex /*uint*/;
+        for (i = 0; i < sourceRect.width; ++i) {
+            for (j = 0; j < sourceRect.height; ++j) {
+                sourceIndex = (i + sourceRect.x + (j + sourceRect.y) * sourceBitmap.width) * 4;
+                destIndex = (i + destPoint.x + (j + destPoint.y) * this.width) * 4;
+                destData[destIndex + destOffset] = sourceData[sourceIndex + sourceOffset];
             }
         }
         if (!this._locked) {
             this._context.putImageData(this._imageData, 0, 0);
             this._imageData = null;
         }
-    };
-    BitmapData.prototype.drawImage = function (img, sourceRect, destRect) {
-        if (this._locked) {
-            // If canvas is locked:
-            //
-            //      1) copy image data back to canvas
-            //      2) draw object
-            //      3) read _imageData back out
-            if (this._imageData)
-                this._context.putImageData(this._imageData, 0, 0); // at coords 0,0
-            this._drawImage(img, sourceRect, destRect);
-            if (this._imageData)
-                this._imageData = this._context.getImageData(0, 0, this._rect.width, this._rect.height);
-        }
-        else {
-            this._drawImage(img, sourceRect, destRect);
-        }
-    };
-    BitmapData.prototype._drawImage = function (img, sourceRect, destRect) {
-        if (img instanceof BitmapData)
-            this._context.drawImage(img.canvas, sourceRect.x, sourceRect.y, sourceRect.width, sourceRect.height, destRect.x, destRect.y, destRect.width, destRect.height);
-        else if (img instanceof HTMLImageElement)
-            this._context.drawImage(img, sourceRect.x, sourceRect.y, sourceRect.width, sourceRect.height, destRect.x, destRect.y, destRect.width, destRect.height);
     };
     BitmapData.prototype.copyPixels = function (bmpd, sourceRect, destRect) {
         if (this._locked) {
@@ -236,18 +305,56 @@ var BitmapData = (function () {
             this._copyPixels(bmpd, sourceRect, destRect);
         }
     };
-    BitmapData.prototype._copyPixels = function (bmpd, sourceRect, destRect) {
-        if (bmpd instanceof BitmapData) {
-            this._context.drawImage(bmpd.canvas, sourceRect.x, sourceRect.y, sourceRect.width, sourceRect.height, destRect.x, destRect.y, destRect.width, destRect.height);
+    /**
+     * Frees memory that is used to store the BitmapData object.
+     *
+     * <p>When the <code>dispose()</code> method is called on an image, the width
+     * and height of the image are set to 0. All subsequent calls to methods or
+     * properties of this BitmapData instance fail, and an exception is thrown.
+     * </p>
+     *
+     * <p><code>BitmapData.dispose()</code> releases the memory occupied by the
+     * actual bitmap data, immediately(a bitmap can consume up to 64 MB of
+     * memory). After using <code>BitmapData.dispose()</code>, the BitmapData
+     * object is no longer usable and an exception may be thrown if
+     * you call functions on the BitmapData object. However,
+     * <code>BitmapData.dispose()</code> does not garbage collect the BitmapData
+     * object(approximately 128 bytes); the memory occupied by the actual
+     * BitmapData object is released at the time the BitmapData object is
+     * collected by the garbage collector.</p>
+     *
+     */
+    BitmapData.prototype.dispose = function () {
+        this._context = null;
+        this._imageCanvas = null;
+        this._imageData = null;
+        this._rect = null;
+        this._transparent = null;
+        this._locked = null;
+    };
+    BitmapData.prototype.draw = function (source, matrix, colorTransform, blendMode, clipRect, smoothing) {
+        if (this._locked) {
+            // If canvas is locked:
+            //
+            //      1) copy image data back to canvas
+            //      2) draw object
+            //      3) read _imageData back out
+            this._context.putImageData(this._imageData, 0, 0); // at coords 0,0
+            this._draw(source, matrix, colorTransform, blendMode, clipRect, smoothing);
+            this._imageData = this._context.getImageData(0, 0, this._rect.width, this._rect.height);
         }
-        else if (bmpd instanceof HTMLImageElement) {
-            this._context.drawImage(bmpd, sourceRect.x, sourceRect.y, sourceRect.width, sourceRect.height, destRect.x, destRect.y, destRect.width, destRect.height);
+        else {
+            this._draw(source, matrix, colorTransform, blendMode, clipRect, smoothing);
         }
     };
     /**
+     * Fills a rectangular area of pixels with a specified ARGB color.
      *
-     * @param rect
-     * @param color
+     * @param rect  The rectangular area to fill.
+     * @param color The ARGB color value that fills the area. ARGB colors are
+     *              often specified in hexadecimal format; for example,
+     *              0xFF336699.
+     * @throws TypeError The rect is null.
      */
     BitmapData.prototype.fillRect = function (rect, color) {
         if (this._locked) {
@@ -267,10 +374,303 @@ var BitmapData = (function () {
         }
     };
     /**
+     * Returns an integer that represents an RGB pixel value from a BitmapData
+     * object at a specific point(<i>x</i>, <i>y</i>). The
+     * <code>getPixel()</code> method returns an unmultiplied pixel value. No
+     * alpha information is returned.
      *
-     * @param rect
-     * @param color
+     * <p>All pixels in a BitmapData object are stored as premultiplied color
+     * values. A premultiplied image pixel has the red, green, and blue color
+     * channel values already multiplied by the alpha data. For example, if the
+     * alpha value is 0, the values for the RGB channels are also 0, independent
+     * of their unmultiplied values. This loss of data can cause some problems
+     * when you perform operations. All BitmapData methods take and return
+     * unmultiplied values. The internal pixel representation is converted from
+     * premultiplied to unmultiplied before it is returned as a value. During a
+     * set operation, the pixel value is premultiplied before the raw image pixel
+     * is set.</p>
+     *
+     * @param x The <i>x</i> position of the pixel.
+     * @param y The <i>y</i> position of the pixel.
+     * @return A number that represents an RGB pixel value. If the(<i>x</i>,
+     *         <i>y</i>) coordinates are outside the bounds of the image, the
+     *         method returns 0.
      */
+    BitmapData.prototype.getPixel = function (x, y) {
+        var r;
+        var g;
+        var b;
+        var a;
+        if (!this._locked) {
+            var pixelData = this._context.getImageData(x, y, 1, 1);
+            r = pixelData.data[0];
+            g = pixelData.data[1];
+            b = pixelData.data[2];
+            a = pixelData.data[3];
+        }
+        else {
+            var index = (x + y * this._imageCanvas.width) * 4;
+            r = this._imageData.data[index + 0];
+            g = this._imageData.data[index + 1];
+            b = this._imageData.data[index + 2];
+            a = this._imageData.data[index + 3];
+        }
+        //returns black if fully transparent
+        if (!a)
+            return 0x0;
+        return (r << 16) | (g << 8) | b;
+    };
+    /**
+     * Returns an ARGB color value that contains alpha channel data and RGB data.
+     * This method is similar to the <code>getPixel()</code> method, which
+     * returns an RGB color without alpha channel data.
+     *
+     * <p>All pixels in a BitmapData object are stored as premultiplied color
+     * values. A premultiplied image pixel has the red, green, and blue color
+     * channel values already multiplied by the alpha data. For example, if the
+     * alpha value is 0, the values for the RGB channels are also 0, independent
+     * of their unmultiplied values. This loss of data can cause some problems
+     * when you perform operations. All BitmapData methods take and return
+     * unmultiplied values. The internal pixel representation is converted from
+     * premultiplied to unmultiplied before it is returned as a value. During a
+     * set operation, the pixel value is premultiplied before the raw image pixel
+     * is set.</p>
+     *
+     * @param x The <i>x</i> position of the pixel.
+     * @param y The <i>y</i> position of the pixel.
+     * @return A number representing an ARGB pixel value. If the(<i>x</i>,
+     *         <i>y</i>) coordinates are outside the bounds of the image, 0 is
+     *         returned.
+     */
+    BitmapData.prototype.getPixel32 = function (x, y) {
+        var r;
+        var g;
+        var b;
+        var a;
+        if (!this._locked) {
+            var pixelData = this._context.getImageData(x, y, 1, 1);
+            r = pixelData.data[0];
+            g = pixelData.data[1];
+            b = pixelData.data[2];
+            a = pixelData.data[3];
+        }
+        else {
+            var index = (x + y * this._imageCanvas.width) * 4;
+            r = this._imageData.data[index + 0];
+            g = this._imageData.data[index + 1];
+            b = this._imageData.data[index + 2];
+            a = this._imageData.data[index + 3];
+        }
+        return (a << 24) | (r << 16) | (g << 8) | b;
+    };
+    /**
+     * Locks an image so that any objects that reference the BitmapData object,
+     * such as Bitmap objects, are not updated when this BitmapData object
+     * changes. To improve performance, use this method along with the
+     * <code>unlock()</code> method before and after numerous calls to the
+     * <code>setPixel()</code> or <code>setPixel32()</code> method.
+     *
+     */
+    BitmapData.prototype.lock = function () {
+        if (this._locked)
+            return;
+        this._locked = true;
+        this._imageData = this._context.getImageData(0, 0, this._rect.width, this._rect.height);
+    };
+    /**
+     * Converts an Array into a rectangular region of pixel data. For each pixel,
+     * an Array element is read and written into the BitmapData pixel. The data
+     * in the Array is expected to be 32-bit ARGB pixel values.
+     *
+     * @param rect        Specifies the rectangular region of the BitmapData
+     *                    object.
+     * @param inputArray  An Array that consists of 32-bit unmultiplied pixel
+     *                    values to be used in the rectangular region.
+     * @throws RangeError The vector array is not large enough to read all the
+     *                    pixel data.
+     */
+    BitmapData.prototype.setArray = function (rect, inputArray) {
+        if (!this._locked)
+            this._imageData = this._context.getImageData(0, 0, this._rect.width, this._rect.height);
+        var i /*uint*/, j /*uint*/, index /*uint*/, argb /*uint*/;
+        for (i = 0; i < rect.width; ++i) {
+            for (j = 0; j < rect.height; ++j) {
+                argb = ColorUtils.float32ColorToARGB(inputArray[i + j * rect.width]);
+                index = (i + rect.x + (j + rect.y) * this._imageCanvas.width) * 4;
+                this._imageData.data[index + 0] = argb[1];
+                this._imageData.data[index + 1] = argb[2];
+                this._imageData.data[index + 2] = argb[3];
+                this._imageData.data[index + 3] = argb[0];
+            }
+        }
+        if (!this._locked) {
+            this._context.putImageData(this._imageData, 0, 0);
+            this._imageData = null;
+        }
+    };
+    /**
+     * Sets a single pixel of a BitmapData object. The current alpha channel
+     * value of the image pixel is preserved during this operation. The value of
+     * the RGB color parameter is treated as an unmultiplied color value.
+     *
+     * <p><b>Note:</b> To increase performance, when you use the
+     * <code>setPixel()</code> or <code>setPixel32()</code> method repeatedly,
+     * call the <code>lock()</code> method before you call the
+     * <code>setPixel()</code> or <code>setPixel32()</code> method, and then call
+     * the <code>unlock()</code> method when you have made all pixel changes.
+     * This process prevents objects that reference this BitmapData instance from
+     * updating until you finish making the pixel changes.</p>
+     *
+     * @param x     The <i>x</i> position of the pixel whose value changes.
+     * @param y     The <i>y</i> position of the pixel whose value changes.
+     * @param color The resulting RGB color for the pixel.
+     */
+    BitmapData.prototype.setPixel = function (x, y, color) {
+        var argb = ColorUtils.float32ColorToARGB(color);
+        if (!this._locked)
+            this._imageData = this._context.getImageData(0, 0, this._rect.width, this._rect.height);
+        var index = (x + y * this._imageCanvas.width) * 4;
+        this._imageData.data[index + 0] = argb[1];
+        this._imageData.data[index + 1] = argb[2];
+        this._imageData.data[index + 2] = argb[3];
+        this._imageData.data[index + 3] = 255;
+        if (!this._locked) {
+            this._context.putImageData(this._imageData, 0, 0);
+            this._imageData = null;
+        }
+    };
+    /**
+     * Sets the color and alpha transparency values of a single pixel of a
+     * BitmapData object. This method is similar to the <code>setPixel()</code>
+     * method; the main difference is that the <code>setPixel32()</code> method
+     * takes an ARGB color value that contains alpha channel information.
+     *
+     * <p>All pixels in a BitmapData object are stored as premultiplied color
+     * values. A premultiplied image pixel has the red, green, and blue color
+     * channel values already multiplied by the alpha data. For example, if the
+     * alpha value is 0, the values for the RGB channels are also 0, independent
+     * of their unmultiplied values. This loss of data can cause some problems
+     * when you perform operations. All BitmapData methods take and return
+     * unmultiplied values. The internal pixel representation is converted from
+     * premultiplied to unmultiplied before it is returned as a value. During a
+     * set operation, the pixel value is premultiplied before the raw image pixel
+     * is set.</p>
+     *
+     * <p><b>Note:</b> To increase performance, when you use the
+     * <code>setPixel()</code> or <code>setPixel32()</code> method repeatedly,
+     * call the <code>lock()</code> method before you call the
+     * <code>setPixel()</code> or <code>setPixel32()</code> method, and then call
+     * the <code>unlock()</code> method when you have made all pixel changes.
+     * This process prevents objects that reference this BitmapData instance from
+     * updating until you finish making the pixel changes.</p>
+     *
+     * @param x     The <i>x</i> position of the pixel whose value changes.
+     * @param y     The <i>y</i> position of the pixel whose value changes.
+     * @param color The resulting ARGB color for the pixel. If the bitmap is
+     *              opaque(not transparent), the alpha transparency portion of
+     *              this color value is ignored.
+     */
+    BitmapData.prototype.setPixel32 = function (x, y, color) {
+        var argb = ColorUtils.float32ColorToARGB(color);
+        if (!this._locked)
+            this._imageData = this._context.getImageData(0, 0, this._rect.width, this._rect.height);
+        var index = (x + y * this._imageCanvas.width) * 4;
+        this._imageData.data[index + 0] = argb[1];
+        this._imageData.data[index + 1] = argb[2];
+        this._imageData.data[index + 2] = argb[3];
+        this._imageData.data[index + 3] = argb[0];
+        if (!this._locked) {
+            this._context.putImageData(this._imageData, 0, 0);
+            this._imageData = null;
+        }
+    };
+    /**
+     * Converts a byte array into a rectangular region of pixel data. For each
+     * pixel, the <code>ByteArray.readUnsignedInt()</code> method is called and
+     * the return value is written into the pixel. If the byte array ends before
+     * the full rectangle is written, the function returns. The data in the byte
+     * array is expected to be 32-bit ARGB pixel values. No seeking is performed
+     * on the byte array before or after the pixels are read.
+     *
+     * @param rect           Specifies the rectangular region of the BitmapData
+     *                       object.
+     * @param inputByteArray A ByteArray object that consists of 32-bit
+     *                       unmultiplied pixel values to be used in the
+     *                       rectangular region.
+     * @throws EOFError  The <code>inputByteArray</code> object does not include
+     *                   enough data to fill the area of the <code>rect</code>
+     *                   rectangle. The method fills as many pixels as possible
+     *                   before throwing the exception.
+     * @throws TypeError The rect or inputByteArray are null.
+     */
+    BitmapData.prototype.setPixels = function (rect, inputByteArray) {
+        if (!this._locked)
+            this._imageData = this._context.getImageData(0, 0, this._rect.width, this._rect.height);
+        inputByteArray.position = 0;
+        var i /*uint*/, j /*uint*/, index /*uint*/;
+        for (i = 0; i < rect.width; ++i) {
+            for (j = 0; j < rect.height; ++j) {
+                index = (i + rect.x + (j + rect.y) * this._imageCanvas.width) * 4;
+                this._imageData.data[index + 0] = inputByteArray.readUnsignedInt();
+                this._imageData.data[index + 1] = inputByteArray.readUnsignedInt();
+                this._imageData.data[index + 2] = inputByteArray.readUnsignedInt();
+                this._imageData.data[index + 3] = inputByteArray.readUnsignedInt();
+            }
+        }
+        if (!this._locked) {
+            this._context.putImageData(this._imageData, 0, 0);
+            this._imageData = null;
+        }
+    };
+    /**
+     * Unlocks an image so that any objects that reference the BitmapData object,
+     * such as Bitmap objects, are updated when this BitmapData object changes.
+     * To improve performance, use this method along with the <code>lock()</code>
+     * method before and after numerous calls to the <code>setPixel()</code> or
+     * <code>setPixel32()</code> method.
+     *
+     * @param changeRect The area of the BitmapData object that has changed. If
+     *                   you do not specify a value for this parameter, the
+     *                   entire area of the BitmapData object is considered
+     *                   changed.
+     */
+    BitmapData.prototype.unlock = function () {
+        if (!this._locked)
+            return;
+        this._locked = false;
+        this._context.putImageData(this._imageData, 0, 0); // at coords 0,0
+        this._imageData = null;
+    };
+    BitmapData.prototype._copyPixels = function (bmpd, sourceRect, destRect) {
+        if (bmpd instanceof BitmapData) {
+            this._context.drawImage(bmpd.canvas, sourceRect.x, sourceRect.y, sourceRect.width, sourceRect.height, destRect.x, destRect.y, destRect.width, destRect.height);
+        }
+        else if (bmpd instanceof HTMLImageElement) {
+            this._context.drawImage(bmpd, sourceRect.x, sourceRect.y, sourceRect.width, sourceRect.height, destRect.x, destRect.y, destRect.width, destRect.height);
+        }
+    };
+    BitmapData.prototype._draw = function (source, matrix, colorTransform, blendMode, clipRect, smoothing) {
+        if (source instanceof BitmapData) {
+            this._context.save();
+            if (matrix != null)
+                this._context.setTransform(matrix.a, matrix.b, matrix.c, matrix.d, matrix.tx, matrix.ty);
+            if (clipRect != null)
+                this._context.drawImage(source.canvas, clipRect.x, clipRect.y, clipRect.width, clipRect.height);
+            else
+                this._context.drawImage(source.canvas, 0, 0);
+            this._context.restore();
+        }
+        else if (source instanceof HTMLImageElement) {
+            this._context.save();
+            if (matrix != null)
+                this._context.setTransform(matrix.a, matrix.b, matrix.c, matrix.d, matrix.tx, matrix.ty);
+            if (clipRect != null)
+                this._context.drawImage(source, clipRect.x, clipRect.y, clipRect.width, clipRect.height);
+            else
+                this._context.drawImage(source, 0, 0);
+            this._context.restore();
+        }
+    };
     BitmapData.prototype._fillRect = function (rect, color) {
         if (color == 0x0 && this._transparent) {
             this._context.clearRect(rect.x, rect.y, rect.width, rect.height);
@@ -284,146 +684,15 @@ var BitmapData = (function () {
             this._context.fillRect(rect.x, rect.y, rect.width, rect.height);
         }
     };
-    BitmapData.prototype.draw = function (source, matrix) {
-        if (this._locked) {
-            // If canvas is locked:
-            //
-            //      1) copy image data back to canvas
-            //      2) draw object
-            //      3) read _imageData back out
-            if (this._imageData)
-                this._context.putImageData(this._imageData, 0, 0); // at coords 0,0
-            this._draw(source, matrix);
-            if (this._imageData)
-                this._imageData = this._context.getImageData(0, 0, this._rect.width, this._rect.height);
-        }
-        else {
-            this._draw(source, matrix);
-        }
-    };
-    BitmapData.prototype._draw = function (source, matrix) {
-        if (source instanceof BitmapData) {
-            this._context.save();
-            if (matrix != null)
-                this._context.setTransform(matrix.a, matrix.b, matrix.c, matrix.d, matrix.tx, matrix.ty);
-            this._context.drawImage(source.canvas, 0, 0);
-            this._context.restore();
-        }
-        else if (source instanceof HTMLImageElement) {
-            this._context.save();
-            if (matrix != null)
-                this._context.setTransform(matrix.a, matrix.b, matrix.c, matrix.d, matrix.tx, matrix.ty);
-            this._context.drawImage(source, 0, 0);
-            this._context.restore();
-        }
-    };
-    BitmapData.prototype.copyChannel = function (sourceBitmap, sourceRect, destPoint, sourceChannel, destChannel) {
-        var imageData = sourceBitmap.imageData;
-        if (!this._locked)
-            this._imageData = this._context.getImageData(0, 0, this._rect.width, this._rect.height);
-        if (this._imageData) {
-            var sourceData = sourceBitmap.imageData.data;
-            var destData = this._imageData.data;
-            var sourceOffset = Math.round(Math.log(sourceChannel) / Math.log(2));
-            var destOffset = Math.round(Math.log(destChannel) / Math.log(2));
-            var i /*uint*/, j /*uint*/, sourceIndex /*uint*/, destIndex /*uint*/;
-            for (i = 0; i < sourceRect.width; ++i) {
-                for (j = 0; j < sourceRect.height; ++j) {
-                    sourceIndex = (i + sourceRect.x + (j + sourceRect.y) * sourceBitmap.width) * 4;
-                    destIndex = (i + destPoint.x + (j + destPoint.y) * this.width) * 4;
-                    destData[destIndex + destOffset] = sourceData[sourceIndex + sourceOffset];
-                }
-            }
-        }
-        if (!this._locked) {
-            this._context.putImageData(this._imageData, 0, 0);
-            this._imageData = null;
-        }
-    };
-    BitmapData.prototype.colorTransform = function (rect, colorTransform) {
-        if (!this._locked)
-            this._imageData = this._context.getImageData(0, 0, this._rect.width, this._rect.height);
-        if (this._imageData) {
-            var data = this._imageData.data;
-            var i /*uint*/, j /*uint*/, index /*uint*/;
-            for (i = 0; i < rect.width; ++i) {
-                for (j = 0; j < rect.height; ++j) {
-                    index = (i + rect.x + (j + rect.y) * this.width) * 4;
-                    data[index] = data[index] * colorTransform.redMultiplier + colorTransform.redOffset;
-                    data[index + 1] = data[index + 1] * colorTransform.greenMultiplier + colorTransform.greenOffset;
-                    data[index + 2] = data[index + 2] * colorTransform.blueMultiplier + colorTransform.blueOffset;
-                    data[index + 3] = data[index + 3] * colorTransform.alphaMultiplier + colorTransform.alphaOffset;
-                }
-            }
-        }
-        if (!this._locked) {
-            this._context.putImageData(this._imageData, 0, 0);
-            this._imageData = null;
-        }
-    };
     Object.defineProperty(BitmapData.prototype, "imageData", {
         /**
          *
          * @returns {ImageData}
          */
         get: function () {
-            return this._context.getImageData(0, 0, this._rect.width, this._rect.height);
-        },
-        /**
-         *
-         * @param {ImageData}
-         */
-        set: function (value) {
-            this._context.putImageData(value, 0, 0);
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(BitmapData.prototype, "width", {
-        /**
-         *
-         * @returns {number}
-         */
-        get: function () {
-            return this._imageCanvas.width;
-        },
-        /**
-         *
-         * @param {number}
-         */
-        set: function (value) {
-            this._rect.width = value;
-            this._imageCanvas.width = value;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(BitmapData.prototype, "height", {
-        /**
-         *
-         * @returns {number}
-         */
-        get: function () {
-            return this._imageCanvas.height;
-        },
-        /**
-         *
-         * @param {number}
-         */
-        set: function (value) {
-            this._rect.height = value;
-            this._imageCanvas.height = value;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(BitmapData.prototype, "rect", {
-        /**
-         *
-         * @param {Rectangle}
-         */
-        get: function () {
-            return this._rect;
+            if (!this._locked)
+                return this._context.getImageData(0, 0, this._rect.width, this._rect.height);
+            return this._imageData;
         },
         enumerable: true,
         configurable: true
@@ -439,28 +708,192 @@ var BitmapData = (function () {
         enumerable: true,
         configurable: true
     });
-    Object.defineProperty(BitmapData.prototype, "context", {
-        /**
-         *
-         * @returns {HTMLCanvasElement}
-         */
-        get: function () {
-            return this._context;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    BitmapData.prototype.clone = function () {
-        var t = new BitmapData(this.width, this.height, this.transparent);
-        t.draw(this);
-        return t;
-    };
     return BitmapData;
 })();
 module.exports = BitmapData;
 
 
-},{"awayjs-core/lib/geom/Rectangle":undefined,"awayjs-core/lib/utils/ColorUtils":undefined}],"awayjs-core/lib/bounds/AxisAlignedBoundingBox":[function(require,module,exports){
+},{"awayjs-core/lib/geom/Rectangle":undefined,"awayjs-core/lib/utils/ColorUtils":undefined}],"awayjs-core/lib/base/BlendMode":[function(require,module,exports){
+/**
+ * A class that provides constant values for visual blend mode effects. These
+ * constants are used in the following:
+ * <ul>
+ *   <li> The <code>blendMode</code> property of the
+ * flash.display.DisplayObject class.</li>
+ *   <li> The <code>blendMode</code> parameter of the <code>draw()</code>
+ * method of the flash.display.BitmapData class</li>
+ * </ul>
+ */
+var BlendMode = (function () {
+    function BlendMode() {
+    }
+    /**
+     * Adds the values of the constituent colors of the display object to the
+     * colors of its background, applying a ceiling of 0xFF. This setting is
+     * commonly used for animating a lightening dissolve between two objects.
+     *
+     * <p>For example, if the display object has a pixel with an RGB value of
+     * 0xAAA633, and the background pixel has an RGB value of 0xDD2200, the
+     * resulting RGB value for the displayed pixel is 0xFFC833(because 0xAA +
+     * 0xDD > 0xFF, 0xA6 + 0x22 = 0xC8, and 0x33 + 0x00 = 0x33).</p>
+     */
+    BlendMode.ADD = "add";
+    /**
+     * Applies the alpha value of each pixel of the display object to the
+     * background. This requires the <code>blendMode</code> property of the
+     * parent display object be set to
+     * <code>away.base.BlendMode.LAYER</code>.
+     *
+     * <p>Not supported under GPU rendering.</p>
+     */
+    BlendMode.ALPHA = "alpha";
+    /**
+     * Selects the darker of the constituent colors of the display object and the
+     * colors of the background(the colors with the smaller values). This
+     * setting is commonly used for superimposing type.
+     *
+     * <p>For example, if the display object has a pixel with an RGB value of
+     * 0xFFCC33, and the background pixel has an RGB value of 0xDDF800, the
+     * resulting RGB value for the displayed pixel is 0xDDCC00(because 0xFF >
+     * 0xDD, 0xCC < 0xF8, and 0x33 > 0x00 = 33).</p>
+     *
+     * <p>Not supported under GPU rendering.</p>
+     */
+    BlendMode.DARKEN = "darken";
+    /**
+     * Compares the constituent colors of the display object with the colors of
+     * its background, and subtracts the darker of the values of the two
+     * constituent colors from the lighter value. This setting is commonly used
+     * for more vibrant colors.
+     *
+     * <p>For example, if the display object has a pixel with an RGB value of
+     * 0xFFCC33, and the background pixel has an RGB value of 0xDDF800, the
+     * resulting RGB value for the displayed pixel is 0x222C33(because 0xFF -
+     * 0xDD = 0x22, 0xF8 - 0xCC = 0x2C, and 0x33 - 0x00 = 0x33).</p>
+     */
+    BlendMode.DIFFERENCE = "difference";
+    /**
+     * Erases the background based on the alpha value of the display object. This
+     * process requires that the <code>blendMode</code> property of the parent
+     * display object be set to <code>flash.display.BlendMode.LAYER</code>.
+     *
+     * <p>Not supported under GPU rendering.</p>
+     */
+    BlendMode.ERASE = "erase";
+    /**
+     * Adjusts the color of each pixel based on the darkness of the display
+     * object. If the display object is lighter than 50% gray, the display object
+     * and background colors are screened, which results in a lighter color. If
+     * the display object is darker than 50% gray, the colors are multiplied,
+     * which results in a darker color. This setting is commonly used for shading
+     * effects.
+     *
+     * <p>Not supported under GPU rendering.</p>
+     */
+    BlendMode.HARDLIGHT = "hardlight";
+    /**
+     * Inverts the background.
+     */
+    BlendMode.INVERT = "invert";
+    /**
+     * Forces the creation of a transparency group for the display object. This
+     * means that the display object is precomposed in a temporary buffer before
+     * it is processed further. The precomposition is done automatically if the
+     * display object is precached by means of bitmap caching or if the display
+     * object is a display object container that has at least one child object
+     * with a <code>blendMode</code> setting other than <code>"normal"</code>.
+     *
+     * <p>Not supported under GPU rendering.</p>
+     */
+    BlendMode.LAYER = "layer";
+    /**
+     * Selects the lighter of the constituent colors of the display object and
+     * the colors of the background(the colors with the larger values). This
+     * setting is commonly used for superimposing type.
+     *
+     * <p>For example, if the display object has a pixel with an RGB value of
+     * 0xFFCC33, and the background pixel has an RGB value of 0xDDF800, the
+     * resulting RGB value for the displayed pixel is 0xFFF833(because 0xFF >
+     * 0xDD, 0xCC < 0xF8, and 0x33 > 0x00 = 33).</p>
+     *
+     * <p>Not supported under GPU rendering.</p>
+     */
+    BlendMode.LIGHTEN = "lighten";
+    /**
+     * Multiplies the values of the display object constituent colors by the
+     * constituent colors of the background color, and normalizes by dividing by
+     * 0xFF, resulting in darker colors. This setting is commonly used for
+     * shadows and depth effects.
+     *
+     * <p>For example, if a constituent color(such as red) of one pixel in the
+     * display object and the corresponding color of the pixel in the background
+     * both have the value 0x88, the multiplied result is 0x4840. Dividing by
+     * 0xFF yields a value of 0x48 for that constituent color, which is a darker
+     * shade than the color of the display object or the color of the
+     * background.</p>
+     */
+    BlendMode.MULTIPLY = "multiply";
+    /**
+     * The display object appears in front of the background. Pixel values of the
+     * display object override the pixel values of the background. Where the
+     * display object is transparent, the background is visible.
+     */
+    BlendMode.NORMAL = "normal";
+    /**
+     * Adjusts the color of each pixel based on the darkness of the background.
+     * If the background is lighter than 50% gray, the display object and
+     * background colors are screened, which results in a lighter color. If the
+     * background is darker than 50% gray, the colors are multiplied, which
+     * results in a darker color. This setting is commonly used for shading
+     * effects.
+     *
+     * <p>Not supported under GPU rendering.</p>
+     */
+    BlendMode.OVERLAY = "overlay";
+    /**
+     * Multiplies the complement(inverse) of the display object color by the
+     * complement of the background color, resulting in a bleaching effect. This
+     * setting is commonly used for highlights or to remove black areas of the
+     * display object.
+     */
+    BlendMode.SCREEN = "screen";
+    /**
+     * Uses a shader to define the blend between objects.
+     *
+     * <p>Setting the <code>blendShader</code> property to a Shader instance
+     * automatically sets the display object's <code>blendMode</code> property to
+     * <code>BlendMode.SHADER</code>. If the <code>blendMode</code> property is
+     * set to <code>BlendMode.SHADER</code> without first setting the
+     * <code>blendShader</code> property, the <code>blendMode</code> property is
+     * set to <code>BlendMode.NORMAL</code> instead. If the
+     * <code>blendShader</code> property is set(which sets the
+     * <code>blendMode</code> property to <code>BlendMode.SHADER</code>), then
+     * later the value of the <code>blendMode</code> property is changed, the
+     * blend mode can be reset to use the blend shader simply by setting the
+     * <code>blendMode</code> property to <code>BlendMode.SHADER</code>. The
+     * <code>blendShader</code> property does not need to be set again except to
+     * change the shader that's used to define the blend mode.</p>
+     *
+     * <p>Not supported under GPU rendering.</p>
+     */
+    BlendMode.SHADER = "shader";
+    /**
+     * Subtracts the values of the constituent colors in the display object from
+     * the values of the background color, applying a floor of 0. This setting is
+     * commonly used for animating a darkening dissolve between two objects.
+     *
+     * <p>For example, if the display object has a pixel with an RGB value of
+     * 0xAA2233, and the background pixel has an RGB value of 0xDDA600, the
+     * resulting RGB value for the displayed pixel is 0x338400(because 0xDD -
+     * 0xAA = 0x33, 0xA6 - 0x22 = 0x84, and 0x00 - 0x33 < 0x00).</p>
+     */
+    BlendMode.SUBTRACT = "subtract";
+    return BlendMode;
+})();
+module.exports = BlendMode;
+
+
+},{}],"awayjs-core/lib/bounds/AxisAlignedBoundingBox":[function(require,module,exports){
 var __extends = this.__extends || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
@@ -9923,9 +10356,8 @@ var CubeTextureBase = require("awayjs-core/lib/textures/CubeTextureBase");
 var TextureUtils = require("awayjs-core/lib/utils/TextureUtils");
 var BitmapCubeTexture = (function (_super) {
     __extends(BitmapCubeTexture, _super);
-    function BitmapCubeTexture(posX, negX, posY, negY, posZ, negZ, generateMipmaps) {
-        if (generateMipmaps === void 0) { generateMipmaps = false; }
-        _super.call(this, generateMipmaps);
+    function BitmapCubeTexture(posX, negX, posY, negY, posZ, negZ) {
+        _super.call(this);
         this._bitmapDatas = new Array(6);
         this._testSize(this._bitmapDatas[0] = posX);
         this._testSize(this._bitmapDatas[1] = negX);
@@ -10072,9 +10504,8 @@ var Texture2DBase = require("awayjs-core/lib/textures/Texture2DBase");
 var TextureUtils = require("awayjs-core/lib/utils/TextureUtils");
 var BitmapTexture = (function (_super) {
     __extends(BitmapTexture, _super);
-    function BitmapTexture(bitmapData, generateMipmaps) {
-        if (generateMipmaps === void 0) { generateMipmaps = false; }
-        _super.call(this, generateMipmaps);
+    function BitmapTexture(bitmapData) {
+        _super.call(this);
         this.bitmapData = bitmapData;
     }
     Object.defineProperty(BitmapTexture.prototype, "bitmapData", {
@@ -10122,9 +10553,8 @@ var MipmapGenerator = require("awayjs-core/lib/textures/MipmapGenerator");
 var TextureProxyBase = require("awayjs-core/lib/textures/TextureProxyBase");
 var CubeTextureBase = (function (_super) {
     __extends(CubeTextureBase, _super);
-    function CubeTextureBase(generateMipmaps) {
-        if (generateMipmaps === void 0) { generateMipmaps = false; }
-        _super.call(this, generateMipmaps);
+    function CubeTextureBase() {
+        _super.call(this);
         this._mipmapDataArray = new Array(6);
         this._mipmapDataDirtyArray = new Array(6);
     }
@@ -10189,9 +10619,8 @@ var CubeTextureBase = require("awayjs-core/lib/textures/CubeTextureBase");
 var TextureUtils = require("awayjs-core/lib/utils/TextureUtils");
 var ImageCubeTexture = (function (_super) {
     __extends(ImageCubeTexture, _super);
-    function ImageCubeTexture(posX, negX, posY, negY, posZ, negZ, generateMipmaps) {
-        if (generateMipmaps === void 0) { generateMipmaps = false; }
-        _super.call(this, generateMipmaps);
+    function ImageCubeTexture(posX, negX, posY, negY, posZ, negZ) {
+        _super.call(this);
         this._htmlImageElements = new Array(6);
         this._testSize(this._htmlImageElements[0] = posX);
         this._testSize(this._htmlImageElements[1] = negX);
@@ -10329,9 +10758,8 @@ var ImageTexture = (function (_super) {
      * @param htmlImageElement
      * @param generateMipmaps
      */
-    function ImageTexture(htmlImageElement, generateMipmaps) {
-        if (generateMipmaps === void 0) { generateMipmaps = false; }
-        _super.call(this, generateMipmaps);
+    function ImageTexture(htmlImageElement) {
+        _super.call(this);
         this.htmlImageElement = htmlImageElement;
     }
     Object.defineProperty(ImageTexture.prototype, "htmlImageElement", {
@@ -10379,8 +10807,8 @@ var MipmapGenerator = (function () {
         var mipmap;
         MipmapGenerator._rect.width = w;
         MipmapGenerator._rect.height = h;
-        while (w >= 1 && h >= 1) {
-            mipmap = output[i] = MipmapGenerator._getMipmapHolder(output[i], w, h);
+        while (w >= 1 || h >= 1) {
+            mipmap = output[i] = MipmapGenerator._getMipmapHolder(output[i], MipmapGenerator._rect.width, MipmapGenerator._rect.height);
             if (alpha)
                 mipmap.fillRect(MipmapGenerator._rect, 0);
             MipmapGenerator._matrix.a = MipmapGenerator._rect.width / source.width;
@@ -10443,7 +10871,7 @@ var TextureUtils = require("awayjs-core/lib/utils/TextureUtils");
 var RenderTexture = (function (_super) {
     __extends(RenderTexture, _super);
     function RenderTexture(width, height) {
-        _super.call(this, false);
+        _super.call(this);
         this._pSetSize(width, height);
     }
     Object.defineProperty(RenderTexture.prototype, "width", {
@@ -10505,13 +10933,12 @@ var BitmapTexture = require("awayjs-core/lib/textures/BitmapTexture");
  */
 var SpecularBitmapTexture = (function (_super) {
     __extends(SpecularBitmapTexture, _super);
-    function SpecularBitmapTexture(specularMap, glossMap, generateMipmaps) {
+    function SpecularBitmapTexture(specularMap, glossMap) {
         if (specularMap === void 0) { specularMap = null; }
         if (glossMap === void 0) { glossMap = null; }
-        if (generateMipmaps === void 0) { generateMipmaps = true; }
         var bmd = specularMap ? specularMap : glossMap;
         bmd = bmd ? new BitmapData(bmd.width, bmd.height, false, 0xffffff) : new BitmapData(1, 1, false, 0xffffff);
-        _super.call(this, bmd, generateMipmaps);
+        _super.call(this, bmd);
         this.specularMap = specularMap;
         this.glossMap = glossMap;
     }
@@ -10586,9 +11013,8 @@ var MipmapGenerator = require("awayjs-core/lib/textures/MipmapGenerator");
 var TextureProxyBase = require("awayjs-core/lib/textures/TextureProxyBase");
 var Texture2DBase = (function (_super) {
     __extends(Texture2DBase, _super);
-    function Texture2DBase(generateMipmaps) {
-        if (generateMipmaps === void 0) { generateMipmaps = false; }
-        _super.call(this, generateMipmaps);
+    function Texture2DBase() {
+        _super.call(this);
     }
     Object.defineProperty(Texture2DBase.prototype, "width", {
         /**
@@ -10689,18 +11115,10 @@ var TextureProxyBase = (function (_super) {
         _super.call(this);
         this._pFormat = "bgra";
         this._textureData = new Array();
-        this._generateMipmaps = this._hasMipmaps = generateMipmaps;
     }
     Object.defineProperty(TextureProxyBase.prototype, "size", {
         get: function () {
             return this._pSize;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(TextureProxyBase.prototype, "hasMipmaps", {
-        get: function () {
-            return this._hasMipmaps;
         },
         enumerable: true,
         configurable: true
@@ -10712,23 +11130,6 @@ var TextureProxyBase = (function (_super) {
          */
         get: function () {
             return this._pFormat;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(TextureProxyBase.prototype, "generateMipmaps", {
-        /**
-         *
-         * @returns {boolean}
-         */
-        get: function () {
-            return this._generateMipmaps;
-        },
-        set: function (value) {
-            if (this._generateMipmaps == value)
-                return;
-            this._generateMipmaps = this._hasMipmaps = value;
-            this.invalidateContent();
         },
         enumerable: true,
         configurable: true

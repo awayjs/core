@@ -1,3 +1,180 @@
+declare module "awayjs-core/lib/base/BlendMode" {
+	/**
+	 * A class that provides constant values for visual blend mode effects. These
+	 * constants are used in the following:
+	 * <ul>
+	 *   <li> The <code>blendMode</code> property of the
+	 * flash.display.DisplayObject class.</li>
+	 *   <li> The <code>blendMode</code> parameter of the <code>draw()</code>
+	 * method of the flash.display.BitmapData class</li>
+	 * </ul>
+	 */
+	class BlendMode {
+	    /**
+	     * Adds the values of the constituent colors of the display object to the
+	     * colors of its background, applying a ceiling of 0xFF. This setting is
+	     * commonly used for animating a lightening dissolve between two objects.
+	     *
+	     * <p>For example, if the display object has a pixel with an RGB value of
+	     * 0xAAA633, and the background pixel has an RGB value of 0xDD2200, the
+	     * resulting RGB value for the displayed pixel is 0xFFC833(because 0xAA +
+	     * 0xDD > 0xFF, 0xA6 + 0x22 = 0xC8, and 0x33 + 0x00 = 0x33).</p>
+	     */
+	    static ADD: string;
+	    /**
+	     * Applies the alpha value of each pixel of the display object to the
+	     * background. This requires the <code>blendMode</code> property of the
+	     * parent display object be set to
+	     * <code>away.base.BlendMode.LAYER</code>.
+	     *
+	     * <p>Not supported under GPU rendering.</p>
+	     */
+	    static ALPHA: string;
+	    /**
+	     * Selects the darker of the constituent colors of the display object and the
+	     * colors of the background(the colors with the smaller values). This
+	     * setting is commonly used for superimposing type.
+	     *
+	     * <p>For example, if the display object has a pixel with an RGB value of
+	     * 0xFFCC33, and the background pixel has an RGB value of 0xDDF800, the
+	     * resulting RGB value for the displayed pixel is 0xDDCC00(because 0xFF >
+	     * 0xDD, 0xCC < 0xF8, and 0x33 > 0x00 = 33).</p>
+	     *
+	     * <p>Not supported under GPU rendering.</p>
+	     */
+	    static DARKEN: string;
+	    /**
+	     * Compares the constituent colors of the display object with the colors of
+	     * its background, and subtracts the darker of the values of the two
+	     * constituent colors from the lighter value. This setting is commonly used
+	     * for more vibrant colors.
+	     *
+	     * <p>For example, if the display object has a pixel with an RGB value of
+	     * 0xFFCC33, and the background pixel has an RGB value of 0xDDF800, the
+	     * resulting RGB value for the displayed pixel is 0x222C33(because 0xFF -
+	     * 0xDD = 0x22, 0xF8 - 0xCC = 0x2C, and 0x33 - 0x00 = 0x33).</p>
+	     */
+	    static DIFFERENCE: string;
+	    /**
+	     * Erases the background based on the alpha value of the display object. This
+	     * process requires that the <code>blendMode</code> property of the parent
+	     * display object be set to <code>flash.display.BlendMode.LAYER</code>.
+	     *
+	     * <p>Not supported under GPU rendering.</p>
+	     */
+	    static ERASE: string;
+	    /**
+	     * Adjusts the color of each pixel based on the darkness of the display
+	     * object. If the display object is lighter than 50% gray, the display object
+	     * and background colors are screened, which results in a lighter color. If
+	     * the display object is darker than 50% gray, the colors are multiplied,
+	     * which results in a darker color. This setting is commonly used for shading
+	     * effects.
+	     *
+	     * <p>Not supported under GPU rendering.</p>
+	     */
+	    static HARDLIGHT: string;
+	    /**
+	     * Inverts the background.
+	     */
+	    static INVERT: string;
+	    /**
+	     * Forces the creation of a transparency group for the display object. This
+	     * means that the display object is precomposed in a temporary buffer before
+	     * it is processed further. The precomposition is done automatically if the
+	     * display object is precached by means of bitmap caching or if the display
+	     * object is a display object container that has at least one child object
+	     * with a <code>blendMode</code> setting other than <code>"normal"</code>.
+	     *
+	     * <p>Not supported under GPU rendering.</p>
+	     */
+	    static LAYER: string;
+	    /**
+	     * Selects the lighter of the constituent colors of the display object and
+	     * the colors of the background(the colors with the larger values). This
+	     * setting is commonly used for superimposing type.
+	     *
+	     * <p>For example, if the display object has a pixel with an RGB value of
+	     * 0xFFCC33, and the background pixel has an RGB value of 0xDDF800, the
+	     * resulting RGB value for the displayed pixel is 0xFFF833(because 0xFF >
+	     * 0xDD, 0xCC < 0xF8, and 0x33 > 0x00 = 33).</p>
+	     *
+	     * <p>Not supported under GPU rendering.</p>
+	     */
+	    static LIGHTEN: string;
+	    /**
+	     * Multiplies the values of the display object constituent colors by the
+	     * constituent colors of the background color, and normalizes by dividing by
+	     * 0xFF, resulting in darker colors. This setting is commonly used for
+	     * shadows and depth effects.
+	     *
+	     * <p>For example, if a constituent color(such as red) of one pixel in the
+	     * display object and the corresponding color of the pixel in the background
+	     * both have the value 0x88, the multiplied result is 0x4840. Dividing by
+	     * 0xFF yields a value of 0x48 for that constituent color, which is a darker
+	     * shade than the color of the display object or the color of the
+	     * background.</p>
+	     */
+	    static MULTIPLY: string;
+	    /**
+	     * The display object appears in front of the background. Pixel values of the
+	     * display object override the pixel values of the background. Where the
+	     * display object is transparent, the background is visible.
+	     */
+	    static NORMAL: string;
+	    /**
+	     * Adjusts the color of each pixel based on the darkness of the background.
+	     * If the background is lighter than 50% gray, the display object and
+	     * background colors are screened, which results in a lighter color. If the
+	     * background is darker than 50% gray, the colors are multiplied, which
+	     * results in a darker color. This setting is commonly used for shading
+	     * effects.
+	     *
+	     * <p>Not supported under GPU rendering.</p>
+	     */
+	    static OVERLAY: string;
+	    /**
+	     * Multiplies the complement(inverse) of the display object color by the
+	     * complement of the background color, resulting in a bleaching effect. This
+	     * setting is commonly used for highlights or to remove black areas of the
+	     * display object.
+	     */
+	    static SCREEN: string;
+	    /**
+	     * Uses a shader to define the blend between objects.
+	     *
+	     * <p>Setting the <code>blendShader</code> property to a Shader instance
+	     * automatically sets the display object's <code>blendMode</code> property to
+	     * <code>BlendMode.SHADER</code>. If the <code>blendMode</code> property is
+	     * set to <code>BlendMode.SHADER</code> without first setting the
+	     * <code>blendShader</code> property, the <code>blendMode</code> property is
+	     * set to <code>BlendMode.NORMAL</code> instead. If the
+	     * <code>blendShader</code> property is set(which sets the
+	     * <code>blendMode</code> property to <code>BlendMode.SHADER</code>), then
+	     * later the value of the <code>blendMode</code> property is changed, the
+	     * blend mode can be reset to use the blend shader simply by setting the
+	     * <code>blendMode</code> property to <code>BlendMode.SHADER</code>. The
+	     * <code>blendShader</code> property does not need to be set again except to
+	     * change the shader that's used to define the blend mode.</p>
+	     *
+	     * <p>Not supported under GPU rendering.</p>
+	     */
+	    static SHADER: string;
+	    /**
+	     * Subtracts the values of the constituent colors in the display object from
+	     * the values of the background color, applying a floor of 0. This setting is
+	     * commonly used for animating a darkening dissolve between two objects.
+	     *
+	     * <p>For example, if the display object has a pixel with an RGB value of
+	     * 0xAA2233, and the background pixel has an RGB value of 0xDDA600, the
+	     * resulting RGB value for the displayed pixel is 0x338400(because 0xDD -
+	     * 0xAA = 0x33, 0xA6 - 0x22 = 0x84, and 0x00 - 0x33 < 0x00).</p>
+	     */
+	    static SUBTRACT: string;
+	}
+	export = BlendMode;
+	
+}
 declare module "awayjs-core/lib/utils/ColorUtils" {
 	/**
 	 *
@@ -1461,13 +1638,68 @@ declare module "awayjs-core/lib/utils/ByteArray" {
 	
 }
 declare module "awayjs-core/lib/base/BitmapData" {
+	import BlendMode = require("awayjs-core/lib/base/BlendMode");
 	import ColorTransform = require("awayjs-core/lib/geom/ColorTransform");
 	import Matrix = require("awayjs-core/lib/geom/Matrix");
 	import Rectangle = require("awayjs-core/lib/geom/Rectangle");
 	import Point = require("awayjs-core/lib/geom/Point");
 	import ByteArray = require("awayjs-core/lib/utils/ByteArray");
 	/**
+	 * The BitmapData class lets you work with the data(pixels) of a Bitmap
+	 * object. You can use the methods of the BitmapData class to create
+	 * arbitrarily sized transparent or opaque bitmap images and manipulate them
+	 * in various ways at runtime. You can also access the BitmapData for a bitmap
+	 * image that you load with the <code>flash.Assets</code> or
+	 * <code>flash.display.Loader</code> classes.
 	 *
+	 * <p>This class lets you separate bitmap rendering operations from the
+	 * internal display updating routines of flash. By manipulating a
+	 * BitmapData object directly, you can create complex images without incurring
+	 * the per-frame overhead of constantly redrawing the content from vector
+	 * data.</p>
+	 *
+	 * <p>The methods of the BitmapData class support effects that are not
+	 * available through the filters available to non-bitmap display objects.</p>
+	 *
+	 * <p>A BitmapData object contains an array of pixel data. This data can
+	 * represent either a fully opaque bitmap or a transparent bitmap that
+	 * contains alpha channel data. Either type of BitmapData object is stored as
+	 * a buffer of 32-bit integers. Each 32-bit integer determines the properties
+	 * of a single pixel in the bitmap.</p>
+	 *
+	 * <p>Each 32-bit integer is a combination of four 8-bit channel values(from
+	 * 0 to 255) that describe the alpha transparency and the red, green, and blue
+	 * (ARGB) values of the pixel.(For ARGB values, the most significant byte
+	 * represents the alpha channel value, followed by red, green, and blue.)</p>
+	 *
+	 * <p>The four channels(alpha, red, green, and blue) are represented as
+	 * numbers when you use them with the <code>BitmapData.copyChannel()</code>
+	 * method or the <code>DisplacementMapFilter.componentX</code> and
+	 * <code>DisplacementMapFilter.componentY</code> properties, and these numbers
+	 * are represented by the following constants in the BitmapDataChannel
+	 * class:</p>
+	 *
+	 * <ul>
+	 *   <li><code>BitmapDataChannel.ALPHA</code></li>
+	 *   <li><code>BitmapDataChannel.RED</code></li>
+	 *   <li><code>BitmapDataChannel.GREEN</code></li>
+	 *   <li><code>BitmapDataChannel.BLUE</code></li>
+	 * </ul>
+	 *
+	 * <p>You can attach BitmapData objects to a Bitmap object by using the
+	 * <code>bitmapData</code> property of the Bitmap object.</p>
+	 *
+	 * <p>You can use a BitmapData object to fill a Graphics object by using the
+	 * <code>Graphics.beginBitmapFill()</code> method.</p>
+	 *
+	 * <p>You can also use a BitmapData object to perform batch tile rendering
+	 * using the <code>flash.display.Tilesheet</code> class.</p>
+	 *
+	 * <p>In Flash Player 10, the maximum size for a BitmapData object
+	 * is 8,191 pixels in width or height, and the total number of pixels cannot
+	 * exceed 16,777,215 pixels.(So, if a BitmapData object is 8,191 pixels wide,
+	 * it can only be 2,048 pixels high.) In Flash Player 9 and earlier, the limitation
+	 * is 2,880 pixels in height and 2,880 in width.</p>
 	 */
 	class BitmapData {
 	    private _imageCanvas;
@@ -1476,142 +1708,433 @@ declare module "awayjs-core/lib/base/BitmapData" {
 	    private _rect;
 	    private _transparent;
 	    private _locked;
+	    /**
+	     * The height of the bitmap image in pixels.
+	     */
+	    height: number;
+	    /**
+	     * The rectangle that defines the size and location of the bitmap image. The
+	     * top and left of the rectangle are 0; the width and height are equal to the
+	     * width and height in pixels of the BitmapData object.
+	     */
+	    rect: Rectangle;
+	    /**
+	     * Defines whether the bitmap image supports per-pixel transparency. You can
+	     * set this value only when you construct a BitmapData object by passing in
+	     * <code>true</code> for the <code>transparent</code> parameter of the
+	     * constructor. Then, after you create a BitmapData object, you can check
+	     * whether it supports per-pixel transparency by determining if the value of
+	     * the <code>transparent</code> property is <code>true</code>.
+	     */
 	    transparent: boolean;
 	    /**
+	     * The width of the bitmap image in pixels.
+	     */
+	    width: number;
+	    /**
+	     * Creates a BitmapData object with a specified width and height. If you
+	     * specify a value for the <code>fillColor</code> parameter, every pixel in
+	     * the bitmap is set to that color.
 	     *
-	     * @param width
-	     * @param height
-	     * @param transparent
-	     * @param fillColor
+	     * <p>By default, the bitmap is created as transparent, unless you pass
+	     * the value <code>false</code> for the transparent parameter. After you
+	     * create an opaque bitmap, you cannot change it to a transparent bitmap.
+	     * Every pixel in an opaque bitmap uses only 24 bits of color channel
+	     * information. If you define the bitmap as transparent, every pixel uses 32
+	     * bits of color channel information, including an alpha transparency
+	     * channel.</p>
+	     *
+	     * @param width       The width of the bitmap image in pixels.
+	     * @param height      The height of the bitmap image in pixels.
+	     * @param transparent Specifies whether the bitmap image supports per-pixel
+	     *                    transparency. The default value is <code>true</code>
+	     *                    (transparent). To create a fully transparent bitmap,
+	     *                    set the value of the <code>transparent</code>
+	     *                    parameter to <code>true</code> and the value of the
+	     *                    <code>fillColor</code> parameter to 0x00000000(or to
+	     *                    0). Setting the <code>transparent</code> property to
+	     *                    <code>false</code> can result in minor improvements
+	     *                    in rendering performance.
+	     * @param fillColor   A 32-bit ARGB color value that you use to fill the
+	     *                    bitmap image area. The default value is
+	     *                    0xFFFFFFFF(solid white).
 	     */
 	    constructor(width: number, height: number, transparent?: boolean, fillColor?: number);
 	    /**
+	     * Returns a new BitmapData object that is a clone of the original instance
+	     * with an exact copy of the contained bitmap.
+	     *
+	     * @return A new BitmapData object that is identical to the original.
+	     */
+	    clone(): BitmapData;
+	    /**
+	     * Adjusts the color values in a specified area of a bitmap image by using a
+	     * <code>ColorTransform</code> object. If the rectangle matches the
+	     * boundaries of the bitmap image, this method transforms the color values of
+	     * the entire image.
+	     *
+	     * @param rect           A Rectangle object that defines the area of the
+	     *                       image in which the ColorTransform object is applied.
+	     * @param colorTransform A ColorTransform object that describes the color
+	     *                       transformation values to apply.
+	     */
+	    colorTransform(rect: Rectangle, colorTransform: ColorTransform): void;
+	    /**
+	     * Transfers data from one channel of another BitmapData object or the
+	     * current BitmapData object into a channel of the current BitmapData object.
+	     * All of the data in the other channels in the destination BitmapData object
+	     * are preserved.
+	     *
+	     * <p>The source channel value and destination channel value can be one of
+	     * following values: </p>
+	     *
+	     * <ul>
+	     *   <li><code>BitmapDataChannel.RED</code></li>
+	     *   <li><code>BitmapDataChannel.GREEN</code></li>
+	     *   <li><code>BitmapDataChannel.BLUE</code></li>
+	     *   <li><code>BitmapDataChannel.ALPHA</code></li>
+	     * </ul>
+	     *
+	     * @param sourceBitmapData The input bitmap image to use. The source image
+	     *                         can be a different BitmapData object or it can
+	     *                         refer to the current BitmapData object.
+	     * @param sourceRect       The source Rectangle object. To copy only channel
+	     *                         data from a smaller area within the bitmap,
+	     *                         specify a source rectangle that is smaller than
+	     *                         the overall size of the BitmapData object.
+	     * @param destPoint        The destination Point object that represents the
+	     *                         upper-left corner of the rectangular area where
+	     *                         the new channel data is placed. To copy only
+	     *                         channel data from one area to a different area in
+	     *                         the destination image, specify a point other than
+	     *                        (0,0).
+	     * @param sourceChannel    The source channel. Use a value from the
+	     *                         BitmapDataChannel class
+	     *                        (<code>BitmapDataChannel.RED</code>,
+	     *                         <code>BitmapDataChannel.BLUE</code>,
+	     *                         <code>BitmapDataChannel.GREEN</code>,
+	     *                         <code>BitmapDataChannel.ALPHA</code>).
+	     * @param destChannel      The destination channel. Use a value from the
+	     *                         BitmapDataChannel class
+	     *                        (<code>BitmapDataChannel.RED</code>,
+	     *                         <code>BitmapDataChannel.BLUE</code>,
+	     *                         <code>BitmapDataChannel.GREEN</code>,
+	     *                         <code>BitmapDataChannel.ALPHA</code>).
+	     * @throws TypeError The sourceBitmapData, sourceRect or destPoint are null.
+	     */
+	    copyChannel(sourceBitmap: BitmapData, sourceRect: Rectangle, destPoint: Point, sourceChannel: number, destChannel: number): void;
+	    /**
+	     * Provides a fast routine to perform pixel manipulation between images with
+	     * no stretching, rotation, or color effects. This method copies a
+	     * rectangular area of a source image to a rectangular area of the same size
+	     * at the destination point of the destination BitmapData object.
+	     *
+	     * <p>If you include the <code>alphaBitmap</code> and <code>alphaPoint</code>
+	     * parameters, you can use a secondary image as an alpha source for the
+	     * source image. If the source image has alpha data, both sets of alpha data
+	     * are used to composite pixels from the source image to the destination
+	     * image. The <code>alphaPoint</code> parameter is the point in the alpha
+	     * image that corresponds to the upper-left corner of the source rectangle.
+	     * Any pixels outside the intersection of the source image and alpha image
+	     * are not copied to the destination image.</p>
+	     *
+	     * <p>The <code>mergeAlpha</code> property controls whether or not the alpha
+	     * channel is used when a transparent image is copied onto another
+	     * transparent image. To copy pixels with the alpha channel data, set the
+	     * <code>mergeAlpha</code> property to <code>true</code>. By default, the
+	     * <code>mergeAlpha</code> property is <code>false</code>.</p>
+	     *
+	     * @param sourceBitmapData The input bitmap image from which to copy pixels.
+	     *                         The source image can be a different BitmapData
+	     *                         instance, or it can refer to the current
+	     *                         BitmapData instance.
+	     * @param sourceRect       A rectangle that defines the area of the source
+	     *                         image to use as input.
+	     * @param destPoint        The destination point that represents the
+	     *                         upper-left corner of the rectangular area where
+	     *                         the new pixels are placed.
+	     * @param alphaBitmapData  A secondary, alpha BitmapData object source.
+	     * @param alphaPoint       The point in the alpha BitmapData object source
+	     *                         that corresponds to the upper-left corner of the
+	     *                         <code>sourceRect</code> parameter.
+	     * @param mergeAlpha       To use the alpha channel, set the value to
+	     *                         <code>true</code>. To copy pixels with no alpha
+	     *                         channel, set the value to <code>false</code>.
+	     * @throws TypeError The sourceBitmapData, sourceRect, destPoint are null.
+	     */
+	    copyPixels(bmpd: BitmapData, sourceRect: Rectangle, destRect: Rectangle): any;
+	    copyPixels(bmpd: HTMLImageElement, sourceRect: Rectangle, destRect: Rectangle): any;
+	    /**
+	     * Frees memory that is used to store the BitmapData object.
+	     *
+	     * <p>When the <code>dispose()</code> method is called on an image, the width
+	     * and height of the image are set to 0. All subsequent calls to methods or
+	     * properties of this BitmapData instance fail, and an exception is thrown.
+	     * </p>
+	     *
+	     * <p><code>BitmapData.dispose()</code> releases the memory occupied by the
+	     * actual bitmap data, immediately(a bitmap can consume up to 64 MB of
+	     * memory). After using <code>BitmapData.dispose()</code>, the BitmapData
+	     * object is no longer usable and an exception may be thrown if
+	     * you call functions on the BitmapData object. However,
+	     * <code>BitmapData.dispose()</code> does not garbage collect the BitmapData
+	     * object(approximately 128 bytes); the memory occupied by the actual
+	     * BitmapData object is released at the time the BitmapData object is
+	     * collected by the garbage collector.</p>
 	     *
 	     */
 	    dispose(): void;
 	    /**
+	     * Draws the <code>source</code> display object onto the bitmap image, using
+	     * the NME software renderer. You can specify <code>matrix</code>,
+	     * <code>colorTransform</code>, <code>blendMode</code>, and a destination
+	     * <code>clipRect</code> parameter to control how the rendering performs.
+	     * Optionally, you can specify whether the bitmap should be smoothed when
+	     * scaled(this works only if the source object is a BitmapData object).
+	     *
+	     * <p>The source display object does not use any of its applied
+	     * transformations for this call. It is treated as it exists in the library
+	     * or file, with no matrix transform, no color transform, and no blend mode.
+	     * To draw a display object(such as a movie clip) by using its own transform
+	     * properties, you can copy its <code>transform</code> property object to the
+	     * <code>transform</code> property of the Bitmap object that uses the
+	     * BitmapData object.</p>
+	     *
+	     * @param source         The display object or BitmapData object to draw to
+	     *                       the BitmapData object.(The DisplayObject and
+	     *                       BitmapData classes implement the IBitmapDrawable
+	     *                       interface.)
+	     * @param matrix         A Matrix object used to scale, rotate, or translate
+	     *                       the coordinates of the bitmap. If you do not want to
+	     *                       apply a matrix transformation to the image, set this
+	     *                       parameter to an identity matrix, created with the
+	     *                       default <code>new Matrix()</code> constructor, or
+	     *                       pass a <code>null</code> value.
+	     * @param colorTransform A ColorTransform object that you use to adjust the
+	     *                       color values of the bitmap. If no object is
+	     *                       supplied, the bitmap image's colors are not
+	     *                       transformed. If you must pass this parameter but you
+	     *                       do not want to transform the image, set this
+	     *                       parameter to a ColorTransform object created with
+	     *                       the default <code>new ColorTransform()</code>
+	     *                       constructor.
+	     * @param blendMode      A string value, from the flash.display.BlendMode
+	     *                       class, specifying the blend mode to be applied to
+	     *                       the resulting bitmap.
+	     * @param clipRect       A Rectangle object that defines the area of the
+	     *                       source object to draw. If you do not supply this
+	     *                       value, no clipping occurs and the entire source
+	     *                       object is drawn.
+	     * @param smoothing      A Boolean value that determines whether a BitmapData
+	     *                       object is smoothed when scaled or rotated, due to a
+	     *                       scaling or rotation in the <code>matrix</code>
+	     *                       parameter. The <code>smoothing</code> parameter only
+	     *                       applies if the <code>source</code> parameter is a
+	     *                       BitmapData object. With <code>smoothing</code> set
+	     *                       to <code>false</code>, the rotated or scaled
+	     *                       BitmapData image can appear pixelated or jagged. For
+	     *                       example, the following two images use the same
+	     *                       BitmapData object for the <code>source</code>
+	     *                       parameter, but the <code>smoothing</code> parameter
+	     *                       is set to <code>true</code> on the left and
+	     *                       <code>false</code> on the right:
+	     *
+	     *                       <p>Drawing a bitmap with <code>smoothing</code> set
+	     *                       to <code>true</code> takes longer than doing so with
+	     *                       <code>smoothing</code> set to
+	     *                       <code>false</code>.</p>
+	     * @throws ArgumentError The <code>source</code> parameter is not a
+	     *                       BitmapData or DisplayObject object.
+	     * @throws ArgumentError The source is null or not a valid IBitmapDrawable
+	     *                       object.
+	     * @throws SecurityError The <code>source</code> object and(in the case of a
+	     *                       Sprite or MovieClip object) all of its child objects
+	     *                       do not come from the same domain as the caller, or
+	     *                       are not in a content that is accessible to the
+	     *                       caller by having called the
+	     *                       <code>Security.allowDomain()</code> method. This
+	     *                       restriction does not apply to AIR content in the
+	     *                       application security sandbox.
+	     */
+	    draw(source: BitmapData, matrix?: Matrix, colorTransform?: ColorTransform, blendMode?: BlendMode, clipRect?: Rectangle, smoothing?: boolean): any;
+	    draw(source: HTMLImageElement, matrix?: Matrix, colorTransform?: ColorTransform, blendMode?: BlendMode, clipRect?: Rectangle, smoothing?: boolean): any;
+	    /**
+	     * Fills a rectangular area of pixels with a specified ARGB color.
+	     *
+	     * @param rect  The rectangular area to fill.
+	     * @param color The ARGB color value that fills the area. ARGB colors are
+	     *              often specified in hexadecimal format; for example,
+	     *              0xFF336699.
+	     * @throws TypeError The rect is null.
+	     */
+	    fillRect(rect: Rectangle, color: number): void;
+	    /**
+	     * Returns an integer that represents an RGB pixel value from a BitmapData
+	     * object at a specific point(<i>x</i>, <i>y</i>). The
+	     * <code>getPixel()</code> method returns an unmultiplied pixel value. No
+	     * alpha information is returned.
+	     *
+	     * <p>All pixels in a BitmapData object are stored as premultiplied color
+	     * values. A premultiplied image pixel has the red, green, and blue color
+	     * channel values already multiplied by the alpha data. For example, if the
+	     * alpha value is 0, the values for the RGB channels are also 0, independent
+	     * of their unmultiplied values. This loss of data can cause some problems
+	     * when you perform operations. All BitmapData methods take and return
+	     * unmultiplied values. The internal pixel representation is converted from
+	     * premultiplied to unmultiplied before it is returned as a value. During a
+	     * set operation, the pixel value is premultiplied before the raw image pixel
+	     * is set.</p>
+	     *
+	     * @param x The <i>x</i> position of the pixel.
+	     * @param y The <i>y</i> position of the pixel.
+	     * @return A number that represents an RGB pixel value. If the(<i>x</i>,
+	     *         <i>y</i>) coordinates are outside the bounds of the image, the
+	     *         method returns 0.
+	     */
+	    getPixel(x: any, y: any): number;
+	    /**
+	     * Returns an ARGB color value that contains alpha channel data and RGB data.
+	     * This method is similar to the <code>getPixel()</code> method, which
+	     * returns an RGB color without alpha channel data.
+	     *
+	     * <p>All pixels in a BitmapData object are stored as premultiplied color
+	     * values. A premultiplied image pixel has the red, green, and blue color
+	     * channel values already multiplied by the alpha data. For example, if the
+	     * alpha value is 0, the values for the RGB channels are also 0, independent
+	     * of their unmultiplied values. This loss of data can cause some problems
+	     * when you perform operations. All BitmapData methods take and return
+	     * unmultiplied values. The internal pixel representation is converted from
+	     * premultiplied to unmultiplied before it is returned as a value. During a
+	     * set operation, the pixel value is premultiplied before the raw image pixel
+	     * is set.</p>
+	     *
+	     * @param x The <i>x</i> position of the pixel.
+	     * @param y The <i>y</i> position of the pixel.
+	     * @return A number representing an ARGB pixel value. If the(<i>x</i>,
+	     *         <i>y</i>) coordinates are outside the bounds of the image, 0 is
+	     *         returned.
+	     */
+	    getPixel32(x: any, y: any): number;
+	    /**
+	     * Locks an image so that any objects that reference the BitmapData object,
+	     * such as Bitmap objects, are not updated when this BitmapData object
+	     * changes. To improve performance, use this method along with the
+	     * <code>unlock()</code> method before and after numerous calls to the
+	     * <code>setPixel()</code> or <code>setPixel32()</code> method.
 	     *
 	     */
 	    lock(): void;
 	    /**
+	     * Converts an Array into a rectangular region of pixel data. For each pixel,
+	     * an Array element is read and written into the BitmapData pixel. The data
+	     * in the Array is expected to be 32-bit ARGB pixel values.
 	     *
+	     * @param rect        Specifies the rectangular region of the BitmapData
+	     *                    object.
+	     * @param inputArray  An Array that consists of 32-bit unmultiplied pixel
+	     *                    values to be used in the rectangular region.
+	     * @throws RangeError The vector array is not large enough to read all the
+	     *                    pixel data.
 	     */
-	    unlock(): void;
+	    setArray(rect: Rectangle, inputArray: number[]): void;
 	    /**
+	     * Sets a single pixel of a BitmapData object. The current alpha channel
+	     * value of the image pixel is preserved during this operation. The value of
+	     * the RGB color parameter is treated as an unmultiplied color value.
 	     *
-	     * @param x
-	     * @param y
-	     * @param color
+	     * <p><b>Note:</b> To increase performance, when you use the
+	     * <code>setPixel()</code> or <code>setPixel32()</code> method repeatedly,
+	     * call the <code>lock()</code> method before you call the
+	     * <code>setPixel()</code> or <code>setPixel32()</code> method, and then call
+	     * the <code>unlock()</code> method when you have made all pixel changes.
+	     * This process prevents objects that reference this BitmapData instance from
+	     * updating until you finish making the pixel changes.</p>
+	     *
+	     * @param x     The <i>x</i> position of the pixel whose value changes.
+	     * @param y     The <i>y</i> position of the pixel whose value changes.
+	     * @param color The resulting RGB color for the pixel.
 	     */
-	    getPixel(x: any, y: any): number;
+	    setPixel(x: number, y: number, color: number): void;
 	    /**
+	     * Sets the color and alpha transparency values of a single pixel of a
+	     * BitmapData object. This method is similar to the <code>setPixel()</code>
+	     * method; the main difference is that the <code>setPixel32()</code> method
+	     * takes an ARGB color value that contains alpha channel information.
 	     *
-	     * @param x
-	     * @param y
-	     * @param color
+	     * <p>All pixels in a BitmapData object are stored as premultiplied color
+	     * values. A premultiplied image pixel has the red, green, and blue color
+	     * channel values already multiplied by the alpha data. For example, if the
+	     * alpha value is 0, the values for the RGB channels are also 0, independent
+	     * of their unmultiplied values. This loss of data can cause some problems
+	     * when you perform operations. All BitmapData methods take and return
+	     * unmultiplied values. The internal pixel representation is converted from
+	     * premultiplied to unmultiplied before it is returned as a value. During a
+	     * set operation, the pixel value is premultiplied before the raw image pixel
+	     * is set.</p>
+	     *
+	     * <p><b>Note:</b> To increase performance, when you use the
+	     * <code>setPixel()</code> or <code>setPixel32()</code> method repeatedly,
+	     * call the <code>lock()</code> method before you call the
+	     * <code>setPixel()</code> or <code>setPixel32()</code> method, and then call
+	     * the <code>unlock()</code> method when you have made all pixel changes.
+	     * This process prevents objects that reference this BitmapData instance from
+	     * updating until you finish making the pixel changes.</p>
+	     *
+	     * @param x     The <i>x</i> position of the pixel whose value changes.
+	     * @param y     The <i>y</i> position of the pixel whose value changes.
+	     * @param color The resulting ARGB color for the pixel. If the bitmap is
+	     *              opaque(not transparent), the alpha transparency portion of
+	     *              this color value is ignored.
 	     */
-	    setPixel(x: any, y: any, color: number): void;
+	    setPixel32(x: any, y: any, color: number): void;
 	    /**
+	     * Converts a byte array into a rectangular region of pixel data. For each
+	     * pixel, the <code>ByteArray.readUnsignedInt()</code> method is called and
+	     * the return value is written into the pixel. If the byte array ends before
+	     * the full rectangle is written, the function returns. The data in the byte
+	     * array is expected to be 32-bit ARGB pixel values. No seeking is performed
+	     * on the byte array before or after the pixels are read.
 	     *
-	     * @param rect
-	     * @param inputByteArray
+	     * @param rect           Specifies the rectangular region of the BitmapData
+	     *                       object.
+	     * @param inputByteArray A ByteArray object that consists of 32-bit
+	     *                       unmultiplied pixel values to be used in the
+	     *                       rectangular region.
+	     * @throws EOFError  The <code>inputByteArray</code> object does not include
+	     *                   enough data to fill the area of the <code>rect</code>
+	     *                   rectangle. The method fills as many pixels as possible
+	     *                   before throwing the exception.
+	     * @throws TypeError The rect or inputByteArray are null.
 	     */
 	    setPixels(rect: Rectangle, inputByteArray: ByteArray): void;
 	    /**
+	     * Unlocks an image so that any objects that reference the BitmapData object,
+	     * such as Bitmap objects, are updated when this BitmapData object changes.
+	     * To improve performance, use this method along with the <code>lock()</code>
+	     * method before and after numerous calls to the <code>setPixel()</code> or
+	     * <code>setPixel32()</code> method.
 	     *
-	     * @param x
-	     * @param y
-	     * @param color
+	     * @param changeRect The area of the BitmapData object that has changed. If
+	     *                   you do not specify a value for this parameter, the
+	     *                   entire area of the BitmapData object is considered
+	     *                   changed.
 	     */
-	    setPixel32(x: any, y: any, color: number): void;
-	    setVector(rect: Rectangle, inputVector: number[]): void;
-	    /**
-	     * Copy an HTMLImageElement or BitmapData object
-	     *
-	     * @param img {BitmapData} / {HTMLImageElement}
-	     * @param sourceRect - source rectange to copy from
-	     * @param destRect - destinatoin rectange to copy to
-	     */
-	    drawImage(img: BitmapData, sourceRect: Rectangle, destRect: Rectangle): any;
-	    drawImage(img: HTMLImageElement, sourceRect: Rectangle, destRect: Rectangle): any;
-	    private _drawImage(img, sourceRect, destRect);
-	    private _drawImage(img, sourceRect, destRect);
-	    /**
-	     *
-	     * @param bmpd
-	     * @param sourceRect
-	     * @param destRect
-	     */
-	    copyPixels(bmpd: BitmapData, sourceRect: Rectangle, destRect: Rectangle): any;
-	    copyPixels(bmpd: HTMLImageElement, sourceRect: Rectangle, destRect: Rectangle): any;
+	    unlock(): void;
 	    private _copyPixels(bmpd, sourceRect, destRect);
 	    private _copyPixels(bmpd, sourceRect, destRect);
-	    /**
-	     *
-	     * @param rect
-	     * @param color
-	     */
-	    fillRect(rect: Rectangle, color: number): void;
-	    /**
-	     *
-	     * @param rect
-	     * @param color
-	     */
+	    private _draw(source, matrix, colorTransform, blendMode, clipRect, smoothing);
+	    private _draw(source, matrix, colorTransform, blendMode, clipRect, smoothing);
 	    private _fillRect(rect, color);
-	    /**
-	     *
-	     * @param source
-	     * @param matrix
-	     */
-	    draw(source: BitmapData, matrix?: Matrix): any;
-	    draw(source: HTMLImageElement, matrix?: Matrix): any;
-	    private _draw(source, matrix);
-	    private _draw(source, matrix);
-	    copyChannel(sourceBitmap: BitmapData, sourceRect: Rectangle, destPoint: Point, sourceChannel: number, destChannel: number): void;
-	    colorTransform(rect: Rectangle, colorTransform: ColorTransform): void;
 	    /**
 	     *
 	     * @returns {ImageData}
 	     */
-	    /**
-	     *
-	     * @param {ImageData}
-	     */
 	    imageData: ImageData;
-	    /**
-	     *
-	     * @returns {number}
-	     */
-	    /**
-	     *
-	     * @param {number}
-	     */
-	    width: number;
-	    /**
-	     *
-	     * @returns {number}
-	     */
-	    /**
-	     *
-	     * @param {number}
-	     */
-	    height: number;
-	    /**
-	     *
-	     * @param {Rectangle}
-	     */
-	    rect: Rectangle;
 	    /**
 	     *
 	     * @returns {HTMLCanvasElement}
 	     */
 	    canvas: HTMLCanvasElement;
-	    /**
-	     *
-	     * @returns {HTMLCanvasElement}
-	     */
-	    context: CanvasRenderingContext2D;
-	    clone(): BitmapData;
 	}
 	export = BitmapData;
 	
@@ -4132,25 +4655,17 @@ declare module "awayjs-core/lib/textures/TextureProxyBase" {
 	class TextureProxyBase extends NamedAssetBase implements IAsset {
 	    _pSize: number;
 	    _pFormat: string;
-	    private _hasMipmaps;
-	    private _generateMipmaps;
 	    private _textureData;
 	    /**
 	     *
 	     */
 	    constructor(generateMipmaps?: boolean);
 	    size: number;
-	    hasMipmaps: boolean;
 	    /**
 	     *
 	     * @returns {string}
 	     */
 	    format: string;
-	    /**
-	     *
-	     * @returns {boolean}
-	     */
-	    generateMipmaps: boolean;
 	    /**
 	     *
 	     * @returns {string}
@@ -4181,7 +4696,7 @@ declare module "awayjs-core/lib/textures/CubeTextureBase" {
 	class CubeTextureBase extends TextureProxyBase {
 	    _mipmapDataArray: BitmapData[][];
 	    _mipmapDataDirtyArray: boolean[];
-	    constructor(generateMipmaps?: boolean);
+	    constructor();
 	    /**
 	     *
 	     * @param width
@@ -4231,7 +4746,7 @@ declare module "awayjs-core/lib/textures/ImageCubeTexture" {
 	     * The texture on the cube's near face.
 	     */
 	    negativeZ: HTMLImageElement;
-	    constructor(posX: HTMLImageElement, negX: HTMLImageElement, posY: HTMLImageElement, negY: HTMLImageElement, posZ: HTMLImageElement, negZ: HTMLImageElement, generateMipmaps?: boolean);
+	    constructor(posX: HTMLImageElement, negX: HTMLImageElement, posY: HTMLImageElement, negY: HTMLImageElement, posZ: HTMLImageElement, negZ: HTMLImageElement);
 	    private _testSize(value);
 	    _iGetTextureData(side: number): HTMLImageElement;
 	}
@@ -4257,7 +4772,7 @@ declare module "awayjs-core/lib/textures/Texture2DBase" {
 	     */
 	    height: number;
 	    size: number;
-	    constructor(generateMipmaps?: boolean);
+	    constructor();
 	    /**
 	     * @inheritDoc
 	     */
@@ -4288,7 +4803,7 @@ declare module "awayjs-core/lib/textures/ImageTexture" {
 	     * @param htmlImageElement
 	     * @param generateMipmaps
 	     */
-	    constructor(htmlImageElement: HTMLImageElement, generateMipmaps?: boolean);
+	    constructor(htmlImageElement: HTMLImageElement);
 	    /**
 	     *
 	     */
@@ -5313,7 +5828,7 @@ declare module "awayjs-core/lib/textures/BitmapCubeTexture" {
 	     * The texture on the cube's near face.
 	     */
 	    negativeZ: BitmapData;
-	    constructor(posX: BitmapData, negX: BitmapData, posY: BitmapData, negY: BitmapData, posZ: BitmapData, negZ: BitmapData, generateMipmaps?: boolean);
+	    constructor(posX: BitmapData, negX: BitmapData, posY: BitmapData, negY: BitmapData, posZ: BitmapData, negZ: BitmapData);
 	    /**
 	     *
 	     * @param value
@@ -5336,7 +5851,7 @@ declare module "awayjs-core/lib/textures/BitmapTexture" {
 	     * @returns {BitmapData}
 	     */
 	    bitmapData: BitmapData;
-	    constructor(bitmapData: BitmapData, generateMipmaps?: boolean);
+	    constructor(bitmapData: BitmapData);
 	    dispose(): void;
 	    _iGetTextureData(): BitmapData;
 	}
@@ -5370,7 +5885,7 @@ declare module "awayjs-core/lib/textures/SpecularBitmapTexture" {
 	class SpecularBitmapTexture extends BitmapTexture {
 	    private _specularMap;
 	    private _glossMap;
-	    constructor(specularMap?: BitmapData, glossMap?: BitmapData, generateMipmaps?: boolean);
+	    constructor(specularMap?: BitmapData, glossMap?: BitmapData);
 	    specularMap: BitmapData;
 	    glossMap: BitmapData;
 	    private _testSize();

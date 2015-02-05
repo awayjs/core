@@ -34,9 +34,9 @@ class MipmapGenerator
 		MipmapGenerator._rect.width = w;
 		MipmapGenerator._rect.height = h;
 
-		while (w >= 1 && h >= 1) {
+		while (w >= 1 || h >= 1) {
 
-			mipmap = output[i] = MipmapGenerator._getMipmapHolder(output[i], w, h);
+			mipmap = output[i] = MipmapGenerator._getMipmapHolder(output[i], MipmapGenerator._rect.width, MipmapGenerator._rect.height);
 
 			if (alpha)
 				mipmap.fillRect(MipmapGenerator._rect, 0);

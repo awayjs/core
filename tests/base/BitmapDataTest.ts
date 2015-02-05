@@ -78,7 +78,7 @@ class BitmapDataTest
 				// copy loaded image to first BitmapData
 
 				var rect:Rectangle = new Rectangle(0, 0, this.image.width, this.image.height);
-				this.bitmapData.drawImage(this.image, rect,  rect);
+				this.bitmapData.draw(this.image);
 
 				//---------------------------------------
 				// copy image into second bitmap data ( and scale it up 2X )
@@ -163,7 +163,7 @@ class BitmapDataTest
 
 	private onImageLoad(event:Event)
 	{
-		this.bitmapData.drawImage(this.image, new Rectangle(0, 0, this.image.width, this.image.height), new Rectangle(0, 0, this.image.width/2, this.image.height/2));
+		this.bitmapData.draw(this.image, null, null, null, new Rectangle(0, 0, this.image.width/2, this.image.height/2));
 
 		this.bitmapData.draw(this.bitmapData, new Matrix(.5, .08, .08, .5, this.image.width/2, this.image.height/2));
 	}

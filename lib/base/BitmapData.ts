@@ -477,7 +477,7 @@ class BitmapData
 	 *                       application security sandbox.
 	 */
 	public draw(source:BitmapData, matrix?:Matrix, colorTransform?:ColorTransform, blendMode?:BlendMode, clipRect?:Rectangle, smoothing?:boolean);
-	public draw(source:HTMLImageElement, matrix?:Matrix, colorTransform?:ColorTransform, blendMode?:BlendMode, clipRect?:Rectangle, smoothing?:boolean);
+	public draw(source:HTMLElement, matrix?:Matrix, colorTransform?:ColorTransform, blendMode?:BlendMode, clipRect?:Rectangle, smoothing?:boolean);
 	public draw(source:any, matrix?:Matrix, colorTransform?:ColorTransform, blendMode?:BlendMode, clipRect?:Rectangle, smoothing?:boolean)
 	{
 		if (this._locked) {
@@ -851,7 +851,7 @@ class BitmapData
 	}
 
 	private _draw(source:BitmapData, matrix:Matrix, colorTransform:ColorTransform, blendMode:BlendMode, clipRect:Rectangle, smoothing:boolean);
-	private _draw(source:HTMLImageElement, matrix:Matrix, colorTransform:ColorTransform, blendMode:BlendMode, clipRect:Rectangle, smoothing:boolean);
+	private _draw(source:HTMLElement, matrix:Matrix, colorTransform:ColorTransform, blendMode:BlendMode, clipRect:Rectangle, smoothing:boolean);
 	private _draw(source:any, matrix:Matrix, colorTransform:ColorTransform, blendMode:BlendMode, clipRect:Rectangle, smoothing:boolean)
 	{
 		if (source instanceof BitmapData) {
@@ -867,7 +867,7 @@ class BitmapData
 
 			this._context.restore();
 
-		} else if (source instanceof HTMLImageElement) {
+		} else if (source instanceof HTMLElement) {
 			this._context.save();
 
 			if (matrix != null)

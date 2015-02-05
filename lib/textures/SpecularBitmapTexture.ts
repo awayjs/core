@@ -12,13 +12,13 @@ class SpecularBitmapTexture extends BitmapTexture
 	private _specularMap:BitmapData;
 	private _glossMap:BitmapData;
 	
-	constructor(specularMap:BitmapData = null, glossMap:BitmapData = null, generateMipmaps:boolean = true)
+	constructor(specularMap:BitmapData = null, glossMap:BitmapData = null)
 	{
 		var bmd:BitmapData = specularMap? specularMap : glossMap;
 
 		bmd = bmd? new BitmapData(bmd.width, bmd.height, false, 0xffffff) : new BitmapData(1, 1, false, 0xffffff);
 		
-		super(bmd, generateMipmaps);
+		super(bmd);
 		
 		this.specularMap = specularMap;
 		this.glossMap = glossMap;

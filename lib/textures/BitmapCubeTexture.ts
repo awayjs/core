@@ -104,9 +104,9 @@ class BitmapCubeTexture extends CubeTextureBase
 		this._bitmapDatas[5] = value;
 	}
 
-	constructor(posX:BitmapData, negX:BitmapData, posY:BitmapData, negY:BitmapData, posZ:BitmapData, negZ:BitmapData, generateMipmaps:boolean = false)
+	constructor(posX:BitmapData, negX:BitmapData, posY:BitmapData, negY:BitmapData, posZ:BitmapData, negZ:BitmapData)
 	{
-		super(generateMipmaps);
+		super();
 
 		this._testSize(this._bitmapDatas[0] = posX);
 		this._testSize(this._bitmapDatas[1] = negX);

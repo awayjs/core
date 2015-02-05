@@ -102,9 +102,9 @@ class ImageCubeTexture extends CubeTextureBase
 		this._htmlImageElements[5] = value;
 	}
 
-	constructor(posX:HTMLImageElement, negX:HTMLImageElement, posY:HTMLImageElement, negY:HTMLImageElement, posZ:HTMLImageElement, negZ:HTMLImageElement, generateMipmaps:boolean = false)
+	constructor(posX:HTMLImageElement, negX:HTMLImageElement, posY:HTMLImageElement, negY:HTMLImageElement, posZ:HTMLImageElement, negZ:HTMLImageElement)
 	{
-		super(generateMipmaps);
+		super();
 
 		this._testSize(this._htmlImageElements[0] = posX);
 		this._testSize(this._htmlImageElements[1] = negX);

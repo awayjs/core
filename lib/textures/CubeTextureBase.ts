@@ -8,9 +8,9 @@ class CubeTextureBase extends TextureProxyBase
 	public _mipmapDataArray:Array<Array<BitmapData>> = new Array<Array<BitmapData>>(6);
 	public _mipmapDataDirtyArray:Array<boolean> = new Array<boolean>(6);
 
-	constructor(generateMipmaps:boolean = false)
+	constructor()
 	{
-		super(generateMipmaps);
+		super();
 	}
 
 	/**

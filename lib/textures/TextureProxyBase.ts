@@ -10,8 +10,6 @@ class TextureProxyBase extends NamedAssetBase implements IAsset
 {
 	public _pSize:number;
 	public _pFormat:string = "bgra"
-	private _hasMipmaps:boolean;
-	private _generateMipmaps:boolean;
 	private _textureData:Array<ITextureData> = new Array<ITextureData>();
 	
 	/**
@@ -20,18 +18,11 @@ class TextureProxyBase extends NamedAssetBase implements IAsset
 	constructor(generateMipmaps:boolean = false)
 	{
 		super();
-
-		this._generateMipmaps = this._hasMipmaps = generateMipmaps;
 	}
 
 	public get size():number
 	{
 		return this._pSize;
-	}
-
-	public get hasMipmaps():boolean
-	{
-		return this._hasMipmaps;
 	}
 
 	/**
@@ -41,25 +32,6 @@ class TextureProxyBase extends NamedAssetBase implements IAsset
 	public get format():string
 	{
 		return this._pFormat;
-	}
-
-	/**
-	 *
-	 * @returns {boolean}
-	 */
-	public get generateMipmaps():boolean
-	{
-		return this._generateMipmaps;
-	}
-
-	public set generateMipmaps(value:boolean)
-	{
-		if (this._generateMipmaps == value)
-			return;
-
-		this._generateMipmaps = this._hasMipmaps = value;
-
-		this.invalidateContent();
 	}
 
 	/**

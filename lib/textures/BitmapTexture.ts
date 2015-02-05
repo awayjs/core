@@ -32,9 +32,9 @@ class BitmapTexture extends Texture2DBase
 		this._pSetSize(value.width, value.height);
 	}
 
-	constructor(bitmapData:BitmapData, generateMipmaps:boolean = false)
+	constructor(bitmapData:BitmapData)
 	{
-		super(generateMipmaps);
+		super();
 
 		this.bitmapData = bitmapData;
 	}

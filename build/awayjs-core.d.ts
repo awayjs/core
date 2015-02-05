@@ -1957,7 +1957,7 @@ declare module "awayjs-core/lib/base/BitmapData" {
 	     *                       application security sandbox.
 	     */
 	    draw(source: BitmapData, matrix?: Matrix, colorTransform?: ColorTransform, blendMode?: BlendMode, clipRect?: Rectangle, smoothing?: boolean): any;
-	    draw(source: HTMLImageElement, matrix?: Matrix, colorTransform?: ColorTransform, blendMode?: BlendMode, clipRect?: Rectangle, smoothing?: boolean): any;
+	    draw(source: HTMLElement, matrix?: Matrix, colorTransform?: ColorTransform, blendMode?: BlendMode, clipRect?: Rectangle, smoothing?: boolean): any;
 	    /**
 	     * Fills a rectangular area of pixels with a specified ARGB color.
 	     *

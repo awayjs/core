@@ -660,7 +660,7 @@ var BitmapData = (function () {
                 this._context.drawImage(source.canvas, 0, 0);
             this._context.restore();
         }
-        else if (source instanceof HTMLImageElement) {
+        else if (source instanceof HTMLElement) {
             this._context.save();
             if (matrix != null)
                 this._context.setTransform(matrix.a, matrix.b, matrix.c, matrix.d, matrix.tx, matrix.ty);

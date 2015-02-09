@@ -34,6 +34,7 @@ class MipmapGenerator
 		MipmapGenerator._rect.width = w;
 		MipmapGenerator._rect.height = h;
 
+		//use (OR) to create non-square texture mipmaps
 		while (w >= 1 || h >= 1) {
 
 			mipmap = output[i] = MipmapGenerator._getMipmapHolder(output[i], MipmapGenerator._rect.width, MipmapGenerator._rect.height);

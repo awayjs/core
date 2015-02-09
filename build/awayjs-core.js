@@ -893,666 +893,7 @@ var BlendMode = (function () {
 module.exports = BlendMode;
 
 
-},{}],"awayjs-core/lib/bounds/AxisAlignedBoundingBox":[function(require,module,exports){
-var __extends = this.__extends || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    __.prototype = b.prototype;
-    d.prototype = new __();
-};
-var BoundingVolumeBase = require("awayjs-core/lib/bounds/BoundingVolumeBase");
-var Matrix3DUtils = require("awayjs-core/lib/geom/Matrix3DUtils");
-var PlaneClassification = require("awayjs-core/lib/geom/PlaneClassification");
-var Vector3D = require("awayjs-core/lib/geom/Vector3D");
-/**
- * AxisAlignedBoundingBox represents a bounding box volume that has its planes aligned to the local coordinate axes of the bounded object.
- * This is useful for most meshes.
- */
-var AxisAlignedBoundingBox = (function (_super) {
-    __extends(AxisAlignedBoundingBox, _super);
-    /**
-     * Creates a new <code>AxisAlignedBoundingBox</code> object.
-     */
-    function AxisAlignedBoundingBox() {
-        _super.call(this);
-        this._centerX = 0;
-        this._centerY = 0;
-        this._centerZ = 0;
-        this._halfExtentsX = 0;
-        this._halfExtentsY = 0;
-        this._halfExtentsZ = 0;
-    }
-    Object.defineProperty(AxisAlignedBoundingBox.prototype, "centerX", {
-        get: function () {
-            return this._centerX;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(AxisAlignedBoundingBox.prototype, "centerY", {
-        get: function () {
-            return this._centerY;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(AxisAlignedBoundingBox.prototype, "centerZ", {
-        get: function () {
-            return this._centerZ;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    /**
-     * @inheritDoc
-     */
-    AxisAlignedBoundingBox.prototype.nullify = function () {
-        _super.prototype.nullify.call(this);
-        this._centerX = this._centerY = this._centerZ = 0;
-        this._halfExtentsX = this._halfExtentsY = this._halfExtentsZ = 0;
-    };
-    /**
-     * @inheritDoc
-     */
-    AxisAlignedBoundingBox.prototype.isInFrustum = function (planes, numPlanes) {
-        for (var i = 0; i < numPlanes; ++i) {
-            var plane = planes[i];
-            var a = plane.a;
-            var b = plane.b;
-            var c = plane.c;
-            var flippedExtentX = a < 0 ? -this._halfExtentsX : this._halfExtentsX;
-            var flippedExtentY = b < 0 ? -this._halfExtentsY : this._halfExtentsY;
-            var flippedExtentZ = c < 0 ? -this._halfExtentsZ : this._halfExtentsZ;
-            var projDist = a * (this._centerX + flippedExtentX) + b * (this._centerY + flippedExtentY) + c * (this._centerZ + flippedExtentZ) - plane.d;
-            if (projDist < 0)
-                return false;
-        }
-        return true;
-    };
-    AxisAlignedBoundingBox.prototype.rayIntersection = function (position, direction, targetNormal) {
-        if (this.containsPoint(position))
-            return 0;
-        var px = position.x - this._centerX;
-        var py = position.y - this._centerY;
-        var pz = position.z - this._centerZ;
-        var vx = direction.x;
-        var vy = direction.y;
-        var vz = direction.z;
-        var ix;
-        var iy;
-        var iz;
-        var rayEntryDistance;
-        // ray-plane tests
-        var intersects;
-        if (vx < 0) {
-            rayEntryDistance = (this._halfExtentsX - px) / vx;
-            if (rayEntryDistance > 0) {
-                iy = py + rayEntryDistance * vy;
-                iz = pz + rayEntryDistance * vz;
-                if (iy > -this._halfExtentsY && iy < this._halfExtentsY && iz > -this._halfExtentsZ && iz < this._halfExtentsZ) {
-                    targetNormal.x = 1;
-                    targetNormal.y = 0;
-                    targetNormal.z = 0;
-                    intersects = true;
-                }
-            }
-        }
-        if (!intersects && vx > 0) {
-            rayEntryDistance = (-this._halfExtentsX - px) / vx;
-            if (rayEntryDistance > 0) {
-                iy = py + rayEntryDistance * vy;
-                iz = pz + rayEntryDistance * vz;
-                if (iy > -this._halfExtentsY && iy < this._halfExtentsY && iz > -this._halfExtentsZ && iz < this._halfExtentsZ) {
-                    targetNormal.x = -1;
-                    targetNormal.y = 0;
-                    targetNormal.z = 0;
-                    intersects = true;
-                }
-            }
-        }
-        if (!intersects && vy < 0) {
-            rayEntryDistance = (this._halfExtentsY - py) / vy;
-            if (rayEntryDistance > 0) {
-                ix = px + rayEntryDistance * vx;
-                iz = pz + rayEntryDistance * vz;
-                if (ix > -this._halfExtentsX && ix < this._halfExtentsX && iz > -this._halfExtentsZ && iz < this._halfExtentsZ) {
-                    targetNormal.x = 0;
-                    targetNormal.y = 1;
-                    targetNormal.z = 0;
-                    intersects = true;
-                }
-            }
-        }
-        if (!intersects && vy > 0) {
-            rayEntryDistance = (-this._halfExtentsY - py) / vy;
-            if (rayEntryDistance > 0) {
-                ix = px + rayEntryDistance * vx;
-                iz = pz + rayEntryDistance * vz;
-                if (ix > -this._halfExtentsX && ix < this._halfExtentsX && iz > -this._halfExtentsZ && iz < this._halfExtentsZ) {
-                    targetNormal.x = 0;
-                    targetNormal.y = -1;
-                    targetNormal.z = 0;
-                    intersects = true;
-                }
-            }
-        }
-        if (!intersects && vz < 0) {
-            rayEntryDistance = (this._halfExtentsZ - pz) / vz;
-            if (rayEntryDistance > 0) {
-                ix = px + rayEntryDistance * vx;
-                iy = py + rayEntryDistance * vy;
-                if (iy > -this._halfExtentsY && iy < this._halfExtentsY && ix > -this._halfExtentsX && ix < this._halfExtentsX) {
-                    targetNormal.x = 0;
-                    targetNormal.y = 0;
-                    targetNormal.z = 1;
-                    intersects = true;
-                }
-            }
-        }
-        if (!intersects && vz > 0) {
-            rayEntryDistance = (-this._halfExtentsZ - pz) / vz;
-            if (rayEntryDistance > 0) {
-                ix = px + rayEntryDistance * vx;
-                iy = py + rayEntryDistance * vy;
-                if (iy > -this._halfExtentsY && iy < this._halfExtentsY && ix > -this._halfExtentsX && ix < this._halfExtentsX) {
-                    targetNormal.x = 0;
-                    targetNormal.y = 0;
-                    targetNormal.z = -1;
-                    intersects = true;
-                }
-            }
-        }
-        return intersects ? rayEntryDistance : -1;
-    };
-    /**
-     * @inheritDoc
-     */
-    AxisAlignedBoundingBox.prototype.containsPoint = function (position) {
-        var px = position.x - this._centerX, py = position.y - this._centerY, pz = position.z - this._centerZ;
-        return px <= this._halfExtentsX && px >= -this._halfExtentsX && py <= this._halfExtentsY && py >= -this._halfExtentsY && pz <= this._halfExtentsZ && pz >= -this._halfExtentsZ;
-    };
-    /**
-     * @inheritDoc
-     */
-    AxisAlignedBoundingBox.prototype.fromExtremes = function (minX, minY, minZ, maxX, maxY, maxZ) {
-        this._centerX = (maxX + minX) * .5;
-        this._centerY = (maxY + minY) * .5;
-        this._centerZ = (maxZ + minZ) * .5;
-        this._halfExtentsX = (maxX - minX) * .5;
-        this._halfExtentsY = (maxY - minY) * .5;
-        this._halfExtentsZ = (maxZ - minZ) * .5;
-        _super.prototype.fromExtremes.call(this, minX, minY, minZ, maxX, maxY, maxZ);
-    };
-    /**
-     * @inheritDoc
-     */
-    AxisAlignedBoundingBox.prototype.clone = function () {
-        var clone = new AxisAlignedBoundingBox();
-        clone.fromExtremes(this._aabb.x, this._aabb.y + this._aabb.height, this._aabb.z, this._aabb.x + this._aabb.width, this._aabb.y, this._aabb.z + this._aabb.depth);
-        return clone;
-    };
-    Object.defineProperty(AxisAlignedBoundingBox.prototype, "halfExtentsX", {
-        get: function () {
-            return this._halfExtentsX;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(AxisAlignedBoundingBox.prototype, "halfExtentsY", {
-        get: function () {
-            return this._halfExtentsY;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(AxisAlignedBoundingBox.prototype, "halfExtentsZ", {
-        get: function () {
-            return this._halfExtentsZ;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    /**
-     * Finds the closest point on the bounding volume to another given point. This can be used for maximum error calculations for content within a given bound.
-     * @param point The point for which to find the closest point on the bounding volume
-     * @param target An optional Vector3D to store the result to prevent creating a new object.
-     * @return
-     */
-    AxisAlignedBoundingBox.prototype.closestPointToPoint = function (point, target) {
-        if (target === void 0) { target = null; }
-        var p;
-        if (target == null)
-            target = new Vector3D();
-        p = point.x;
-        if (p < this._aabb.x)
-            p = this._aabb.x;
-        if (p > this._aabb.x + this._aabb.width)
-            p = this._aabb.x + this._aabb.width;
-        target.x = p;
-        p = point.y;
-        if (p < this._aabb.y + this._aabb.height)
-            p = this._aabb.y + this._aabb.height;
-        if (p > this._aabb.y)
-            p = this._aabb.y;
-        target.y = p;
-        p = point.z;
-        if (p < this._aabb.z)
-            p = this._aabb.z;
-        if (p > this._aabb.z + this._aabb.depth)
-            p = this._aabb.z + this._aabb.depth;
-        target.z = p;
-        return target;
-    };
-    AxisAlignedBoundingBox.prototype.classifyToPlane = function (plane) {
-        var a = plane.a;
-        var b = plane.b;
-        var c = plane.c;
-        var centerDistance = a * this._centerX + b * this._centerY + c * this._centerZ - plane.d;
-        if (a < 0)
-            a = -a;
-        if (b < 0)
-            b = -b;
-        if (c < 0)
-            c = -c;
-        var boundOffset = a * this._halfExtentsX + b * this._halfExtentsY + c * this._halfExtentsZ;
-        return centerDistance > boundOffset ? PlaneClassification.FRONT : centerDistance < -boundOffset ? PlaneClassification.BACK : PlaneClassification.INTERSECT;
-    };
-    AxisAlignedBoundingBox.prototype.transformFrom = function (bounds, matrix) {
-        var aabb = bounds;
-        var cx = aabb._centerX;
-        var cy = aabb._centerY;
-        var cz = aabb._centerZ;
-        var raw = Matrix3DUtils.RAW_DATA_CONTAINER;
-        matrix.copyRawDataTo(raw);
-        var m11 = raw[0], m12 = raw[4], m13 = raw[8], m14 = raw[12];
-        var m21 = raw[1], m22 = raw[5], m23 = raw[9], m24 = raw[13];
-        var m31 = raw[2], m32 = raw[6], m33 = raw[10], m34 = raw[14];
-        this._centerX = cx * m11 + cy * m12 + cz * m13 + m14;
-        this._centerY = cx * m21 + cy * m22 + cz * m23 + m24;
-        this._centerZ = cx * m31 + cy * m32 + cz * m33 + m34;
-        if (m11 < 0)
-            m11 = -m11;
-        if (m12 < 0)
-            m12 = -m12;
-        if (m13 < 0)
-            m13 = -m13;
-        if (m21 < 0)
-            m21 = -m21;
-        if (m22 < 0)
-            m22 = -m22;
-        if (m23 < 0)
-            m23 = -m23;
-        if (m31 < 0)
-            m31 = -m31;
-        if (m32 < 0)
-            m32 = -m32;
-        if (m33 < 0)
-            m33 = -m33;
-        var hx = aabb._halfExtentsX;
-        var hy = aabb._halfExtentsY;
-        var hz = aabb._halfExtentsZ;
-        this._halfExtentsX = hx * m11 + hy * m12 + hz * m13;
-        this._halfExtentsY = hx * m21 + hy * m22 + hz * m23;
-        this._halfExtentsZ = hx * m31 + hy * m32 + hz * m33;
-        this._aabb.width = this._halfExtentsX * 2;
-        this._aabb.height = this._halfExtentsY * 2;
-        this._aabb.depth = this._halfExtentsZ * 2;
-        this._aabb.x = this._centerX - this._halfExtentsX;
-        this._aabb.y = this._centerY + this._halfExtentsY;
-        this._aabb.z = this._centerZ - this._halfExtentsZ;
-    };
-    return AxisAlignedBoundingBox;
-})(BoundingVolumeBase);
-module.exports = AxisAlignedBoundingBox;
-
-
-},{"awayjs-core/lib/bounds/BoundingVolumeBase":undefined,"awayjs-core/lib/geom/Matrix3DUtils":undefined,"awayjs-core/lib/geom/PlaneClassification":undefined,"awayjs-core/lib/geom/Vector3D":undefined}],"awayjs-core/lib/bounds/BoundingSphere":[function(require,module,exports){
-var __extends = this.__extends || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    __.prototype = b.prototype;
-    d.prototype = new __();
-};
-var BoundingVolumeBase = require("awayjs-core/lib/bounds/BoundingVolumeBase");
-var PlaneClassification = require("awayjs-core/lib/geom/PlaneClassification");
-var Vector3D = require("awayjs-core/lib/geom/Vector3D");
-var BoundingSphere = (function (_super) {
-    __extends(BoundingSphere, _super);
-    function BoundingSphere() {
-        _super.call(this);
-        this._radius = 0;
-        this._centerX = 0;
-        this._centerY = 0;
-        this._centerZ = 0;
-    }
-    Object.defineProperty(BoundingSphere.prototype, "radius", {
-        get: function () {
-            return this._radius;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    BoundingSphere.prototype.nullify = function () {
-        _super.prototype.nullify.call(this);
-        this._centerX = this._centerY = this._centerZ = 0;
-        this._radius = 0;
-    };
-    BoundingSphere.prototype.isInFrustum = function (planes, numPlanes) {
-        for (var i = 0; i < numPlanes; ++i) {
-            var plane = planes[i];
-            var flippedExtentX = plane.a < 0 ? -this._radius : this._radius;
-            var flippedExtentY = plane.b < 0 ? -this._radius : this._radius;
-            var flippedExtentZ = plane.c < 0 ? -this._radius : this._radius;
-            var projDist = plane.a * (this._centerX + flippedExtentX) + plane.b * (this._centerY + flippedExtentY) + plane.c * (this._centerZ + flippedExtentZ) - plane.d;
-            if (projDist < 0) {
-                return false;
-            }
-        }
-        return true;
-    };
-    BoundingSphere.prototype.fromSphere = function (center, radius) {
-        this._centerX = center.x;
-        this._centerY = center.y;
-        this._centerZ = center.z;
-        this._radius = radius;
-        this._aabb.width = this._aabb.height = this._aabb.depth = radius * 2;
-        this._aabb.x = this._centerX - radius;
-        this._aabb.y = this._centerY + radius;
-        this._aabb.z = this._centerZ - radius;
-        this._pAabbPointsDirty = true;
-    };
-    BoundingSphere.prototype.fromExtremes = function (minX, minY, minZ, maxX, maxY, maxZ) {
-        this._centerX = (maxX + minX) * .5;
-        this._centerY = (maxY + minY) * .5;
-        this._centerZ = (maxZ + minZ) * .5;
-        var d = maxX - minX;
-        var y = maxY - minY;
-        var z = maxZ - minZ;
-        if (y > d)
-            d = y;
-        if (z > d)
-            d = z;
-        this._radius = d * Math.sqrt(.5);
-        _super.prototype.fromExtremes.call(this, minX, minY, minZ, maxX, maxY, maxZ);
-    };
-    BoundingSphere.prototype.clone = function () {
-        var clone = new BoundingSphere();
-        clone.fromSphere(new Vector3D(this._centerX, this._centerY, this._centerZ), this._radius);
-        return clone;
-    };
-    BoundingSphere.prototype.rayIntersection = function (position, direction, targetNormal) {
-        if (this.containsPoint(position)) {
-            return 0;
-        }
-        var px = position.x - this._centerX, py = position.y - this._centerY, pz = position.z - this._centerZ;
-        var vx = direction.x, vy = direction.y, vz = direction.z;
-        var rayEntryDistance;
-        var a = vx * vx + vy * vy + vz * vz;
-        var b = 2 * (px * vx + py * vy + pz * vz);
-        var c = px * px + py * py + pz * pz - this._radius * this._radius;
-        var det = b * b - 4 * a * c;
-        if (det >= 0) {
-            var sqrtDet = Math.sqrt(det);
-            rayEntryDistance = (-b - sqrtDet) / (2 * a);
-            if (rayEntryDistance >= 0) {
-                targetNormal.x = px + rayEntryDistance * vx;
-                targetNormal.y = py + rayEntryDistance * vy;
-                targetNormal.z = pz + rayEntryDistance * vz;
-                targetNormal.normalize();
-                return rayEntryDistance;
-            }
-        }
-        // ray misses sphere
-        return -1;
-    };
-    BoundingSphere.prototype.containsPoint = function (position) {
-        var px = position.x - this._centerX;
-        var py = position.y - this._centerY;
-        var pz = position.z - this._centerZ;
-        var distance = Math.sqrt(px * px + py * py + pz * pz);
-        return distance <= this._radius;
-    };
-    //@override
-    BoundingSphere.prototype.classifyToPlane = function (plane) {
-        var a = plane.a;
-        var b = plane.b;
-        var c = plane.c;
-        var dd = a * this._centerX + b * this._centerY + c * this._centerZ - plane.d;
-        if (a < 0)
-            a = -a;
-        if (b < 0)
-            b = -b;
-        if (c < 0)
-            c = -c;
-        var rr = (a + b + c) * this._radius;
-        return dd > rr ? PlaneClassification.FRONT : dd < -rr ? PlaneClassification.BACK : PlaneClassification.INTERSECT;
-    };
-    BoundingSphere.prototype.transformFrom = function (bounds, matrix) {
-        var sphere = bounds;
-        var cx = sphere._centerX;
-        var cy = sphere._centerY;
-        var cz = sphere._centerZ;
-        var raw = new Array(16);
-        matrix.copyRawDataTo(raw);
-        var m11 = raw[0], m12 = raw[4], m13 = raw[8], m14 = raw[12];
-        var m21 = raw[1], m22 = raw[5], m23 = raw[9], m24 = raw[13];
-        var m31 = raw[2], m32 = raw[6], m33 = raw[10], m34 = raw[14];
-        this._centerX = cx * m11 + cy * m12 + cz * m13 + m14;
-        this._centerY = cx * m21 + cy * m22 + cz * m23 + m24;
-        this._centerZ = cx * m31 + cy * m32 + cz * m33 + m34;
-        if (m11 < 0)
-            m11 = -m11;
-        if (m12 < 0)
-            m12 = -m12;
-        if (m13 < 0)
-            m13 = -m13;
-        if (m21 < 0)
-            m21 = -m21;
-        if (m22 < 0)
-            m22 = -m22;
-        if (m23 < 0)
-            m23 = -m23;
-        if (m31 < 0)
-            m31 = -m31;
-        if (m32 < 0)
-            m32 = -m32;
-        if (m33 < 0)
-            m33 = -m33;
-        var r = sphere._radius;
-        var rx = m11 + m12 + m13;
-        var ry = m21 + m22 + m23;
-        var rz = m31 + m32 + m33;
-        this._radius = r * Math.sqrt(rx * rx + ry * ry + rz * rz);
-        this._aabb.width = this._aabb.height = this._aabb.depth = this._radius * 2;
-        this._aabb.x = this._centerX - this._radius;
-        this._aabb.y = this._centerY + this._radius;
-        this._aabb.z = this._centerZ - this._radius;
-    };
-    return BoundingSphere;
-})(BoundingVolumeBase);
-module.exports = BoundingSphere;
-
-
-},{"awayjs-core/lib/bounds/BoundingVolumeBase":undefined,"awayjs-core/lib/geom/PlaneClassification":undefined,"awayjs-core/lib/geom/Vector3D":undefined}],"awayjs-core/lib/bounds/BoundingVolumeBase":[function(require,module,exports){
-var Box = require("awayjs-core/lib/geom/Box");
-var AbstractMethodError = require("awayjs-core/lib/errors/AbstractMethodError");
-var BoundingVolumeBase = (function () {
-    function BoundingVolumeBase() {
-        this._pAabbPoints = new Array();
-        this._pAabbPointsDirty = true;
-        this._aabb = new Box();
-    }
-    Object.defineProperty(BoundingVolumeBase.prototype, "aabb", {
-        get: function () {
-            return this._aabb;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(BoundingVolumeBase.prototype, "aabbPoints", {
-        get: function () {
-            if (this._pAabbPointsDirty)
-                this.pUpdateAABBPoints();
-            return this._pAabbPoints;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    BoundingVolumeBase.prototype.nullify = function () {
-        this._aabb.x = this._aabb.y = this._aabb.z = 0;
-        this._aabb.width = this._aabb.height = this._aabb.depth = 0;
-        this._pAabbPointsDirty = true;
-    };
-    BoundingVolumeBase.prototype.fromVertices = function (vertices) {
-        var i;
-        var len = vertices.length;
-        if (len == 0) {
-            this.nullify();
-            return;
-        }
-        var v;
-        this.minX = this.maxX = vertices[i++];
-        this.minY = this.maxY = vertices[i++];
-        this.minZ = this.maxZ = vertices[i++];
-        while (i < len) {
-            v = vertices[i++];
-            if (v < this.minX)
-                this.minX = v;
-            else if (v > this.maxX)
-                this.maxX = v;
-            v = vertices[i++];
-            if (v < this.minY)
-                this.minY = v;
-            else if (v > this.maxY)
-                this.maxY = v;
-            v = vertices[i++];
-            if (v < this.minZ)
-                this.minZ = v;
-            else if (v > this.maxZ)
-                this.maxZ = v;
-        }
-        this.fromExtremes(this.minX, this.minY, this.minZ, this.maxX, this.maxY, this.maxZ);
-    };
-    BoundingVolumeBase.prototype.fromSphere = function (center, radius) {
-        this.fromExtremes(center.x - radius, center.y - radius, center.z - radius, center.x + radius, center.y + radius, center.z + radius);
-    };
-    BoundingVolumeBase.prototype.fromExtremes = function (minX, minY, minZ, maxX, maxY, maxZ) {
-        this._aabb.x = minX;
-        this._aabb.y = maxY;
-        this._aabb.z = minZ;
-        this._aabb.width = maxX - minX;
-        this._aabb.height = maxY - minY;
-        this._aabb.depth = maxZ - minZ;
-        this._pAabbPointsDirty = true;
-    };
-    BoundingVolumeBase.prototype.isInFrustum = function (planes, numPlanes) {
-        throw new AbstractMethodError();
-    };
-    BoundingVolumeBase.prototype.overlaps = function (bounds) {
-        return this._aabb.intersects(bounds.aabb);
-    };
-    BoundingVolumeBase.prototype.clone = function () {
-        throw new AbstractMethodError();
-    };
-    BoundingVolumeBase.prototype.rayIntersection = function (position, direction, targetNormal) {
-        return -1;
-    };
-    BoundingVolumeBase.prototype.containsPoint = function (position) {
-        return false;
-    };
-    BoundingVolumeBase.prototype.pUpdateAABBPoints = function () {
-        this.minX = this._aabb.x;
-        this.minY = this._aabb.y - this._aabb.height;
-        this.minZ = this._aabb.z;
-        this.maxX = this._aabb.x + this._aabb.width;
-        this.maxY = this._aabb.y;
-        this.maxZ = this._aabb.z + this._aabb.depth;
-        this._pAabbPoints[0] = this.minX;
-        this._pAabbPoints[1] = this.minY;
-        this._pAabbPoints[2] = this.minZ;
-        this._pAabbPoints[3] = this.maxX;
-        this._pAabbPoints[4] = this.minY;
-        this._pAabbPoints[5] = this.minZ;
-        this._pAabbPoints[6] = this.minX;
-        this._pAabbPoints[7] = this.maxY;
-        this._pAabbPoints[8] = this.minZ;
-        this._pAabbPoints[9] = this.maxX;
-        this._pAabbPoints[10] = this.maxY;
-        this._pAabbPoints[11] = this.minZ;
-        this._pAabbPoints[12] = this.minX;
-        this._pAabbPoints[13] = this.minY;
-        this._pAabbPoints[14] = this.maxZ;
-        this._pAabbPoints[15] = this.maxX;
-        this._pAabbPoints[16] = this.minY;
-        this._pAabbPoints[17] = this.maxZ;
-        this._pAabbPoints[18] = this.minX;
-        this._pAabbPoints[19] = this.maxY;
-        this._pAabbPoints[20] = this.maxZ;
-        this._pAabbPoints[21] = this.maxX;
-        this._pAabbPoints[22] = this.maxY;
-        this._pAabbPoints[23] = this.maxZ;
-        this._pAabbPointsDirty = false;
-    };
-    BoundingVolumeBase.prototype.classifyToPlane = function (plane) {
-        throw new AbstractMethodError();
-    };
-    BoundingVolumeBase.prototype.transformFrom = function (bounds, matrix) {
-        throw new AbstractMethodError();
-    };
-    return BoundingVolumeBase;
-})();
-module.exports = BoundingVolumeBase;
-
-
-},{"awayjs-core/lib/errors/AbstractMethodError":undefined,"awayjs-core/lib/geom/Box":undefined}],"awayjs-core/lib/bounds/NullBounds":[function(require,module,exports){
-var __extends = this.__extends || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    __.prototype = b.prototype;
-    d.prototype = new __();
-};
-var BoundingVolumeBase = require("awayjs-core/lib/bounds/BoundingVolumeBase");
-var PlaneClassification = require("awayjs-core/lib/geom/PlaneClassification");
-var NullBounds = (function (_super) {
-    __extends(NullBounds, _super);
-    function NullBounds(alwaysIn) {
-        if (alwaysIn === void 0) { alwaysIn = true; }
-        _super.call(this);
-        this._alwaysIn = alwaysIn;
-        this._aabb.width = this._aabb.height = this._aabb.depth = Number.POSITIVE_INFINITY;
-        this._aabb.x = this._aabb.y = this._aabb.z = this._alwaysIn ? Number.NEGATIVE_INFINITY / 2 : Number.POSITIVE_INFINITY;
-    }
-    //@override
-    NullBounds.prototype.clone = function () {
-        return new NullBounds(this._alwaysIn);
-    };
-    //@override
-    NullBounds.prototype.isInFrustum = function (planes, numPlanes) {
-        return this._alwaysIn;
-    };
-    //		//@override
-    //		public fromGeometry(geometry:away.base.Geometry)
-    //		{
-    //		}
-    //@override
-    NullBounds.prototype.fromSphere = function (center, radius) {
-    };
-    //@override
-    NullBounds.prototype.fromExtremes = function (minX, minY, minZ, maxX, maxY, maxZ) {
-    };
-    NullBounds.prototype.classifyToPlane = function (plane) {
-        return PlaneClassification.INTERSECT;
-    };
-    //@override
-    NullBounds.prototype.transformFrom = function (bounds, matrix) {
-        this._alwaysIn = bounds._alwaysIn;
-    };
-    return NullBounds;
-})(BoundingVolumeBase);
-module.exports = NullBounds;
-
-
-},{"awayjs-core/lib/bounds/BoundingVolumeBase":undefined,"awayjs-core/lib/geom/PlaneClassification":undefined}],"awayjs-core/lib/errors/AbstractMethodError":[function(require,module,exports){
+},{}],"awayjs-core/lib/errors/AbstractMethodError":[function(require,module,exports){
 var __extends = this.__extends || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
@@ -2448,7 +1789,7 @@ var Box = (function () {
      * @return A value of <code>true</code> if the Box object that you specify
      *         is contained by this Box object; otherwise <code>false</code>.
      */
-    Box.prototype.containsRect = function (box) {
+    Box.prototype.containsBox = function (box) {
         return (this.x <= box.x && this.x + this.width >= box.x + box.width && this.y <= box.y && this.y + this.height >= box.y + box.height && this.z <= box.z && this.z + this.depth >= box.z + box.depth);
     };
     /**
@@ -2458,7 +1799,12 @@ var Box = (function () {
      * @param sourceBox The Box object from which to copy the data.
      */
     Box.prototype.copyFrom = function (sourceBox) {
-        //TODO
+        this.x = sourceBox.x;
+        this.y = sourceBox.y;
+        this.z = sourceBox.z;
+        this.width = sourceBox.width;
+        this.height = sourceBox.height;
+        this.depth = sourceBox.depth;
     };
     /**
      * Determines whether the object specified in the <code>toCompare</code>
@@ -2593,6 +1939,139 @@ var Box = (function () {
      */
     Box.prototype.intersects = function (toIntersect) {
         return (this.x + this.width > toIntersect.x && this.x < toIntersect.x + toIntersect.width && this.y + this.height > toIntersect.y && this.y < toIntersect.y + toIntersect.height && this.z + this.depth > toIntersect.z && this.z < toIntersect.z + toIntersect.depth);
+    };
+    Box.prototype.rayIntersection = function (position, direction, targetNormal) {
+        if (this.containsPoint(position))
+            return 0;
+        var halfExtentsX = this.width / 2;
+        var halfExtentsY = this.height / 2;
+        var halfExtentsZ = this.depth / 2;
+        var centerX = this.x + halfExtentsX;
+        var centerY = this.y + halfExtentsY;
+        var centerZ = this.z + halfExtentsZ;
+        var px = position.x - centerX;
+        var py = position.y - centerY;
+        var pz = position.z - centerZ;
+        var vx = direction.x;
+        var vy = direction.y;
+        var vz = direction.z;
+        var ix;
+        var iy;
+        var iz;
+        var rayEntryDistance;
+        // ray-plane tests
+        var intersects;
+        if (vx < 0) {
+            rayEntryDistance = (halfExtentsX - px) / vx;
+            if (rayEntryDistance > 0) {
+                iy = py + rayEntryDistance * vy;
+                iz = pz + rayEntryDistance * vz;
+                if (iy > -halfExtentsY && iy < halfExtentsY && iz > -halfExtentsZ && iz < halfExtentsZ) {
+                    targetNormal.x = 1;
+                    targetNormal.y = 0;
+                    targetNormal.z = 0;
+                    intersects = true;
+                }
+            }
+        }
+        if (!intersects && vx > 0) {
+            rayEntryDistance = (-halfExtentsX - px) / vx;
+            if (rayEntryDistance > 0) {
+                iy = py + rayEntryDistance * vy;
+                iz = pz + rayEntryDistance * vz;
+                if (iy > -halfExtentsY && iy < halfExtentsY && iz > -halfExtentsZ && iz < halfExtentsZ) {
+                    targetNormal.x = -1;
+                    targetNormal.y = 0;
+                    targetNormal.z = 0;
+                    intersects = true;
+                }
+            }
+        }
+        if (!intersects && vy < 0) {
+            rayEntryDistance = (halfExtentsY - py) / vy;
+            if (rayEntryDistance > 0) {
+                ix = px + rayEntryDistance * vx;
+                iz = pz + rayEntryDistance * vz;
+                if (ix > -halfExtentsX && ix < halfExtentsX && iz > -halfExtentsZ && iz < halfExtentsZ) {
+                    targetNormal.x = 0;
+                    targetNormal.y = 1;
+                    targetNormal.z = 0;
+                    intersects = true;
+                }
+            }
+        }
+        if (!intersects && vy > 0) {
+            rayEntryDistance = (-halfExtentsY - py) / vy;
+            if (rayEntryDistance > 0) {
+                ix = px + rayEntryDistance * vx;
+                iz = pz + rayEntryDistance * vz;
+                if (ix > -halfExtentsX && ix < halfExtentsX && iz > -halfExtentsZ && iz < halfExtentsZ) {
+                    targetNormal.x = 0;
+                    targetNormal.y = -1;
+                    targetNormal.z = 0;
+                    intersects = true;
+                }
+            }
+        }
+        if (!intersects && vz < 0) {
+            rayEntryDistance = (halfExtentsZ - pz) / vz;
+            if (rayEntryDistance > 0) {
+                ix = px + rayEntryDistance * vx;
+                iy = py + rayEntryDistance * vy;
+                if (iy > -halfExtentsY && iy < halfExtentsY && ix > -halfExtentsX && ix < halfExtentsX) {
+                    targetNormal.x = 0;
+                    targetNormal.y = 0;
+                    targetNormal.z = 1;
+                    intersects = true;
+                }
+            }
+        }
+        if (!intersects && vz > 0) {
+            rayEntryDistance = (-halfExtentsZ - pz) / vz;
+            if (rayEntryDistance > 0) {
+                ix = px + rayEntryDistance * vx;
+                iy = py + rayEntryDistance * vy;
+                if (iy > -halfExtentsY && iy < halfExtentsY && ix > -halfExtentsX && ix < halfExtentsX) {
+                    targetNormal.x = 0;
+                    targetNormal.y = 0;
+                    targetNormal.z = -1;
+                    intersects = true;
+                }
+            }
+        }
+        return intersects ? rayEntryDistance : -1;
+    };
+    /**
+     * Finds the closest point on the Box to another given point. This can be used for maximum error calculations for content within a given Box.
+     *
+     * @param point The point for which to find the closest point on the Box
+     * @param target An optional Vector3D to store the result to prevent creating a new object.
+     * @return
+     */
+    Box.prototype.closestPointToPoint = function (point, target) {
+        if (target === void 0) { target = null; }
+        var p;
+        if (target == null)
+            target = new Vector3D();
+        p = point.x;
+        if (p < this.x)
+            p = this.x;
+        if (p > this.x + this.width)
+            p = this.x + this.width;
+        target.x = p;
+        p = point.y;
+        if (p < this.y + this.height)
+            p = this.y + this.height;
+        if (p > this.y)
+            p = this.y;
+        target.y = p;
+        p = point.z;
+        if (p < this.z)
+            p = this.z;
+        if (p > this.z + this.depth)
+            p = this.z + this.depth;
+        target.z = p;
+        return target;
     };
     /**
      * Determines whether or not this Box object is empty.
@@ -5555,7 +5034,61 @@ var Rectangle = (function () {
 module.exports = Rectangle;
 
 
-},{"awayjs-core/lib/geom/Point":undefined}],"awayjs-core/lib/geom/UVTransform":[function(require,module,exports){
+},{"awayjs-core/lib/geom/Point":undefined}],"awayjs-core/lib/geom/Sphere":[function(require,module,exports){
+var Sphere = (function () {
+    /**
+     * Create a Sphere with ABCD coefficients
+     */
+    function Sphere(x, y, z, radius) {
+        if (x === void 0) { x = 0; }
+        if (y === void 0) { y = 0; }
+        if (z === void 0) { z = 0; }
+        if (radius === void 0) { radius = 0; }
+        this.x = x;
+        this.y = y;
+        this.z = z;
+        this.radius = radius;
+    }
+    Sphere.prototype.rayIntersection = function (position, direction, targetNormal) {
+        if (this.containsPoint(position))
+            return 0;
+        var px = position.x - this.x, py = position.y - this.y, pz = position.z - this.z;
+        var vx = direction.x, vy = direction.y, vz = direction.z;
+        var rayEntryDistance;
+        var a = vx * vx + vy * vy + vz * vz;
+        var b = 2 * (px * vx + py * vy + pz * vz);
+        var c = px * px + py * py + pz * pz - this.radius * this.radius;
+        var det = b * b - 4 * a * c;
+        if (det >= 0) {
+            var sqrtDet = Math.sqrt(det);
+            rayEntryDistance = (-b - sqrtDet) / (2 * a);
+            if (rayEntryDistance >= 0) {
+                targetNormal.x = px + rayEntryDistance * vx;
+                targetNormal.y = py + rayEntryDistance * vy;
+                targetNormal.z = pz + rayEntryDistance * vz;
+                targetNormal.normalize();
+                return rayEntryDistance;
+            }
+        }
+        // ray misses sphere
+        return -1;
+    };
+    Sphere.prototype.containsPoint = function (position) {
+        var px = position.x - this.x;
+        var py = position.y - this.y;
+        var pz = position.z - this.z;
+        var distance = Math.sqrt(px * px + py * py + pz * pz);
+        return distance <= this.radius;
+    };
+    Sphere.prototype.toString = function () {
+        return "Sphere [x:" + this.x + ", y:" + this.y + ", z:" + this.z + ", radius:" + this.radius + "]";
+    };
+    return Sphere;
+})();
+module.exports = Sphere;
+
+
+},{}],"awayjs-core/lib/geom/UVTransform":[function(require,module,exports){
 var Matrix = require("awayjs-core/lib/geom/Matrix");
 var UVTransform = (function () {
     function UVTransform() {

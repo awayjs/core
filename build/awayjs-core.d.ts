@@ -2149,366 +2149,361 @@ declare module "awayjs-core/lib/base/BitmapDataChannel" {
 	export = BitmapDataChannel;
 	
 }
-declare module "awayjs-core/lib/geom/Box" {
-	import Vector3D = require("awayjs-core/lib/geom/Vector3D");
-	/**
-	 * A Box object is an area defined by its position, as indicated by its
-	 * top-left-front corner point(<i>x</i>, <i>y</i>, <i>z</i>) and by its width,
-	 * height and depth.
-	 *
-	 *
-	 * <p>The <code>x</code>, <code>y</code>, <code>z</code>, <code>width</code>,
-	 * <code>height</code> <code>depth</code> properties of the Box class are
-	 * independent of each other; changing the value of one property has no effect
-	 * on the others. However, the <code>right</code>, <code>bottom</code> and
-	 * <code>back</code> properties are integrally related to those six
-	 * properties. For example, if you change the value of the <code>right</code>
-	 * property, the value of the <code>width</code> property changes; if you
-	 * change the <code>bottom</code> property, the value of the
-	 * <code>height</code> property changes. </p>
-	 *
-	 * <p>The following methods and properties use Box objects:</p>
-	 *
-	 * <ul>
-	 *   <li>The <code>bounds</code> property of the DisplayObject class</li>
-	 * </ul>
-	 *
-	 * <p>You can use the <code>new Box()</code> constructor to create a
-	 * Box object.</p>
-	 *
-	 * <p><b>Note:</b> The Box class does not define a cubic Shape
-	 * display object.
-	 */
-	class Box {
-	    private _size;
-	    private _bottomRightBack;
-	    private _topLeftFront;
-	    /**
-	     * The height of the box, in pixels. Changing the <code>height</code> value
-	     * of a Box object has no effect on the <code>x</code>, <code>y</code>,
-	     * <code>z</code>, <code>depth</code> and <code>width</code> properties.
-	     */
-	    height: number;
-	    /**
-	     * The width of the box, in pixels. Changing the <code>width</code> value
-	     * of a Box object has no effect on the <code>x</code>, <code>y</code>,
-	     * <code>z</code>, <code>depth</code> and <code>height</code> properties.
-	     */
-	    width: number;
-	    /**
-	     * The deoth of the box, in pixels. Changing the <code>depth</code> value
-	     * of a Box object has no effect on the <code>x</code>, <code>y</code>,
-	     * <code>z</code>, <code>width</code> and <code>height</code> properties.
-	     */
-	    depth: number;
-	    /**
-	     * The <i>x</i> coordinate of the top-left-front corner of the box.
-	     * Changing the value of the <code>x</code> property of a Box object has no
-	     * effect on the <code>y</code>, <code>z</code>, <code>width</code>,
-	     * <code>height</code> and <code>depth</code> properties.
-	     *
-	     * <p>The value of the <code>x</code> property is equal to the value of the
-	     * <code>left</code> property.</p>
-	     */
-	    x: number;
-	    /**
-	     * The <i>y</i> coordinate of the top-left-front corner of the box.
-	     * Changing the value of the <code>y</code> property of a Box object has no
-	     * effect on the <code>x</code>, <code>z</code>, <code>width</code>,
-	     * <code>height</code> and <code>depth</code> properties.
-	     *
-	     * <p>The value of the <code>y</code> property is equal to the value of the
-	     * <code>top</code> property.</p>
-	     */
-	    y: number;
-	    /**
-	     * The <i>y</i> coordinate of the top-left-front corner of the box.
-	     * Changing the value of the <code>z</code> property of a Box object has no
-	     * effect on the <code>x</code>, <code>y</code>, <code>width</code>,
-	     * <code>height</code> and <code>depth</code> properties.
-	     *
-	     * <p>The value of the <code>z</code> property is equal to the value of the
-	     * <code>front</code> property.</p>
-	     */
-	    z: number;
-	    /**
-	     * The sum of the <code>z</code> and <code>height</code> properties.
-	     */
-	    back: number;
-	    /**
-	     * The sum of the <code>y</code> and <code>height</code> properties.
-	     */
-	    bottom: number;
-	    /**
-	     * The location of the Box object's bottom-right corner, determined by the
-	     * values of the <code>right</code> and <code>bottom</code> properties.
-	     */
-	    bottomRightBack: Vector3D;
-	    /**
-	     * The <i>z</i> coordinate of the top-left-front corner of the box. Changing
-	     * the <code>front</code> property of a Box object has no effect on the
-	     * <code>x</code>, <code>y</code>, <code>width</code> and <code>height</code>
-	     * properties. However it does affect the <code>depth</code> property,
-	     * whereas changing the <code>z</code> value does <i>not</i> affect the
-	     * <code>depth</code> property.
-	     *
-	     * <p>The value of the <code>left</code> property is equal to the value of
-	     * the <code>x</code> property.</p>
-	     */
-	    front: number;
-	    /**
-	     * The <i>x</i> coordinate of the top-left corner of the box. Changing the
-	     * <code>left</code> property of a Box object has no effect on the
-	     * <code>y</code> and <code>height</code> properties. However it does affect
-	     * the <code>width</code> property, whereas changing the <code>x</code> value
-	     * does <i>not</i> affect the <code>width</code> property.
-	     *
-	     * <p>The value of the <code>left</code> property is equal to the value of
-	     * the <code>x</code> property.</p>
-	     */
-	    left: number;
-	    /**
-	     * The sum of the <code>x</code> and <code>width</code> properties.
-	     */
-	    right: number;
-	    /**
-	     * The size of the Box object, expressed as a Vector3D object with the
-	     * values of the <code>width</code>, <code>height</code> and
-	     * <code>depth</code> properties.
-	     */
-	    size: Vector3D;
-	    /**
-	     * The <i>y</i> coordinate of the top-left-front corner of the box. Changing
-	     * the <code>top</code> property of a Box object has no effect on the
-	     * <code>x</code> and <code>width</code> properties. However it does affect
-	     * the <code>height</code> property, whereas changing the <code>y</code>
-	     * value does <i>not</i> affect the <code>height</code> property.
-	     *
-	     * <p>The value of the <code>top</code> property is equal to the value of the
-	     * <code>y</code> property.</p>
-	     */
-	    top: number;
-	    /**
-	     * The location of the Box object's top-left-front corner, determined by the
-	     * <i>x</i>, <i>y</i> and <i>z</i> coordinates of the point.
-	     */
-	    topLeftFront: Vector3D;
-	    /**
-	     * Creates a new Box object with the top-left-front corner specified by the
-	     * <code>x</code>, <code>y</code> and <code>z</code> parameters and with the
-	     * specified <code>width</code>, <code>height</code> and <code>depth</code>
-	     * parameters. If you call this public without parameters, a box with
-	     * <code>x</code>, <code>y</code>, <code>z</code>, <code>width</code>,
-	     * <code>height</code> and <code>depth</code> properties set to 0 is created.
-	     *
-	     * @param x      The <i>x</i> coordinate of the top-left-front corner of the
-	     *               box.
-	     * @param y      The <i>y</i> coordinate of the top-left-front corner of the
-	     *               box.
-	     * @param z      The <i>z</i> coordinate of the top-left-front corner of the
-	     *               box.
-	     * @param width  The width of the box, in pixels.
-	     * @param height The height of the box, in pixels.
-	     * @param depth The depth of the box, in pixels.
-	     */
-	    constructor(x?: number, y?: number, z?: number, width?: number, height?: number, depth?: number);
-	    /**
-	     * Returns a new Box object with the same values for the <code>x</code>,
-	     * <code>y</code>, <code>z</code>, <code>width</code>, <code>height</code>
-	     * and <code>depth</code> properties as the original Box object.
-	     *
-	     * @return A new Box object with the same values for the <code>x</code>,
-	     *         <code>y</code>, <code>z</code>, <code>width</code>,
-	     *         <code>height</code> and <code>depth</code> properties as the
-	     *         original Box object.
-	     */
-	    clone(): Box;
-	    /**
-	     * Determines whether the specified position is contained within the cubic
-	     * region defined by this Box object.
-	     *
-	     * @param x The <i>x</i> coordinate(horizontal component) of the position.
-	     * @param y The <i>y</i> coordinate(vertical component) of the position.
-	     * @param z The <i>z</i> coordinate(longitudinal component) of the position.
-	     * @return A value of <code>true</code> if the Box object contains the
-	     *         specified position; otherwise <code>false</code>.
-	     */
-	    contains(x: number, y: number, z: number): boolean;
-	    /**
-	     * Determines whether the specified position is contained within the cubic
-	     * region defined by this Box object. This method is similar to the
-	     * <code>Box.contains()</code> method, except that it takes a Vector3D
-	     * object as a parameter.
-	     *
-	     * @param position The position, as represented by its <i>x</i>, <i>y</i> and
-	     *                 <i>z</i> coordinates.
-	     * @return A value of <code>true</code> if the Box object contains the
-	     *         specified position; otherwise <code>false</code>.
-	     */
-	    containsPoint(position: Vector3D): boolean;
-	    /**
-	     * Determines whether the Box object specified by the <code>box</code>
-	     * parameter is contained within this Box object. A Box object is said to
-	     * contain another if the second Box object falls entirely within the
-	     * boundaries of the first.
-	     *
-	     * @param box The Box object being checked.
-	     * @return A value of <code>true</code> if the Box object that you specify
-	     *         is contained by this Box object; otherwise <code>false</code>.
-	     */
-	    containsRect(box: Box): boolean;
-	    /**
-	     * Copies all of box data from the source Box object into the calling
-	     * Box object.
-	     *
-	     * @param sourceBox The Box object from which to copy the data.
-	     */
-	    copyFrom(sourceBox: Box): void;
-	    /**
-	     * Determines whether the object specified in the <code>toCompare</code>
-	     * parameter is equal to this Box object. This method compares the
-	     * <code>x</code>, <code>y</code>, <code>z</code>, <code>width</code>,
-	     * <code>height</code> and <code>depth</code> properties of an object against
-	     * the same properties of this Box object.
-	     *
-	     * @param toCompare The box to compare to this Box object.
-	     * @return A value of <code>true</code> if the object has exactly the same
-	     *         values for the <code>x</code>, <code>y</code>, <code>z</code>,
-	     *         <code>width</code>, <code>height</code> and <code>depth</code>
-	     *         properties as this Box object; otherwise <code>false</code>.
-	     */
-	    equals(toCompare: Box): boolean;
-	    /**
-	     * Increases the size of the Box object by the specified amounts, in
-	     * pixels. The center point of the Box object stays the same, and its
-	     * size increases to the left and right by the <code>dx</code> value, to
-	     * the top and the bottom by the <code>dy</code> value, and to
-	     * the front and the back by the <code>dz</code> value.
-	     *
-	     * @param dx The value to be added to the left and the right of the Box
-	     *           object. The following equation is used to calculate the new
-	     *           width and position of the box:
-	     * @param dy The value to be added to the top and the bottom of the Box
-	     *           object. The following equation is used to calculate the new
-	     *           height and position of the box:
-	     * @param dz The value to be added to the front and the back of the Box
-	     *           object. The following equation is used to calculate the new
-	     *           depth and position of the box:
-	     */
-	    inflate(dx: number, dy: number, dz: number): void;
-	    /**
-	     * Increases the size of the Box object. This method is similar to the
-	     * <code>Box.inflate()</code> method except it takes a Vector3D object as
-	     * a parameter.
-	     *
-	     * <p>The following two code examples give the same result:</p>
-	     *
-	     * @param delta The <code>x</code> property of this Vector3D object is used to
-	     *              increase the horizontal dimension of the Box object.
-	     *              The <code>y</code> property is used to increase the vertical
-	     *              dimension of the Box object.
-	     *              The <code>z</code> property is used to increase the
-	     *              longitudinal dimension of the Box object.
-	     */
-	    inflatePoint(delta: Vector3D): void;
-	    /**
-	     * If the Box object specified in the <code>toIntersect</code> parameter
-	     * intersects with this Box object, returns the area of intersection
-	     * as a Box object. If the boxes do not intersect, this method returns an
-	     * empty Box object with its properties set to 0.
-	     *
-	     * @param toIntersect The Box object to compare against to see if it
-	     *                    intersects with this Box object.
-	     * @return A Box object that equals the area of intersection. If the
-	     *         boxes do not intersect, this method returns an empty Box
-	     *         object; that is, a box with its <code>x</code>, <code>y</code>,
-	     *         <code>z</code>, <code>width</code>,  <code>height</code>, and
-	     *         <code>depth</code> properties set to 0.
-	     */
-	    intersection(toIntersect: Box): Box;
-	    /**
-	     * Determines whether the object specified in the <code>toIntersect</code>
-	     * parameter intersects with this Box object. This method checks the
-	     * <code>x</code>, <code>y</code>, <code>z</code>, <code>width</code>,
-	     * <code>height</code>, and <code>depth</code> properties of the specified
-	     * Box object to see if it intersects with this Box object.
-	     *
-	     * @param toIntersect The Box object to compare against this Box object.
-	     * @return A value of <code>true</code> if the specified object intersects
-	     *         with this Box object; otherwise <code>false</code>.
-	     */
-	    intersects(toIntersect: Box): boolean;
-	    /**
-	     * Determines whether or not this Box object is empty.
-	     *
-	     * @return A value of <code>true</code> if the Box object's width, height or
-	     *         depth is less than or equal to 0; otherwise <code>false</code>.
-	     */
-	    isEmpty(): boolean;
-	    /**
-	     * Adjusts the location of the Box object, as determined by its
-	     * top-left-front corner, by the specified amounts.
-	     *
-	     * @param dx Moves the <i>x</i> value of the Box object by this amount.
-	     * @param dy Moves the <i>y</i> value of the Box object by this amount.
-	     * @param dz Moves the <i>z</i> value of the Box object by this amount.
-	     */
-	    offset(dx: number, dy: number, dz: number): void;
-	    /**
-	     * Adjusts the location of the Box object using a Vector3D object as a
-	     * parameter. This method is similar to the <code>Box.offset()</code>
-	     * method, except that it takes a Vector3D object as a parameter.
-	     *
-	     * @param position A Vector3D object to use to offset this Box object.
-	     */
-	    offsetPosition(position: Vector3D): void;
-	    /**
-	     * Sets all of the Box object's properties to 0. A Box object is empty if its
-	     * width, height or depth is less than or equal to 0.
-	     *
-	     * <p> This method sets the values of the <code>x</code>, <code>y</code>,
-	     * <code>z</code>, <code>width</code>, <code>height</code>, and
-	     * <code>depth</code> properties to 0.</p>
-	     *
-	     */
-	    setEmpty(): void;
-	    /**
-	     * Sets the members of Box to the specified values
-	     *
-	     * @param xa      The <i>x</i> coordinate of the top-left-front corner of the
-	     *                box.
-	     * @param ya      The <i>y</i> coordinate of the top-left-front corner of the
-	     *                box.
-	     * @param yz      The <i>z</i> coordinate of the top-left-front corner of the
-	     *                box.
-	     * @param widtha  The width of the box, in pixels.
-	     * @param heighta The height of the box, in pixels.
-	     * @param deptha  The depth of the box, in pixels.
-	     */
-	    setTo(xa: number, ya: number, za: number, widtha: number, heighta: number, deptha: number): void;
-	    /**
-	     * Builds and returns a string that lists the horizontal, vertical and
-	     * longitudinal positions and the width, height and depth of the Box object.
-	     *
-	     * @return A string listing the value of each of the following properties of
-	     *         the Box object: <code>x</code>, <code>y</code>, <code>z</code>,
-	     *         <code>width</code>, <code>height</code>, and <code>depth</code>.
-	     */
-	    toString(): string;
-	    /**
-	     * Adds two boxes together to create a new Box object, by filling
-	     * in the horizontal, vertical and longitudinal space between the two boxes.
-	     *
-	     * <p><b>Note:</b> The <code>union()</code> method ignores boxes with
-	     * <code>0</code> as the height, width or depth value, such as: <code>var
-	     * box2:Box = new Box(300,300,300,50,50,0);</code></p>
-	     *
-	     * @param toUnion A Box object to add to this Box object.
-	     * @return A new Box object that is the union of the two boxes.
-	     */
-	    union(toUnion: Box): Box;
+declare module "awayjs-core/lib/errors/DocumentError" {
+	import Error = require("awayjs-core/lib/errors/Error");
+	class DocumentError extends Error {
+	    static DOCUMENT_DOES_NOT_EXIST: string;
+	    constructor(message?: string, id?: number);
 	}
-	export = Box;
+	export = DocumentError;
+	
+}
+declare module "awayjs-core/lib/errors/PartialImplementationError" {
+	import Error = require("awayjs-core/lib/errors/Error");
+	/**
+	 * AbstractMethodError is thrown when an abstract method is called. The method in question should be overridden
+	 * by a concrete subclass.
+	 */
+	class PartialImplementationError extends Error {
+	    /**
+	     * Create a new AbstractMethodError.
+	     * @param message An optional message to override the default error message.
+	     * @param id The id of the error.
+	     */
+	    constructor(dependency?: string, id?: number);
+	}
+	export = PartialImplementationError;
+	
+}
+declare module "awayjs-core/lib/errors/RangeError" {
+	import Error = require("awayjs-core/lib/errors/Error");
+	/**
+	 * RangeError is thrown when an index is accessed out of range of the number of
+	 * available indices on an Array.
+	 */
+	class RangeError extends Error {
+	    /**
+	     * Create a new RangeError.
+	     *
+	     * @param message An optional message to override the default error message.
+	     * @param id The id of the error.
+	     */
+	    constructor(message?: string, id?: number);
+	}
+	export = RangeError;
+	
+}
+declare module "awayjs-core/lib/events/Event" {
+	class Event {
+	    static COMPLETE: string;
+	    static OPEN: string;
+	    static ENTER_FRAME: string;
+	    static EXIT_FRAME: string;
+	    static RESIZE: string;
+	    static ERROR: string;
+	    static CHANGE: string;
+	    /**
+	     * Type of event
+	     * @property type
+	     * @type String
+	     */
+	    type: string;
+	    /**
+	     * Reference to target object
+	     * @property target
+	     * @type Object
+	     */
+	    target: any;
+	    constructor(type: string);
+	    /**
+	     * Clones the current event.
+	     * @return An exact duplicate of the current event.
+	     */
+	    clone(): Event;
+	}
+	export = Event;
+	
+}
+declare module "awayjs-core/lib/events/IEventDispatcher" {
+	import Event = require("awayjs-core/lib/events/Event");
+	/**
+	 * Base interface for dispatching events
+	 *
+	 * @interface away.events.IEventDispatcher
+	 *
+	 */
+	interface IEventDispatcher {
+	    /**
+	     * Add an event listener
+	     * @method addEventListener
+	     * @param {String} Name of event to add a listener for
+	     * @param {Function} Callback function
+	     */
+	    addEventListener(type: string, listener: Function): any;
+	    /**
+	     * Remove an event listener
+	     * @method removeEventListener
+	     * @param {String} Name of event to remove a listener for
+	     * @param {Function} Callback function
+	     */
+	    removeEventListener(type: string, listener: Function): any;
+	    /**
+	     * Dispatch an event
+	     * @method dispatchEvent
+	     * @param {Event} Event to dispatch
+	     */
+	    dispatchEvent(event: Event): any;
+	    /**
+	     * check if an object has an event listener assigned to it
+	     * @method hasListener
+	     * @param {String} Name of event to remove a listener for
+	     * @param {Function} Callback function
+	     * @param {Object} Target object listener is added to
+	     */
+	    hasEventListener(type: string, listener?: Function): boolean;
+	}
+	export = IEventDispatcher;
+	
+}
+declare module "awayjs-core/lib/library/IAsset" {
+	import IEventDispatcher = require("awayjs-core/lib/events/IEventDispatcher");
+	interface IAsset extends IEventDispatcher {
+	    /**
+	     *
+	     */
+	    name: string;
+	    /**
+	     *
+	     */
+	    id: number;
+	    /**
+	     *
+	     */
+	    assetNamespace: string;
+	    /**
+	     *
+	     */
+	    assetType: string;
+	    /**
+	     *
+	     */
+	    assetFullPath: string[];
+	    /**
+	     *
+	     * @param name
+	     * @param ns
+	     */
+	    assetPathEquals(name: string, ns: string): boolean;
+	    /**
+	     *
+	     * @param name
+	     * @param ns
+	     * @param overrideOriginal
+	     */
+	    resetAssetPath(name: string, ns: string, overrideOriginal?: boolean): void;
+	    /**
+	     *
+	     */
+	    dispose(): any;
+	}
+	export = IAsset;
+	
+}
+declare module "awayjs-core/lib/events/AssetEvent" {
+	import IAsset = require("awayjs-core/lib/library/IAsset");
+	import Event = require("awayjs-core/lib/events/Event");
+	/**
+	 * @class away.events.AssetEvent
+	 */
+	class AssetEvent extends Event {
+	    /**
+	     *
+	     */
+	    static ASSET_COMPLETE: string;
+	    /**
+	     *
+	     */
+	    static ASSET_RENAME: string;
+	    /**
+	     *
+	     */
+	    static ASSET_CONFLICT_RESOLVED: string;
+	    /**
+	     *
+	     */
+	    static TEXTURE_SIZE_ERROR: string;
+	    private _asset;
+	    private _prevName;
+	    /**
+	     *
+	     */
+	    constructor(type: string, asset?: IAsset, prevName?: string);
+	    /**
+	     *
+	     */
+	    asset: IAsset;
+	    /**
+	     *
+	     */
+	    assetPrevName: string;
+	    /**
+	     *
+	     */
+	    clone(): Event;
+	}
+	export = AssetEvent;
+	
+}
+declare module "awayjs-core/lib/events/EventDispatcher" {
+	import Event = require("awayjs-core/lib/events/Event");
+	/**
+	 * Base class for dispatching events
+	*
+	* @class away.events.EventDispatcher
+	*
+	*/
+	class EventDispatcher {
+	    private listeners;
+	    private target;
+	    constructor(target?: any);
+	    /**
+	     * Add an event listener
+	     * @method addEventListener
+	     * @param {String} Name of event to add a listener for
+	     * @param {Function} Callback function
+	     */
+	    addEventListener(type: string, listener: Function): void;
+	    /**
+	     * Remove an event listener
+	     * @method removeEventListener
+	     * @param {String} Name of event to remove a listener for
+	     * @param {Function} Callback function
+	     */
+	    removeEventListener(type: string, listener: Function): void;
+	    /**
+	     * Dispatch an event
+	     * @method dispatchEvent
+	     * @param {Event} Event to dispatch
+	     */
+	    dispatchEvent(event: Event): void;
+	    /**
+	     * get Event Listener Index in array. Returns -1 if no listener is added
+	     * @method getEventListenerIndex
+	     * @param {String} Name of event to remove a listener for
+	     * @param {Function} Callback function
+	     */
+	    private getEventListenerIndex(type, listener);
+	    /**
+	     * check if an object has an event listener assigned to it
+	     * @method hasListener
+	     * @param {String} Name of event to remove a listener for
+	     * @param {Function} Callback function
+	     */
+	    hasEventListener(type: string, listener?: Function): boolean;
+	}
+	export = EventDispatcher;
+	
+}
+declare module "awayjs-core/lib/events/HTTPStatusEvent" {
+	import Event = require("awayjs-core/lib/events/Event");
+	/**
+	 * @class away.events.HTTPStatusEvent
+	 */
+	class HTTPStatusEvent extends Event {
+	    static HTTP_STATUS: string;
+	    status: number;
+	    constructor(type: string, status?: number);
+	}
+	export = HTTPStatusEvent;
+	
+}
+declare module "awayjs-core/lib/events/IOErrorEvent" {
+	import Event = require("awayjs-core/lib/events/Event");
+	class IOErrorEvent extends Event {
+	    static IO_ERROR: string;
+	    constructor(type: string);
+	}
+	export = IOErrorEvent;
+	
+}
+declare module "awayjs-core/lib/events/LoaderEvent" {
+	import IAsset = require("awayjs-core/lib/library/IAsset");
+	import Event = require("awayjs-core/lib/events/Event");
+	class LoaderEvent extends Event {
+	    /**
+	     * Dispatched when a resource and all of its dependencies is retrieved.
+	     */
+	    static RESOURCE_COMPLETE: string;
+	    private _url;
+	    private _content;
+	    private _assets;
+	    /**
+	     * Create a new LoaderEvent object.
+	     *
+	     * @param type The event type.
+	     * @param url The url of the loaded resource.
+	     * @param assets The assets of the loaded resource.
+	     */
+	    constructor(type: string, url?: string, content?: IAsset, assets?: IAsset[]);
+	    /**
+	     * The content returned if the resource has been loaded inside a <code>Loader</code> object.
+	     */
+	    content: IAsset;
+	    /**
+	     * The url of the loaded resource.
+	     */
+	    url: string;
+	    /**
+	     * The error string on loadError.
+	     */
+	    assets: IAsset[];
+	    /**
+	     * Clones the current event.
+	     * @return An exact duplicate of the current event.
+	     */
+	    clone(): Event;
+	}
+	export = LoaderEvent;
+	
+}
+declare module "awayjs-core/lib/events/ParserEvent" {
+	import Event = require("awayjs-core/lib/events/Event");
+	class ParserEvent extends Event {
+	    private _message;
+	    /**
+	     * Dispatched when parsing of an asset completed.
+	     */
+	    static PARSE_COMPLETE: string;
+	    /**
+	     * Dispatched when an error occurs while parsing the data (e.g. because it's
+	     * incorrectly formatted.)
+	     */
+	    static PARSE_ERROR: string;
+	    /**
+	     * Dispatched when a parser is ready to have dependencies retrieved and resolved.
+	     * This is an internal event that should rarely (if ever) be listened for by
+	     * external classes.
+	     */
+	    static READY_FOR_DEPENDENCIES: string;
+	    constructor(type: string, message?: string);
+	    /**
+	     * Additional human-readable message. Usually supplied for ParserEvent.PARSE_ERROR events.
+	     */
+	    message: string;
+	    clone(): Event;
+	}
+	export = ParserEvent;
+	
+}
+declare module "awayjs-core/lib/events/ProgressEvent" {
+	import Event = require("awayjs-core/lib/events/Event");
+	class ProgressEvent extends Event {
+	    static PROGRESS: string;
+	    bytesLoaded: number;
+	    bytesTotal: number;
+	    constructor(type: string);
+	}
+	export = ProgressEvent;
 	
 }
 declare module "awayjs-core/lib/geom/Orientation3D" {
@@ -2920,500 +2915,6 @@ declare module "awayjs-core/lib/geom/Matrix3D" {
 	export = Matrix3D;
 	
 }
-declare module "awayjs-core/lib/bounds/BoundingVolumeBase" {
-	import Box = require("awayjs-core/lib/geom/Box");
-	import Matrix3D = require("awayjs-core/lib/geom/Matrix3D");
-	import Plane3D = require("awayjs-core/lib/geom/Plane3D");
-	import Vector3D = require("awayjs-core/lib/geom/Vector3D");
-	class BoundingVolumeBase {
-	    _aabb: Box;
-	    _pAabbPoints: number[];
-	    _pAabbPointsDirty: boolean;
-	    minX: number;
-	    minY: number;
-	    minZ: number;
-	    maxX: number;
-	    maxY: number;
-	    maxZ: number;
-	    constructor();
-	    aabb: Box;
-	    aabbPoints: number[];
-	    nullify(): void;
-	    fromVertices(vertices: number[]): void;
-	    fromSphere(center: Vector3D, radius: number): void;
-	    fromExtremes(minX: number, minY: number, minZ: number, maxX: number, maxY: number, maxZ: number): void;
-	    isInFrustum(planes: Plane3D[], numPlanes: number): boolean;
-	    overlaps(bounds: BoundingVolumeBase): boolean;
-	    clone(): BoundingVolumeBase;
-	    rayIntersection(position: Vector3D, direction: Vector3D, targetNormal: Vector3D): number;
-	    containsPoint(position: Vector3D): boolean;
-	    pUpdateAABBPoints(): void;
-	    classifyToPlane(plane: Plane3D): number;
-	    transformFrom(bounds: BoundingVolumeBase, matrix: Matrix3D): void;
-	}
-	export = BoundingVolumeBase;
-	
-}
-declare module "awayjs-core/lib/bounds/AxisAlignedBoundingBox" {
-	import BoundingVolumeBase = require("awayjs-core/lib/bounds/BoundingVolumeBase");
-	import Matrix3D = require("awayjs-core/lib/geom/Matrix3D");
-	import Plane3D = require("awayjs-core/lib/geom/Plane3D");
-	import Vector3D = require("awayjs-core/lib/geom/Vector3D");
-	/**
-	 * AxisAlignedBoundingBox represents a bounding box volume that has its planes aligned to the local coordinate axes of the bounded object.
-	 * This is useful for most meshes.
-	 */
-	class AxisAlignedBoundingBox extends BoundingVolumeBase {
-	    private _centerX;
-	    private _centerY;
-	    private _centerZ;
-	    private _halfExtentsX;
-	    private _halfExtentsY;
-	    private _halfExtentsZ;
-	    centerX: number;
-	    centerY: number;
-	    centerZ: number;
-	    /**
-	     * Creates a new <code>AxisAlignedBoundingBox</code> object.
-	     */
-	    constructor();
-	    /**
-	     * @inheritDoc
-	     */
-	    nullify(): void;
-	    /**
-	     * @inheritDoc
-	     */
-	    isInFrustum(planes: Plane3D[], numPlanes: number): boolean;
-	    rayIntersection(position: Vector3D, direction: Vector3D, targetNormal: Vector3D): number;
-	    /**
-	     * @inheritDoc
-	     */
-	    containsPoint(position: Vector3D): boolean;
-	    /**
-	     * @inheritDoc
-	     */
-	    fromExtremes(minX: number, minY: number, minZ: number, maxX: number, maxY: number, maxZ: number): void;
-	    /**
-	     * @inheritDoc
-	     */
-	    clone(): BoundingVolumeBase;
-	    halfExtentsX: number;
-	    halfExtentsY: number;
-	    halfExtentsZ: number;
-	    /**
-	     * Finds the closest point on the bounding volume to another given point. This can be used for maximum error calculations for content within a given bound.
-	     * @param point The point for which to find the closest point on the bounding volume
-	     * @param target An optional Vector3D to store the result to prevent creating a new object.
-	     * @return
-	     */
-	    closestPointToPoint(point: Vector3D, target?: Vector3D): Vector3D;
-	    classifyToPlane(plane: Plane3D): number;
-	    transformFrom(bounds: BoundingVolumeBase, matrix: Matrix3D): void;
-	}
-	export = AxisAlignedBoundingBox;
-	
-}
-declare module "awayjs-core/lib/bounds/BoundingSphere" {
-	import BoundingVolumeBase = require("awayjs-core/lib/bounds/BoundingVolumeBase");
-	import Matrix3D = require("awayjs-core/lib/geom/Matrix3D");
-	import Plane3D = require("awayjs-core/lib/geom/Plane3D");
-	import Vector3D = require("awayjs-core/lib/geom/Vector3D");
-	class BoundingSphere extends BoundingVolumeBase {
-	    private _radius;
-	    private _centerX;
-	    private _centerY;
-	    private _centerZ;
-	    constructor();
-	    radius: number;
-	    nullify(): void;
-	    isInFrustum(planes: Plane3D[], numPlanes: number): boolean;
-	    fromSphere(center: Vector3D, radius: number): void;
-	    fromExtremes(minX: number, minY: number, minZ: number, maxX: number, maxY: number, maxZ: number): void;
-	    clone(): BoundingVolumeBase;
-	    rayIntersection(position: Vector3D, direction: Vector3D, targetNormal: Vector3D): number;
-	    containsPoint(position: Vector3D): boolean;
-	    classifyToPlane(plane: Plane3D): number;
-	    transformFrom(bounds: BoundingVolumeBase, matrix: Matrix3D): void;
-	}
-	export = BoundingSphere;
-	
-}
-declare module "awayjs-core/lib/bounds/NullBounds" {
-	import BoundingVolumeBase = require("awayjs-core/lib/bounds/BoundingVolumeBase");
-	import Matrix3D = require("awayjs-core/lib/geom/Matrix3D");
-	import Plane3D = require("awayjs-core/lib/geom/Plane3D");
-	import Vector3D = require("awayjs-core/lib/geom/Vector3D");
-	class NullBounds extends BoundingVolumeBase {
-	    private _alwaysIn;
-	    constructor(alwaysIn?: boolean);
-	    clone(): BoundingVolumeBase;
-	    isInFrustum(planes: Plane3D[], numPlanes: number): boolean;
-	    fromSphere(center: Vector3D, radius: number): void;
-	    fromExtremes(minX: number, minY: number, minZ: number, maxX: number, maxY: number, maxZ: number): void;
-	    classifyToPlane(plane: Plane3D): number;
-	    transformFrom(bounds: BoundingVolumeBase, matrix: Matrix3D): void;
-	}
-	export = NullBounds;
-	
-}
-declare module "awayjs-core/lib/errors/DocumentError" {
-	import Error = require("awayjs-core/lib/errors/Error");
-	class DocumentError extends Error {
-	    static DOCUMENT_DOES_NOT_EXIST: string;
-	    constructor(message?: string, id?: number);
-	}
-	export = DocumentError;
-	
-}
-declare module "awayjs-core/lib/errors/PartialImplementationError" {
-	import Error = require("awayjs-core/lib/errors/Error");
-	/**
-	 * AbstractMethodError is thrown when an abstract method is called. The method in question should be overridden
-	 * by a concrete subclass.
-	 */
-	class PartialImplementationError extends Error {
-	    /**
-	     * Create a new AbstractMethodError.
-	     * @param message An optional message to override the default error message.
-	     * @param id The id of the error.
-	     */
-	    constructor(dependency?: string, id?: number);
-	}
-	export = PartialImplementationError;
-	
-}
-declare module "awayjs-core/lib/errors/RangeError" {
-	import Error = require("awayjs-core/lib/errors/Error");
-	/**
-	 * RangeError is thrown when an index is accessed out of range of the number of
-	 * available indices on an Array.
-	 */
-	class RangeError extends Error {
-	    /**
-	     * Create a new RangeError.
-	     *
-	     * @param message An optional message to override the default error message.
-	     * @param id The id of the error.
-	     */
-	    constructor(message?: string, id?: number);
-	}
-	export = RangeError;
-	
-}
-declare module "awayjs-core/lib/events/Event" {
-	class Event {
-	    static COMPLETE: string;
-	    static OPEN: string;
-	    static ENTER_FRAME: string;
-	    static EXIT_FRAME: string;
-	    static RESIZE: string;
-	    static ERROR: string;
-	    static CHANGE: string;
-	    /**
-	     * Type of event
-	     * @property type
-	     * @type String
-	     */
-	    type: string;
-	    /**
-	     * Reference to target object
-	     * @property target
-	     * @type Object
-	     */
-	    target: any;
-	    constructor(type: string);
-	    /**
-	     * Clones the current event.
-	     * @return An exact duplicate of the current event.
-	     */
-	    clone(): Event;
-	}
-	export = Event;
-	
-}
-declare module "awayjs-core/lib/events/IEventDispatcher" {
-	import Event = require("awayjs-core/lib/events/Event");
-	/**
-	 * Base interface for dispatching events
-	 *
-	 * @interface away.events.IEventDispatcher
-	 *
-	 */
-	interface IEventDispatcher {
-	    /**
-	     * Add an event listener
-	     * @method addEventListener
-	     * @param {String} Name of event to add a listener for
-	     * @param {Function} Callback function
-	     */
-	    addEventListener(type: string, listener: Function): any;
-	    /**
-	     * Remove an event listener
-	     * @method removeEventListener
-	     * @param {String} Name of event to remove a listener for
-	     * @param {Function} Callback function
-	     */
-	    removeEventListener(type: string, listener: Function): any;
-	    /**
-	     * Dispatch an event
-	     * @method dispatchEvent
-	     * @param {Event} Event to dispatch
-	     */
-	    dispatchEvent(event: Event): any;
-	    /**
-	     * check if an object has an event listener assigned to it
-	     * @method hasListener
-	     * @param {String} Name of event to remove a listener for
-	     * @param {Function} Callback function
-	     * @param {Object} Target object listener is added to
-	     */
-	    hasEventListener(type: string, listener?: Function): boolean;
-	}
-	export = IEventDispatcher;
-	
-}
-declare module "awayjs-core/lib/library/IAsset" {
-	import IEventDispatcher = require("awayjs-core/lib/events/IEventDispatcher");
-	interface IAsset extends IEventDispatcher {
-	    /**
-	     *
-	     */
-	    name: string;
-	    /**
-	     *
-	     */
-	    id: number;
-	    /**
-	     *
-	     */
-	    assetNamespace: string;
-	    /**
-	     *
-	     */
-	    assetType: string;
-	    /**
-	     *
-	     */
-	    assetFullPath: string[];
-	    /**
-	     *
-	     * @param name
-	     * @param ns
-	     */
-	    assetPathEquals(name: string, ns: string): boolean;
-	    /**
-	     *
-	     * @param name
-	     * @param ns
-	     * @param overrideOriginal
-	     */
-	    resetAssetPath(name: string, ns: string, overrideOriginal?: boolean): void;
-	    /**
-	     *
-	     */
-	    dispose(): any;
-	}
-	export = IAsset;
-	
-}
-declare module "awayjs-core/lib/events/AssetEvent" {
-	import IAsset = require("awayjs-core/lib/library/IAsset");
-	import Event = require("awayjs-core/lib/events/Event");
-	/**
-	 * @class away.events.AssetEvent
-	 */
-	class AssetEvent extends Event {
-	    /**
-	     *
-	     */
-	    static ASSET_COMPLETE: string;
-	    /**
-	     *
-	     */
-	    static ASSET_RENAME: string;
-	    /**
-	     *
-	     */
-	    static ASSET_CONFLICT_RESOLVED: string;
-	    /**
-	     *
-	     */
-	    static TEXTURE_SIZE_ERROR: string;
-	    private _asset;
-	    private _prevName;
-	    /**
-	     *
-	     */
-	    constructor(type: string, asset?: IAsset, prevName?: string);
-	    /**
-	     *
-	     */
-	    asset: IAsset;
-	    /**
-	     *
-	     */
-	    assetPrevName: string;
-	    /**
-	     *
-	     */
-	    clone(): Event;
-	}
-	export = AssetEvent;
-	
-}
-declare module "awayjs-core/lib/events/EventDispatcher" {
-	import Event = require("awayjs-core/lib/events/Event");
-	/**
-	 * Base class for dispatching events
-	*
-	* @class away.events.EventDispatcher
-	*
-	*/
-	class EventDispatcher {
-	    private listeners;
-	    private target;
-	    constructor(target?: any);
-	    /**
-	     * Add an event listener
-	     * @method addEventListener
-	     * @param {String} Name of event to add a listener for
-	     * @param {Function} Callback function
-	     */
-	    addEventListener(type: string, listener: Function): void;
-	    /**
-	     * Remove an event listener
-	     * @method removeEventListener
-	     * @param {String} Name of event to remove a listener for
-	     * @param {Function} Callback function
-	     */
-	    removeEventListener(type: string, listener: Function): void;
-	    /**
-	     * Dispatch an event
-	     * @method dispatchEvent
-	     * @param {Event} Event to dispatch
-	     */
-	    dispatchEvent(event: Event): void;
-	    /**
-	     * get Event Listener Index in array. Returns -1 if no listener is added
-	     * @method getEventListenerIndex
-	     * @param {String} Name of event to remove a listener for
-	     * @param {Function} Callback function
-	     */
-	    private getEventListenerIndex(type, listener);
-	    /**
-	     * check if an object has an event listener assigned to it
-	     * @method hasListener
-	     * @param {String} Name of event to remove a listener for
-	     * @param {Function} Callback function
-	     */
-	    hasEventListener(type: string, listener?: Function): boolean;
-	}
-	export = EventDispatcher;
-	
-}
-declare module "awayjs-core/lib/events/HTTPStatusEvent" {
-	import Event = require("awayjs-core/lib/events/Event");
-	/**
-	 * @class away.events.HTTPStatusEvent
-	 */
-	class HTTPStatusEvent extends Event {
-	    static HTTP_STATUS: string;
-	    status: number;
-	    constructor(type: string, status?: number);
-	}
-	export = HTTPStatusEvent;
-	
-}
-declare module "awayjs-core/lib/events/IOErrorEvent" {
-	import Event = require("awayjs-core/lib/events/Event");
-	class IOErrorEvent extends Event {
-	    static IO_ERROR: string;
-	    constructor(type: string);
-	}
-	export = IOErrorEvent;
-	
-}
-declare module "awayjs-core/lib/events/LoaderEvent" {
-	import IAsset = require("awayjs-core/lib/library/IAsset");
-	import Event = require("awayjs-core/lib/events/Event");
-	class LoaderEvent extends Event {
-	    /**
-	     * Dispatched when a resource and all of its dependencies is retrieved.
-	     */
-	    static RESOURCE_COMPLETE: string;
-	    private _url;
-	    private _content;
-	    private _assets;
-	    /**
-	     * Create a new LoaderEvent object.
-	     *
-	     * @param type The event type.
-	     * @param url The url of the loaded resource.
-	     * @param assets The assets of the loaded resource.
-	     */
-	    constructor(type: string, url?: string, content?: IAsset, assets?: IAsset[]);
-	    /**
-	     * The content returned if the resource has been loaded inside a <code>Loader</code> object.
-	     */
-	    content: IAsset;
-	    /**
-	     * The url of the loaded resource.
-	     */
-	    url: string;
-	    /**
-	     * The error string on loadError.
-	     */
-	    assets: IAsset[];
-	    /**
-	     * Clones the current event.
-	     * @return An exact duplicate of the current event.
-	     */
-	    clone(): Event;
-	}
-	export = LoaderEvent;
-	
-}
-declare module "awayjs-core/lib/events/ParserEvent" {
-	import Event = require("awayjs-core/lib/events/Event");
-	class ParserEvent extends Event {
-	    private _message;
-	    /**
-	     * Dispatched when parsing of an asset completed.
-	     */
-	    static PARSE_COMPLETE: string;
-	    /**
-	     * Dispatched when an error occurs while parsing the data (e.g. because it's
-	     * incorrectly formatted.)
-	     */
-	    static PARSE_ERROR: string;
-	    /**
-	     * Dispatched when a parser is ready to have dependencies retrieved and resolved.
-	     * This is an internal event that should rarely (if ever) be listened for by
-	     * external classes.
-	     */
-	    static READY_FOR_DEPENDENCIES: string;
-	    constructor(type: string, message?: string);
-	    /**
-	     * Additional human-readable message. Usually supplied for ParserEvent.PARSE_ERROR events.
-	     */
-	    message: string;
-	    clone(): Event;
-	}
-	export = ParserEvent;
-	
-}
-declare module "awayjs-core/lib/events/ProgressEvent" {
-	import Event = require("awayjs-core/lib/events/Event");
-	class ProgressEvent extends Event {
-	    static PROGRESS: string;
-	    bytesLoaded: number;
-	    bytesTotal: number;
-	    constructor(type: string);
-	}
-	export = ProgressEvent;
-	
-}
 declare module "awayjs-core/lib/projections/IProjection" {
 	import Matrix3D = require("awayjs-core/lib/geom/Matrix3D");
 	import Vector3D = require("awayjs-core/lib/geom/Vector3D");
@@ -3460,6 +2961,377 @@ declare module "awayjs-core/lib/events/TimerEvent" {
 	    constructor(type: string);
 	}
 	export = TimerEvent;
+	
+}
+declare module "awayjs-core/lib/geom/Box" {
+	import Vector3D = require("awayjs-core/lib/geom/Vector3D");
+	/**
+	 * A Box object is an area defined by its position, as indicated by its
+	 * top-left-front corner point(<i>x</i>, <i>y</i>, <i>z</i>) and by its width,
+	 * height and depth.
+	 *
+	 *
+	 * <p>The <code>x</code>, <code>y</code>, <code>z</code>, <code>width</code>,
+	 * <code>height</code> <code>depth</code> properties of the Box class are
+	 * independent of each other; changing the value of one property has no effect
+	 * on the others. However, the <code>right</code>, <code>bottom</code> and
+	 * <code>back</code> properties are integrally related to those six
+	 * properties. For example, if you change the value of the <code>right</code>
+	 * property, the value of the <code>width</code> property changes; if you
+	 * change the <code>bottom</code> property, the value of the
+	 * <code>height</code> property changes. </p>
+	 *
+	 * <p>The following methods and properties use Box objects:</p>
+	 *
+	 * <ul>
+	 *   <li>The <code>bounds</code> property of the DisplayObject class</li>
+	 * </ul>
+	 *
+	 * <p>You can use the <code>new Box()</code> constructor to create a
+	 * Box object.</p>
+	 *
+	 * <p><b>Note:</b> The Box class does not define a cubic Shape
+	 * display object.
+	 */
+	class Box {
+	    private _size;
+	    private _bottomRightBack;
+	    private _topLeftFront;
+	    /**
+	     * The height of the box, in pixels. Changing the <code>height</code> value
+	     * of a Box object has no effect on the <code>x</code>, <code>y</code>,
+	     * <code>z</code>, <code>depth</code> and <code>width</code> properties.
+	     */
+	    height: number;
+	    /**
+	     * The width of the box, in pixels. Changing the <code>width</code> value
+	     * of a Box object has no effect on the <code>x</code>, <code>y</code>,
+	     * <code>z</code>, <code>depth</code> and <code>height</code> properties.
+	     */
+	    width: number;
+	    /**
+	     * The deoth of the box, in pixels. Changing the <code>depth</code> value
+	     * of a Box object has no effect on the <code>x</code>, <code>y</code>,
+	     * <code>z</code>, <code>width</code> and <code>height</code> properties.
+	     */
+	    depth: number;
+	    /**
+	     * The <i>x</i> coordinate of the top-left-front corner of the box.
+	     * Changing the value of the <code>x</code> property of a Box object has no
+	     * effect on the <code>y</code>, <code>z</code>, <code>width</code>,
+	     * <code>height</code> and <code>depth</code> properties.
+	     *
+	     * <p>The value of the <code>x</code> property is equal to the value of the
+	     * <code>left</code> property.</p>
+	     */
+	    x: number;
+	    /**
+	     * The <i>y</i> coordinate of the top-left-front corner of the box.
+	     * Changing the value of the <code>y</code> property of a Box object has no
+	     * effect on the <code>x</code>, <code>z</code>, <code>width</code>,
+	     * <code>height</code> and <code>depth</code> properties.
+	     *
+	     * <p>The value of the <code>y</code> property is equal to the value of the
+	     * <code>top</code> property.</p>
+	     */
+	    y: number;
+	    /**
+	     * The <i>y</i> coordinate of the top-left-front corner of the box.
+	     * Changing the value of the <code>z</code> property of a Box object has no
+	     * effect on the <code>x</code>, <code>y</code>, <code>width</code>,
+	     * <code>height</code> and <code>depth</code> properties.
+	     *
+	     * <p>The value of the <code>z</code> property is equal to the value of the
+	     * <code>front</code> property.</p>
+	     */
+	    z: number;
+	    /**
+	     * The sum of the <code>z</code> and <code>height</code> properties.
+	     */
+	    back: number;
+	    /**
+	     * The sum of the <code>y</code> and <code>height</code> properties.
+	     */
+	    bottom: number;
+	    /**
+	     * The location of the Box object's bottom-right corner, determined by the
+	     * values of the <code>right</code> and <code>bottom</code> properties.
+	     */
+	    bottomRightBack: Vector3D;
+	    /**
+	     * The <i>z</i> coordinate of the top-left-front corner of the box. Changing
+	     * the <code>front</code> property of a Box object has no effect on the
+	     * <code>x</code>, <code>y</code>, <code>width</code> and <code>height</code>
+	     * properties. However it does affect the <code>depth</code> property,
+	     * whereas changing the <code>z</code> value does <i>not</i> affect the
+	     * <code>depth</code> property.
+	     *
+	     * <p>The value of the <code>left</code> property is equal to the value of
+	     * the <code>x</code> property.</p>
+	     */
+	    front: number;
+	    /**
+	     * The <i>x</i> coordinate of the top-left corner of the box. Changing the
+	     * <code>left</code> property of a Box object has no effect on the
+	     * <code>y</code> and <code>height</code> properties. However it does affect
+	     * the <code>width</code> property, whereas changing the <code>x</code> value
+	     * does <i>not</i> affect the <code>width</code> property.
+	     *
+	     * <p>The value of the <code>left</code> property is equal to the value of
+	     * the <code>x</code> property.</p>
+	     */
+	    left: number;
+	    /**
+	     * The sum of the <code>x</code> and <code>width</code> properties.
+	     */
+	    right: number;
+	    /**
+	     * The size of the Box object, expressed as a Vector3D object with the
+	     * values of the <code>width</code>, <code>height</code> and
+	     * <code>depth</code> properties.
+	     */
+	    size: Vector3D;
+	    /**
+	     * The <i>y</i> coordinate of the top-left-front corner of the box. Changing
+	     * the <code>top</code> property of a Box object has no effect on the
+	     * <code>x</code> and <code>width</code> properties. However it does affect
+	     * the <code>height</code> property, whereas changing the <code>y</code>
+	     * value does <i>not</i> affect the <code>height</code> property.
+	     *
+	     * <p>The value of the <code>top</code> property is equal to the value of the
+	     * <code>y</code> property.</p>
+	     */
+	    top: number;
+	    /**
+	     * The location of the Box object's top-left-front corner, determined by the
+	     * <i>x</i>, <i>y</i> and <i>z</i> coordinates of the point.
+	     */
+	    topLeftFront: Vector3D;
+	    /**
+	     * Creates a new Box object with the top-left-front corner specified by the
+	     * <code>x</code>, <code>y</code> and <code>z</code> parameters and with the
+	     * specified <code>width</code>, <code>height</code> and <code>depth</code>
+	     * parameters. If you call this public without parameters, a box with
+	     * <code>x</code>, <code>y</code>, <code>z</code>, <code>width</code>,
+	     * <code>height</code> and <code>depth</code> properties set to 0 is created.
+	     *
+	     * @param x      The <i>x</i> coordinate of the top-left-front corner of the
+	     *               box.
+	     * @param y      The <i>y</i> coordinate of the top-left-front corner of the
+	     *               box.
+	     * @param z      The <i>z</i> coordinate of the top-left-front corner of the
+	     *               box.
+	     * @param width  The width of the box, in pixels.
+	     * @param height The height of the box, in pixels.
+	     * @param depth The depth of the box, in pixels.
+	     */
+	    constructor(x?: number, y?: number, z?: number, width?: number, height?: number, depth?: number);
+	    /**
+	     * Returns a new Box object with the same values for the <code>x</code>,
+	     * <code>y</code>, <code>z</code>, <code>width</code>, <code>height</code>
+	     * and <code>depth</code> properties as the original Box object.
+	     *
+	     * @return A new Box object with the same values for the <code>x</code>,
+	     *         <code>y</code>, <code>z</code>, <code>width</code>,
+	     *         <code>height</code> and <code>depth</code> properties as the
+	     *         original Box object.
+	     */
+	    clone(): Box;
+	    /**
+	     * Determines whether the specified position is contained within the cubic
+	     * region defined by this Box object.
+	     *
+	     * @param x The <i>x</i> coordinate(horizontal component) of the position.
+	     * @param y The <i>y</i> coordinate(vertical component) of the position.
+	     * @param z The <i>z</i> coordinate(longitudinal component) of the position.
+	     * @return A value of <code>true</code> if the Box object contains the
+	     *         specified position; otherwise <code>false</code>.
+	     */
+	    contains(x: number, y: number, z: number): boolean;
+	    /**
+	     * Determines whether the specified position is contained within the cubic
+	     * region defined by this Box object. This method is similar to the
+	     * <code>Box.contains()</code> method, except that it takes a Vector3D
+	     * object as a parameter.
+	     *
+	     * @param position The position, as represented by its <i>x</i>, <i>y</i> and
+	     *                 <i>z</i> coordinates.
+	     * @return A value of <code>true</code> if the Box object contains the
+	     *         specified position; otherwise <code>false</code>.
+	     */
+	    containsPoint(position: Vector3D): boolean;
+	    /**
+	     * Determines whether the Box object specified by the <code>box</code>
+	     * parameter is contained within this Box object. A Box object is said to
+	     * contain another if the second Box object falls entirely within the
+	     * boundaries of the first.
+	     *
+	     * @param box The Box object being checked.
+	     * @return A value of <code>true</code> if the Box object that you specify
+	     *         is contained by this Box object; otherwise <code>false</code>.
+	     */
+	    containsBox(box: Box): boolean;
+	    /**
+	     * Copies all of box data from the source Box object into the calling
+	     * Box object.
+	     *
+	     * @param sourceBox The Box object from which to copy the data.
+	     */
+	    copyFrom(sourceBox: Box): void;
+	    /**
+	     * Determines whether the object specified in the <code>toCompare</code>
+	     * parameter is equal to this Box object. This method compares the
+	     * <code>x</code>, <code>y</code>, <code>z</code>, <code>width</code>,
+	     * <code>height</code> and <code>depth</code> properties of an object against
+	     * the same properties of this Box object.
+	     *
+	     * @param toCompare The box to compare to this Box object.
+	     * @return A value of <code>true</code> if the object has exactly the same
+	     *         values for the <code>x</code>, <code>y</code>, <code>z</code>,
+	     *         <code>width</code>, <code>height</code> and <code>depth</code>
+	     *         properties as this Box object; otherwise <code>false</code>.
+	     */
+	    equals(toCompare: Box): boolean;
+	    /**
+	     * Increases the size of the Box object by the specified amounts, in
+	     * pixels. The center point of the Box object stays the same, and its
+	     * size increases to the left and right by the <code>dx</code> value, to
+	     * the top and the bottom by the <code>dy</code> value, and to
+	     * the front and the back by the <code>dz</code> value.
+	     *
+	     * @param dx The value to be added to the left and the right of the Box
+	     *           object. The following equation is used to calculate the new
+	     *           width and position of the box:
+	     * @param dy The value to be added to the top and the bottom of the Box
+	     *           object. The following equation is used to calculate the new
+	     *           height and position of the box:
+	     * @param dz The value to be added to the front and the back of the Box
+	     *           object. The following equation is used to calculate the new
+	     *           depth and position of the box:
+	     */
+	    inflate(dx: number, dy: number, dz: number): void;
+	    /**
+	     * Increases the size of the Box object. This method is similar to the
+	     * <code>Box.inflate()</code> method except it takes a Vector3D object as
+	     * a parameter.
+	     *
+	     * <p>The following two code examples give the same result:</p>
+	     *
+	     * @param delta The <code>x</code> property of this Vector3D object is used to
+	     *              increase the horizontal dimension of the Box object.
+	     *              The <code>y</code> property is used to increase the vertical
+	     *              dimension of the Box object.
+	     *              The <code>z</code> property is used to increase the
+	     *              longitudinal dimension of the Box object.
+	     */
+	    inflatePoint(delta: Vector3D): void;
+	    /**
+	     * If the Box object specified in the <code>toIntersect</code> parameter
+	     * intersects with this Box object, returns the area of intersection
+	     * as a Box object. If the boxes do not intersect, this method returns an
+	     * empty Box object with its properties set to 0.
+	     *
+	     * @param toIntersect The Box object to compare against to see if it
+	     *                    intersects with this Box object.
+	     * @return A Box object that equals the area of intersection. If the
+	     *         boxes do not intersect, this method returns an empty Box
+	     *         object; that is, a box with its <code>x</code>, <code>y</code>,
+	     *         <code>z</code>, <code>width</code>,  <code>height</code>, and
+	     *         <code>depth</code> properties set to 0.
+	     */
+	    intersection(toIntersect: Box): Box;
+	    /**
+	     * Determines whether the object specified in the <code>toIntersect</code>
+	     * parameter intersects with this Box object. This method checks the
+	     * <code>x</code>, <code>y</code>, <code>z</code>, <code>width</code>,
+	     * <code>height</code>, and <code>depth</code> properties of the specified
+	     * Box object to see if it intersects with this Box object.
+	     *
+	     * @param toIntersect The Box object to compare against this Box object.
+	     * @return A value of <code>true</code> if the specified object intersects
+	     *         with this Box object; otherwise <code>false</code>.
+	     */
+	    intersects(toIntersect: Box): boolean;
+	    rayIntersection(position: Vector3D, direction: Vector3D, targetNormal: Vector3D): number;
+	    /**
+	     * Finds the closest point on the Box to another given point. This can be used for maximum error calculations for content within a given Box.
+	     *
+	     * @param point The point for which to find the closest point on the Box
+	     * @param target An optional Vector3D to store the result to prevent creating a new object.
+	     * @return
+	     */
+	    closestPointToPoint(point: Vector3D, target?: Vector3D): Vector3D;
+	    /**
+	     * Determines whether or not this Box object is empty.
+	     *
+	     * @return A value of <code>true</code> if the Box object's width, height or
+	     *         depth is less than or equal to 0; otherwise <code>false</code>.
+	     */
+	    isEmpty(): boolean;
+	    /**
+	     * Adjusts the location of the Box object, as determined by its
+	     * top-left-front corner, by the specified amounts.
+	     *
+	     * @param dx Moves the <i>x</i> value of the Box object by this amount.
+	     * @param dy Moves the <i>y</i> value of the Box object by this amount.
+	     * @param dz Moves the <i>z</i> value of the Box object by this amount.
+	     */
+	    offset(dx: number, dy: number, dz: number): void;
+	    /**
+	     * Adjusts the location of the Box object using a Vector3D object as a
+	     * parameter. This method is similar to the <code>Box.offset()</code>
+	     * method, except that it takes a Vector3D object as a parameter.
+	     *
+	     * @param position A Vector3D object to use to offset this Box object.
+	     */
+	    offsetPosition(position: Vector3D): void;
+	    /**
+	     * Sets all of the Box object's properties to 0. A Box object is empty if its
+	     * width, height or depth is less than or equal to 0.
+	     *
+	     * <p> This method sets the values of the <code>x</code>, <code>y</code>,
+	     * <code>z</code>, <code>width</code>, <code>height</code>, and
+	     * <code>depth</code> properties to 0.</p>
+	     *
+	     */
+	    setEmpty(): void;
+	    /**
+	     * Sets the members of Box to the specified values
+	     *
+	     * @param xa      The <i>x</i> coordinate of the top-left-front corner of the
+	     *                box.
+	     * @param ya      The <i>y</i> coordinate of the top-left-front corner of the
+	     *                box.
+	     * @param yz      The <i>z</i> coordinate of the top-left-front corner of the
+	     *                box.
+	     * @param widtha  The width of the box, in pixels.
+	     * @param heighta The height of the box, in pixels.
+	     * @param deptha  The depth of the box, in pixels.
+	     */
+	    setTo(xa: number, ya: number, za: number, widtha: number, heighta: number, deptha: number): void;
+	    /**
+	     * Builds and returns a string that lists the horizontal, vertical and
+	     * longitudinal positions and the width, height and depth of the Box object.
+	     *
+	     * @return A string listing the value of each of the following properties of
+	     *         the Box object: <code>x</code>, <code>y</code>, <code>z</code>,
+	     *         <code>width</code>, <code>height</code>, and <code>depth</code>.
+	     */
+	    toString(): string;
+	    /**
+	     * Adds two boxes together to create a new Box object, by filling
+	     * in the horizontal, vertical and longitudinal space between the two boxes.
+	     *
+	     * <p><b>Note:</b> The <code>union()</code> method ignores boxes with
+	     * <code>0</code> as the height, width or depth value, such as: <code>var
+	     * box2:Box = new Box(300,300,300,50,50,0);</code></p>
+	     *
+	     * @param toUnion A Box object to add to this Box object.
+	     * @return A new Box object that is the union of the two boxes.
+	     */
+	    union(toUnion: Box): Box;
+	}
+	export = Box;
 	
 }
 declare module "awayjs-core/lib/geom/MathConsts" {
@@ -3616,6 +3488,36 @@ declare module "awayjs-core/lib/geom/PoissonLookup" {
 	    static getDistribution(n: number): number[];
 	}
 	export = PoissonLookup;
+	
+}
+declare module "awayjs-core/lib/geom/Sphere" {
+	import Vector3D = require("awayjs-core/lib/geom/Vector3D");
+	class Sphere {
+	    /**
+	     *
+	     */
+	    x: number;
+	    /**
+	     *
+	     */
+	    y: number;
+	    /**
+	     *
+	     */
+	    z: number;
+	    /**
+	     *
+	     */
+	    radius: number;
+	    /**
+	     * Create a Sphere with ABCD coefficients
+	     */
+	    constructor(x?: number, y?: number, z?: number, radius?: number);
+	    rayIntersection(position: Vector3D, direction: Vector3D, targetNormal: Vector3D): number;
+	    containsPoint(position: Vector3D): boolean;
+	    toString(): string;
+	}
+	export = Sphere;
 	
 }
 declare module "awayjs-core/lib/geom/UVTransform" {

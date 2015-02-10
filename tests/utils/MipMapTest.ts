@@ -46,7 +46,7 @@ class MipMapTest
 		alert( 'Each click will generate a level of MipMap');
 
 		this.sourceBitmap                        = new BitmapData( 1024 , 1024 , true , 0xff0000 );
-		this.sourceBitmap.drawImage( image , this.sourceBitmap.rect , this.sourceBitmap.rect );
+		this.sourceBitmap.draw(image);
 		this.sourceBitmap.canvas.style.position  = 'absolute';
 		this.sourceBitmap.canvas.style.left      = '0px';
 		this.sourceBitmap.canvas.style.top       = '1030px';

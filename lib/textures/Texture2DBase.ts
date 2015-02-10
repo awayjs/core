@@ -33,9 +33,9 @@ class Texture2DBase extends TextureProxyBase
 		return this._pWidth;
 	}
 
-	constructor(generateMipmaps:boolean = false)
+	constructor()
 	{
-		super(generateMipmaps);
+		super();
 	}
 
 	/**

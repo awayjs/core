@@ -324,7 +324,7 @@ class Box
 	 * @return A value of <code>true</code> if the Box object that you specify
 	 *         is contained by this Box object; otherwise <code>false</code>.
 	 */
-	public containsRect(box:Box):boolean
+	public containsBox(box:Box):boolean
 	{
 		return (this.x <= box.x && this.x + this.width >= box.x + box.width && this.y <= box.y && this.y + this.height >= box.y + box.height && this.z <= box.z && this.z + this.depth >= box.z + box.depth)
 	}
@@ -337,7 +337,12 @@ class Box
 	 */
 	public copyFrom(sourceBox:Box)
 	{
-		//TODO
+		this.x = sourceBox.x;
+		this.y = sourceBox.y;
+		this.z = sourceBox.z;
+		this.width = sourceBox.width;
+		this.height = sourceBox.height;
+		this.depth = sourceBox.depth;
 	}
 
 	/**
@@ -491,6 +496,155 @@ class Box
 	public intersects(toIntersect:Box):boolean
 	{
 		return (this.x + this.width > toIntersect.x && this.x < toIntersect.x + toIntersect.width && this.y + this.height > toIntersect.y && this.y < toIntersect.y + toIntersect.height && this.z + this.depth > toIntersect.z && this.z < toIntersect.z + toIntersect.depth);
+	}
+
+	public rayIntersection(position:Vector3D, direction:Vector3D, targetNormal:Vector3D):number
+	{
+		if (this.containsPoint(position))
+			return 0;
+
+		var halfExtentsX:number = this.width/2;
+		var halfExtentsY:number = this.height/2;
+		var halfExtentsZ:number = this.depth/2;
+
+		var centerX:number = this.x + halfExtentsX;
+		var centerY:number = this.y + halfExtentsY;
+		var centerZ:number = this.z + halfExtentsZ;
+
+		var px:number = position.x - centerX;
+		var py:number = position.y - centerY;
+		var pz:number = position.z - centerZ;
+
+		var vx:number = direction.x
+		var vy:number = direction.y
+		var vz:number = direction.z;
+
+		var ix:number;
+		var iy:number;
+		var iz:number;
+		var rayEntryDistance:number;
+
+		// ray-plane tests
+		var intersects:boolean;
+		if (vx < 0) {
+			rayEntryDistance = ( halfExtentsX - px )/vx;
+			if (rayEntryDistance > 0) {
+				iy = py + rayEntryDistance*vy;
+				iz = pz + rayEntryDistance*vz;
+				if (iy > -halfExtentsY && iy < halfExtentsY && iz > -halfExtentsZ && iz < halfExtentsZ) {
+					targetNormal.x = 1;
+					targetNormal.y = 0;
+					targetNormal.z = 0;
+
+					intersects = true;
+				}
+			}
+		}
+		if (!intersects && vx > 0) {
+			rayEntryDistance = ( -halfExtentsX - px )/vx;
+			if (rayEntryDistance > 0) {
+				iy = py + rayEntryDistance*vy;
+				iz = pz + rayEntryDistance*vz;
+				if (iy > -halfExtentsY && iy < halfExtentsY && iz > -halfExtentsZ && iz < halfExtentsZ) {
+					targetNormal.x = -1;
+					targetNormal.y = 0;
+					targetNormal.z = 0;
+					intersects = true;
+				}
+			}
+		}
+		if (!intersects && vy < 0) {
+			rayEntryDistance = ( halfExtentsY - py )/vy;
+			if (rayEntryDistance > 0) {
+				ix = px + rayEntryDistance*vx;
+				iz = pz + rayEntryDistance*vz;
+				if (ix > -halfExtentsX && ix < halfExtentsX && iz > -halfExtentsZ && iz < halfExtentsZ) {
+					targetNormal.x = 0;
+					targetNormal.y = 1;
+					targetNormal.z = 0;
+					intersects = true;
+				}
+			}
+		}
+		if (!intersects && vy > 0) {
+			rayEntryDistance = ( -halfExtentsY - py )/vy;
+			if (rayEntryDistance > 0) {
+				ix = px + rayEntryDistance*vx;
+				iz = pz + rayEntryDistance*vz;
+				if (ix > -halfExtentsX && ix < halfExtentsX && iz > -halfExtentsZ && iz < halfExtentsZ) {
+					targetNormal.x = 0;
+					targetNormal.y = -1;
+					targetNormal.z = 0;
+					intersects = true;
+				}
+			}
+		}
+		if (!intersects && vz < 0) {
+			rayEntryDistance = ( halfExtentsZ - pz )/vz;
+			if (rayEntryDistance > 0) {
+				ix = px + rayEntryDistance*vx;
+				iy = py + rayEntryDistance*vy;
+				if (iy > -halfExtentsY && iy < halfExtentsY && ix > -halfExtentsX && ix < halfExtentsX) {
+					targetNormal.x = 0;
+					targetNormal.y = 0;
+					targetNormal.z = 1;
+					intersects = true;
+				}
+			}
+		}
+		if (!intersects && vz > 0) {
+			rayEntryDistance = ( -halfExtentsZ - pz )/vz;
+			if (rayEntryDistance > 0) {
+				ix = px + rayEntryDistance*vx;
+				iy = py + rayEntryDistance*vy;
+				if (iy > -halfExtentsY && iy < halfExtentsY && ix > -halfExtentsX && ix < halfExtentsX) {
+					targetNormal.x = 0;
+					targetNormal.y = 0;
+					targetNormal.z = -1;
+					intersects = true;
+				}
+			}
+		}
+
+		return intersects? rayEntryDistance : -1;
+	}
+
+	/**
+	 * Finds the closest point on the Box to another given point. This can be used for maximum error calculations for content within a given Box.
+	 *
+	 * @param point The point for which to find the closest point on the Box
+	 * @param target An optional Vector3D to store the result to prevent creating a new object.
+	 * @return
+	 */
+	public closestPointToPoint(point:Vector3D, target:Vector3D = null):Vector3D
+	{
+		var p:number;
+
+		if (target == null)
+			target = new Vector3D();
+
+		p = point.x;
+		if (p < this.x)
+			p = this.x;
+		if (p > this.x + this.width)
+			p = this.x + this.width;
+		target.x = p;
+
+		p = point.y;
+		if (p < this.y + this.height)
+			p = this.y + this.height;
+		if (p > this.y)
+			p = this.y;
+		target.y = p;
+
+		p = point.z;
+		if (p < this.z)
+			p = this.z;
+		if (p > this.z + this.depth)
+			p = this.z + this.depth;
+		target.z = p;
+
+		return target;
 	}
 
 	/**

@@ -50,7 +50,7 @@ class RenderTexture extends Texture2DBase
 
 	constructor(width:number, height:number)
 	{
-		super(false);
+		super();
 
 		this._pSetSize(width, height);
 	}

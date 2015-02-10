@@ -12,9 +12,9 @@ class ImageTexture extends Texture2DBase
 	 * @param htmlImageElement
 	 * @param generateMipmaps
 	 */
-	constructor(htmlImageElement:HTMLImageElement, generateMipmaps:boolean = false)
+	constructor(htmlImageElement:HTMLImageElement)
 	{
-		super(generateMipmaps);
+		super();
 
 		this.htmlImageElement = htmlImageElement;
 	}

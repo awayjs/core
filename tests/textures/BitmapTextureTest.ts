@@ -45,10 +45,10 @@ class BitmapTextureTest
 
 		console.log( 'Event' , image );
 
-		this.bitmapData                         = new BitmapData( image.width , image.height );
-		this.bitmapData.drawImage( image , rect ,  rect );
+		this.bitmapData = new BitmapData( image.width , image.height );
+		this.bitmapData.draw(image);
 
-		this.target                             = new BitmapTexture( this.bitmapData , true );//new HTMLImageElementTexture( loader.image , false );
+		this.target = new BitmapTexture(this.bitmapData);
 
 		Debug.log( 'BitmapData'           , this.bitmapData );
 		Debug.log( 'BitmapTexture'       , this.target );

@@ -15,6 +15,7 @@ class AssetType
 	public static MATERIAL:string = 'material';
 	public static MESH:string = 'mesh';
 	public static TRIANGLE_SUB_MESH:string = 'triangleSubMesh';
+    public static CURVE_SUB_MESH:string = 'curveSubMesh';
 	public static LINE_SUB_MESH:string = 'lineSubMesh';
 	public static PRIMITIVE_PREFAB:string = 'primitivePrefab';
 	public static SHADOW_MAP_METHOD:string = 'shadowMapMethod';

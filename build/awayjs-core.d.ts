@@ -2036,7 +2036,7 @@ declare module "awayjs-core/lib/base/BitmapData" {
 	     * @throws RangeError The vector array is not large enough to read all the
 	     *                    pixel data.
 	     */
-	    setArray(rect: Rectangle, inputArray: number[]): void;
+	    setArray(rect: Rectangle, inputArray: Array<number>): void;
 	    /**
 	     * Sets a single pixel of a BitmapData object. The current alpha channel
 	     * value of the image pixel is preserved during this operation. The value of
@@ -2147,820 +2147,6 @@ declare module "awayjs-core/lib/base/BitmapDataChannel" {
 	    static RED: number;
 	}
 	export = BitmapDataChannel;
-	
-}
-declare module "awayjs-core/lib/errors/DocumentError" {
-	import Error = require("awayjs-core/lib/errors/Error");
-	class DocumentError extends Error {
-	    static DOCUMENT_DOES_NOT_EXIST: string;
-	    constructor(message?: string, id?: number);
-	}
-	export = DocumentError;
-	
-}
-declare module "awayjs-core/lib/errors/PartialImplementationError" {
-	import Error = require("awayjs-core/lib/errors/Error");
-	/**
-	 * AbstractMethodError is thrown when an abstract method is called. The method in question should be overridden
-	 * by a concrete subclass.
-	 */
-	class PartialImplementationError extends Error {
-	    /**
-	     * Create a new AbstractMethodError.
-	     * @param message An optional message to override the default error message.
-	     * @param id The id of the error.
-	     */
-	    constructor(dependency?: string, id?: number);
-	}
-	export = PartialImplementationError;
-	
-}
-declare module "awayjs-core/lib/errors/RangeError" {
-	import Error = require("awayjs-core/lib/errors/Error");
-	/**
-	 * RangeError is thrown when an index is accessed out of range of the number of
-	 * available indices on an Array.
-	 */
-	class RangeError extends Error {
-	    /**
-	     * Create a new RangeError.
-	     *
-	     * @param message An optional message to override the default error message.
-	     * @param id The id of the error.
-	     */
-	    constructor(message?: string, id?: number);
-	}
-	export = RangeError;
-	
-}
-declare module "awayjs-core/lib/events/Event" {
-	class Event {
-	    static COMPLETE: string;
-	    static OPEN: string;
-	    static ENTER_FRAME: string;
-	    static EXIT_FRAME: string;
-	    static RESIZE: string;
-	    static ERROR: string;
-	    static CHANGE: string;
-	    /**
-	     * Type of event
-	     * @property type
-	     * @type String
-	     */
-	    type: string;
-	    /**
-	     * Reference to target object
-	     * @property target
-	     * @type Object
-	     */
-	    target: any;
-	    constructor(type: string);
-	    /**
-	     * Clones the current event.
-	     * @return An exact duplicate of the current event.
-	     */
-	    clone(): Event;
-	}
-	export = Event;
-	
-}
-declare module "awayjs-core/lib/events/IEventDispatcher" {
-	import Event = require("awayjs-core/lib/events/Event");
-	/**
-	 * Base interface for dispatching events
-	 *
-	 * @interface away.events.IEventDispatcher
-	 *
-	 */
-	interface IEventDispatcher {
-	    /**
-	     * Add an event listener
-	     * @method addEventListener
-	     * @param {String} Name of event to add a listener for
-	     * @param {Function} Callback function
-	     */
-	    addEventListener(type: string, listener: Function): any;
-	    /**
-	     * Remove an event listener
-	     * @method removeEventListener
-	     * @param {String} Name of event to remove a listener for
-	     * @param {Function} Callback function
-	     */
-	    removeEventListener(type: string, listener: Function): any;
-	    /**
-	     * Dispatch an event
-	     * @method dispatchEvent
-	     * @param {Event} Event to dispatch
-	     */
-	    dispatchEvent(event: Event): any;
-	    /**
-	     * check if an object has an event listener assigned to it
-	     * @method hasListener
-	     * @param {String} Name of event to remove a listener for
-	     * @param {Function} Callback function
-	     * @param {Object} Target object listener is added to
-	     */
-	    hasEventListener(type: string, listener?: Function): boolean;
-	}
-	export = IEventDispatcher;
-	
-}
-declare module "awayjs-core/lib/library/IAsset" {
-	import IEventDispatcher = require("awayjs-core/lib/events/IEventDispatcher");
-	interface IAsset extends IEventDispatcher {
-	    /**
-	     *
-	     */
-	    name: string;
-	    /**
-	     *
-	     */
-	    id: number;
-	    /**
-	     *
-	     */
-	    assetNamespace: string;
-	    /**
-	     *
-	     */
-	    assetType: string;
-	    /**
-	     *
-	     */
-	    assetFullPath: string[];
-	    /**
-	     *
-	     * @param name
-	     * @param ns
-	     */
-	    assetPathEquals(name: string, ns: string): boolean;
-	    /**
-	     *
-	     * @param name
-	     * @param ns
-	     * @param overrideOriginal
-	     */
-	    resetAssetPath(name: string, ns: string, overrideOriginal?: boolean): void;
-	    /**
-	     *
-	     */
-	    dispose(): any;
-	}
-	export = IAsset;
-	
-}
-declare module "awayjs-core/lib/events/AssetEvent" {
-	import IAsset = require("awayjs-core/lib/library/IAsset");
-	import Event = require("awayjs-core/lib/events/Event");
-	/**
-	 * @class away.events.AssetEvent
-	 */
-	class AssetEvent extends Event {
-	    /**
-	     *
-	     */
-	    static ASSET_COMPLETE: string;
-	    /**
-	     *
-	     */
-	    static ASSET_RENAME: string;
-	    /**
-	     *
-	     */
-	    static ASSET_CONFLICT_RESOLVED: string;
-	    /**
-	     *
-	     */
-	    static TEXTURE_SIZE_ERROR: string;
-	    private _asset;
-	    private _prevName;
-	    /**
-	     *
-	     */
-	    constructor(type: string, asset?: IAsset, prevName?: string);
-	    /**
-	     *
-	     */
-	    asset: IAsset;
-	    /**
-	     *
-	     */
-	    assetPrevName: string;
-	    /**
-	     *
-	     */
-	    clone(): Event;
-	}
-	export = AssetEvent;
-	
-}
-declare module "awayjs-core/lib/events/EventDispatcher" {
-	import Event = require("awayjs-core/lib/events/Event");
-	/**
-	 * Base class for dispatching events
-	*
-	* @class away.events.EventDispatcher
-	*
-	*/
-	class EventDispatcher {
-	    private listeners;
-	    private target;
-	    constructor(target?: any);
-	    /**
-	     * Add an event listener
-	     * @method addEventListener
-	     * @param {String} Name of event to add a listener for
-	     * @param {Function} Callback function
-	     */
-	    addEventListener(type: string, listener: Function): void;
-	    /**
-	     * Remove an event listener
-	     * @method removeEventListener
-	     * @param {String} Name of event to remove a listener for
-	     * @param {Function} Callback function
-	     */
-	    removeEventListener(type: string, listener: Function): void;
-	    /**
-	     * Dispatch an event
-	     * @method dispatchEvent
-	     * @param {Event} Event to dispatch
-	     */
-	    dispatchEvent(event: Event): void;
-	    /**
-	     * get Event Listener Index in array. Returns -1 if no listener is added
-	     * @method getEventListenerIndex
-	     * @param {String} Name of event to remove a listener for
-	     * @param {Function} Callback function
-	     */
-	    private getEventListenerIndex(type, listener);
-	    /**
-	     * check if an object has an event listener assigned to it
-	     * @method hasListener
-	     * @param {String} Name of event to remove a listener for
-	     * @param {Function} Callback function
-	     */
-	    hasEventListener(type: string, listener?: Function): boolean;
-	}
-	export = EventDispatcher;
-	
-}
-declare module "awayjs-core/lib/events/HTTPStatusEvent" {
-	import Event = require("awayjs-core/lib/events/Event");
-	/**
-	 * @class away.events.HTTPStatusEvent
-	 */
-	class HTTPStatusEvent extends Event {
-	    static HTTP_STATUS: string;
-	    status: number;
-	    constructor(type: string, status?: number);
-	}
-	export = HTTPStatusEvent;
-	
-}
-declare module "awayjs-core/lib/events/IOErrorEvent" {
-	import Event = require("awayjs-core/lib/events/Event");
-	class IOErrorEvent extends Event {
-	    static IO_ERROR: string;
-	    constructor(type: string);
-	}
-	export = IOErrorEvent;
-	
-}
-declare module "awayjs-core/lib/events/LoaderEvent" {
-	import IAsset = require("awayjs-core/lib/library/IAsset");
-	import Event = require("awayjs-core/lib/events/Event");
-	class LoaderEvent extends Event {
-	    /**
-	     * Dispatched when a resource and all of its dependencies is retrieved.
-	     */
-	    static RESOURCE_COMPLETE: string;
-	    private _url;
-	    private _content;
-	    private _assets;
-	    /**
-	     * Create a new LoaderEvent object.
-	     *
-	     * @param type The event type.
-	     * @param url The url of the loaded resource.
-	     * @param assets The assets of the loaded resource.
-	     */
-	    constructor(type: string, url?: string, content?: IAsset, assets?: IAsset[]);
-	    /**
-	     * The content returned if the resource has been loaded inside a <code>Loader</code> object.
-	     */
-	    content: IAsset;
-	    /**
-	     * The url of the loaded resource.
-	     */
-	    url: string;
-	    /**
-	     * The error string on loadError.
-	     */
-	    assets: IAsset[];
-	    /**
-	     * Clones the current event.
-	     * @return An exact duplicate of the current event.
-	     */
-	    clone(): Event;
-	}
-	export = LoaderEvent;
-	
-}
-declare module "awayjs-core/lib/events/ParserEvent" {
-	import Event = require("awayjs-core/lib/events/Event");
-	class ParserEvent extends Event {
-	    private _message;
-	    /**
-	     * Dispatched when parsing of an asset completed.
-	     */
-	    static PARSE_COMPLETE: string;
-	    /**
-	     * Dispatched when an error occurs while parsing the data (e.g. because it's
-	     * incorrectly formatted.)
-	     */
-	    static PARSE_ERROR: string;
-	    /**
-	     * Dispatched when a parser is ready to have dependencies retrieved and resolved.
-	     * This is an internal event that should rarely (if ever) be listened for by
-	     * external classes.
-	     */
-	    static READY_FOR_DEPENDENCIES: string;
-	    constructor(type: string, message?: string);
-	    /**
-	     * Additional human-readable message. Usually supplied for ParserEvent.PARSE_ERROR events.
-	     */
-	    message: string;
-	    clone(): Event;
-	}
-	export = ParserEvent;
-	
-}
-declare module "awayjs-core/lib/events/ProgressEvent" {
-	import Event = require("awayjs-core/lib/events/Event");
-	class ProgressEvent extends Event {
-	    static PROGRESS: string;
-	    bytesLoaded: number;
-	    bytesTotal: number;
-	    constructor(type: string);
-	}
-	export = ProgressEvent;
-	
-}
-declare module "awayjs-core/lib/geom/Orientation3D" {
-	/**
-	 * A Quaternion object which can be used to represent rotations.
-	 */
-	class Orientation3D {
-	    /**
-	     * The axis angle orientation uses a combination of an axis and an angle to determine the orientation.
-	     * @type {string}
-	     */
-	    static AXIS_ANGLE: string;
-	    /**
-	     * The default orientation for decompose() and recompose() methods, defines the orientation with three separate angles of rotation for each axis.
-	     * @type {string}
-	     */
-	    static EULER_ANGLES: string;
-	    /**
-	     * The quaternion orientation uses complex numbers.
-	     * @type {string}
-	     */
-	    static QUATERNION: string;
-	}
-	export = Orientation3D;
-	
-}
-declare module "awayjs-core/lib/geom/PlaneClassification" {
-	class PlaneClassification {
-	    static BACK: number;
-	    static FRONT: number;
-	    static IN: number;
-	    static OUT: number;
-	    static INTERSECT: number;
-	}
-	export = PlaneClassification;
-	
-}
-declare module "awayjs-core/lib/geom/Plane3D" {
-	import Vector3D = require("awayjs-core/lib/geom/Vector3D");
-	class Plane3D {
-	    /**
-	     * The A coefficient of this plane. (Also the x dimension of the plane normal)
-	     */
-	    a: number;
-	    /**
-	     * The B coefficient of this plane. (Also the y dimension of the plane normal)
-	     */
-	    b: number;
-	    /**
-	     * The C coefficient of this plane. (Also the z dimension of the plane normal)
-	     */
-	    c: number;
-	    /**
-	     * The D coefficient of this plane. (Also the inverse dot product between normal and point)
-	     */
-	    d: number;
-	    _iAlignment: number;
-	    static ALIGN_ANY: number;
-	    static ALIGN_XY_AXIS: number;
-	    static ALIGN_YZ_AXIS: number;
-	    static ALIGN_XZ_AXIS: number;
-	    /**
-	     * Create a Plane3D with ABCD coefficients
-	     */
-	    constructor(a?: number, b?: number, c?: number, d?: number);
-	    /**
-	     * Fills this Plane3D with the coefficients from 3 points in 3d space.
-	     * @param p0 Vector3D
-	     * @param p1 Vector3D
-	     * @param p2 Vector3D
-	     */
-	    fromPoints(p0: Vector3D, p1: Vector3D, p2: Vector3D): void;
-	    /**
-	     * Fills this Plane3D with the coefficients from the plane's normal and a point in 3d space.
-	     * @param normal Vector3D
-	     * @param point  Vector3D
-	     */
-	    fromNormalAndPoint(normal: Vector3D, point: Vector3D): void;
-	    /**
-	     * Normalize this Plane3D
-	     * @return Plane3D This Plane3D.
-	     */
-	    normalize(): Plane3D;
-	    /**
-	     * Returns the signed distance between this Plane3D and the point p.
-	     * @param p Vector3D
-	     * @returns Number
-	     */
-	    distance(p: Vector3D): number;
-	    /**
-	     * Classify a point against this Plane3D. (in front, back or intersecting)
-	     * @param p Vector3D
-	     * @return int Plane3.FRONT or Plane3D.BACK or Plane3D.INTERSECT
-	     */
-	    classifyPoint(p: Vector3D, epsilon?: number): number;
-	    toString(): string;
-	}
-	export = Plane3D;
-	
-}
-declare module "awayjs-core/lib/geom/Matrix3DUtils" {
-	import Quaternion = require("awayjs-core/lib/geom/Quaternion");
-	import Matrix3D = require("awayjs-core/lib/geom/Matrix3D");
-	import Plane3D = require("awayjs-core/lib/geom/Plane3D");
-	import Vector3D = require("awayjs-core/lib/geom/Vector3D");
-	/**
-	 * away.geom.Matrix3DUtils provides additional Matrix3D functions.
-	 */
-	class Matrix3DUtils {
-	    /**
-	     * A reference to a Vector to be used as a temporary raw data container, to prevent object creation.
-	     */
-	    static RAW_DATA_CONTAINER: number[];
-	    static CALCULATION_MATRIX: Matrix3D;
-	    /**
-	     * Fills the 3d matrix object with values representing the transformation made by the given quaternion.
-	     *
-	     * @param    quarternion    The quarterion object to convert.
-	     */
-	    static quaternion2matrix(quarternion: Quaternion, m?: Matrix3D): Matrix3D;
-	    /**
-	     * Returns a normalised <code>Vector3D</code> object representing the forward vector of the given matrix.
-	     * @param    m        The Matrix3D object to use to get the forward vector
-	     * @param    v        [optional] A vector holder to prevent make new Vector3D instance if already exists. Default is null.
-	     * @return            The forward vector
-	     */
-	    static getForward(m: Matrix3D, v?: Vector3D): Vector3D;
-	    /**
-	     * Returns a normalised <code>Vector3D</code> object representing the up vector of the given matrix.
-	     * @param    m        The Matrix3D object to use to get the up vector
-	     * @param    v        [optional] A vector holder to prevent make new Vector3D instance if already exists. Default is null.
-	     * @return            The up vector
-	     */
-	    static getUp(m: Matrix3D, v?: Vector3D): Vector3D;
-	    /**
-	     * Returns a normalised <code>Vector3D</code> object representing the right vector of the given matrix.
-	     * @param    m        The Matrix3D object to use to get the right vector
-	     * @param    v        [optional] A vector holder to prevent make new Vector3D instance if already exists. Default is null.
-	     * @return            The right vector
-	     */
-	    static getRight(m: Matrix3D, v?: Vector3D): Vector3D;
-	    /**
-	     * Returns a boolean value representing whether there is any significant difference between the two given 3d matrices.
-	     */
-	    static compare(m1: Matrix3D, m2: Matrix3D): boolean;
-	    static lookAt(matrix: Matrix3D, pos: Vector3D, dir: Vector3D, up: Vector3D): void;
-	    static reflection(plane: Plane3D, target?: Matrix3D): Matrix3D;
-	    static transformVector(matrix: Matrix3D, vector: Vector3D, result?: Vector3D): Vector3D;
-	    static deltaTransformVector(matrix: Matrix3D, vector: Vector3D, result?: Vector3D): Vector3D;
-	    static getTranslation(transform: Matrix3D, result?: Vector3D): Vector3D;
-	    static deltaTransformVectors(matrix: Matrix3D, vin: number[], vout: number[]): void;
-	}
-	export = Matrix3DUtils;
-	
-}
-declare module "awayjs-core/lib/geom/Quaternion" {
-	import Matrix3D = require("awayjs-core/lib/geom/Matrix3D");
-	import Vector3D = require("awayjs-core/lib/geom/Vector3D");
-	/**
-	 * A Quaternion object which can be used to represent rotations.
-	 */
-	class Quaternion {
-	    /**
-	     * The x value of the quaternion.
-	     */
-	    x: number;
-	    /**
-	     * The y value of the quaternion.
-	     */
-	    y: number;
-	    /**
-	     * The z value of the quaternion.
-	     */
-	    z: number;
-	    /**
-	     * The w value of the quaternion.
-	     */
-	    w: number;
-	    /**
-	     * Creates a new Quaternion object.
-	     * @param x The x value of the quaternion.
-	     * @param y The y value of the quaternion.
-	     * @param z The z value of the quaternion.
-	     * @param w The w value of the quaternion.
-	     */
-	    constructor(x?: number, y?: number, z?: number, w?: number);
-	    /**
-	     * Returns the magnitude of the quaternion object.
-	     */
-	    magnitude: number;
-	    /**
-	     * Fills the quaternion object with the result from a multiplication of two quaternion objects.
-	     *
-	     * @param    qa    The first quaternion in the multiplication.
-	     * @param    qb    The second quaternion in the multiplication.
-	     */
-	    multiply(qa: Quaternion, qb: Quaternion): void;
-	    multiplyVector(vector: Vector3D, target?: Quaternion): Quaternion;
-	    /**
-	     * Fills the quaternion object with values representing the given rotation around a vector.
-	     *
-	     * @param    axis    The axis around which to rotate
-	     * @param    angle    The angle in radians of the rotation.
-	     */
-	    fromAxisAngle(axis: Vector3D, angle: number): void;
-	    /**
-	     * Spherically interpolates between two quaternions, providing an interpolation between rotations with constant angle change rate.
-	     * @param qa The first quaternion to interpolate.
-	     * @param qb The second quaternion to interpolate.
-	     * @param t The interpolation weight, a value between 0 and 1.
-	     */
-	    slerp(qa: Quaternion, qb: Quaternion, t: number): void;
-	    /**
-	     * Linearly interpolates between two quaternions.
-	     * @param qa The first quaternion to interpolate.
-	     * @param qb The second quaternion to interpolate.
-	     * @param t The interpolation weight, a value between 0 and 1.
-	     */
-	    lerp(qa: Quaternion, qb: Quaternion, t: number): void;
-	    /**
-	     * Fills the quaternion object with values representing the given euler rotation.
-	     *
-	     * @param    ax        The angle in radians of the rotation around the ax axis.
-	     * @param    ay        The angle in radians of the rotation around the ay axis.
-	     * @param    az        The angle in radians of the rotation around the az axis.
-	     */
-	    fromEulerAngles(ax: number, ay: number, az: number): void;
-	    /**
-	     * Fills a target Vector3D object with the Euler angles that form the rotation represented by this quaternion.
-	     * @param target An optional Vector3D object to contain the Euler angles. If not provided, a new object is created.
-	     * @return The Vector3D containing the Euler angles.
-	     */
-	    toEulerAngles(target?: Vector3D): Vector3D;
-	    /**
-	     * Normalises the quaternion object.
-	     */
-	    normalize(val?: number): void;
-	    /**
-	     * Used to trace the values of a quaternion.
-	     *
-	     * @return A string representation of the quaternion object.
-	     */
-	    toString(): string;
-	    /**
-	     * Converts the quaternion to a Matrix3D object representing an equivalent rotation.
-	     * @param target An optional Matrix3D container to store the transformation in. If not provided, a new object is created.
-	     * @return A Matrix3D object representing an equivalent rotation.
-	     */
-	    toMatrix3D(target?: Matrix3D): Matrix3D;
-	    /**
-	     * Extracts a quaternion rotation matrix out of a given Matrix3D object.
-	     * @param matrix The Matrix3D out of which the rotation will be extracted.
-	     */
-	    fromMatrix(matrix: Matrix3D): void;
-	    /**
-	     * Converts the quaternion to a Vector.&lt;Number&gt; matrix representation of a rotation equivalent to this quaternion.
-	     * @param target The Vector.&lt;Number&gt; to contain the raw matrix data.
-	     * @param exclude4thRow If true, the last row will be omitted, and a 4x3 matrix will be generated instead of a 4x4.
-	     */
-	    toRawData(target: number[], exclude4thRow?: boolean): void;
-	    /**
-	     * Clones the quaternion.
-	     * @return An exact duplicate of the current Quaternion.
-	     */
-	    clone(): Quaternion;
-	    /**
-	     * Rotates a point.
-	     * @param vector The Vector3D object to be rotated.
-	     * @param target An optional Vector3D object that will contain the rotated coordinates. If not provided, a new object will be created.
-	     * @return A Vector3D object containing the rotated point.
-	     */
-	    rotatePoint(vector: Vector3D, target?: Vector3D): Vector3D;
-	    /**
-	     * Copies the data from a quaternion into this instance.
-	     * @param q The quaternion to copy from.
-	     */
-	    copyFrom(q: Quaternion): void;
-	}
-	export = Quaternion;
-	
-}
-declare module "awayjs-core/lib/geom/Matrix3D" {
-	import Vector3D = require("awayjs-core/lib/geom/Vector3D");
-	class Matrix3D {
-	    /**
-	     * A Vector of 16 Numbers, where every four elements is a column of a 4x4 matrix.
-	     *
-	     * <p>An exception is thrown if the rawData property is set to a matrix that is not invertible. The Matrix3D
-	     * object must be invertible. If a non-invertible matrix is needed, create a subclass of the Matrix3D object.</p>
-	     */
-	    rawData: number[];
-	    /**
-	     * Creates a Matrix3D object.
-	     */
-	    constructor(v?: number[]);
-	    /**
-	     * Appends the matrix by multiplying another Matrix3D object by the current Matrix3D object.
-	     */
-	    append(lhs: Matrix3D): void;
-	    /**
-	     * Appends an incremental rotation to a Matrix3D object.
-	     */
-	    appendRotation(degrees: number, axis: Vector3D): void;
-	    /**
-	     * Appends an incremental scale change along the x, y, and z axes to a Matrix3D object.
-	     */
-	    appendScale(xScale: number, yScale: number, zScale: number): void;
-	    /**
-	     * Appends an incremental translation, a repositioning along the x, y, and z axes, to a Matrix3D object.
-	     */
-	    appendTranslation(x: number, y: number, z: number): void;
-	    /**
-	     * Returns a new Matrix3D object that is an exact copy of the current Matrix3D object.
-	     */
-	    clone(): Matrix3D;
-	    /**
-	     * Copies a Vector3D object into specific column of the calling Matrix3D object.
-	     */
-	    copyColumnFrom(column: number, vector3D: Vector3D): void;
-	    /**
-	     * Copies specific column of the calling Matrix3D object into the Vector3D object.
-	     */
-	    copyColumnTo(column: number, vector3D: Vector3D): void;
-	    /**
-	     * Copies all of the matrix data from the source Matrix3D object into the calling Matrix3D object.
-	     */
-	    copyFrom(sourceMatrix3D: Matrix3D): void;
-	    copyRawDataFrom(vector: number[], index?: number, transpose?: boolean): void;
-	    copyRawDataTo(vector: number[], index?: number, transpose?: boolean): void;
-	    /**
-	     * Copies a Vector3D object into specific row of the calling Matrix3D object.
-	     */
-	    copyRowFrom(row: number, vector3D: Vector3D): void;
-	    /**
-	     * Copies specific row of the calling Matrix3D object into the Vector3D object.
-	     */
-	    copyRowTo(row: number, vector3D: Vector3D): void;
-	    /**
-	     * Copies this Matrix3D object into a destination Matrix3D object.
-	     */
-	    copyToMatrix3D(dest: Matrix3D): void;
-	    /**
-	     * Returns the transformation matrix's translation, rotation, and scale settings as a Vector of three Vector3D objects.
-	     */
-	    decompose(orientationStyle?: string): Vector3D[];
-	    /**
-	     * Uses the transformation matrix without its translation elements to transform a Vector3D object from one space
-	     * coordinate to another.
-	     */
-	    deltaTransformVector(v: Vector3D): Vector3D;
-	    /**
-	     * Converts the current matrix to an identity or unit matrix.
-	     */
-	    identity(): void;
-	    /**
-	     * [static] Interpolates the translation, rotation, and scale transformation of one matrix toward those of the target matrix.
-	     */
-	    static interpolate(thisMat: Matrix3D, toMat: Matrix3D, percent: number): Matrix3D;
-	    /**
-	     * Interpolates this matrix towards the translation, rotation, and scale transformations of the target matrix.
-	     */
-	    interpolateTo(toMat: Matrix3D, percent: number): void;
-	    /**
-	     * Inverts the current matrix.
-	     */
-	    invert(): boolean;
-	    /**
-	     * Prepends a matrix by multiplying the current Matrix3D object by another Matrix3D object.
-	     */
-	    prepend(rhs: Matrix3D): void;
-	    /**
-	     * Prepends an incremental rotation to a Matrix3D object.
-	     */
-	    prependRotation(degrees: number, axis: Vector3D): void;
-	    /**
-	     * Prepends an incremental scale change along the x, y, and z axes to a Matrix3D object.
-	     */
-	    prependScale(xScale: number, yScale: number, zScale: number): void;
-	    /**
-	     * Prepends an incremental translation, a repositioning along the x, y, and z axes, to a Matrix3D object.
-	     */
-	    prependTranslation(x: number, y: number, z: number): void;
-	    /**
-	     * Sets the transformation matrix's translation, rotation, and scale settings.
-	     */
-	    recompose(components: Vector3D[]): boolean;
-	    transformVector(v: Vector3D): Vector3D;
-	    /**
-	     * Uses the transformation matrix to transform a Vector of Numbers from one coordinate space to another.
-	     */
-	    transformVectors(vin: number[], vout: number[]): void;
-	    /**
-	     * Converts the current Matrix3D object to a matrix where the rows and columns are swapped.
-	     */
-	    transpose(): void;
-	    static getAxisRotation(x: number, y: number, z: number, degrees: number): Matrix3D;
-	    /**
-	     * [read-only] A Number that determines whether a matrix is invertible.
-	     */
-	    determinant: number;
-	    /**
-	     * A Vector3D object that holds the position, the 3D coordinate (x,y,z) of a display object within the
-	     * transformation's frame of reference.
-	     */
-	    position: Vector3D;
-	    toFixed(decimalPlace: number): string;
-	    toString(): string;
-	}
-	export = Matrix3D;
-	
-}
-declare module "awayjs-core/lib/projections/IProjection" {
-	import Matrix3D = require("awayjs-core/lib/geom/Matrix3D");
-	import Vector3D = require("awayjs-core/lib/geom/Vector3D");
-	import IEventDispatcher = require("awayjs-core/lib/events/IEventDispatcher");
-	/**
-	 * IMaterialOwner provides an interface for objects that can use materials.
-	 *
-	 * @interface away.base.IMaterialOwner
-	 */
-	interface IProjection extends IEventDispatcher {
-	    coordinateSystem: string;
-	    frustumCorners: number[];
-	    matrix: Matrix3D;
-	    near: number;
-	    originX: number;
-	    originY: number;
-	    far: number;
-	    _iAspectRatio: number;
-	    project(point3d: Vector3D): Vector3D;
-	    unproject(nX: number, nY: number, sZ: number): Vector3D;
-	    _iUpdateScissorRect(x: number, y: number, width: number, height: number): any;
-	    _iUpdateViewport(x: number, y: number, width: number, height: number): any;
-	}
-	export = IProjection;
-	
-}
-declare module "awayjs-core/lib/events/ProjectionEvent" {
-	import Event = require("awayjs-core/lib/events/Event");
-	import IProjection = require("awayjs-core/lib/projections/IProjection");
-	class ProjectionEvent extends Event {
-	    static MATRIX_CHANGED: string;
-	    private _projection;
-	    constructor(type: string, projection: IProjection);
-	    projection: IProjection;
-	}
-	export = ProjectionEvent;
-	
-}
-declare module "awayjs-core/lib/events/TimerEvent" {
-	import Event = require("awayjs-core/lib/events/Event");
-	class TimerEvent extends Event {
-	    static TIMER: string;
-	    static TIMER_COMPLETE: string;
-	    constructor(type: string);
-	}
-	export = TimerEvent;
 	
 }
 declare module "awayjs-core/lib/geom/Box" {
@@ -3351,6 +2537,415 @@ declare module "awayjs-core/lib/geom/MathConsts" {
 	export = MathConsts;
 	
 }
+declare module "awayjs-core/lib/geom/Orientation3D" {
+	/**
+	 * A Quaternion object which can be used to represent rotations.
+	 */
+	class Orientation3D {
+	    /**
+	     * The axis angle orientation uses a combination of an axis and an angle to determine the orientation.
+	     * @type {string}
+	     */
+	    static AXIS_ANGLE: string;
+	    /**
+	     * The default orientation for decompose() and recompose() methods, defines the orientation with three separate angles of rotation for each axis.
+	     * @type {string}
+	     */
+	    static EULER_ANGLES: string;
+	    /**
+	     * The quaternion orientation uses complex numbers.
+	     * @type {string}
+	     */
+	    static QUATERNION: string;
+	}
+	export = Orientation3D;
+	
+}
+declare module "awayjs-core/lib/geom/PlaneClassification" {
+	class PlaneClassification {
+	    static BACK: number;
+	    static FRONT: number;
+	    static IN: number;
+	    static OUT: number;
+	    static INTERSECT: number;
+	}
+	export = PlaneClassification;
+	
+}
+declare module "awayjs-core/lib/geom/Plane3D" {
+	import Vector3D = require("awayjs-core/lib/geom/Vector3D");
+	class Plane3D {
+	    /**
+	     * The A coefficient of this plane. (Also the x dimension of the plane normal)
+	     */
+	    a: number;
+	    /**
+	     * The B coefficient of this plane. (Also the y dimension of the plane normal)
+	     */
+	    b: number;
+	    /**
+	     * The C coefficient of this plane. (Also the z dimension of the plane normal)
+	     */
+	    c: number;
+	    /**
+	     * The D coefficient of this plane. (Also the inverse dot product between normal and point)
+	     */
+	    d: number;
+	    _iAlignment: number;
+	    static ALIGN_ANY: number;
+	    static ALIGN_XY_AXIS: number;
+	    static ALIGN_YZ_AXIS: number;
+	    static ALIGN_XZ_AXIS: number;
+	    /**
+	     * Create a Plane3D with ABCD coefficients
+	     */
+	    constructor(a?: number, b?: number, c?: number, d?: number);
+	    /**
+	     * Fills this Plane3D with the coefficients from 3 points in 3d space.
+	     * @param p0 Vector3D
+	     * @param p1 Vector3D
+	     * @param p2 Vector3D
+	     */
+	    fromPoints(p0: Vector3D, p1: Vector3D, p2: Vector3D): void;
+	    /**
+	     * Fills this Plane3D with the coefficients from the plane's normal and a point in 3d space.
+	     * @param normal Vector3D
+	     * @param point  Vector3D
+	     */
+	    fromNormalAndPoint(normal: Vector3D, point: Vector3D): void;
+	    /**
+	     * Normalize this Plane3D
+	     * @return Plane3D This Plane3D.
+	     */
+	    normalize(): Plane3D;
+	    /**
+	     * Returns the signed distance between this Plane3D and the point p.
+	     * @param p Vector3D
+	     * @returns Number
+	     */
+	    distance(p: Vector3D): number;
+	    /**
+	     * Classify a point against this Plane3D. (in front, back or intersecting)
+	     * @param p Vector3D
+	     * @return int Plane3.FRONT or Plane3D.BACK or Plane3D.INTERSECT
+	     */
+	    classifyPoint(p: Vector3D, epsilon?: number): number;
+	    toString(): string;
+	}
+	export = Plane3D;
+	
+}
+declare module "awayjs-core/lib/geom/Matrix3DUtils" {
+	import Quaternion = require("awayjs-core/lib/geom/Quaternion");
+	import Matrix3D = require("awayjs-core/lib/geom/Matrix3D");
+	import Plane3D = require("awayjs-core/lib/geom/Plane3D");
+	import Vector3D = require("awayjs-core/lib/geom/Vector3D");
+	/**
+	 * away.geom.Matrix3DUtils provides additional Matrix3D functions.
+	 */
+	class Matrix3DUtils {
+	    /**
+	     * A reference to a Vector to be used as a temporary raw data container, to prevent object creation.
+	     */
+	    static RAW_DATA_CONTAINER: number[];
+	    static CALCULATION_MATRIX: Matrix3D;
+	    /**
+	     * Fills the 3d matrix object with values representing the transformation made by the given quaternion.
+	     *
+	     * @param    quarternion    The quarterion object to convert.
+	     */
+	    static quaternion2matrix(quarternion: Quaternion, m?: Matrix3D): Matrix3D;
+	    /**
+	     * Returns a normalised <code>Vector3D</code> object representing the forward vector of the given matrix.
+	     * @param    m        The Matrix3D object to use to get the forward vector
+	     * @param    v        [optional] A vector holder to prevent make new Vector3D instance if already exists. Default is null.
+	     * @return            The forward vector
+	     */
+	    static getForward(m: Matrix3D, v?: Vector3D): Vector3D;
+	    /**
+	     * Returns a normalised <code>Vector3D</code> object representing the up vector of the given matrix.
+	     * @param    m        The Matrix3D object to use to get the up vector
+	     * @param    v        [optional] A vector holder to prevent make new Vector3D instance if already exists. Default is null.
+	     * @return            The up vector
+	     */
+	    static getUp(m: Matrix3D, v?: Vector3D): Vector3D;
+	    /**
+	     * Returns a normalised <code>Vector3D</code> object representing the right vector of the given matrix.
+	     * @param    m        The Matrix3D object to use to get the right vector
+	     * @param    v        [optional] A vector holder to prevent make new Vector3D instance if already exists. Default is null.
+	     * @return            The right vector
+	     */
+	    static getRight(m: Matrix3D, v?: Vector3D): Vector3D;
+	    /**
+	     * Returns a boolean value representing whether there is any significant difference between the two given 3d matrices.
+	     */
+	    static compare(m1: Matrix3D, m2: Matrix3D): boolean;
+	    static lookAt(matrix: Matrix3D, pos: Vector3D, dir: Vector3D, up: Vector3D): void;
+	    static reflection(plane: Plane3D, target?: Matrix3D): Matrix3D;
+	    static transformVector(matrix: Matrix3D, vector: Vector3D, result?: Vector3D): Vector3D;
+	    static deltaTransformVector(matrix: Matrix3D, vector: Vector3D, result?: Vector3D): Vector3D;
+	    static getTranslation(transform: Matrix3D, result?: Vector3D): Vector3D;
+	    static deltaTransformVectors(matrix: Matrix3D, vin: Array<number>, vout: Array<number>): void;
+	}
+	export = Matrix3DUtils;
+	
+}
+declare module "awayjs-core/lib/geom/Quaternion" {
+	import Matrix3D = require("awayjs-core/lib/geom/Matrix3D");
+	import Vector3D = require("awayjs-core/lib/geom/Vector3D");
+	/**
+	 * A Quaternion object which can be used to represent rotations.
+	 */
+	class Quaternion {
+	    /**
+	     * The x value of the quaternion.
+	     */
+	    x: number;
+	    /**
+	     * The y value of the quaternion.
+	     */
+	    y: number;
+	    /**
+	     * The z value of the quaternion.
+	     */
+	    z: number;
+	    /**
+	     * The w value of the quaternion.
+	     */
+	    w: number;
+	    /**
+	     * Creates a new Quaternion object.
+	     * @param x The x value of the quaternion.
+	     * @param y The y value of the quaternion.
+	     * @param z The z value of the quaternion.
+	     * @param w The w value of the quaternion.
+	     */
+	    constructor(x?: number, y?: number, z?: number, w?: number);
+	    /**
+	     * Returns the magnitude of the quaternion object.
+	     */
+	    magnitude: number;
+	    /**
+	     * Fills the quaternion object with the result from a multiplication of two quaternion objects.
+	     *
+	     * @param    qa    The first quaternion in the multiplication.
+	     * @param    qb    The second quaternion in the multiplication.
+	     */
+	    multiply(qa: Quaternion, qb: Quaternion): void;
+	    multiplyVector(vector: Vector3D, target?: Quaternion): Quaternion;
+	    /**
+	     * Fills the quaternion object with values representing the given rotation around a vector.
+	     *
+	     * @param    axis    The axis around which to rotate
+	     * @param    angle    The angle in radians of the rotation.
+	     */
+	    fromAxisAngle(axis: Vector3D, angle: number): void;
+	    /**
+	     * Spherically interpolates between two quaternions, providing an interpolation between rotations with constant angle change rate.
+	     * @param qa The first quaternion to interpolate.
+	     * @param qb The second quaternion to interpolate.
+	     * @param t The interpolation weight, a value between 0 and 1.
+	     */
+	    slerp(qa: Quaternion, qb: Quaternion, t: number): void;
+	    /**
+	     * Linearly interpolates between two quaternions.
+	     * @param qa The first quaternion to interpolate.
+	     * @param qb The second quaternion to interpolate.
+	     * @param t The interpolation weight, a value between 0 and 1.
+	     */
+	    lerp(qa: Quaternion, qb: Quaternion, t: number): void;
+	    /**
+	     * Fills the quaternion object with values representing the given euler rotation.
+	     *
+	     * @param    ax        The angle in radians of the rotation around the ax axis.
+	     * @param    ay        The angle in radians of the rotation around the ay axis.
+	     * @param    az        The angle in radians of the rotation around the az axis.
+	     */
+	    fromEulerAngles(ax: number, ay: number, az: number): void;
+	    /**
+	     * Fills a target Vector3D object with the Euler angles that form the rotation represented by this quaternion.
+	     * @param target An optional Vector3D object to contain the Euler angles. If not provided, a new object is created.
+	     * @return The Vector3D containing the Euler angles.
+	     */
+	    toEulerAngles(target?: Vector3D): Vector3D;
+	    /**
+	     * Normalises the quaternion object.
+	     */
+	    normalize(val?: number): void;
+	    /**
+	     * Used to trace the values of a quaternion.
+	     *
+	     * @return A string representation of the quaternion object.
+	     */
+	    toString(): string;
+	    /**
+	     * Converts the quaternion to a Matrix3D object representing an equivalent rotation.
+	     * @param target An optional Matrix3D container to store the transformation in. If not provided, a new object is created.
+	     * @return A Matrix3D object representing an equivalent rotation.
+	     */
+	    toMatrix3D(target?: Matrix3D): Matrix3D;
+	    /**
+	     * Extracts a quaternion rotation matrix out of a given Matrix3D object.
+	     * @param matrix The Matrix3D out of which the rotation will be extracted.
+	     */
+	    fromMatrix(matrix: Matrix3D): void;
+	    /**
+	     * Converts the quaternion to a Vector.&lt;Number&gt; matrix representation of a rotation equivalent to this quaternion.
+	     * @param target The Vector.&lt;Number&gt; to contain the raw matrix data.
+	     * @param exclude4thRow If true, the last row will be omitted, and a 4x3 matrix will be generated instead of a 4x4.
+	     */
+	    toRawData(target: number[], exclude4thRow?: boolean): void;
+	    /**
+	     * Clones the quaternion.
+	     * @return An exact duplicate of the current Quaternion.
+	     */
+	    clone(): Quaternion;
+	    /**
+	     * Rotates a point.
+	     * @param vector The Vector3D object to be rotated.
+	     * @param target An optional Vector3D object that will contain the rotated coordinates. If not provided, a new object will be created.
+	     * @return A Vector3D object containing the rotated point.
+	     */
+	    rotatePoint(vector: Vector3D, target?: Vector3D): Vector3D;
+	    /**
+	     * Copies the data from a quaternion into this instance.
+	     * @param q The quaternion to copy from.
+	     */
+	    copyFrom(q: Quaternion): void;
+	}
+	export = Quaternion;
+	
+}
+declare module "awayjs-core/lib/geom/Matrix3D" {
+	import Vector3D = require("awayjs-core/lib/geom/Vector3D");
+	class Matrix3D {
+	    /**
+	     * A Vector of 16 Numbers, where every four elements is a column of a 4x4 matrix.
+	     *
+	     * <p>An exception is thrown if the rawData property is set to a matrix that is not invertible. The Matrix3D
+	     * object must be invertible. If a non-invertible matrix is needed, create a subclass of the Matrix3D object.</p>
+	     */
+	    rawData: number[];
+	    /**
+	     * Creates a Matrix3D object.
+	     */
+	    constructor(v?: number[]);
+	    /**
+	     * Appends the matrix by multiplying another Matrix3D object by the current Matrix3D object.
+	     */
+	    append(lhs: Matrix3D): void;
+	    /**
+	     * Appends an incremental rotation to a Matrix3D object.
+	     */
+	    appendRotation(degrees: number, axis: Vector3D): void;
+	    /**
+	     * Appends an incremental scale change along the x, y, and z axes to a Matrix3D object.
+	     */
+	    appendScale(xScale: number, yScale: number, zScale: number): void;
+	    /**
+	     * Appends an incremental translation, a repositioning along the x, y, and z axes, to a Matrix3D object.
+	     */
+	    appendTranslation(x: number, y: number, z: number): void;
+	    /**
+	     * Returns a new Matrix3D object that is an exact copy of the current Matrix3D object.
+	     */
+	    clone(): Matrix3D;
+	    /**
+	     * Copies a Vector3D object into specific column of the calling Matrix3D object.
+	     */
+	    copyColumnFrom(column: number, vector3D: Vector3D): void;
+	    /**
+	     * Copies specific column of the calling Matrix3D object into the Vector3D object.
+	     */
+	    copyColumnTo(column: number, vector3D: Vector3D): void;
+	    /**
+	     * Copies all of the matrix data from the source Matrix3D object into the calling Matrix3D object.
+	     */
+	    copyFrom(sourceMatrix3D: Matrix3D): void;
+	    copyRawDataFrom(vector: number[], index?: number, transpose?: boolean): void;
+	    copyRawDataTo(vector: number[], index?: number, transpose?: boolean): void;
+	    /**
+	     * Copies a Vector3D object into specific row of the calling Matrix3D object.
+	     */
+	    copyRowFrom(row: number, vector3D: Vector3D): void;
+	    /**
+	     * Copies specific row of the calling Matrix3D object into the Vector3D object.
+	     */
+	    copyRowTo(row: number, vector3D: Vector3D): void;
+	    /**
+	     * Copies this Matrix3D object into a destination Matrix3D object.
+	     */
+	    copyToMatrix3D(dest: Matrix3D): void;
+	    /**
+	     * Returns the transformation matrix's translation, rotation, and scale settings as a Vector of three Vector3D objects.
+	     */
+	    decompose(orientationStyle?: string): Vector3D[];
+	    /**
+	     * Uses the transformation matrix without its translation elements to transform a Vector3D object from one space
+	     * coordinate to another.
+	     */
+	    deltaTransformVector(v: Vector3D): Vector3D;
+	    /**
+	     * Converts the current matrix to an identity or unit matrix.
+	     */
+	    identity(): void;
+	    /**
+	     * [static] Interpolates the translation, rotation, and scale transformation of one matrix toward those of the target matrix.
+	     */
+	    static interpolate(thisMat: Matrix3D, toMat: Matrix3D, percent: number): Matrix3D;
+	    /**
+	     * Interpolates this matrix towards the translation, rotation, and scale transformations of the target matrix.
+	     */
+	    interpolateTo(toMat: Matrix3D, percent: number): void;
+	    /**
+	     * Inverts the current matrix.
+	     */
+	    invert(): boolean;
+	    /**
+	     * Prepends a matrix by multiplying the current Matrix3D object by another Matrix3D object.
+	     */
+	    prepend(rhs: Matrix3D): void;
+	    /**
+	     * Prepends an incremental rotation to a Matrix3D object.
+	     */
+	    prependRotation(degrees: number, axis: Vector3D): void;
+	    /**
+	     * Prepends an incremental scale change along the x, y, and z axes to a Matrix3D object.
+	     */
+	    prependScale(xScale: number, yScale: number, zScale: number): void;
+	    /**
+	     * Prepends an incremental translation, a repositioning along the x, y, and z axes, to a Matrix3D object.
+	     */
+	    prependTranslation(x: number, y: number, z: number): void;
+	    /**
+	     * Sets the transformation matrix's translation, rotation, and scale settings.
+	     */
+	    recompose(components: Vector3D[]): boolean;
+	    transformVector(v: Vector3D): Vector3D;
+	    /**
+	     * Uses the transformation matrix to transform a Vector of Numbers from one coordinate space to another.
+	     */
+	    transformVectors(vin: number[], vout: number[]): void;
+	    /**
+	     * Converts the current Matrix3D object to a matrix where the rows and columns are swapped.
+	     */
+	    transpose(): void;
+	    static getAxisRotation(x: number, y: number, z: number, degrees: number): Matrix3D;
+	    /**
+	     * [read-only] A Number that determines whether a matrix is invertible.
+	     */
+	    determinant: number;
+	    /**
+	     * A Vector3D object that holds the position, the 3D coordinate (x,y,z) of a display object within the
+	     * transformation's frame of reference.
+	     */
+	    position: Vector3D;
+	    toFixed(decimalPlace: number): string;
+	    toString(): string;
+	}
+	export = Matrix3D;
+	
+}
 declare module "awayjs-core/lib/geom/PerspectiveProjection" {
 	import Matrix3D = require("awayjs-core/lib/geom/Matrix3D");
 	import Point = require("awayjs-core/lib/geom/Point");
@@ -3483,9 +3078,9 @@ declare module "awayjs-core/lib/geom/PerspectiveProjection" {
 }
 declare module "awayjs-core/lib/geom/PoissonLookup" {
 	class PoissonLookup {
-	    static _distributions: number[][];
+	    static _distributions: Array<Array<number>>;
 	    static initDistributions(): void;
-	    static getDistribution(n: number): number[];
+	    static getDistribution(n: number): Array<number>;
 	}
 	export = PoissonLookup;
 	
@@ -3625,13 +3220,129 @@ declare module "awayjs-core/lib/net/URLRequest" {
 	export = URLRequest;
 	
 }
+declare module "awayjs-core/lib/events/Event" {
+	class Event {
+	    static COMPLETE: string;
+	    static OPEN: string;
+	    static ENTER_FRAME: string;
+	    static EXIT_FRAME: string;
+	    static RESIZE: string;
+	    static ERROR: string;
+	    static CHANGE: string;
+	    /**
+	     * Type of event
+	     * @property type
+	     * @type String
+	     */
+	    type: string;
+	    /**
+	     * Reference to target object
+	     * @property target
+	     * @type Object
+	     */
+	    target: any;
+	    constructor(type: string);
+	    /**
+	     * Clones the current event.
+	     * @return An exact duplicate of the current event.
+	     */
+	    clone(): Event;
+	}
+	export = Event;
+	
+}
+declare module "awayjs-core/lib/events/IEventDispatcher" {
+	import Event = require("awayjs-core/lib/events/Event");
+	/**
+	 * Base interface for dispatching events
+	 *
+	 * @interface away.events.IEventDispatcher
+	 *
+	 */
+	interface IEventDispatcher {
+	    /**
+	     * Add an event listener
+	     * @method addEventListener
+	     * @param {String} Name of event to add a listener for
+	     * @param {Function} Callback function
+	     */
+	    addEventListener(type: string, listener: Function): any;
+	    /**
+	     * Remove an event listener
+	     * @method removeEventListener
+	     * @param {String} Name of event to remove a listener for
+	     * @param {Function} Callback function
+	     */
+	    removeEventListener(type: string, listener: Function): any;
+	    /**
+	     * Dispatch an event
+	     * @method dispatchEvent
+	     * @param {Event} Event to dispatch
+	     */
+	    dispatchEvent(event: Event): any;
+	    /**
+	     * check if an object has an event listener assigned to it
+	     * @method hasListener
+	     * @param {String} Name of event to remove a listener for
+	     * @param {Function} Callback function
+	     * @param {Object} Target object listener is added to
+	     */
+	    hasEventListener(type: string, listener?: Function): boolean;
+	}
+	export = IEventDispatcher;
+	
+}
+declare module "awayjs-core/lib/library/IAsset" {
+	import IEventDispatcher = require("awayjs-core/lib/events/IEventDispatcher");
+	interface IAsset extends IEventDispatcher {
+	    /**
+	     *
+	     */
+	    name: string;
+	    /**
+	     *
+	     */
+	    id: number;
+	    /**
+	     *
+	     */
+	    assetNamespace: string;
+	    /**
+	     *
+	     */
+	    assetType: string;
+	    /**
+	     *
+	     */
+	    assetFullPath: Array<string>;
+	    /**
+	     *
+	     * @param name
+	     * @param ns
+	     */
+	    assetPathEquals(name: string, ns: string): boolean;
+	    /**
+	     *
+	     * @param name
+	     * @param ns
+	     * @param overrideOriginal
+	     */
+	    resetAssetPath(name: string, ns: string, overrideOriginal?: boolean): void;
+	    /**
+	     *
+	     */
+	    dispose(): any;
+	}
+	export = IAsset;
+	
+}
 declare module "awayjs-core/lib/library/AssetLibraryIterator" {
 	import IAsset = require("awayjs-core/lib/library/IAsset");
 	class AssetLibraryIterator {
 	    private _assets;
 	    private _filtered;
 	    private _idx;
-	    constructor(assets: IAsset[], assetTypeFilter: string, namespaceFilter: string, filterFunc: any);
+	    constructor(assets: Array<IAsset>, assetTypeFilter: string, namespaceFilter: string, filterFunc: any);
 	    currentAsset: IAsset;
 	    numAssets: number;
 	    next(): IAsset;
@@ -3734,6 +3445,56 @@ declare module "awayjs-core/lib/library/AssetLoaderContext" {
 	    _iGetRemappedUrl(originalUrl: string): string;
 	}
 	export = AssetLoaderContext;
+	
+}
+declare module "awayjs-core/lib/events/EventDispatcher" {
+	import Event = require("awayjs-core/lib/events/Event");
+	/**
+	 * Base class for dispatching events
+	*
+	* @class away.events.EventDispatcher
+	*
+	*/
+	class EventDispatcher {
+	    private listeners;
+	    private target;
+	    constructor(target?: any);
+	    /**
+	     * Add an event listener
+	     * @method addEventListener
+	     * @param {String} Name of event to add a listener for
+	     * @param {Function} Callback function
+	     */
+	    addEventListener(type: string, listener: Function): void;
+	    /**
+	     * Remove an event listener
+	     * @method removeEventListener
+	     * @param {String} Name of event to remove a listener for
+	     * @param {Function} Callback function
+	     */
+	    removeEventListener(type: string, listener: Function): void;
+	    /**
+	     * Dispatch an event
+	     * @method dispatchEvent
+	     * @param {Event} Event to dispatch
+	     */
+	    dispatchEvent(event: Event): void;
+	    /**
+	     * get Event Listener Index in array. Returns -1 if no listener is added
+	     * @method getEventListenerIndex
+	     * @param {String} Name of event to remove a listener for
+	     * @param {Function} Callback function
+	     */
+	    private getEventListenerIndex(type, listener);
+	    /**
+	     * check if an object has an event listener assigned to it
+	     * @method hasListener
+	     * @param {String} Name of event to remove a listener for
+	     * @param {Function} Callback function
+	     */
+	    hasEventListener(type: string, listener?: Function): boolean;
+	}
+	export = EventDispatcher;
 	
 }
 declare module "awayjs-core/lib/library/AssetLoaderToken" {
@@ -3951,6 +3712,39 @@ declare module "awayjs-core/lib/net/URLVariables" {
 	export = URLVariables;
 	
 }
+declare module "awayjs-core/lib/events/HTTPStatusEvent" {
+	import Event = require("awayjs-core/lib/events/Event");
+	/**
+	 * @class away.events.HTTPStatusEvent
+	 */
+	class HTTPStatusEvent extends Event {
+	    static HTTP_STATUS: string;
+	    status: number;
+	    constructor(type: string, status?: number);
+	}
+	export = HTTPStatusEvent;
+	
+}
+declare module "awayjs-core/lib/events/IOErrorEvent" {
+	import Event = require("awayjs-core/lib/events/Event");
+	class IOErrorEvent extends Event {
+	    static IO_ERROR: string;
+	    constructor(type: string);
+	}
+	export = IOErrorEvent;
+	
+}
+declare module "awayjs-core/lib/events/ProgressEvent" {
+	import Event = require("awayjs-core/lib/events/Event");
+	class ProgressEvent extends Event {
+	    static PROGRESS: string;
+	    bytesLoaded: number;
+	    bytesTotal: number;
+	    constructor(type: string);
+	}
+	export = ProgressEvent;
+	
+}
 declare module "awayjs-core/lib/net/URLLoader" {
 	import URLRequest = require("awayjs-core/lib/net/URLRequest");
 	import EventDispatcher = require("awayjs-core/lib/events/EventDispatcher");
@@ -4099,6 +3893,130 @@ declare module "awayjs-core/lib/net/URLLoader" {
 	export = URLLoader;
 	
 }
+declare module "awayjs-core/lib/events/AssetEvent" {
+	import IAsset = require("awayjs-core/lib/library/IAsset");
+	import Event = require("awayjs-core/lib/events/Event");
+	/**
+	 * @class away.events.AssetEvent
+	 */
+	class AssetEvent extends Event {
+	    /**
+	     *
+	     */
+	    static ASSET_COMPLETE: string;
+	    /**
+	     *
+	     */
+	    static ASSET_RENAME: string;
+	    /**
+	     *
+	     */
+	    static ASSET_CONFLICT_RESOLVED: string;
+	    /**
+	     *
+	     */
+	    static TEXTURE_SIZE_ERROR: string;
+	    private _asset;
+	    private _prevName;
+	    /**
+	     *
+	     */
+	    constructor(type: string, asset?: IAsset, prevName?: string);
+	    /**
+	     *
+	     */
+	    asset: IAsset;
+	    /**
+	     *
+	     */
+	    assetPrevName: string;
+	    /**
+	     *
+	     */
+	    clone(): Event;
+	}
+	export = AssetEvent;
+	
+}
+declare module "awayjs-core/lib/events/LoaderEvent" {
+	import IAsset = require("awayjs-core/lib/library/IAsset");
+	import Event = require("awayjs-core/lib/events/Event");
+	class LoaderEvent extends Event {
+	    /**
+	     * Dispatched when a resource and all of its dependencies is retrieved.
+	     */
+	    static RESOURCE_COMPLETE: string;
+	    private _url;
+	    private _content;
+	    private _assets;
+	    /**
+	     * Create a new LoaderEvent object.
+	     *
+	     * @param type The event type.
+	     * @param url The url of the loaded resource.
+	     * @param assets The assets of the loaded resource.
+	     */
+	    constructor(type: string, url?: string, content?: IAsset, assets?: Array<IAsset>);
+	    /**
+	     * The content returned if the resource has been loaded inside a <code>Loader</code> object.
+	     */
+	    content: IAsset;
+	    /**
+	     * The url of the loaded resource.
+	     */
+	    url: string;
+	    /**
+	     * The error string on loadError.
+	     */
+	    assets: IAsset[];
+	    /**
+	     * Clones the current event.
+	     * @return An exact duplicate of the current event.
+	     */
+	    clone(): Event;
+	}
+	export = LoaderEvent;
+	
+}
+declare module "awayjs-core/lib/events/ParserEvent" {
+	import Event = require("awayjs-core/lib/events/Event");
+	class ParserEvent extends Event {
+	    private _message;
+	    /**
+	     * Dispatched when parsing of an asset completed.
+	     */
+	    static PARSE_COMPLETE: string;
+	    /**
+	     * Dispatched when an error occurs while parsing the data (e.g. because it's
+	     * incorrectly formatted.)
+	     */
+	    static PARSE_ERROR: string;
+	    /**
+	     * Dispatched when a parser is ready to have dependencies retrieved and resolved.
+	     * This is an internal event that should rarely (if ever) be listened for by
+	     * external classes.
+	     */
+	    static READY_FOR_DEPENDENCIES: string;
+	    constructor(type: string, message?: string);
+	    /**
+	     * Additional human-readable message. Usually supplied for ParserEvent.PARSE_ERROR events.
+	     */
+	    message: string;
+	    clone(): Event;
+	}
+	export = ParserEvent;
+	
+}
+declare module "awayjs-core/lib/events/TimerEvent" {
+	import Event = require("awayjs-core/lib/events/Event");
+	class TimerEvent extends Event {
+	    static TIMER: string;
+	    static TIMER_COMPLETE: string;
+	    constructor(type: string);
+	}
+	export = TimerEvent;
+	
+}
 declare module "awayjs-core/lib/parsers/ParserUtils" {
 	import ByteArray = require("awayjs-core/lib/utils/ByteArray");
 	class ParserUtils {
@@ -4206,11 +4124,11 @@ declare module "awayjs-core/lib/parsers/ResourceDependency" {
 	    /**
 	     *
 	     */
-	    assets: IAsset[];
+	    assets: Array<IAsset>;
 	    /**
 	     *
 	     */
-	    dependencies: ResourceDependency[];
+	    dependencies: Array<ResourceDependency>;
 	    /**
 	     * @private
 	     * Method to set data after having already created the dependency object, e.g. after load.
@@ -4368,7 +4286,7 @@ declare module "awayjs-core/lib/parsers/ParserBase" {
 	    /**
 	     * A list of dependencies that need to be loaded and resolved for the object being parsed.
 	     */
-	    dependencies: ResourceDependency[];
+	    dependencies: Array<ResourceDependency>;
 	    /**
 	     * Resolve a dependency when it's loaded. For example, a dependency containing an ImageResource would be assigned
 	     * to a Mesh instance as a BitmapMaterial, a scene graph object would be added to its intended parent. The
@@ -4452,8 +4370,8 @@ declare module "awayjs-core/lib/textures/MipmapGenerator" {
 	     * @param mipmap An optional mip map holder to avoids creating new instances for fe animated materials.
 	     * @param alpha Indicate whether or not the uploaded bitmapData is transparent.
 	     */
-	    static generateMipMaps(source: HTMLImageElement, output?: BitmapData[], alpha?: boolean): any;
-	    static generateMipMaps(source: BitmapData, output?: BitmapData[], alpha?: boolean): any;
+	    static generateMipMaps(source: HTMLImageElement, output?: Array<BitmapData>, alpha?: boolean): any;
+	    static generateMipMaps(source: BitmapData, output?: Array<BitmapData>, alpha?: boolean): any;
 	    private static _getMipmapHolder(mipMapHolder, newW, newH);
 	    static freeMipMapHolder(mipMapHolder: BitmapData): void;
 	}
@@ -4477,6 +4395,7 @@ declare module "awayjs-core/lib/library/AssetType" {
 	    static MATERIAL: string;
 	    static MESH: string;
 	    static TRIANGLE_SUB_MESH: string;
+	    static CURVE_SUB_MESH: string;
 	    static LINE_SUB_MESH: string;
 	    static PRIMITIVE_PREFAB: string;
 	    static SHADOW_MAP_METHOD: string;
@@ -4519,7 +4438,7 @@ declare module "awayjs-core/lib/library/NamedAssetBase" {
 	    name: string;
 	    dispose(): void;
 	    assetNamespace: string;
-	    assetFullPath: string[];
+	    assetFullPath: Array<string>;
 	    assetPathEquals(name: string, ns: string): boolean;
 	    resetAssetPath(name: string, ns?: string, overrideOriginal?: boolean): void;
 	    private updateFullPath();
@@ -4596,8 +4515,8 @@ declare module "awayjs-core/lib/textures/CubeTextureBase" {
 	import BitmapData = require("awayjs-core/lib/base/BitmapData");
 	import TextureProxyBase = require("awayjs-core/lib/textures/TextureProxyBase");
 	class CubeTextureBase extends TextureProxyBase {
-	    _mipmapDataArray: BitmapData[][];
-	    _mipmapDataDirtyArray: boolean[];
+	    _mipmapDataArray: Array<Array<BitmapData>>;
+	    _mipmapDataDirtyArray: Array<boolean>;
 	    constructor();
 	    /**
 	     *
@@ -4614,7 +4533,7 @@ declare module "awayjs-core/lib/textures/CubeTextureBase" {
 	     *
 	     */
 	    invalidateContent(): void;
-	    _iGetMipmapData(side: number): BitmapData[];
+	    _iGetMipmapData(side: number): Array<BitmapData>;
 	    _iGetTextureData(side: number): any;
 	}
 	export = CubeTextureBase;
@@ -4690,7 +4609,7 @@ declare module "awayjs-core/lib/textures/Texture2DBase" {
 	     * @private
 	     */
 	    _pSetSize(width: number, height: number): void;
-	    _iGetMipmapData(): BitmapData[];
+	    _iGetMipmapData(): Array<BitmapData>;
 	    _iGetTextureData(): any;
 	}
 	export = Texture2DBase;
@@ -4895,7 +4814,7 @@ declare module "awayjs-core/lib/library/AssetLoader" {
 	     * @param parsers A Vector of parser classes to enable.
 	     * @see away.parsers.Parsers
 	     */
-	    static enableParsers(parsers: Object[]): void;
+	    static enableParsers(parsers: Array<Object>): void;
 	    /**
 	     * Returns the base dependency of the loader
 	     */
@@ -5365,7 +5284,7 @@ declare module "awayjs-core/lib/library/AssetLibrary" {
 	    /**
 	     *
 	     */
-	    static enableParsers(parserClasses: Object[]): void;
+	    static enableParsers(parserClasses: Array<Object>): void;
 	    /**
 	     * Short-hand for conflictStrategy property on default asset library bundle.
 	     *
@@ -5497,6 +5416,50 @@ declare module "awayjs-core/lib/library/IDUtil" {
 	export = IDUtil;
 	
 }
+declare module "awayjs-core/lib/errors/DocumentError" {
+	import Error = require("awayjs-core/lib/errors/Error");
+	class DocumentError extends Error {
+	    static DOCUMENT_DOES_NOT_EXIST: string;
+	    constructor(message?: string, id?: number);
+	}
+	export = DocumentError;
+	
+}
+declare module "awayjs-core/lib/errors/PartialImplementationError" {
+	import Error = require("awayjs-core/lib/errors/Error");
+	/**
+	 * AbstractMethodError is thrown when an abstract method is called. The method in question should be overridden
+	 * by a concrete subclass.
+	 */
+	class PartialImplementationError extends Error {
+	    /**
+	     * Create a new AbstractMethodError.
+	     * @param message An optional message to override the default error message.
+	     * @param id The id of the error.
+	     */
+	    constructor(dependency?: string, id?: number);
+	}
+	export = PartialImplementationError;
+	
+}
+declare module "awayjs-core/lib/errors/RangeError" {
+	import Error = require("awayjs-core/lib/errors/Error");
+	/**
+	 * RangeError is thrown when an index is accessed out of range of the number of
+	 * available indices on an Array.
+	 */
+	class RangeError extends Error {
+	    /**
+	     * Create a new RangeError.
+	     *
+	     * @param message An optional message to override the default error message.
+	     * @param id The id of the error.
+	     */
+	    constructor(message?: string, id?: number);
+	}
+	export = RangeError;
+	
+}
 declare module "awayjs-core/lib/net/CrossDomainPolicy" {
 	class CrossDomainPolicy {
 	    static ANONYMOUS: string;
@@ -5524,6 +5487,44 @@ declare module "awayjs-core/lib/parsers/ParserDataFormat" {
 	    static IMAGE: string;
 	}
 	export = ParserDataFormat;
+	
+}
+declare module "awayjs-core/lib/projections/IProjection" {
+	import Matrix3D = require("awayjs-core/lib/geom/Matrix3D");
+	import Vector3D = require("awayjs-core/lib/geom/Vector3D");
+	import IEventDispatcher = require("awayjs-core/lib/events/IEventDispatcher");
+	/**
+	 * IMaterialOwner provides an interface for objects that can use materials.
+	 *
+	 * @interface away.base.IMaterialOwner
+	 */
+	interface IProjection extends IEventDispatcher {
+	    coordinateSystem: string;
+	    frustumCorners: Array<number>;
+	    matrix: Matrix3D;
+	    near: number;
+	    originX: number;
+	    originY: number;
+	    far: number;
+	    _iAspectRatio: number;
+	    project(point3d: Vector3D): Vector3D;
+	    unproject(nX: number, nY: number, sZ: number): Vector3D;
+	    _iUpdateScissorRect(x: number, y: number, width: number, height: number): any;
+	    _iUpdateViewport(x: number, y: number, width: number, height: number): any;
+	}
+	export = IProjection;
+	
+}
+declare module "awayjs-core/lib/events/ProjectionEvent" {
+	import Event = require("awayjs-core/lib/events/Event");
+	import IProjection = require("awayjs-core/lib/projections/IProjection");
+	class ProjectionEvent extends Event {
+	    static MATRIX_CHANGED: string;
+	    private _projection;
+	    constructor(type: string, projection: IProjection);
+	    projection: IProjection;
+	}
+	export = ProjectionEvent;
 	
 }
 declare module "awayjs-core/lib/projections/CoordinateSystem" {
@@ -5866,7 +5867,7 @@ declare module "awayjs-core/lib/ui/Keyboard" {
 	    /**
 	     * An array containing all the defined key name constants.
 	     */
-	    static CharCodeStrings: any[];
+	    static CharCodeStrings: Array<any>;
 	    /**
 	     * Constant associated with the key code value for the D key (68).
 	     */

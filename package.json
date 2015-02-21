@@ -17,6 +17,7 @@
     "tsify": "^0.8.0",
     "vinyl-map": "^1.0.1",
     "vinyl-source-stream": "^1.0.0",
+    "vinyl-transform": "^1.0.0",
     "watchify": "^2.3.0"
   }
 }

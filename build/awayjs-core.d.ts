@@ -2453,367 +2453,6 @@ declare module "awayjs-core/lib/geom/UVTransform" {
 	export = UVTransform;
 	
 }
-declare module "awayjs-core/lib/events/Event" {
-	class Event {
-	    static COMPLETE: string;
-	    static OPEN: string;
-	    static ENTER_FRAME: string;
-	    static EXIT_FRAME: string;
-	    static RESIZE: string;
-	    static ERROR: string;
-	    static CHANGE: string;
-	    /**
-	     * Type of event
-	     * @property type
-	     * @type String
-	     */
-	    type: string;
-	    /**
-	     * Reference to target object
-	     * @property target
-	     * @type Object
-	     */
-	    target: any;
-	    constructor(type: string);
-	    /**
-	     * Clones the current event.
-	     * @return An exact duplicate of the current event.
-	     */
-	    clone(): Event;
-	}
-	export = Event;
-	
-}
-declare module "awayjs-core/lib/events/IEventDispatcher" {
-	import Event = require("awayjs-core/lib/events/Event");
-	/**
-	 * Base interface for dispatching events
-	 *
-	 * @interface away.events.IEventDispatcher
-	 *
-	 */
-	interface IEventDispatcher {
-	    /**
-	     * Add an event listener
-	     * @method addEventListener
-	     * @param {String} Name of event to add a listener for
-	     * @param {Function} Callback function
-	     */
-	    addEventListener(type: string, listener: Function): any;
-	    /**
-	     * Remove an event listener
-	     * @method removeEventListener
-	     * @param {String} Name of event to remove a listener for
-	     * @param {Function} Callback function
-	     */
-	    removeEventListener(type: string, listener: Function): any;
-	    /**
-	     * Dispatch an event
-	     * @method dispatchEvent
-	     * @param {Event} Event to dispatch
-	     */
-	    dispatchEvent(event: Event): any;
-	    /**
-	     * check if an object has an event listener assigned to it
-	     * @method hasListener
-	     * @param {String} Name of event to remove a listener for
-	     * @param {Function} Callback function
-	     * @param {Object} Target object listener is added to
-	     */
-	    hasEventListener(type: string, listener?: Function): boolean;
-	}
-	export = IEventDispatcher;
-	
-}
-declare module "awayjs-core/lib/library/IAsset" {
-	import IEventDispatcher = require("awayjs-core/lib/events/IEventDispatcher");
-	interface IAsset extends IEventDispatcher {
-	    /**
-	     *
-	     */
-	    name: string;
-	    /**
-	     *
-	     */
-	    id: number;
-	    /**
-	     *
-	     */
-	    assetNamespace: string;
-	    /**
-	     *
-	     */
-	    assetType: string;
-	    /**
-	     *
-	     */
-	    assetFullPath: Array<string>;
-	    /**
-	     *
-	     * @param name
-	     * @param ns
-	     */
-	    assetPathEquals(name: string, ns: string): boolean;
-	    /**
-	     *
-	     * @param name
-	     * @param ns
-	     * @param overrideOriginal
-	     */
-	    resetAssetPath(name: string, ns: string, overrideOriginal?: boolean): void;
-	    /**
-	     *
-	     */
-	    dispose(): any;
-	}
-	export = IAsset;
-	
-}
-declare module "awayjs-core/lib/events/AssetEvent" {
-	import IAsset = require("awayjs-core/lib/library/IAsset");
-	import Event = require("awayjs-core/lib/events/Event");
-	/**
-	 * @class away.events.AssetEvent
-	 */
-	class AssetEvent extends Event {
-	    /**
-	     *
-	     */
-	    static ASSET_COMPLETE: string;
-	    /**
-	     *
-	     */
-	    static ASSET_RENAME: string;
-	    /**
-	     *
-	     */
-	    static ASSET_CONFLICT_RESOLVED: string;
-	    /**
-	     *
-	     */
-	    static TEXTURE_SIZE_ERROR: string;
-	    private _asset;
-	    private _prevName;
-	    /**
-	     *
-	     */
-	    constructor(type: string, asset?: IAsset, prevName?: string);
-	    /**
-	     *
-	     */
-	    asset: IAsset;
-	    /**
-	     *
-	     */
-	    assetPrevName: string;
-	    /**
-	     *
-	     */
-	    clone(): Event;
-	}
-	export = AssetEvent;
-	
-}
-declare module "awayjs-core/lib/events/EventDispatcher" {
-	import Event = require("awayjs-core/lib/events/Event");
-	/**
-	 * Base class for dispatching events
-	*
-	* @class away.events.EventDispatcher
-	*
-	*/
-	class EventDispatcher {
-	    private listeners;
-	    private target;
-	    constructor(target?: any);
-	    /**
-	     * Add an event listener
-	     * @method addEventListener
-	     * @param {String} Name of event to add a listener for
-	     * @param {Function} Callback function
-	     */
-	    addEventListener(type: string, listener: Function): void;
-	    /**
-	     * Remove an event listener
-	     * @method removeEventListener
-	     * @param {String} Name of event to remove a listener for
-	     * @param {Function} Callback function
-	     */
-	    removeEventListener(type: string, listener: Function): void;
-	    /**
-	     * Dispatch an event
-	     * @method dispatchEvent
-	     * @param {Event} Event to dispatch
-	     */
-	    dispatchEvent(event: Event): void;
-	    /**
-	     * get Event Listener Index in array. Returns -1 if no listener is added
-	     * @method getEventListenerIndex
-	     * @param {String} Name of event to remove a listener for
-	     * @param {Function} Callback function
-	     */
-	    private getEventListenerIndex(type, listener);
-	    /**
-	     * check if an object has an event listener assigned to it
-	     * @method hasListener
-	     * @param {String} Name of event to remove a listener for
-	     * @param {Function} Callback function
-	     */
-	    hasEventListener(type: string, listener?: Function): boolean;
-	}
-	export = EventDispatcher;
-	
-}
-declare module "awayjs-core/lib/events/HTTPStatusEvent" {
-	import Event = require("awayjs-core/lib/events/Event");
-	/**
-	 * @class away.events.HTTPStatusEvent
-	 */
-	class HTTPStatusEvent extends Event {
-	    static HTTP_STATUS: string;
-	    status: number;
-	    constructor(type: string, status?: number);
-	}
-	export = HTTPStatusEvent;
-	
-}
-declare module "awayjs-core/lib/events/IOErrorEvent" {
-	import Event = require("awayjs-core/lib/events/Event");
-	class IOErrorEvent extends Event {
-	    static IO_ERROR: string;
-	    constructor(type: string);
-	}
-	export = IOErrorEvent;
-	
-}
-declare module "awayjs-core/lib/events/LoaderEvent" {
-	import IAsset = require("awayjs-core/lib/library/IAsset");
-	import Event = require("awayjs-core/lib/events/Event");
-	class LoaderEvent extends Event {
-	    /**
-	     * Dispatched when a resource and all of its dependencies is retrieved.
-	     */
-	    static RESOURCE_COMPLETE: string;
-	    private _url;
-	    private _content;
-	    private _assets;
-	    /**
-	     * Create a new LoaderEvent object.
-	     *
-	     * @param type The event type.
-	     * @param url The url of the loaded resource.
-	     * @param assets The assets of the loaded resource.
-	     */
-	    constructor(type: string, url?: string, content?: IAsset, assets?: Array<IAsset>);
-	    /**
-	     * The content returned if the resource has been loaded inside a <code>Loader</code> object.
-	     */
-	    content: IAsset;
-	    /**
-	     * The url of the loaded resource.
-	     */
-	    url: string;
-	    /**
-	     * The error string on loadError.
-	     */
-	    assets: IAsset[];
-	    /**
-	     * Clones the current event.
-	     * @return An exact duplicate of the current event.
-	     */
-	    clone(): Event;
-	}
-	export = LoaderEvent;
-	
-}
-declare module "awayjs-core/lib/events/ParserEvent" {
-	import Event = require("awayjs-core/lib/events/Event");
-	class ParserEvent extends Event {
-	    private _message;
-	    /**
-	     * Dispatched when parsing of an asset completed.
-	     */
-	    static PARSE_COMPLETE: string;
-	    /**
-	     * Dispatched when an error occurs while parsing the data (e.g. because it's
-	     * incorrectly formatted.)
-	     */
-	    static PARSE_ERROR: string;
-	    /**
-	     * Dispatched when a parser is ready to have dependencies retrieved and resolved.
-	     * This is an internal event that should rarely (if ever) be listened for by
-	     * external classes.
-	     */
-	    static READY_FOR_DEPENDENCIES: string;
-	    constructor(type: string, message?: string);
-	    /**
-	     * Additional human-readable message. Usually supplied for ParserEvent.PARSE_ERROR events.
-	     */
-	    message: string;
-	    clone(): Event;
-	}
-	export = ParserEvent;
-	
-}
-declare module "awayjs-core/lib/events/ProgressEvent" {
-	import Event = require("awayjs-core/lib/events/Event");
-	class ProgressEvent extends Event {
-	    static PROGRESS: string;
-	    bytesLoaded: number;
-	    bytesTotal: number;
-	    constructor(type: string);
-	}
-	export = ProgressEvent;
-	
-}
-declare module "awayjs-core/lib/projections/IProjection" {
-	import Matrix3D = require("awayjs-core/lib/geom/Matrix3D");
-	import Vector3D = require("awayjs-core/lib/geom/Vector3D");
-	import IEventDispatcher = require("awayjs-core/lib/events/IEventDispatcher");
-	/**
-	 * IMaterialOwner provides an interface for objects that can use materials.
-	 *
-	 * @interface away.base.IMaterialOwner
-	 */
-	interface IProjection extends IEventDispatcher {
-	    coordinateSystem: string;
-	    frustumCorners: Array<number>;
-	    matrix: Matrix3D;
-	    near: number;
-	    originX: number;
-	    originY: number;
-	    far: number;
-	    _iAspectRatio: number;
-	    project(point3d: Vector3D): Vector3D;
-	    unproject(nX: number, nY: number, sZ: number): Vector3D;
-	    _iUpdateScissorRect(x: number, y: number, width: number, height: number): any;
-	    _iUpdateViewport(x: number, y: number, width: number, height: number): any;
-	}
-	export = IProjection;
-	
-}
-declare module "awayjs-core/lib/events/ProjectionEvent" {
-	import Event = require("awayjs-core/lib/events/Event");
-	import IProjection = require("awayjs-core/lib/projections/IProjection");
-	class ProjectionEvent extends Event {
-	    static MATRIX_CHANGED: string;
-	    private _projection;
-	    constructor(type: string, projection: IProjection);
-	    projection: IProjection;
-	}
-	export = ProjectionEvent;
-	
-}
-declare module "awayjs-core/lib/events/TimerEvent" {
-	import Event = require("awayjs-core/lib/events/Event");
-	class TimerEvent extends Event {
-	    static TIMER: string;
-	    static TIMER_COMPLETE: string;
-	    constructor(type: string);
-	}
-	export = TimerEvent;
-	
-}
 declare module "awayjs-core/lib/base/BlendMode" {
 	/**
 	 * A class that provides constant values for visual blend mode effects. These
@@ -3561,6 +3200,367 @@ declare module "awayjs-core/lib/base/BitmapDataChannel" {
 	    static RED: number;
 	}
 	export = BitmapDataChannel;
+	
+}
+declare module "awayjs-core/lib/events/Event" {
+	class Event {
+	    static COMPLETE: string;
+	    static OPEN: string;
+	    static ENTER_FRAME: string;
+	    static EXIT_FRAME: string;
+	    static RESIZE: string;
+	    static ERROR: string;
+	    static CHANGE: string;
+	    /**
+	     * Type of event
+	     * @property type
+	     * @type String
+	     */
+	    type: string;
+	    /**
+	     * Reference to target object
+	     * @property target
+	     * @type Object
+	     */
+	    target: any;
+	    constructor(type: string);
+	    /**
+	     * Clones the current event.
+	     * @return An exact duplicate of the current event.
+	     */
+	    clone(): Event;
+	}
+	export = Event;
+	
+}
+declare module "awayjs-core/lib/events/IEventDispatcher" {
+	import Event = require("awayjs-core/lib/events/Event");
+	/**
+	 * Base interface for dispatching events
+	 *
+	 * @interface away.events.IEventDispatcher
+	 *
+	 */
+	interface IEventDispatcher {
+	    /**
+	     * Add an event listener
+	     * @method addEventListener
+	     * @param {String} Name of event to add a listener for
+	     * @param {Function} Callback function
+	     */
+	    addEventListener(type: string, listener: Function): any;
+	    /**
+	     * Remove an event listener
+	     * @method removeEventListener
+	     * @param {String} Name of event to remove a listener for
+	     * @param {Function} Callback function
+	     */
+	    removeEventListener(type: string, listener: Function): any;
+	    /**
+	     * Dispatch an event
+	     * @method dispatchEvent
+	     * @param {Event} Event to dispatch
+	     */
+	    dispatchEvent(event: Event): any;
+	    /**
+	     * check if an object has an event listener assigned to it
+	     * @method hasListener
+	     * @param {String} Name of event to remove a listener for
+	     * @param {Function} Callback function
+	     * @param {Object} Target object listener is added to
+	     */
+	    hasEventListener(type: string, listener?: Function): boolean;
+	}
+	export = IEventDispatcher;
+	
+}
+declare module "awayjs-core/lib/library/IAsset" {
+	import IEventDispatcher = require("awayjs-core/lib/events/IEventDispatcher");
+	interface IAsset extends IEventDispatcher {
+	    /**
+	     *
+	     */
+	    name: string;
+	    /**
+	     *
+	     */
+	    id: number;
+	    /**
+	     *
+	     */
+	    assetNamespace: string;
+	    /**
+	     *
+	     */
+	    assetType: string;
+	    /**
+	     *
+	     */
+	    assetFullPath: Array<string>;
+	    /**
+	     *
+	     * @param name
+	     * @param ns
+	     */
+	    assetPathEquals(name: string, ns: string): boolean;
+	    /**
+	     *
+	     * @param name
+	     * @param ns
+	     * @param overrideOriginal
+	     */
+	    resetAssetPath(name: string, ns: string, overrideOriginal?: boolean): void;
+	    /**
+	     *
+	     */
+	    dispose(): any;
+	}
+	export = IAsset;
+	
+}
+declare module "awayjs-core/lib/events/AssetEvent" {
+	import IAsset = require("awayjs-core/lib/library/IAsset");
+	import Event = require("awayjs-core/lib/events/Event");
+	/**
+	 * @class away.events.AssetEvent
+	 */
+	class AssetEvent extends Event {
+	    /**
+	     *
+	     */
+	    static ASSET_COMPLETE: string;
+	    /**
+	     *
+	     */
+	    static ASSET_RENAME: string;
+	    /**
+	     *
+	     */
+	    static ASSET_CONFLICT_RESOLVED: string;
+	    /**
+	     *
+	     */
+	    static TEXTURE_SIZE_ERROR: string;
+	    private _asset;
+	    private _prevName;
+	    /**
+	     *
+	     */
+	    constructor(type: string, asset?: IAsset, prevName?: string);
+	    /**
+	     *
+	     */
+	    asset: IAsset;
+	    /**
+	     *
+	     */
+	    assetPrevName: string;
+	    /**
+	     *
+	     */
+	    clone(): Event;
+	}
+	export = AssetEvent;
+	
+}
+declare module "awayjs-core/lib/events/EventDispatcher" {
+	import Event = require("awayjs-core/lib/events/Event");
+	/**
+	 * Base class for dispatching events
+	*
+	* @class away.events.EventDispatcher
+	*
+	*/
+	class EventDispatcher {
+	    private listeners;
+	    private target;
+	    constructor(target?: any);
+	    /**
+	     * Add an event listener
+	     * @method addEventListener
+	     * @param {String} Name of event to add a listener for
+	     * @param {Function} Callback function
+	     */
+	    addEventListener(type: string, listener: Function): void;
+	    /**
+	     * Remove an event listener
+	     * @method removeEventListener
+	     * @param {String} Name of event to remove a listener for
+	     * @param {Function} Callback function
+	     */
+	    removeEventListener(type: string, listener: Function): void;
+	    /**
+	     * Dispatch an event
+	     * @method dispatchEvent
+	     * @param {Event} Event to dispatch
+	     */
+	    dispatchEvent(event: Event): void;
+	    /**
+	     * get Event Listener Index in array. Returns -1 if no listener is added
+	     * @method getEventListenerIndex
+	     * @param {String} Name of event to remove a listener for
+	     * @param {Function} Callback function
+	     */
+	    private getEventListenerIndex(type, listener);
+	    /**
+	     * check if an object has an event listener assigned to it
+	     * @method hasListener
+	     * @param {String} Name of event to remove a listener for
+	     * @param {Function} Callback function
+	     */
+	    hasEventListener(type: string, listener?: Function): boolean;
+	}
+	export = EventDispatcher;
+	
+}
+declare module "awayjs-core/lib/events/HTTPStatusEvent" {
+	import Event = require("awayjs-core/lib/events/Event");
+	/**
+	 * @class away.events.HTTPStatusEvent
+	 */
+	class HTTPStatusEvent extends Event {
+	    static HTTP_STATUS: string;
+	    status: number;
+	    constructor(type: string, status?: number);
+	}
+	export = HTTPStatusEvent;
+	
+}
+declare module "awayjs-core/lib/events/IOErrorEvent" {
+	import Event = require("awayjs-core/lib/events/Event");
+	class IOErrorEvent extends Event {
+	    static IO_ERROR: string;
+	    constructor(type: string);
+	}
+	export = IOErrorEvent;
+	
+}
+declare module "awayjs-core/lib/events/LoaderEvent" {
+	import IAsset = require("awayjs-core/lib/library/IAsset");
+	import Event = require("awayjs-core/lib/events/Event");
+	class LoaderEvent extends Event {
+	    /**
+	     * Dispatched when a resource and all of its dependencies is retrieved.
+	     */
+	    static RESOURCE_COMPLETE: string;
+	    private _url;
+	    private _content;
+	    private _assets;
+	    /**
+	     * Create a new LoaderEvent object.
+	     *
+	     * @param type The event type.
+	     * @param url The url of the loaded resource.
+	     * @param assets The assets of the loaded resource.
+	     */
+	    constructor(type: string, url?: string, content?: IAsset, assets?: Array<IAsset>);
+	    /**
+	     * The content returned if the resource has been loaded inside a <code>Loader</code> object.
+	     */
+	    content: IAsset;
+	    /**
+	     * The url of the loaded resource.
+	     */
+	    url: string;
+	    /**
+	     * The error string on loadError.
+	     */
+	    assets: IAsset[];
+	    /**
+	     * Clones the current event.
+	     * @return An exact duplicate of the current event.
+	     */
+	    clone(): Event;
+	}
+	export = LoaderEvent;
+	
+}
+declare module "awayjs-core/lib/events/ParserEvent" {
+	import Event = require("awayjs-core/lib/events/Event");
+	class ParserEvent extends Event {
+	    private _message;
+	    /**
+	     * Dispatched when parsing of an asset completed.
+	     */
+	    static PARSE_COMPLETE: string;
+	    /**
+	     * Dispatched when an error occurs while parsing the data (e.g. because it's
+	     * incorrectly formatted.)
+	     */
+	    static PARSE_ERROR: string;
+	    /**
+	     * Dispatched when a parser is ready to have dependencies retrieved and resolved.
+	     * This is an internal event that should rarely (if ever) be listened for by
+	     * external classes.
+	     */
+	    static READY_FOR_DEPENDENCIES: string;
+	    constructor(type: string, message?: string);
+	    /**
+	     * Additional human-readable message. Usually supplied for ParserEvent.PARSE_ERROR events.
+	     */
+	    message: string;
+	    clone(): Event;
+	}
+	export = ParserEvent;
+	
+}
+declare module "awayjs-core/lib/events/ProgressEvent" {
+	import Event = require("awayjs-core/lib/events/Event");
+	class ProgressEvent extends Event {
+	    static PROGRESS: string;
+	    bytesLoaded: number;
+	    bytesTotal: number;
+	    constructor(type: string);
+	}
+	export = ProgressEvent;
+	
+}
+declare module "awayjs-core/lib/projections/IProjection" {
+	import Matrix3D = require("awayjs-core/lib/geom/Matrix3D");
+	import Vector3D = require("awayjs-core/lib/geom/Vector3D");
+	import IEventDispatcher = require("awayjs-core/lib/events/IEventDispatcher");
+	/**
+	 * IMaterialOwner provides an interface for objects that can use materials.
+	 *
+	 * @interface away.base.IMaterialOwner
+	 */
+	interface IProjection extends IEventDispatcher {
+	    coordinateSystem: string;
+	    frustumCorners: Array<number>;
+	    matrix: Matrix3D;
+	    near: number;
+	    originX: number;
+	    originY: number;
+	    far: number;
+	    _iAspectRatio: number;
+	    project(point3d: Vector3D): Vector3D;
+	    unproject(nX: number, nY: number, sZ: number): Vector3D;
+	    _iUpdateScissorRect(x: number, y: number, width: number, height: number): any;
+	    _iUpdateViewport(x: number, y: number, width: number, height: number): any;
+	}
+	export = IProjection;
+	
+}
+declare module "awayjs-core/lib/events/ProjectionEvent" {
+	import Event = require("awayjs-core/lib/events/Event");
+	import IProjection = require("awayjs-core/lib/projections/IProjection");
+	class ProjectionEvent extends Event {
+	    static MATRIX_CHANGED: string;
+	    private _projection;
+	    constructor(type: string, projection: IProjection);
+	    projection: IProjection;
+	}
+	export = ProjectionEvent;
+	
+}
+declare module "awayjs-core/lib/events/TimerEvent" {
+	import Event = require("awayjs-core/lib/events/Event");
+	class TimerEvent extends Event {
+	    static TIMER: string;
+	    static TIMER_COMPLETE: string;
+	    constructor(type: string);
+	}
+	export = TimerEvent;
 	
 }
 declare module "awayjs-core/lib/net/URLRequestMethod" {
@@ -5498,14 +5498,6 @@ declare module "awayjs-core/lib/library/IDUtil" {
 	export = IDUtil;
 	
 }
-declare module "awayjs-core/lib/net/CrossDomainPolicy" {
-	class CrossDomainPolicy {
-	    static ANONYMOUS: string;
-	    static USE_CREDENTIALS: string;
-	}
-	export = CrossDomainPolicy;
-	
-}
 declare module "awayjs-core/lib/parsers/ParserDataFormat" {
 	/**
 	 * An enumeration providing values to describe the data format of parsed data.
@@ -5525,6 +5517,14 @@ declare module "awayjs-core/lib/parsers/ParserDataFormat" {
 	    static IMAGE: string;
 	}
 	export = ParserDataFormat;
+	
+}
+declare module "awayjs-core/lib/net/CrossDomainPolicy" {
+	class CrossDomainPolicy {
+	    static ANONYMOUS: string;
+	    static USE_CREDENTIALS: string;
+	}
+	export = CrossDomainPolicy;
 	
 }
 declare module "awayjs-core/lib/projections/CoordinateSystem" {
@@ -5700,6 +5700,101 @@ declare module "awayjs-core/lib/projections/OrthographicProjection" {
 	    pUpdateMatrix(): void;
 	}
 	export = OrthographicProjection;
+	
+}
+declare module "awayjs-core/lib/textures/BitmapCubeTexture" {
+	import BitmapData = require("awayjs-core/lib/base/BitmapData");
+	import CubeTextureBase = require("awayjs-core/lib/textures/CubeTextureBase");
+	class BitmapCubeTexture extends CubeTextureBase {
+	    private _bitmapDatas;
+	    /**
+	     * The texture on the cube's right face.
+	     */
+	    positiveX: BitmapData;
+	    /**
+	     * The texture on the cube's left face.
+	     */
+	    negativeX: BitmapData;
+	    /**
+	     * The texture on the cube's top face.
+	     */
+	    positiveY: BitmapData;
+	    /**
+	     * The texture on the cube's bottom face.
+	     */
+	    negativeY: BitmapData;
+	    /**
+	     * The texture on the cube's far face.
+	     */
+	    positiveZ: BitmapData;
+	    /**
+	     * The texture on the cube's near face.
+	     */
+	    negativeZ: BitmapData;
+	    constructor(posX: BitmapData, negX: BitmapData, posY: BitmapData, negY: BitmapData, posZ: BitmapData, negZ: BitmapData);
+	    /**
+	     *
+	     * @param value
+	     * @private
+	     */
+	    private _testSize(value);
+	    dispose(): void;
+	    _iGetTextureData(side: number): BitmapData;
+	}
+	export = BitmapCubeTexture;
+	
+}
+declare module "awayjs-core/lib/textures/BitmapTexture" {
+	import BitmapData = require("awayjs-core/lib/base/BitmapData");
+	import Texture2DBase = require("awayjs-core/lib/textures/Texture2DBase");
+	class BitmapTexture extends Texture2DBase {
+	    _bitmapData: BitmapData;
+	    /**
+	     *
+	     * @returns {BitmapData}
+	     */
+	    bitmapData: BitmapData;
+	    constructor(bitmapData: BitmapData);
+	    dispose(): void;
+	    _iGetTextureData(): BitmapData;
+	}
+	export = BitmapTexture;
+	
+}
+declare module "awayjs-core/lib/textures/RenderTexture" {
+	import Texture2DBase = require("awayjs-core/lib/textures/Texture2DBase");
+	class RenderTexture extends Texture2DBase {
+	    /**
+	     *
+	     * @returns {number}
+	     */
+	    width: number;
+	    /**
+	     *
+	     * @returns {number}
+	     */
+	    height: number;
+	    constructor(width: number, height: number);
+	}
+	export = RenderTexture;
+	
+}
+declare module "awayjs-core/lib/textures/SpecularBitmapTexture" {
+	import BitmapData = require("awayjs-core/lib/base/BitmapData");
+	import BitmapTexture = require("awayjs-core/lib/textures/BitmapTexture");
+	/**
+	 * A convenience texture that encodes a specular map in the red channel, and the gloss map in the green channel, as expected by BasicSpecularMapMethod
+	 */
+	class SpecularBitmapTexture extends BitmapTexture {
+	    private _specularMap;
+	    private _glossMap;
+	    constructor(specularMap?: BitmapData, glossMap?: BitmapData);
+	    specularMap: BitmapData;
+	    glossMap: BitmapData;
+	    private _testSize();
+	    _iGetTextureData(): BitmapData;
+	}
+	export = SpecularBitmapTexture;
 	
 }
 declare module "awayjs-core/lib/ui/Keyboard" {
@@ -6523,101 +6618,6 @@ declare module "awayjs-core/lib/ui/Keyboard" {
 	    static Z: number;
 	}
 	export = Keyboard;
-	
-}
-declare module "awayjs-core/lib/textures/BitmapCubeTexture" {
-	import BitmapData = require("awayjs-core/lib/base/BitmapData");
-	import CubeTextureBase = require("awayjs-core/lib/textures/CubeTextureBase");
-	class BitmapCubeTexture extends CubeTextureBase {
-	    private _bitmapDatas;
-	    /**
-	     * The texture on the cube's right face.
-	     */
-	    positiveX: BitmapData;
-	    /**
-	     * The texture on the cube's left face.
-	     */
-	    negativeX: BitmapData;
-	    /**
-	     * The texture on the cube's top face.
-	     */
-	    positiveY: BitmapData;
-	    /**
-	     * The texture on the cube's bottom face.
-	     */
-	    negativeY: BitmapData;
-	    /**
-	     * The texture on the cube's far face.
-	     */
-	    positiveZ: BitmapData;
-	    /**
-	     * The texture on the cube's near face.
-	     */
-	    negativeZ: BitmapData;
-	    constructor(posX: BitmapData, negX: BitmapData, posY: BitmapData, negY: BitmapData, posZ: BitmapData, negZ: BitmapData);
-	    /**
-	     *
-	     * @param value
-	     * @private
-	     */
-	    private _testSize(value);
-	    dispose(): void;
-	    _iGetTextureData(side: number): BitmapData;
-	}
-	export = BitmapCubeTexture;
-	
-}
-declare module "awayjs-core/lib/textures/BitmapTexture" {
-	import BitmapData = require("awayjs-core/lib/base/BitmapData");
-	import Texture2DBase = require("awayjs-core/lib/textures/Texture2DBase");
-	class BitmapTexture extends Texture2DBase {
-	    _bitmapData: BitmapData;
-	    /**
-	     *
-	     * @returns {BitmapData}
-	     */
-	    bitmapData: BitmapData;
-	    constructor(bitmapData: BitmapData);
-	    dispose(): void;
-	    _iGetTextureData(): BitmapData;
-	}
-	export = BitmapTexture;
-	
-}
-declare module "awayjs-core/lib/textures/RenderTexture" {
-	import Texture2DBase = require("awayjs-core/lib/textures/Texture2DBase");
-	class RenderTexture extends Texture2DBase {
-	    /**
-	     *
-	     * @returns {number}
-	     */
-	    width: number;
-	    /**
-	     *
-	     * @returns {number}
-	     */
-	    height: number;
-	    constructor(width: number, height: number);
-	}
-	export = RenderTexture;
-	
-}
-declare module "awayjs-core/lib/textures/SpecularBitmapTexture" {
-	import BitmapData = require("awayjs-core/lib/base/BitmapData");
-	import BitmapTexture = require("awayjs-core/lib/textures/BitmapTexture");
-	/**
-	 * A convenience texture that encodes a specular map in the red channel, and the gloss map in the green channel, as expected by BasicSpecularMapMethod
-	 */
-	class SpecularBitmapTexture extends BitmapTexture {
-	    private _specularMap;
-	    private _glossMap;
-	    constructor(specularMap?: BitmapData, glossMap?: BitmapData);
-	    specularMap: BitmapData;
-	    glossMap: BitmapData;
-	    private _testSize();
-	    _iGetTextureData(): BitmapData;
-	}
-	export = SpecularBitmapTexture;
 	
 }
 declare module "awayjs-core/lib/utils/ByteArrayBuffer" {

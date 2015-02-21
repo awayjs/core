@@ -5,6 +5,7 @@ var path = require('path');
 var browserify  = require('browserify');
 var source = require('vinyl-source-stream');
 var map = require('vinyl-map');
+var transform = require('vinyl-transform');
 var exorcist = require('exorcist');
 var sourcemaps = require('gulp-sourcemaps');
 var uglify = require('gulp-uglify');
@@ -70,7 +71,10 @@ gulp.task('package-min', ['package'], function(callback){
         .pipe(rename(function (path) {
             path.basename += '.min';
         }))
-        .pipe(sourcemaps.write('./', {sourceRoot: './'}))
+        .pipe(sourcemaps.write({sourceRoot: './'}))
+        .pipe(transform(function() {
+            return exorcist('./build/awayjs-core.min.js.map');
+        }))
         .pipe(gulp.dest('./build'));
 });
 
@@ -115,7 +119,6 @@ gulp.task('tests', function () {
     });
 
     var tsResult = gulp.src(['./tests/**/*.ts', './build/awayjs-core.d.ts'])
-        //.pipe(changed('./tests', {extension:'.js', hasChanged: changed.compareLastModifiedTime}))
         .pipe(sourcemaps.init())
         .pipe(typescript(tsProject));
 

@@ -1,477 +1,113 @@
-declare module "awayjs-core/lib/base/BlendMode" {
-	/**
-	 * A class that provides constant values for visual blend mode effects. These
-	 * constants are used in the following:
-	 * <ul>
-	 *   <li> The <code>blendMode</code> property of the
-	 * flash.display.DisplayObject class.</li>
-	 *   <li> The <code>blendMode</code> parameter of the <code>draw()</code>
-	 * method of the flash.display.BitmapData class</li>
-	 * </ul>
-	 */
-	class BlendMode {
+declare module "awayjs-core/lib/errors/Error" {
+	class Error {
+	    private _errorID;
+	    private _messsage;
+	    private _name;
+	    constructor(message?: string, id?: number, _name?: string);
 	    /**
-	     * Adds the values of the constituent colors of the display object to the
-	     * colors of its background, applying a ceiling of 0xFF. This setting is
-	     * commonly used for animating a lightening dissolve between two objects.
 	     *
-	     * <p>For example, if the display object has a pixel with an RGB value of
-	     * 0xAAA633, and the background pixel has an RGB value of 0xDD2200, the
-	     * resulting RGB value for the displayed pixel is 0xFFC833(because 0xAA +
-	     * 0xDD > 0xFF, 0xA6 + 0x22 = 0xC8, and 0x33 + 0x00 = 0x33).</p>
+	     * @returns {string}
 	     */
-	    static ADD: string;
 	    /**
-	     * Applies the alpha value of each pixel of the display object to the
-	     * background. This requires the <code>blendMode</code> property of the
-	     * parent display object be set to
-	     * <code>away.base.BlendMode.LAYER</code>.
 	     *
-	     * <p>Not supported under GPU rendering.</p>
+	     * @param value
 	     */
-	    static ALPHA: string;
+	    message: string;
 	    /**
-	     * Selects the darker of the constituent colors of the display object and the
-	     * colors of the background(the colors with the smaller values). This
-	     * setting is commonly used for superimposing type.
 	     *
-	     * <p>For example, if the display object has a pixel with an RGB value of
-	     * 0xFFCC33, and the background pixel has an RGB value of 0xDDF800, the
-	     * resulting RGB value for the displayed pixel is 0xDDCC00(because 0xFF >
-	     * 0xDD, 0xCC < 0xF8, and 0x33 > 0x00 = 33).</p>
-	     *
-	     * <p>Not supported under GPU rendering.</p>
+	     * @returns {string}
 	     */
-	    static DARKEN: string;
 	    /**
-	     * Compares the constituent colors of the display object with the colors of
-	     * its background, and subtracts the darker of the values of the two
-	     * constituent colors from the lighter value. This setting is commonly used
-	     * for more vibrant colors.
 	     *
-	     * <p>For example, if the display object has a pixel with an RGB value of
-	     * 0xFFCC33, and the background pixel has an RGB value of 0xDDF800, the
-	     * resulting RGB value for the displayed pixel is 0x222C33(because 0xFF -
-	     * 0xDD = 0x22, 0xF8 - 0xCC = 0x2C, and 0x33 - 0x00 = 0x33).</p>
+	     * @param value
 	     */
-	    static DIFFERENCE: string;
+	    name: string;
 	    /**
-	     * Erases the background based on the alpha value of the display object. This
-	     * process requires that the <code>blendMode</code> property of the parent
-	     * display object be set to <code>flash.display.BlendMode.LAYER</code>.
 	     *
-	     * <p>Not supported under GPU rendering.</p>
+	     * @returns {number}
 	     */
-	    static ERASE: string;
-	    /**
-	     * Adjusts the color of each pixel based on the darkness of the display
-	     * object. If the display object is lighter than 50% gray, the display object
-	     * and background colors are screened, which results in a lighter color. If
-	     * the display object is darker than 50% gray, the colors are multiplied,
-	     * which results in a darker color. This setting is commonly used for shading
-	     * effects.
-	     *
-	     * <p>Not supported under GPU rendering.</p>
-	     */
-	    static HARDLIGHT: string;
-	    /**
-	     * Inverts the background.
-	     */
-	    static INVERT: string;
-	    /**
-	     * Forces the creation of a transparency group for the display object. This
-	     * means that the display object is precomposed in a temporary buffer before
-	     * it is processed further. The precomposition is done automatically if the
-	     * display object is precached by means of bitmap caching or if the display
-	     * object is a display object container that has at least one child object
-	     * with a <code>blendMode</code> setting other than <code>"normal"</code>.
-	     *
-	     * <p>Not supported under GPU rendering.</p>
-	     */
-	    static LAYER: string;
-	    /**
-	     * Selects the lighter of the constituent colors of the display object and
-	     * the colors of the background(the colors with the larger values). This
-	     * setting is commonly used for superimposing type.
-	     *
-	     * <p>For example, if the display object has a pixel with an RGB value of
-	     * 0xFFCC33, and the background pixel has an RGB value of 0xDDF800, the
-	     * resulting RGB value for the displayed pixel is 0xFFF833(because 0xFF >
-	     * 0xDD, 0xCC < 0xF8, and 0x33 > 0x00 = 33).</p>
-	     *
-	     * <p>Not supported under GPU rendering.</p>
-	     */
-	    static LIGHTEN: string;
-	    /**
-	     * Multiplies the values of the display object constituent colors by the
-	     * constituent colors of the background color, and normalizes by dividing by
-	     * 0xFF, resulting in darker colors. This setting is commonly used for
-	     * shadows and depth effects.
-	     *
-	     * <p>For example, if a constituent color(such as red) of one pixel in the
-	     * display object and the corresponding color of the pixel in the background
-	     * both have the value 0x88, the multiplied result is 0x4840. Dividing by
-	     * 0xFF yields a value of 0x48 for that constituent color, which is a darker
-	     * shade than the color of the display object or the color of the
-	     * background.</p>
-	     */
-	    static MULTIPLY: string;
-	    /**
-	     * The display object appears in front of the background. Pixel values of the
-	     * display object override the pixel values of the background. Where the
-	     * display object is transparent, the background is visible.
-	     */
-	    static NORMAL: string;
-	    /**
-	     * Adjusts the color of each pixel based on the darkness of the background.
-	     * If the background is lighter than 50% gray, the display object and
-	     * background colors are screened, which results in a lighter color. If the
-	     * background is darker than 50% gray, the colors are multiplied, which
-	     * results in a darker color. This setting is commonly used for shading
-	     * effects.
-	     *
-	     * <p>Not supported under GPU rendering.</p>
-	     */
-	    static OVERLAY: string;
-	    /**
-	     * Multiplies the complement(inverse) of the display object color by the
-	     * complement of the background color, resulting in a bleaching effect. This
-	     * setting is commonly used for highlights or to remove black areas of the
-	     * display object.
-	     */
-	    static SCREEN: string;
-	    /**
-	     * Uses a shader to define the blend between objects.
-	     *
-	     * <p>Setting the <code>blendShader</code> property to a Shader instance
-	     * automatically sets the display object's <code>blendMode</code> property to
-	     * <code>BlendMode.SHADER</code>. If the <code>blendMode</code> property is
-	     * set to <code>BlendMode.SHADER</code> without first setting the
-	     * <code>blendShader</code> property, the <code>blendMode</code> property is
-	     * set to <code>BlendMode.NORMAL</code> instead. If the
-	     * <code>blendShader</code> property is set(which sets the
-	     * <code>blendMode</code> property to <code>BlendMode.SHADER</code>), then
-	     * later the value of the <code>blendMode</code> property is changed, the
-	     * blend mode can be reset to use the blend shader simply by setting the
-	     * <code>blendMode</code> property to <code>BlendMode.SHADER</code>. The
-	     * <code>blendShader</code> property does not need to be set again except to
-	     * change the shader that's used to define the blend mode.</p>
-	     *
-	     * <p>Not supported under GPU rendering.</p>
-	     */
-	    static SHADER: string;
-	    /**
-	     * Subtracts the values of the constituent colors in the display object from
-	     * the values of the background color, applying a floor of 0. This setting is
-	     * commonly used for animating a darkening dissolve between two objects.
-	     *
-	     * <p>For example, if the display object has a pixel with an RGB value of
-	     * 0xAA2233, and the background pixel has an RGB value of 0xDDA600, the
-	     * resulting RGB value for the displayed pixel is 0x338400(because 0xDD -
-	     * 0xAA = 0x33, 0xA6 - 0x22 = 0x84, and 0x00 - 0x33 < 0x00).</p>
-	     */
-	    static SUBTRACT: string;
+	    errorID: number;
 	}
-	export = BlendMode;
+	export = Error;
 	
 }
-declare module "awayjs-core/lib/utils/ColorUtils" {
+declare module "awayjs-core/lib/errors/AbstractMethodError" {
+	import Error = require("awayjs-core/lib/errors/Error");
 	/**
-	 *
+	 * AbstractMethodError is thrown when an abstract method is called. The method in question should be overridden
+	 * by a concrete subclass.
 	 */
-	class ColorUtils {
-	    static float32ColorToARGB(float32Color: number): number[];
-	    private static componentToHex(c);
-	    static RGBToHexString(argb: number[]): string;
-	    static ARGBToHexString(argb: number[]): string;
+	class AbstractMethodError extends Error {
+	    /**
+	     * Create a new AbstractMethodError.
+	     * @param message An optional message to override the default error message.
+	     * @param id The id of the error.
+	     */
+	    constructor(message?: string, id?: number);
 	}
-	export = ColorUtils;
+	export = AbstractMethodError;
 	
 }
-declare module "awayjs-core/lib/geom/ColorTransform" {
+declare module "awayjs-core/lib/errors/ArgumentError" {
+	import Error = require("awayjs-core/lib/errors/Error");
 	/**
-	 * The ColorTransform class lets you adjust the color values in a display
-	 * object. The color adjustment or <i>color transformation</i> can be applied
-	 * to all four channels: red, green, blue, and alpha transparency.
-	 *
-	 * <p>When a ColorTransform object is applied to a display object, a new value
-	 * for each color channel is calculated like this:</p>
-	 *
-	 * <ul>
-	 *   <li>New red value = (old red value * <code>redMultiplier</code>) +
-	 * <code>redOffset</code></li>
-	 *   <li>New green value = (old green value * <code>greenMultiplier</code>) +
-	 * <code>greenOffset</code></li>
-	 *   <li>New blue value = (old blue value * <code>blueMultiplier</code>) +
-	 * <code>blueOffset</code></li>
-	 *   <li>New alpha value = (old alpha value * <code>alphaMultiplier</code>) +
-	 * <code>alphaOffset</code></li>
-	 * </ul>
-	 *
-	 * <p>If any of the color channel values is greater than 255 after the
-	 * calculation, it is set to 255. If it is less than 0, it is set to 0.</p>
-	 *
-	 * <p>You can use ColorTransform objects in the following ways:</p>
-	 *
-	 * <ul>
-	 *   <li>In the <code>colorTransform</code> parameter of the
-	 * <code>colorTransform()</code> method of the BitmapData class</li>
-	 *   <li>As the <code>colorTransform</code> property of a Transform object
-	 * (which can be used as the <code>transform</code> property of a display
-	 * object)</li>
-	 * </ul>
-	 *
-	 * <p>You must use the <code>new ColorTransform()</code> constructor to create
-	 * a ColorTransform object before you can call the methods of the
-	 * ColorTransform object.</p>
-	 *
-	 * <p>Color transformations do not apply to the background color of a movie
-	 * clip(such as a loaded SWF object). They apply only to graphics and symbols
-	 * that are attached to the movie clip.</p>
+	 * AbstractMethodError is thrown when an abstract method is called. The method in question should be overridden
+	 * by a concrete subclass.
 	 */
-	class ColorTransform {
+	class ArgumentError extends Error {
 	    /**
-	     * A decimal value that is multiplied with the alpha transparency channel
-	     * value.
+	     * Create a new ArgumentError.
 	     *
-	     * <p>If you set the alpha transparency value of a display object directly by
-	     * using the <code>alpha</code> property of the DisplayObject instance, it
-	     * affects the value of the <code>alphaMultiplier</code> property of that
-	     * display object's <code>transform.colorTransform</code> property.</p>
+	     * @param message An optional message to override the default error message.
+	     * @param id The id of the error.
 	     */
-	    alphaMultiplier: number;
-	    /**
-	     * A number from -255 to 255 that is added to the alpha transparency channel
-	     * value after it has been multiplied by the <code>alphaMultiplier</code>
-	     * value.
-	     */
-	    alphaOffset: number;
-	    /**
-	     * A decimal value that is multiplied with the blue channel value.
-	     */
-	    blueMultiplier: number;
-	    /**
-	     * A number from -255 to 255 that is added to the blue channel value after it
-	     * has been multiplied by the <code>blueMultiplier</code> value.
-	     */
-	    blueOffset: number;
-	    /**
-	     * A decimal value that is multiplied with the green channel value.
-	     */
-	    greenMultiplier: number;
-	    /**
-	     * A number from -255 to 255 that is added to the green channel value after
-	     * it has been multiplied by the <code>greenMultiplier</code> value.
-	     */
-	    greenOffset: number;
-	    /**
-	     * A decimal value that is multiplied with the red channel value.
-	     */
-	    redMultiplier: number;
-	    /**
-	     * A number from -255 to 255 that is added to the red channel value after it
-	     * has been multiplied by the <code>redMultiplier</code> value.
-	     */
-	    redOffset: number;
-	    /**
-	     * The RGB color value for a ColorTransform object.
-	     *
-	     * <p>When you set this property, it changes the three color offset values
-	     * (<code>redOffset</code>, <code>greenOffset</code>, and
-	     * <code>blueOffset</code>) accordingly, and it sets the three color
-	     * multiplier values(<code>redMultiplier</code>,
-	     * <code>greenMultiplier</code>, and <code>blueMultiplier</code>) to 0. The
-	     * alpha transparency multiplier and offset values do not change.</p>
-	     *
-	     * <p>When you pass a value for this property, use the format
-	     * 0x<i>RRGGBB</i>. <i>RR</i>, <i>GG</i>, and <i>BB</i> each consist of two
-	     * hexadecimal digits that specify the offset of each color component. The 0x
-	     * tells the ActionScript compiler that the number is a hexadecimal
-	     * value.</p>
-	     */
-	    color: number;
-	    /**
-	     * Creates a ColorTransform object for a display object with the specified
-	     * color channel values and alpha values.
-	     *
-	     * @param redMultiplier   The value for the red multiplier, in the range from
-	     *                        0 to 1.
-	     * @param greenMultiplier The value for the green multiplier, in the range
-	     *                        from 0 to 1.
-	     * @param blueMultiplier  The value for the blue multiplier, in the range
-	     *                        from 0 to 1.
-	     * @param alphaMultiplier The value for the alpha transparency multiplier, in
-	     *                        the range from 0 to 1.
-	     * @param redOffset       The offset value for the red color channel, in the
-	     *                        range from -255 to 255.
-	     * @param greenOffset     The offset value for the green color channel, in
-	     *                        the range from -255 to 255.
-	     * @param blueOffset      The offset for the blue color channel value, in the
-	     *                        range from -255 to 255.
-	     * @param alphaOffset     The offset for alpha transparency channel value, in
-	     *                        the range from -255 to 255.
-	     */
-	    constructor(redMultiplier?: number, greenMultiplier?: number, blueMultiplier?: number, alphaMultiplier?: number, redOffset?: number, greenOffset?: number, blueOffset?: number, alphaOffset?: number);
-	    /**
-	     * Concatenates the ColorTranform object specified by the <code>second</code>
-	     * parameter with the current ColorTransform object and sets the current
-	     * object as the result, which is an additive combination of the two color
-	     * transformations. When you apply the concatenated ColorTransform object,
-	     * the effect is the same as applying the <code>second</code> color
-	     * transformation after the <i>original</i> color transformation.
-	     *
-	     * @param second The ColorTransform object to be combined with the current
-	     *               ColorTransform object.
-	     */
-	    concat(second: ColorTransform): void;
+	    constructor(message?: string, id?: number);
 	}
-	export = ColorTransform;
+	export = ArgumentError;
 	
 }
-declare module "awayjs-core/lib/geom/Point" {
-	/**
-	 * The Point object represents a location in a two-dimensional coordinate
-	 * system, where <i>x</i> represents the horizontal axis and <i>y</i>
-	 * represents the vertical axis.
-	 *
-	 * <p>The following code creates a point at(0,0):</p>
-	 *
-	 * <p>Methods and properties of the following classes use Point objects:</p>
-	 *
-	 * <ul>
-	 *   <li>BitmapData</li>
-	 *   <li>DisplayObject</li>
-	 *   <li>DisplayObjectContainer</li>
-	 *   <li>DisplacementMapFilter</li>
-	 *   <li>NativeWindow</li>
-	 *   <li>Matrix</li>
-	 *   <li>Rectangle</li>
-	 * </ul>
-	 *
-	 * <p>You can use the <code>new Point()</code> constructor to create a Point
-	 * object.</p>
-	 */
-	class Point {
-	    /**
-	     * The horizontal coordinate of the point. The default value is 0.
-	     */
-	    x: number;
-	    /**
-	     * The vertical coordinate of the point. The default value is 0.
-	     */
-	    y: number;
-	    /**
-	     * The length of the line segment from(0,0) to this point.
-	     */
-	    length: number;
-	    /**
-	     * Creates a new point. If you pass no parameters to this method, a point is
-	     * created at(0,0).
-	     *
-	     * @param x The horizontal coordinate.
-	     * @param y The vertical coordinate.
-	     */
-	    constructor(x?: number, y?: number);
-	    /**
-	     * Adds the coordinates of another point to the coordinates of this point to
-	     * create a new point.
-	     *
-	     * @param v The point to be added.
-	     * @return The new point.
-	     */
-	    add(v: Point): Point;
-	    /**
-	     * Creates a copy of this Point object.
-	     *
-	     * @return The new Point object.
-	     */
-	    clone(): Point;
-	    copyFrom(sourcePoint: Point): void;
-	    /**
-	     * Determines whether two points are equal. Two points are equal if they have
-	     * the same <i>x</i> and <i>y</i> values.
-	     *
-	     * @param toCompare The point to be compared.
-	     * @return A value of <code>true</code> if the object is equal to this Point
-	     *         object; <code>false</code> if it is not equal.
-	     */
-	    equals(toCompare: Point): boolean;
-	    /**
-	     * Scales the line segment between(0,0) and the current point to a set
-	     * length.
-	     *
-	     * @param thickness The scaling value. For example, if the current point is
-	     *                 (0,5), and you normalize it to 1, the point returned is
-	     *                  at(0,1).
-	     */
-	    normalize(thickness?: number): void;
-	    /**
-	     * Offsets the Point object by the specified amount. The value of
-	     * <code>dx</code> is added to the original value of <i>x</i> to create the
-	     * new <i>x</i> value. The value of <code>dy</code> is added to the original
-	     * value of <i>y</i> to create the new <i>y</i> value.
-	     *
-	     * @param dx The amount by which to offset the horizontal coordinate,
-	     *           <i>x</i>.
-	     * @param dy The amount by which to offset the vertical coordinate, <i>y</i>.
-	     */
-	    offset(dx: number, dy: number): void;
-	    setTo(xa: number, ya: number): void;
-	    /**
-	     * Subtracts the coordinates of another point from the coordinates of this
-	     * point to create a new point.
-	     *
-	     * @param v The point to be subtracted.
-	     * @return The new point.
-	     */
-	    subtract(v: Point): Point;
-	    /**
-	     * Returns a string that contains the values of the <i>x</i> and <i>y</i>
-	     * coordinates. The string has the form <code>"(x=<i>x</i>,
-	     * y=<i>y</i>)"</code>, so calling the <code>toString()</code> method for a
-	     * point at 23,17 would return <code>"(x=23, y=17)"</code>.
-	     *
-	     * @return The string representation of the coordinates.
-	     */
-	    toString(): string;
-	    /**
-	     * Returns the distance between <code>pt1</code> and <code>pt2</code>.
-	     *
-	     * @param pt1 The first point.
-	     * @param pt2 The second point.
-	     * @return The distance between the first and second points.
-	     */
-	    static distance(pt1: Point, pt2: Point): number;
-	    /**
-	     * Determines a point between two specified points. The parameter
-	     * <code>f</code> determines where the new interpolated point is located
-	     * relative to the two end points specified by parameters <code>pt1</code>
-	     * and <code>pt2</code>. The closer the value of the parameter <code>f</code>
-	     * is to <code>1.0</code>, the closer the interpolated point is to the first
-	     * point(parameter <code>pt1</code>). The closer the value of the parameter
-	     * <code>f</code> is to 0, the closer the interpolated point is to the second
-	     * point(parameter <code>pt2</code>).
-	     *
-	     * @param pt1 The first point.
-	     * @param pt2 The second point.
-	     * @param f   The level of interpolation between the two points. Indicates
-	     *            where the new point will be, along the line between
-	     *            <code>pt1</code> and <code>pt2</code>. If <code>f</code>=1,
-	     *            <code>pt1</code> is returned; if <code>f</code>=0,
-	     *            <code>pt2</code> is returned.
-	     * @return The new, interpolated point.
-	     */
-	    static interpolate(pt1: Point, pt2: Point, f: number): Point;
-	    /**
-	     * Converts a pair of polar coordinates to a Cartesian point coordinate.
-	     *
-	     * @param len   The length coordinate of the polar pair.
-	     * @param angle The angle, in radians, of the polar pair.
-	     * @return The Cartesian point.
-	     */
-	    static polar(len: number, angle: number): Point;
+declare module "awayjs-core/lib/errors/DocumentError" {
+	import Error = require("awayjs-core/lib/errors/Error");
+	class DocumentError extends Error {
+	    static DOCUMENT_DOES_NOT_EXIST: string;
+	    constructor(message?: string, id?: number);
 	}
-	export = Point;
+	export = DocumentError;
+	
+}
+declare module "awayjs-core/lib/errors/PartialImplementationError" {
+	import Error = require("awayjs-core/lib/errors/Error");
+	/**
+	 * AbstractMethodError is thrown when an abstract method is called. The method in question should be overridden
+	 * by a concrete subclass.
+	 */
+	class PartialImplementationError extends Error {
+	    /**
+	     * Create a new AbstractMethodError.
+	     * @param message An optional message to override the default error message.
+	     * @param id The id of the error.
+	     */
+	    constructor(dependency?: string, id?: number);
+	}
+	export = PartialImplementationError;
+	
+}
+declare module "awayjs-core/lib/errors/RangeError" {
+	import Error = require("awayjs-core/lib/errors/Error");
+	/**
+	 * RangeError is thrown when an index is accessed out of range of the number of
+	 * available indices on an Array.
+	 */
+	class RangeError extends Error {
+	    /**
+	     * Create a new RangeError.
+	     *
+	     * @param message An optional message to override the default error message.
+	     * @param id The id of the error.
+	     */
+	    constructor(message?: string, id?: number);
+	}
+	export = RangeError;
 	
 }
 declare module "awayjs-core/lib/geom/Vector3D" {
@@ -835,55 +471,691 @@ declare module "awayjs-core/lib/geom/Vector3D" {
 	export = Vector3D;
 	
 }
-declare module "awayjs-core/lib/errors/Error" {
-	class Error {
-	    private _errorID;
-	    private _messsage;
-	    private _name;
-	    constructor(message?: string, id?: number, _name?: string);
+declare module "awayjs-core/lib/geom/Box" {
+	import Vector3D = require("awayjs-core/lib/geom/Vector3D");
+	/**
+	 * A Box object is an area defined by its position, as indicated by its
+	 * top-left-front corner point(<i>x</i>, <i>y</i>, <i>z</i>) and by its width,
+	 * height and depth.
+	 *
+	 *
+	 * <p>The <code>x</code>, <code>y</code>, <code>z</code>, <code>width</code>,
+	 * <code>height</code> <code>depth</code> properties of the Box class are
+	 * independent of each other; changing the value of one property has no effect
+	 * on the others. However, the <code>right</code>, <code>bottom</code> and
+	 * <code>back</code> properties are integrally related to those six
+	 * properties. For example, if you change the value of the <code>right</code>
+	 * property, the value of the <code>width</code> property changes; if you
+	 * change the <code>bottom</code> property, the value of the
+	 * <code>height</code> property changes. </p>
+	 *
+	 * <p>The following methods and properties use Box objects:</p>
+	 *
+	 * <ul>
+	 *   <li>The <code>bounds</code> property of the DisplayObject class</li>
+	 * </ul>
+	 *
+	 * <p>You can use the <code>new Box()</code> constructor to create a
+	 * Box object.</p>
+	 *
+	 * <p><b>Note:</b> The Box class does not define a cubic Shape
+	 * display object.
+	 */
+	class Box {
+	    private _size;
+	    private _bottomRightBack;
+	    private _topLeftFront;
 	    /**
-	     *
-	     * @returns {string}
+	     * The height of the box, in pixels. Changing the <code>height</code> value
+	     * of a Box object has no effect on the <code>x</code>, <code>y</code>,
+	     * <code>z</code>, <code>depth</code> and <code>width</code> properties.
 	     */
+	    height: number;
 	    /**
-	     *
-	     * @param value
+	     * The width of the box, in pixels. Changing the <code>width</code> value
+	     * of a Box object has no effect on the <code>x</code>, <code>y</code>,
+	     * <code>z</code>, <code>depth</code> and <code>height</code> properties.
 	     */
-	    message: string;
+	    width: number;
 	    /**
-	     *
-	     * @returns {string}
+	     * The deoth of the box, in pixels. Changing the <code>depth</code> value
+	     * of a Box object has no effect on the <code>x</code>, <code>y</code>,
+	     * <code>z</code>, <code>width</code> and <code>height</code> properties.
 	     */
+	    depth: number;
 	    /**
+	     * The <i>x</i> coordinate of the top-left-front corner of the box.
+	     * Changing the value of the <code>x</code> property of a Box object has no
+	     * effect on the <code>y</code>, <code>z</code>, <code>width</code>,
+	     * <code>height</code> and <code>depth</code> properties.
 	     *
-	     * @param value
+	     * <p>The value of the <code>x</code> property is equal to the value of the
+	     * <code>left</code> property.</p>
 	     */
-	    name: string;
+	    x: number;
 	    /**
+	     * The <i>y</i> coordinate of the top-left-front corner of the box.
+	     * Changing the value of the <code>y</code> property of a Box object has no
+	     * effect on the <code>x</code>, <code>z</code>, <code>width</code>,
+	     * <code>height</code> and <code>depth</code> properties.
 	     *
-	     * @returns {number}
+	     * <p>The value of the <code>y</code> property is equal to the value of the
+	     * <code>top</code> property.</p>
 	     */
-	    errorID: number;
+	    y: number;
+	    /**
+	     * The <i>y</i> coordinate of the top-left-front corner of the box.
+	     * Changing the value of the <code>z</code> property of a Box object has no
+	     * effect on the <code>x</code>, <code>y</code>, <code>width</code>,
+	     * <code>height</code> and <code>depth</code> properties.
+	     *
+	     * <p>The value of the <code>z</code> property is equal to the value of the
+	     * <code>front</code> property.</p>
+	     */
+	    z: number;
+	    /**
+	     * The sum of the <code>z</code> and <code>height</code> properties.
+	     */
+	    back: number;
+	    /**
+	     * The sum of the <code>y</code> and <code>height</code> properties.
+	     */
+	    bottom: number;
+	    /**
+	     * The location of the Box object's bottom-right corner, determined by the
+	     * values of the <code>right</code> and <code>bottom</code> properties.
+	     */
+	    bottomRightBack: Vector3D;
+	    /**
+	     * The <i>z</i> coordinate of the top-left-front corner of the box. Changing
+	     * the <code>front</code> property of a Box object has no effect on the
+	     * <code>x</code>, <code>y</code>, <code>width</code> and <code>height</code>
+	     * properties. However it does affect the <code>depth</code> property,
+	     * whereas changing the <code>z</code> value does <i>not</i> affect the
+	     * <code>depth</code> property.
+	     *
+	     * <p>The value of the <code>left</code> property is equal to the value of
+	     * the <code>x</code> property.</p>
+	     */
+	    front: number;
+	    /**
+	     * The <i>x</i> coordinate of the top-left corner of the box. Changing the
+	     * <code>left</code> property of a Box object has no effect on the
+	     * <code>y</code> and <code>height</code> properties. However it does affect
+	     * the <code>width</code> property, whereas changing the <code>x</code> value
+	     * does <i>not</i> affect the <code>width</code> property.
+	     *
+	     * <p>The value of the <code>left</code> property is equal to the value of
+	     * the <code>x</code> property.</p>
+	     */
+	    left: number;
+	    /**
+	     * The sum of the <code>x</code> and <code>width</code> properties.
+	     */
+	    right: number;
+	    /**
+	     * The size of the Box object, expressed as a Vector3D object with the
+	     * values of the <code>width</code>, <code>height</code> and
+	     * <code>depth</code> properties.
+	     */
+	    size: Vector3D;
+	    /**
+	     * The <i>y</i> coordinate of the top-left-front corner of the box. Changing
+	     * the <code>top</code> property of a Box object has no effect on the
+	     * <code>x</code> and <code>width</code> properties. However it does affect
+	     * the <code>height</code> property, whereas changing the <code>y</code>
+	     * value does <i>not</i> affect the <code>height</code> property.
+	     *
+	     * <p>The value of the <code>top</code> property is equal to the value of the
+	     * <code>y</code> property.</p>
+	     */
+	    top: number;
+	    /**
+	     * The location of the Box object's top-left-front corner, determined by the
+	     * <i>x</i>, <i>y</i> and <i>z</i> coordinates of the point.
+	     */
+	    topLeftFront: Vector3D;
+	    /**
+	     * Creates a new Box object with the top-left-front corner specified by the
+	     * <code>x</code>, <code>y</code> and <code>z</code> parameters and with the
+	     * specified <code>width</code>, <code>height</code> and <code>depth</code>
+	     * parameters. If you call this public without parameters, a box with
+	     * <code>x</code>, <code>y</code>, <code>z</code>, <code>width</code>,
+	     * <code>height</code> and <code>depth</code> properties set to 0 is created.
+	     *
+	     * @param x      The <i>x</i> coordinate of the top-left-front corner of the
+	     *               box.
+	     * @param y      The <i>y</i> coordinate of the top-left-front corner of the
+	     *               box.
+	     * @param z      The <i>z</i> coordinate of the top-left-front corner of the
+	     *               box.
+	     * @param width  The width of the box, in pixels.
+	     * @param height The height of the box, in pixels.
+	     * @param depth The depth of the box, in pixels.
+	     */
+	    constructor(x?: number, y?: number, z?: number, width?: number, height?: number, depth?: number);
+	    /**
+	     * Returns a new Box object with the same values for the <code>x</code>,
+	     * <code>y</code>, <code>z</code>, <code>width</code>, <code>height</code>
+	     * and <code>depth</code> properties as the original Box object.
+	     *
+	     * @return A new Box object with the same values for the <code>x</code>,
+	     *         <code>y</code>, <code>z</code>, <code>width</code>,
+	     *         <code>height</code> and <code>depth</code> properties as the
+	     *         original Box object.
+	     */
+	    clone(): Box;
+	    /**
+	     * Determines whether the specified position is contained within the cubic
+	     * region defined by this Box object.
+	     *
+	     * @param x The <i>x</i> coordinate(horizontal component) of the position.
+	     * @param y The <i>y</i> coordinate(vertical component) of the position.
+	     * @param z The <i>z</i> coordinate(longitudinal component) of the position.
+	     * @return A value of <code>true</code> if the Box object contains the
+	     *         specified position; otherwise <code>false</code>.
+	     */
+	    contains(x: number, y: number, z: number): boolean;
+	    /**
+	     * Determines whether the specified position is contained within the cubic
+	     * region defined by this Box object. This method is similar to the
+	     * <code>Box.contains()</code> method, except that it takes a Vector3D
+	     * object as a parameter.
+	     *
+	     * @param position The position, as represented by its <i>x</i>, <i>y</i> and
+	     *                 <i>z</i> coordinates.
+	     * @return A value of <code>true</code> if the Box object contains the
+	     *         specified position; otherwise <code>false</code>.
+	     */
+	    containsPoint(position: Vector3D): boolean;
+	    /**
+	     * Determines whether the Box object specified by the <code>box</code>
+	     * parameter is contained within this Box object. A Box object is said to
+	     * contain another if the second Box object falls entirely within the
+	     * boundaries of the first.
+	     *
+	     * @param box The Box object being checked.
+	     * @return A value of <code>true</code> if the Box object that you specify
+	     *         is contained by this Box object; otherwise <code>false</code>.
+	     */
+	    containsBox(box: Box): boolean;
+	    /**
+	     * Copies all of box data from the source Box object into the calling
+	     * Box object.
+	     *
+	     * @param sourceBox The Box object from which to copy the data.
+	     */
+	    copyFrom(sourceBox: Box): void;
+	    /**
+	     * Determines whether the object specified in the <code>toCompare</code>
+	     * parameter is equal to this Box object. This method compares the
+	     * <code>x</code>, <code>y</code>, <code>z</code>, <code>width</code>,
+	     * <code>height</code> and <code>depth</code> properties of an object against
+	     * the same properties of this Box object.
+	     *
+	     * @param toCompare The box to compare to this Box object.
+	     * @return A value of <code>true</code> if the object has exactly the same
+	     *         values for the <code>x</code>, <code>y</code>, <code>z</code>,
+	     *         <code>width</code>, <code>height</code> and <code>depth</code>
+	     *         properties as this Box object; otherwise <code>false</code>.
+	     */
+	    equals(toCompare: Box): boolean;
+	    /**
+	     * Increases the size of the Box object by the specified amounts, in
+	     * pixels. The center point of the Box object stays the same, and its
+	     * size increases to the left and right by the <code>dx</code> value, to
+	     * the top and the bottom by the <code>dy</code> value, and to
+	     * the front and the back by the <code>dz</code> value.
+	     *
+	     * @param dx The value to be added to the left and the right of the Box
+	     *           object. The following equation is used to calculate the new
+	     *           width and position of the box:
+	     * @param dy The value to be added to the top and the bottom of the Box
+	     *           object. The following equation is used to calculate the new
+	     *           height and position of the box:
+	     * @param dz The value to be added to the front and the back of the Box
+	     *           object. The following equation is used to calculate the new
+	     *           depth and position of the box:
+	     */
+	    inflate(dx: number, dy: number, dz: number): void;
+	    /**
+	     * Increases the size of the Box object. This method is similar to the
+	     * <code>Box.inflate()</code> method except it takes a Vector3D object as
+	     * a parameter.
+	     *
+	     * <p>The following two code examples give the same result:</p>
+	     *
+	     * @param delta The <code>x</code> property of this Vector3D object is used to
+	     *              increase the horizontal dimension of the Box object.
+	     *              The <code>y</code> property is used to increase the vertical
+	     *              dimension of the Box object.
+	     *              The <code>z</code> property is used to increase the
+	     *              longitudinal dimension of the Box object.
+	     */
+	    inflatePoint(delta: Vector3D): void;
+	    /**
+	     * If the Box object specified in the <code>toIntersect</code> parameter
+	     * intersects with this Box object, returns the area of intersection
+	     * as a Box object. If the boxes do not intersect, this method returns an
+	     * empty Box object with its properties set to 0.
+	     *
+	     * @param toIntersect The Box object to compare against to see if it
+	     *                    intersects with this Box object.
+	     * @return A Box object that equals the area of intersection. If the
+	     *         boxes do not intersect, this method returns an empty Box
+	     *         object; that is, a box with its <code>x</code>, <code>y</code>,
+	     *         <code>z</code>, <code>width</code>,  <code>height</code>, and
+	     *         <code>depth</code> properties set to 0.
+	     */
+	    intersection(toIntersect: Box): Box;
+	    /**
+	     * Determines whether the object specified in the <code>toIntersect</code>
+	     * parameter intersects with this Box object. This method checks the
+	     * <code>x</code>, <code>y</code>, <code>z</code>, <code>width</code>,
+	     * <code>height</code>, and <code>depth</code> properties of the specified
+	     * Box object to see if it intersects with this Box object.
+	     *
+	     * @param toIntersect The Box object to compare against this Box object.
+	     * @return A value of <code>true</code> if the specified object intersects
+	     *         with this Box object; otherwise <code>false</code>.
+	     */
+	    intersects(toIntersect: Box): boolean;
+	    rayIntersection(position: Vector3D, direction: Vector3D, targetNormal: Vector3D): number;
+	    /**
+	     * Finds the closest point on the Box to another given point. This can be used for maximum error calculations for content within a given Box.
+	     *
+	     * @param point The point for which to find the closest point on the Box
+	     * @param target An optional Vector3D to store the result to prevent creating a new object.
+	     * @return
+	     */
+	    closestPointToPoint(point: Vector3D, target?: Vector3D): Vector3D;
+	    /**
+	     * Determines whether or not this Box object is empty.
+	     *
+	     * @return A value of <code>true</code> if the Box object's width, height or
+	     *         depth is less than or equal to 0; otherwise <code>false</code>.
+	     */
+	    isEmpty(): boolean;
+	    /**
+	     * Adjusts the location of the Box object, as determined by its
+	     * top-left-front corner, by the specified amounts.
+	     *
+	     * @param dx Moves the <i>x</i> value of the Box object by this amount.
+	     * @param dy Moves the <i>y</i> value of the Box object by this amount.
+	     * @param dz Moves the <i>z</i> value of the Box object by this amount.
+	     */
+	    offset(dx: number, dy: number, dz: number): void;
+	    /**
+	     * Adjusts the location of the Box object using a Vector3D object as a
+	     * parameter. This method is similar to the <code>Box.offset()</code>
+	     * method, except that it takes a Vector3D object as a parameter.
+	     *
+	     * @param position A Vector3D object to use to offset this Box object.
+	     */
+	    offsetPosition(position: Vector3D): void;
+	    /**
+	     * Sets all of the Box object's properties to 0. A Box object is empty if its
+	     * width, height or depth is less than or equal to 0.
+	     *
+	     * <p> This method sets the values of the <code>x</code>, <code>y</code>,
+	     * <code>z</code>, <code>width</code>, <code>height</code>, and
+	     * <code>depth</code> properties to 0.</p>
+	     *
+	     */
+	    setEmpty(): void;
+	    /**
+	     * Sets the members of Box to the specified values
+	     *
+	     * @param xa      The <i>x</i> coordinate of the top-left-front corner of the
+	     *                box.
+	     * @param ya      The <i>y</i> coordinate of the top-left-front corner of the
+	     *                box.
+	     * @param yz      The <i>z</i> coordinate of the top-left-front corner of the
+	     *                box.
+	     * @param widtha  The width of the box, in pixels.
+	     * @param heighta The height of the box, in pixels.
+	     * @param deptha  The depth of the box, in pixels.
+	     */
+	    setTo(xa: number, ya: number, za: number, widtha: number, heighta: number, deptha: number): void;
+	    /**
+	     * Builds and returns a string that lists the horizontal, vertical and
+	     * longitudinal positions and the width, height and depth of the Box object.
+	     *
+	     * @return A string listing the value of each of the following properties of
+	     *         the Box object: <code>x</code>, <code>y</code>, <code>z</code>,
+	     *         <code>width</code>, <code>height</code>, and <code>depth</code>.
+	     */
+	    toString(): string;
+	    /**
+	     * Adds two boxes together to create a new Box object, by filling
+	     * in the horizontal, vertical and longitudinal space between the two boxes.
+	     *
+	     * <p><b>Note:</b> The <code>union()</code> method ignores boxes with
+	     * <code>0</code> as the height, width or depth value, such as: <code>var
+	     * box2:Box = new Box(300,300,300,50,50,0);</code></p>
+	     *
+	     * @param toUnion A Box object to add to this Box object.
+	     * @return A new Box object that is the union of the two boxes.
+	     */
+	    union(toUnion: Box): Box;
 	}
-	export = Error;
+	export = Box;
 	
 }
-declare module "awayjs-core/lib/errors/ArgumentError" {
-	import Error = require("awayjs-core/lib/errors/Error");
+declare module "awayjs-core/lib/utils/ColorUtils" {
 	/**
-	 * AbstractMethodError is thrown when an abstract method is called. The method in question should be overridden
-	 * by a concrete subclass.
+	 *
 	 */
-	class ArgumentError extends Error {
-	    /**
-	     * Create a new ArgumentError.
-	     *
-	     * @param message An optional message to override the default error message.
-	     * @param id The id of the error.
-	     */
-	    constructor(message?: string, id?: number);
+	class ColorUtils {
+	    static float32ColorToARGB(float32Color: number): number[];
+	    private static componentToHex(c);
+	    static RGBToHexString(argb: number[]): string;
+	    static ARGBToHexString(argb: number[]): string;
 	}
-	export = ArgumentError;
+	export = ColorUtils;
+	
+}
+declare module "awayjs-core/lib/geom/ColorTransform" {
+	/**
+	 * The ColorTransform class lets you adjust the color values in a display
+	 * object. The color adjustment or <i>color transformation</i> can be applied
+	 * to all four channels: red, green, blue, and alpha transparency.
+	 *
+	 * <p>When a ColorTransform object is applied to a display object, a new value
+	 * for each color channel is calculated like this:</p>
+	 *
+	 * <ul>
+	 *   <li>New red value = (old red value * <code>redMultiplier</code>) +
+	 * <code>redOffset</code></li>
+	 *   <li>New green value = (old green value * <code>greenMultiplier</code>) +
+	 * <code>greenOffset</code></li>
+	 *   <li>New blue value = (old blue value * <code>blueMultiplier</code>) +
+	 * <code>blueOffset</code></li>
+	 *   <li>New alpha value = (old alpha value * <code>alphaMultiplier</code>) +
+	 * <code>alphaOffset</code></li>
+	 * </ul>
+	 *
+	 * <p>If any of the color channel values is greater than 255 after the
+	 * calculation, it is set to 255. If it is less than 0, it is set to 0.</p>
+	 *
+	 * <p>You can use ColorTransform objects in the following ways:</p>
+	 *
+	 * <ul>
+	 *   <li>In the <code>colorTransform</code> parameter of the
+	 * <code>colorTransform()</code> method of the BitmapData class</li>
+	 *   <li>As the <code>colorTransform</code> property of a Transform object
+	 * (which can be used as the <code>transform</code> property of a display
+	 * object)</li>
+	 * </ul>
+	 *
+	 * <p>You must use the <code>new ColorTransform()</code> constructor to create
+	 * a ColorTransform object before you can call the methods of the
+	 * ColorTransform object.</p>
+	 *
+	 * <p>Color transformations do not apply to the background color of a movie
+	 * clip(such as a loaded SWF object). They apply only to graphics and symbols
+	 * that are attached to the movie clip.</p>
+	 */
+	class ColorTransform {
+	    /**
+	     * A decimal value that is multiplied with the alpha transparency channel
+	     * value.
+	     *
+	     * <p>If you set the alpha transparency value of a display object directly by
+	     * using the <code>alpha</code> property of the DisplayObject instance, it
+	     * affects the value of the <code>alphaMultiplier</code> property of that
+	     * display object's <code>transform.colorTransform</code> property.</p>
+	     */
+	    alphaMultiplier: number;
+	    /**
+	     * A number from -255 to 255 that is added to the alpha transparency channel
+	     * value after it has been multiplied by the <code>alphaMultiplier</code>
+	     * value.
+	     */
+	    alphaOffset: number;
+	    /**
+	     * A decimal value that is multiplied with the blue channel value.
+	     */
+	    blueMultiplier: number;
+	    /**
+	     * A number from -255 to 255 that is added to the blue channel value after it
+	     * has been multiplied by the <code>blueMultiplier</code> value.
+	     */
+	    blueOffset: number;
+	    /**
+	     * A decimal value that is multiplied with the green channel value.
+	     */
+	    greenMultiplier: number;
+	    /**
+	     * A number from -255 to 255 that is added to the green channel value after
+	     * it has been multiplied by the <code>greenMultiplier</code> value.
+	     */
+	    greenOffset: number;
+	    /**
+	     * A decimal value that is multiplied with the red channel value.
+	     */
+	    redMultiplier: number;
+	    /**
+	     * A number from -255 to 255 that is added to the red channel value after it
+	     * has been multiplied by the <code>redMultiplier</code> value.
+	     */
+	    redOffset: number;
+	    /**
+	     * The RGB color value for a ColorTransform object.
+	     *
+	     * <p>When you set this property, it changes the three color offset values
+	     * (<code>redOffset</code>, <code>greenOffset</code>, and
+	     * <code>blueOffset</code>) accordingly, and it sets the three color
+	     * multiplier values(<code>redMultiplier</code>,
+	     * <code>greenMultiplier</code>, and <code>blueMultiplier</code>) to 0. The
+	     * alpha transparency multiplier and offset values do not change.</p>
+	     *
+	     * <p>When you pass a value for this property, use the format
+	     * 0x<i>RRGGBB</i>. <i>RR</i>, <i>GG</i>, and <i>BB</i> each consist of two
+	     * hexadecimal digits that specify the offset of each color component. The 0x
+	     * tells the ActionScript compiler that the number is a hexadecimal
+	     * value.</p>
+	     */
+	    color: number;
+	    /**
+	     * Creates a ColorTransform object for a display object with the specified
+	     * color channel values and alpha values.
+	     *
+	     * @param redMultiplier   The value for the red multiplier, in the range from
+	     *                        0 to 1.
+	     * @param greenMultiplier The value for the green multiplier, in the range
+	     *                        from 0 to 1.
+	     * @param blueMultiplier  The value for the blue multiplier, in the range
+	     *                        from 0 to 1.
+	     * @param alphaMultiplier The value for the alpha transparency multiplier, in
+	     *                        the range from 0 to 1.
+	     * @param redOffset       The offset value for the red color channel, in the
+	     *                        range from -255 to 255.
+	     * @param greenOffset     The offset value for the green color channel, in
+	     *                        the range from -255 to 255.
+	     * @param blueOffset      The offset for the blue color channel value, in the
+	     *                        range from -255 to 255.
+	     * @param alphaOffset     The offset for alpha transparency channel value, in
+	     *                        the range from -255 to 255.
+	     */
+	    constructor(redMultiplier?: number, greenMultiplier?: number, blueMultiplier?: number, alphaMultiplier?: number, redOffset?: number, greenOffset?: number, blueOffset?: number, alphaOffset?: number);
+	    /**
+	     * Concatenates the ColorTranform object specified by the <code>second</code>
+	     * parameter with the current ColorTransform object and sets the current
+	     * object as the result, which is an additive combination of the two color
+	     * transformations. When you apply the concatenated ColorTransform object,
+	     * the effect is the same as applying the <code>second</code> color
+	     * transformation after the <i>original</i> color transformation.
+	     *
+	     * @param second The ColorTransform object to be combined with the current
+	     *               ColorTransform object.
+	     */
+	    concat(second: ColorTransform): void;
+	}
+	export = ColorTransform;
+	
+}
+declare module "awayjs-core/lib/geom/MathConsts" {
+	/**
+	* MathConsts provides some commonly used mathematical constants
+	*/
+	class MathConsts {
+	    /**
+	     * The amount to multiply with when converting radians to degrees.
+	     */
+	    static RADIANS_TO_DEGREES: number;
+	    /**
+	     * The amount to multiply with when converting degrees to radians.
+	     */
+	    static DEGREES_TO_RADIANS: number;
+	}
+	export = MathConsts;
+	
+}
+declare module "awayjs-core/lib/geom/Point" {
+	/**
+	 * The Point object represents a location in a two-dimensional coordinate
+	 * system, where <i>x</i> represents the horizontal axis and <i>y</i>
+	 * represents the vertical axis.
+	 *
+	 * <p>The following code creates a point at(0,0):</p>
+	 *
+	 * <p>Methods and properties of the following classes use Point objects:</p>
+	 *
+	 * <ul>
+	 *   <li>BitmapData</li>
+	 *   <li>DisplayObject</li>
+	 *   <li>DisplayObjectContainer</li>
+	 *   <li>DisplacementMapFilter</li>
+	 *   <li>NativeWindow</li>
+	 *   <li>Matrix</li>
+	 *   <li>Rectangle</li>
+	 * </ul>
+	 *
+	 * <p>You can use the <code>new Point()</code> constructor to create a Point
+	 * object.</p>
+	 */
+	class Point {
+	    /**
+	     * The horizontal coordinate of the point. The default value is 0.
+	     */
+	    x: number;
+	    /**
+	     * The vertical coordinate of the point. The default value is 0.
+	     */
+	    y: number;
+	    /**
+	     * The length of the line segment from(0,0) to this point.
+	     */
+	    length: number;
+	    /**
+	     * Creates a new point. If you pass no parameters to this method, a point is
+	     * created at(0,0).
+	     *
+	     * @param x The horizontal coordinate.
+	     * @param y The vertical coordinate.
+	     */
+	    constructor(x?: number, y?: number);
+	    /**
+	     * Adds the coordinates of another point to the coordinates of this point to
+	     * create a new point.
+	     *
+	     * @param v The point to be added.
+	     * @return The new point.
+	     */
+	    add(v: Point): Point;
+	    /**
+	     * Creates a copy of this Point object.
+	     *
+	     * @return The new Point object.
+	     */
+	    clone(): Point;
+	    copyFrom(sourcePoint: Point): void;
+	    /**
+	     * Determines whether two points are equal. Two points are equal if they have
+	     * the same <i>x</i> and <i>y</i> values.
+	     *
+	     * @param toCompare The point to be compared.
+	     * @return A value of <code>true</code> if the object is equal to this Point
+	     *         object; <code>false</code> if it is not equal.
+	     */
+	    equals(toCompare: Point): boolean;
+	    /**
+	     * Scales the line segment between(0,0) and the current point to a set
+	     * length.
+	     *
+	     * @param thickness The scaling value. For example, if the current point is
+	     *                 (0,5), and you normalize it to 1, the point returned is
+	     *                  at(0,1).
+	     */
+	    normalize(thickness?: number): void;
+	    /**
+	     * Offsets the Point object by the specified amount. The value of
+	     * <code>dx</code> is added to the original value of <i>x</i> to create the
+	     * new <i>x</i> value. The value of <code>dy</code> is added to the original
+	     * value of <i>y</i> to create the new <i>y</i> value.
+	     *
+	     * @param dx The amount by which to offset the horizontal coordinate,
+	     *           <i>x</i>.
+	     * @param dy The amount by which to offset the vertical coordinate, <i>y</i>.
+	     */
+	    offset(dx: number, dy: number): void;
+	    setTo(xa: number, ya: number): void;
+	    /**
+	     * Subtracts the coordinates of another point from the coordinates of this
+	     * point to create a new point.
+	     *
+	     * @param v The point to be subtracted.
+	     * @return The new point.
+	     */
+	    subtract(v: Point): Point;
+	    /**
+	     * Returns a string that contains the values of the <i>x</i> and <i>y</i>
+	     * coordinates. The string has the form <code>"(x=<i>x</i>,
+	     * y=<i>y</i>)"</code>, so calling the <code>toString()</code> method for a
+	     * point at 23,17 would return <code>"(x=23, y=17)"</code>.
+	     *
+	     * @return The string representation of the coordinates.
+	     */
+	    toString(): string;
+	    /**
+	     * Returns the distance between <code>pt1</code> and <code>pt2</code>.
+	     *
+	     * @param pt1 The first point.
+	     * @param pt2 The second point.
+	     * @return The distance between the first and second points.
+	     */
+	    static distance(pt1: Point, pt2: Point): number;
+	    /**
+	     * Determines a point between two specified points. The parameter
+	     * <code>f</code> determines where the new interpolated point is located
+	     * relative to the two end points specified by parameters <code>pt1</code>
+	     * and <code>pt2</code>. The closer the value of the parameter <code>f</code>
+	     * is to <code>1.0</code>, the closer the interpolated point is to the first
+	     * point(parameter <code>pt1</code>). The closer the value of the parameter
+	     * <code>f</code> is to 0, the closer the interpolated point is to the second
+	     * point(parameter <code>pt2</code>).
+	     *
+	     * @param pt1 The first point.
+	     * @param pt2 The second point.
+	     * @param f   The level of interpolation between the two points. Indicates
+	     *            where the new point will be, along the line between
+	     *            <code>pt1</code> and <code>pt2</code>. If <code>f</code>=1,
+	     *            <code>pt1</code> is returned; if <code>f</code>=0,
+	     *            <code>pt2</code> is returned.
+	     * @return The new, interpolated point.
+	     */
+	    static interpolate(pt1: Point, pt2: Point, f: number): Point;
+	    /**
+	     * Converts a pair of polar coordinates to a Cartesian point coordinate.
+	     *
+	     * @param len   The length coordinate of the polar pair.
+	     * @param angle The angle, in radians, of the polar pair.
+	     * @return The Cartesian point.
+	     */
+	    static polar(len: number, angle: number): Point;
+	}
+	export = Point;
 	
 }
 declare module "awayjs-core/lib/geom/Matrix" {
@@ -1228,6 +1500,554 @@ declare module "awayjs-core/lib/geom/Matrix" {
 	export = Matrix;
 	
 }
+declare module "awayjs-core/lib/geom/Orientation3D" {
+	/**
+	 * A Quaternion object which can be used to represent rotations.
+	 */
+	class Orientation3D {
+	    /**
+	     * The axis angle orientation uses a combination of an axis and an angle to determine the orientation.
+	     * @type {string}
+	     */
+	    static AXIS_ANGLE: string;
+	    /**
+	     * The default orientation for decompose() and recompose() methods, defines the orientation with three separate angles of rotation for each axis.
+	     * @type {string}
+	     */
+	    static EULER_ANGLES: string;
+	    /**
+	     * The quaternion orientation uses complex numbers.
+	     * @type {string}
+	     */
+	    static QUATERNION: string;
+	}
+	export = Orientation3D;
+	
+}
+declare module "awayjs-core/lib/geom/PlaneClassification" {
+	class PlaneClassification {
+	    static BACK: number;
+	    static FRONT: number;
+	    static IN: number;
+	    static OUT: number;
+	    static INTERSECT: number;
+	}
+	export = PlaneClassification;
+	
+}
+declare module "awayjs-core/lib/geom/Plane3D" {
+	import Vector3D = require("awayjs-core/lib/geom/Vector3D");
+	class Plane3D {
+	    /**
+	     * The A coefficient of this plane. (Also the x dimension of the plane normal)
+	     */
+	    a: number;
+	    /**
+	     * The B coefficient of this plane. (Also the y dimension of the plane normal)
+	     */
+	    b: number;
+	    /**
+	     * The C coefficient of this plane. (Also the z dimension of the plane normal)
+	     */
+	    c: number;
+	    /**
+	     * The D coefficient of this plane. (Also the inverse dot product between normal and point)
+	     */
+	    d: number;
+	    _iAlignment: number;
+	    static ALIGN_ANY: number;
+	    static ALIGN_XY_AXIS: number;
+	    static ALIGN_YZ_AXIS: number;
+	    static ALIGN_XZ_AXIS: number;
+	    /**
+	     * Create a Plane3D with ABCD coefficients
+	     */
+	    constructor(a?: number, b?: number, c?: number, d?: number);
+	    /**
+	     * Fills this Plane3D with the coefficients from 3 points in 3d space.
+	     * @param p0 Vector3D
+	     * @param p1 Vector3D
+	     * @param p2 Vector3D
+	     */
+	    fromPoints(p0: Vector3D, p1: Vector3D, p2: Vector3D): void;
+	    /**
+	     * Fills this Plane3D with the coefficients from the plane's normal and a point in 3d space.
+	     * @param normal Vector3D
+	     * @param point  Vector3D
+	     */
+	    fromNormalAndPoint(normal: Vector3D, point: Vector3D): void;
+	    /**
+	     * Normalize this Plane3D
+	     * @return Plane3D This Plane3D.
+	     */
+	    normalize(): Plane3D;
+	    /**
+	     * Returns the signed distance between this Plane3D and the point p.
+	     * @param p Vector3D
+	     * @returns Number
+	     */
+	    distance(p: Vector3D): number;
+	    /**
+	     * Classify a point against this Plane3D. (in front, back or intersecting)
+	     * @param p Vector3D
+	     * @return int Plane3.FRONT or Plane3D.BACK or Plane3D.INTERSECT
+	     */
+	    classifyPoint(p: Vector3D, epsilon?: number): number;
+	    toString(): string;
+	}
+	export = Plane3D;
+	
+}
+declare module "awayjs-core/lib/geom/Matrix3DUtils" {
+	import Quaternion = require("awayjs-core/lib/geom/Quaternion");
+	import Matrix3D = require("awayjs-core/lib/geom/Matrix3D");
+	import Plane3D = require("awayjs-core/lib/geom/Plane3D");
+	import Vector3D = require("awayjs-core/lib/geom/Vector3D");
+	/**
+	 * away.geom.Matrix3DUtils provides additional Matrix3D functions.
+	 */
+	class Matrix3DUtils {
+	    /**
+	     * A reference to a Vector to be used as a temporary raw data container, to prevent object creation.
+	     */
+	    static RAW_DATA_CONTAINER: number[];
+	    static CALCULATION_MATRIX: Matrix3D;
+	    /**
+	     * Fills the 3d matrix object with values representing the transformation made by the given quaternion.
+	     *
+	     * @param    quarternion    The quarterion object to convert.
+	     */
+	    static quaternion2matrix(quarternion: Quaternion, m?: Matrix3D): Matrix3D;
+	    /**
+	     * Returns a normalised <code>Vector3D</code> object representing the forward vector of the given matrix.
+	     * @param    m        The Matrix3D object to use to get the forward vector
+	     * @param    v        [optional] A vector holder to prevent make new Vector3D instance if already exists. Default is null.
+	     * @return            The forward vector
+	     */
+	    static getForward(m: Matrix3D, v?: Vector3D): Vector3D;
+	    /**
+	     * Returns a normalised <code>Vector3D</code> object representing the up vector of the given matrix.
+	     * @param    m        The Matrix3D object to use to get the up vector
+	     * @param    v        [optional] A vector holder to prevent make new Vector3D instance if already exists. Default is null.
+	     * @return            The up vector
+	     */
+	    static getUp(m: Matrix3D, v?: Vector3D): Vector3D;
+	    /**
+	     * Returns a normalised <code>Vector3D</code> object representing the right vector of the given matrix.
+	     * @param    m        The Matrix3D object to use to get the right vector
+	     * @param    v        [optional] A vector holder to prevent make new Vector3D instance if already exists. Default is null.
+	     * @return            The right vector
+	     */
+	    static getRight(m: Matrix3D, v?: Vector3D): Vector3D;
+	    /**
+	     * Returns a boolean value representing whether there is any significant difference between the two given 3d matrices.
+	     */
+	    static compare(m1: Matrix3D, m2: Matrix3D): boolean;
+	    static lookAt(matrix: Matrix3D, pos: Vector3D, dir: Vector3D, up: Vector3D): void;
+	    static reflection(plane: Plane3D, target?: Matrix3D): Matrix3D;
+	    static transformVector(matrix: Matrix3D, vector: Vector3D, result?: Vector3D): Vector3D;
+	    static deltaTransformVector(matrix: Matrix3D, vector: Vector3D, result?: Vector3D): Vector3D;
+	    static getTranslation(transform: Matrix3D, result?: Vector3D): Vector3D;
+	    static deltaTransformVectors(matrix: Matrix3D, vin: Array<number>, vout: Array<number>): void;
+	}
+	export = Matrix3DUtils;
+	
+}
+declare module "awayjs-core/lib/geom/Quaternion" {
+	import Matrix3D = require("awayjs-core/lib/geom/Matrix3D");
+	import Vector3D = require("awayjs-core/lib/geom/Vector3D");
+	/**
+	 * A Quaternion object which can be used to represent rotations.
+	 */
+	class Quaternion {
+	    /**
+	     * The x value of the quaternion.
+	     */
+	    x: number;
+	    /**
+	     * The y value of the quaternion.
+	     */
+	    y: number;
+	    /**
+	     * The z value of the quaternion.
+	     */
+	    z: number;
+	    /**
+	     * The w value of the quaternion.
+	     */
+	    w: number;
+	    /**
+	     * Creates a new Quaternion object.
+	     * @param x The x value of the quaternion.
+	     * @param y The y value of the quaternion.
+	     * @param z The z value of the quaternion.
+	     * @param w The w value of the quaternion.
+	     */
+	    constructor(x?: number, y?: number, z?: number, w?: number);
+	    /**
+	     * Returns the magnitude of the quaternion object.
+	     */
+	    magnitude: number;
+	    /**
+	     * Fills the quaternion object with the result from a multiplication of two quaternion objects.
+	     *
+	     * @param    qa    The first quaternion in the multiplication.
+	     * @param    qb    The second quaternion in the multiplication.
+	     */
+	    multiply(qa: Quaternion, qb: Quaternion): void;
+	    multiplyVector(vector: Vector3D, target?: Quaternion): Quaternion;
+	    /**
+	     * Fills the quaternion object with values representing the given rotation around a vector.
+	     *
+	     * @param    axis    The axis around which to rotate
+	     * @param    angle    The angle in radians of the rotation.
+	     */
+	    fromAxisAngle(axis: Vector3D, angle: number): void;
+	    /**
+	     * Spherically interpolates between two quaternions, providing an interpolation between rotations with constant angle change rate.
+	     * @param qa The first quaternion to interpolate.
+	     * @param qb The second quaternion to interpolate.
+	     * @param t The interpolation weight, a value between 0 and 1.
+	     */
+	    slerp(qa: Quaternion, qb: Quaternion, t: number): void;
+	    /**
+	     * Linearly interpolates between two quaternions.
+	     * @param qa The first quaternion to interpolate.
+	     * @param qb The second quaternion to interpolate.
+	     * @param t The interpolation weight, a value between 0 and 1.
+	     */
+	    lerp(qa: Quaternion, qb: Quaternion, t: number): void;
+	    /**
+	     * Fills the quaternion object with values representing the given euler rotation.
+	     *
+	     * @param    ax        The angle in radians of the rotation around the ax axis.
+	     * @param    ay        The angle in radians of the rotation around the ay axis.
+	     * @param    az        The angle in radians of the rotation around the az axis.
+	     */
+	    fromEulerAngles(ax: number, ay: number, az: number): void;
+	    /**
+	     * Fills a target Vector3D object with the Euler angles that form the rotation represented by this quaternion.
+	     * @param target An optional Vector3D object to contain the Euler angles. If not provided, a new object is created.
+	     * @return The Vector3D containing the Euler angles.
+	     */
+	    toEulerAngles(target?: Vector3D): Vector3D;
+	    /**
+	     * Normalises the quaternion object.
+	     */
+	    normalize(val?: number): void;
+	    /**
+	     * Used to trace the values of a quaternion.
+	     *
+	     * @return A string representation of the quaternion object.
+	     */
+	    toString(): string;
+	    /**
+	     * Converts the quaternion to a Matrix3D object representing an equivalent rotation.
+	     * @param target An optional Matrix3D container to store the transformation in. If not provided, a new object is created.
+	     * @return A Matrix3D object representing an equivalent rotation.
+	     */
+	    toMatrix3D(target?: Matrix3D): Matrix3D;
+	    /**
+	     * Extracts a quaternion rotation matrix out of a given Matrix3D object.
+	     * @param matrix The Matrix3D out of which the rotation will be extracted.
+	     */
+	    fromMatrix(matrix: Matrix3D): void;
+	    /**
+	     * Converts the quaternion to a Vector.&lt;Number&gt; matrix representation of a rotation equivalent to this quaternion.
+	     * @param target The Vector.&lt;Number&gt; to contain the raw matrix data.
+	     * @param exclude4thRow If true, the last row will be omitted, and a 4x3 matrix will be generated instead of a 4x4.
+	     */
+	    toRawData(target: number[], exclude4thRow?: boolean): void;
+	    /**
+	     * Clones the quaternion.
+	     * @return An exact duplicate of the current Quaternion.
+	     */
+	    clone(): Quaternion;
+	    /**
+	     * Rotates a point.
+	     * @param vector The Vector3D object to be rotated.
+	     * @param target An optional Vector3D object that will contain the rotated coordinates. If not provided, a new object will be created.
+	     * @return A Vector3D object containing the rotated point.
+	     */
+	    rotatePoint(vector: Vector3D, target?: Vector3D): Vector3D;
+	    /**
+	     * Copies the data from a quaternion into this instance.
+	     * @param q The quaternion to copy from.
+	     */
+	    copyFrom(q: Quaternion): void;
+	}
+	export = Quaternion;
+	
+}
+declare module "awayjs-core/lib/geom/Matrix3D" {
+	import Vector3D = require("awayjs-core/lib/geom/Vector3D");
+	class Matrix3D {
+	    /**
+	     * A Vector of 16 Numbers, where every four elements is a column of a 4x4 matrix.
+	     *
+	     * <p>An exception is thrown if the rawData property is set to a matrix that is not invertible. The Matrix3D
+	     * object must be invertible. If a non-invertible matrix is needed, create a subclass of the Matrix3D object.</p>
+	     */
+	    rawData: number[];
+	    /**
+	     * Creates a Matrix3D object.
+	     */
+	    constructor(v?: number[]);
+	    /**
+	     * Appends the matrix by multiplying another Matrix3D object by the current Matrix3D object.
+	     */
+	    append(lhs: Matrix3D): void;
+	    /**
+	     * Appends an incremental rotation to a Matrix3D object.
+	     */
+	    appendRotation(degrees: number, axis: Vector3D): void;
+	    /**
+	     * Appends an incremental scale change along the x, y, and z axes to a Matrix3D object.
+	     */
+	    appendScale(xScale: number, yScale: number, zScale: number): void;
+	    /**
+	     * Appends an incremental translation, a repositioning along the x, y, and z axes, to a Matrix3D object.
+	     */
+	    appendTranslation(x: number, y: number, z: number): void;
+	    /**
+	     * Returns a new Matrix3D object that is an exact copy of the current Matrix3D object.
+	     */
+	    clone(): Matrix3D;
+	    /**
+	     * Copies a Vector3D object into specific column of the calling Matrix3D object.
+	     */
+	    copyColumnFrom(column: number, vector3D: Vector3D): void;
+	    /**
+	     * Copies specific column of the calling Matrix3D object into the Vector3D object.
+	     */
+	    copyColumnTo(column: number, vector3D: Vector3D): void;
+	    /**
+	     * Copies all of the matrix data from the source Matrix3D object into the calling Matrix3D object.
+	     */
+	    copyFrom(sourceMatrix3D: Matrix3D): void;
+	    copyRawDataFrom(vector: number[], index?: number, transpose?: boolean): void;
+	    copyRawDataTo(vector: number[], index?: number, transpose?: boolean): void;
+	    /**
+	     * Copies a Vector3D object into specific row of the calling Matrix3D object.
+	     */
+	    copyRowFrom(row: number, vector3D: Vector3D): void;
+	    /**
+	     * Copies specific row of the calling Matrix3D object into the Vector3D object.
+	     */
+	    copyRowTo(row: number, vector3D: Vector3D): void;
+	    /**
+	     * Copies this Matrix3D object into a destination Matrix3D object.
+	     */
+	    copyToMatrix3D(dest: Matrix3D): void;
+	    /**
+	     * Returns the transformation matrix's translation, rotation, and scale settings as a Vector of three Vector3D objects.
+	     */
+	    decompose(orientationStyle?: string): Vector3D[];
+	    /**
+	     * Uses the transformation matrix without its translation elements to transform a Vector3D object from one space
+	     * coordinate to another.
+	     */
+	    deltaTransformVector(v: Vector3D): Vector3D;
+	    /**
+	     * Converts the current matrix to an identity or unit matrix.
+	     */
+	    identity(): void;
+	    /**
+	     * [static] Interpolates the translation, rotation, and scale transformation of one matrix toward those of the target matrix.
+	     */
+	    static interpolate(thisMat: Matrix3D, toMat: Matrix3D, percent: number): Matrix3D;
+	    /**
+	     * Interpolates this matrix towards the translation, rotation, and scale transformations of the target matrix.
+	     */
+	    interpolateTo(toMat: Matrix3D, percent: number): void;
+	    /**
+	     * Inverts the current matrix.
+	     */
+	    invert(): boolean;
+	    /**
+	     * Prepends a matrix by multiplying the current Matrix3D object by another Matrix3D object.
+	     */
+	    prepend(rhs: Matrix3D): void;
+	    /**
+	     * Prepends an incremental rotation to a Matrix3D object.
+	     */
+	    prependRotation(degrees: number, axis: Vector3D): void;
+	    /**
+	     * Prepends an incremental scale change along the x, y, and z axes to a Matrix3D object.
+	     */
+	    prependScale(xScale: number, yScale: number, zScale: number): void;
+	    /**
+	     * Prepends an incremental translation, a repositioning along the x, y, and z axes, to a Matrix3D object.
+	     */
+	    prependTranslation(x: number, y: number, z: number): void;
+	    /**
+	     * Sets the transformation matrix's translation, rotation, and scale settings.
+	     */
+	    recompose(components: Vector3D[]): boolean;
+	    transformVector(v: Vector3D): Vector3D;
+	    /**
+	     * Uses the transformation matrix to transform a Vector of Numbers from one coordinate space to another.
+	     */
+	    transformVectors(vin: number[], vout: number[]): void;
+	    /**
+	     * Converts the current Matrix3D object to a matrix where the rows and columns are swapped.
+	     */
+	    transpose(): void;
+	    static getAxisRotation(x: number, y: number, z: number, degrees: number): Matrix3D;
+	    /**
+	     * [read-only] A Number that determines whether a matrix is invertible.
+	     */
+	    determinant: number;
+	    /**
+	     * A Vector3D object that holds the position, the 3D coordinate (x,y,z) of a display object within the
+	     * transformation's frame of reference.
+	     */
+	    position: Vector3D;
+	    toFixed(decimalPlace: number): string;
+	    toString(): string;
+	}
+	export = Matrix3D;
+	
+}
+declare module "awayjs-core/lib/geom/PerspectiveProjection" {
+	import Matrix3D = require("awayjs-core/lib/geom/Matrix3D");
+	import Point = require("awayjs-core/lib/geom/Point");
+	/**
+	 * <p>The PerspectiveProjection class provides an easy way to assign or modify
+	 * the perspective transformations of a display object and all of its
+	 * children. For more complex or custom perspective transformations, use the
+	 * Matrix3D class. While the PerspectiveProjection class provides basic
+	 * three-dimensional presentation properties, the Matrix3D class provides more
+	 * detailed control over the three-dimensional presentation of display objects.
+	 * </p>
+	 *
+	 * <p>Projection is a way of representing a three-dimensional object in a
+	 * two-dimensional space, like a cube projected onto a computer screen.
+	 * Perspective projection uses a viewing frustum (a rectangular pyramid) to
+	 * model and project a three-dimensional world and its objects on the screen.
+	 * The viewing frustum becomes increasingly wider as it moves further from the
+	 * origin of the viewpoint. The origin of the viewpoint could be a camera or
+	 * the eyes of an observer facing the screen. The projected perspective
+	 * produces the illusion of three dimensions with depth and distance, where
+	 * the objects closer to the screen appear larger than the objects farther
+	 * from the screen.</p>
+	 *
+	 * <p>A default PerspectiveProjection object is a framework defined for
+	 * perspective transformation of the root object, based on the field of view
+	 * and aspect ratio (dimensions) of the stage. The projection center, the
+	 * vanishing point, is set to the center of the stage, which means the
+	 * three-dimensional display objects disappear toward the center of the stage
+	 * as they move back in the z axis. The default viewpoint is at point (0,0)
+	 * looking down the positive z axis. The y-axis points down toward the bottom
+	 * of the screen. You can gain access to the root display object's perspective
+	 * projection settings and change the field of view and projection center
+	 * properties of the perspectiveProjection property through the root object's
+	 * <code>DisplayObject.transform</code> property.</p>
+	 *
+	 * <p>You can also set a different perspective projection setting for a
+	 * display object through the parent's perspective projection. First, create a
+	 * PerspectiveProjection object and set its <code>fieldOfView</code> and
+	 * <code>projectionCenter</code> properties. Next, assign the
+	 * PerspectiveProjection object to the parent display object using the
+	 * <code>DisplayObject.transform</code> property. The specified projection
+	 * matrix and transformation will then apply to all the display object's
+	 * three-dimensional children.</p>
+	 *
+	 * <p>To modify a perspective projection of the stage or root object: use the
+	 * <code>transform.matrix</code> property of the root display object to gain
+	 * access to the PerspectiveProjection object. Or, apply different perspective
+	 * projection properties to a display object by setting the perspective
+	 * projection properties of the display object's parent. The child display
+	 * object inherits the new properties. Specifically, create a
+	 * PerspectiveProjection object and set its properties, then assign the
+	 * PerspectiveProjection object to the <code>perspectiveProjection</code>
+	 * property of the parent display object's <code>transform</code> property.
+	 * The specified projection transformation then applies to all the display
+	 * object's three-dimensional children.</p>
+	 *
+	 * <p>Since both PerspectiveProjection and Matrix3D objects perform
+	 * perspective transformations, do not assign both to a display object at the
+	 * same time. Use the PerspectiveProjection object for focal length and
+	 * projection center changes. For more control over the perspective
+	 * transformation, create a perspective projection Matrix3D object.</p>
+	 */
+	class PerspectiveProjection {
+	    private _matrix3D;
+	    /**
+	     * Specifies an angle, as a degree between 0 and 180, for the field of
+	     * view in three dimensions. This value determines how strong the
+	     * perspective transformation and distortion apply to a
+	     * three-dimensional display object with a non-zero z-coordinate.
+	     *
+	     * <p>A degree close to 0 means that the screen's two-dimensional x-
+	     * and y-coordinates are roughly the same as the three-dimensional x-,
+	     * y-, and z-coordinates with little or no distortion. In other words,
+	     * for a small angle, a display object moving down the z axis appears
+	     * to stay near the same size and moves little.</p>
+	     *
+	     * <p>A value close to 180 degrees results in a fisheye projection effect:
+	     * positions with a z value smaller than 0 are magnified, while
+	     * positions with a z value larger than 0 are minimized. With a large
+	     * angle, a display object moving down the z axis appears to change
+	     * size quickly and moves a great distance. If the field of view is
+	     * set to 0 or 180, nothing is seen on the screen.</p>
+	     */
+	    fieldOfView: number;
+	    /**
+	     * The distance between the eye or the viewpoint's origin (0,0,0) and
+	     * the display object located in the z axis. During the perspective
+	     * transformation, the <code>focalLength</code> is calculated
+	     * dynamically using the angle of the field of view and the stage's
+	     * aspect ratio (stage width divided by stage height).
+	     *
+	     * @see away.geom.PerspectiveProjection#fieldOfView
+	     */
+	    focalLength: number;
+	    /**
+	     * A two-dimensional point representing the center of the projection,
+	     * the vanishing point for the display object.
+	     *
+	     * <p>The <code>projectionCenter</code> property is an offset to the
+	     * default registration point that is the upper left of the stage,
+	     * point (0,0). The default projection transformation center is in the
+	     * middle of the stage, which means the three-dimensional display
+	     * objects disappear toward the center of the stage as they move
+	     * backwards in the z axis.</p>
+	     */
+	    projectionCenter: Point;
+	    /**
+	     * Creates an instance of a PerspectiveProjection object.
+	     */
+	    constructor();
+	    /**
+	     * Returns the underlying Matrix3D object of the display object.
+	     *
+	     * <p>A display object, like the root object, can have a
+	     * PerspectiveProjection object without needing a Matrix3D property
+	     * defined for its transformations. In fact, use either a
+	     * PerspectiveProjection or a Matrix3D object to specify the
+	     * perspective transformation. If when using the PerspectiveProjection
+	     * object, a Matrix3D object was needed, the <code>toMatrix3D()</code>
+	     * method can retrieve the underlying Matrix3D object of the display
+	     * object. For example, the <code>toMatrix3D()</code> method can be
+	     * used with the <code>Utils3D.projectVectors()</code> method.</p>
+	     *
+	     * @see away.geom.Matrix3D
+	     */
+	    toMatrix3D(): Matrix3D;
+	}
+	export = PerspectiveProjection;
+	
+}
+declare module "awayjs-core/lib/geom/PoissonLookup" {
+	class PoissonLookup {
+	    static _distributions: Array<Array<number>>;
+	    static initDistributions(): void;
+	    static getDistribution(n: number): Array<number>;
+	}
+	export = PoissonLookup;
+	
+}
 declare module "awayjs-core/lib/geom/Rectangle" {
 	import Point = require("awayjs-core/lib/geom/Point");
 	/**
@@ -1560,21 +2380,254 @@ declare module "awayjs-core/lib/geom/Rectangle" {
 	export = Rectangle;
 	
 }
-declare module "awayjs-core/lib/errors/AbstractMethodError" {
-	import Error = require("awayjs-core/lib/errors/Error");
-	/**
-	 * AbstractMethodError is thrown when an abstract method is called. The method in question should be overridden
-	 * by a concrete subclass.
-	 */
-	class AbstractMethodError extends Error {
+declare module "awayjs-core/lib/geom/Sphere" {
+	import Vector3D = require("awayjs-core/lib/geom/Vector3D");
+	class Sphere {
 	    /**
-	     * Create a new AbstractMethodError.
-	     * @param message An optional message to override the default error message.
-	     * @param id The id of the error.
+	     *
 	     */
-	    constructor(message?: string, id?: number);
+	    x: number;
+	    /**
+	     *
+	     */
+	    y: number;
+	    /**
+	     *
+	     */
+	    z: number;
+	    /**
+	     *
+	     */
+	    radius: number;
+	    /**
+	     * Create a Sphere with ABCD coefficients
+	     */
+	    constructor(x?: number, y?: number, z?: number, radius?: number);
+	    rayIntersection(position: Vector3D, direction: Vector3D, targetNormal: Vector3D): number;
+	    containsPoint(position: Vector3D): boolean;
+	    toString(): string;
 	}
-	export = AbstractMethodError;
+	export = Sphere;
+	
+}
+declare module "awayjs-core/lib/geom/UVTransform" {
+	import Matrix = require("awayjs-core/lib/geom/Matrix");
+	class UVTransform {
+	    private _uvMatrix;
+	    private _uvMatrixDirty;
+	    private _rotation;
+	    private _scaleU;
+	    private _scaleV;
+	    private _offsetU;
+	    private _offsetV;
+	    /**
+	     *
+	     */
+	    offsetU: number;
+	    /**
+	     *
+	     */
+	    offsetV: number;
+	    /**
+	     *
+	     */
+	    rotation: number;
+	    /**
+	     *
+	     */
+	    scaleU: number;
+	    /**
+	     *
+	     */
+	    scaleV: number;
+	    /**
+	     *
+	     */
+	    matrix: Matrix;
+	    constructor();
+	    /**
+	     * @private
+	     */
+	    private updateUVMatrix();
+	}
+	export = UVTransform;
+	
+}
+declare module "awayjs-core/lib/base/BlendMode" {
+	/**
+	 * A class that provides constant values for visual blend mode effects. These
+	 * constants are used in the following:
+	 * <ul>
+	 *   <li> The <code>blendMode</code> property of the
+	 * flash.display.DisplayObject class.</li>
+	 *   <li> The <code>blendMode</code> parameter of the <code>draw()</code>
+	 * method of the flash.display.BitmapData class</li>
+	 * </ul>
+	 */
+	class BlendMode {
+	    /**
+	     * Adds the values of the constituent colors of the display object to the
+	     * colors of its background, applying a ceiling of 0xFF. This setting is
+	     * commonly used for animating a lightening dissolve between two objects.
+	     *
+	     * <p>For example, if the display object has a pixel with an RGB value of
+	     * 0xAAA633, and the background pixel has an RGB value of 0xDD2200, the
+	     * resulting RGB value for the displayed pixel is 0xFFC833(because 0xAA +
+	     * 0xDD > 0xFF, 0xA6 + 0x22 = 0xC8, and 0x33 + 0x00 = 0x33).</p>
+	     */
+	    static ADD: string;
+	    /**
+	     * Applies the alpha value of each pixel of the display object to the
+	     * background. This requires the <code>blendMode</code> property of the
+	     * parent display object be set to
+	     * <code>away.base.BlendMode.LAYER</code>.
+	     *
+	     * <p>Not supported under GPU rendering.</p>
+	     */
+	    static ALPHA: string;
+	    /**
+	     * Selects the darker of the constituent colors of the display object and the
+	     * colors of the background(the colors with the smaller values). This
+	     * setting is commonly used for superimposing type.
+	     *
+	     * <p>For example, if the display object has a pixel with an RGB value of
+	     * 0xFFCC33, and the background pixel has an RGB value of 0xDDF800, the
+	     * resulting RGB value for the displayed pixel is 0xDDCC00(because 0xFF >
+	     * 0xDD, 0xCC < 0xF8, and 0x33 > 0x00 = 33).</p>
+	     *
+	     * <p>Not supported under GPU rendering.</p>
+	     */
+	    static DARKEN: string;
+	    /**
+	     * Compares the constituent colors of the display object with the colors of
+	     * its background, and subtracts the darker of the values of the two
+	     * constituent colors from the lighter value. This setting is commonly used
+	     * for more vibrant colors.
+	     *
+	     * <p>For example, if the display object has a pixel with an RGB value of
+	     * 0xFFCC33, and the background pixel has an RGB value of 0xDDF800, the
+	     * resulting RGB value for the displayed pixel is 0x222C33(because 0xFF -
+	     * 0xDD = 0x22, 0xF8 - 0xCC = 0x2C, and 0x33 - 0x00 = 0x33).</p>
+	     */
+	    static DIFFERENCE: string;
+	    /**
+	     * Erases the background based on the alpha value of the display object. This
+	     * process requires that the <code>blendMode</code> property of the parent
+	     * display object be set to <code>flash.display.BlendMode.LAYER</code>.
+	     *
+	     * <p>Not supported under GPU rendering.</p>
+	     */
+	    static ERASE: string;
+	    /**
+	     * Adjusts the color of each pixel based on the darkness of the display
+	     * object. If the display object is lighter than 50% gray, the display object
+	     * and background colors are screened, which results in a lighter color. If
+	     * the display object is darker than 50% gray, the colors are multiplied,
+	     * which results in a darker color. This setting is commonly used for shading
+	     * effects.
+	     *
+	     * <p>Not supported under GPU rendering.</p>
+	     */
+	    static HARDLIGHT: string;
+	    /**
+	     * Inverts the background.
+	     */
+	    static INVERT: string;
+	    /**
+	     * Forces the creation of a transparency group for the display object. This
+	     * means that the display object is precomposed in a temporary buffer before
+	     * it is processed further. The precomposition is done automatically if the
+	     * display object is precached by means of bitmap caching or if the display
+	     * object is a display object container that has at least one child object
+	     * with a <code>blendMode</code> setting other than <code>"normal"</code>.
+	     *
+	     * <p>Not supported under GPU rendering.</p>
+	     */
+	    static LAYER: string;
+	    /**
+	     * Selects the lighter of the constituent colors of the display object and
+	     * the colors of the background(the colors with the larger values). This
+	     * setting is commonly used for superimposing type.
+	     *
+	     * <p>For example, if the display object has a pixel with an RGB value of
+	     * 0xFFCC33, and the background pixel has an RGB value of 0xDDF800, the
+	     * resulting RGB value for the displayed pixel is 0xFFF833(because 0xFF >
+	     * 0xDD, 0xCC < 0xF8, and 0x33 > 0x00 = 33).</p>
+	     *
+	     * <p>Not supported under GPU rendering.</p>
+	     */
+	    static LIGHTEN: string;
+	    /**
+	     * Multiplies the values of the display object constituent colors by the
+	     * constituent colors of the background color, and normalizes by dividing by
+	     * 0xFF, resulting in darker colors. This setting is commonly used for
+	     * shadows and depth effects.
+	     *
+	     * <p>For example, if a constituent color(such as red) of one pixel in the
+	     * display object and the corresponding color of the pixel in the background
+	     * both have the value 0x88, the multiplied result is 0x4840. Dividing by
+	     * 0xFF yields a value of 0x48 for that constituent color, which is a darker
+	     * shade than the color of the display object or the color of the
+	     * background.</p>
+	     */
+	    static MULTIPLY: string;
+	    /**
+	     * The display object appears in front of the background. Pixel values of the
+	     * display object override the pixel values of the background. Where the
+	     * display object is transparent, the background is visible.
+	     */
+	    static NORMAL: string;
+	    /**
+	     * Adjusts the color of each pixel based on the darkness of the background.
+	     * If the background is lighter than 50% gray, the display object and
+	     * background colors are screened, which results in a lighter color. If the
+	     * background is darker than 50% gray, the colors are multiplied, which
+	     * results in a darker color. This setting is commonly used for shading
+	     * effects.
+	     *
+	     * <p>Not supported under GPU rendering.</p>
+	     */
+	    static OVERLAY: string;
+	    /**
+	     * Multiplies the complement(inverse) of the display object color by the
+	     * complement of the background color, resulting in a bleaching effect. This
+	     * setting is commonly used for highlights or to remove black areas of the
+	     * display object.
+	     */
+	    static SCREEN: string;
+	    /**
+	     * Uses a shader to define the blend between objects.
+	     *
+	     * <p>Setting the <code>blendShader</code> property to a Shader instance
+	     * automatically sets the display object's <code>blendMode</code> property to
+	     * <code>BlendMode.SHADER</code>. If the <code>blendMode</code> property is
+	     * set to <code>BlendMode.SHADER</code> without first setting the
+	     * <code>blendShader</code> property, the <code>blendMode</code> property is
+	     * set to <code>BlendMode.NORMAL</code> instead. If the
+	     * <code>blendShader</code> property is set(which sets the
+	     * <code>blendMode</code> property to <code>BlendMode.SHADER</code>), then
+	     * later the value of the <code>blendMode</code> property is changed, the
+	     * blend mode can be reset to use the blend shader simply by setting the
+	     * <code>blendMode</code> property to <code>BlendMode.SHADER</code>. The
+	     * <code>blendShader</code> property does not need to be set again except to
+	     * change the shader that's used to define the blend mode.</p>
+	     *
+	     * <p>Not supported under GPU rendering.</p>
+	     */
+	    static SHADER: string;
+	    /**
+	     * Subtracts the values of the constituent colors in the display object from
+	     * the values of the background color, applying a floor of 0. This setting is
+	     * commonly used for animating a darkening dissolve between two objects.
+	     *
+	     * <p>For example, if the display object has a pixel with an RGB value of
+	     * 0xAA2233, and the background pixel has an RGB value of 0xDDA600, the
+	     * resulting RGB value for the displayed pixel is 0x338400(because 0xDD -
+	     * 0xAA = 0x33, 0xA6 - 0x22 = 0x84, and 0x00 - 0x33 < 0x00).</p>
+	     */
+	    static SUBTRACT: string;
+	}
+	export = BlendMode;
 	
 }
 declare module "awayjs-core/lib/utils/ByteArrayBase" {
@@ -2036,7 +3089,7 @@ declare module "awayjs-core/lib/base/BitmapData" {
 	     * @throws RangeError The vector array is not large enough to read all the
 	     *                    pixel data.
 	     */
-	    setArray(rect: Rectangle, inputArray: number[]): void;
+	    setArray(rect: Rectangle, inputArray: Array<number>): void;
 	    /**
 	     * Sets a single pixel of a BitmapData object. The current alpha channel
 	     * value of the image pixel is preserved during this operation. The value of
@@ -2149,50 +3202,6 @@ declare module "awayjs-core/lib/base/BitmapDataChannel" {
 	export = BitmapDataChannel;
 	
 }
-declare module "awayjs-core/lib/errors/DocumentError" {
-	import Error = require("awayjs-core/lib/errors/Error");
-	class DocumentError extends Error {
-	    static DOCUMENT_DOES_NOT_EXIST: string;
-	    constructor(message?: string, id?: number);
-	}
-	export = DocumentError;
-	
-}
-declare module "awayjs-core/lib/errors/PartialImplementationError" {
-	import Error = require("awayjs-core/lib/errors/Error");
-	/**
-	 * AbstractMethodError is thrown when an abstract method is called. The method in question should be overridden
-	 * by a concrete subclass.
-	 */
-	class PartialImplementationError extends Error {
-	    /**
-	     * Create a new AbstractMethodError.
-	     * @param message An optional message to override the default error message.
-	     * @param id The id of the error.
-	     */
-	    constructor(dependency?: string, id?: number);
-	}
-	export = PartialImplementationError;
-	
-}
-declare module "awayjs-core/lib/errors/RangeError" {
-	import Error = require("awayjs-core/lib/errors/Error");
-	/**
-	 * RangeError is thrown when an index is accessed out of range of the number of
-	 * available indices on an Array.
-	 */
-	class RangeError extends Error {
-	    /**
-	     * Create a new RangeError.
-	     *
-	     * @param message An optional message to override the default error message.
-	     * @param id The id of the error.
-	     */
-	    constructor(message?: string, id?: number);
-	}
-	export = RangeError;
-	
-}
 declare module "awayjs-core/lib/events/Event" {
 	class Event {
 	    static COMPLETE: string;
@@ -2287,7 +3296,7 @@ declare module "awayjs-core/lib/library/IAsset" {
 	    /**
 	     *
 	     */
-	    assetFullPath: string[];
+	    assetFullPath: Array<string>;
 	    /**
 	     *
 	     * @param name
@@ -2444,7 +3453,7 @@ declare module "awayjs-core/lib/events/LoaderEvent" {
 	     * @param url The url of the loaded resource.
 	     * @param assets The assets of the loaded resource.
 	     */
-	    constructor(type: string, url?: string, content?: IAsset, assets?: IAsset[]);
+	    constructor(type: string, url?: string, content?: IAsset, assets?: Array<IAsset>);
 	    /**
 	     * The content returned if the resource has been loaded inside a <code>Loader</code> object.
 	     */
@@ -2506,415 +3515,6 @@ declare module "awayjs-core/lib/events/ProgressEvent" {
 	export = ProgressEvent;
 	
 }
-declare module "awayjs-core/lib/geom/Orientation3D" {
-	/**
-	 * A Quaternion object which can be used to represent rotations.
-	 */
-	class Orientation3D {
-	    /**
-	     * The axis angle orientation uses a combination of an axis and an angle to determine the orientation.
-	     * @type {string}
-	     */
-	    static AXIS_ANGLE: string;
-	    /**
-	     * The default orientation for decompose() and recompose() methods, defines the orientation with three separate angles of rotation for each axis.
-	     * @type {string}
-	     */
-	    static EULER_ANGLES: string;
-	    /**
-	     * The quaternion orientation uses complex numbers.
-	     * @type {string}
-	     */
-	    static QUATERNION: string;
-	}
-	export = Orientation3D;
-	
-}
-declare module "awayjs-core/lib/geom/PlaneClassification" {
-	class PlaneClassification {
-	    static BACK: number;
-	    static FRONT: number;
-	    static IN: number;
-	    static OUT: number;
-	    static INTERSECT: number;
-	}
-	export = PlaneClassification;
-	
-}
-declare module "awayjs-core/lib/geom/Plane3D" {
-	import Vector3D = require("awayjs-core/lib/geom/Vector3D");
-	class Plane3D {
-	    /**
-	     * The A coefficient of this plane. (Also the x dimension of the plane normal)
-	     */
-	    a: number;
-	    /**
-	     * The B coefficient of this plane. (Also the y dimension of the plane normal)
-	     */
-	    b: number;
-	    /**
-	     * The C coefficient of this plane. (Also the z dimension of the plane normal)
-	     */
-	    c: number;
-	    /**
-	     * The D coefficient of this plane. (Also the inverse dot product between normal and point)
-	     */
-	    d: number;
-	    _iAlignment: number;
-	    static ALIGN_ANY: number;
-	    static ALIGN_XY_AXIS: number;
-	    static ALIGN_YZ_AXIS: number;
-	    static ALIGN_XZ_AXIS: number;
-	    /**
-	     * Create a Plane3D with ABCD coefficients
-	     */
-	    constructor(a?: number, b?: number, c?: number, d?: number);
-	    /**
-	     * Fills this Plane3D with the coefficients from 3 points in 3d space.
-	     * @param p0 Vector3D
-	     * @param p1 Vector3D
-	     * @param p2 Vector3D
-	     */
-	    fromPoints(p0: Vector3D, p1: Vector3D, p2: Vector3D): void;
-	    /**
-	     * Fills this Plane3D with the coefficients from the plane's normal and a point in 3d space.
-	     * @param normal Vector3D
-	     * @param point  Vector3D
-	     */
-	    fromNormalAndPoint(normal: Vector3D, point: Vector3D): void;
-	    /**
-	     * Normalize this Plane3D
-	     * @return Plane3D This Plane3D.
-	     */
-	    normalize(): Plane3D;
-	    /**
-	     * Returns the signed distance between this Plane3D and the point p.
-	     * @param p Vector3D
-	     * @returns Number
-	     */
-	    distance(p: Vector3D): number;
-	    /**
-	     * Classify a point against this Plane3D. (in front, back or intersecting)
-	     * @param p Vector3D
-	     * @return int Plane3.FRONT or Plane3D.BACK or Plane3D.INTERSECT
-	     */
-	    classifyPoint(p: Vector3D, epsilon?: number): number;
-	    toString(): string;
-	}
-	export = Plane3D;
-	
-}
-declare module "awayjs-core/lib/geom/Matrix3DUtils" {
-	import Quaternion = require("awayjs-core/lib/geom/Quaternion");
-	import Matrix3D = require("awayjs-core/lib/geom/Matrix3D");
-	import Plane3D = require("awayjs-core/lib/geom/Plane3D");
-	import Vector3D = require("awayjs-core/lib/geom/Vector3D");
-	/**
-	 * away.geom.Matrix3DUtils provides additional Matrix3D functions.
-	 */
-	class Matrix3DUtils {
-	    /**
-	     * A reference to a Vector to be used as a temporary raw data container, to prevent object creation.
-	     */
-	    static RAW_DATA_CONTAINER: number[];
-	    static CALCULATION_MATRIX: Matrix3D;
-	    /**
-	     * Fills the 3d matrix object with values representing the transformation made by the given quaternion.
-	     *
-	     * @param    quarternion    The quarterion object to convert.
-	     */
-	    static quaternion2matrix(quarternion: Quaternion, m?: Matrix3D): Matrix3D;
-	    /**
-	     * Returns a normalised <code>Vector3D</code> object representing the forward vector of the given matrix.
-	     * @param    m        The Matrix3D object to use to get the forward vector
-	     * @param    v        [optional] A vector holder to prevent make new Vector3D instance if already exists. Default is null.
-	     * @return            The forward vector
-	     */
-	    static getForward(m: Matrix3D, v?: Vector3D): Vector3D;
-	    /**
-	     * Returns a normalised <code>Vector3D</code> object representing the up vector of the given matrix.
-	     * @param    m        The Matrix3D object to use to get the up vector
-	     * @param    v        [optional] A vector holder to prevent make new Vector3D instance if already exists. Default is null.
-	     * @return            The up vector
-	     */
-	    static getUp(m: Matrix3D, v?: Vector3D): Vector3D;
-	    /**
-	     * Returns a normalised <code>Vector3D</code> object representing the right vector of the given matrix.
-	     * @param    m        The Matrix3D object to use to get the right vector
-	     * @param    v        [optional] A vector holder to prevent make new Vector3D instance if already exists. Default is null.
-	     * @return            The right vector
-	     */
-	    static getRight(m: Matrix3D, v?: Vector3D): Vector3D;
-	    /**
-	     * Returns a boolean value representing whether there is any significant difference between the two given 3d matrices.
-	     */
-	    static compare(m1: Matrix3D, m2: Matrix3D): boolean;
-	    static lookAt(matrix: Matrix3D, pos: Vector3D, dir: Vector3D, up: Vector3D): void;
-	    static reflection(plane: Plane3D, target?: Matrix3D): Matrix3D;
-	    static transformVector(matrix: Matrix3D, vector: Vector3D, result?: Vector3D): Vector3D;
-	    static deltaTransformVector(matrix: Matrix3D, vector: Vector3D, result?: Vector3D): Vector3D;
-	    static getTranslation(transform: Matrix3D, result?: Vector3D): Vector3D;
-	    static deltaTransformVectors(matrix: Matrix3D, vin: number[], vout: number[]): void;
-	}
-	export = Matrix3DUtils;
-	
-}
-declare module "awayjs-core/lib/geom/Quaternion" {
-	import Matrix3D = require("awayjs-core/lib/geom/Matrix3D");
-	import Vector3D = require("awayjs-core/lib/geom/Vector3D");
-	/**
-	 * A Quaternion object which can be used to represent rotations.
-	 */
-	class Quaternion {
-	    /**
-	     * The x value of the quaternion.
-	     */
-	    x: number;
-	    /**
-	     * The y value of the quaternion.
-	     */
-	    y: number;
-	    /**
-	     * The z value of the quaternion.
-	     */
-	    z: number;
-	    /**
-	     * The w value of the quaternion.
-	     */
-	    w: number;
-	    /**
-	     * Creates a new Quaternion object.
-	     * @param x The x value of the quaternion.
-	     * @param y The y value of the quaternion.
-	     * @param z The z value of the quaternion.
-	     * @param w The w value of the quaternion.
-	     */
-	    constructor(x?: number, y?: number, z?: number, w?: number);
-	    /**
-	     * Returns the magnitude of the quaternion object.
-	     */
-	    magnitude: number;
-	    /**
-	     * Fills the quaternion object with the result from a multiplication of two quaternion objects.
-	     *
-	     * @param    qa    The first quaternion in the multiplication.
-	     * @param    qb    The second quaternion in the multiplication.
-	     */
-	    multiply(qa: Quaternion, qb: Quaternion): void;
-	    multiplyVector(vector: Vector3D, target?: Quaternion): Quaternion;
-	    /**
-	     * Fills the quaternion object with values representing the given rotation around a vector.
-	     *
-	     * @param    axis    The axis around which to rotate
-	     * @param    angle    The angle in radians of the rotation.
-	     */
-	    fromAxisAngle(axis: Vector3D, angle: number): void;
-	    /**
-	     * Spherically interpolates between two quaternions, providing an interpolation between rotations with constant angle change rate.
-	     * @param qa The first quaternion to interpolate.
-	     * @param qb The second quaternion to interpolate.
-	     * @param t The interpolation weight, a value between 0 and 1.
-	     */
-	    slerp(qa: Quaternion, qb: Quaternion, t: number): void;
-	    /**
-	     * Linearly interpolates between two quaternions.
-	     * @param qa The first quaternion to interpolate.
-	     * @param qb The second quaternion to interpolate.
-	     * @param t The interpolation weight, a value between 0 and 1.
-	     */
-	    lerp(qa: Quaternion, qb: Quaternion, t: number): void;
-	    /**
-	     * Fills the quaternion object with values representing the given euler rotation.
-	     *
-	     * @param    ax        The angle in radians of the rotation around the ax axis.
-	     * @param    ay        The angle in radians of the rotation around the ay axis.
-	     * @param    az        The angle in radians of the rotation around the az axis.
-	     */
-	    fromEulerAngles(ax: number, ay: number, az: number): void;
-	    /**
-	     * Fills a target Vector3D object with the Euler angles that form the rotation represented by this quaternion.
-	     * @param target An optional Vector3D object to contain the Euler angles. If not provided, a new object is created.
-	     * @return The Vector3D containing the Euler angles.
-	     */
-	    toEulerAngles(target?: Vector3D): Vector3D;
-	    /**
-	     * Normalises the quaternion object.
-	     */
-	    normalize(val?: number): void;
-	    /**
-	     * Used to trace the values of a quaternion.
-	     *
-	     * @return A string representation of the quaternion object.
-	     */
-	    toString(): string;
-	    /**
-	     * Converts the quaternion to a Matrix3D object representing an equivalent rotation.
-	     * @param target An optional Matrix3D container to store the transformation in. If not provided, a new object is created.
-	     * @return A Matrix3D object representing an equivalent rotation.
-	     */
-	    toMatrix3D(target?: Matrix3D): Matrix3D;
-	    /**
-	     * Extracts a quaternion rotation matrix out of a given Matrix3D object.
-	     * @param matrix The Matrix3D out of which the rotation will be extracted.
-	     */
-	    fromMatrix(matrix: Matrix3D): void;
-	    /**
-	     * Converts the quaternion to a Vector.&lt;Number&gt; matrix representation of a rotation equivalent to this quaternion.
-	     * @param target The Vector.&lt;Number&gt; to contain the raw matrix data.
-	     * @param exclude4thRow If true, the last row will be omitted, and a 4x3 matrix will be generated instead of a 4x4.
-	     */
-	    toRawData(target: number[], exclude4thRow?: boolean): void;
-	    /**
-	     * Clones the quaternion.
-	     * @return An exact duplicate of the current Quaternion.
-	     */
-	    clone(): Quaternion;
-	    /**
-	     * Rotates a point.
-	     * @param vector The Vector3D object to be rotated.
-	     * @param target An optional Vector3D object that will contain the rotated coordinates. If not provided, a new object will be created.
-	     * @return A Vector3D object containing the rotated point.
-	     */
-	    rotatePoint(vector: Vector3D, target?: Vector3D): Vector3D;
-	    /**
-	     * Copies the data from a quaternion into this instance.
-	     * @param q The quaternion to copy from.
-	     */
-	    copyFrom(q: Quaternion): void;
-	}
-	export = Quaternion;
-	
-}
-declare module "awayjs-core/lib/geom/Matrix3D" {
-	import Vector3D = require("awayjs-core/lib/geom/Vector3D");
-	class Matrix3D {
-	    /**
-	     * A Vector of 16 Numbers, where every four elements is a column of a 4x4 matrix.
-	     *
-	     * <p>An exception is thrown if the rawData property is set to a matrix that is not invertible. The Matrix3D
-	     * object must be invertible. If a non-invertible matrix is needed, create a subclass of the Matrix3D object.</p>
-	     */
-	    rawData: number[];
-	    /**
-	     * Creates a Matrix3D object.
-	     */
-	    constructor(v?: number[]);
-	    /**
-	     * Appends the matrix by multiplying another Matrix3D object by the current Matrix3D object.
-	     */
-	    append(lhs: Matrix3D): void;
-	    /**
-	     * Appends an incremental rotation to a Matrix3D object.
-	     */
-	    appendRotation(degrees: number, axis: Vector3D): void;
-	    /**
-	     * Appends an incremental scale change along the x, y, and z axes to a Matrix3D object.
-	     */
-	    appendScale(xScale: number, yScale: number, zScale: number): void;
-	    /**
-	     * Appends an incremental translation, a repositioning along the x, y, and z axes, to a Matrix3D object.
-	     */
-	    appendTranslation(x: number, y: number, z: number): void;
-	    /**
-	     * Returns a new Matrix3D object that is an exact copy of the current Matrix3D object.
-	     */
-	    clone(): Matrix3D;
-	    /**
-	     * Copies a Vector3D object into specific column of the calling Matrix3D object.
-	     */
-	    copyColumnFrom(column: number, vector3D: Vector3D): void;
-	    /**
-	     * Copies specific column of the calling Matrix3D object into the Vector3D object.
-	     */
-	    copyColumnTo(column: number, vector3D: Vector3D): void;
-	    /**
-	     * Copies all of the matrix data from the source Matrix3D object into the calling Matrix3D object.
-	     */
-	    copyFrom(sourceMatrix3D: Matrix3D): void;
-	    copyRawDataFrom(vector: number[], index?: number, transpose?: boolean): void;
-	    copyRawDataTo(vector: number[], index?: number, transpose?: boolean): void;
-	    /**
-	     * Copies a Vector3D object into specific row of the calling Matrix3D object.
-	     */
-	    copyRowFrom(row: number, vector3D: Vector3D): void;
-	    /**
-	     * Copies specific row of the calling Matrix3D object into the Vector3D object.
-	     */
-	    copyRowTo(row: number, vector3D: Vector3D): void;
-	    /**
-	     * Copies this Matrix3D object into a destination Matrix3D object.
-	     */
-	    copyToMatrix3D(dest: Matrix3D): void;
-	    /**
-	     * Returns the transformation matrix's translation, rotation, and scale settings as a Vector of three Vector3D objects.
-	     */
-	    decompose(orientationStyle?: string): Vector3D[];
-	    /**
-	     * Uses the transformation matrix without its translation elements to transform a Vector3D object from one space
-	     * coordinate to another.
-	     */
-	    deltaTransformVector(v: Vector3D): Vector3D;
-	    /**
-	     * Converts the current matrix to an identity or unit matrix.
-	     */
-	    identity(): void;
-	    /**
-	     * [static] Interpolates the translation, rotation, and scale transformation of one matrix toward those of the target matrix.
-	     */
-	    static interpolate(thisMat: Matrix3D, toMat: Matrix3D, percent: number): Matrix3D;
-	    /**
-	     * Interpolates this matrix towards the translation, rotation, and scale transformations of the target matrix.
-	     */
-	    interpolateTo(toMat: Matrix3D, percent: number): void;
-	    /**
-	     * Inverts the current matrix.
-	     */
-	    invert(): boolean;
-	    /**
-	     * Prepends a matrix by multiplying the current Matrix3D object by another Matrix3D object.
-	     */
-	    prepend(rhs: Matrix3D): void;
-	    /**
-	     * Prepends an incremental rotation to a Matrix3D object.
-	     */
-	    prependRotation(degrees: number, axis: Vector3D): void;
-	    /**
-	     * Prepends an incremental scale change along the x, y, and z axes to a Matrix3D object.
-	     */
-	    prependScale(xScale: number, yScale: number, zScale: number): void;
-	    /**
-	     * Prepends an incremental translation, a repositioning along the x, y, and z axes, to a Matrix3D object.
-	     */
-	    prependTranslation(x: number, y: number, z: number): void;
-	    /**
-	     * Sets the transformation matrix's translation, rotation, and scale settings.
-	     */
-	    recompose(components: Vector3D[]): boolean;
-	    transformVector(v: Vector3D): Vector3D;
-	    /**
-	     * Uses the transformation matrix to transform a Vector of Numbers from one coordinate space to another.
-	     */
-	    transformVectors(vin: number[], vout: number[]): void;
-	    /**
-	     * Converts the current Matrix3D object to a matrix where the rows and columns are swapped.
-	     */
-	    transpose(): void;
-	    static getAxisRotation(x: number, y: number, z: number, degrees: number): Matrix3D;
-	    /**
-	     * [read-only] A Number that determines whether a matrix is invertible.
-	     */
-	    determinant: number;
-	    /**
-	     * A Vector3D object that holds the position, the 3D coordinate (x,y,z) of a display object within the
-	     * transformation's frame of reference.
-	     */
-	    position: Vector3D;
-	    toFixed(decimalPlace: number): string;
-	    toString(): string;
-	}
-	export = Matrix3D;
-	
-}
 declare module "awayjs-core/lib/projections/IProjection" {
 	import Matrix3D = require("awayjs-core/lib/geom/Matrix3D");
 	import Vector3D = require("awayjs-core/lib/geom/Vector3D");
@@ -2926,7 +3526,7 @@ declare module "awayjs-core/lib/projections/IProjection" {
 	 */
 	interface IProjection extends IEventDispatcher {
 	    coordinateSystem: string;
-	    frustumCorners: number[];
+	    frustumCorners: Array<number>;
 	    matrix: Matrix3D;
 	    near: number;
 	    originX: number;
@@ -2961,606 +3561,6 @@ declare module "awayjs-core/lib/events/TimerEvent" {
 	    constructor(type: string);
 	}
 	export = TimerEvent;
-	
-}
-declare module "awayjs-core/lib/geom/Box" {
-	import Vector3D = require("awayjs-core/lib/geom/Vector3D");
-	/**
-	 * A Box object is an area defined by its position, as indicated by its
-	 * top-left-front corner point(<i>x</i>, <i>y</i>, <i>z</i>) and by its width,
-	 * height and depth.
-	 *
-	 *
-	 * <p>The <code>x</code>, <code>y</code>, <code>z</code>, <code>width</code>,
-	 * <code>height</code> <code>depth</code> properties of the Box class are
-	 * independent of each other; changing the value of one property has no effect
-	 * on the others. However, the <code>right</code>, <code>bottom</code> and
-	 * <code>back</code> properties are integrally related to those six
-	 * properties. For example, if you change the value of the <code>right</code>
-	 * property, the value of the <code>width</code> property changes; if you
-	 * change the <code>bottom</code> property, the value of the
-	 * <code>height</code> property changes. </p>
-	 *
-	 * <p>The following methods and properties use Box objects:</p>
-	 *
-	 * <ul>
-	 *   <li>The <code>bounds</code> property of the DisplayObject class</li>
-	 * </ul>
-	 *
-	 * <p>You can use the <code>new Box()</code> constructor to create a
-	 * Box object.</p>
-	 *
-	 * <p><b>Note:</b> The Box class does not define a cubic Shape
-	 * display object.
-	 */
-	class Box {
-	    private _size;
-	    private _bottomRightBack;
-	    private _topLeftFront;
-	    /**
-	     * The height of the box, in pixels. Changing the <code>height</code> value
-	     * of a Box object has no effect on the <code>x</code>, <code>y</code>,
-	     * <code>z</code>, <code>depth</code> and <code>width</code> properties.
-	     */
-	    height: number;
-	    /**
-	     * The width of the box, in pixels. Changing the <code>width</code> value
-	     * of a Box object has no effect on the <code>x</code>, <code>y</code>,
-	     * <code>z</code>, <code>depth</code> and <code>height</code> properties.
-	     */
-	    width: number;
-	    /**
-	     * The deoth of the box, in pixels. Changing the <code>depth</code> value
-	     * of a Box object has no effect on the <code>x</code>, <code>y</code>,
-	     * <code>z</code>, <code>width</code> and <code>height</code> properties.
-	     */
-	    depth: number;
-	    /**
-	     * The <i>x</i> coordinate of the top-left-front corner of the box.
-	     * Changing the value of the <code>x</code> property of a Box object has no
-	     * effect on the <code>y</code>, <code>z</code>, <code>width</code>,
-	     * <code>height</code> and <code>depth</code> properties.
-	     *
-	     * <p>The value of the <code>x</code> property is equal to the value of the
-	     * <code>left</code> property.</p>
-	     */
-	    x: number;
-	    /**
-	     * The <i>y</i> coordinate of the top-left-front corner of the box.
-	     * Changing the value of the <code>y</code> property of a Box object has no
-	     * effect on the <code>x</code>, <code>z</code>, <code>width</code>,
-	     * <code>height</code> and <code>depth</code> properties.
-	     *
-	     * <p>The value of the <code>y</code> property is equal to the value of the
-	     * <code>top</code> property.</p>
-	     */
-	    y: number;
-	    /**
-	     * The <i>y</i> coordinate of the top-left-front corner of the box.
-	     * Changing the value of the <code>z</code> property of a Box object has no
-	     * effect on the <code>x</code>, <code>y</code>, <code>width</code>,
-	     * <code>height</code> and <code>depth</code> properties.
-	     *
-	     * <p>The value of the <code>z</code> property is equal to the value of the
-	     * <code>front</code> property.</p>
-	     */
-	    z: number;
-	    /**
-	     * The sum of the <code>z</code> and <code>height</code> properties.
-	     */
-	    back: number;
-	    /**
-	     * The sum of the <code>y</code> and <code>height</code> properties.
-	     */
-	    bottom: number;
-	    /**
-	     * The location of the Box object's bottom-right corner, determined by the
-	     * values of the <code>right</code> and <code>bottom</code> properties.
-	     */
-	    bottomRightBack: Vector3D;
-	    /**
-	     * The <i>z</i> coordinate of the top-left-front corner of the box. Changing
-	     * the <code>front</code> property of a Box object has no effect on the
-	     * <code>x</code>, <code>y</code>, <code>width</code> and <code>height</code>
-	     * properties. However it does affect the <code>depth</code> property,
-	     * whereas changing the <code>z</code> value does <i>not</i> affect the
-	     * <code>depth</code> property.
-	     *
-	     * <p>The value of the <code>left</code> property is equal to the value of
-	     * the <code>x</code> property.</p>
-	     */
-	    front: number;
-	    /**
-	     * The <i>x</i> coordinate of the top-left corner of the box. Changing the
-	     * <code>left</code> property of a Box object has no effect on the
-	     * <code>y</code> and <code>height</code> properties. However it does affect
-	     * the <code>width</code> property, whereas changing the <code>x</code> value
-	     * does <i>not</i> affect the <code>width</code> property.
-	     *
-	     * <p>The value of the <code>left</code> property is equal to the value of
-	     * the <code>x</code> property.</p>
-	     */
-	    left: number;
-	    /**
-	     * The sum of the <code>x</code> and <code>width</code> properties.
-	     */
-	    right: number;
-	    /**
-	     * The size of the Box object, expressed as a Vector3D object with the
-	     * values of the <code>width</code>, <code>height</code> and
-	     * <code>depth</code> properties.
-	     */
-	    size: Vector3D;
-	    /**
-	     * The <i>y</i> coordinate of the top-left-front corner of the box. Changing
-	     * the <code>top</code> property of a Box object has no effect on the
-	     * <code>x</code> and <code>width</code> properties. However it does affect
-	     * the <code>height</code> property, whereas changing the <code>y</code>
-	     * value does <i>not</i> affect the <code>height</code> property.
-	     *
-	     * <p>The value of the <code>top</code> property is equal to the value of the
-	     * <code>y</code> property.</p>
-	     */
-	    top: number;
-	    /**
-	     * The location of the Box object's top-left-front corner, determined by the
-	     * <i>x</i>, <i>y</i> and <i>z</i> coordinates of the point.
-	     */
-	    topLeftFront: Vector3D;
-	    /**
-	     * Creates a new Box object with the top-left-front corner specified by the
-	     * <code>x</code>, <code>y</code> and <code>z</code> parameters and with the
-	     * specified <code>width</code>, <code>height</code> and <code>depth</code>
-	     * parameters. If you call this public without parameters, a box with
-	     * <code>x</code>, <code>y</code>, <code>z</code>, <code>width</code>,
-	     * <code>height</code> and <code>depth</code> properties set to 0 is created.
-	     *
-	     * @param x      The <i>x</i> coordinate of the top-left-front corner of the
-	     *               box.
-	     * @param y      The <i>y</i> coordinate of the top-left-front corner of the
-	     *               box.
-	     * @param z      The <i>z</i> coordinate of the top-left-front corner of the
-	     *               box.
-	     * @param width  The width of the box, in pixels.
-	     * @param height The height of the box, in pixels.
-	     * @param depth The depth of the box, in pixels.
-	     */
-	    constructor(x?: number, y?: number, z?: number, width?: number, height?: number, depth?: number);
-	    /**
-	     * Returns a new Box object with the same values for the <code>x</code>,
-	     * <code>y</code>, <code>z</code>, <code>width</code>, <code>height</code>
-	     * and <code>depth</code> properties as the original Box object.
-	     *
-	     * @return A new Box object with the same values for the <code>x</code>,
-	     *         <code>y</code>, <code>z</code>, <code>width</code>,
-	     *         <code>height</code> and <code>depth</code> properties as the
-	     *         original Box object.
-	     */
-	    clone(): Box;
-	    /**
-	     * Determines whether the specified position is contained within the cubic
-	     * region defined by this Box object.
-	     *
-	     * @param x The <i>x</i> coordinate(horizontal component) of the position.
-	     * @param y The <i>y</i> coordinate(vertical component) of the position.
-	     * @param z The <i>z</i> coordinate(longitudinal component) of the position.
-	     * @return A value of <code>true</code> if the Box object contains the
-	     *         specified position; otherwise <code>false</code>.
-	     */
-	    contains(x: number, y: number, z: number): boolean;
-	    /**
-	     * Determines whether the specified position is contained within the cubic
-	     * region defined by this Box object. This method is similar to the
-	     * <code>Box.contains()</code> method, except that it takes a Vector3D
-	     * object as a parameter.
-	     *
-	     * @param position The position, as represented by its <i>x</i>, <i>y</i> and
-	     *                 <i>z</i> coordinates.
-	     * @return A value of <code>true</code> if the Box object contains the
-	     *         specified position; otherwise <code>false</code>.
-	     */
-	    containsPoint(position: Vector3D): boolean;
-	    /**
-	     * Determines whether the Box object specified by the <code>box</code>
-	     * parameter is contained within this Box object. A Box object is said to
-	     * contain another if the second Box object falls entirely within the
-	     * boundaries of the first.
-	     *
-	     * @param box The Box object being checked.
-	     * @return A value of <code>true</code> if the Box object that you specify
-	     *         is contained by this Box object; otherwise <code>false</code>.
-	     */
-	    containsBox(box: Box): boolean;
-	    /**
-	     * Copies all of box data from the source Box object into the calling
-	     * Box object.
-	     *
-	     * @param sourceBox The Box object from which to copy the data.
-	     */
-	    copyFrom(sourceBox: Box): void;
-	    /**
-	     * Determines whether the object specified in the <code>toCompare</code>
-	     * parameter is equal to this Box object. This method compares the
-	     * <code>x</code>, <code>y</code>, <code>z</code>, <code>width</code>,
-	     * <code>height</code> and <code>depth</code> properties of an object against
-	     * the same properties of this Box object.
-	     *
-	     * @param toCompare The box to compare to this Box object.
-	     * @return A value of <code>true</code> if the object has exactly the same
-	     *         values for the <code>x</code>, <code>y</code>, <code>z</code>,
-	     *         <code>width</code>, <code>height</code> and <code>depth</code>
-	     *         properties as this Box object; otherwise <code>false</code>.
-	     */
-	    equals(toCompare: Box): boolean;
-	    /**
-	     * Increases the size of the Box object by the specified amounts, in
-	     * pixels. The center point of the Box object stays the same, and its
-	     * size increases to the left and right by the <code>dx</code> value, to
-	     * the top and the bottom by the <code>dy</code> value, and to
-	     * the front and the back by the <code>dz</code> value.
-	     *
-	     * @param dx The value to be added to the left and the right of the Box
-	     *           object. The following equation is used to calculate the new
-	     *           width and position of the box:
-	     * @param dy The value to be added to the top and the bottom of the Box
-	     *           object. The following equation is used to calculate the new
-	     *           height and position of the box:
-	     * @param dz The value to be added to the front and the back of the Box
-	     *           object. The following equation is used to calculate the new
-	     *           depth and position of the box:
-	     */
-	    inflate(dx: number, dy: number, dz: number): void;
-	    /**
-	     * Increases the size of the Box object. This method is similar to the
-	     * <code>Box.inflate()</code> method except it takes a Vector3D object as
-	     * a parameter.
-	     *
-	     * <p>The following two code examples give the same result:</p>
-	     *
-	     * @param delta The <code>x</code> property of this Vector3D object is used to
-	     *              increase the horizontal dimension of the Box object.
-	     *              The <code>y</code> property is used to increase the vertical
-	     *              dimension of the Box object.
-	     *              The <code>z</code> property is used to increase the
-	     *              longitudinal dimension of the Box object.
-	     */
-	    inflatePoint(delta: Vector3D): void;
-	    /**
-	     * If the Box object specified in the <code>toIntersect</code> parameter
-	     * intersects with this Box object, returns the area of intersection
-	     * as a Box object. If the boxes do not intersect, this method returns an
-	     * empty Box object with its properties set to 0.
-	     *
-	     * @param toIntersect The Box object to compare against to see if it
-	     *                    intersects with this Box object.
-	     * @return A Box object that equals the area of intersection. If the
-	     *         boxes do not intersect, this method returns an empty Box
-	     *         object; that is, a box with its <code>x</code>, <code>y</code>,
-	     *         <code>z</code>, <code>width</code>,  <code>height</code>, and
-	     *         <code>depth</code> properties set to 0.
-	     */
-	    intersection(toIntersect: Box): Box;
-	    /**
-	     * Determines whether the object specified in the <code>toIntersect</code>
-	     * parameter intersects with this Box object. This method checks the
-	     * <code>x</code>, <code>y</code>, <code>z</code>, <code>width</code>,
-	     * <code>height</code>, and <code>depth</code> properties of the specified
-	     * Box object to see if it intersects with this Box object.
-	     *
-	     * @param toIntersect The Box object to compare against this Box object.
-	     * @return A value of <code>true</code> if the specified object intersects
-	     *         with this Box object; otherwise <code>false</code>.
-	     */
-	    intersects(toIntersect: Box): boolean;
-	    rayIntersection(position: Vector3D, direction: Vector3D, targetNormal: Vector3D): number;
-	    /**
-	     * Finds the closest point on the Box to another given point. This can be used for maximum error calculations for content within a given Box.
-	     *
-	     * @param point The point for which to find the closest point on the Box
-	     * @param target An optional Vector3D to store the result to prevent creating a new object.
-	     * @return
-	     */
-	    closestPointToPoint(point: Vector3D, target?: Vector3D): Vector3D;
-	    /**
-	     * Determines whether or not this Box object is empty.
-	     *
-	     * @return A value of <code>true</code> if the Box object's width, height or
-	     *         depth is less than or equal to 0; otherwise <code>false</code>.
-	     */
-	    isEmpty(): boolean;
-	    /**
-	     * Adjusts the location of the Box object, as determined by its
-	     * top-left-front corner, by the specified amounts.
-	     *
-	     * @param dx Moves the <i>x</i> value of the Box object by this amount.
-	     * @param dy Moves the <i>y</i> value of the Box object by this amount.
-	     * @param dz Moves the <i>z</i> value of the Box object by this amount.
-	     */
-	    offset(dx: number, dy: number, dz: number): void;
-	    /**
-	     * Adjusts the location of the Box object using a Vector3D object as a
-	     * parameter. This method is similar to the <code>Box.offset()</code>
-	     * method, except that it takes a Vector3D object as a parameter.
-	     *
-	     * @param position A Vector3D object to use to offset this Box object.
-	     */
-	    offsetPosition(position: Vector3D): void;
-	    /**
-	     * Sets all of the Box object's properties to 0. A Box object is empty if its
-	     * width, height or depth is less than or equal to 0.
-	     *
-	     * <p> This method sets the values of the <code>x</code>, <code>y</code>,
-	     * <code>z</code>, <code>width</code>, <code>height</code>, and
-	     * <code>depth</code> properties to 0.</p>
-	     *
-	     */
-	    setEmpty(): void;
-	    /**
-	     * Sets the members of Box to the specified values
-	     *
-	     * @param xa      The <i>x</i> coordinate of the top-left-front corner of the
-	     *                box.
-	     * @param ya      The <i>y</i> coordinate of the top-left-front corner of the
-	     *                box.
-	     * @param yz      The <i>z</i> coordinate of the top-left-front corner of the
-	     *                box.
-	     * @param widtha  The width of the box, in pixels.
-	     * @param heighta The height of the box, in pixels.
-	     * @param deptha  The depth of the box, in pixels.
-	     */
-	    setTo(xa: number, ya: number, za: number, widtha: number, heighta: number, deptha: number): void;
-	    /**
-	     * Builds and returns a string that lists the horizontal, vertical and
-	     * longitudinal positions and the width, height and depth of the Box object.
-	     *
-	     * @return A string listing the value of each of the following properties of
-	     *         the Box object: <code>x</code>, <code>y</code>, <code>z</code>,
-	     *         <code>width</code>, <code>height</code>, and <code>depth</code>.
-	     */
-	    toString(): string;
-	    /**
-	     * Adds two boxes together to create a new Box object, by filling
-	     * in the horizontal, vertical and longitudinal space between the two boxes.
-	     *
-	     * <p><b>Note:</b> The <code>union()</code> method ignores boxes with
-	     * <code>0</code> as the height, width or depth value, such as: <code>var
-	     * box2:Box = new Box(300,300,300,50,50,0);</code></p>
-	     *
-	     * @param toUnion A Box object to add to this Box object.
-	     * @return A new Box object that is the union of the two boxes.
-	     */
-	    union(toUnion: Box): Box;
-	}
-	export = Box;
-	
-}
-declare module "awayjs-core/lib/geom/MathConsts" {
-	/**
-	* MathConsts provides some commonly used mathematical constants
-	*/
-	class MathConsts {
-	    /**
-	     * The amount to multiply with when converting radians to degrees.
-	     */
-	    static RADIANS_TO_DEGREES: number;
-	    /**
-	     * The amount to multiply with when converting degrees to radians.
-	     */
-	    static DEGREES_TO_RADIANS: number;
-	}
-	export = MathConsts;
-	
-}
-declare module "awayjs-core/lib/geom/PerspectiveProjection" {
-	import Matrix3D = require("awayjs-core/lib/geom/Matrix3D");
-	import Point = require("awayjs-core/lib/geom/Point");
-	/**
-	 * <p>The PerspectiveProjection class provides an easy way to assign or modify
-	 * the perspective transformations of a display object and all of its
-	 * children. For more complex or custom perspective transformations, use the
-	 * Matrix3D class. While the PerspectiveProjection class provides basic
-	 * three-dimensional presentation properties, the Matrix3D class provides more
-	 * detailed control over the three-dimensional presentation of display objects.
-	 * </p>
-	 *
-	 * <p>Projection is a way of representing a three-dimensional object in a
-	 * two-dimensional space, like a cube projected onto a computer screen.
-	 * Perspective projection uses a viewing frustum (a rectangular pyramid) to
-	 * model and project a three-dimensional world and its objects on the screen.
-	 * The viewing frustum becomes increasingly wider as it moves further from the
-	 * origin of the viewpoint. The origin of the viewpoint could be a camera or
-	 * the eyes of an observer facing the screen. The projected perspective
-	 * produces the illusion of three dimensions with depth and distance, where
-	 * the objects closer to the screen appear larger than the objects farther
-	 * from the screen.</p>
-	 *
-	 * <p>A default PerspectiveProjection object is a framework defined for
-	 * perspective transformation of the root object, based on the field of view
-	 * and aspect ratio (dimensions) of the stage. The projection center, the
-	 * vanishing point, is set to the center of the stage, which means the
-	 * three-dimensional display objects disappear toward the center of the stage
-	 * as they move back in the z axis. The default viewpoint is at point (0,0)
-	 * looking down the positive z axis. The y-axis points down toward the bottom
-	 * of the screen. You can gain access to the root display object's perspective
-	 * projection settings and change the field of view and projection center
-	 * properties of the perspectiveProjection property through the root object's
-	 * <code>DisplayObject.transform</code> property.</p>
-	 *
-	 * <p>You can also set a different perspective projection setting for a
-	 * display object through the parent's perspective projection. First, create a
-	 * PerspectiveProjection object and set its <code>fieldOfView</code> and
-	 * <code>projectionCenter</code> properties. Next, assign the
-	 * PerspectiveProjection object to the parent display object using the
-	 * <code>DisplayObject.transform</code> property. The specified projection
-	 * matrix and transformation will then apply to all the display object's
-	 * three-dimensional children.</p>
-	 *
-	 * <p>To modify a perspective projection of the stage or root object: use the
-	 * <code>transform.matrix</code> property of the root display object to gain
-	 * access to the PerspectiveProjection object. Or, apply different perspective
-	 * projection properties to a display object by setting the perspective
-	 * projection properties of the display object's parent. The child display
-	 * object inherits the new properties. Specifically, create a
-	 * PerspectiveProjection object and set its properties, then assign the
-	 * PerspectiveProjection object to the <code>perspectiveProjection</code>
-	 * property of the parent display object's <code>transform</code> property.
-	 * The specified projection transformation then applies to all the display
-	 * object's three-dimensional children.</p>
-	 *
-	 * <p>Since both PerspectiveProjection and Matrix3D objects perform
-	 * perspective transformations, do not assign both to a display object at the
-	 * same time. Use the PerspectiveProjection object for focal length and
-	 * projection center changes. For more control over the perspective
-	 * transformation, create a perspective projection Matrix3D object.</p>
-	 */
-	class PerspectiveProjection {
-	    private _matrix3D;
-	    /**
-	     * Specifies an angle, as a degree between 0 and 180, for the field of
-	     * view in three dimensions. This value determines how strong the
-	     * perspective transformation and distortion apply to a
-	     * three-dimensional display object with a non-zero z-coordinate.
-	     *
-	     * <p>A degree close to 0 means that the screen's two-dimensional x-
-	     * and y-coordinates are roughly the same as the three-dimensional x-,
-	     * y-, and z-coordinates with little or no distortion. In other words,
-	     * for a small angle, a display object moving down the z axis appears
-	     * to stay near the same size and moves little.</p>
-	     *
-	     * <p>A value close to 180 degrees results in a fisheye projection effect:
-	     * positions with a z value smaller than 0 are magnified, while
-	     * positions with a z value larger than 0 are minimized. With a large
-	     * angle, a display object moving down the z axis appears to change
-	     * size quickly and moves a great distance. If the field of view is
-	     * set to 0 or 180, nothing is seen on the screen.</p>
-	     */
-	    fieldOfView: number;
-	    /**
-	     * The distance between the eye or the viewpoint's origin (0,0,0) and
-	     * the display object located in the z axis. During the perspective
-	     * transformation, the <code>focalLength</code> is calculated
-	     * dynamically using the angle of the field of view and the stage's
-	     * aspect ratio (stage width divided by stage height).
-	     *
-	     * @see away.geom.PerspectiveProjection#fieldOfView
-	     */
-	    focalLength: number;
-	    /**
-	     * A two-dimensional point representing the center of the projection,
-	     * the vanishing point for the display object.
-	     *
-	     * <p>The <code>projectionCenter</code> property is an offset to the
-	     * default registration point that is the upper left of the stage,
-	     * point (0,0). The default projection transformation center is in the
-	     * middle of the stage, which means the three-dimensional display
-	     * objects disappear toward the center of the stage as they move
-	     * backwards in the z axis.</p>
-	     */
-	    projectionCenter: Point;
-	    /**
-	     * Creates an instance of a PerspectiveProjection object.
-	     */
-	    constructor();
-	    /**
-	     * Returns the underlying Matrix3D object of the display object.
-	     *
-	     * <p>A display object, like the root object, can have a
-	     * PerspectiveProjection object without needing a Matrix3D property
-	     * defined for its transformations. In fact, use either a
-	     * PerspectiveProjection or a Matrix3D object to specify the
-	     * perspective transformation. If when using the PerspectiveProjection
-	     * object, a Matrix3D object was needed, the <code>toMatrix3D()</code>
-	     * method can retrieve the underlying Matrix3D object of the display
-	     * object. For example, the <code>toMatrix3D()</code> method can be
-	     * used with the <code>Utils3D.projectVectors()</code> method.</p>
-	     *
-	     * @see away.geom.Matrix3D
-	     */
-	    toMatrix3D(): Matrix3D;
-	}
-	export = PerspectiveProjection;
-	
-}
-declare module "awayjs-core/lib/geom/PoissonLookup" {
-	class PoissonLookup {
-	    static _distributions: number[][];
-	    static initDistributions(): void;
-	    static getDistribution(n: number): number[];
-	}
-	export = PoissonLookup;
-	
-}
-declare module "awayjs-core/lib/geom/Sphere" {
-	import Vector3D = require("awayjs-core/lib/geom/Vector3D");
-	class Sphere {
-	    /**
-	     *
-	     */
-	    x: number;
-	    /**
-	     *
-	     */
-	    y: number;
-	    /**
-	     *
-	     */
-	    z: number;
-	    /**
-	     *
-	     */
-	    radius: number;
-	    /**
-	     * Create a Sphere with ABCD coefficients
-	     */
-	    constructor(x?: number, y?: number, z?: number, radius?: number);
-	    rayIntersection(position: Vector3D, direction: Vector3D, targetNormal: Vector3D): number;
-	    containsPoint(position: Vector3D): boolean;
-	    toString(): string;
-	}
-	export = Sphere;
-	
-}
-declare module "awayjs-core/lib/geom/UVTransform" {
-	import Matrix = require("awayjs-core/lib/geom/Matrix");
-	class UVTransform {
-	    private _uvMatrix;
-	    private _uvMatrixDirty;
-	    private _rotation;
-	    private _scaleU;
-	    private _scaleV;
-	    private _offsetU;
-	    private _offsetV;
-	    /**
-	     *
-	     */
-	    offsetU: number;
-	    /**
-	     *
-	     */
-	    offsetV: number;
-	    /**
-	     *
-	     */
-	    rotation: number;
-	    /**
-	     *
-	     */
-	    scaleU: number;
-	    /**
-	     *
-	     */
-	    scaleV: number;
-	    /**
-	     *
-	     */
-	    matrix: Matrix;
-	    constructor();
-	    /**
-	     * @private
-	     */
-	    private updateUVMatrix();
-	}
-	export = UVTransform;
 	
 }
 declare module "awayjs-core/lib/net/URLRequestMethod" {
@@ -3631,7 +3631,7 @@ declare module "awayjs-core/lib/library/AssetLibraryIterator" {
 	    private _assets;
 	    private _filtered;
 	    private _idx;
-	    constructor(assets: IAsset[], assetTypeFilter: string, namespaceFilter: string, filterFunc: any);
+	    constructor(assets: Array<IAsset>, assetTypeFilter: string, namespaceFilter: string, filterFunc: any);
 	    currentAsset: IAsset;
 	    numAssets: number;
 	    next(): IAsset;
@@ -4206,11 +4206,11 @@ declare module "awayjs-core/lib/parsers/ResourceDependency" {
 	    /**
 	     *
 	     */
-	    assets: IAsset[];
+	    assets: Array<IAsset>;
 	    /**
 	     *
 	     */
-	    dependencies: ResourceDependency[];
+	    dependencies: Array<ResourceDependency>;
 	    /**
 	     * @private
 	     * Method to set data after having already created the dependency object, e.g. after load.
@@ -4368,7 +4368,7 @@ declare module "awayjs-core/lib/parsers/ParserBase" {
 	    /**
 	     * A list of dependencies that need to be loaded and resolved for the object being parsed.
 	     */
-	    dependencies: ResourceDependency[];
+	    dependencies: Array<ResourceDependency>;
 	    /**
 	     * Resolve a dependency when it's loaded. For example, a dependency containing an ImageResource would be assigned
 	     * to a Mesh instance as a BitmapMaterial, a scene graph object would be added to its intended parent. The
@@ -4452,8 +4452,8 @@ declare module "awayjs-core/lib/textures/MipmapGenerator" {
 	     * @param mipmap An optional mip map holder to avoids creating new instances for fe animated materials.
 	     * @param alpha Indicate whether or not the uploaded bitmapData is transparent.
 	     */
-	    static generateMipMaps(source: HTMLImageElement, output?: BitmapData[], alpha?: boolean): any;
-	    static generateMipMaps(source: BitmapData, output?: BitmapData[], alpha?: boolean): any;
+	    static generateMipMaps(source: HTMLImageElement, output?: Array<BitmapData>, alpha?: boolean): any;
+	    static generateMipMaps(source: BitmapData, output?: Array<BitmapData>, alpha?: boolean): any;
 	    private static _getMipmapHolder(mipMapHolder, newW, newH);
 	    static freeMipMapHolder(mipMapHolder: BitmapData): void;
 	}
@@ -4477,6 +4477,7 @@ declare module "awayjs-core/lib/library/AssetType" {
 	    static MATERIAL: string;
 	    static MESH: string;
 	    static TRIANGLE_SUB_MESH: string;
+	    static CURVE_SUB_MESH: string;
 	    static LINE_SUB_MESH: string;
 	    static PRIMITIVE_PREFAB: string;
 	    static SHADOW_MAP_METHOD: string;
@@ -4519,7 +4520,7 @@ declare module "awayjs-core/lib/library/NamedAssetBase" {
 	    name: string;
 	    dispose(): void;
 	    assetNamespace: string;
-	    assetFullPath: string[];
+	    assetFullPath: Array<string>;
 	    assetPathEquals(name: string, ns: string): boolean;
 	    resetAssetPath(name: string, ns?: string, overrideOriginal?: boolean): void;
 	    private updateFullPath();
@@ -4596,8 +4597,8 @@ declare module "awayjs-core/lib/textures/CubeTextureBase" {
 	import BitmapData = require("awayjs-core/lib/base/BitmapData");
 	import TextureProxyBase = require("awayjs-core/lib/textures/TextureProxyBase");
 	class CubeTextureBase extends TextureProxyBase {
-	    _mipmapDataArray: BitmapData[][];
-	    _mipmapDataDirtyArray: boolean[];
+	    _mipmapDataArray: Array<Array<BitmapData>>;
+	    _mipmapDataDirtyArray: Array<boolean>;
 	    constructor();
 	    /**
 	     *
@@ -4614,7 +4615,7 @@ declare module "awayjs-core/lib/textures/CubeTextureBase" {
 	     *
 	     */
 	    invalidateContent(): void;
-	    _iGetMipmapData(side: number): BitmapData[];
+	    _iGetMipmapData(side: number): Array<BitmapData>;
 	    _iGetTextureData(side: number): any;
 	}
 	export = CubeTextureBase;
@@ -4690,7 +4691,7 @@ declare module "awayjs-core/lib/textures/Texture2DBase" {
 	     * @private
 	     */
 	    _pSetSize(width: number, height: number): void;
-	    _iGetMipmapData(): BitmapData[];
+	    _iGetMipmapData(): Array<BitmapData>;
 	    _iGetTextureData(): any;
 	}
 	export = Texture2DBase;
@@ -4895,7 +4896,7 @@ declare module "awayjs-core/lib/library/AssetLoader" {
 	     * @param parsers A Vector of parser classes to enable.
 	     * @see away.parsers.Parsers
 	     */
-	    static enableParsers(parsers: Object[]): void;
+	    static enableParsers(parsers: Array<Object>): void;
 	    /**
 	     * Returns the base dependency of the loader
 	     */
@@ -5365,7 +5366,7 @@ declare module "awayjs-core/lib/library/AssetLibrary" {
 	    /**
 	     *
 	     */
-	    static enableParsers(parserClasses: Object[]): void;
+	    static enableParsers(parserClasses: Array<Object>): void;
 	    /**
 	     * Short-hand for conflictStrategy property on default asset library bundle.
 	     *
@@ -5497,14 +5498,6 @@ declare module "awayjs-core/lib/library/IDUtil" {
 	export = IDUtil;
 	
 }
-declare module "awayjs-core/lib/net/CrossDomainPolicy" {
-	class CrossDomainPolicy {
-	    static ANONYMOUS: string;
-	    static USE_CREDENTIALS: string;
-	}
-	export = CrossDomainPolicy;
-	
-}
 declare module "awayjs-core/lib/parsers/ParserDataFormat" {
 	/**
 	 * An enumeration providing values to describe the data format of parsed data.
@@ -5524,6 +5517,14 @@ declare module "awayjs-core/lib/parsers/ParserDataFormat" {
 	    static IMAGE: string;
 	}
 	export = ParserDataFormat;
+	
+}
+declare module "awayjs-core/lib/net/CrossDomainPolicy" {
+	class CrossDomainPolicy {
+	    static ANONYMOUS: string;
+	    static USE_CREDENTIALS: string;
+	}
+	export = CrossDomainPolicy;
 	
 }
 declare module "awayjs-core/lib/projections/CoordinateSystem" {
@@ -5866,7 +5867,7 @@ declare module "awayjs-core/lib/ui/Keyboard" {
 	    /**
 	     * An array containing all the defined key name constants.
 	     */
-	    static CharCodeStrings: any[];
+	    static CharCodeStrings: Array<any>;
 	    /**
 	     * Constant associated with the key code value for the D key (68).
 	     */

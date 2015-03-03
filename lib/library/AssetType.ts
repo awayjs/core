@@ -8,6 +8,7 @@ class AssetType
 	public static CAMERA:string = 'camera';
 	public static CONTAINER:string = 'container';
 	public static EFFECTS_METHOD:string = 'effectsMethod';
+	public static FONT:string = 'font';
 	public static GEOMETRY:string = 'geometry';
 	public static LINE_SEGMENT:string = 'lineSegment';
 	public static LIGHT:string = 'light';
@@ -23,6 +24,8 @@ class AssetType
 	public static SKELETON_POSE:string = 'skeletonPose';
 	public static SKYBOX:string = 'skybox';
 	public static STATE_TRANSITION:string = 'stateTransition';
+	public static TEXTFIELD:string = 'textfield';
+	public static TEXTFORMAT:string = 'textformat';
 	public static TEXTURE:string = 'texture';
 	public static TEXTURE_PROJECTOR:string = 'textureProjector';
 	public static TIMELINE:string = 'timeline';

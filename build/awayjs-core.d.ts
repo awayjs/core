@@ -3563,6 +3563,45 @@ declare module "awayjs-core/lib/geom/UVTransform" {
 	export = UVTransform;
 	
 }
+declare module "awayjs-core/lib/net/CrossDomainPolicy" {
+	class CrossDomainPolicy {
+	    static ANONYMOUS: string;
+	    static USE_CREDENTIALS: string;
+	}
+	export = CrossDomainPolicy;
+	
+}
+declare module "awayjs-core/lib/net/URLLoaderDataFormat" {
+	class URLLoaderDataFormat {
+	    /**
+	     * TEXT
+	     * @type {string}
+	     */
+	    static TEXT: string;
+	    /**
+	     * Variables / Value Pairs
+	     * @type {string}
+	     */
+	    static VARIABLES: string;
+	    /**
+	     *
+	     * @type {string}
+	     */
+	    static BLOB: string;
+	    /**
+	     *
+	     * @type {string}
+	     */
+	    static ARRAY_BUFFER: string;
+	    /**
+	     *
+	     * @type {string}
+	     */
+	    static BINARY: string;
+	}
+	export = URLLoaderDataFormat;
+	
+}
 declare module "awayjs-core/lib/net/URLRequestMethod" {
 	class URLRequestMethod {
 	    /**
@@ -3623,6 +3662,190 @@ declare module "awayjs-core/lib/net/URLRequest" {
 	    dispose(): void;
 	}
 	export = URLRequest;
+	
+}
+declare module "awayjs-core/lib/net/URLVariables" {
+	class URLVariables {
+	    private _variables;
+	    /**
+	     *
+	     * @param source
+	     */
+	    constructor(source?: string);
+	    /**
+	     *
+	     * @param source
+	     */
+	    decode(source: string): void;
+	    /**
+	     *
+	     * @returns {string}
+	     */
+	    toString(): string;
+	    /**
+	     *
+	     * @returns {Object}
+	     */
+	    /**
+	     *
+	     * @returns {Object}
+	     */
+	    variables: Object;
+	    /**
+	     *
+	     * @returns {Object}
+	     */
+	    formData: FormData;
+	}
+	export = URLVariables;
+	
+}
+declare module "awayjs-core/lib/net/URLLoader" {
+	import URLRequest = require("awayjs-core/lib/net/URLRequest");
+	import EventDispatcher = require("awayjs-core/lib/events/EventDispatcher");
+	/**
+	 * The URLLoader is used to load a single file, as part of a resource.
+	 *
+	 * While URLLoader can be used directly, e.g. to create a third-party asset
+	 * management system, it's recommended to use any of the classes Loader3D, AssetLoader
+	 * and AssetLibrary instead in most cases.
+	 *
+	 * @see AssetLoader
+	 * @see away.library.AssetLibrary
+	 */
+	class URLLoader extends EventDispatcher {
+	    private _XHR;
+	    private _bytesLoaded;
+	    private _bytesTotal;
+	    private _dataFormat;
+	    private _loadError;
+	    private _request;
+	    private _data;
+	    private _loadStartEvent;
+	    private _loadErrorEvent;
+	    private _loadCompleteEvent;
+	    private _progressEvent;
+	    /**
+	     * Creates a new URLLoader object.
+	     */
+	    constructor();
+	    /**
+	     *
+	     */
+	    url: string;
+	    /**
+	     *
+	     */
+	    data: any;
+	    /**
+	     *
+	     * URLLoaderDataFormat.BINARY
+	     * URLLoaderDataFormat.TEXT
+	     * URLLoaderDataFormat.VARIABLES
+	     *
+	     * @param format
+	     */
+	    dataFormat: string;
+	    /**
+	     *
+	     * @returns {number}
+	     */
+	    bytesLoaded: number;
+	    /**
+	     *
+	     * @returns {number}
+	     */
+	    bytesTotal: number;
+	    /**
+	     * Load a resource from a file.
+	     *
+	     * @param request The URLRequest object containing the URL of the object to be loaded.
+	     */
+	    load(request: URLRequest): void;
+	    /**
+	     *
+	     */
+	    close(): void;
+	    /**
+	     *
+	     */
+	    dispose(): void;
+	    /**
+	     *
+	     * @param xhr
+	     * @param responseType
+	     */
+	    private setResponseType(xhr, responseType);
+	    /**
+	     *
+	     * @param request {URLRequest}
+	     */
+	    private getRequest(request);
+	    /**
+	     *
+	     * @param request {URLRequest}
+	     */
+	    private postRequest(request);
+	    /**
+	     *
+	     * @param error {XMLHttpRequestException}
+	     */
+	    private handleXmlHttpRequestException(error);
+	    /**
+	     *
+	     */
+	    private initXHR();
+	    /**
+	     *
+	     */
+	    private disposeXHR();
+	    /**
+	     *
+	     * @param source
+	     */
+	    decodeURLVariables(source: string): Object;
+	    /**
+	     * When XHR state changes
+	     * @param event
+	     */
+	    private onReadyStateChange(event);
+	    /**
+	     * When the request has completed, regardless of whether or not it was successful.
+	     * @param event
+	     */
+	    private onLoadEnd(event);
+	    /**
+	     * When the author specified timeout has passed before the request could complete.
+	     * @param event
+	     */
+	    private onTimeOut(event);
+	    /**
+	     * When the request has been aborted, either by invoking the abort() method or navigating away from the page.
+	     * @param event
+	     */
+	    private onAbort(event);
+	    /**
+	     * While loading and sending data.
+	     * @param event
+	     */
+	    private onProgress(event);
+	    /**
+	     * When the request starts.
+	     * @param event
+	     */
+	    private onLoadStart(event);
+	    /**
+	     * When the request has successfully completed.
+	     * @param event
+	     */
+	    private onLoadComplete(event);
+	    /**
+	     * When the request has failed. ( due to network issues ).
+	     * @param event
+	     */
+	    private onLoadError(event);
+	}
+	export = URLLoader;
 	
 }
 declare module "awayjs-core/lib/library/AssetLibraryIterator" {
@@ -3882,221 +4105,6 @@ declare module "awayjs-core/lib/library/AssetLoaderToken" {
 	    hasEventListener(type: string, listener?: Function): boolean;
 	}
 	export = AssetLoaderToken;
-	
-}
-declare module "awayjs-core/lib/net/URLLoaderDataFormat" {
-	class URLLoaderDataFormat {
-	    /**
-	     * TEXT
-	     * @type {string}
-	     */
-	    static TEXT: string;
-	    /**
-	     * Variables / Value Pairs
-	     * @type {string}
-	     */
-	    static VARIABLES: string;
-	    /**
-	     *
-	     * @type {string}
-	     */
-	    static BLOB: string;
-	    /**
-	     *
-	     * @type {string}
-	     */
-	    static ARRAY_BUFFER: string;
-	    /**
-	     *
-	     * @type {string}
-	     */
-	    static BINARY: string;
-	}
-	export = URLLoaderDataFormat;
-	
-}
-declare module "awayjs-core/lib/net/URLVariables" {
-	class URLVariables {
-	    private _variables;
-	    /**
-	     *
-	     * @param source
-	     */
-	    constructor(source?: string);
-	    /**
-	     *
-	     * @param source
-	     */
-	    decode(source: string): void;
-	    /**
-	     *
-	     * @returns {string}
-	     */
-	    toString(): string;
-	    /**
-	     *
-	     * @returns {Object}
-	     */
-	    /**
-	     *
-	     * @returns {Object}
-	     */
-	    variables: Object;
-	    /**
-	     *
-	     * @returns {Object}
-	     */
-	    formData: FormData;
-	}
-	export = URLVariables;
-	
-}
-declare module "awayjs-core/lib/net/URLLoader" {
-	import URLRequest = require("awayjs-core/lib/net/URLRequest");
-	import EventDispatcher = require("awayjs-core/lib/events/EventDispatcher");
-	/**
-	 * The URLLoader is used to load a single file, as part of a resource.
-	 *
-	 * While URLLoader can be used directly, e.g. to create a third-party asset
-	 * management system, it's recommended to use any of the classes Loader3D, AssetLoader
-	 * and AssetLibrary instead in most cases.
-	 *
-	 * @see AssetLoader
-	 * @see away.library.AssetLibrary
-	 */
-	class URLLoader extends EventDispatcher {
-	    private _XHR;
-	    private _bytesLoaded;
-	    private _bytesTotal;
-	    private _dataFormat;
-	    private _loadError;
-	    private _request;
-	    private _data;
-	    private _loadStartEvent;
-	    private _loadErrorEvent;
-	    private _loadCompleteEvent;
-	    private _progressEvent;
-	    /**
-	     * Creates a new URLLoader object.
-	     */
-	    constructor();
-	    /**
-	     *
-	     */
-	    url: string;
-	    /**
-	     *
-	     */
-	    data: any;
-	    /**
-	     *
-	     * URLLoaderDataFormat.BINARY
-	     * URLLoaderDataFormat.TEXT
-	     * URLLoaderDataFormat.VARIABLES
-	     *
-	     * @param format
-	     */
-	    dataFormat: string;
-	    /**
-	     *
-	     * @returns {number}
-	     */
-	    bytesLoaded: number;
-	    /**
-	     *
-	     * @returns {number}
-	     */
-	    bytesTotal: number;
-	    /**
-	     * Load a resource from a file.
-	     *
-	     * @param request The URLRequest object containing the URL of the object to be loaded.
-	     */
-	    load(request: URLRequest): void;
-	    /**
-	     *
-	     */
-	    close(): void;
-	    /**
-	     *
-	     */
-	    dispose(): void;
-	    /**
-	     *
-	     * @param xhr
-	     * @param responseType
-	     */
-	    private setResponseType(xhr, responseType);
-	    /**
-	     *
-	     * @param request {URLRequest}
-	     */
-	    private getRequest(request);
-	    /**
-	     *
-	     * @param request {URLRequest}
-	     */
-	    private postRequest(request);
-	    /**
-	     *
-	     * @param error {XMLHttpRequestException}
-	     */
-	    private handleXmlHttpRequestException(error);
-	    /**
-	     *
-	     */
-	    private initXHR();
-	    /**
-	     *
-	     */
-	    private disposeXHR();
-	    /**
-	     *
-	     * @param source
-	     */
-	    decodeURLVariables(source: string): Object;
-	    /**
-	     * When XHR state changes
-	     * @param event
-	     */
-	    private onReadyStateChange(event);
-	    /**
-	     * When the request has completed, regardless of whether or not it was successful.
-	     * @param event
-	     */
-	    private onLoadEnd(event);
-	    /**
-	     * When the author specified timeout has passed before the request could complete.
-	     * @param event
-	     */
-	    private onTimeOut(event);
-	    /**
-	     * When the request has been aborted, either by invoking the abort() method or navigating away from the page.
-	     * @param event
-	     */
-	    private onAbort(event);
-	    /**
-	     * While loading and sending data.
-	     * @param event
-	     */
-	    private onProgress(event);
-	    /**
-	     * When the request starts.
-	     * @param event
-	     */
-	    private onLoadStart(event);
-	    /**
-	     * When the request has successfully completed.
-	     * @param event
-	     */
-	    private onLoadComplete(event);
-	    /**
-	     * When the request has failed. ( due to network issues ).
-	     * @param event
-	     */
-	    private onLoadError(event);
-	}
-	export = URLLoader;
 	
 }
 declare module "awayjs-core/lib/parsers/ParserUtils" {
@@ -5501,14 +5509,6 @@ declare module "awayjs-core/lib/library/IDUtil" {
 	export = IDUtil;
 	
 }
-declare module "awayjs-core/lib/net/CrossDomainPolicy" {
-	class CrossDomainPolicy {
-	    static ANONYMOUS: string;
-	    static USE_CREDENTIALS: string;
-	}
-	export = CrossDomainPolicy;
-	
-}
 declare module "awayjs-core/lib/parsers/ParserDataFormat" {
 	/**
 	 * An enumeration providing values to describe the data format of parsed data.
@@ -5703,101 +5703,6 @@ declare module "awayjs-core/lib/projections/OrthographicProjection" {
 	    pUpdateMatrix(): void;
 	}
 	export = OrthographicProjection;
-	
-}
-declare module "awayjs-core/lib/textures/BitmapCubeTexture" {
-	import BitmapData = require("awayjs-core/lib/base/BitmapData");
-	import CubeTextureBase = require("awayjs-core/lib/textures/CubeTextureBase");
-	class BitmapCubeTexture extends CubeTextureBase {
-	    private _bitmapDatas;
-	    /**
-	     * The texture on the cube's right face.
-	     */
-	    positiveX: BitmapData;
-	    /**
-	     * The texture on the cube's left face.
-	     */
-	    negativeX: BitmapData;
-	    /**
-	     * The texture on the cube's top face.
-	     */
-	    positiveY: BitmapData;
-	    /**
-	     * The texture on the cube's bottom face.
-	     */
-	    negativeY: BitmapData;
-	    /**
-	     * The texture on the cube's far face.
-	     */
-	    positiveZ: BitmapData;
-	    /**
-	     * The texture on the cube's near face.
-	     */
-	    negativeZ: BitmapData;
-	    constructor(posX: BitmapData, negX: BitmapData, posY: BitmapData, negY: BitmapData, posZ: BitmapData, negZ: BitmapData);
-	    /**
-	     *
-	     * @param value
-	     * @private
-	     */
-	    private _testSize(value);
-	    dispose(): void;
-	    _iGetTextureData(side: number): BitmapData;
-	}
-	export = BitmapCubeTexture;
-	
-}
-declare module "awayjs-core/lib/textures/BitmapTexture" {
-	import BitmapData = require("awayjs-core/lib/base/BitmapData");
-	import Texture2DBase = require("awayjs-core/lib/textures/Texture2DBase");
-	class BitmapTexture extends Texture2DBase {
-	    _bitmapData: BitmapData;
-	    /**
-	     *
-	     * @returns {BitmapData}
-	     */
-	    bitmapData: BitmapData;
-	    constructor(bitmapData: BitmapData);
-	    dispose(): void;
-	    _iGetTextureData(): BitmapData;
-	}
-	export = BitmapTexture;
-	
-}
-declare module "awayjs-core/lib/textures/RenderTexture" {
-	import Texture2DBase = require("awayjs-core/lib/textures/Texture2DBase");
-	class RenderTexture extends Texture2DBase {
-	    /**
-	     *
-	     * @returns {number}
-	     */
-	    width: number;
-	    /**
-	     *
-	     * @returns {number}
-	     */
-	    height: number;
-	    constructor(width: number, height: number);
-	}
-	export = RenderTexture;
-	
-}
-declare module "awayjs-core/lib/textures/SpecularBitmapTexture" {
-	import BitmapData = require("awayjs-core/lib/base/BitmapData");
-	import BitmapTexture = require("awayjs-core/lib/textures/BitmapTexture");
-	/**
-	 * A convenience texture that encodes a specular map in the red channel, and the gloss map in the green channel, as expected by BasicSpecularMapMethod
-	 */
-	class SpecularBitmapTexture extends BitmapTexture {
-	    private _specularMap;
-	    private _glossMap;
-	    constructor(specularMap?: BitmapData, glossMap?: BitmapData);
-	    specularMap: BitmapData;
-	    glossMap: BitmapData;
-	    private _testSize();
-	    _iGetTextureData(): BitmapData;
-	}
-	export = SpecularBitmapTexture;
 	
 }
 declare module "awayjs-core/lib/ui/Keyboard" {
@@ -6715,5 +6620,100 @@ declare module "awayjs-core/lib/utils/RequestAnimationFrame" {
 	    private _tick();
 	}
 	export = RequestAnimationFrame;
+	
+}
+declare module "awayjs-core/lib/textures/BitmapCubeTexture" {
+	import BitmapData = require("awayjs-core/lib/base/BitmapData");
+	import CubeTextureBase = require("awayjs-core/lib/textures/CubeTextureBase");
+	class BitmapCubeTexture extends CubeTextureBase {
+	    private _bitmapDatas;
+	    /**
+	     * The texture on the cube's right face.
+	     */
+	    positiveX: BitmapData;
+	    /**
+	     * The texture on the cube's left face.
+	     */
+	    negativeX: BitmapData;
+	    /**
+	     * The texture on the cube's top face.
+	     */
+	    positiveY: BitmapData;
+	    /**
+	     * The texture on the cube's bottom face.
+	     */
+	    negativeY: BitmapData;
+	    /**
+	     * The texture on the cube's far face.
+	     */
+	    positiveZ: BitmapData;
+	    /**
+	     * The texture on the cube's near face.
+	     */
+	    negativeZ: BitmapData;
+	    constructor(posX: BitmapData, negX: BitmapData, posY: BitmapData, negY: BitmapData, posZ: BitmapData, negZ: BitmapData);
+	    /**
+	     *
+	     * @param value
+	     * @private
+	     */
+	    private _testSize(value);
+	    dispose(): void;
+	    _iGetTextureData(side: number): BitmapData;
+	}
+	export = BitmapCubeTexture;
+	
+}
+declare module "awayjs-core/lib/textures/BitmapTexture" {
+	import BitmapData = require("awayjs-core/lib/base/BitmapData");
+	import Texture2DBase = require("awayjs-core/lib/textures/Texture2DBase");
+	class BitmapTexture extends Texture2DBase {
+	    _bitmapData: BitmapData;
+	    /**
+	     *
+	     * @returns {BitmapData}
+	     */
+	    bitmapData: BitmapData;
+	    constructor(bitmapData: BitmapData);
+	    dispose(): void;
+	    _iGetTextureData(): BitmapData;
+	}
+	export = BitmapTexture;
+	
+}
+declare module "awayjs-core/lib/textures/RenderTexture" {
+	import Texture2DBase = require("awayjs-core/lib/textures/Texture2DBase");
+	class RenderTexture extends Texture2DBase {
+	    /**
+	     *
+	     * @returns {number}
+	     */
+	    width: number;
+	    /**
+	     *
+	     * @returns {number}
+	     */
+	    height: number;
+	    constructor(width: number, height: number);
+	}
+	export = RenderTexture;
+	
+}
+declare module "awayjs-core/lib/textures/SpecularBitmapTexture" {
+	import BitmapData = require("awayjs-core/lib/base/BitmapData");
+	import BitmapTexture = require("awayjs-core/lib/textures/BitmapTexture");
+	/**
+	 * A convenience texture that encodes a specular map in the red channel, and the gloss map in the green channel, as expected by BasicSpecularMapMethod
+	 */
+	class SpecularBitmapTexture extends BitmapTexture {
+	    private _specularMap;
+	    private _glossMap;
+	    constructor(specularMap?: BitmapData, glossMap?: BitmapData);
+	    specularMap: BitmapData;
+	    glossMap: BitmapData;
+	    private _testSize();
+	    _iGetTextureData(): BitmapData;
+	}
+	export = SpecularBitmapTexture;
 	
 }

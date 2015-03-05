@@ -189,7 +189,7 @@ gulp.task('version', ['commit'], function(callback){
 gulp.task('push', ['version'], function(callback){
     gulp.src('')
         .pipe(shell([
-            'git push --tags'
+            'git push origin --tags'
         ])).on('error', function(err) {
             throw err;
         }).on('end', callback);

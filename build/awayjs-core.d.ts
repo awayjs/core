@@ -5705,101 +5705,6 @@ declare module "awayjs-core/lib/projections/OrthographicProjection" {
 	export = OrthographicProjection;
 	
 }
-declare module "awayjs-core/lib/textures/BitmapCubeTexture" {
-	import BitmapData = require("awayjs-core/lib/base/BitmapData");
-	import CubeTextureBase = require("awayjs-core/lib/textures/CubeTextureBase");
-	class BitmapCubeTexture extends CubeTextureBase {
-	    private _bitmapDatas;
-	    /**
-	     * The texture on the cube's right face.
-	     */
-	    positiveX: BitmapData;
-	    /**
-	     * The texture on the cube's left face.
-	     */
-	    negativeX: BitmapData;
-	    /**
-	     * The texture on the cube's top face.
-	     */
-	    positiveY: BitmapData;
-	    /**
-	     * The texture on the cube's bottom face.
-	     */
-	    negativeY: BitmapData;
-	    /**
-	     * The texture on the cube's far face.
-	     */
-	    positiveZ: BitmapData;
-	    /**
-	     * The texture on the cube's near face.
-	     */
-	    negativeZ: BitmapData;
-	    constructor(posX: BitmapData, negX: BitmapData, posY: BitmapData, negY: BitmapData, posZ: BitmapData, negZ: BitmapData);
-	    /**
-	     *
-	     * @param value
-	     * @private
-	     */
-	    private _testSize(value);
-	    dispose(): void;
-	    _iGetTextureData(side: number): BitmapData;
-	}
-	export = BitmapCubeTexture;
-	
-}
-declare module "awayjs-core/lib/textures/BitmapTexture" {
-	import BitmapData = require("awayjs-core/lib/base/BitmapData");
-	import Texture2DBase = require("awayjs-core/lib/textures/Texture2DBase");
-	class BitmapTexture extends Texture2DBase {
-	    _bitmapData: BitmapData;
-	    /**
-	     *
-	     * @returns {BitmapData}
-	     */
-	    bitmapData: BitmapData;
-	    constructor(bitmapData: BitmapData);
-	    dispose(): void;
-	    _iGetTextureData(): BitmapData;
-	}
-	export = BitmapTexture;
-	
-}
-declare module "awayjs-core/lib/textures/RenderTexture" {
-	import Texture2DBase = require("awayjs-core/lib/textures/Texture2DBase");
-	class RenderTexture extends Texture2DBase {
-	    /**
-	     *
-	     * @returns {number}
-	     */
-	    width: number;
-	    /**
-	     *
-	     * @returns {number}
-	     */
-	    height: number;
-	    constructor(width: number, height: number);
-	}
-	export = RenderTexture;
-	
-}
-declare module "awayjs-core/lib/textures/SpecularBitmapTexture" {
-	import BitmapData = require("awayjs-core/lib/base/BitmapData");
-	import BitmapTexture = require("awayjs-core/lib/textures/BitmapTexture");
-	/**
-	 * A convenience texture that encodes a specular map in the red channel, and the gloss map in the green channel, as expected by BasicSpecularMapMethod
-	 */
-	class SpecularBitmapTexture extends BitmapTexture {
-	    private _specularMap;
-	    private _glossMap;
-	    constructor(specularMap?: BitmapData, glossMap?: BitmapData);
-	    specularMap: BitmapData;
-	    glossMap: BitmapData;
-	    private _testSize();
-	    _iGetTextureData(): BitmapData;
-	}
-	export = SpecularBitmapTexture;
-	
-}
 declare module "awayjs-core/lib/ui/Keyboard" {
 	class Keyboard {
 	    /**
@@ -6715,5 +6620,100 @@ declare module "awayjs-core/lib/utils/RequestAnimationFrame" {
 	    private _tick();
 	}
 	export = RequestAnimationFrame;
+	
+}
+declare module "awayjs-core/lib/textures/BitmapCubeTexture" {
+	import BitmapData = require("awayjs-core/lib/base/BitmapData");
+	import CubeTextureBase = require("awayjs-core/lib/textures/CubeTextureBase");
+	class BitmapCubeTexture extends CubeTextureBase {
+	    private _bitmapDatas;
+	    /**
+	     * The texture on the cube's right face.
+	     */
+	    positiveX: BitmapData;
+	    /**
+	     * The texture on the cube's left face.
+	     */
+	    negativeX: BitmapData;
+	    /**
+	     * The texture on the cube's top face.
+	     */
+	    positiveY: BitmapData;
+	    /**
+	     * The texture on the cube's bottom face.
+	     */
+	    negativeY: BitmapData;
+	    /**
+	     * The texture on the cube's far face.
+	     */
+	    positiveZ: BitmapData;
+	    /**
+	     * The texture on the cube's near face.
+	     */
+	    negativeZ: BitmapData;
+	    constructor(posX: BitmapData, negX: BitmapData, posY: BitmapData, negY: BitmapData, posZ: BitmapData, negZ: BitmapData);
+	    /**
+	     *
+	     * @param value
+	     * @private
+	     */
+	    private _testSize(value);
+	    dispose(): void;
+	    _iGetTextureData(side: number): BitmapData;
+	}
+	export = BitmapCubeTexture;
+	
+}
+declare module "awayjs-core/lib/textures/BitmapTexture" {
+	import BitmapData = require("awayjs-core/lib/base/BitmapData");
+	import Texture2DBase = require("awayjs-core/lib/textures/Texture2DBase");
+	class BitmapTexture extends Texture2DBase {
+	    _bitmapData: BitmapData;
+	    /**
+	     *
+	     * @returns {BitmapData}
+	     */
+	    bitmapData: BitmapData;
+	    constructor(bitmapData: BitmapData);
+	    dispose(): void;
+	    _iGetTextureData(): BitmapData;
+	}
+	export = BitmapTexture;
+	
+}
+declare module "awayjs-core/lib/textures/RenderTexture" {
+	import Texture2DBase = require("awayjs-core/lib/textures/Texture2DBase");
+	class RenderTexture extends Texture2DBase {
+	    /**
+	     *
+	     * @returns {number}
+	     */
+	    width: number;
+	    /**
+	     *
+	     * @returns {number}
+	     */
+	    height: number;
+	    constructor(width: number, height: number);
+	}
+	export = RenderTexture;
+	
+}
+declare module "awayjs-core/lib/textures/SpecularBitmapTexture" {
+	import BitmapData = require("awayjs-core/lib/base/BitmapData");
+	import BitmapTexture = require("awayjs-core/lib/textures/BitmapTexture");
+	/**
+	 * A convenience texture that encodes a specular map in the red channel, and the gloss map in the green channel, as expected by BasicSpecularMapMethod
+	 */
+	class SpecularBitmapTexture extends BitmapTexture {
+	    private _specularMap;
+	    private _glossMap;
+	    constructor(specularMap?: BitmapData, glossMap?: BitmapData);
+	    specularMap: BitmapData;
+	    glossMap: BitmapData;
+	    private _testSize();
+	    _iGetTextureData(): BitmapData;
+	}
+	export = SpecularBitmapTexture;
 	
 }

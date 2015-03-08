@@ -1,4 +1,4 @@
-import BlendMode				= require("awayjs-core/lib/base/BlendMode");
+import BlendMode				= require("awayjs-core/lib/data/BlendMode");
 import ColorTransform			= require("awayjs-core/lib/geom/ColorTransform");
 import Matrix					= require("awayjs-core/lib/geom/Matrix");
 import Rectangle				= require("awayjs-core/lib/geom/Rectangle");

@@ -1,4 +1,4 @@
-import BitmapData				= require("awayjs-core/lib/base/BitmapData");
+import BitmapData				= require("awayjs-core/lib/data/BitmapData");
 import Matrix					= require("awayjs-core/lib/geom/Matrix");
 import Rectangle				= require("awayjs-core/lib/geom/Rectangle");
 

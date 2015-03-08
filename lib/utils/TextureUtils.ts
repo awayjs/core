@@ -1,4 +1,4 @@
-import BitmapData				= require("awayjs-core/lib/base/BitmapData");
+import BitmapData				= require("awayjs-core/lib/data/BitmapData");
 
 class TextureUtils
 {
@@ -6,14 +6,10 @@ class TextureUtils
 
 	public static isBitmapDataValid(bitmapData:BitmapData):boolean
 	{
-		if (bitmapData == null) {
-
+		if (bitmapData == null)
 			return true;
 
-		}
-
 		return TextureUtils.isDimensionValid(bitmapData.width) && TextureUtils.isDimensionValid(bitmapData.height);
-
 	}
 
 	public static isHTMLImageElementValid(image:HTMLImageElement):boolean
@@ -22,21 +18,16 @@ class TextureUtils
 			return true;
 
 		return TextureUtils.isDimensionValid(image.width) && TextureUtils.isDimensionValid(image.height);
-
 	}
 
 	public static isDimensionValid(d:number):boolean
 	{
-
 		return d >= 1 && d <= TextureUtils.MAX_SIZE && TextureUtils.isPowerOfTwo(d);
-
 	}
 
 	public static isPowerOfTwo(value:number):boolean
 	{
-
-		return value? ( ( value & -value ) == value ) : false;
-
+		return value? ((value & -value) == value) : false;
 	}
 
 	public static getBestPowerOf2(value:number):number

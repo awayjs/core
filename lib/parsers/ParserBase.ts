@@ -1,4 +1,4 @@
-import BitmapData				= require("awayjs-core/lib/base/BitmapData");
+import BitmapData				= require("awayjs-core/lib/data/BitmapData");
 import IAsset					= require("awayjs-core/lib/library/IAsset");
 import URLRequest				= require("awayjs-core/lib/net/URLRequest");
 import AbstractMethodError		= require("awayjs-core/lib/errors/AbstractMethodError");

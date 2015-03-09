@@ -1,4 +1,4 @@
-declare module "awayjs-core/lib/base/BlendMode" {
+declare module "awayjs-core/lib/data/BlendMode" {
 	/**
 	 * A class that provides constant values for visual blend mode effects. These
 	 * constants are used in the following:
@@ -1637,8 +1637,8 @@ declare module "awayjs-core/lib/utils/ByteArray" {
 	export = ByteArray;
 	
 }
-declare module "awayjs-core/lib/base/BitmapData" {
-	import BlendMode = require("awayjs-core/lib/base/BlendMode");
+declare module "awayjs-core/lib/data/BitmapData" {
+	import BlendMode = require("awayjs-core/lib/data/BlendMode");
 	import ColorTransform = require("awayjs-core/lib/geom/ColorTransform");
 	import Matrix = require("awayjs-core/lib/geom/Matrix");
 	import Rectangle = require("awayjs-core/lib/geom/Rectangle");
@@ -2139,7 +2139,7 @@ declare module "awayjs-core/lib/base/BitmapData" {
 	export = BitmapData;
 	
 }
-declare module "awayjs-core/lib/base/BitmapDataChannel" {
+declare module "awayjs-core/lib/data/BitmapDataChannel" {
 	class BitmapDataChannel {
 	    static ALPHA: number;
 	    static BLUE: number;
@@ -2147,50 +2147,6 @@ declare module "awayjs-core/lib/base/BitmapDataChannel" {
 	    static RED: number;
 	}
 	export = BitmapDataChannel;
-	
-}
-declare module "awayjs-core/lib/errors/DocumentError" {
-	import Error = require("awayjs-core/lib/errors/Error");
-	class DocumentError extends Error {
-	    static DOCUMENT_DOES_NOT_EXIST: string;
-	    constructor(message?: string, id?: number);
-	}
-	export = DocumentError;
-	
-}
-declare module "awayjs-core/lib/errors/PartialImplementationError" {
-	import Error = require("awayjs-core/lib/errors/Error");
-	/**
-	 * AbstractMethodError is thrown when an abstract method is called. The method in question should be overridden
-	 * by a concrete subclass.
-	 */
-	class PartialImplementationError extends Error {
-	    /**
-	     * Create a new AbstractMethodError.
-	     * @param message An optional message to override the default error message.
-	     * @param id The id of the error.
-	     */
-	    constructor(dependency?: string, id?: number);
-	}
-	export = PartialImplementationError;
-	
-}
-declare module "awayjs-core/lib/errors/RangeError" {
-	import Error = require("awayjs-core/lib/errors/Error");
-	/**
-	 * RangeError is thrown when an index is accessed out of range of the number of
-	 * available indices on an Array.
-	 */
-	class RangeError extends Error {
-	    /**
-	     * Create a new RangeError.
-	     *
-	     * @param message An optional message to override the default error message.
-	     * @param id The id of the error.
-	     */
-	    constructor(message?: string, id?: number);
-	}
-	export = RangeError;
 	
 }
 declare module "awayjs-core/lib/events/Event" {
@@ -2224,286 +2180,46 @@ declare module "awayjs-core/lib/events/Event" {
 	export = Event;
 	
 }
-declare module "awayjs-core/lib/events/IEventDispatcher" {
+declare module "awayjs-core/lib/events/GeometryEvent" {
+	import SubGeometryBase = require("awayjs-core/lib/data/SubGeometryBase");
 	import Event = require("awayjs-core/lib/events/Event");
 	/**
-	 * Base interface for dispatching events
-	 *
-	 * @interface away.events.IEventDispatcher
-	 *
-	 */
-	interface IEventDispatcher {
-	    /**
-	     * Add an event listener
-	     * @method addEventListener
-	     * @param {String} Name of event to add a listener for
-	     * @param {Function} Callback function
-	     */
-	    addEventListener(type: string, listener: Function): any;
-	    /**
-	     * Remove an event listener
-	     * @method removeEventListener
-	     * @param {String} Name of event to remove a listener for
-	     * @param {Function} Callback function
-	     */
-	    removeEventListener(type: string, listener: Function): any;
-	    /**
-	     * Dispatch an event
-	     * @method dispatchEvent
-	     * @param {Event} Event to dispatch
-	     */
-	    dispatchEvent(event: Event): any;
-	    /**
-	     * check if an object has an event listener assigned to it
-	     * @method hasListener
-	     * @param {String} Name of event to remove a listener for
-	     * @param {Function} Callback function
-	     * @param {Object} Target object listener is added to
-	     */
-	    hasEventListener(type: string, listener?: Function): boolean;
-	}
-	export = IEventDispatcher;
-	
-}
-declare module "awayjs-core/lib/library/IAsset" {
-	import IEventDispatcher = require("awayjs-core/lib/events/IEventDispatcher");
-	interface IAsset extends IEventDispatcher {
-	    /**
-	     *
-	     */
-	    name: string;
-	    /**
-	     *
-	     */
-	    id: number;
-	    /**
-	     *
-	     */
-	    assetNamespace: string;
-	    /**
-	     *
-	     */
-	    assetType: string;
-	    /**
-	     *
-	     */
-	    assetFullPath: Array<string>;
-	    /**
-	     *
-	     * @param name
-	     * @param ns
-	     */
-	    assetPathEquals(name: string, ns: string): boolean;
-	    /**
-	     *
-	     * @param name
-	     * @param ns
-	     * @param overrideOriginal
-	     */
-	    resetAssetPath(name: string, ns: string, overrideOriginal?: boolean): void;
-	    /**
-	     *
-	     */
-	    dispose(): any;
-	}
-	export = IAsset;
-	
-}
-declare module "awayjs-core/lib/events/AssetEvent" {
-	import IAsset = require("awayjs-core/lib/library/IAsset");
-	import Event = require("awayjs-core/lib/events/Event");
-	/**
-	 * @class away.events.AssetEvent
-	 */
-	class AssetEvent extends Event {
-	    /**
-	     *
-	     */
-	    static ASSET_COMPLETE: string;
-	    /**
-	     *
-	     */
-	    static ASSET_RENAME: string;
-	    /**
-	     *
-	     */
-	    static ASSET_CONFLICT_RESOLVED: string;
-	    /**
-	     *
-	     */
-	    static TEXTURE_SIZE_ERROR: string;
-	    private _asset;
-	    private _prevName;
-	    /**
-	     *
-	     */
-	    constructor(type: string, asset?: IAsset, prevName?: string);
-	    /**
-	     *
-	     */
-	    asset: IAsset;
-	    /**
-	     *
-	     */
-	    assetPrevName: string;
-	    /**
-	     *
-	     */
-	    clone(): Event;
-	}
-	export = AssetEvent;
-	
-}
-declare module "awayjs-core/lib/events/EventDispatcher" {
-	import Event = require("awayjs-core/lib/events/Event");
-	/**
-	 * Base class for dispatching events
+	* Dispatched to notify changes in a geometry object's state.
 	*
-	* @class away.events.EventDispatcher
-	*
+	* @class away.events.GeometryEvent
+	* @see away3d.core.base.Geometry
 	*/
-	class EventDispatcher {
-	    private listeners;
-	    private target;
-	    constructor(target?: any);
+	class GeometryEvent extends Event {
 	    /**
-	     * Add an event listener
-	     * @method addEventListener
-	     * @param {String} Name of event to add a listener for
-	     * @param {Function} Callback function
+	     * Dispatched when a TriangleSubGeometry was added to the dispatching Geometry.
 	     */
-	    addEventListener(type: string, listener: Function): void;
+	    static SUB_GEOMETRY_ADDED: string;
 	    /**
-	     * Remove an event listener
-	     * @method removeEventListener
-	     * @param {String} Name of event to remove a listener for
-	     * @param {Function} Callback function
+	     * Dispatched when a TriangleSubGeometry was removed from the dispatching Geometry.
 	     */
-	    removeEventListener(type: string, listener: Function): void;
+	    static SUB_GEOMETRY_REMOVED: string;
 	    /**
-	     * Dispatch an event
-	     * @method dispatchEvent
-	     * @param {Event} Event to dispatch
-	     */
-	    dispatchEvent(event: Event): void;
-	    /**
-	     * get Event Listener Index in array. Returns -1 if no listener is added
-	     * @method getEventListenerIndex
-	     * @param {String} Name of event to remove a listener for
-	     * @param {Function} Callback function
-	     */
-	    private getEventListenerIndex(type, listener);
-	    /**
-	     * check if an object has an event listener assigned to it
-	     * @method hasListener
-	     * @param {String} Name of event to remove a listener for
-	     * @param {Function} Callback function
-	     */
-	    hasEventListener(type: string, listener?: Function): boolean;
-	}
-	export = EventDispatcher;
-	
-}
-declare module "awayjs-core/lib/events/HTTPStatusEvent" {
-	import Event = require("awayjs-core/lib/events/Event");
-	/**
-	 * @class away.events.HTTPStatusEvent
-	 */
-	class HTTPStatusEvent extends Event {
-	    static HTTP_STATUS: string;
-	    status: number;
-	    constructor(type: string, status?: number);
-	}
-	export = HTTPStatusEvent;
-	
-}
-declare module "awayjs-core/lib/events/IOErrorEvent" {
-	import Event = require("awayjs-core/lib/events/Event");
-	class IOErrorEvent extends Event {
-	    static IO_ERROR: string;
-	    constructor(type: string);
-	}
-	export = IOErrorEvent;
-	
-}
-declare module "awayjs-core/lib/events/LoaderEvent" {
-	import IAsset = require("awayjs-core/lib/library/IAsset");
-	import Event = require("awayjs-core/lib/events/Event");
-	class LoaderEvent extends Event {
-	    /**
-	     * Dispatched when a resource and all of its dependencies is retrieved.
-	     */
-	    static RESOURCE_COMPLETE: string;
-	    private _url;
-	    private _content;
-	    private _assets;
-	    /**
-	     * Create a new LoaderEvent object.
 	     *
+	     */
+	    static BOUNDS_INVALID: string;
+	    private _subGeometry;
+	    /**
+	     * Create a new GeometryEvent
 	     * @param type The event type.
-	     * @param url The url of the loaded resource.
-	     * @param assets The assets of the loaded resource.
+	     * @param subGeometry An optional TriangleSubGeometry object that is the subject of this event.
 	     */
-	    constructor(type: string, url?: string, content?: IAsset, assets?: Array<IAsset>);
+	    constructor(type: string, subGeometry?: SubGeometryBase);
 	    /**
-	     * The content returned if the resource has been loaded inside a <code>Loader</code> object.
+	     * The TriangleSubGeometry object that is the subject of this event, if appropriate.
 	     */
-	    content: IAsset;
+	    subGeometry: SubGeometryBase;
 	    /**
-	     * The url of the loaded resource.
-	     */
-	    url: string;
-	    /**
-	     * The error string on loadError.
-	     */
-	    assets: IAsset[];
-	    /**
-	     * Clones the current event.
-	     * @return An exact duplicate of the current event.
+	     * Clones the event.
+	     * @return An exact duplicate of the current object.
 	     */
 	    clone(): Event;
 	}
-	export = LoaderEvent;
-	
-}
-declare module "awayjs-core/lib/events/ParserEvent" {
-	import Event = require("awayjs-core/lib/events/Event");
-	class ParserEvent extends Event {
-	    private _message;
-	    /**
-	     * Dispatched when parsing of an asset completed.
-	     */
-	    static PARSE_COMPLETE: string;
-	    /**
-	     * Dispatched when an error occurs while parsing the data (e.g. because it's
-	     * incorrectly formatted.)
-	     */
-	    static PARSE_ERROR: string;
-	    /**
-	     * Dispatched when a parser is ready to have dependencies retrieved and resolved.
-	     * This is an internal event that should rarely (if ever) be listened for by
-	     * external classes.
-	     */
-	    static READY_FOR_DEPENDENCIES: string;
-	    constructor(type: string, message?: string);
-	    /**
-	     * Additional human-readable message. Usually supplied for ParserEvent.PARSE_ERROR events.
-	     */
-	    message: string;
-	    clone(): Event;
-	}
-	export = ParserEvent;
-	
-}
-declare module "awayjs-core/lib/events/ProgressEvent" {
-	import Event = require("awayjs-core/lib/events/Event");
-	class ProgressEvent extends Event {
-	    static PROGRESS: string;
-	    bytesLoaded: number;
-	    bytesTotal: number;
-	    constructor(type: string);
-	}
-	export = ProgressEvent;
+	export = GeometryEvent;
 	
 }
 declare module "awayjs-core/lib/geom/Orientation3D" {
@@ -2913,6 +2629,1060 @@ declare module "awayjs-core/lib/geom/Matrix3D" {
 	    toString(): string;
 	}
 	export = Matrix3D;
+	
+}
+declare module "awayjs-core/lib/library/AssetType" {
+	class AssetType {
+	    static ANIMATION_NODE: string;
+	    static ANIMATION_SET: string;
+	    static ANIMATION_STATE: string;
+	    static ANIMATOR: string;
+	    static BILLBOARD: string;
+	    static CAMERA: string;
+	    static CONTAINER: string;
+	    static EFFECTS_METHOD: string;
+	    static FONT: string;
+	    static GEOMETRY: string;
+	    static LINE_SEGMENT: string;
+	    static LIGHT: string;
+	    static LIGHT_PICKER: string;
+	    static MATERIAL: string;
+	    static MESH: string;
+	    static TRIANGLE_SUB_MESH: string;
+	    static CURVE_SUB_MESH: string;
+	    static LINE_SUB_MESH: string;
+	    static PRIMITIVE_PREFAB: string;
+	    static SHADOW_MAP_METHOD: string;
+	    static SKELETON: string;
+	    static SKELETON_POSE: string;
+	    static SKYBOX: string;
+	    static STATE_TRANSITION: string;
+	    static TEXTFIELD: string;
+	    static TEXTFORMAT: string;
+	    static TEXTURE: string;
+	    static TEXTURE_PROJECTOR: string;
+	    static TIMELINE: string;
+	}
+	export = AssetType;
+	
+}
+declare module "awayjs-core/lib/events/IEventDispatcher" {
+	import Event = require("awayjs-core/lib/events/Event");
+	/**
+	 * Base interface for dispatching events
+	 *
+	 * @interface away.events.IEventDispatcher
+	 *
+	 */
+	interface IEventDispatcher {
+	    /**
+	     * Add an event listener
+	     * @method addEventListener
+	     * @param {String} Name of event to add a listener for
+	     * @param {Function} Callback function
+	     */
+	    addEventListener(type: string, listener: Function): any;
+	    /**
+	     * Remove an event listener
+	     * @method removeEventListener
+	     * @param {String} Name of event to remove a listener for
+	     * @param {Function} Callback function
+	     */
+	    removeEventListener(type: string, listener: Function): any;
+	    /**
+	     * Dispatch an event
+	     * @method dispatchEvent
+	     * @param {Event} Event to dispatch
+	     */
+	    dispatchEvent(event: Event): any;
+	    /**
+	     * check if an object has an event listener assigned to it
+	     * @method hasListener
+	     * @param {String} Name of event to remove a listener for
+	     * @param {Function} Callback function
+	     * @param {Object} Target object listener is added to
+	     */
+	    hasEventListener(type: string, listener?: Function): boolean;
+	}
+	export = IEventDispatcher;
+	
+}
+declare module "awayjs-core/lib/library/IAsset" {
+	import IEventDispatcher = require("awayjs-core/lib/events/IEventDispatcher");
+	interface IAsset extends IEventDispatcher {
+	    /**
+	     *
+	     */
+	    name: string;
+	    /**
+	     *
+	     */
+	    id: number;
+	    /**
+	     *
+	     */
+	    assetNamespace: string;
+	    /**
+	     *
+	     */
+	    assetType: string;
+	    /**
+	     *
+	     */
+	    assetFullPath: Array<string>;
+	    /**
+	     *
+	     * @param name
+	     * @param ns
+	     */
+	    assetPathEquals(name: string, ns: string): boolean;
+	    /**
+	     *
+	     * @param name
+	     * @param ns
+	     * @param overrideOriginal
+	     */
+	    resetAssetPath(name: string, ns: string, overrideOriginal?: boolean): void;
+	    /**
+	     *
+	     */
+	    dispose(): any;
+	}
+	export = IAsset;
+	
+}
+declare module "awayjs-core/lib/events/AssetEvent" {
+	import IAsset = require("awayjs-core/lib/library/IAsset");
+	import Event = require("awayjs-core/lib/events/Event");
+	/**
+	 * @class away.events.AssetEvent
+	 */
+	class AssetEvent extends Event {
+	    /**
+	     *
+	     */
+	    static ASSET_COMPLETE: string;
+	    /**
+	     *
+	     */
+	    static ASSET_RENAME: string;
+	    /**
+	     *
+	     */
+	    static ASSET_CONFLICT_RESOLVED: string;
+	    /**
+	     *
+	     */
+	    static TEXTURE_SIZE_ERROR: string;
+	    private _asset;
+	    private _prevName;
+	    /**
+	     *
+	     */
+	    constructor(type: string, asset?: IAsset, prevName?: string);
+	    /**
+	     *
+	     */
+	    asset: IAsset;
+	    /**
+	     *
+	     */
+	    assetPrevName: string;
+	    /**
+	     *
+	     */
+	    clone(): Event;
+	}
+	export = AssetEvent;
+	
+}
+declare module "awayjs-core/lib/events/EventDispatcher" {
+	import Event = require("awayjs-core/lib/events/Event");
+	/**
+	 * Base class for dispatching events
+	*
+	* @class away.events.EventDispatcher
+	*
+	*/
+	class EventDispatcher {
+	    private listeners;
+	    private target;
+	    constructor(target?: any);
+	    /**
+	     * Add an event listener
+	     * @method addEventListener
+	     * @param {String} Name of event to add a listener for
+	     * @param {Function} Callback function
+	     */
+	    addEventListener(type: string, listener: Function): void;
+	    /**
+	     * Remove an event listener
+	     * @method removeEventListener
+	     * @param {String} Name of event to remove a listener for
+	     * @param {Function} Callback function
+	     */
+	    removeEventListener(type: string, listener: Function): void;
+	    /**
+	     * Dispatch an event
+	     * @method dispatchEvent
+	     * @param {Event} Event to dispatch
+	     */
+	    dispatchEvent(event: Event): void;
+	    /**
+	     * get Event Listener Index in array. Returns -1 if no listener is added
+	     * @method getEventListenerIndex
+	     * @param {String} Name of event to remove a listener for
+	     * @param {Function} Callback function
+	     */
+	    private getEventListenerIndex(type, listener);
+	    /**
+	     * check if an object has an event listener assigned to it
+	     * @method hasListener
+	     * @param {String} Name of event to remove a listener for
+	     * @param {Function} Callback function
+	     */
+	    hasEventListener(type: string, listener?: Function): boolean;
+	}
+	export = EventDispatcher;
+	
+}
+declare module "awayjs-core/lib/library/NamedAssetBase" {
+	import EventDispatcher = require("awayjs-core/lib/events/EventDispatcher");
+	class NamedAssetBase extends EventDispatcher {
+	    static ID_COUNT: number;
+	    private _originalName;
+	    private _namespace;
+	    private _name;
+	    private _id;
+	    private _full_path;
+	    static DEFAULT_NAMESPACE: string;
+	    constructor(name?: string);
+	    /**
+	     *
+	     */
+	    assetType: string;
+	    /**
+	     * The original name used for this asset in the resource (e.g. file) in which
+	     * it was found. This may not be the same as <code>name</code>, which may
+	     * have changed due to of a name conflict.
+	     */
+	    originalName: string;
+	    /**
+	     * A unique id for the asset, used to identify assets in an associative array
+	     */
+	    id: number;
+	    name: string;
+	    dispose(): void;
+	    assetNamespace: string;
+	    assetFullPath: Array<string>;
+	    assetPathEquals(name: string, ns: string): boolean;
+	    resetAssetPath(name: string, ns?: string, overrideOriginal?: boolean): void;
+	    private updateFullPath();
+	}
+	export = NamedAssetBase;
+	
+}
+declare module "awayjs-core/lib/data/Geometry" {
+	import SubGeometryBase = require("awayjs-core/lib/data/SubGeometryBase");
+	import Matrix3D = require("awayjs-core/lib/geom/Matrix3D");
+	import IAsset = require("awayjs-core/lib/library/IAsset");
+	import NamedAssetBase = require("awayjs-core/lib/library/NamedAssetBase");
+	/**
+	 *
+	 * Geometry is a collection of SubGeometries, each of which contain the actual geometrical data such as vertices,
+	 * normals, uvs, etc. It also contains a reference to an animation class, which defines how the geometry moves.
+	 * A Geometry object is assigned to a Mesh, a scene graph occurence of the geometry, which in turn assigns
+	 * the SubGeometries to its respective TriangleSubMesh objects.
+	 *
+	 *
+	 *
+	 * @see away.core.base.SubGeometry
+	 * @see away.entities.Mesh
+	 *
+	 * @class Geometry
+	 */
+	class Geometry extends NamedAssetBase implements IAsset {
+	    private _subGeometries;
+	    assetType: string;
+	    /**
+	     * A collection of TriangleSubGeometry objects, each of which contain geometrical data such as vertices, normals, etc.
+	     */
+	    subGeometries: Array<SubGeometryBase>;
+	    getSubGeometries(): Array<SubGeometryBase>;
+	    /**
+	     * Creates a new Geometry object.
+	     */
+	    constructor();
+	    applyTransformation(transform: Matrix3D): void;
+	    /**
+	     * Adds a new TriangleSubGeometry object to the list.
+	     * @param subGeometry The TriangleSubGeometry object to be added.
+	     */
+	    addSubGeometry(subGeometry: SubGeometryBase): void;
+	    /**
+	     * Removes a new TriangleSubGeometry object from the list.
+	     * @param subGeometry The TriangleSubGeometry object to be removed.
+	     */
+	    removeSubGeometry(subGeometry: SubGeometryBase): void;
+	    /**
+	     * Clones the geometry.
+	     * @return An exact duplicate of the current Geometry object.
+	     */
+	    clone(): Geometry;
+	    /**
+	     * Scales the geometry.
+	     * @param scale The amount by which to scale.
+	     */
+	    scale(scale: number): void;
+	    /**
+	     * Clears all resources used by the Geometry object, including SubGeometries.
+	     */
+	    dispose(): void;
+	    /**
+	     * Scales the uv coordinates (tiling)
+	     * @param scaleU The amount by which to scale on the u axis. Default is 1;
+	     * @param scaleV The amount by which to scale on the v axis. Default is 1;
+	     */
+	    scaleUV(scaleU?: number, scaleV?: number): void;
+	    iInvalidateBounds(subGeom: SubGeometryBase): void;
+	}
+	export = Geometry;
+	
+}
+declare module "awayjs-core/lib/events/SubGeometryEvent" {
+	import Event = require("awayjs-core/lib/events/Event");
+	/**
+	 * Dispatched to notify changes in a sub geometry object's state.
+	 *
+	 * @class away.events.SubGeometryEvent
+	 * @see away.core.base.Geometry
+	 */
+	class SubGeometryEvent extends Event {
+	    /**
+	     * Dispatched when a TriangleSubGeometry's index data has been updated.
+	     */
+	    static INDICES_UPDATED: string;
+	    /**
+	     * Dispatched when a TriangleSubGeometry's vertex data has been updated.
+	     */
+	    static VERTICES_UPDATED: string;
+	    private _dataType;
+	    /**
+	     * Create a new GeometryEvent
+	     * @param type The event type.
+	     * @param dataType An optional data type of the vertex data being updated.
+	     */
+	    constructor(type: string, dataType?: string);
+	    /**
+	     * The data type of the vertex data.
+	     */
+	    dataType: string;
+	    /**
+	     * Clones the event.
+	     *
+	     * @return An exact duplicate of the current object.
+	     */
+	    clone(): Event;
+	}
+	export = SubGeometryEvent;
+	
+}
+declare module "awayjs-core/lib/data/SubGeometryBase" {
+	import Geometry = require("awayjs-core/lib/data/Geometry");
+	import Matrix3D = require("awayjs-core/lib/geom/Matrix3D");
+	import NamedAssetBase = require("awayjs-core/lib/library/NamedAssetBase");
+	/**
+	 * @class away.base.TriangleSubGeometry
+	 */
+	class SubGeometryBase extends NamedAssetBase {
+	    static VERTEX_DATA: string;
+	    _pStrideOffsetDirty: boolean;
+	    _pIndices: Array<number>;
+	    _pVertices: Array<number>;
+	    private _numIndices;
+	    private _numTriangles;
+	    _pNumVertices: number;
+	    _pConcatenateArrays: boolean;
+	    private _indicesUpdated;
+	    _pStride: Object;
+	    _pOffset: Object;
+	    _pUpdateStrideOffset(): void;
+	    subGeometryType: string;
+	    /**
+	     *
+	     */
+	    concatenateArrays: boolean;
+	    /**
+	     * The raw index data that define the faces.
+	     */
+	    indices: Array<number>;
+	    /**
+	     *
+	     */
+	    vertices: Array<number>;
+	    /**
+	     * The total amount of triangles in the TriangleSubGeometry.
+	     */
+	    numTriangles: number;
+	    numVertices: number;
+	    /**
+	     *
+	     */
+	    constructor(concatenatedArrays: boolean);
+	    /**
+	     *
+	     */
+	    getStride(dataType: string): any;
+	    /**
+	     *
+	     */
+	    getOffset(dataType: string): any;
+	    updateVertices(): void;
+	    /**
+	     *
+	     */
+	    dispose(): void;
+	    /**
+	     * Updates the face indices of the TriangleSubGeometry.
+	     *
+	     * @param indices The face indices to upload.
+	     */
+	    updateIndices(indices: Array<number>): void;
+	    /**
+	     * @protected
+	     */
+	    pInvalidateBounds(): void;
+	    /**
+	     * The Geometry object that 'owns' this TriangleSubGeometry object.
+	     *
+	     * @private
+	     */
+	    parentGeometry: Geometry;
+	    /**
+	     * Clones the current object
+	     * @return An exact duplicate of the current object.
+	     */
+	    clone(): SubGeometryBase;
+	    applyTransformation(transform: Matrix3D): void;
+	    /**
+	     * Scales the geometry.
+	     * @param scale The amount by which to scale.
+	     */
+	    scale(scale: number): void;
+	    scaleUV(scaleU?: number, scaleV?: number): void;
+	    getBoundingPositions(): Array<number>;
+	    private notifyIndicesUpdate();
+	    _pNotifyVerticesUpdate(): void;
+	}
+	export = SubGeometryBase;
+	
+}
+declare module "awayjs-core/lib/data/CurveSubGeometry" {
+	import SubGeometryBase = require("awayjs-core/lib/data/SubGeometryBase");
+	import Matrix3D = require("awayjs-core/lib/geom/Matrix3D");
+	/**
+	 * @class away.base.CurveSubGeometry
+	 */
+	class CurveSubGeometry extends SubGeometryBase {
+	    static SUB_GEOMETRY_TYPE: string;
+	    static POSITION_DATA: string;
+	    static CURVE_DATA: string;
+	    static UV_DATA: string;
+	    static POSITION_FORMAT: string;
+	    static CURVE_FORMAT: string;
+	    static UV_FORMAT: string;
+	    private _positionsDirty;
+	    private _curvesDirty;
+	    private _faceNormalsDirty;
+	    private _vertexNormalsDirty;
+	    private _uvsDirty;
+	    private _secondaryUVsDirty;
+	    private _jointIndicesDirty;
+	    private _jointWeightsDirty;
+	    private _positions;
+	    private _curves;
+	    private _uvs;
+	    private _useCondensedIndices;
+	    private _condensedJointIndices;
+	    private _condensedIndexLookUp;
+	    private _concatenateArrays;
+	    private _autoDeriveNormals;
+	    private _useFaceWeights;
+	    private _autoDeriveUVs;
+	    private _faceNormals;
+	    private _faceWeights;
+	    private _scaleU;
+	    private _scaleV;
+	    private _positionsUpdated;
+	    private _curvesUpdated;
+	    private _uvsUpdated;
+	    private _secondaryUVsUpdated;
+	    subGeometryType: string;
+	    /**
+	     *
+	     */
+	    scaleU: number;
+	    /**
+	     *
+	     */
+	    scaleV: number;
+	    /**
+	     * Offers the option of enabling GPU accelerated animation on skeletons larger than 32 joints
+	     * by condensing the number of joint index values required per mesh. Only applicable to
+	     * skeleton animations that utilise more than one mesh object. Defaults to false.
+	     */
+	    useCondensedIndices: boolean;
+	    _pUpdateStrideOffset(): void;
+	    /**
+	     * Defines whether a UV buffer should be automatically generated to contain dummy UV coordinates.
+	     * Set to true if a geometry lacks UV data but uses a material that requires it, or leave as false
+	     * in cases where UV data is explicitly defined or the material does not require UV data.
+	     */
+	    autoDeriveUVs: boolean;
+	    /**
+	     * True if the vertex normals should be derived from the geometry, false if the vertex normals are set
+	     * explicitly.
+	     */
+	    autoDeriveNormals: boolean;
+	    /**
+	     *
+	     */
+	    vertices: Array<number>;
+	    /**
+	     *
+	     */
+	    positions: Array<number>;
+	    /**
+	     *
+	     */
+	    curves: Array<number>;
+	    /**
+	     * The raw data of the face normals, in the same order as the faces are listed in the index list.
+	     */
+	    faceNormals: Array<number>;
+	    /**
+	     *
+	     */
+	    uvs: Array<number>;
+	    /**
+	     * Indicates whether or not to take the size of faces into account when auto-deriving vertex normals and tangents.
+	     */
+	    useFaceWeights: boolean;
+	    condensedIndexLookUp: Array<number>;
+	    /**
+	     *
+	     */
+	    constructor(concatenatedArrays: boolean);
+	    getBoundingPositions(): Array<number>;
+	    /**
+	     *
+	     */
+	    updatePositions(values: Array<number>): void;
+	    /**
+	     * Updates the vertex normals based on the geometry.
+	     */
+	    updateCurves(values: Array<number>): void;
+	    /**
+	     * Updates the uvs based on the geometry.
+	     */
+	    updateUVs(values: Array<number>): void;
+	    /**
+	     *
+	     */
+	    dispose(): void;
+	    /**
+	     * Updates the face indices of the CurveSubGeometry.
+	     *
+	     * @param indices The face indices to upload.
+	     */
+	    updateIndices(indices: Array<number>): void;
+	    /**
+	     * Clones the current object
+	     * @return An exact duplicate of the current object.
+	     */
+	    clone(): CurveSubGeometry;
+	    scaleUV(scaleU?: number, scaleV?: number): void;
+	    /**
+	     * Scales the geometry.
+	     * @param scale The amount by which to scale.
+	     */
+	    scale(scale: number): void;
+	    applyTransformation(transform: Matrix3D): void;
+	    /**
+	     * Updates the normals for each face.
+	     */
+	    private updateFaceNormals();
+	    _pNotifyVerticesUpdate(): void;
+	    private notifyPositionsUpdate();
+	    private notifyCurvesUpdate();
+	    private notifyUVsUpdate();
+	}
+	export = CurveSubGeometry;
+	
+}
+declare module "awayjs-core/lib/data/TriangleSubGeometry" {
+	import SubGeometryBase = require("awayjs-core/lib/data/SubGeometryBase");
+	import Matrix3D = require("awayjs-core/lib/geom/Matrix3D");
+	/**
+	 * @class away.base.TriangleSubGeometry
+	 */
+	class TriangleSubGeometry extends SubGeometryBase {
+	    static SUB_GEOMETRY_TYPE: string;
+	    static POSITION_DATA: string;
+	    static NORMAL_DATA: string;
+	    static TANGENT_DATA: string;
+	    static UV_DATA: string;
+	    static SECONDARY_UV_DATA: string;
+	    static JOINT_INDEX_DATA: string;
+	    static JOINT_WEIGHT_DATA: string;
+	    static POSITION_FORMAT: string;
+	    static NORMAL_FORMAT: string;
+	    static TANGENT_FORMAT: string;
+	    static UV_FORMAT: string;
+	    static SECONDARY_UV_FORMAT: string;
+	    private _positionsDirty;
+	    private _faceNormalsDirty;
+	    private _faceTangentsDirty;
+	    private _vertexNormalsDirty;
+	    private _vertexTangentsDirty;
+	    private _uvsDirty;
+	    private _secondaryUVsDirty;
+	    private _jointIndicesDirty;
+	    private _jointWeightsDirty;
+	    private _positions;
+	    private _vertexNormals;
+	    private _vertexTangents;
+	    private _uvs;
+	    private _secondaryUVs;
+	    private _jointIndices;
+	    private _jointWeights;
+	    private _useCondensedIndices;
+	    private _condensedJointIndices;
+	    private _condensedIndexLookUp;
+	    private _numCondensedJoints;
+	    private _jointsPerVertex;
+	    private _concatenateArrays;
+	    private _autoDeriveNormals;
+	    private _autoDeriveTangents;
+	    private _autoDeriveUVs;
+	    private _useFaceWeights;
+	    private _faceNormals;
+	    private _faceTangents;
+	    private _faceWeights;
+	    private _scaleU;
+	    private _scaleV;
+	    private _positionsUpdated;
+	    private _normalsUpdated;
+	    private _tangentsUpdated;
+	    private _uvsUpdated;
+	    private _secondaryUVsUpdated;
+	    private _jointIndicesUpdated;
+	    private _jointWeightsUpdated;
+	    subGeometryType: string;
+	    /**
+	     *
+	     */
+	    scaleU: number;
+	    /**
+	     *
+	     */
+	    scaleV: number;
+	    /**
+	     * Offers the option of enabling GPU accelerated animation on skeletons larger than 32 joints
+	     * by condensing the number of joint index values required per mesh. Only applicable to
+	     * skeleton animations that utilise more than one mesh object. Defaults to false.
+	     */
+	    useCondensedIndices: boolean;
+	    _pUpdateStrideOffset(): void;
+	    /**
+	     *
+	     */
+	    jointsPerVertex: number;
+	    /**
+	     * Defines whether a UV buffer should be automatically generated to contain dummy UV coordinates.
+	     * Set to true if a geometry lacks UV data but uses a material that requires it, or leave as false
+	     * in cases where UV data is explicitly defined or the material does not require UV data.
+	     */
+	    autoDeriveUVs: boolean;
+	    /**
+	     * True if the vertex normals should be derived from the geometry, false if the vertex normals are set
+	     * explicitly.
+	     */
+	    autoDeriveNormals: boolean;
+	    /**
+	     * True if the vertex tangents should be derived from the geometry, false if the vertex normals are set
+	     * explicitly.
+	     */
+	    autoDeriveTangents: boolean;
+	    /**
+	     *
+	     */
+	    vertices: Array<number>;
+	    /**
+	     *
+	     */
+	    positions: Array<number>;
+	    /**
+	     *
+	     */
+	    vertexNormals: Array<number>;
+	    /**
+	     *
+	     */
+	    vertexTangents: Array<number>;
+	    /**
+	     * The raw data of the face normals, in the same order as the faces are listed in the index list.
+	     */
+	    faceNormals: Array<number>;
+	    /**
+	     * The raw data of the face tangets, in the same order as the faces are listed in the index list.
+	     */
+	    faceTangents: Array<number>;
+	    /**
+	     *
+	     */
+	    uvs: Array<number>;
+	    /**
+	     *
+	     */
+	    secondaryUVs: Array<number>;
+	    /**
+	     *
+	     */
+	    jointIndices: Array<number>;
+	    /**
+	     *
+	     */
+	    jointWeights: Array<number>;
+	    /**
+	     * Indicates whether or not to take the size of faces into account when auto-deriving vertex normals and tangents.
+	     */
+	    useFaceWeights: boolean;
+	    numCondensedJoints: number;
+	    condensedIndexLookUp: Array<number>;
+	    /**
+	     *
+	     */
+	    constructor(concatenatedArrays: boolean);
+	    getBoundingPositions(): Array<number>;
+	    /**
+	     *
+	     */
+	    updatePositions(values: Array<number>): void;
+	    /**
+	     * Updates the vertex normals based on the geometry.
+	     */
+	    updateVertexNormals(values: Array<number>): void;
+	    /**
+	     * Updates the vertex tangents based on the geometry.
+	     */
+	    updateVertexTangents(values: Array<number>): void;
+	    /**
+	     * Updates the uvs based on the geometry.
+	     */
+	    updateUVs(values: Array<number>): void;
+	    /**
+	     * Updates the secondary uvs based on the geometry.
+	     */
+	    updateSecondaryUVs(values: Array<number>): void;
+	    /**
+	     * Updates the joint indices
+	     */
+	    updateJointIndices(values: Array<number>): void;
+	    /**
+	     * Updates the joint weights.
+	     */
+	    updateJointWeights(values: Array<number>): void;
+	    /**
+	     *
+	     */
+	    dispose(): void;
+	    /**
+	     * Updates the face indices of the TriangleSubGeometry.
+	     *
+	     * @param indices The face indices to upload.
+	     */
+	    updateIndices(indices: Array<number>): void;
+	    /**
+	     * Clones the current object
+	     * @return An exact duplicate of the current object.
+	     */
+	    clone(): TriangleSubGeometry;
+	    scaleUV(scaleU?: number, scaleV?: number): void;
+	    /**
+	     * Scales the geometry.
+	     * @param scale The amount by which to scale.
+	     */
+	    scale(scale: number): void;
+	    applyTransformation(transform: Matrix3D): void;
+	    /**
+	     * Updates the tangents for each face.
+	     */
+	    private updateFaceTangents();
+	    /**
+	     * Updates the normals for each face.
+	     */
+	    private updateFaceNormals();
+	    _pNotifyVerticesUpdate(): void;
+	    private notifyPositionsUpdate();
+	    private notifyNormalsUpdate();
+	    private notifyTangentsUpdate();
+	    private notifyUVsUpdate();
+	    private notifySecondaryUVsUpdate();
+	    private notifyJointIndicesUpdate();
+	    private notifyJointWeightsUpdate();
+	}
+	export = TriangleSubGeometry;
+	
+}
+declare module "awayjs-core/lib/data/LineSubGeometry" {
+	import Geometry = require("awayjs-core/lib/data/Geometry");
+	import SubGeometryBase = require("awayjs-core/lib/data/SubGeometryBase");
+	/**
+	 * @class LineSubGeometry
+	 */
+	class LineSubGeometry extends SubGeometryBase {
+	    static SUB_GEOMETRY_TYPE: string;
+	    static VERTEX_DATA: string;
+	    static START_POSITION_DATA: string;
+	    static END_POSITION_DATA: string;
+	    static THICKNESS_DATA: string;
+	    static COLOR_DATA: string;
+	    static POSITION_FORMAT: string;
+	    static COLOR_FORMAT: string;
+	    static THICKNESS_FORMAT: string;
+	    private _positionsDirty;
+	    private _boundingPositionDirty;
+	    private _thicknessDirty;
+	    private _colorsDirty;
+	    private _startPositions;
+	    private _endPositions;
+	    private _boundingPositions;
+	    private _thickness;
+	    private _startColors;
+	    private _endColors;
+	    private _numSegments;
+	    private _positionsUpdated;
+	    private _thicknessUpdated;
+	    private _colorUpdated;
+	    _pUpdateStrideOffset(): void;
+	    subGeometryType: string;
+	    /**
+	     *
+	     */
+	    vertices: Array<number>;
+	    /**
+	     *
+	     */
+	    startPositions: Array<number>;
+	    /**
+	     *
+	     */
+	    endPositions: Array<number>;
+	    /**
+	     *
+	     */
+	    thickness: Array<number>;
+	    /**
+	     *
+	     */
+	    startColors: Array<number>;
+	    /**
+	     *
+	     */
+	    endColors: Array<number>;
+	    /**
+	     * The total amount of segments in the TriangleSubGeometry.
+	     */
+	    numSegments: number;
+	    /**
+	     *
+	     */
+	    constructor();
+	    getBoundingPositions(): Array<number>;
+	    /**
+	     *
+	     */
+	    updatePositions(startValues: Array<number>, endValues: Array<number>): void;
+	    /**
+	     * Updates the thickness.
+	     */
+	    updateThickness(values: Array<number>): void;
+	    /**
+	     *
+	     */
+	    updateColors(startValues: Array<number>, endValues: Array<number>): void;
+	    /**
+	     *
+	     */
+	    dispose(): void;
+	    /**
+	     * @protected
+	     */
+	    pInvalidateBounds(): void;
+	    /**
+	     * The Geometry object that 'owns' this TriangleSubGeometry object.
+	     *
+	     * @private
+	     */
+	    parentGeometry: Geometry;
+	    /**
+	     * Clones the current object
+	     * @return An exact duplicate of the current object.
+	     */
+	    clone(): LineSubGeometry;
+	    _pNotifyVerticesUpdate(): void;
+	    private notifyPositionsUpdate();
+	    private notifyThicknessUpdate();
+	    private notifyColorsUpdate();
+	}
+	export = LineSubGeometry;
+	
+}
+declare module "awayjs-core/lib/errors/DocumentError" {
+	import Error = require("awayjs-core/lib/errors/Error");
+	class DocumentError extends Error {
+	    static DOCUMENT_DOES_NOT_EXIST: string;
+	    constructor(message?: string, id?: number);
+	}
+	export = DocumentError;
+	
+}
+declare module "awayjs-core/lib/errors/PartialImplementationError" {
+	import Error = require("awayjs-core/lib/errors/Error");
+	/**
+	 * AbstractMethodError is thrown when an abstract method is called. The method in question should be overridden
+	 * by a concrete subclass.
+	 */
+	class PartialImplementationError extends Error {
+	    /**
+	     * Create a new AbstractMethodError.
+	     * @param message An optional message to override the default error message.
+	     * @param id The id of the error.
+	     */
+	    constructor(dependency?: string, id?: number);
+	}
+	export = PartialImplementationError;
+	
+}
+declare module "awayjs-core/lib/errors/RangeError" {
+	import Error = require("awayjs-core/lib/errors/Error");
+	/**
+	 * RangeError is thrown when an index is accessed out of range of the number of
+	 * available indices on an Array.
+	 */
+	class RangeError extends Error {
+	    /**
+	     * Create a new RangeError.
+	     *
+	     * @param message An optional message to override the default error message.
+	     * @param id The id of the error.
+	     */
+	    constructor(message?: string, id?: number);
+	}
+	export = RangeError;
+	
+}
+declare module "awayjs-core/lib/events/HTTPStatusEvent" {
+	import Event = require("awayjs-core/lib/events/Event");
+	/**
+	 * @class away.events.HTTPStatusEvent
+	 */
+	class HTTPStatusEvent extends Event {
+	    static HTTP_STATUS: string;
+	    status: number;
+	    constructor(type: string, status?: number);
+	}
+	export = HTTPStatusEvent;
+	
+}
+declare module "awayjs-core/lib/events/IOErrorEvent" {
+	import Event = require("awayjs-core/lib/events/Event");
+	class IOErrorEvent extends Event {
+	    static IO_ERROR: string;
+	    constructor(type: string);
+	}
+	export = IOErrorEvent;
+	
+}
+declare module "awayjs-core/lib/events/LoaderEvent" {
+	import IAsset = require("awayjs-core/lib/library/IAsset");
+	import Event = require("awayjs-core/lib/events/Event");
+	class LoaderEvent extends Event {
+	    /**
+	     * Dispatched when a resource and all of its dependencies is retrieved.
+	     */
+	    static RESOURCE_COMPLETE: string;
+	    private _url;
+	    private _content;
+	    private _assets;
+	    /**
+	     * Create a new LoaderEvent object.
+	     *
+	     * @param type The event type.
+	     * @param url The url of the loaded resource.
+	     * @param assets The assets of the loaded resource.
+	     */
+	    constructor(type: string, url?: string, content?: IAsset, assets?: Array<IAsset>);
+	    /**
+	     * The content returned if the resource has been loaded inside a <code>Loader</code> object.
+	     */
+	    content: IAsset;
+	    /**
+	     * The url of the loaded resource.
+	     */
+	    url: string;
+	    /**
+	     * The error string on loadError.
+	     */
+	    assets: IAsset[];
+	    /**
+	     * Clones the current event.
+	     * @return An exact duplicate of the current event.
+	     */
+	    clone(): Event;
+	}
+	export = LoaderEvent;
+	
+}
+declare module "awayjs-core/lib/events/ParserEvent" {
+	import Event = require("awayjs-core/lib/events/Event");
+	class ParserEvent extends Event {
+	    private _message;
+	    /**
+	     * Dispatched when parsing of an asset completed.
+	     */
+	    static PARSE_COMPLETE: string;
+	    /**
+	     * Dispatched when an error occurs while parsing the data (e.g. because it's
+	     * incorrectly formatted.)
+	     */
+	    static PARSE_ERROR: string;
+	    /**
+	     * Dispatched when a parser is ready to have dependencies retrieved and resolved.
+	     * This is an internal event that should rarely (if ever) be listened for by
+	     * external classes.
+	     */
+	    static READY_FOR_DEPENDENCIES: string;
+	    constructor(type: string, message?: string);
+	    /**
+	     * Additional human-readable message. Usually supplied for ParserEvent.PARSE_ERROR events.
+	     */
+	    message: string;
+	    clone(): Event;
+	}
+	export = ParserEvent;
+	
+}
+declare module "awayjs-core/lib/events/ProgressEvent" {
+	import Event = require("awayjs-core/lib/events/Event");
+	class ProgressEvent extends Event {
+	    static PROGRESS: string;
+	    bytesLoaded: number;
+	    bytesTotal: number;
+	    constructor(type: string);
+	}
+	export = ProgressEvent;
 	
 }
 declare module "awayjs-core/lib/projections/IProjection" {
@@ -3563,45 +4333,6 @@ declare module "awayjs-core/lib/geom/UVTransform" {
 	export = UVTransform;
 	
 }
-declare module "awayjs-core/lib/net/CrossDomainPolicy" {
-	class CrossDomainPolicy {
-	    static ANONYMOUS: string;
-	    static USE_CREDENTIALS: string;
-	}
-	export = CrossDomainPolicy;
-	
-}
-declare module "awayjs-core/lib/net/URLLoaderDataFormat" {
-	class URLLoaderDataFormat {
-	    /**
-	     * TEXT
-	     * @type {string}
-	     */
-	    static TEXT: string;
-	    /**
-	     * Variables / Value Pairs
-	     * @type {string}
-	     */
-	    static VARIABLES: string;
-	    /**
-	     *
-	     * @type {string}
-	     */
-	    static BLOB: string;
-	    /**
-	     *
-	     * @type {string}
-	     */
-	    static ARRAY_BUFFER: string;
-	    /**
-	     *
-	     * @type {string}
-	     */
-	    static BINARY: string;
-	}
-	export = URLLoaderDataFormat;
-	
-}
 declare module "awayjs-core/lib/net/URLRequestMethod" {
 	class URLRequestMethod {
 	    /**
@@ -3662,190 +4393,6 @@ declare module "awayjs-core/lib/net/URLRequest" {
 	    dispose(): void;
 	}
 	export = URLRequest;
-	
-}
-declare module "awayjs-core/lib/net/URLVariables" {
-	class URLVariables {
-	    private _variables;
-	    /**
-	     *
-	     * @param source
-	     */
-	    constructor(source?: string);
-	    /**
-	     *
-	     * @param source
-	     */
-	    decode(source: string): void;
-	    /**
-	     *
-	     * @returns {string}
-	     */
-	    toString(): string;
-	    /**
-	     *
-	     * @returns {Object}
-	     */
-	    /**
-	     *
-	     * @returns {Object}
-	     */
-	    variables: Object;
-	    /**
-	     *
-	     * @returns {Object}
-	     */
-	    formData: FormData;
-	}
-	export = URLVariables;
-	
-}
-declare module "awayjs-core/lib/net/URLLoader" {
-	import URLRequest = require("awayjs-core/lib/net/URLRequest");
-	import EventDispatcher = require("awayjs-core/lib/events/EventDispatcher");
-	/**
-	 * The URLLoader is used to load a single file, as part of a resource.
-	 *
-	 * While URLLoader can be used directly, e.g. to create a third-party asset
-	 * management system, it's recommended to use any of the classes Loader3D, AssetLoader
-	 * and AssetLibrary instead in most cases.
-	 *
-	 * @see AssetLoader
-	 * @see away.library.AssetLibrary
-	 */
-	class URLLoader extends EventDispatcher {
-	    private _XHR;
-	    private _bytesLoaded;
-	    private _bytesTotal;
-	    private _dataFormat;
-	    private _loadError;
-	    private _request;
-	    private _data;
-	    private _loadStartEvent;
-	    private _loadErrorEvent;
-	    private _loadCompleteEvent;
-	    private _progressEvent;
-	    /**
-	     * Creates a new URLLoader object.
-	     */
-	    constructor();
-	    /**
-	     *
-	     */
-	    url: string;
-	    /**
-	     *
-	     */
-	    data: any;
-	    /**
-	     *
-	     * URLLoaderDataFormat.BINARY
-	     * URLLoaderDataFormat.TEXT
-	     * URLLoaderDataFormat.VARIABLES
-	     *
-	     * @param format
-	     */
-	    dataFormat: string;
-	    /**
-	     *
-	     * @returns {number}
-	     */
-	    bytesLoaded: number;
-	    /**
-	     *
-	     * @returns {number}
-	     */
-	    bytesTotal: number;
-	    /**
-	     * Load a resource from a file.
-	     *
-	     * @param request The URLRequest object containing the URL of the object to be loaded.
-	     */
-	    load(request: URLRequest): void;
-	    /**
-	     *
-	     */
-	    close(): void;
-	    /**
-	     *
-	     */
-	    dispose(): void;
-	    /**
-	     *
-	     * @param xhr
-	     * @param responseType
-	     */
-	    private setResponseType(xhr, responseType);
-	    /**
-	     *
-	     * @param request {URLRequest}
-	     */
-	    private getRequest(request);
-	    /**
-	     *
-	     * @param request {URLRequest}
-	     */
-	    private postRequest(request);
-	    /**
-	     *
-	     * @param error {XMLHttpRequestException}
-	     */
-	    private handleXmlHttpRequestException(error);
-	    /**
-	     *
-	     */
-	    private initXHR();
-	    /**
-	     *
-	     */
-	    private disposeXHR();
-	    /**
-	     *
-	     * @param source
-	     */
-	    decodeURLVariables(source: string): Object;
-	    /**
-	     * When XHR state changes
-	     * @param event
-	     */
-	    private onReadyStateChange(event);
-	    /**
-	     * When the request has completed, regardless of whether or not it was successful.
-	     * @param event
-	     */
-	    private onLoadEnd(event);
-	    /**
-	     * When the author specified timeout has passed before the request could complete.
-	     * @param event
-	     */
-	    private onTimeOut(event);
-	    /**
-	     * When the request has been aborted, either by invoking the abort() method or navigating away from the page.
-	     * @param event
-	     */
-	    private onAbort(event);
-	    /**
-	     * While loading and sending data.
-	     * @param event
-	     */
-	    private onProgress(event);
-	    /**
-	     * When the request starts.
-	     * @param event
-	     */
-	    private onLoadStart(event);
-	    /**
-	     * When the request has successfully completed.
-	     * @param event
-	     */
-	    private onLoadComplete(event);
-	    /**
-	     * When the request has failed. ( due to network issues ).
-	     * @param event
-	     */
-	    private onLoadError(event);
-	}
-	export = URLLoader;
 	
 }
 declare module "awayjs-core/lib/library/AssetLibraryIterator" {
@@ -4107,6 +4654,221 @@ declare module "awayjs-core/lib/library/AssetLoaderToken" {
 	export = AssetLoaderToken;
 	
 }
+declare module "awayjs-core/lib/net/URLLoaderDataFormat" {
+	class URLLoaderDataFormat {
+	    /**
+	     * TEXT
+	     * @type {string}
+	     */
+	    static TEXT: string;
+	    /**
+	     * Variables / Value Pairs
+	     * @type {string}
+	     */
+	    static VARIABLES: string;
+	    /**
+	     *
+	     * @type {string}
+	     */
+	    static BLOB: string;
+	    /**
+	     *
+	     * @type {string}
+	     */
+	    static ARRAY_BUFFER: string;
+	    /**
+	     *
+	     * @type {string}
+	     */
+	    static BINARY: string;
+	}
+	export = URLLoaderDataFormat;
+	
+}
+declare module "awayjs-core/lib/net/URLVariables" {
+	class URLVariables {
+	    private _variables;
+	    /**
+	     *
+	     * @param source
+	     */
+	    constructor(source?: string);
+	    /**
+	     *
+	     * @param source
+	     */
+	    decode(source: string): void;
+	    /**
+	     *
+	     * @returns {string}
+	     */
+	    toString(): string;
+	    /**
+	     *
+	     * @returns {Object}
+	     */
+	    /**
+	     *
+	     * @returns {Object}
+	     */
+	    variables: Object;
+	    /**
+	     *
+	     * @returns {Object}
+	     */
+	    formData: FormData;
+	}
+	export = URLVariables;
+	
+}
+declare module "awayjs-core/lib/net/URLLoader" {
+	import URLRequest = require("awayjs-core/lib/net/URLRequest");
+	import EventDispatcher = require("awayjs-core/lib/events/EventDispatcher");
+	/**
+	 * The URLLoader is used to load a single file, as part of a resource.
+	 *
+	 * While URLLoader can be used directly, e.g. to create a third-party asset
+	 * management system, it's recommended to use any of the classes Loader3D, AssetLoader
+	 * and AssetLibrary instead in most cases.
+	 *
+	 * @see AssetLoader
+	 * @see away.library.AssetLibrary
+	 */
+	class URLLoader extends EventDispatcher {
+	    private _XHR;
+	    private _bytesLoaded;
+	    private _bytesTotal;
+	    private _dataFormat;
+	    private _loadError;
+	    private _request;
+	    private _data;
+	    private _loadStartEvent;
+	    private _loadErrorEvent;
+	    private _loadCompleteEvent;
+	    private _progressEvent;
+	    /**
+	     * Creates a new URLLoader object.
+	     */
+	    constructor();
+	    /**
+	     *
+	     */
+	    url: string;
+	    /**
+	     *
+	     */
+	    data: any;
+	    /**
+	     *
+	     * URLLoaderDataFormat.BINARY
+	     * URLLoaderDataFormat.TEXT
+	     * URLLoaderDataFormat.VARIABLES
+	     *
+	     * @param format
+	     */
+	    dataFormat: string;
+	    /**
+	     *
+	     * @returns {number}
+	     */
+	    bytesLoaded: number;
+	    /**
+	     *
+	     * @returns {number}
+	     */
+	    bytesTotal: number;
+	    /**
+	     * Load a resource from a file.
+	     *
+	     * @param request The URLRequest object containing the URL of the object to be loaded.
+	     */
+	    load(request: URLRequest): void;
+	    /**
+	     *
+	     */
+	    close(): void;
+	    /**
+	     *
+	     */
+	    dispose(): void;
+	    /**
+	     *
+	     * @param xhr
+	     * @param responseType
+	     */
+	    private setResponseType(xhr, responseType);
+	    /**
+	     *
+	     * @param request {URLRequest}
+	     */
+	    private getRequest(request);
+	    /**
+	     *
+	     * @param request {URLRequest}
+	     */
+	    private postRequest(request);
+	    /**
+	     *
+	     * @param error {XMLHttpRequestException}
+	     */
+	    private handleXmlHttpRequestException(error);
+	    /**
+	     *
+	     */
+	    private initXHR();
+	    /**
+	     *
+	     */
+	    private disposeXHR();
+	    /**
+	     *
+	     * @param source
+	     */
+	    decodeURLVariables(source: string): Object;
+	    /**
+	     * When XHR state changes
+	     * @param event
+	     */
+	    private onReadyStateChange(event);
+	    /**
+	     * When the request has completed, regardless of whether or not it was successful.
+	     * @param event
+	     */
+	    private onLoadEnd(event);
+	    /**
+	     * When the author specified timeout has passed before the request could complete.
+	     * @param event
+	     */
+	    private onTimeOut(event);
+	    /**
+	     * When the request has been aborted, either by invoking the abort() method or navigating away from the page.
+	     * @param event
+	     */
+	    private onAbort(event);
+	    /**
+	     * While loading and sending data.
+	     * @param event
+	     */
+	    private onProgress(event);
+	    /**
+	     * When the request starts.
+	     * @param event
+	     */
+	    private onLoadStart(event);
+	    /**
+	     * When the request has successfully completed.
+	     * @param event
+	     */
+	    private onLoadComplete(event);
+	    /**
+	     * When the request has failed. ( due to network issues ).
+	     * @param event
+	     */
+	    private onLoadError(event);
+	}
+	export = URLLoader;
+	
+}
 declare module "awayjs-core/lib/parsers/ParserUtils" {
 	import ByteArray = require("awayjs-core/lib/utils/ByteArray");
 	class ParserUtils {
@@ -4248,7 +5010,7 @@ declare module "awayjs-core/lib/parsers/ResourceDependency" {
 	
 }
 declare module "awayjs-core/lib/utils/TextureUtils" {
-	import BitmapData = require("awayjs-core/lib/base/BitmapData");
+	import BitmapData = require("awayjs-core/lib/data/BitmapData");
 	class TextureUtils {
 	    private static MAX_SIZE;
 	    static isBitmapDataValid(bitmapData: BitmapData): boolean;
@@ -4292,7 +5054,7 @@ declare module "awayjs-core/lib/utils/getTimer" {
 	
 }
 declare module "awayjs-core/lib/parsers/ParserBase" {
-	import BitmapData = require("awayjs-core/lib/base/BitmapData");
+	import BitmapData = require("awayjs-core/lib/data/BitmapData");
 	import IAsset = require("awayjs-core/lib/library/IAsset");
 	import URLRequest = require("awayjs-core/lib/net/URLRequest");
 	import EventDispatcher = require("awayjs-core/lib/events/EventDispatcher");
@@ -4443,7 +5205,7 @@ declare module "awayjs-core/lib/parsers/ParserBase" {
 	
 }
 declare module "awayjs-core/lib/textures/MipmapGenerator" {
-	import BitmapData = require("awayjs-core/lib/base/BitmapData");
+	import BitmapData = require("awayjs-core/lib/data/BitmapData");
 	/**
 	 * MipmapGenerator is a helper class that uploads BitmapData to a Texture including mipmap levels.
 	 */
@@ -4466,77 +5228,6 @@ declare module "awayjs-core/lib/textures/MipmapGenerator" {
 	    static freeMipMapHolder(mipMapHolder: BitmapData): void;
 	}
 	export = MipmapGenerator;
-	
-}
-declare module "awayjs-core/lib/library/AssetType" {
-	class AssetType {
-	    static ANIMATION_NODE: string;
-	    static ANIMATION_SET: string;
-	    static ANIMATION_STATE: string;
-	    static ANIMATOR: string;
-	    static BILLBOARD: string;
-	    static CAMERA: string;
-	    static CONTAINER: string;
-	    static EFFECTS_METHOD: string;
-	    static FONT: string;
-	    static GEOMETRY: string;
-	    static LINE_SEGMENT: string;
-	    static LIGHT: string;
-	    static LIGHT_PICKER: string;
-	    static MATERIAL: string;
-	    static MESH: string;
-	    static TRIANGLE_SUB_MESH: string;
-	    static CURVE_SUB_MESH: string;
-	    static LINE_SUB_MESH: string;
-	    static PRIMITIVE_PREFAB: string;
-	    static SHADOW_MAP_METHOD: string;
-	    static SKELETON: string;
-	    static SKELETON_POSE: string;
-	    static SKYBOX: string;
-	    static STATE_TRANSITION: string;
-	    static TEXTFIELD: string;
-	    static TEXTFORMAT: string;
-	    static TEXTURE: string;
-	    static TEXTURE_PROJECTOR: string;
-	    static TIMELINE: string;
-	}
-	export = AssetType;
-	
-}
-declare module "awayjs-core/lib/library/NamedAssetBase" {
-	import EventDispatcher = require("awayjs-core/lib/events/EventDispatcher");
-	class NamedAssetBase extends EventDispatcher {
-	    static ID_COUNT: number;
-	    private _originalName;
-	    private _namespace;
-	    private _name;
-	    private _id;
-	    private _full_path;
-	    static DEFAULT_NAMESPACE: string;
-	    constructor(name?: string);
-	    /**
-	     *
-	     */
-	    assetType: string;
-	    /**
-	     * The original name used for this asset in the resource (e.g. file) in which
-	     * it was found. This may not be the same as <code>name</code>, which may
-	     * have changed due to of a name conflict.
-	     */
-	    originalName: string;
-	    /**
-	     * A unique id for the asset, used to identify assets in an associative array
-	     */
-	    id: number;
-	    name: string;
-	    dispose(): void;
-	    assetNamespace: string;
-	    assetFullPath: Array<string>;
-	    assetPathEquals(name: string, ns: string): boolean;
-	    resetAssetPath(name: string, ns?: string, overrideOriginal?: boolean): void;
-	    private updateFullPath();
-	}
-	export = NamedAssetBase;
 	
 }
 declare module "awayjs-core/lib/pool/ITextureData" {
@@ -4605,7 +5296,7 @@ declare module "awayjs-core/lib/textures/TextureProxyBase" {
 	
 }
 declare module "awayjs-core/lib/textures/CubeTextureBase" {
-	import BitmapData = require("awayjs-core/lib/base/BitmapData");
+	import BitmapData = require("awayjs-core/lib/data/BitmapData");
 	import TextureProxyBase = require("awayjs-core/lib/textures/TextureProxyBase");
 	class CubeTextureBase extends TextureProxyBase {
 	    _mipmapDataArray: Array<Array<BitmapData>>;
@@ -4668,7 +5359,7 @@ declare module "awayjs-core/lib/textures/ImageCubeTexture" {
 	
 }
 declare module "awayjs-core/lib/textures/Texture2DBase" {
-	import BitmapData = require("awayjs-core/lib/base/BitmapData");
+	import BitmapData = require("awayjs-core/lib/data/BitmapData");
 	import TextureProxyBase = require("awayjs-core/lib/textures/TextureProxyBase");
 	class Texture2DBase extends TextureProxyBase {
 	    private _mipmapData;
@@ -5509,6 +6200,14 @@ declare module "awayjs-core/lib/library/IDUtil" {
 	export = IDUtil;
 	
 }
+declare module "awayjs-core/lib/net/CrossDomainPolicy" {
+	class CrossDomainPolicy {
+	    static ANONYMOUS: string;
+	    static USE_CREDENTIALS: string;
+	}
+	export = CrossDomainPolicy;
+	
+}
 declare module "awayjs-core/lib/parsers/ParserDataFormat" {
 	/**
 	 * An enumeration providing values to describe the data format of parsed data.
@@ -5703,6 +6402,101 @@ declare module "awayjs-core/lib/projections/OrthographicProjection" {
 	    pUpdateMatrix(): void;
 	}
 	export = OrthographicProjection;
+	
+}
+declare module "awayjs-core/lib/textures/BitmapCubeTexture" {
+	import BitmapData = require("awayjs-core/lib/data/BitmapData");
+	import CubeTextureBase = require("awayjs-core/lib/textures/CubeTextureBase");
+	class BitmapCubeTexture extends CubeTextureBase {
+	    private _bitmapDatas;
+	    /**
+	     * The texture on the cube's right face.
+	     */
+	    positiveX: BitmapData;
+	    /**
+	     * The texture on the cube's left face.
+	     */
+	    negativeX: BitmapData;
+	    /**
+	     * The texture on the cube's top face.
+	     */
+	    positiveY: BitmapData;
+	    /**
+	     * The texture on the cube's bottom face.
+	     */
+	    negativeY: BitmapData;
+	    /**
+	     * The texture on the cube's far face.
+	     */
+	    positiveZ: BitmapData;
+	    /**
+	     * The texture on the cube's near face.
+	     */
+	    negativeZ: BitmapData;
+	    constructor(posX: BitmapData, negX: BitmapData, posY: BitmapData, negY: BitmapData, posZ: BitmapData, negZ: BitmapData);
+	    /**
+	     *
+	     * @param value
+	     * @private
+	     */
+	    private _testSize(value);
+	    dispose(): void;
+	    _iGetTextureData(side: number): BitmapData;
+	}
+	export = BitmapCubeTexture;
+	
+}
+declare module "awayjs-core/lib/textures/BitmapTexture" {
+	import BitmapData = require("awayjs-core/lib/data/BitmapData");
+	import Texture2DBase = require("awayjs-core/lib/textures/Texture2DBase");
+	class BitmapTexture extends Texture2DBase {
+	    _bitmapData: BitmapData;
+	    /**
+	     *
+	     * @returns {BitmapData}
+	     */
+	    bitmapData: BitmapData;
+	    constructor(bitmapData: BitmapData);
+	    dispose(): void;
+	    _iGetTextureData(): BitmapData;
+	}
+	export = BitmapTexture;
+	
+}
+declare module "awayjs-core/lib/textures/RenderTexture" {
+	import Texture2DBase = require("awayjs-core/lib/textures/Texture2DBase");
+	class RenderTexture extends Texture2DBase {
+	    /**
+	     *
+	     * @returns {number}
+	     */
+	    width: number;
+	    /**
+	     *
+	     * @returns {number}
+	     */
+	    height: number;
+	    constructor(width: number, height: number);
+	}
+	export = RenderTexture;
+	
+}
+declare module "awayjs-core/lib/textures/SpecularBitmapTexture" {
+	import BitmapData = require("awayjs-core/lib/data/BitmapData");
+	import BitmapTexture = require("awayjs-core/lib/textures/BitmapTexture");
+	/**
+	 * A convenience texture that encodes a specular map in the red channel, and the gloss map in the green channel, as expected by BasicSpecularMapMethod
+	 */
+	class SpecularBitmapTexture extends BitmapTexture {
+	    private _specularMap;
+	    private _glossMap;
+	    constructor(specularMap?: BitmapData, glossMap?: BitmapData);
+	    specularMap: BitmapData;
+	    glossMap: BitmapData;
+	    private _testSize();
+	    _iGetTextureData(): BitmapData;
+	}
+	export = SpecularBitmapTexture;
 	
 }
 declare module "awayjs-core/lib/ui/Keyboard" {
@@ -6620,100 +7414,5 @@ declare module "awayjs-core/lib/utils/RequestAnimationFrame" {
 	    private _tick();
 	}
 	export = RequestAnimationFrame;
-	
-}
-declare module "awayjs-core/lib/textures/BitmapCubeTexture" {
-	import BitmapData = require("awayjs-core/lib/base/BitmapData");
-	import CubeTextureBase = require("awayjs-core/lib/textures/CubeTextureBase");
-	class BitmapCubeTexture extends CubeTextureBase {
-	    private _bitmapDatas;
-	    /**
-	     * The texture on the cube's right face.
-	     */
-	    positiveX: BitmapData;
-	    /**
-	     * The texture on the cube's left face.
-	     */
-	    negativeX: BitmapData;
-	    /**
-	     * The texture on the cube's top face.
-	     */
-	    positiveY: BitmapData;
-	    /**
-	     * The texture on the cube's bottom face.
-	     */
-	    negativeY: BitmapData;
-	    /**
-	     * The texture on the cube's far face.
-	     */
-	    positiveZ: BitmapData;
-	    /**
-	     * The texture on the cube's near face.
-	     */
-	    negativeZ: BitmapData;
-	    constructor(posX: BitmapData, negX: BitmapData, posY: BitmapData, negY: BitmapData, posZ: BitmapData, negZ: BitmapData);
-	    /**
-	     *
-	     * @param value
-	     * @private
-	     */
-	    private _testSize(value);
-	    dispose(): void;
-	    _iGetTextureData(side: number): BitmapData;
-	}
-	export = BitmapCubeTexture;
-	
-}
-declare module "awayjs-core/lib/textures/BitmapTexture" {
-	import BitmapData = require("awayjs-core/lib/base/BitmapData");
-	import Texture2DBase = require("awayjs-core/lib/textures/Texture2DBase");
-	class BitmapTexture extends Texture2DBase {
-	    _bitmapData: BitmapData;
-	    /**
-	     *
-	     * @returns {BitmapData}
-	     */
-	    bitmapData: BitmapData;
-	    constructor(bitmapData: BitmapData);
-	    dispose(): void;
-	    _iGetTextureData(): BitmapData;
-	}
-	export = BitmapTexture;
-	
-}
-declare module "awayjs-core/lib/textures/RenderTexture" {
-	import Texture2DBase = require("awayjs-core/lib/textures/Texture2DBase");
-	class RenderTexture extends Texture2DBase {
-	    /**
-	     *
-	     * @returns {number}
-	     */
-	    width: number;
-	    /**
-	     *
-	     * @returns {number}
-	     */
-	    height: number;
-	    constructor(width: number, height: number);
-	}
-	export = RenderTexture;
-	
-}
-declare module "awayjs-core/lib/textures/SpecularBitmapTexture" {
-	import BitmapData = require("awayjs-core/lib/base/BitmapData");
-	import BitmapTexture = require("awayjs-core/lib/textures/BitmapTexture");
-	/**
-	 * A convenience texture that encodes a specular map in the red channel, and the gloss map in the green channel, as expected by BasicSpecularMapMethod
-	 */
-	class SpecularBitmapTexture extends BitmapTexture {
-	    private _specularMap;
-	    private _glossMap;
-	    constructor(specularMap?: BitmapData, glossMap?: BitmapData);
-	    specularMap: BitmapData;
-	    glossMap: BitmapData;
-	    private _testSize();
-	    _iGetTextureData(): BitmapData;
-	}
-	export = SpecularBitmapTexture;
 	
 }

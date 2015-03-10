@@ -928,9 +928,9 @@ var CurveSubGeometry = (function (_super) {
         this._scaleU = 1;
         this._scaleV = 1;
     }
-    Object.defineProperty(CurveSubGeometry.prototype, "subGeometryType", {
+    Object.defineProperty(CurveSubGeometry.prototype, "assetType", {
         get: function () {
-            return CurveSubGeometry.SUB_GEOMETRY_TYPE;
+            return CurveSubGeometry.assetType;
         },
         enumerable: true,
         configurable: true
@@ -1471,7 +1471,7 @@ var CurveSubGeometry = (function (_super) {
             this._uvsUpdated = new SubGeometryEvent(SubGeometryEvent.VERTICES_UPDATED, CurveSubGeometry.UV_DATA);
         this.dispatchEvent(this._uvsUpdated);
     };
-    CurveSubGeometry.SUB_GEOMETRY_TYPE = "curve";
+    CurveSubGeometry.assetType = "[asset CurveSubGeometry]";
     CurveSubGeometry.POSITION_DATA = "positions";
     CurveSubGeometry.CURVE_DATA = "curves";
     CurveSubGeometry.UV_DATA = "uvs";
@@ -1492,8 +1492,7 @@ var __extends = this.__extends || function (d, b) {
     d.prototype = new __();
 };
 var GeometryEvent = require("awayjs-core/lib/events/GeometryEvent");
-var AssetType = require("awayjs-core/lib/library/AssetType");
-var NamedAssetBase = require("awayjs-core/lib/library/NamedAssetBase");
+var AssetBase = require("awayjs-core/lib/library/AssetBase");
 /**
  *
  * Geometry is a collection of SubGeometries, each of which contain the actual geometrical data such as vertices,
@@ -1519,7 +1518,7 @@ var Geometry = (function (_super) {
     }
     Object.defineProperty(Geometry.prototype, "assetType", {
         get: function () {
-            return AssetType.GEOMETRY;
+            return Geometry.assetType;
         },
         enumerable: true,
         configurable: true
@@ -1534,9 +1533,6 @@ var Geometry = (function (_super) {
         enumerable: true,
         configurable: true
     });
-    Geometry.prototype.getSubGeometries = function () {
-        return this._subGeometries;
-    };
     Geometry.prototype.applyTransformation = function (transform) {
         var len = this._subGeometries.length;
         for (var i = 0; i < len; ++i)
@@ -1611,12 +1607,13 @@ var Geometry = (function (_super) {
         if (this.hasEventListener(GeometryEvent.BOUNDS_INVALID))
             this.dispatchEvent(new GeometryEvent(GeometryEvent.BOUNDS_INVALID, subGeom));
     };
+    Geometry.assetType = "[asset Geometry]";
     return Geometry;
-})(NamedAssetBase);
+})(AssetBase);
 module.exports = Geometry;
 
 
-},{"awayjs-core/lib/events/GeometryEvent":"awayjs-core/lib/events/GeometryEvent","awayjs-core/lib/library/AssetType":"awayjs-core/lib/library/AssetType","awayjs-core/lib/library/NamedAssetBase":"awayjs-core/lib/library/NamedAssetBase"}],"awayjs-core/lib/data/LineSubGeometry":[function(require,module,exports){
+},{"awayjs-core/lib/events/GeometryEvent":"awayjs-core/lib/events/GeometryEvent","awayjs-core/lib/library/AssetBase":"awayjs-core/lib/library/AssetBase"}],"awayjs-core/lib/data/LineSubGeometry":[function(require,module,exports){
 var __extends = this.__extends || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
@@ -1641,6 +1638,17 @@ var LineSubGeometry = (function (_super) {
         this._thicknessDirty = true;
         this._colorsDirty = true;
     }
+    Object.defineProperty(LineSubGeometry.prototype, "assetType", {
+        /**
+         *
+         * @returns {string}
+         */
+        get: function () {
+            return LineSubGeometry.assetType;
+        },
+        enumerable: true,
+        configurable: true
+    });
     LineSubGeometry.prototype._pUpdateStrideOffset = function () {
         this._pOffset[LineSubGeometry.VERTEX_DATA] = 0;
         var stride = 0;
@@ -1664,13 +1672,6 @@ var LineSubGeometry = (function (_super) {
             this._pVertices.length = len;
         this._pStrideOffsetDirty = false;
     };
-    Object.defineProperty(LineSubGeometry.prototype, "subGeometryType", {
-        get: function () {
-            return LineSubGeometry.SUB_GEOMETRY_TYPE;
-        },
-        enumerable: true,
-        configurable: true
-    });
     Object.defineProperty(LineSubGeometry.prototype, "vertices", {
         /**
          *
@@ -1952,7 +1953,7 @@ var LineSubGeometry = (function (_super) {
             this._colorUpdated = new SubGeometryEvent(SubGeometryEvent.VERTICES_UPDATED, LineSubGeometry.COLOR_DATA);
         this.dispatchEvent(this._colorUpdated);
     };
-    LineSubGeometry.SUB_GEOMETRY_TYPE = "line";
+    LineSubGeometry.assetType = "[asset LineSubGeometry]";
     LineSubGeometry.VERTEX_DATA = "vertices";
     LineSubGeometry.START_POSITION_DATA = "startPositions";
     LineSubGeometry.END_POSITION_DATA = "endPositions";
@@ -1976,7 +1977,7 @@ var __extends = this.__extends || function (d, b) {
 };
 var AbstractMethodError = require("awayjs-core/lib/errors/AbstractMethodError");
 var SubGeometryEvent = require("awayjs-core/lib/events/SubGeometryEvent");
-var NamedAssetBase = require("awayjs-core/lib/library/NamedAssetBase");
+var AssetBase = require("awayjs-core/lib/library/AssetBase");
 /**
  * @class away.base.TriangleSubGeometry
  */
@@ -1996,13 +1997,6 @@ var SubGeometryBase = (function (_super) {
     SubGeometryBase.prototype._pUpdateStrideOffset = function () {
         throw new AbstractMethodError();
     };
-    Object.defineProperty(SubGeometryBase.prototype, "subGeometryType", {
-        get: function () {
-            throw new AbstractMethodError();
-        },
-        enumerable: true,
-        configurable: true
-    });
     Object.defineProperty(SubGeometryBase.prototype, "concatenateArrays", {
         /**
          *
@@ -2135,11 +2129,11 @@ var SubGeometryBase = (function (_super) {
     };
     SubGeometryBase.VERTEX_DATA = "vertices";
     return SubGeometryBase;
-})(NamedAssetBase);
+})(AssetBase);
 module.exports = SubGeometryBase;
 
 
-},{"awayjs-core/lib/errors/AbstractMethodError":"awayjs-core/lib/errors/AbstractMethodError","awayjs-core/lib/events/SubGeometryEvent":"awayjs-core/lib/events/SubGeometryEvent","awayjs-core/lib/library/NamedAssetBase":"awayjs-core/lib/library/NamedAssetBase"}],"awayjs-core/lib/data/TriangleSubGeometry":[function(require,module,exports){
+},{"awayjs-core/lib/errors/AbstractMethodError":"awayjs-core/lib/errors/AbstractMethodError","awayjs-core/lib/events/SubGeometryEvent":"awayjs-core/lib/events/SubGeometryEvent","awayjs-core/lib/library/AssetBase":"awayjs-core/lib/library/AssetBase"}],"awayjs-core/lib/data/TriangleSubGeometry":[function(require,module,exports){
 var __extends = this.__extends || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
@@ -2176,9 +2170,9 @@ var TriangleSubGeometry = (function (_super) {
         this._scaleU = 1;
         this._scaleV = 1;
     }
-    Object.defineProperty(TriangleSubGeometry.prototype, "subGeometryType", {
+    Object.defineProperty(TriangleSubGeometry.prototype, "assetType", {
         get: function () {
-            return TriangleSubGeometry.SUB_GEOMETRY_TYPE;
+            return TriangleSubGeometry.assetType;
         },
         enumerable: true,
         configurable: true
@@ -3316,7 +3310,7 @@ var TriangleSubGeometry = (function (_super) {
             this._jointWeightsUpdated = new SubGeometryEvent(SubGeometryEvent.VERTICES_UPDATED, TriangleSubGeometry.JOINT_WEIGHT_DATA);
         this.dispatchEvent(this._jointWeightsUpdated);
     };
-    TriangleSubGeometry.SUB_GEOMETRY_TYPE = "triangle";
+    TriangleSubGeometry.assetType = "[asset TriangleSubGeometry]";
     TriangleSubGeometry.POSITION_DATA = "positions";
     TriangleSubGeometry.NORMAL_DATA = "vertexNormals";
     TriangleSubGeometry.TANGENT_DATA = "vertexTangents";
@@ -8178,7 +8172,120 @@ var Vector3D = (function () {
 module.exports = Vector3D;
 
 
-},{}],"awayjs-core/lib/library/AssetLibraryBundle":[function(require,module,exports){
+},{}],"awayjs-core/lib/library/AssetBase":[function(require,module,exports){
+var __extends = this.__extends || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    __.prototype = b.prototype;
+    d.prototype = new __();
+};
+var AbstractMethodError = require("awayjs-core/lib/errors/AbstractMethodError");
+var AssetEvent = require("awayjs-core/lib/events/AssetEvent");
+var EventDispatcher = require("awayjs-core/lib/events/EventDispatcher");
+var AssetBase = (function (_super) {
+    __extends(AssetBase, _super);
+    function AssetBase(name) {
+        if (name === void 0) { name = null; }
+        _super.call(this);
+        this._id = AssetBase.ID_COUNT++;
+        if (name == null)
+            name = 'null';
+        this._name = name;
+        this._originalName = name;
+        this.updateFullPath();
+    }
+    Object.defineProperty(AssetBase.prototype, "assetType", {
+        /**
+         *
+         */
+        get: function () {
+            throw new AbstractMethodError();
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(AssetBase.prototype, "originalName", {
+        /**
+         * The original name used for this asset in the resource (e.g. file) in which
+         * it was found. This may not be the same as <code>name</code>, which may
+         * have changed due to of a name conflict.
+         */
+        get: function () {
+            return this._originalName;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(AssetBase.prototype, "id", {
+        /**
+         * A unique id for the asset, used to identify assets in an associative array
+         */
+        get: function () {
+            return this._id;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(AssetBase.prototype, "name", {
+        get: function () {
+            return this._name;
+        },
+        set: function (val) {
+            var prev;
+            prev = this._name;
+            this._name = val;
+            if (this._name == null)
+                this._name = 'null';
+            this.updateFullPath();
+            //if (hasEventListener(AssetEvent.ASSET_RENAME))
+            this.dispatchEvent(new AssetEvent(AssetEvent.ASSET_RENAME, this, prev));
+        },
+        enumerable: true,
+        configurable: true
+    });
+    AssetBase.prototype.dispose = function () {
+        throw new AbstractMethodError();
+    };
+    Object.defineProperty(AssetBase.prototype, "assetNamespace", {
+        get: function () {
+            return this._namespace;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(AssetBase.prototype, "assetFullPath", {
+        get: function () {
+            return this._full_path;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    AssetBase.prototype.assetPathEquals = function (name, ns) {
+        return (this._name == name && (!ns || this._namespace == ns));
+    };
+    AssetBase.prototype.isAsset = function (assetClass) {
+        return this.assetType == assetClass.assetType;
+    };
+    AssetBase.prototype.resetAssetPath = function (name, ns, overrideOriginal) {
+        if (ns === void 0) { ns = null; }
+        if (overrideOriginal === void 0) { overrideOriginal = true; }
+        this._name = name ? name : 'null';
+        this._namespace = ns ? ns : AssetBase.DEFAULT_NAMESPACE;
+        if (overrideOriginal)
+            this._originalName = this._name;
+        this.updateFullPath();
+    };
+    AssetBase.prototype.updateFullPath = function () {
+        this._full_path = [this._namespace, this._name];
+    };
+    AssetBase.ID_COUNT = 0;
+    AssetBase.DEFAULT_NAMESPACE = 'default';
+    return AssetBase;
+})(EventDispatcher);
+module.exports = AssetBase;
+
+
+},{"awayjs-core/lib/errors/AbstractMethodError":"awayjs-core/lib/errors/AbstractMethodError","awayjs-core/lib/events/AssetEvent":"awayjs-core/lib/events/AssetEvent","awayjs-core/lib/events/EventDispatcher":"awayjs-core/lib/events/EventDispatcher"}],"awayjs-core/lib/library/AssetLibraryBundle":[function(require,module,exports){
 var __extends = this.__extends || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
@@ -8189,7 +8296,7 @@ var AssetLibraryIterator = require("awayjs-core/lib/library/AssetLibraryIterator
 var AssetLoader = require("awayjs-core/lib/library/AssetLoader");
 var ConflictPrecedence = require("awayjs-core/lib/library/ConflictPrecedence");
 var ConflictStrategy = require("awayjs-core/lib/library/ConflictStrategy");
-var NamedAssetBase = require("awayjs-core/lib/library/NamedAssetBase");
+var AssetBase = require("awayjs-core/lib/library/AssetBase");
 var Error = require("awayjs-core/lib/errors/Error");
 var AssetEvent = require("awayjs-core/lib/events/AssetEvent");
 var IOErrorEvent = require("awayjs-core/lib/events/IOErrorEvent");
@@ -8377,7 +8484,7 @@ var AssetLibraryBundle = (function (_super) {
         if (this._assetDictDirty)
             this.rehashAssetDict();
         if (ns == null)
-            ns = NamedAssetBase.DEFAULT_NAMESPACE;
+            ns = AssetBase.DEFAULT_NAMESPACE;
         if (!this._assetDictionary.hasOwnProperty(ns))
             return null;
         return this._assetDictionary[ns][name];
@@ -8394,7 +8501,7 @@ var AssetLibraryBundle = (function (_super) {
         if (this._assets.indexOf(asset) >= 0)
             return;
         old = this.getAsset(asset.name, asset.assetNamespace);
-        ns = asset.assetNamespace || NamedAssetBase.DEFAULT_NAMESPACE;
+        ns = asset.assetNamespace || AssetBase.DEFAULT_NAMESPACE;
         if (old != null)
             this._strategy.resolveConflict(asset, old, this._assetDictionary[ns], this._strategyPreference);
         //create unique-id (for now this is used in AwayBuilder only
@@ -8483,7 +8590,7 @@ var AssetLibraryBundle = (function (_super) {
         old_assets = this._assets.concat();
         this._assets.length = 0;
         if (ns == null)
-            ns = NamedAssetBase.DEFAULT_NAMESPACE;
+            ns = AssetBase.DEFAULT_NAMESPACE;
         for (var d = 0; d < old_assets.length; d++) {
             asset = old_assets[d];
             // Remove from dict if in the supplied namespace. If not,
@@ -8664,7 +8771,7 @@ var AssetLibraryBundle = (function (_super) {
 module.exports = AssetLibraryBundle;
 
 
-},{"awayjs-core/lib/errors/Error":"awayjs-core/lib/errors/Error","awayjs-core/lib/events/AssetEvent":"awayjs-core/lib/events/AssetEvent","awayjs-core/lib/events/EventDispatcher":"awayjs-core/lib/events/EventDispatcher","awayjs-core/lib/events/IOErrorEvent":"awayjs-core/lib/events/IOErrorEvent","awayjs-core/lib/events/LoaderEvent":"awayjs-core/lib/events/LoaderEvent","awayjs-core/lib/events/ParserEvent":"awayjs-core/lib/events/ParserEvent","awayjs-core/lib/library/AssetLibraryIterator":"awayjs-core/lib/library/AssetLibraryIterator","awayjs-core/lib/library/AssetLoader":"awayjs-core/lib/library/AssetLoader","awayjs-core/lib/library/ConflictPrecedence":"awayjs-core/lib/library/ConflictPrecedence","awayjs-core/lib/library/ConflictStrategy":"awayjs-core/lib/library/ConflictStrategy","awayjs-core/lib/library/NamedAssetBase":"awayjs-core/lib/library/NamedAssetBase"}],"awayjs-core/lib/library/AssetLibraryIterator":[function(require,module,exports){
+},{"awayjs-core/lib/errors/Error":"awayjs-core/lib/errors/Error","awayjs-core/lib/events/AssetEvent":"awayjs-core/lib/events/AssetEvent","awayjs-core/lib/events/EventDispatcher":"awayjs-core/lib/events/EventDispatcher","awayjs-core/lib/events/IOErrorEvent":"awayjs-core/lib/events/IOErrorEvent","awayjs-core/lib/events/LoaderEvent":"awayjs-core/lib/events/LoaderEvent","awayjs-core/lib/events/ParserEvent":"awayjs-core/lib/events/ParserEvent","awayjs-core/lib/library/AssetBase":"awayjs-core/lib/library/AssetBase","awayjs-core/lib/library/AssetLibraryIterator":"awayjs-core/lib/library/AssetLibraryIterator","awayjs-core/lib/library/AssetLoader":"awayjs-core/lib/library/AssetLoader","awayjs-core/lib/library/ConflictPrecedence":"awayjs-core/lib/library/ConflictPrecedence","awayjs-core/lib/library/ConflictStrategy":"awayjs-core/lib/library/ConflictStrategy"}],"awayjs-core/lib/library/AssetLibraryIterator":[function(require,module,exports){
 var AssetLibraryIterator = (function () {
     function AssetLibraryIterator(assets, assetTypeFilter, namespaceFilter, filterFunc) {
         this._assets = assets;
@@ -9823,45 +9930,7 @@ var AssetLoader = (function (_super) {
 module.exports = AssetLoader;
 
 
-},{"awayjs-core/lib/errors/Error":"awayjs-core/lib/errors/Error","awayjs-core/lib/events/AssetEvent":"awayjs-core/lib/events/AssetEvent","awayjs-core/lib/events/Event":"awayjs-core/lib/events/Event","awayjs-core/lib/events/EventDispatcher":"awayjs-core/lib/events/EventDispatcher","awayjs-core/lib/events/IOErrorEvent":"awayjs-core/lib/events/IOErrorEvent","awayjs-core/lib/events/LoaderEvent":"awayjs-core/lib/events/LoaderEvent","awayjs-core/lib/events/ParserEvent":"awayjs-core/lib/events/ParserEvent","awayjs-core/lib/library/AssetLoaderToken":"awayjs-core/lib/library/AssetLoaderToken","awayjs-core/lib/net/URLLoader":"awayjs-core/lib/net/URLLoader","awayjs-core/lib/net/URLLoaderDataFormat":"awayjs-core/lib/net/URLLoaderDataFormat","awayjs-core/lib/parsers/CubeTextureParser":"awayjs-core/lib/parsers/CubeTextureParser","awayjs-core/lib/parsers/ResourceDependency":"awayjs-core/lib/parsers/ResourceDependency","awayjs-core/lib/parsers/Texture2DParser":"awayjs-core/lib/parsers/Texture2DParser"}],"awayjs-core/lib/library/AssetType":[function(require,module,exports){
-var AssetType = (function () {
-    function AssetType() {
-    }
-    AssetType.ANIMATION_NODE = 'animationNode';
-    AssetType.ANIMATION_SET = 'animationSet';
-    AssetType.ANIMATION_STATE = 'animationState';
-    AssetType.ANIMATOR = 'animator';
-    AssetType.BILLBOARD = 'billboard';
-    AssetType.CAMERA = 'camera';
-    AssetType.CONTAINER = 'container';
-    AssetType.EFFECTS_METHOD = 'effectsMethod';
-    AssetType.FONT = 'font';
-    AssetType.GEOMETRY = 'geometry';
-    AssetType.LINE_SEGMENT = 'lineSegment';
-    AssetType.LIGHT = 'light';
-    AssetType.LIGHT_PICKER = 'lightPicker';
-    AssetType.MATERIAL = 'material';
-    AssetType.MESH = 'mesh';
-    AssetType.TRIANGLE_SUB_MESH = 'triangleSubMesh';
-    AssetType.CURVE_SUB_MESH = 'curveSubMesh';
-    AssetType.LINE_SUB_MESH = 'lineSubMesh';
-    AssetType.PRIMITIVE_PREFAB = 'primitivePrefab';
-    AssetType.SHADOW_MAP_METHOD = 'shadowMapMethod';
-    AssetType.SKELETON = 'skeleton';
-    AssetType.SKELETON_POSE = 'skeletonPose';
-    AssetType.SKYBOX = 'skybox';
-    AssetType.STATE_TRANSITION = 'stateTransition';
-    AssetType.TEXTFIELD = 'textfield';
-    AssetType.TEXTFORMAT = 'textformat';
-    AssetType.TEXTURE = 'texture';
-    AssetType.TEXTURE_PROJECTOR = 'textureProjector';
-    AssetType.TIMELINE = 'timeline';
-    return AssetType;
-})();
-module.exports = AssetType;
-
-
-},{}],"awayjs-core/lib/library/ConflictPrecedence":[function(require,module,exports){
+},{"awayjs-core/lib/errors/Error":"awayjs-core/lib/errors/Error","awayjs-core/lib/events/AssetEvent":"awayjs-core/lib/events/AssetEvent","awayjs-core/lib/events/Event":"awayjs-core/lib/events/Event","awayjs-core/lib/events/EventDispatcher":"awayjs-core/lib/events/EventDispatcher","awayjs-core/lib/events/IOErrorEvent":"awayjs-core/lib/events/IOErrorEvent","awayjs-core/lib/events/LoaderEvent":"awayjs-core/lib/events/LoaderEvent","awayjs-core/lib/events/ParserEvent":"awayjs-core/lib/events/ParserEvent","awayjs-core/lib/library/AssetLoaderToken":"awayjs-core/lib/library/AssetLoaderToken","awayjs-core/lib/net/URLLoader":"awayjs-core/lib/net/URLLoader","awayjs-core/lib/net/URLLoaderDataFormat":"awayjs-core/lib/net/URLLoaderDataFormat","awayjs-core/lib/parsers/CubeTextureParser":"awayjs-core/lib/parsers/CubeTextureParser","awayjs-core/lib/parsers/ResourceDependency":"awayjs-core/lib/parsers/ResourceDependency","awayjs-core/lib/parsers/Texture2DParser":"awayjs-core/lib/parsers/Texture2DParser"}],"awayjs-core/lib/library/ConflictPrecedence":[function(require,module,exports){
 /**
  * Enumaration class for precedence when resolving naming conflicts in the library.
  *
@@ -10015,7 +10084,11 @@ var ErrorConflictStrategy = (function (_super) {
 module.exports = ErrorConflictStrategy;
 
 
-},{"awayjs-core/lib/errors/Error":"awayjs-core/lib/errors/Error","awayjs-core/lib/library/ConflictStrategyBase":"awayjs-core/lib/library/ConflictStrategyBase"}],"awayjs-core/lib/library/IAsset":[function(require,module,exports){
+},{"awayjs-core/lib/errors/Error":"awayjs-core/lib/errors/Error","awayjs-core/lib/library/ConflictStrategyBase":"awayjs-core/lib/library/ConflictStrategyBase"}],"awayjs-core/lib/library/IAssetClass":[function(require,module,exports){
+
+
+
+},{}],"awayjs-core/lib/library/IAsset":[function(require,module,exports){
 
 
 
@@ -10104,117 +10177,7 @@ var IgnoreConflictStrategy = (function (_super) {
 module.exports = IgnoreConflictStrategy;
 
 
-},{"awayjs-core/lib/library/ConflictStrategyBase":"awayjs-core/lib/library/ConflictStrategyBase"}],"awayjs-core/lib/library/NamedAssetBase":[function(require,module,exports){
-var __extends = this.__extends || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    __.prototype = b.prototype;
-    d.prototype = new __();
-};
-var AbstractMethodError = require("awayjs-core/lib/errors/AbstractMethodError");
-var AssetEvent = require("awayjs-core/lib/events/AssetEvent");
-var EventDispatcher = require("awayjs-core/lib/events/EventDispatcher");
-var NamedAssetBase = (function (_super) {
-    __extends(NamedAssetBase, _super);
-    function NamedAssetBase(name) {
-        if (name === void 0) { name = null; }
-        _super.call(this);
-        this._id = NamedAssetBase.ID_COUNT++;
-        if (name == null)
-            name = 'null';
-        this._name = name;
-        this._originalName = name;
-        this.updateFullPath();
-    }
-    Object.defineProperty(NamedAssetBase.prototype, "assetType", {
-        /**
-         *
-         */
-        get: function () {
-            throw new AbstractMethodError();
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(NamedAssetBase.prototype, "originalName", {
-        /**
-         * The original name used for this asset in the resource (e.g. file) in which
-         * it was found. This may not be the same as <code>name</code>, which may
-         * have changed due to of a name conflict.
-         */
-        get: function () {
-            return this._originalName;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(NamedAssetBase.prototype, "id", {
-        /**
-         * A unique id for the asset, used to identify assets in an associative array
-         */
-        get: function () {
-            return this._id;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(NamedAssetBase.prototype, "name", {
-        get: function () {
-            return this._name;
-        },
-        set: function (val) {
-            var prev;
-            prev = this._name;
-            this._name = val;
-            if (this._name == null)
-                this._name = 'null';
-            this.updateFullPath();
-            //if (hasEventListener(AssetEvent.ASSET_RENAME))
-            this.dispatchEvent(new AssetEvent(AssetEvent.ASSET_RENAME, this, prev));
-        },
-        enumerable: true,
-        configurable: true
-    });
-    NamedAssetBase.prototype.dispose = function () {
-        throw new AbstractMethodError();
-    };
-    Object.defineProperty(NamedAssetBase.prototype, "assetNamespace", {
-        get: function () {
-            return this._namespace;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(NamedAssetBase.prototype, "assetFullPath", {
-        get: function () {
-            return this._full_path;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    NamedAssetBase.prototype.assetPathEquals = function (name, ns) {
-        return (this._name == name && (!ns || this._namespace == ns));
-    };
-    NamedAssetBase.prototype.resetAssetPath = function (name, ns, overrideOriginal) {
-        if (ns === void 0) { ns = null; }
-        if (overrideOriginal === void 0) { overrideOriginal = true; }
-        this._name = name ? name : 'null';
-        this._namespace = ns ? ns : NamedAssetBase.DEFAULT_NAMESPACE;
-        if (overrideOriginal)
-            this._originalName = this._name;
-        this.updateFullPath();
-    };
-    NamedAssetBase.prototype.updateFullPath = function () {
-        this._full_path = [this._namespace, this._name];
-    };
-    NamedAssetBase.ID_COUNT = 0;
-    NamedAssetBase.DEFAULT_NAMESPACE = 'default';
-    return NamedAssetBase;
-})(EventDispatcher);
-module.exports = NamedAssetBase;
-
-
-},{"awayjs-core/lib/errors/AbstractMethodError":"awayjs-core/lib/errors/AbstractMethodError","awayjs-core/lib/events/AssetEvent":"awayjs-core/lib/events/AssetEvent","awayjs-core/lib/events/EventDispatcher":"awayjs-core/lib/events/EventDispatcher"}],"awayjs-core/lib/library/NumSuffixConflictStrategy":[function(require,module,exports){
+},{"awayjs-core/lib/library/ConflictStrategyBase":"awayjs-core/lib/library/ConflictStrategyBase"}],"awayjs-core/lib/library/NumSuffixConflictStrategy":[function(require,module,exports){
 var __extends = this.__extends || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
@@ -12646,7 +12609,7 @@ var __extends = this.__extends || function (d, b) {
 };
 var AbstractMethodError = require("awayjs-core/lib/errors/AbstractMethodError");
 var MipmapGenerator = require("awayjs-core/lib/textures/MipmapGenerator");
-var TextureProxyBase = require("awayjs-core/lib/textures/TextureProxyBase");
+var TextureBase = require("awayjs-core/lib/textures/TextureBase");
 var CubeTextureBase = (function (_super) {
     __extends(CubeTextureBase, _super);
     function CubeTextureBase() {
@@ -12699,11 +12662,11 @@ var CubeTextureBase = (function (_super) {
         throw new AbstractMethodError();
     };
     return CubeTextureBase;
-})(TextureProxyBase);
+})(TextureBase);
 module.exports = CubeTextureBase;
 
 
-},{"awayjs-core/lib/errors/AbstractMethodError":"awayjs-core/lib/errors/AbstractMethodError","awayjs-core/lib/textures/MipmapGenerator":"awayjs-core/lib/textures/MipmapGenerator","awayjs-core/lib/textures/TextureProxyBase":"awayjs-core/lib/textures/TextureProxyBase"}],"awayjs-core/lib/textures/ImageCubeTexture":[function(require,module,exports){
+},{"awayjs-core/lib/errors/AbstractMethodError":"awayjs-core/lib/errors/AbstractMethodError","awayjs-core/lib/textures/MipmapGenerator":"awayjs-core/lib/textures/MipmapGenerator","awayjs-core/lib/textures/TextureBase":"awayjs-core/lib/textures/TextureBase"}],"awayjs-core/lib/textures/ImageCubeTexture":[function(require,module,exports){
 var __extends = this.__extends || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
@@ -13106,7 +13069,7 @@ var __extends = this.__extends || function (d, b) {
 };
 var AbstractMethodError = require("awayjs-core/lib/errors/AbstractMethodError");
 var MipmapGenerator = require("awayjs-core/lib/textures/MipmapGenerator");
-var TextureProxyBase = require("awayjs-core/lib/textures/TextureProxyBase");
+var TextureBase = require("awayjs-core/lib/textures/TextureBase");
 var Texture2DBase = (function (_super) {
     __extends(Texture2DBase, _super);
     function Texture2DBase() {
@@ -13185,19 +13148,18 @@ var Texture2DBase = (function (_super) {
         throw new AbstractMethodError();
     };
     return Texture2DBase;
-})(TextureProxyBase);
+})(TextureBase);
 module.exports = Texture2DBase;
 
 
-},{"awayjs-core/lib/errors/AbstractMethodError":"awayjs-core/lib/errors/AbstractMethodError","awayjs-core/lib/textures/MipmapGenerator":"awayjs-core/lib/textures/MipmapGenerator","awayjs-core/lib/textures/TextureProxyBase":"awayjs-core/lib/textures/TextureProxyBase"}],"awayjs-core/lib/textures/TextureProxyBase":[function(require,module,exports){
+},{"awayjs-core/lib/errors/AbstractMethodError":"awayjs-core/lib/errors/AbstractMethodError","awayjs-core/lib/textures/MipmapGenerator":"awayjs-core/lib/textures/MipmapGenerator","awayjs-core/lib/textures/TextureBase":"awayjs-core/lib/textures/TextureBase"}],"awayjs-core/lib/textures/TextureBase":[function(require,module,exports){
 var __extends = this.__extends || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
     __.prototype = b.prototype;
     d.prototype = new __();
 };
-var AssetType = require("awayjs-core/lib/library/AssetType");
-var NamedAssetBase = require("awayjs-core/lib/library/NamedAssetBase");
+var AssetBase = require("awayjs-core/lib/library/AssetBase");
 /**
  *
  */
@@ -13236,7 +13198,7 @@ var TextureProxyBase = (function (_super) {
          * @returns {string}
          */
         get: function () {
-            return AssetType.TEXTURE;
+            return TextureProxyBase.assetType;
         },
         enumerable: true,
         configurable: true
@@ -13272,12 +13234,13 @@ var TextureProxyBase = (function (_super) {
         this._textureData.splice(this._textureData.indexOf(textureData), 1);
         return textureData;
     };
+    TextureProxyBase.assetType = "[asset Texture]";
     return TextureProxyBase;
-})(NamedAssetBase);
+})(AssetBase);
 module.exports = TextureProxyBase;
 
 
-},{"awayjs-core/lib/library/AssetType":"awayjs-core/lib/library/AssetType","awayjs-core/lib/library/NamedAssetBase":"awayjs-core/lib/library/NamedAssetBase"}],"awayjs-core/lib/ui/Keyboard":[function(require,module,exports){
+},{"awayjs-core/lib/library/AssetBase":"awayjs-core/lib/library/AssetBase"}],"awayjs-core/lib/ui/Keyboard":[function(require,module,exports){
 var Keyboard = (function () {
     function Keyboard() {
     }

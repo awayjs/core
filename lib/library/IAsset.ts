@@ -1,4 +1,5 @@
 import IEventDispatcher			= require("awayjs-core/lib/events/IEventDispatcher");
+import IAssetClass				= require("awayjs-core/lib/library/IAssetClass");
 
 interface IAsset extends IEventDispatcher
 {
@@ -36,17 +37,22 @@ interface IAsset extends IEventDispatcher
 
 	/**
 	 *
+	 */
+	dispose();
+
+	/**
+	 *
+	 * @param IAssetClass
+	 */
+	isAsset(IAssetClass):boolean;
+
+	/**
+	 *
 	 * @param name
 	 * @param ns
 	 * @param overrideOriginal
 	 */
 	resetAssetPath(name:string, ns:string, overrideOriginal?:boolean):void;
-
-	/**
-	 *
-	 */
-	dispose();
-
 }
 
 export = IAsset;

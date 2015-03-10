@@ -8,7 +8,7 @@ import SubGeometryEvent			= require("awayjs-core/lib/events/SubGeometryEvent");
  */
 class CurveSubGeometry extends SubGeometryBase
 {
-	public static SUB_GEOMETRY_TYPE:string = "curve";
+	public static assetType:string = "[asset CurveSubGeometry]";
 
 	public static POSITION_DATA:string = "positions";
     public static CURVE_DATA:string = "curves";
@@ -55,9 +55,9 @@ class CurveSubGeometry extends SubGeometryBase
 	private _secondaryUVsUpdated:SubGeometryEvent;
 
 
-	public get subGeometryType():string
+	public get assetType():string
 	{
-		return CurveSubGeometry.SUB_GEOMETRY_TYPE;
+		return CurveSubGeometry.assetType;
 	}
 
 	/**

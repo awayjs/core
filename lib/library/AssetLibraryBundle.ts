@@ -7,7 +7,7 @@ import AssetLoaderContext		= require("awayjs-core/lib/library/AssetLoaderContext
 import ConflictPrecedence		= require("awayjs-core/lib/library/ConflictPrecedence");
 import ConflictStrategy			= require("awayjs-core/lib/library/ConflictStrategy");
 import ConflictStrategyBase		= require("awayjs-core/lib/library/ConflictStrategyBase");
-import NamedAssetBase			= require("awayjs-core/lib/library/NamedAssetBase");
+import AssetBase				= require("awayjs-core/lib/library/AssetBase");
 import IAsset					= require("awayjs-core/lib/library/IAsset");
 import Error					= require("awayjs-core/lib/errors/Error");
 import AssetEvent				= require("awayjs-core/lib/events/AssetEvent");
@@ -240,7 +240,7 @@ class AssetLibraryBundle extends EventDispatcher
 			this.rehashAssetDict();
 
 		if (ns == null)
-			ns = NamedAssetBase.DEFAULT_NAMESPACE;
+			ns = AssetBase.DEFAULT_NAMESPACE;
 
 		if (!this._assetDictionary.hasOwnProperty(ns))
 			return null;
@@ -264,7 +264,7 @@ class AssetLibraryBundle extends EventDispatcher
 			return;
 
 		old = this.getAsset(asset.name, asset.assetNamespace);
-		ns = asset.assetNamespace || NamedAssetBase.DEFAULT_NAMESPACE;
+		ns = asset.assetNamespace || AssetBase.DEFAULT_NAMESPACE;
 
 		if (old != null)
 			this._strategy.resolveConflict(asset, old, this._assetDictionary[ns], this._strategyPreference);
@@ -377,7 +377,7 @@ class AssetLibraryBundle extends EventDispatcher
 		this._assets.length = 0;
 
 		if (ns == null)
-			ns = NamedAssetBase.DEFAULT_NAMESPACE;
+			ns = AssetBase.DEFAULT_NAMESPACE;
 
 		for (var d:number = 0; d < old_assets.length; d++) {
 			asset = old_assets[d];

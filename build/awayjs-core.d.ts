@@ -2631,41 +2631,6 @@ declare module "awayjs-core/lib/geom/Matrix3D" {
 	export = Matrix3D;
 	
 }
-declare module "awayjs-core/lib/library/AssetType" {
-	class AssetType {
-	    static ANIMATION_NODE: string;
-	    static ANIMATION_SET: string;
-	    static ANIMATION_STATE: string;
-	    static ANIMATOR: string;
-	    static BILLBOARD: string;
-	    static CAMERA: string;
-	    static CONTAINER: string;
-	    static EFFECTS_METHOD: string;
-	    static FONT: string;
-	    static GEOMETRY: string;
-	    static LINE_SEGMENT: string;
-	    static LIGHT: string;
-	    static LIGHT_PICKER: string;
-	    static MATERIAL: string;
-	    static MESH: string;
-	    static TRIANGLE_SUB_MESH: string;
-	    static CURVE_SUB_MESH: string;
-	    static LINE_SUB_MESH: string;
-	    static PRIMITIVE_PREFAB: string;
-	    static SHADOW_MAP_METHOD: string;
-	    static SKELETON: string;
-	    static SKELETON_POSE: string;
-	    static SKYBOX: string;
-	    static STATE_TRANSITION: string;
-	    static TEXTFIELD: string;
-	    static TEXTFORMAT: string;
-	    static TEXTURE: string;
-	    static TEXTURE_PROJECTOR: string;
-	    static TIMELINE: string;
-	}
-	export = AssetType;
-	
-}
 declare module "awayjs-core/lib/events/IEventDispatcher" {
 	import Event = require("awayjs-core/lib/events/Event");
 	/**
@@ -2707,6 +2672,15 @@ declare module "awayjs-core/lib/events/IEventDispatcher" {
 	export = IEventDispatcher;
 	
 }
+declare module "awayjs-core/lib/library/IAssetClass" {
+	import IAsset = require("awayjs-core/lib/library/IAsset");
+	interface IAssetClass {
+	    assetType: string;
+	    new (): IAsset;
+	}
+	export = IAssetClass;
+	
+}
 declare module "awayjs-core/lib/library/IAsset" {
 	import IEventDispatcher = require("awayjs-core/lib/events/IEventDispatcher");
 	interface IAsset extends IEventDispatcher {
@@ -2738,15 +2712,20 @@ declare module "awayjs-core/lib/library/IAsset" {
 	    assetPathEquals(name: string, ns: string): boolean;
 	    /**
 	     *
+	     */
+	    dispose(): any;
+	    /**
+	     *
+	     * @param IAssetClass
+	     */
+	    isAsset(IAssetClass: any): boolean;
+	    /**
+	     *
 	     * @param name
 	     * @param ns
 	     * @param overrideOriginal
 	     */
 	    resetAssetPath(name: string, ns: string, overrideOriginal?: boolean): void;
-	    /**
-	     *
-	     */
-	    dispose(): any;
 	}
 	export = IAsset;
 	
@@ -2846,9 +2825,10 @@ declare module "awayjs-core/lib/events/EventDispatcher" {
 	export = EventDispatcher;
 	
 }
-declare module "awayjs-core/lib/library/NamedAssetBase" {
+declare module "awayjs-core/lib/library/AssetBase" {
+	import IAssetClass = require("awayjs-core/lib/library/IAssetClass");
 	import EventDispatcher = require("awayjs-core/lib/events/EventDispatcher");
-	class NamedAssetBase extends EventDispatcher {
+	class AssetBase extends EventDispatcher {
 	    static ID_COUNT: number;
 	    private _originalName;
 	    private _namespace;
@@ -2876,17 +2856,18 @@ declare module "awayjs-core/lib/library/NamedAssetBase" {
 	    assetNamespace: string;
 	    assetFullPath: Array<string>;
 	    assetPathEquals(name: string, ns: string): boolean;
+	    isAsset(assetClass: IAssetClass): boolean;
 	    resetAssetPath(name: string, ns?: string, overrideOriginal?: boolean): void;
 	    private updateFullPath();
 	}
-	export = NamedAssetBase;
+	export = AssetBase;
 	
 }
 declare module "awayjs-core/lib/data/Geometry" {
 	import SubGeometryBase = require("awayjs-core/lib/data/SubGeometryBase");
 	import Matrix3D = require("awayjs-core/lib/geom/Matrix3D");
 	import IAsset = require("awayjs-core/lib/library/IAsset");
-	import NamedAssetBase = require("awayjs-core/lib/library/NamedAssetBase");
+	import AssetBase = require("awayjs-core/lib/library/AssetBase");
 	/**
 	 *
 	 * Geometry is a collection of SubGeometries, each of which contain the actual geometrical data such as vertices,
@@ -2901,14 +2882,14 @@ declare module "awayjs-core/lib/data/Geometry" {
 	 *
 	 * @class Geometry
 	 */
-	class Geometry extends NamedAssetBase implements IAsset {
+	class Geometry extends AssetBase implements IAsset {
+	    static assetType: string;
 	    private _subGeometries;
 	    assetType: string;
 	    /**
 	     * A collection of TriangleSubGeometry objects, each of which contain geometrical data such as vertices, normals, etc.
 	     */
 	    subGeometries: Array<SubGeometryBase>;
-	    getSubGeometries(): Array<SubGeometryBase>;
 	    /**
 	     * Creates a new Geometry object.
 	     */
@@ -2990,11 +2971,11 @@ declare module "awayjs-core/lib/events/SubGeometryEvent" {
 declare module "awayjs-core/lib/data/SubGeometryBase" {
 	import Geometry = require("awayjs-core/lib/data/Geometry");
 	import Matrix3D = require("awayjs-core/lib/geom/Matrix3D");
-	import NamedAssetBase = require("awayjs-core/lib/library/NamedAssetBase");
+	import AssetBase = require("awayjs-core/lib/library/AssetBase");
 	/**
 	 * @class away.base.TriangleSubGeometry
 	 */
-	class SubGeometryBase extends NamedAssetBase {
+	class SubGeometryBase extends AssetBase {
 	    static VERTEX_DATA: string;
 	    _pStrideOffsetDirty: boolean;
 	    _pIndices: Array<number>;
@@ -3007,7 +2988,6 @@ declare module "awayjs-core/lib/data/SubGeometryBase" {
 	    _pStride: Object;
 	    _pOffset: Object;
 	    _pUpdateStrideOffset(): void;
-	    subGeometryType: string;
 	    /**
 	     *
 	     */
@@ -3084,7 +3064,7 @@ declare module "awayjs-core/lib/data/CurveSubGeometry" {
 	 * @class away.base.CurveSubGeometry
 	 */
 	class CurveSubGeometry extends SubGeometryBase {
-	    static SUB_GEOMETRY_TYPE: string;
+	    static assetType: string;
 	    static POSITION_DATA: string;
 	    static CURVE_DATA: string;
 	    static UV_DATA: string;
@@ -3117,7 +3097,7 @@ declare module "awayjs-core/lib/data/CurveSubGeometry" {
 	    private _curvesUpdated;
 	    private _uvsUpdated;
 	    private _secondaryUVsUpdated;
-	    subGeometryType: string;
+	    assetType: string;
 	    /**
 	     *
 	     */
@@ -3227,7 +3207,7 @@ declare module "awayjs-core/lib/data/TriangleSubGeometry" {
 	 * @class away.base.TriangleSubGeometry
 	 */
 	class TriangleSubGeometry extends SubGeometryBase {
-	    static SUB_GEOMETRY_TYPE: string;
+	    static assetType: string;
 	    static POSITION_DATA: string;
 	    static NORMAL_DATA: string;
 	    static TANGENT_DATA: string;
@@ -3278,7 +3258,7 @@ declare module "awayjs-core/lib/data/TriangleSubGeometry" {
 	    private _secondaryUVsUpdated;
 	    private _jointIndicesUpdated;
 	    private _jointWeightsUpdated;
-	    subGeometryType: string;
+	    assetType: string;
 	    /**
 	     *
 	     */
@@ -3442,7 +3422,7 @@ declare module "awayjs-core/lib/data/LineSubGeometry" {
 	 * @class LineSubGeometry
 	 */
 	class LineSubGeometry extends SubGeometryBase {
-	    static SUB_GEOMETRY_TYPE: string;
+	    static assetType: string;
 	    static VERTEX_DATA: string;
 	    static START_POSITION_DATA: string;
 	    static END_POSITION_DATA: string;
@@ -3465,8 +3445,12 @@ declare module "awayjs-core/lib/data/LineSubGeometry" {
 	    private _positionsUpdated;
 	    private _thicknessUpdated;
 	    private _colorUpdated;
+	    /**
+	     *
+	     * @returns {string}
+	     */
+	    assetType: string;
 	    _pUpdateStrideOffset(): void;
-	    subGeometryType: string;
 	    /**
 	     *
 	     */
@@ -5250,17 +5234,18 @@ declare module "awayjs-core/lib/pool/ITextureData" {
 	export = ITextureData;
 	
 }
-declare module "awayjs-core/lib/textures/TextureProxyBase" {
+declare module "awayjs-core/lib/textures/TextureBase" {
 	import IAsset = require("awayjs-core/lib/library/IAsset");
-	import NamedAssetBase = require("awayjs-core/lib/library/NamedAssetBase");
+	import AssetBase = require("awayjs-core/lib/library/AssetBase");
 	import ITextureData = require("awayjs-core/lib/pool/ITextureData");
 	/**
 	 *
 	 */
-	class TextureProxyBase extends NamedAssetBase implements IAsset {
+	class TextureProxyBase extends AssetBase implements IAsset {
 	    _pSize: number;
 	    _pFormat: string;
 	    private _textureData;
+	    static assetType: string;
 	    /**
 	     *
 	     */
@@ -5297,8 +5282,8 @@ declare module "awayjs-core/lib/textures/TextureProxyBase" {
 }
 declare module "awayjs-core/lib/textures/CubeTextureBase" {
 	import BitmapData = require("awayjs-core/lib/data/BitmapData");
-	import TextureProxyBase = require("awayjs-core/lib/textures/TextureProxyBase");
-	class CubeTextureBase extends TextureProxyBase {
+	import TextureBase = require("awayjs-core/lib/textures/TextureBase");
+	class CubeTextureBase extends TextureBase {
 	    _mipmapDataArray: Array<Array<BitmapData>>;
 	    _mipmapDataDirtyArray: Array<boolean>;
 	    constructor();
@@ -5360,8 +5345,8 @@ declare module "awayjs-core/lib/textures/ImageCubeTexture" {
 }
 declare module "awayjs-core/lib/textures/Texture2DBase" {
 	import BitmapData = require("awayjs-core/lib/data/BitmapData");
-	import TextureProxyBase = require("awayjs-core/lib/textures/TextureProxyBase");
-	class Texture2DBase extends TextureProxyBase {
+	import TextureBase = require("awayjs-core/lib/textures/TextureBase");
+	class Texture2DBase extends TextureBase {
 	    private _mipmapData;
 	    private _mipmapDataDirty;
 	    _pWidth: number;

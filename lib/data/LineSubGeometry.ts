@@ -8,7 +8,7 @@ import SubGeometryEvent			= require("awayjs-core/lib/events/SubGeometryEvent");
  */
 class LineSubGeometry extends SubGeometryBase
 {
-	public static SUB_GEOMETRY_TYPE:string = "line";
+	public static assetType:string = "[asset LineSubGeometry]";
 
 	public static VERTEX_DATA:string = "vertices";
 	public static START_POSITION_DATA:string = "startPositions";
@@ -38,6 +38,15 @@ class LineSubGeometry extends SubGeometryBase
 	private _positionsUpdated:SubGeometryEvent;
 	private _thicknessUpdated:SubGeometryEvent;
 	private _colorUpdated:SubGeometryEvent;
+
+	/**
+	 *
+	 * @returns {string}
+	 */
+	public get assetType():string
+	{
+		return LineSubGeometry.assetType;
+	}
 
 	public _pUpdateStrideOffset()
 	{
@@ -70,11 +79,6 @@ class LineSubGeometry extends SubGeometryBase
 			this._pVertices.length = len;
 
 		this._pStrideOffsetDirty = false;
-	}
-
-	public get subGeometryType():string
-	{
-		return LineSubGeometry.SUB_GEOMETRY_TYPE;
 	}
 
 	/**

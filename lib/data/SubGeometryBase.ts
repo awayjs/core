@@ -3,12 +3,12 @@ import AbstractMethodError		= require("awayjs-core/lib/errors/AbstractMethodErro
 import SubGeometryEvent			= require("awayjs-core/lib/events/SubGeometryEvent");
 import Matrix3D					= require("awayjs-core/lib/geom/Matrix3D");
 import Rectangle				= require("awayjs-core/lib/geom/Rectangle");
-import NamedAssetBase			= require("awayjs-core/lib/library/NamedAssetBase");
+import AssetBase				= require("awayjs-core/lib/library/AssetBase");
 
 /**
  * @class away.base.TriangleSubGeometry
  */
-class SubGeometryBase extends NamedAssetBase
+class SubGeometryBase extends AssetBase
 {
 	public static VERTEX_DATA:string = "vertices";
 
@@ -29,11 +29,6 @@ class SubGeometryBase extends NamedAssetBase
 	public _pOffset:Object = new Object();
 
 	public _pUpdateStrideOffset()
-	{
-		throw new AbstractMethodError();
-	}
-
-	public get subGeometryType():string
 	{
 		throw new AbstractMethodError();
 	}

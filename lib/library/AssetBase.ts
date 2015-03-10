@@ -1,9 +1,10 @@
 import IAsset					= require("awayjs-core/lib/library/IAsset");
+import IAssetClass				= require("awayjs-core/lib/library/IAssetClass");
 import AbstractMethodError		= require("awayjs-core/lib/errors/AbstractMethodError");
 import AssetEvent				= require("awayjs-core/lib/events/AssetEvent");
 import EventDispatcher			= require("awayjs-core/lib/events/EventDispatcher");
 
-class NamedAssetBase extends EventDispatcher
+class AssetBase extends EventDispatcher
 {
 	public static ID_COUNT:number = 0;
 
@@ -19,7 +20,7 @@ class NamedAssetBase extends EventDispatcher
 	{
 		super();
 
-		this._id = NamedAssetBase.ID_COUNT++;
+		this._id = AssetBase.ID_COUNT++;
 
 		if (name == null)
 			name = 'null';
@@ -98,11 +99,17 @@ class NamedAssetBase extends EventDispatcher
 		return (this._name == name && (!ns || this._namespace == ns));
 	}
 
+
+	public isAsset(assetClass:IAssetClass):boolean
+	{
+		return this.assetType == assetClass.assetType;
+	}
+
 	public resetAssetPath(name:string, ns:string = null, overrideOriginal:boolean = true):void
 	{
 
 		this._name = name? name : 'null';
-		this._namespace = ns? ns : NamedAssetBase.DEFAULT_NAMESPACE;
+		this._namespace = ns? ns : AssetBase.DEFAULT_NAMESPACE;
 
 		if (overrideOriginal)
 			this._originalName = this._name;
@@ -116,4 +123,4 @@ class NamedAssetBase extends EventDispatcher
 	}
 }
 
-export = NamedAssetBase;
+export = AssetBase;

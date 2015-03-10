@@ -1,9 +1,9 @@
 import BitmapData				= require("awayjs-core/lib/data/BitmapData");
 import AbstractMethodError		= require("awayjs-core/lib/errors/AbstractMethodError");
 import MipmapGenerator			= require("awayjs-core/lib/textures/MipmapGenerator");
-import TextureProxyBase			= require("awayjs-core/lib/textures/TextureProxyBase");
+import TextureBase				= require("awayjs-core/lib/textures/TextureBase");
 
-class Texture2DBase extends TextureProxyBase
+class Texture2DBase extends TextureBase
 {
 	private _mipmapData:Array<BitmapData>;
 	private _mipmapDataDirty:boolean;

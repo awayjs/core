@@ -1,9 +1,8 @@
 import SubGeometryBase			= require("awayjs-core/lib/data/SubGeometryBase");
 import GeometryEvent			= require("awayjs-core/lib/events/GeometryEvent");
 import Matrix3D					= require("awayjs-core/lib/geom/Matrix3D");
-import AssetType				= require("awayjs-core/lib/library/AssetType");
 import IAsset					= require("awayjs-core/lib/library/IAsset");
-import NamedAssetBase			= require("awayjs-core/lib/library/NamedAssetBase");
+import AssetBase				= require("awayjs-core/lib/library/AssetBase");
 
 /**
  *
@@ -19,24 +18,21 @@ import NamedAssetBase			= require("awayjs-core/lib/library/NamedAssetBase");
  *
  * @class Geometry
  */
-class Geometry extends NamedAssetBase implements IAsset
+class Geometry extends AssetBase implements IAsset
 {
+	public static assetType:string = "[asset Geometry]";
+
 	private _subGeometries:Array<SubGeometryBase>;
 
 	public get assetType():string
 	{
-		return AssetType.GEOMETRY;
+		return Geometry.assetType;
 	}
 
 	/**
 	 * A collection of TriangleSubGeometry objects, each of which contain geometrical data such as vertices, normals, etc.
 	 */
 	public get subGeometries():Array<SubGeometryBase>
-	{
-		return this._subGeometries;
-	}
-
-	public getSubGeometries():Array<SubGeometryBase>
 	{
 		return this._subGeometries;
 	}

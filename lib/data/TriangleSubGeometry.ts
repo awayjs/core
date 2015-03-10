@@ -8,7 +8,7 @@ import SubGeometryEvent			= require("awayjs-core/lib/events/SubGeometryEvent");
  */
 class TriangleSubGeometry extends SubGeometryBase
 {
-	public static SUB_GEOMETRY_TYPE:string = "triangle";
+	public static assetType:string = "[asset TriangleSubGeometry]";
 
 	public static POSITION_DATA:string = "positions";
 	public static NORMAL_DATA:string = "vertexNormals";
@@ -72,9 +72,9 @@ class TriangleSubGeometry extends SubGeometryBase
 	private _jointWeightsUpdated:SubGeometryEvent;
 
 
-	public get subGeometryType():string
+	public get assetType():string
 	{
-		return TriangleSubGeometry.SUB_GEOMETRY_TYPE;
+		return TriangleSubGeometry.assetType;
 	}
 
 	/**

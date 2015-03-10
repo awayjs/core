@@ -1,17 +1,18 @@
-import AssetType				= require("awayjs-core/lib/library/AssetType");
 import IAsset					= require("awayjs-core/lib/library/IAsset");
-import NamedAssetBase			= require("awayjs-core/lib/library/NamedAssetBase");
+import AssetBase				= require("awayjs-core/lib/library/AssetBase");
 import ITextureData				= require("awayjs-core/lib/pool/ITextureData");
 
 /**
  *
  */
-class TextureProxyBase extends NamedAssetBase implements IAsset
+class TextureProxyBase extends AssetBase implements IAsset
 {
 	public _pSize:number;
 	public _pFormat:string = "bgra"
 	private _textureData:Array<ITextureData> = new Array<ITextureData>();
-	
+
+	public static assetType:string = "[asset Texture]";
+
 	/**
 	 *
 	 */
@@ -40,7 +41,7 @@ class TextureProxyBase extends NamedAssetBase implements IAsset
 	 */
 	public get assetType():string
 	{
-		return AssetType.TEXTURE;
+		return TextureProxyBase.assetType;
 	}
 
 	/**

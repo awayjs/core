@@ -1,6 +1,6 @@
 {
   "name": "awayjs-core",
-  "version": "0.4.9",
+  "version": "0.4.10",
   "description": "AwayJS core classes",
   "url": "http://www.away3d.com",
   "author": "The Away Foundation <admin@theawayfoundation.org>",
@@ -8,6 +8,7 @@
   "license": "Apache version 2.0",
   "devDependencies": {
     "browserify": "^8.1.3",
+    "del": "^1.1.1",
     "exorcist": "^0.1.6",
     "glob": "^4.4.0",
     "gulp": "^3.8.11",

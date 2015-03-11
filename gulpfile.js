@@ -2,6 +2,7 @@ var concat = require('gulp-concat');
 var gulp = require('gulp');
 var glob = require('glob');
 var path = require('path');
+var del = require('del');
 var browserify  = require('browserify');
 var source = require('vinyl-source-stream');
 var map = require('vinyl-map');
@@ -63,7 +64,9 @@ gulp.task('package', ['compile'], function(callback){
             .pipe(exorcist('./build/awayjs-core.js.map'))
             .pipe(source('awayjs-core.js'))
             .pipe(gulp.dest('./build'))
-            .on('end', callback);
+            .on('end', function() {
+                del('./lib/**/*.js', callback)
+            });
     });
 });
 
@@ -81,35 +84,35 @@ gulp.task('package-min', ['package'], function(callback){
         .pipe(gulp.dest('./build'));
 });
 
-gulp.task('package-watch', function(callback){
-    glob('./lib/**/*.js', {}, function (error, files) {
-        var b = browserify({
-            debug: true,
-            paths: ['../'],
-            cache:{},
-            packageCache:{},
-            fullPaths:true
-        });
-
-        files.forEach(function (file) {
-            b.require(file, {expose:unixStylePath(path.relative('../', file.slice(0,-3)))});
-        });
-
-        b = watchify(b);
-        b.on('update', function(){
-            bundleShare(b);
-        });
-
-        bundleShare(b)
-            .on('end', callback);
-    })
-});
-
-gulp.task('watch', ['package-watch'], function(){
-
-    //Start live reload server
-    livereload.listen();
-});
+//gulp.task('package-watch', function(callback){
+//    glob('./lib/**/*.js', {}, function (error, files) {
+//        var b = browserify({
+//            debug: true,
+//            paths: ['../'],
+//            cache:{},
+//            packageCache:{},
+//            fullPaths:true
+//        });
+//
+//        files.forEach(function (file) {
+//            b.require(file, {expose:unixStylePath(path.relative('../', file.slice(0,-3)))});
+//        });
+//
+//        b = watchify(b);
+//        b.on('update', function(){
+//            bundleShare(b);
+//        });
+//
+//        bundleShare(b)
+//            .on('end', callback);
+//    })
+//});
+//
+//gulp.task('watch', ['package-watch'], function(){
+//
+//    //Start live reload server
+//    livereload.listen();
+//});
 
 gulp.task('tests', function () {
 

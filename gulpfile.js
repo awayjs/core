@@ -1,11 +1,8 @@
-var concat = require('gulp-concat');
 var gulp = require('gulp');
 var glob = require('glob');
 var path = require('path');
-var del = require('del');
 var browserify  = require('browserify');
 var source = require('vinyl-source-stream');
-var map = require('vinyl-map');
 var transform = require('vinyl-transform');
 var exorcist = require('exorcist');
 var sourcemaps = require('gulp-sourcemaps');
@@ -18,56 +15,11 @@ var typescript = require('gulp-typescript');
 
 var shell = require('gulp-shell');
 var git = require('gulp-git');
+var watch;
 
-gulp.task('compile', function() {
-    var tsProject = typescript.createProject({
-        declarationFiles: true,
-        noExternalResolve: true,
-        target: 'ES5',
-        module: 'commonjs',
-        sourceRoot: './awayjs-core/lib/'
-    });
-
-    var tsResult = gulp.src('./lib/**/*.ts')
-        .pipe(sourcemaps.init())
-        .pipe(typescript(tsProject));
-
-    tsResult.dts
-        .pipe(map(function(code, filename) {
-            code = code.toString();
-            code = 'declare module "' + unixStylePath(path.relative('../', filename.slice(0,-5))) + '" {\n\t'
-            + code.split('declare ').join('').split('\n').join('\n\t') + "\n"
-            + '}';
-            return code;
-        }))
-        .pipe(concat('awayjs-core.d.ts'))
-        .pipe(gulp.dest('./build'));
-
-    return tsResult.js
-        .pipe(sourcemaps.write({sourceRoot: '../'}))
-        .pipe(gulp.dest('./lib'));
-});
-
-gulp.task('package', ['compile'], function(callback){
-
-    glob('./lib/**/*.js', {}, function (error, files) {
-        var b = browserify({
-            paths: ['../'],
-            debug: true
-        });
-
-        files.forEach(function (file) {
-            b.require(file, {expose:unixStylePath(path.relative('../', file.slice(0,-3)))});
-        });
-
-        b.bundle()
-            .pipe(exorcist('./build/awayjs-core.js.map'))
-            .pipe(source('awayjs-core.js'))
-            .pipe(gulp.dest('./build'))
-            .on('end', function() {
-                del('./lib/**/*.js', callback)
-            });
-    });
+gulp.task('package', function(callback){
+    watch = false;
+    browserifyShare(callback);
 });
 
 gulp.task('package-min', ['package'], function(callback){
@@ -77,42 +29,23 @@ gulp.task('package-min', ['package'], function(callback){
         .pipe(rename(function (path) {
             path.basename += '.min';
         }))
-        .pipe(sourcemaps.write({sourceRoot: './'}))
+        .pipe(sourcemaps.write({sourceRoot: '../'}))
         .pipe(transform(function() {
             return exorcist('./build/awayjs-core.min.js.map');
         }))
         .pipe(gulp.dest('./build'));
 });
 
-//gulp.task('package-watch', function(callback){
-//    glob('./lib/**/*.js', {}, function (error, files) {
-//        var b = browserify({
-//            debug: true,
-//            paths: ['../'],
-//            cache:{},
-//            packageCache:{},
-//            fullPaths:true
-//        });
-//
-//        files.forEach(function (file) {
-//            b.require(file, {expose:unixStylePath(path.relative('../', file.slice(0,-3)))});
-//        });
-//
-//        b = watchify(b);
-//        b.on('update', function(){
-//            bundleShare(b);
-//        });
-//
-//        bundleShare(b)
-//            .on('end', callback);
-//    })
-//});
-//
-//gulp.task('watch', ['package-watch'], function(){
-//
-//    //Start live reload server
-//    livereload.listen();
-//});
+gulp.task('package-watch', function(callback){
+    watch = true;
+    browserifyShare(callback);
+});
+
+gulp.task('watch', ['package-watch'], function(){
+
+    //Start live reload server
+    livereload.listen();
+});
 
 gulp.task('tests', function () {
 
@@ -124,7 +57,7 @@ gulp.task('tests', function () {
         sourceRoot: './'
     });
 
-    var tsResult = gulp.src(['./tests/**/*.ts', './build/awayjs-core.d.ts'])
+    var tsResult = gulp.src(['./tests/**/*.ts', './node_modules/awayjs-**/build/*.d.ts', './build/awayjs-core.d.ts'])
         .pipe(sourcemaps.init())
         .pipe(typescript(tsProject));
 
@@ -133,12 +66,45 @@ gulp.task('tests', function () {
         .pipe(gulp.dest('./tests'));
 });
 
+function browserifyShare(callback) {
+    var b = browserify({
+        debug: true,
+        paths: ['../'],
+        cache: {},
+        packageCache: {},
+        fullPaths: true
+    });
 
-function bundleShare(b) {
-    return b.bundle()
-        .pipe(source('awayjs-core.js'))
-        .pipe(gulp.dest('./build'))
-        .pipe(livereload());
+    b.plugin('tsify', {target:'ES5', sourceRoot:'../', noExternalResolve: true, declarationFiles: './node_modules/awayjs-**/build/*.d.ts', declarationOutput: './build/awayjs-core.d.ts'});
+
+    glob('./node_modules/awayjs-**/lib/**/*.ts', {}, function (error, files) {
+        files.forEach(function (file) {
+            b.external(file);
+        });
+    });
+
+    glob('./lib/**/*.ts', {}, function (error, files) {
+
+        files.forEach(function (file) {
+            b.require(file, {expose:unixStylePath(path.relative('../', file.slice(0,-3)))});
+        });
+
+        if (watch) {
+            b = watchify(b);
+            b.on('update', function(){
+                return b.bundle()
+                    .pipe(source('awayjs-core.js'))
+                    .pipe(gulp.dest('./build'))
+                    .pipe(livereload());
+            });
+        }
+
+        b.bundle()
+            .pipe(exorcist('./build/awayjs-core.js.map'))
+            .pipe(source('awayjs-core.js'))
+            .pipe(gulp.dest('./build'))
+            .on('end', callback);
+    });
 }
 
 function unixStylePath(filePath) {

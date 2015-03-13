@@ -1,1642 +1,3 @@
-declare module "awayjs-core/lib/data/BlendMode" {
-	/**
-	 * A class that provides constant values for visual blend mode effects. These
-	 * constants are used in the following:
-	 * <ul>
-	 *   <li> The <code>blendMode</code> property of the
-	 * flash.display.DisplayObject class.</li>
-	 *   <li> The <code>blendMode</code> parameter of the <code>draw()</code>
-	 * method of the flash.display.BitmapData class</li>
-	 * </ul>
-	 */
-	class BlendMode {
-	    /**
-	     * Adds the values of the constituent colors of the display object to the
-	     * colors of its background, applying a ceiling of 0xFF. This setting is
-	     * commonly used for animating a lightening dissolve between two objects.
-	     *
-	     * <p>For example, if the display object has a pixel with an RGB value of
-	     * 0xAAA633, and the background pixel has an RGB value of 0xDD2200, the
-	     * resulting RGB value for the displayed pixel is 0xFFC833(because 0xAA +
-	     * 0xDD > 0xFF, 0xA6 + 0x22 = 0xC8, and 0x33 + 0x00 = 0x33).</p>
-	     */
-	    static ADD: string;
-	    /**
-	     * Applies the alpha value of each pixel of the display object to the
-	     * background. This requires the <code>blendMode</code> property of the
-	     * parent display object be set to
-	     * <code>away.base.BlendMode.LAYER</code>.
-	     *
-	     * <p>Not supported under GPU rendering.</p>
-	     */
-	    static ALPHA: string;
-	    /**
-	     * Selects the darker of the constituent colors of the display object and the
-	     * colors of the background(the colors with the smaller values). This
-	     * setting is commonly used for superimposing type.
-	     *
-	     * <p>For example, if the display object has a pixel with an RGB value of
-	     * 0xFFCC33, and the background pixel has an RGB value of 0xDDF800, the
-	     * resulting RGB value for the displayed pixel is 0xDDCC00(because 0xFF >
-	     * 0xDD, 0xCC < 0xF8, and 0x33 > 0x00 = 33).</p>
-	     *
-	     * <p>Not supported under GPU rendering.</p>
-	     */
-	    static DARKEN: string;
-	    /**
-	     * Compares the constituent colors of the display object with the colors of
-	     * its background, and subtracts the darker of the values of the two
-	     * constituent colors from the lighter value. This setting is commonly used
-	     * for more vibrant colors.
-	     *
-	     * <p>For example, if the display object has a pixel with an RGB value of
-	     * 0xFFCC33, and the background pixel has an RGB value of 0xDDF800, the
-	     * resulting RGB value for the displayed pixel is 0x222C33(because 0xFF -
-	     * 0xDD = 0x22, 0xF8 - 0xCC = 0x2C, and 0x33 - 0x00 = 0x33).</p>
-	     */
-	    static DIFFERENCE: string;
-	    /**
-	     * Erases the background based on the alpha value of the display object. This
-	     * process requires that the <code>blendMode</code> property of the parent
-	     * display object be set to <code>flash.display.BlendMode.LAYER</code>.
-	     *
-	     * <p>Not supported under GPU rendering.</p>
-	     */
-	    static ERASE: string;
-	    /**
-	     * Adjusts the color of each pixel based on the darkness of the display
-	     * object. If the display object is lighter than 50% gray, the display object
-	     * and background colors are screened, which results in a lighter color. If
-	     * the display object is darker than 50% gray, the colors are multiplied,
-	     * which results in a darker color. This setting is commonly used for shading
-	     * effects.
-	     *
-	     * <p>Not supported under GPU rendering.</p>
-	     */
-	    static HARDLIGHT: string;
-	    /**
-	     * Inverts the background.
-	     */
-	    static INVERT: string;
-	    /**
-	     * Forces the creation of a transparency group for the display object. This
-	     * means that the display object is precomposed in a temporary buffer before
-	     * it is processed further. The precomposition is done automatically if the
-	     * display object is precached by means of bitmap caching or if the display
-	     * object is a display object container that has at least one child object
-	     * with a <code>blendMode</code> setting other than <code>"normal"</code>.
-	     *
-	     * <p>Not supported under GPU rendering.</p>
-	     */
-	    static LAYER: string;
-	    /**
-	     * Selects the lighter of the constituent colors of the display object and
-	     * the colors of the background(the colors with the larger values). This
-	     * setting is commonly used for superimposing type.
-	     *
-	     * <p>For example, if the display object has a pixel with an RGB value of
-	     * 0xFFCC33, and the background pixel has an RGB value of 0xDDF800, the
-	     * resulting RGB value for the displayed pixel is 0xFFF833(because 0xFF >
-	     * 0xDD, 0xCC < 0xF8, and 0x33 > 0x00 = 33).</p>
-	     *
-	     * <p>Not supported under GPU rendering.</p>
-	     */
-	    static LIGHTEN: string;
-	    /**
-	     * Multiplies the values of the display object constituent colors by the
-	     * constituent colors of the background color, and normalizes by dividing by
-	     * 0xFF, resulting in darker colors. This setting is commonly used for
-	     * shadows and depth effects.
-	     *
-	     * <p>For example, if a constituent color(such as red) of one pixel in the
-	     * display object and the corresponding color of the pixel in the background
-	     * both have the value 0x88, the multiplied result is 0x4840. Dividing by
-	     * 0xFF yields a value of 0x48 for that constituent color, which is a darker
-	     * shade than the color of the display object or the color of the
-	     * background.</p>
-	     */
-	    static MULTIPLY: string;
-	    /**
-	     * The display object appears in front of the background. Pixel values of the
-	     * display object override the pixel values of the background. Where the
-	     * display object is transparent, the background is visible.
-	     */
-	    static NORMAL: string;
-	    /**
-	     * Adjusts the color of each pixel based on the darkness of the background.
-	     * If the background is lighter than 50% gray, the display object and
-	     * background colors are screened, which results in a lighter color. If the
-	     * background is darker than 50% gray, the colors are multiplied, which
-	     * results in a darker color. This setting is commonly used for shading
-	     * effects.
-	     *
-	     * <p>Not supported under GPU rendering.</p>
-	     */
-	    static OVERLAY: string;
-	    /**
-	     * Multiplies the complement(inverse) of the display object color by the
-	     * complement of the background color, resulting in a bleaching effect. This
-	     * setting is commonly used for highlights or to remove black areas of the
-	     * display object.
-	     */
-	    static SCREEN: string;
-	    /**
-	     * Uses a shader to define the blend between objects.
-	     *
-	     * <p>Setting the <code>blendShader</code> property to a Shader instance
-	     * automatically sets the display object's <code>blendMode</code> property to
-	     * <code>BlendMode.SHADER</code>. If the <code>blendMode</code> property is
-	     * set to <code>BlendMode.SHADER</code> without first setting the
-	     * <code>blendShader</code> property, the <code>blendMode</code> property is
-	     * set to <code>BlendMode.NORMAL</code> instead. If the
-	     * <code>blendShader</code> property is set(which sets the
-	     * <code>blendMode</code> property to <code>BlendMode.SHADER</code>), then
-	     * later the value of the <code>blendMode</code> property is changed, the
-	     * blend mode can be reset to use the blend shader simply by setting the
-	     * <code>blendMode</code> property to <code>BlendMode.SHADER</code>. The
-	     * <code>blendShader</code> property does not need to be set again except to
-	     * change the shader that's used to define the blend mode.</p>
-	     *
-	     * <p>Not supported under GPU rendering.</p>
-	     */
-	    static SHADER: string;
-	    /**
-	     * Subtracts the values of the constituent colors in the display object from
-	     * the values of the background color, applying a floor of 0. This setting is
-	     * commonly used for animating a darkening dissolve between two objects.
-	     *
-	     * <p>For example, if the display object has a pixel with an RGB value of
-	     * 0xAA2233, and the background pixel has an RGB value of 0xDDA600, the
-	     * resulting RGB value for the displayed pixel is 0x338400(because 0xDD -
-	     * 0xAA = 0x33, 0xA6 - 0x22 = 0x84, and 0x00 - 0x33 < 0x00).</p>
-	     */
-	    static SUBTRACT: string;
-	}
-	export = BlendMode;
-	
-}
-declare module "awayjs-core/lib/utils/ColorUtils" {
-	/**
-	 *
-	 */
-	class ColorUtils {
-	    static float32ColorToARGB(float32Color: number): number[];
-	    private static componentToHex(c);
-	    static RGBToHexString(argb: number[]): string;
-	    static ARGBToHexString(argb: number[]): string;
-	}
-	export = ColorUtils;
-	
-}
-declare module "awayjs-core/lib/geom/ColorTransform" {
-	/**
-	 * The ColorTransform class lets you adjust the color values in a display
-	 * object. The color adjustment or <i>color transformation</i> can be applied
-	 * to all four channels: red, green, blue, and alpha transparency.
-	 *
-	 * <p>When a ColorTransform object is applied to a display object, a new value
-	 * for each color channel is calculated like this:</p>
-	 *
-	 * <ul>
-	 *   <li>New red value = (old red value * <code>redMultiplier</code>) +
-	 * <code>redOffset</code></li>
-	 *   <li>New green value = (old green value * <code>greenMultiplier</code>) +
-	 * <code>greenOffset</code></li>
-	 *   <li>New blue value = (old blue value * <code>blueMultiplier</code>) +
-	 * <code>blueOffset</code></li>
-	 *   <li>New alpha value = (old alpha value * <code>alphaMultiplier</code>) +
-	 * <code>alphaOffset</code></li>
-	 * </ul>
-	 *
-	 * <p>If any of the color channel values is greater than 255 after the
-	 * calculation, it is set to 255. If it is less than 0, it is set to 0.</p>
-	 *
-	 * <p>You can use ColorTransform objects in the following ways:</p>
-	 *
-	 * <ul>
-	 *   <li>In the <code>colorTransform</code> parameter of the
-	 * <code>colorTransform()</code> method of the BitmapData class</li>
-	 *   <li>As the <code>colorTransform</code> property of a Transform object
-	 * (which can be used as the <code>transform</code> property of a display
-	 * object)</li>
-	 * </ul>
-	 *
-	 * <p>You must use the <code>new ColorTransform()</code> constructor to create
-	 * a ColorTransform object before you can call the methods of the
-	 * ColorTransform object.</p>
-	 *
-	 * <p>Color transformations do not apply to the background color of a movie
-	 * clip(such as a loaded SWF object). They apply only to graphics and symbols
-	 * that are attached to the movie clip.</p>
-	 */
-	class ColorTransform {
-	    /**
-	     * A decimal value that is multiplied with the alpha transparency channel
-	     * value.
-	     *
-	     * <p>If you set the alpha transparency value of a display object directly by
-	     * using the <code>alpha</code> property of the DisplayObject instance, it
-	     * affects the value of the <code>alphaMultiplier</code> property of that
-	     * display object's <code>transform.colorTransform</code> property.</p>
-	     */
-	    alphaMultiplier: number;
-	    /**
-	     * A number from -255 to 255 that is added to the alpha transparency channel
-	     * value after it has been multiplied by the <code>alphaMultiplier</code>
-	     * value.
-	     */
-	    alphaOffset: number;
-	    /**
-	     * A decimal value that is multiplied with the blue channel value.
-	     */
-	    blueMultiplier: number;
-	    /**
-	     * A number from -255 to 255 that is added to the blue channel value after it
-	     * has been multiplied by the <code>blueMultiplier</code> value.
-	     */
-	    blueOffset: number;
-	    /**
-	     * A decimal value that is multiplied with the green channel value.
-	     */
-	    greenMultiplier: number;
-	    /**
-	     * A number from -255 to 255 that is added to the green channel value after
-	     * it has been multiplied by the <code>greenMultiplier</code> value.
-	     */
-	    greenOffset: number;
-	    /**
-	     * A decimal value that is multiplied with the red channel value.
-	     */
-	    redMultiplier: number;
-	    /**
-	     * A number from -255 to 255 that is added to the red channel value after it
-	     * has been multiplied by the <code>redMultiplier</code> value.
-	     */
-	    redOffset: number;
-	    /**
-	     * The RGB color value for a ColorTransform object.
-	     *
-	     * <p>When you set this property, it changes the three color offset values
-	     * (<code>redOffset</code>, <code>greenOffset</code>, and
-	     * <code>blueOffset</code>) accordingly, and it sets the three color
-	     * multiplier values(<code>redMultiplier</code>,
-	     * <code>greenMultiplier</code>, and <code>blueMultiplier</code>) to 0. The
-	     * alpha transparency multiplier and offset values do not change.</p>
-	     *
-	     * <p>When you pass a value for this property, use the format
-	     * 0x<i>RRGGBB</i>. <i>RR</i>, <i>GG</i>, and <i>BB</i> each consist of two
-	     * hexadecimal digits that specify the offset of each color component. The 0x
-	     * tells the ActionScript compiler that the number is a hexadecimal
-	     * value.</p>
-	     */
-	    color: number;
-	    /**
-	     * Creates a ColorTransform object for a display object with the specified
-	     * color channel values and alpha values.
-	     *
-	     * @param redMultiplier   The value for the red multiplier, in the range from
-	     *                        0 to 1.
-	     * @param greenMultiplier The value for the green multiplier, in the range
-	     *                        from 0 to 1.
-	     * @param blueMultiplier  The value for the blue multiplier, in the range
-	     *                        from 0 to 1.
-	     * @param alphaMultiplier The value for the alpha transparency multiplier, in
-	     *                        the range from 0 to 1.
-	     * @param redOffset       The offset value for the red color channel, in the
-	     *                        range from -255 to 255.
-	     * @param greenOffset     The offset value for the green color channel, in
-	     *                        the range from -255 to 255.
-	     * @param blueOffset      The offset for the blue color channel value, in the
-	     *                        range from -255 to 255.
-	     * @param alphaOffset     The offset for alpha transparency channel value, in
-	     *                        the range from -255 to 255.
-	     */
-	    constructor(redMultiplier?: number, greenMultiplier?: number, blueMultiplier?: number, alphaMultiplier?: number, redOffset?: number, greenOffset?: number, blueOffset?: number, alphaOffset?: number);
-	    /**
-	     * Concatenates the ColorTranform object specified by the <code>second</code>
-	     * parameter with the current ColorTransform object and sets the current
-	     * object as the result, which is an additive combination of the two color
-	     * transformations. When you apply the concatenated ColorTransform object,
-	     * the effect is the same as applying the <code>second</code> color
-	     * transformation after the <i>original</i> color transformation.
-	     *
-	     * @param second The ColorTransform object to be combined with the current
-	     *               ColorTransform object.
-	     */
-	    concat(second: ColorTransform): void;
-	}
-	export = ColorTransform;
-	
-}
-declare module "awayjs-core/lib/geom/Point" {
-	/**
-	 * The Point object represents a location in a two-dimensional coordinate
-	 * system, where <i>x</i> represents the horizontal axis and <i>y</i>
-	 * represents the vertical axis.
-	 *
-	 * <p>The following code creates a point at(0,0):</p>
-	 *
-	 * <p>Methods and properties of the following classes use Point objects:</p>
-	 *
-	 * <ul>
-	 *   <li>BitmapData</li>
-	 *   <li>DisplayObject</li>
-	 *   <li>DisplayObjectContainer</li>
-	 *   <li>DisplacementMapFilter</li>
-	 *   <li>NativeWindow</li>
-	 *   <li>Matrix</li>
-	 *   <li>Rectangle</li>
-	 * </ul>
-	 *
-	 * <p>You can use the <code>new Point()</code> constructor to create a Point
-	 * object.</p>
-	 */
-	class Point {
-	    /**
-	     * The horizontal coordinate of the point. The default value is 0.
-	     */
-	    x: number;
-	    /**
-	     * The vertical coordinate of the point. The default value is 0.
-	     */
-	    y: number;
-	    /**
-	     * The length of the line segment from(0,0) to this point.
-	     */
-	    length: number;
-	    /**
-	     * Creates a new point. If you pass no parameters to this method, a point is
-	     * created at(0,0).
-	     *
-	     * @param x The horizontal coordinate.
-	     * @param y The vertical coordinate.
-	     */
-	    constructor(x?: number, y?: number);
-	    /**
-	     * Adds the coordinates of another point to the coordinates of this point to
-	     * create a new point.
-	     *
-	     * @param v The point to be added.
-	     * @return The new point.
-	     */
-	    add(v: Point): Point;
-	    /**
-	     * Creates a copy of this Point object.
-	     *
-	     * @return The new Point object.
-	     */
-	    clone(): Point;
-	    copyFrom(sourcePoint: Point): void;
-	    /**
-	     * Determines whether two points are equal. Two points are equal if they have
-	     * the same <i>x</i> and <i>y</i> values.
-	     *
-	     * @param toCompare The point to be compared.
-	     * @return A value of <code>true</code> if the object is equal to this Point
-	     *         object; <code>false</code> if it is not equal.
-	     */
-	    equals(toCompare: Point): boolean;
-	    /**
-	     * Scales the line segment between(0,0) and the current point to a set
-	     * length.
-	     *
-	     * @param thickness The scaling value. For example, if the current point is
-	     *                 (0,5), and you normalize it to 1, the point returned is
-	     *                  at(0,1).
-	     */
-	    normalize(thickness?: number): void;
-	    /**
-	     * Offsets the Point object by the specified amount. The value of
-	     * <code>dx</code> is added to the original value of <i>x</i> to create the
-	     * new <i>x</i> value. The value of <code>dy</code> is added to the original
-	     * value of <i>y</i> to create the new <i>y</i> value.
-	     *
-	     * @param dx The amount by which to offset the horizontal coordinate,
-	     *           <i>x</i>.
-	     * @param dy The amount by which to offset the vertical coordinate, <i>y</i>.
-	     */
-	    offset(dx: number, dy: number): void;
-	    setTo(xa: number, ya: number): void;
-	    /**
-	     * Subtracts the coordinates of another point from the coordinates of this
-	     * point to create a new point.
-	     *
-	     * @param v The point to be subtracted.
-	     * @return The new point.
-	     */
-	    subtract(v: Point): Point;
-	    /**
-	     * Returns a string that contains the values of the <i>x</i> and <i>y</i>
-	     * coordinates. The string has the form <code>"(x=<i>x</i>,
-	     * y=<i>y</i>)"</code>, so calling the <code>toString()</code> method for a
-	     * point at 23,17 would return <code>"(x=23, y=17)"</code>.
-	     *
-	     * @return The string representation of the coordinates.
-	     */
-	    toString(): string;
-	    /**
-	     * Returns the distance between <code>pt1</code> and <code>pt2</code>.
-	     *
-	     * @param pt1 The first point.
-	     * @param pt2 The second point.
-	     * @return The distance between the first and second points.
-	     */
-	    static distance(pt1: Point, pt2: Point): number;
-	    /**
-	     * Determines a point between two specified points. The parameter
-	     * <code>f</code> determines where the new interpolated point is located
-	     * relative to the two end points specified by parameters <code>pt1</code>
-	     * and <code>pt2</code>. The closer the value of the parameter <code>f</code>
-	     * is to <code>1.0</code>, the closer the interpolated point is to the first
-	     * point(parameter <code>pt1</code>). The closer the value of the parameter
-	     * <code>f</code> is to 0, the closer the interpolated point is to the second
-	     * point(parameter <code>pt2</code>).
-	     *
-	     * @param pt1 The first point.
-	     * @param pt2 The second point.
-	     * @param f   The level of interpolation between the two points. Indicates
-	     *            where the new point will be, along the line between
-	     *            <code>pt1</code> and <code>pt2</code>. If <code>f</code>=1,
-	     *            <code>pt1</code> is returned; if <code>f</code>=0,
-	     *            <code>pt2</code> is returned.
-	     * @return The new, interpolated point.
-	     */
-	    static interpolate(pt1: Point, pt2: Point, f: number): Point;
-	    /**
-	     * Converts a pair of polar coordinates to a Cartesian point coordinate.
-	     *
-	     * @param len   The length coordinate of the polar pair.
-	     * @param angle The angle, in radians, of the polar pair.
-	     * @return The Cartesian point.
-	     */
-	    static polar(len: number, angle: number): Point;
-	}
-	export = Point;
-	
-}
-declare module "awayjs-core/lib/geom/Vector3D" {
-	/**
-	 * The Vector3D class represents a point or a location in the three-dimensional
-	 * space using the Cartesian coordinates x, y, and z. As in a two-dimensional
-	 * space, the x property represents the horizontal axis and the y property
-	 * represents the vertical axis. In three-dimensional space, the z property
-	 * represents depth. The value of the x property increases as the object moves
-	 * to the right. The value of the y property increases as the object moves
-	 * down. The z property increases as the object moves farther from the point
-	 * of view. Using perspective projection and scaling, the object is seen to be
-	 * bigger when near and smaller when farther away from the screen. As in a
-	 * right-handed three-dimensional coordinate system, the positive z-axis points
-	 * away from the viewer and the value of the z property increases as the object
-	 * moves away from the viewer's eye. The origin point (0,0,0) of the global
-	 * space is the upper-left corner of the stage.
-	 *
-	 * <p>The Vector3D class can also represent a direction, an arrow pointing from
-	 * the origin of the coordinates, such as (0,0,0), to an endpoint; or a
-	 * floating-point component of an RGB (Red, Green, Blue) color model.</p>
-	 *
-	 * <p>Quaternion notation introduces a fourth element, the w property, which
-	 * provides additional orientation information. For example, the w property can
-	 * define an angle of rotation of a Vector3D object. The combination of the
-	 * angle of rotation and the coordinates x, y, and z can determine the display
-	 * object's orientation. Here is a representation of Vector3D elements in
-	 * matrix notation:</p>
-	 */
-	class Vector3D {
-	    /**
-	     * The x axis defined as a Vector3D object with coordinates (1,0,0).
-	     */
-	    static X_AXIS: Vector3D;
-	    /**
-	     * The y axis defined as a Vector3D object with coordinates (0,1,0).
-	     */
-	    static Y_AXIS: Vector3D;
-	    /**
-	     * The z axis defined as a Vector3D object with coordinates (0,0,1).
-	     */
-	    static Z_AXIS: Vector3D;
-	    /**
-	     * The first element of a Vector3D object, such as the x coordinate of
-	     * a point in the three-dimensional space. The default value is 0.
-	     */
-	    x: number;
-	    y: number;
-	    /**
-	     * The third element of a Vector3D object, such as the y coordinate of
-	     * a point in the three-dimensional space. The default value is 0.
-	     */
-	    z: number;
-	    /**
-	     * TThe fourth element of a Vector3D object (in addition to the x, y,
-	     * and z properties) can hold data such as the angle of rotation. The
-	     * default value is 0.
-	     *
-	     * <p>Quaternion notation employs an angle as the fourth element in
-	     * its calculation of three-dimensional rotation. The w property can
-	     * be used to define the angle of rotation about the Vector3D object.
-	     * The combination of the rotation angle and the coordinates (x,y,z)
-	     * determines the display object's orientation.</p>
-	     *
-	     * <p>In addition, the w property can be used as a perspective warp
-	     * factor for a projected three-dimensional position or as a projection
-	     * transform value in representing a three-dimensional coordinate
-	     * projected into the two-dimensional space. For example, you can
-	     * create a projection matrix using the <code>Matrix3D.rawData</code>
-	     * property, that, when applied to a Vector3D object, produces a
-	     * transform value in the Vector3D object's fourth element (the w
-	     * property). Dividing the Vector3D object's other elements by the
-	     * transform value then produces a projected Vector3D object. You can
-	     * use the <code>Vector3D.project()</code> method to divide the first
-	     * three elements of a Vector3D object by its fourth element.</p>
-	     */
-	    w: number;
-	    /**
-	     * The length, magnitude, of the current Vector3D object from the
-	     * origin (0,0,0) to the object's x, y, and z coordinates. The w
-	     * property is ignored. A unit vector has a length or magnitude of
-	     * one.
-	     */
-	    length: number;
-	    /**
-	     * The square of the length of the current Vector3D object, calculated
-	     * using the x, y, and z properties. The w property is ignored. Use the
-	     * <code>lengthSquared()</code> method whenever possible instead of the
-	     * slower <code>Math.sqrt()</code> method call of the
-	     * <code>Vector3D.length()</code> method.
-	     */
-	    lengthSquared: number;
-	    /**
-	     * Creates an instance of a Vector3D object. If you do not specify a
-	     * parameter for the constructor, a Vector3D object is created with
-	     * the elements (0,0,0,0).
-	     *
-	     * @param x The first element, such as the x coordinate.
-	     * @param y The second element, such as the y coordinate.
-	     * @param z The third element, such as the z coordinate.
-	     * @param w An optional element for additional data such as the angle
-	     *          of rotation.
-	     */
-	    constructor(x?: number, y?: number, z?: number, w?: number);
-	    /**
-	     * Adds the value of the x, y, and z elements of the current Vector3D
-	     * object to the values of the x, y, and z elements of another Vector3D
-	     * object. The <code>add()</code> method does not change the current
-	     * Vector3D object. Instead, it returns a new Vector3D object with
-	     * the new values.
-	     *
-	     * <p>The result of adding two vectors together is a resultant vector.
-	     * One way to visualize the result is by drawing a vector from the
-	     * origin or tail of the first vector to the end or head of the second
-	     * vector. The resultant vector is the distance between the origin
-	     * point of the first vector and the end point of the second vector.
-	     * </p>
-	     */
-	    add(a: Vector3D): Vector3D;
-	    /**
-	     * Returns the angle in radians between two vectors. The returned angle
-	     * is the smallest radian the first Vector3D object rotates until it
-	     * aligns with the second Vector3D object.
-	     *
-	     * <p>The <code>angleBetween()</code> method is a static method. You
-	     * can use it directly as a method of the Vector3D class.</p>
-	     *
-	     * <p>To convert a degree to a radian, you can use the following
-	     * formula:</p>
-	     *
-	     * <p><code>radian = Math.PI/180 * degree</code></p>
-	     *
-	     * @param a The first Vector3D object.
-	     * @param b The second Vector3D object.
-	     * @returns The angle between two Vector3D objects.
-	     */
-	    static angleBetween(a: Vector3D, b: Vector3D): number;
-	    /**
-	     * Returns a new Vector3D object that is an exact copy of the current
-	     * Vector3D object.
-	     *
-	     * @returns A new Vector3D object that is a copy of the current
-	     * Vector3D object.
-	     */
-	    clone(): Vector3D;
-	    /**
-	     * Copies all of vector data from the source Vector3D object into the
-	     * calling Vector3D object.
-	     *
-	     * @param src The Vector3D object from which to copy the data.
-	     */
-	    copyFrom(src: Vector3D): void;
-	    /**
-	     * Returns a new Vector3D object that is perpendicular (at a right
-	     * angle) to the current Vector3D and another Vector3D object. If the
-	     * returned Vector3D object's coordinates are (0,0,0), then the two
-	     * Vector3D objects are parallel to each other.
-	     *
-	     * <p>You can use the normalized cross product of two vertices of a
-	     * polygon surface with the normalized vector of the camera or eye
-	     * viewpoint to get a dot product. The value of the dot product can
-	     * identify whether a surface of a three-dimensional object is hidden
-	     * from the viewpoint.</p>
-	     *
-	     * @param a A second Vector3D object.
-	     * @returns A new Vector3D object that is perpendicular to the current
-	     *          Vector3D object and the Vector3D object specified as the
-	     *          parameter.
-	     */
-	    crossProduct(a: Vector3D): Vector3D;
-	    /**
-	     * Decrements the value of the x, y, and z elements of the current
-	     * Vector3D object by the values of the x, y, and z elements of
-	     * specified Vector3D object. Unlike the
-	     * <code>Vector3D.subtract()</code> method, the
-	     * <code>decrementBy()</code> method changes the current Vector3D
-	     * object and does not return a new Vector3D object.
-	     *
-	     * @param a The Vector3D object containing the values to subtract from
-	     *          the current Vector3D object.
-	     */
-	    decrementBy(a: Vector3D): void;
-	    /**
-	     * Returns the distance between two Vector3D objects. The
-	     * <code>distance()</code> method is a static method. You can use it
-	     * directly as a method of the Vector3D class to get the Euclidean
-	     * distance between two three-dimensional points.
-	     *
-	     * @param pt1 A Vector3D object as the first three-dimensional point.
-	     * @param pt2 A Vector3D object as the second three-dimensional point.
-	     * @returns The distance between two Vector3D objects.
-	     */
-	    static distance(pt1: Vector3D, pt2: Vector3D): number;
-	    /**
-	     * If the current Vector3D object and the one specified as the
-	     * parameter are unit vertices, this method returns the cosine of the
-	     * angle between the two vertices. Unit vertices are vertices that
-	     * point to the same direction but their length is one. They remove the
-	     * length of the vector as a factor in the result. You can use the
-	     * <code>normalize()</code> method to convert a vector to a unit
-	     * vector.
-	     *
-	     * <p>The <code>dotProduct()</code> method finds the angle between two
-	     * vertices. It is also used in backface culling or lighting
-	     * calculations. Backface culling is a procedure for determining which
-	     * surfaces are hidden from the viewpoint. You can use the normalized
-	     * vertices from the camera, or eye, viewpoint and the cross product of
-	     * the vertices of a polygon surface to get the dot product. If the dot
-	     * product is less than zero, then the surface is facing the camera or
-	     * the viewer. If the two unit vertices are perpendicular to each
-	     * other, they are orthogonal and the dot product is zero. If the two
-	     * vertices are parallel to each other, the dot product is one.</p>
-	     *
-	     * @param a The second Vector3D object.
-	     * @returns A scalar which is the dot product of the current Vector3D
-	     *          object and the specified Vector3D object.
-	     *
-	     * @see away.geom.Vector3D#crossProduct()
-	     * @see away.geom.Vector3D#normalize()
-	     */
-	    dotProduct(a: Vector3D): number;
-	    /**
-	     * Determines whether two Vector3D objects are equal by comparing the
-	     * x, y, and z elements of the current Vector3D object with a
-	     * specified Vector3D object. If the values of these elements are the
-	     * same, the two Vector3D objects are equal. If the second optional
-	     * parameter is set to true, all four elements of the Vector3D objects,
-	     * including the w property, are compared.
-	     */
-	    /**
-	     *
-	     * @param toCompare The Vector3D object to be compared with the current
-	     *                  Vector3D object.
-	     * @param allFour   An optional parameter that specifies whether the w
-	     *                  property of the Vector3D objects is used in the
-	     *                  comparison.
-	     * @returns A value of true if the specified Vector3D object is equal
-	     *          to the current Vector3D object; false if it is not equal.
-	     */
-	    equals(toCompare: Vector3D, allFour?: boolean): boolean;
-	    /**
-	     * Increments the value of the x, y, and z elements of the current
-	     * Vector3D object by the values of the x, y, and z elements of a
-	     * specified Vector3D object. Unlike the <code>Vector3D.add()</code>
-	     * method, the <code>incrementBy()</code> method changes the current
-	     * Vector3D object and does not return a new Vector3D object.
-	     *
-	     * @param a The Vector3D object to be added to the current Vector3D
-	     *          object.
-	     */
-	    incrementBy(a: Vector3D): void;
-	    /**
-	     * Compares the elements of the current Vector3D object with the
-	     * elements of a specified Vector3D object to determine whether they
-	     * are nearly equal. The two Vector3D objects are nearly equal if the
-	     * value of all the elements of the two vertices are equal, or the
-	     * result of the comparison is within the tolerance range. The
-	     * difference between two elements must be less than the number
-	     * specified as the tolerance parameter. If the third optional
-	     * parameter is set to <code>true</code>, all four elements of the
-	     * Vector3D objects, including the <code>w</code> property, are
-	     * compared. Otherwise, only the x, y, and z elements are included in
-	     * the comparison.
-	     */
-	    /**
-	     *
-	     * @param toCompare The Vector3D object to be compared with the current
-	     *                  Vector3D object.
-	     * @param tolerance A number determining the tolerance factor. If the
-	     *                  difference between the values of the Vector3D
-	     *                  element specified in the toCompare parameter and
-	     *                  the current Vector3D element is less than the
-	     *                  tolerance number, the two values are considered
-	     *                  nearly equal.
-	     * @param allFour   An optional parameter that specifies whether the w
-	     *                  property of the Vector3D objects is used in the
-	     *                  comparison.
-	     * @returns A value of true if the specified Vector3D object is nearly
-	     *          equal to the current Vector3D object; false if it is not
-	     *          equal.
-	     *
-	     * @see away.geom.Vector3D#equals()
-	     */
-	    nearEquals(toCompare: Vector3D, tolerance: number, allFour?: boolean): boolean;
-	    /**
-	     * Sets the current Vector3D object to its inverse. The inverse object
-	     * is also considered the opposite of the original object. The value of
-	     * the x, y, and z properties of the current Vector3D object is changed
-	     * to -x, -y, and -z.
-	     */
-	    negate(): void;
-	    /**
-	     * Converts a Vector3D object to a unit vector by dividing the first
-	     * three elements (x, y, z) by the length of the vector. Unit vertices
-	     * are vertices that have a direction but their length is one. They
-	     * simplify vector calculations by removing length as a factor.
-	     */
-	    /**
-	     * Scales the line segment between(0,0) and the current point to a set
-	     * length.
-	     *
-	     * @param thickness The scaling value. For example, if the current
-	     *                  Vector3D object is (0,3,4), and you normalize it to
-	     *                  1, the point returned is at(0,0.6,0.8).
-	     */
-	    normalize(thickness?: number): void;
-	    /**
-	     * Divides the value of the <code>x</code>, <code>y</code>, and
-	     * <code>z</code> properties of the current Vector3D object by the
-	     * value of its <code>w</code> property.
-	     *
-	     * <p>If the current Vector3D object is the result of multiplying a
-	     * Vector3D object by a projection Matrix3D object, the w property can
-	     * hold the transform value. The <code>project()</code> method then can
-	     * complete the projection by dividing the elements by the
-	     * <code>w</code> property. Use the <code>Matrix3D.rawData</code>
-	     * property to create a projection Matrix3D object.</p>
-	     */
-	    project(): void;
-	    /**
-	     * Scales the current Vector3D object by a scalar, a magnitude. The
-	     * Vector3D object's x, y, and z elements are multiplied by the scalar
-	     * number specified in the parameter. For example, if the vector is
-	     * scaled by ten, the result is a vector that is ten times longer. The
-	     * scalar can also change the direction of the vector. Multiplying the
-	     * vector by a negative number reverses its direction.
-	     *
-	     * @param s A multiplier (scalar) used to scale a Vector3D object.
-	
-	     */
-	    scaleBy(s: number): void;
-	    /**
-	     * Sets the members of Vector3D to the specified values
-	     *
-	     * @param xa The first element, such as the x coordinate.
-	     * @param ya The second element, such as the y coordinate.
-	     * @param za The third element, such as the z coordinate.
-	     */
-	    setTo(xa: number, ya: number, za: number): void;
-	    /**
-	     * Subtracts the value of the x, y, and z elements of the current
-	     * Vector3D object from the values of the x, y, and z elements of
-	     * another Vector3D object. The <code>subtract()</code> method does not
-	     * change the current Vector3D object. Instead, this method returns a
-	     * new Vector3D object with the new values.
-	     *
-	     * @param a The Vector3D object to be subtracted from the current
-	     *          Vector3D object.
-	     * @returns A new Vector3D object that is the difference between the
-	     *          current Vector3D and the specified Vector3D object.
-	     *
-	     * @see away.geom.Vector3D#decrementBy()
-	     */
-	    subtract(a: Vector3D): Vector3D;
-	    /**
-	     * Returns a string representation of the current Vector3D object. The
-	     * string contains the values of the x, y, and z properties.
-	     */
-	    toString(): string;
-	}
-	export = Vector3D;
-	
-}
-declare module "awayjs-core/lib/errors/Error" {
-	class Error {
-	    private _errorID;
-	    private _messsage;
-	    private _name;
-	    constructor(message?: string, id?: number, _name?: string);
-	    /**
-	     *
-	     * @returns {string}
-	     */
-	    /**
-	     *
-	     * @param value
-	     */
-	    message: string;
-	    /**
-	     *
-	     * @returns {string}
-	     */
-	    /**
-	     *
-	     * @param value
-	     */
-	    name: string;
-	    /**
-	     *
-	     * @returns {number}
-	     */
-	    errorID: number;
-	}
-	export = Error;
-	
-}
-declare module "awayjs-core/lib/errors/ArgumentError" {
-	import Error = require("awayjs-core/lib/errors/Error");
-	/**
-	 * AbstractMethodError is thrown when an abstract method is called. The method in question should be overridden
-	 * by a concrete subclass.
-	 */
-	class ArgumentError extends Error {
-	    /**
-	     * Create a new ArgumentError.
-	     *
-	     * @param message An optional message to override the default error message.
-	     * @param id The id of the error.
-	     */
-	    constructor(message?: string, id?: number);
-	}
-	export = ArgumentError;
-	
-}
-declare module "awayjs-core/lib/geom/Matrix" {
-	import Point = require("awayjs-core/lib/geom/Point");
-	import Vector3D = require("awayjs-core/lib/geom/Vector3D");
-	/**
-	 * The Matrix class represents a transformation matrix that determines how to
-	 * map points from one coordinate space to another. You can perform various
-	 * graphical transformations on a display object by setting the properties of
-	 * a Matrix object, applying that Matrix object to the <code>matrix</code>
-	 * property of a Transform object, and then applying that Transform object as
-	 * the <code>transform</code> property of the display object. These
-	 * transformation functions include translation(<i>x</i> and <i>y</i>
-	 * repositioning), rotation, scaling, and skewing.
-	 *
-	 * <p>Together these types of transformations are known as <i>affine
-	 * transformations</i>. Affine transformations preserve the straightness of
-	 * lines while transforming, so that parallel lines stay parallel.</p>
-	 *
-	 * <p>To apply a transformation matrix to a display object, you create a
-	 * Transform object, set its <code>matrix</code> property to the
-	 * transformation matrix, and then set the <code>transform</code> property of
-	 * the display object to the Transform object. Matrix objects are also used as
-	 * parameters of some methods, such as the following:</p>
-	 *
-	 * <ul>
-	 *   <li>The <code>draw()</code> method of a BitmapData object</li>
-	 *   <li>The <code>beginBitmapFill()</code> method,
-	 * <code>beginGradientFill()</code> method, or
-	 * <code>lineGradientStyle()</code> method of a Graphics object</li>
-	 * </ul>
-	 *
-	 * <p>A transformation matrix object is a 3 x 3 matrix with the following
-	 * contents:</p>
-	 *
-	 * <p>In traditional transformation matrixes, the <code>u</code>,
-	 * <code>v</code>, and <code>w</code> properties provide extra capabilities.
-	 * The Matrix class can only operate in two-dimensional space, so it always
-	 * assumes that the property values <code>u</code> and <code>v</code> are 0.0,
-	 * and that the property value <code>w</code> is 1.0. The effective values of
-	 * the matrix are as follows:</p>
-	 *
-	 * <p>You can get and set the values of all six of the other properties in a
-	 * Matrix object: <code>a</code>, <code>b</code>, <code>c</code>,
-	 * <code>d</code>, <code>tx</code>, and <code>ty</code>.</p>
-	 *
-	 * <p>The Matrix class supports the four major types of transformations:
-	 * translation, scaling, rotation, and skewing. You can set three of these
-	 * transformations by using specialized methods, as described in the following
-	 * table: </p>
-	 *
-	 * <p>Each transformation function alters the current matrix properties so
-	 * that you can effectively combine multiple transformations. To do this, you
-	 * call more than one transformation function before applying the matrix to
-	 * its display object target(by using the <code>transform</code> property of
-	 * that display object).</p>
-	 *
-	 * <p>Use the <code>new Matrix()</code> constructor to create a Matrix object
-	 * before you can call the methods of the Matrix object.</p>
-	 */
-	class Matrix {
-	    /**
-	     * The value that affects the positioning of pixels along the <i>x</i> axis
-	     * when scaling or rotating an image.
-	     */
-	    a: number;
-	    /**
-	     * The value that affects the positioning of pixels along the <i>y</i> axis
-	     * when rotating or skewing an image.
-	     */
-	    b: number;
-	    /**
-	     * The value that affects the positioning of pixels along the <i>x</i> axis
-	     * when rotating or skewing an image.
-	     */
-	    c: number;
-	    /**
-	     * The value that affects the positioning of pixels along the <i>y</i> axis
-	     * when scaling or rotating an image.
-	     */
-	    d: number;
-	    /**
-	     * The distance by which to translate each point along the <i>x</i> axis.
-	     */
-	    tx: number;
-	    /**
-	     * The distance by which to translate each point along the <i>y</i> axis.
-	     */
-	    ty: number;
-	    /**
-	     * Creates a new Matrix object with the specified parameters. In matrix
-	     * notation, the properties are organized like this:
-	     *
-	     * <p>If you do not provide any parameters to the <code>new Matrix()</code>
-	     * constructor, it creates an <i>identity matrix</i> with the following
-	     * values:</p>
-	     *
-	     * <p>In matrix notation, the identity matrix looks like this:</p>
-	     *
-	     * @param a  The value that affects the positioning of pixels along the
-	     *           <i>x</i> axis when scaling or rotating an image.
-	     * @param b  The value that affects the positioning of pixels along the
-	     *           <i>y</i> axis when rotating or skewing an image.
-	     * @param c  The value that affects the positioning of pixels along the
-	     *           <i>x</i> axis when rotating or skewing an image.
-	     * @param d  The value that affects the positioning of pixels along the
-	     *           <i>y</i> axis when scaling or rotating an image..
-	     * @param tx The distance by which to translate each point along the <i>x</i>
-	     *           axis.
-	     * @param ty The distance by which to translate each point along the <i>y</i>
-	     *           axis.
-	     */
-	    constructor(a?: number, b?: number, c?: number, d?: number, tx?: number, ty?: number);
-	    /**
-	     * Returns a new Matrix object that is a clone of this matrix, with an exact
-	     * copy of the contained object.
-	     *
-	     * @return A Matrix object.
-	     */
-	    clone(): Matrix;
-	    /**
-	     * Concatenates a matrix with the current matrix, effectively combining the
-	     * geometric effects of the two. In mathematical terms, concatenating two
-	     * matrixes is the same as combining them using matrix multiplication.
-	     *
-	     * <p>For example, if matrix <code>m1</code> scales an object by a factor of
-	     * four, and matrix <code>m2</code> rotates an object by 1.5707963267949
-	     * radians(<code>Math.PI/2</code>), then <code>m1.concat(m2)</code>
-	     * transforms <code>m1</code> into a matrix that scales an object by a factor
-	     * of four and rotates the object by <code>Math.PI/2</code> radians. </p>
-	     *
-	     * <p>This method replaces the source matrix with the concatenated matrix. If
-	     * you want to concatenate two matrixes without altering either of the two
-	     * source matrixes, first copy the source matrix by using the
-	     * <code>clone()</code> method, as shown in the Class Examples section.</p>
-	     *
-	     * @param matrix The matrix to be concatenated to the source matrix.
-	     */
-	    concat(matrix: Matrix): void;
-	    /**
-	     * Copies a Vector3D object into specific column of the calling Matrix3D
-	     * object.
-	     *
-	     * @param column   The column from which to copy the data from.
-	     * @param vector3D The Vector3D object from which to copy the data.
-	     */
-	    copyColumnFrom(column: number, vector3D: Vector3D): void;
-	    /**
-	     * Copies specific column of the calling Matrix object into the Vector3D
-	     * object. The w element of the Vector3D object will not be changed.
-	     *
-	     * @param column   The column from which to copy the data from.
-	     * @param vector3D The Vector3D object from which to copy the data.
-	     */
-	    copyColumnTo(column: number, vector3D: Vector3D): void;
-	    /**
-	     * Copies all of the matrix data from the source Point object into the
-	     * calling Matrix object.
-	     *
-	     * @param sourceMatrix The Matrix object from which to copy the data.
-	     */
-	    copyFrom(sourceMatrix: Matrix): void;
-	    /**
-	     * Copies a Vector3D object into specific row of the calling Matrix object.
-	     *
-	     * @param row      The row from which to copy the data from.
-	     * @param vector3D The Vector3D object from which to copy the data.
-	     */
-	    copyRowFrom(row: number, vector3D: Vector3D): void;
-	    /**
-	     * Copies specific row of the calling Matrix object into the Vector3D object.
-	     * The w element of the Vector3D object will not be changed.
-	     *
-	     * @param row      The row from which to copy the data from.
-	     * @param vector3D The Vector3D object from which to copy the data.
-	     */
-	    copyRowTo(row: number, vector3D: Vector3D): void;
-	    /**
-	     * Includes parameters for scaling, rotation, and translation. When applied
-	     * to a matrix it sets the matrix's values based on those parameters.
-	     *
-	     * <p>Using the <code>createBox()</code> method lets you obtain the same
-	     * matrix as you would if you applied the <code>identity()</code>,
-	     * <code>rotate()</code>, <code>scale()</code>, and <code>translate()</code>
-	     * methods in succession. For example, <code>mat1.createBox(2,2,Math.PI/4,
-	     * 100, 100)</code> has the same effect as the following:</p>
-	     *
-	     * @param scaleX   The factor by which to scale horizontally.
-	     * @param scaleY   The factor by which scale vertically.
-	     * @param rotation The amount to rotate, in radians.
-	     * @param tx       The number of pixels to translate(move) to the right
-	     *                 along the <i>x</i> axis.
-	     * @param ty       The number of pixels to translate(move) down along the
-	     *                 <i>y</i> axis.
-	     */
-	    createBox(scaleX: number, scaleY: number, rotation?: number, tx?: number, ty?: number): void;
-	    /**
-	     * Creates the specific style of matrix expected by the
-	     * <code>beginGradientFill()</code> and <code>lineGradientStyle()</code>
-	     * methods of the Graphics class. Width and height are scaled to a
-	     * <code>scaleX</code>/<code>scaleY</code> pair and the
-	     * <code>tx</code>/<code>ty</code> values are offset by half the width and
-	     * height.
-	     *
-	     * <p>For example, consider a gradient with the following
-	     * characteristics:</p>
-	     *
-	     * <ul>
-	     *   <li><code>GradientType.LINEAR</code></li>
-	     *   <li>Two colors, green and blue, with the ratios array set to <code>[0,
-	     * 255]</code></li>
-	     *   <li><code>SpreadMethod.PAD</code></li>
-	     *   <li><code>InterpolationMethod.LINEAR_RGB</code></li>
-	     * </ul>
-	     *
-	     * <p>The following illustrations show gradients in which the matrix was
-	     * defined using the <code>createGradientBox()</code> method with different
-	     * parameter settings:</p>
-	     *
-	     * @param width    The width of the gradient box.
-	     * @param height   The height of the gradient box.
-	     * @param rotation The amount to rotate, in radians.
-	     * @param tx       The distance, in pixels, to translate to the right along
-	     *                 the <i>x</i> axis. This value is offset by half of the
-	     *                 <code>width</code> parameter.
-	     * @param ty       The distance, in pixels, to translate down along the
-	     *                 <i>y</i> axis. This value is offset by half of the
-	     *                 <code>height</code> parameter.
-	     */
-	    createGradientBox(width: number, height: number, rotation?: number, tx?: number, ty?: number): void;
-	    /**
-	     * Given a point in the pretransform coordinate space, returns the
-	     * coordinates of that point after the transformation occurs. Unlike the
-	     * standard transformation applied using the <code>transformPoint()</code>
-	     * method, the <code>deltaTransformPoint()</code> method's transformation
-	     * does not consider the translation parameters <code>tx</code> and
-	     * <code>ty</code>.
-	     *
-	     * @param point The point for which you want to get the result of the matrix
-	     *              transformation.
-	     * @return The point resulting from applying the matrix transformation.
-	     */
-	    deltaTransformPoint(point: Point): Point;
-	    /**
-	     * Sets each matrix property to a value that causes a null transformation. An
-	     * object transformed by applying an identity matrix will be identical to the
-	     * original.
-	     *
-	     * <p>After calling the <code>identity()</code> method, the resulting matrix
-	     * has the following properties: <code>a</code>=1, <code>b</code>=0,
-	     * <code>c</code>=0, <code>d</code>=1, <code>tx</code>=0,
-	     * <code>ty</code>=0.</p>
-	     *
-	     * <p>In matrix notation, the identity matrix looks like this:</p>
-	     *
-	     */
-	    identity(): void;
-	    /**
-	     * Performs the opposite transformation of the original matrix. You can apply
-	     * an inverted matrix to an object to undo the transformation performed when
-	     * applying the original matrix.
-	     */
-	    invert(): void;
-	    /**
-	     * Returns a new Matrix object that is a clone of this matrix, with an exact
-	     * copy of the contained object.
-	     *
-	     * @param matrix The matrix for which you want to get the result of the matrix
-	     *               transformation.
-	     * @return A Matrix object.
-	     */
-	    multiply(matrix: Matrix): Matrix;
-	    /**
-	     * Applies a rotation transformation to the Matrix object.
-	     *
-	     * <p>The <code>rotate()</code> method alters the <code>a</code>,
-	     * <code>b</code>, <code>c</code>, and <code>d</code> properties of the
-	     * Matrix object. In matrix notation, this is the same as concatenating the
-	     * current matrix with the following:</p>
-	     *
-	     * @param angle The rotation angle in radians.
-	     */
-	    rotate(angle: number): void;
-	    /**
-	     * Applies a scaling transformation to the matrix. The <i>x</i> axis is
-	     * multiplied by <code>sx</code>, and the <i>y</i> axis it is multiplied by
-	     * <code>sy</code>.
-	     *
-	     * <p>The <code>scale()</code> method alters the <code>a</code> and
-	     * <code>d</code> properties of the Matrix object. In matrix notation, this
-	     * is the same as concatenating the current matrix with the following
-	     * matrix:</p>
-	     *
-	     * @param sx A multiplier used to scale the object along the <i>x</i> axis.
-	     * @param sy A multiplier used to scale the object along the <i>y</i> axis.
-	     */
-	    scale(sx: number, sy: number): void;
-	    /**
-	     * Sets the members of Matrix to the specified values.
-	     *
-	     * @param a  The value that affects the positioning of pixels along the
-	     *           <i>x</i> axis when scaling or rotating an image.
-	     * @param b  The value that affects the positioning of pixels along the
-	     *           <i>y</i> axis when rotating or skewing an image.
-	     * @param c  The value that affects the positioning of pixels along the
-	     *           <i>x</i> axis when rotating or skewing an image.
-	     * @param d  The value that affects the positioning of pixels along the
-	     *           <i>y</i> axis when scaling or rotating an image..
-	     * @param tx The distance by which to translate each point along the <i>x</i>
-	     *           axis.
-	     * @param ty The distance by which to translate each point along the <i>y</i>
-	     *           axis.
-	     */
-	    setTo(a: number, b: number, c: number, d: number, tx: number, ty: number): void;
-	    /**
-	     * Returns a text value listing the properties of the Matrix object.
-	     *
-	     * @return A string containing the values of the properties of the Matrix
-	     *         object: <code>a</code>, <code>b</code>, <code>c</code>,
-	     *         <code>d</code>, <code>tx</code>, and <code>ty</code>.
-	     */
-	    toString(): string;
-	    /**
-	     * Returns the result of applying the geometric transformation represented by
-	     * the Matrix object to the specified point.
-	     *
-	     * @param point The point for which you want to get the result of the Matrix
-	     *              transformation.
-	     * @return The point resulting from applying the Matrix transformation.
-	     */
-	    transformPoint(point: Point): Point;
-	    /**
-	     * Translates the matrix along the <i>x</i> and <i>y</i> axes, as specified
-	     * by the <code>dx</code> and <code>dy</code> parameters.
-	     *
-	     * @param dx The amount of movement along the <i>x</i> axis to the right, in
-	     *           pixels.
-	     * @param dy The amount of movement down along the <i>y</i> axis, in pixels.
-	     */
-	    translate(dx: number, dy: number): void;
-	}
-	export = Matrix;
-	
-}
-declare module "awayjs-core/lib/geom/Rectangle" {
-	import Point = require("awayjs-core/lib/geom/Point");
-	/**
-	 * A Rectangle object is an area defined by its position, as indicated by its
-	 * top-left corner point(<i>x</i>, <i>y</i>) and by its width and its height.
-	 *
-	 *
-	 * <p>The <code>x</code>, <code>y</code>, <code>width</code>, and
-	 * <code>height</code> properties of the Rectangle class are independent of
-	 * each other; changing the value of one property has no effect on the others.
-	 * However, the <code>right</code> and <code>bottom</code> properties are
-	 * integrally related to those four properties. For example, if you change the
-	 * value of the <code>right</code> property, the value of the
-	 * <code>width</code> property changes; if you change the <code>bottom</code>
-	 * property, the value of the <code>height</code> property changes. </p>
-	 *
-	 * <p>The following methods and properties use Rectangle objects:</p>
-	 *
-	 * <ul>
-	 *   <li>The <code>applyFilter()</code>, <code>colorTransform()</code>,
-	 * <code>copyChannel()</code>, <code>copyPixels()</code>, <code>draw()</code>,
-	 * <code>fillRect()</code>, <code>generateFilterRect()</code>,
-	 * <code>getColorBoundsRect()</code>, <code>getPixels()</code>,
-	 * <code>merge()</code>, <code>paletteMap()</code>,
-	 * <code>pixelDisolve()</code>, <code>setPixels()</code>, and
-	 * <code>threshold()</code> methods, and the <code>rect</code> property of the
-	 * BitmapData class</li>
-	 *   <li>The <code>getBounds()</code> and <code>getRect()</code> methods, and
-	 * the <code>scrollRect</code> and <code>scale9Grid</code> properties of the
-	 * DisplayObject class</li>
-	 *   <li>The <code>getCharBoundaries()</code> method of the TextField
-	 * class</li>
-	 *   <li>The <code>pixelBounds</code> property of the Transform class</li>
-	 *   <li>The <code>bounds</code> parameter for the <code>startDrag()</code>
-	 * method of the Sprite class</li>
-	 *   <li>The <code>printArea</code> parameter of the <code>addPage()</code>
-	 * method of the PrintJob class</li>
-	 * </ul>
-	 *
-	 * <p>You can use the <code>new Rectangle()</code> constructor to create a
-	 * Rectangle object.</p>
-	 *
-	 * <p><b>Note:</b> The Rectangle class does not define a rectangular Shape
-	 * display object. To draw a rectangular Shape object onscreen, use the
-	 * <code>drawRect()</code> method of the Graphics class.</p>
-	 */
-	class Rectangle {
-	    private _size;
-	    private _bottomRight;
-	    private _topLeft;
-	    /**
-	     * The height of the rectangle, in pixels. Changing the <code>height</code>
-	     * value of a Rectangle object has no effect on the <code>x</code>,
-	     * <code>y</code>, and <code>width</code> properties.
-	     */
-	    height: number;
-	    /**
-	     * The width of the rectangle, in pixels. Changing the <code>width</code>
-	     * value of a Rectangle object has no effect on the <code>x</code>,
-	     * <code>y</code>, and <code>height</code> properties.
-	     */
-	    width: number;
-	    /**
-	     * The <i>x</i> coordinate of the top-left corner of the rectangle. Changing
-	     * the value of the <code>x</code> property of a Rectangle object has no
-	     * effect on the <code>y</code>, <code>width</code>, and <code>height</code>
-	     * properties.
-	     *
-	     * <p>The value of the <code>x</code> property is equal to the value of the
-	     * <code>left</code> property.</p>
-	     */
-	    x: number;
-	    /**
-	     * The <i>y</i> coordinate of the top-left corner of the rectangle. Changing
-	     * the value of the <code>y</code> property of a Rectangle object has no
-	     * effect on the <code>x</code>, <code>width</code>, and <code>height</code>
-	     * properties.
-	     *
-	     * <p>The value of the <code>y</code> property is equal to the value of the
-	     * <code>top</code> property.</p>
-	     */
-	    y: number;
-	    /**
-	     * The sum of the <code>y</code> and <code>height</code> properties.
-	     */
-	    bottom: number;
-	    /**
-	     * The location of the Rectangle object's bottom-right corner, determined by
-	     * the values of the <code>right</code> and <code>bottom</code> properties.
-	     */
-	    bottomRight: Point;
-	    /**
-	     * The <i>x</i> coordinate of the top-left corner of the rectangle. Changing
-	     * the <code>left</code> property of a Rectangle object has no effect on the
-	     * <code>y</code> and <code>height</code> properties. However it does affect
-	     * the <code>width</code> property, whereas changing the <code>x</code> value
-	     * does <i>not</i> affect the <code>width</code> property.
-	     *
-	     * <p>The value of the <code>left</code> property is equal to the value of
-	     * the <code>x</code> property.</p>
-	     */
-	    left: number;
-	    /**
-	     * The sum of the <code>x</code> and <code>width</code> properties.
-	     */
-	    right: number;
-	    /**
-	     * The size of the Rectangle object, expressed as a Point object with the
-	     * values of the <code>width</code> and <code>height</code> properties.
-	     */
-	    size: Point;
-	    /**
-	     * The <i>y</i> coordinate of the top-left corner of the rectangle. Changing
-	     * the <code>top</code> property of a Rectangle object has no effect on the
-	     * <code>x</code> and <code>width</code> properties. However it does affect
-	     * the <code>height</code> property, whereas changing the <code>y</code>
-	     * value does <i>not</i> affect the <code>height</code> property.
-	     *
-	     * <p>The value of the <code>top</code> property is equal to the value of the
-	     * <code>y</code> property.</p>
-	     */
-	    top: number;
-	    /**
-	     * The location of the Rectangle object's top-left corner, determined by the
-	     * <i>x</i> and <i>y</i> coordinates of the point.
-	     */
-	    topLeft: Point;
-	    /**
-	     * Creates a new Rectangle object with the top-left corner specified by the
-	     * <code>x</code> and <code>y</code> parameters and with the specified
-	     * <code>width</code> and <code>height</code> parameters. If you call this
-	     * public without parameters, a rectangle with <code>x</code>,
-	     * <code>y</code>, <code>width</code>, and <code>height</code> properties set
-	     * to 0 is created.
-	     *
-	     * @param x      The <i>x</i> coordinate of the top-left corner of the
-	     *               rectangle.
-	     * @param y      The <i>y</i> coordinate of the top-left corner of the
-	     *               rectangle.
-	     * @param width  The width of the rectangle, in pixels.
-	     * @param height The height of the rectangle, in pixels.
-	     */
-	    constructor(x?: number, y?: number, width?: number, height?: number);
-	    /**
-	     * Returns a new Rectangle object with the same values for the
-	     * <code>x</code>, <code>y</code>, <code>width</code>, and
-	     * <code>height</code> properties as the original Rectangle object.
-	     *
-	     * @return A new Rectangle object with the same values for the
-	     *         <code>x</code>, <code>y</code>, <code>width</code>, and
-	     *         <code>height</code> properties as the original Rectangle object.
-	     */
-	    clone(): Rectangle;
-	    /**
-	     * Determines whether the specified point is contained within the rectangular
-	     * region defined by this Rectangle object.
-	     *
-	     * @param x The <i>x</i> coordinate(horizontal position) of the point.
-	     * @param y The <i>y</i> coordinate(vertical position) of the point.
-	     * @return A value of <code>true</code> if the Rectangle object contains the
-	     *         specified point; otherwise <code>false</code>.
-	     */
-	    contains(x: number, y: number): boolean;
-	    /**
-	     * Determines whether the specified point is contained within the rectangular
-	     * region defined by this Rectangle object. This method is similar to the
-	     * <code>Rectangle.contains()</code> method, except that it takes a Point
-	     * object as a parameter.
-	     *
-	     * @param point The point, as represented by its <i>x</i> and <i>y</i>
-	     *              coordinates.
-	     * @return A value of <code>true</code> if the Rectangle object contains the
-	     *         specified point; otherwise <code>false</code>.
-	     */
-	    containsPoint(point: Point): boolean;
-	    /**
-	     * Determines whether the Rectangle object specified by the <code>rect</code>
-	     * parameter is contained within this Rectangle object. A Rectangle object is
-	     * said to contain another if the second Rectangle object falls entirely
-	     * within the boundaries of the first.
-	     *
-	     * @param rect The Rectangle object being checked.
-	     * @return A value of <code>true</code> if the Rectangle object that you
-	     *         specify is contained by this Rectangle object; otherwise
-	     *         <code>false</code>.
-	     */
-	    containsRect(rect: Rectangle): boolean;
-	    /**
-	     * Copies all of rectangle data from the source Rectangle object into the
-	     * calling Rectangle object.
-	     *
-	     * @param sourceRect The Rectangle object from which to copy the data.
-	     */
-	    copyFrom(sourceRect: Rectangle): void;
-	    /**
-	     * Determines whether the object specified in the <code>toCompare</code>
-	     * parameter is equal to this Rectangle object. This method compares the
-	     * <code>x</code>, <code>y</code>, <code>width</code>, and
-	     * <code>height</code> properties of an object against the same properties of
-	     * this Rectangle object.
-	     *
-	     * @param toCompare The rectangle to compare to this Rectangle object.
-	     * @return A value of <code>true</code> if the object has exactly the same
-	     *         values for the <code>x</code>, <code>y</code>, <code>width</code>,
-	     *         and <code>height</code> properties as this Rectangle object;
-	     *         otherwise <code>false</code>.
-	     */
-	    equals(toCompare: Rectangle): boolean;
-	    /**
-	     * Increases the size of the Rectangle object by the specified amounts, in
-	     * pixels. The center point of the Rectangle object stays the same, and its
-	     * size increases to the left and right by the <code>dx</code> value, and to
-	     * the top and the bottom by the <code>dy</code> value.
-	     *
-	     * @param dx The value to be added to the left and the right of the Rectangle
-	     *           object. The following equation is used to calculate the new
-	     *           width and position of the rectangle:
-	     * @param dy The value to be added to the top and the bottom of the
-	     *           Rectangle. The following equation is used to calculate the new
-	     *           height and position of the rectangle:
-	     */
-	    inflate(dx: number, dy: number): void;
-	    /**
-	     * Increases the size of the Rectangle object. This method is similar to the
-	     * <code>Rectangle.inflate()</code> method except it takes a Point object as
-	     * a parameter.
-	     *
-	     * <p>The following two code examples give the same result:</p>
-	     *
-	     * @param point The <code>x</code> property of this Point object is used to
-	     *              increase the horizontal dimension of the Rectangle object.
-	     *              The <code>y</code> property is used to increase the vertical
-	     *              dimension of the Rectangle object.
-	     */
-	    inflatePoint(point: Point): void;
-	    /**
-	     * If the Rectangle object specified in the <code>toIntersect</code>
-	     * parameter intersects with this Rectangle object, returns the area of
-	     * intersection as a Rectangle object. If the rectangles do not intersect,
-	     * this method returns an empty Rectangle object with its properties set to
-	     * 0.
-	     *
-	     * @param toIntersect The Rectangle object to compare against to see if it
-	     *                    intersects with this Rectangle object.
-	     * @return A Rectangle object that equals the area of intersection. If the
-	     *         rectangles do not intersect, this method returns an empty
-	     *         Rectangle object; that is, a rectangle with its <code>x</code>,
-	     *         <code>y</code>, <code>width</code>, and <code>height</code>
-	     *         properties set to 0.
-	     */
-	    intersection(toIntersect: Rectangle): Rectangle;
-	    /**
-	     * Determines whether the object specified in the <code>toIntersect</code>
-	     * parameter intersects with this Rectangle object. This method checks the
-	     * <code>x</code>, <code>y</code>, <code>width</code>, and
-	     * <code>height</code> properties of the specified Rectangle object to see if
-	     * it intersects with this Rectangle object.
-	     *
-	     * @param toIntersect The Rectangle object to compare against this Rectangle
-	     *                    object.
-	     * @return A value of <code>true</code> if the specified object intersects
-	     *         with this Rectangle object; otherwise <code>false</code>.
-	     */
-	    intersects(toIntersect: Rectangle): boolean;
-	    /**
-	     * Determines whether or not this Rectangle object is empty.
-	     *
-	     * @return A value of <code>true</code> if the Rectangle object's width or
-	     *         height is less than or equal to 0; otherwise <code>false</code>.
-	     */
-	    isEmpty(): boolean;
-	    /**
-	     * Adjusts the location of the Rectangle object, as determined by its
-	     * top-left corner, by the specified amounts.
-	     *
-	     * @param dx Moves the <i>x</i> value of the Rectangle object by this amount.
-	     * @param dy Moves the <i>y</i> value of the Rectangle object by this amount.
-	     */
-	    offset(dx: number, dy: number): void;
-	    /**
-	     * Adjusts the location of the Rectangle object using a Point object as a
-	     * parameter. This method is similar to the <code>Rectangle.offset()</code>
-	     * method, except that it takes a Point object as a parameter.
-	     *
-	     * @param point A Point object to use to offset this Rectangle object.
-	     */
-	    offsetPoint(point: Point): void;
-	    /**
-	     * Sets all of the Rectangle object's properties to 0. A Rectangle object is
-	     * empty if its width or height is less than or equal to 0.
-	     *
-	     * <p> This method sets the values of the <code>x</code>, <code>y</code>,
-	     * <code>width</code>, and <code>height</code> properties to 0.</p>
-	     *
-	     */
-	    setEmpty(): void;
-	    /**
-	     * Sets the members of Rectangle to the specified values
-	     *
-	     * @param xa      The <i>x</i> coordinate of the top-left corner of the
-	     *                rectangle.
-	     * @param ya      The <i>y</i> coordinate of the top-left corner of the
-	     *                rectangle.
-	     * @param widtha  The width of the rectangle, in pixels.
-	     * @param heighta The height of the rectangle, in pixels.
-	     */
-	    setTo(xa: number, ya: number, widtha: number, heighta: number): void;
-	    /**
-	     * Builds and returns a string that lists the horizontal and vertical
-	     * positions and the width and height of the Rectangle object.
-	     *
-	     * @return A string listing the value of each of the following properties of
-	     *         the Rectangle object: <code>x</code>, <code>y</code>,
-	     *         <code>width</code>, and <code>height</code>.
-	     */
-	    toString(): string;
-	    /**
-	     * Adds two rectangles together to create a new Rectangle object, by filling
-	     * in the horizontal and vertical space between the two rectangles.
-	     *
-	     * <p><b>Note:</b> The <code>union()</code> method ignores rectangles with
-	     * <code>0</code> as the height or width value, such as: <code>var
-	     * rect2:Rectangle = new Rectangle(300,300,50,0);</code></p>
-	     *
-	     * @param toUnion A Rectangle object to add to this Rectangle object.
-	     * @return A new Rectangle object that is the union of the two rectangles.
-	     */
-	    union(toUnion: Rectangle): Rectangle;
-	}
-	export = Rectangle;
-	
-}
-declare module "awayjs-core/lib/errors/AbstractMethodError" {
-	import Error = require("awayjs-core/lib/errors/Error");
-	/**
-	 * AbstractMethodError is thrown when an abstract method is called. The method in question should be overridden
-	 * by a concrete subclass.
-	 */
-	class AbstractMethodError extends Error {
-	    /**
-	     * Create a new AbstractMethodError.
-	     * @param message An optional message to override the default error message.
-	     * @param id The id of the error.
-	     */
-	    constructor(message?: string, id?: number);
-	}
-	export = AbstractMethodError;
-	
-}
-declare module "awayjs-core/lib/utils/ByteArrayBase" {
-	class ByteArrayBase {
-	    position: number;
-	    length: number;
-	    _mode: string;
-	    static Base64Key: string;
-	    constructor();
-	    writeByte(b: number): void;
-	    readByte(): number;
-	    writeUnsignedByte(b: number): void;
-	    readUnsignedByte(): number;
-	    writeUnsignedShort(b: number): void;
-	    readUnsignedShort(): number;
-	    writeUnsignedInt(b: number): void;
-	    readUnsignedInt(): number;
-	    writeFloat(b: number): void;
-	    toFloatBits(x: number): void;
-	    readFloat(b: number): void;
-	    fromFloatBits(x: number): void;
-	    getBytesAvailable(): number;
-	    toString(): string;
-	    compareEqual(other: any, count: any): boolean;
-	    writeBase64String(s: string): void;
-	    dumpToConsole(): void;
-	    readBase64String(count: number): string;
-	    static internalGetBase64String(count: any, getUnsignedByteFunc: any, self: any): string;
-	}
-	export = ByteArrayBase;
-	
-}
-declare module "awayjs-core/lib/utils/ByteArray" {
-	import ByteArrayBase = require("awayjs-core/lib/utils/ByteArrayBase");
-	class ByteArray extends ByteArrayBase {
-	    maxlength: number;
-	    arraybytes: any;
-	    unalignedarraybytestemp: any;
-	    constructor();
-	    ensureWriteableSpace(n: number): void;
-	    setArrayBuffer(aBuffer: ArrayBuffer): void;
-	    getBytesAvailable(): number;
-	    ensureSpace(n: number): void;
-	    writeByte(b: number): void;
-	    readByte(): number;
-	    readBytes(bytes: ByteArray, offset?: number, length?: number): void;
-	    writeUnsignedByte(b: number): void;
-	    readUnsignedByte(): number;
-	    writeUnsignedShort(b: number): void;
-	    readUTFBytes(len: number): string;
-	    readInt(): number;
-	    readShort(): number;
-	    readDouble(): number;
-	    readUnsignedShort(): number;
-	    writeUnsignedInt(b: number): void;
-	    readUnsignedInt(): number;
-	    writeFloat(b: number): void;
-	    readFloat(): number;
-	}
-	export = ByteArray;
-	
-}
 declare module "awayjs-core/lib/data/BitmapData" {
 	import BlendMode = require("awayjs-core/lib/data/BlendMode");
 	import ColorTransform = require("awayjs-core/lib/geom/ColorTransform");
@@ -2138,8 +499,7 @@ declare module "awayjs-core/lib/data/BitmapData" {
 	}
 	export = BitmapData;
 	
-}
-declare module "awayjs-core/lib/data/BitmapDataChannel" {
+}declare module "awayjs-core/lib/data/BitmapDataChannel" {
 	class BitmapDataChannel {
 	    static ALPHA: number;
 	    static BLUE: number;
@@ -2148,916 +508,183 @@ declare module "awayjs-core/lib/data/BitmapDataChannel" {
 	}
 	export = BitmapDataChannel;
 	
-}
-declare module "awayjs-core/lib/events/Event" {
-	class Event {
-	    static COMPLETE: string;
-	    static OPEN: string;
-	    static ENTER_FRAME: string;
-	    static EXIT_FRAME: string;
-	    static RESIZE: string;
-	    static ERROR: string;
-	    static CHANGE: string;
-	    /**
-	     * Type of event
-	     * @property type
-	     * @type String
-	     */
-	    type: string;
-	    /**
-	     * Reference to target object
-	     * @property target
-	     * @type Object
-	     */
-	    target: any;
-	    constructor(type: string);
-	    /**
-	     * Clones the current event.
-	     * @return An exact duplicate of the current event.
-	     */
-	    clone(): Event;
-	}
-	export = Event;
-	
-}
-declare module "awayjs-core/lib/events/GeometryEvent" {
-	import SubGeometryBase = require("awayjs-core/lib/data/SubGeometryBase");
-	import Event = require("awayjs-core/lib/events/Event");
+}declare module "awayjs-core/lib/data/BlendMode" {
 	/**
-	* Dispatched to notify changes in a geometry object's state.
-	*
-	* @class away.events.GeometryEvent
-	* @see away3d.core.base.Geometry
-	*/
-	class GeometryEvent extends Event {
-	    /**
-	     * Dispatched when a TriangleSubGeometry was added to the dispatching Geometry.
-	     */
-	    static SUB_GEOMETRY_ADDED: string;
-	    /**
-	     * Dispatched when a TriangleSubGeometry was removed from the dispatching Geometry.
-	     */
-	    static SUB_GEOMETRY_REMOVED: string;
-	    /**
-	     *
-	     */
-	    static BOUNDS_INVALID: string;
-	    private _subGeometry;
-	    /**
-	     * Create a new GeometryEvent
-	     * @param type The event type.
-	     * @param subGeometry An optional TriangleSubGeometry object that is the subject of this event.
-	     */
-	    constructor(type: string, subGeometry?: SubGeometryBase);
-	    /**
-	     * The TriangleSubGeometry object that is the subject of this event, if appropriate.
-	     */
-	    subGeometry: SubGeometryBase;
-	    /**
-	     * Clones the event.
-	     * @return An exact duplicate of the current object.
-	     */
-	    clone(): Event;
-	}
-	export = GeometryEvent;
-	
-}
-declare module "awayjs-core/lib/geom/Orientation3D" {
-	/**
-	 * A Quaternion object which can be used to represent rotations.
+	 * A class that provides constant values for visual blend mode effects. These
+	 * constants are used in the following:
+	 * <ul>
+	 *   <li> The <code>blendMode</code> property of the
+	 * flash.display.DisplayObject class.</li>
+	 *   <li> The <code>blendMode</code> parameter of the <code>draw()</code>
+	 * method of the flash.display.BitmapData class</li>
+	 * </ul>
 	 */
-	class Orientation3D {
+	class BlendMode {
 	    /**
-	     * The axis angle orientation uses a combination of an axis and an angle to determine the orientation.
-	     * @type {string}
+	     * Adds the values of the constituent colors of the display object to the
+	     * colors of its background, applying a ceiling of 0xFF. This setting is
+	     * commonly used for animating a lightening dissolve between two objects.
+	     *
+	     * <p>For example, if the display object has a pixel with an RGB value of
+	     * 0xAAA633, and the background pixel has an RGB value of 0xDD2200, the
+	     * resulting RGB value for the displayed pixel is 0xFFC833(because 0xAA +
+	     * 0xDD > 0xFF, 0xA6 + 0x22 = 0xC8, and 0x33 + 0x00 = 0x33).</p>
 	     */
-	    static AXIS_ANGLE: string;
+	    static ADD: string;
 	    /**
-	     * The default orientation for decompose() and recompose() methods, defines the orientation with three separate angles of rotation for each axis.
-	     * @type {string}
+	     * Applies the alpha value of each pixel of the display object to the
+	     * background. This requires the <code>blendMode</code> property of the
+	     * parent display object be set to
+	     * <code>away.base.BlendMode.LAYER</code>.
+	     *
+	     * <p>Not supported under GPU rendering.</p>
 	     */
-	    static EULER_ANGLES: string;
+	    static ALPHA: string;
 	    /**
-	     * The quaternion orientation uses complex numbers.
-	     * @type {string}
+	     * Selects the darker of the constituent colors of the display object and the
+	     * colors of the background(the colors with the smaller values). This
+	     * setting is commonly used for superimposing type.
+	     *
+	     * <p>For example, if the display object has a pixel with an RGB value of
+	     * 0xFFCC33, and the background pixel has an RGB value of 0xDDF800, the
+	     * resulting RGB value for the displayed pixel is 0xDDCC00(because 0xFF >
+	     * 0xDD, 0xCC < 0xF8, and 0x33 > 0x00 = 33).</p>
+	     *
+	     * <p>Not supported under GPU rendering.</p>
 	     */
-	    static QUATERNION: string;
+	    static DARKEN: string;
+	    /**
+	     * Compares the constituent colors of the display object with the colors of
+	     * its background, and subtracts the darker of the values of the two
+	     * constituent colors from the lighter value. This setting is commonly used
+	     * for more vibrant colors.
+	     *
+	     * <p>For example, if the display object has a pixel with an RGB value of
+	     * 0xFFCC33, and the background pixel has an RGB value of 0xDDF800, the
+	     * resulting RGB value for the displayed pixel is 0x222C33(because 0xFF -
+	     * 0xDD = 0x22, 0xF8 - 0xCC = 0x2C, and 0x33 - 0x00 = 0x33).</p>
+	     */
+	    static DIFFERENCE: string;
+	    /**
+	     * Erases the background based on the alpha value of the display object. This
+	     * process requires that the <code>blendMode</code> property of the parent
+	     * display object be set to <code>flash.display.BlendMode.LAYER</code>.
+	     *
+	     * <p>Not supported under GPU rendering.</p>
+	     */
+	    static ERASE: string;
+	    /**
+	     * Adjusts the color of each pixel based on the darkness of the display
+	     * object. If the display object is lighter than 50% gray, the display object
+	     * and background colors are screened, which results in a lighter color. If
+	     * the display object is darker than 50% gray, the colors are multiplied,
+	     * which results in a darker color. This setting is commonly used for shading
+	     * effects.
+	     *
+	     * <p>Not supported under GPU rendering.</p>
+	     */
+	    static HARDLIGHT: string;
+	    /**
+	     * Inverts the background.
+	     */
+	    static INVERT: string;
+	    /**
+	     * Forces the creation of a transparency group for the display object. This
+	     * means that the display object is precomposed in a temporary buffer before
+	     * it is processed further. The precomposition is done automatically if the
+	     * display object is precached by means of bitmap caching or if the display
+	     * object is a display object container that has at least one child object
+	     * with a <code>blendMode</code> setting other than <code>"normal"</code>.
+	     *
+	     * <p>Not supported under GPU rendering.</p>
+	     */
+	    static LAYER: string;
+	    /**
+	     * Selects the lighter of the constituent colors of the display object and
+	     * the colors of the background(the colors with the larger values). This
+	     * setting is commonly used for superimposing type.
+	     *
+	     * <p>For example, if the display object has a pixel with an RGB value of
+	     * 0xFFCC33, and the background pixel has an RGB value of 0xDDF800, the
+	     * resulting RGB value for the displayed pixel is 0xFFF833(because 0xFF >
+	     * 0xDD, 0xCC < 0xF8, and 0x33 > 0x00 = 33).</p>
+	     *
+	     * <p>Not supported under GPU rendering.</p>
+	     */
+	    static LIGHTEN: string;
+	    /**
+	     * Multiplies the values of the display object constituent colors by the
+	     * constituent colors of the background color, and normalizes by dividing by
+	     * 0xFF, resulting in darker colors. This setting is commonly used for
+	     * shadows and depth effects.
+	     *
+	     * <p>For example, if a constituent color(such as red) of one pixel in the
+	     * display object and the corresponding color of the pixel in the background
+	     * both have the value 0x88, the multiplied result is 0x4840. Dividing by
+	     * 0xFF yields a value of 0x48 for that constituent color, which is a darker
+	     * shade than the color of the display object or the color of the
+	     * background.</p>
+	     */
+	    static MULTIPLY: string;
+	    /**
+	     * The display object appears in front of the background. Pixel values of the
+	     * display object override the pixel values of the background. Where the
+	     * display object is transparent, the background is visible.
+	     */
+	    static NORMAL: string;
+	    /**
+	     * Adjusts the color of each pixel based on the darkness of the background.
+	     * If the background is lighter than 50% gray, the display object and
+	     * background colors are screened, which results in a lighter color. If the
+	     * background is darker than 50% gray, the colors are multiplied, which
+	     * results in a darker color. This setting is commonly used for shading
+	     * effects.
+	     *
+	     * <p>Not supported under GPU rendering.</p>
+	     */
+	    static OVERLAY: string;
+	    /**
+	     * Multiplies the complement(inverse) of the display object color by the
+	     * complement of the background color, resulting in a bleaching effect. This
+	     * setting is commonly used for highlights or to remove black areas of the
+	     * display object.
+	     */
+	    static SCREEN: string;
+	    /**
+	     * Uses a shader to define the blend between objects.
+	     *
+	     * <p>Setting the <code>blendShader</code> property to a Shader instance
+	     * automatically sets the display object's <code>blendMode</code> property to
+	     * <code>BlendMode.SHADER</code>. If the <code>blendMode</code> property is
+	     * set to <code>BlendMode.SHADER</code> without first setting the
+	     * <code>blendShader</code> property, the <code>blendMode</code> property is
+	     * set to <code>BlendMode.NORMAL</code> instead. If the
+	     * <code>blendShader</code> property is set(which sets the
+	     * <code>blendMode</code> property to <code>BlendMode.SHADER</code>), then
+	     * later the value of the <code>blendMode</code> property is changed, the
+	     * blend mode can be reset to use the blend shader simply by setting the
+	     * <code>blendMode</code> property to <code>BlendMode.SHADER</code>. The
+	     * <code>blendShader</code> property does not need to be set again except to
+	     * change the shader that's used to define the blend mode.</p>
+	     *
+	     * <p>Not supported under GPU rendering.</p>
+	     */
+	    static SHADER: string;
+	    /**
+	     * Subtracts the values of the constituent colors in the display object from
+	     * the values of the background color, applying a floor of 0. This setting is
+	     * commonly used for animating a darkening dissolve between two objects.
+	     *
+	     * <p>For example, if the display object has a pixel with an RGB value of
+	     * 0xAA2233, and the background pixel has an RGB value of 0xDDA600, the
+	     * resulting RGB value for the displayed pixel is 0x338400(because 0xDD -
+	     * 0xAA = 0x33, 0xA6 - 0x22 = 0x84, and 0x00 - 0x33 < 0x00).</p>
+	     */
+	    static SUBTRACT: string;
 	}
-	export = Orientation3D;
+	export = BlendMode;
 	
-}
-declare module "awayjs-core/lib/geom/PlaneClassification" {
-	class PlaneClassification {
-	    static BACK: number;
-	    static FRONT: number;
-	    static IN: number;
-	    static OUT: number;
-	    static INTERSECT: number;
-	}
-	export = PlaneClassification;
-	
-}
-declare module "awayjs-core/lib/geom/Plane3D" {
-	import Vector3D = require("awayjs-core/lib/geom/Vector3D");
-	class Plane3D {
-	    /**
-	     * The A coefficient of this plane. (Also the x dimension of the plane normal)
-	     */
-	    a: number;
-	    /**
-	     * The B coefficient of this plane. (Also the y dimension of the plane normal)
-	     */
-	    b: number;
-	    /**
-	     * The C coefficient of this plane. (Also the z dimension of the plane normal)
-	     */
-	    c: number;
-	    /**
-	     * The D coefficient of this plane. (Also the inverse dot product between normal and point)
-	     */
-	    d: number;
-	    _iAlignment: number;
-	    static ALIGN_ANY: number;
-	    static ALIGN_XY_AXIS: number;
-	    static ALIGN_YZ_AXIS: number;
-	    static ALIGN_XZ_AXIS: number;
-	    /**
-	     * Create a Plane3D with ABCD coefficients
-	     */
-	    constructor(a?: number, b?: number, c?: number, d?: number);
-	    /**
-	     * Fills this Plane3D with the coefficients from 3 points in 3d space.
-	     * @param p0 Vector3D
-	     * @param p1 Vector3D
-	     * @param p2 Vector3D
-	     */
-	    fromPoints(p0: Vector3D, p1: Vector3D, p2: Vector3D): void;
-	    /**
-	     * Fills this Plane3D with the coefficients from the plane's normal and a point in 3d space.
-	     * @param normal Vector3D
-	     * @param point  Vector3D
-	     */
-	    fromNormalAndPoint(normal: Vector3D, point: Vector3D): void;
-	    /**
-	     * Normalize this Plane3D
-	     * @return Plane3D This Plane3D.
-	     */
-	    normalize(): Plane3D;
-	    /**
-	     * Returns the signed distance between this Plane3D and the point p.
-	     * @param p Vector3D
-	     * @returns Number
-	     */
-	    distance(p: Vector3D): number;
-	    /**
-	     * Classify a point against this Plane3D. (in front, back or intersecting)
-	     * @param p Vector3D
-	     * @return int Plane3.FRONT or Plane3D.BACK or Plane3D.INTERSECT
-	     */
-	    classifyPoint(p: Vector3D, epsilon?: number): number;
-	    toString(): string;
-	}
-	export = Plane3D;
-	
-}
-declare module "awayjs-core/lib/geom/Matrix3DUtils" {
-	import Quaternion = require("awayjs-core/lib/geom/Quaternion");
-	import Matrix3D = require("awayjs-core/lib/geom/Matrix3D");
-	import Plane3D = require("awayjs-core/lib/geom/Plane3D");
-	import Vector3D = require("awayjs-core/lib/geom/Vector3D");
-	/**
-	 * away.geom.Matrix3DUtils provides additional Matrix3D functions.
-	 */
-	class Matrix3DUtils {
-	    /**
-	     * A reference to a Vector to be used as a temporary raw data container, to prevent object creation.
-	     */
-	    static RAW_DATA_CONTAINER: number[];
-	    static CALCULATION_MATRIX: Matrix3D;
-	    /**
-	     * Fills the 3d matrix object with values representing the transformation made by the given quaternion.
-	     *
-	     * @param    quarternion    The quarterion object to convert.
-	     */
-	    static quaternion2matrix(quarternion: Quaternion, m?: Matrix3D): Matrix3D;
-	    /**
-	     * Returns a normalised <code>Vector3D</code> object representing the forward vector of the given matrix.
-	     * @param    m        The Matrix3D object to use to get the forward vector
-	     * @param    v        [optional] A vector holder to prevent make new Vector3D instance if already exists. Default is null.
-	     * @return            The forward vector
-	     */
-	    static getForward(m: Matrix3D, v?: Vector3D): Vector3D;
-	    /**
-	     * Returns a normalised <code>Vector3D</code> object representing the up vector of the given matrix.
-	     * @param    m        The Matrix3D object to use to get the up vector
-	     * @param    v        [optional] A vector holder to prevent make new Vector3D instance if already exists. Default is null.
-	     * @return            The up vector
-	     */
-	    static getUp(m: Matrix3D, v?: Vector3D): Vector3D;
-	    /**
-	     * Returns a normalised <code>Vector3D</code> object representing the right vector of the given matrix.
-	     * @param    m        The Matrix3D object to use to get the right vector
-	     * @param    v        [optional] A vector holder to prevent make new Vector3D instance if already exists. Default is null.
-	     * @return            The right vector
-	     */
-	    static getRight(m: Matrix3D, v?: Vector3D): Vector3D;
-	    /**
-	     * Returns a boolean value representing whether there is any significant difference between the two given 3d matrices.
-	     */
-	    static compare(m1: Matrix3D, m2: Matrix3D): boolean;
-	    static lookAt(matrix: Matrix3D, pos: Vector3D, dir: Vector3D, up: Vector3D): void;
-	    static reflection(plane: Plane3D, target?: Matrix3D): Matrix3D;
-	    static transformVector(matrix: Matrix3D, vector: Vector3D, result?: Vector3D): Vector3D;
-	    static deltaTransformVector(matrix: Matrix3D, vector: Vector3D, result?: Vector3D): Vector3D;
-	    static getTranslation(transform: Matrix3D, result?: Vector3D): Vector3D;
-	    static deltaTransformVectors(matrix: Matrix3D, vin: Array<number>, vout: Array<number>): void;
-	}
-	export = Matrix3DUtils;
-	
-}
-declare module "awayjs-core/lib/geom/Quaternion" {
-	import Matrix3D = require("awayjs-core/lib/geom/Matrix3D");
-	import Vector3D = require("awayjs-core/lib/geom/Vector3D");
-	/**
-	 * A Quaternion object which can be used to represent rotations.
-	 */
-	class Quaternion {
-	    /**
-	     * The x value of the quaternion.
-	     */
-	    x: number;
-	    /**
-	     * The y value of the quaternion.
-	     */
-	    y: number;
-	    /**
-	     * The z value of the quaternion.
-	     */
-	    z: number;
-	    /**
-	     * The w value of the quaternion.
-	     */
-	    w: number;
-	    /**
-	     * Creates a new Quaternion object.
-	     * @param x The x value of the quaternion.
-	     * @param y The y value of the quaternion.
-	     * @param z The z value of the quaternion.
-	     * @param w The w value of the quaternion.
-	     */
-	    constructor(x?: number, y?: number, z?: number, w?: number);
-	    /**
-	     * Returns the magnitude of the quaternion object.
-	     */
-	    magnitude: number;
-	    /**
-	     * Fills the quaternion object with the result from a multiplication of two quaternion objects.
-	     *
-	     * @param    qa    The first quaternion in the multiplication.
-	     * @param    qb    The second quaternion in the multiplication.
-	     */
-	    multiply(qa: Quaternion, qb: Quaternion): void;
-	    multiplyVector(vector: Vector3D, target?: Quaternion): Quaternion;
-	    /**
-	     * Fills the quaternion object with values representing the given rotation around a vector.
-	     *
-	     * @param    axis    The axis around which to rotate
-	     * @param    angle    The angle in radians of the rotation.
-	     */
-	    fromAxisAngle(axis: Vector3D, angle: number): void;
-	    /**
-	     * Spherically interpolates between two quaternions, providing an interpolation between rotations with constant angle change rate.
-	     * @param qa The first quaternion to interpolate.
-	     * @param qb The second quaternion to interpolate.
-	     * @param t The interpolation weight, a value between 0 and 1.
-	     */
-	    slerp(qa: Quaternion, qb: Quaternion, t: number): void;
-	    /**
-	     * Linearly interpolates between two quaternions.
-	     * @param qa The first quaternion to interpolate.
-	     * @param qb The second quaternion to interpolate.
-	     * @param t The interpolation weight, a value between 0 and 1.
-	     */
-	    lerp(qa: Quaternion, qb: Quaternion, t: number): void;
-	    /**
-	     * Fills the quaternion object with values representing the given euler rotation.
-	     *
-	     * @param    ax        The angle in radians of the rotation around the ax axis.
-	     * @param    ay        The angle in radians of the rotation around the ay axis.
-	     * @param    az        The angle in radians of the rotation around the az axis.
-	     */
-	    fromEulerAngles(ax: number, ay: number, az: number): void;
-	    /**
-	     * Fills a target Vector3D object with the Euler angles that form the rotation represented by this quaternion.
-	     * @param target An optional Vector3D object to contain the Euler angles. If not provided, a new object is created.
-	     * @return The Vector3D containing the Euler angles.
-	     */
-	    toEulerAngles(target?: Vector3D): Vector3D;
-	    /**
-	     * Normalises the quaternion object.
-	     */
-	    normalize(val?: number): void;
-	    /**
-	     * Used to trace the values of a quaternion.
-	     *
-	     * @return A string representation of the quaternion object.
-	     */
-	    toString(): string;
-	    /**
-	     * Converts the quaternion to a Matrix3D object representing an equivalent rotation.
-	     * @param target An optional Matrix3D container to store the transformation in. If not provided, a new object is created.
-	     * @return A Matrix3D object representing an equivalent rotation.
-	     */
-	    toMatrix3D(target?: Matrix3D): Matrix3D;
-	    /**
-	     * Extracts a quaternion rotation matrix out of a given Matrix3D object.
-	     * @param matrix The Matrix3D out of which the rotation will be extracted.
-	     */
-	    fromMatrix(matrix: Matrix3D): void;
-	    /**
-	     * Converts the quaternion to a Vector.&lt;Number&gt; matrix representation of a rotation equivalent to this quaternion.
-	     * @param target The Vector.&lt;Number&gt; to contain the raw matrix data.
-	     * @param exclude4thRow If true, the last row will be omitted, and a 4x3 matrix will be generated instead of a 4x4.
-	     */
-	    toRawData(target: number[], exclude4thRow?: boolean): void;
-	    /**
-	     * Clones the quaternion.
-	     * @return An exact duplicate of the current Quaternion.
-	     */
-	    clone(): Quaternion;
-	    /**
-	     * Rotates a point.
-	     * @param vector The Vector3D object to be rotated.
-	     * @param target An optional Vector3D object that will contain the rotated coordinates. If not provided, a new object will be created.
-	     * @return A Vector3D object containing the rotated point.
-	     */
-	    rotatePoint(vector: Vector3D, target?: Vector3D): Vector3D;
-	    /**
-	     * Copies the data from a quaternion into this instance.
-	     * @param q The quaternion to copy from.
-	     */
-	    copyFrom(q: Quaternion): void;
-	}
-	export = Quaternion;
-	
-}
-declare module "awayjs-core/lib/geom/Matrix3D" {
-	import Vector3D = require("awayjs-core/lib/geom/Vector3D");
-	class Matrix3D {
-	    /**
-	     * A Vector of 16 Numbers, where every four elements is a column of a 4x4 matrix.
-	     *
-	     * <p>An exception is thrown if the rawData property is set to a matrix that is not invertible. The Matrix3D
-	     * object must be invertible. If a non-invertible matrix is needed, create a subclass of the Matrix3D object.</p>
-	     */
-	    rawData: number[];
-	    /**
-	     * Creates a Matrix3D object.
-	     */
-	    constructor(v?: number[]);
-	    /**
-	     * Appends the matrix by multiplying another Matrix3D object by the current Matrix3D object.
-	     */
-	    append(lhs: Matrix3D): void;
-	    /**
-	     * Appends an incremental rotation to a Matrix3D object.
-	     */
-	    appendRotation(degrees: number, axis: Vector3D): void;
-	    /**
-	     * Appends an incremental scale change along the x, y, and z axes to a Matrix3D object.
-	     */
-	    appendScale(xScale: number, yScale: number, zScale: number): void;
-	    /**
-	     * Appends an incremental translation, a repositioning along the x, y, and z axes, to a Matrix3D object.
-	     */
-	    appendTranslation(x: number, y: number, z: number): void;
-	    /**
-	     * Returns a new Matrix3D object that is an exact copy of the current Matrix3D object.
-	     */
-	    clone(): Matrix3D;
-	    /**
-	     * Copies a Vector3D object into specific column of the calling Matrix3D object.
-	     */
-	    copyColumnFrom(column: number, vector3D: Vector3D): void;
-	    /**
-	     * Copies specific column of the calling Matrix3D object into the Vector3D object.
-	     */
-	    copyColumnTo(column: number, vector3D: Vector3D): void;
-	    /**
-	     * Copies all of the matrix data from the source Matrix3D object into the calling Matrix3D object.
-	     */
-	    copyFrom(sourceMatrix3D: Matrix3D): void;
-	    copyRawDataFrom(vector: number[], index?: number, transpose?: boolean): void;
-	    copyRawDataTo(vector: number[], index?: number, transpose?: boolean): void;
-	    /**
-	     * Copies a Vector3D object into specific row of the calling Matrix3D object.
-	     */
-	    copyRowFrom(row: number, vector3D: Vector3D): void;
-	    /**
-	     * Copies specific row of the calling Matrix3D object into the Vector3D object.
-	     */
-	    copyRowTo(row: number, vector3D: Vector3D): void;
-	    /**
-	     * Copies this Matrix3D object into a destination Matrix3D object.
-	     */
-	    copyToMatrix3D(dest: Matrix3D): void;
-	    /**
-	     * Returns the transformation matrix's translation, rotation, and scale settings as a Vector of three Vector3D objects.
-	     */
-	    decompose(orientationStyle?: string): Vector3D[];
-	    /**
-	     * Uses the transformation matrix without its translation elements to transform a Vector3D object from one space
-	     * coordinate to another.
-	     */
-	    deltaTransformVector(v: Vector3D): Vector3D;
-	    /**
-	     * Converts the current matrix to an identity or unit matrix.
-	     */
-	    identity(): void;
-	    /**
-	     * [static] Interpolates the translation, rotation, and scale transformation of one matrix toward those of the target matrix.
-	     */
-	    static interpolate(thisMat: Matrix3D, toMat: Matrix3D, percent: number): Matrix3D;
-	    /**
-	     * Interpolates this matrix towards the translation, rotation, and scale transformations of the target matrix.
-	     */
-	    interpolateTo(toMat: Matrix3D, percent: number): void;
-	    /**
-	     * Inverts the current matrix.
-	     */
-	    invert(): boolean;
-	    /**
-	     * Prepends a matrix by multiplying the current Matrix3D object by another Matrix3D object.
-	     */
-	    prepend(rhs: Matrix3D): void;
-	    /**
-	     * Prepends an incremental rotation to a Matrix3D object.
-	     */
-	    prependRotation(degrees: number, axis: Vector3D): void;
-	    /**
-	     * Prepends an incremental scale change along the x, y, and z axes to a Matrix3D object.
-	     */
-	    prependScale(xScale: number, yScale: number, zScale: number): void;
-	    /**
-	     * Prepends an incremental translation, a repositioning along the x, y, and z axes, to a Matrix3D object.
-	     */
-	    prependTranslation(x: number, y: number, z: number): void;
-	    /**
-	     * Sets the transformation matrix's translation, rotation, and scale settings.
-	     */
-	    recompose(components: Vector3D[]): boolean;
-	    transformVector(v: Vector3D): Vector3D;
-	    /**
-	     * Uses the transformation matrix to transform a Vector of Numbers from one coordinate space to another.
-	     */
-	    transformVectors(vin: number[], vout: number[]): void;
-	    /**
-	     * Converts the current Matrix3D object to a matrix where the rows and columns are swapped.
-	     */
-	    transpose(): void;
-	    static getAxisRotation(x: number, y: number, z: number, degrees: number): Matrix3D;
-	    /**
-	     * [read-only] A Number that determines whether a matrix is invertible.
-	     */
-	    determinant: number;
-	    /**
-	     * A Vector3D object that holds the position, the 3D coordinate (x,y,z) of a display object within the
-	     * transformation's frame of reference.
-	     */
-	    position: Vector3D;
-	    toFixed(decimalPlace: number): string;
-	    toString(): string;
-	}
-	export = Matrix3D;
-	
-}
-declare module "awayjs-core/lib/events/IEventDispatcher" {
-	import Event = require("awayjs-core/lib/events/Event");
-	/**
-	 * Base interface for dispatching events
-	 *
-	 * @interface away.events.IEventDispatcher
-	 *
-	 */
-	interface IEventDispatcher {
-	    /**
-	     * Add an event listener
-	     * @method addEventListener
-	     * @param {String} Name of event to add a listener for
-	     * @param {Function} Callback function
-	     */
-	    addEventListener(type: string, listener: Function): any;
-	    /**
-	     * Remove an event listener
-	     * @method removeEventListener
-	     * @param {String} Name of event to remove a listener for
-	     * @param {Function} Callback function
-	     */
-	    removeEventListener(type: string, listener: Function): any;
-	    /**
-	     * Dispatch an event
-	     * @method dispatchEvent
-	     * @param {Event} Event to dispatch
-	     */
-	    dispatchEvent(event: Event): any;
-	    /**
-	     * check if an object has an event listener assigned to it
-	     * @method hasListener
-	     * @param {String} Name of event to remove a listener for
-	     * @param {Function} Callback function
-	     * @param {Object} Target object listener is added to
-	     */
-	    hasEventListener(type: string, listener?: Function): boolean;
-	}
-	export = IEventDispatcher;
-	
-}
-declare module "awayjs-core/lib/library/IAssetClass" {
-	import IAsset = require("awayjs-core/lib/library/IAsset");
-	interface IAssetClass {
-	    assetType: string;
-	    new (): IAsset;
-	}
-	export = IAssetClass;
-	
-}
-declare module "awayjs-core/lib/library/IAsset" {
-	import IEventDispatcher = require("awayjs-core/lib/events/IEventDispatcher");
-	interface IAsset extends IEventDispatcher {
-	    /**
-	     *
-	     */
-	    name: string;
-	    /**
-	     *
-	     */
-	    id: number;
-	    /**
-	     *
-	     */
-	    assetNamespace: string;
-	    /**
-	     *
-	     */
-	    assetType: string;
-	    /**
-	     *
-	     */
-	    assetFullPath: Array<string>;
-	    /**
-	     *
-	     * @param name
-	     * @param ns
-	     */
-	    assetPathEquals(name: string, ns: string): boolean;
-	    /**
-	     *
-	     */
-	    dispose(): any;
-	    /**
-	     *
-	     * @param IAssetClass
-	     */
-	    isAsset(IAssetClass: any): boolean;
-	    /**
-	     *
-	     * @param name
-	     * @param ns
-	     * @param overrideOriginal
-	     */
-	    resetAssetPath(name: string, ns: string, overrideOriginal?: boolean): void;
-	}
-	export = IAsset;
-	
-}
-declare module "awayjs-core/lib/events/AssetEvent" {
-	import IAsset = require("awayjs-core/lib/library/IAsset");
-	import Event = require("awayjs-core/lib/events/Event");
-	/**
-	 * @class away.events.AssetEvent
-	 */
-	class AssetEvent extends Event {
-	    /**
-	     *
-	     */
-	    static ASSET_COMPLETE: string;
-	    /**
-	     *
-	     */
-	    static ASSET_RENAME: string;
-	    /**
-	     *
-	     */
-	    static ASSET_CONFLICT_RESOLVED: string;
-	    /**
-	     *
-	     */
-	    static TEXTURE_SIZE_ERROR: string;
-	    private _asset;
-	    private _prevName;
-	    /**
-	     *
-	     */
-	    constructor(type: string, asset?: IAsset, prevName?: string);
-	    /**
-	     *
-	     */
-	    asset: IAsset;
-	    /**
-	     *
-	     */
-	    assetPrevName: string;
-	    /**
-	     *
-	     */
-	    clone(): Event;
-	}
-	export = AssetEvent;
-	
-}
-declare module "awayjs-core/lib/events/EventDispatcher" {
-	import Event = require("awayjs-core/lib/events/Event");
-	/**
-	 * Base class for dispatching events
-	*
-	* @class away.events.EventDispatcher
-	*
-	*/
-	class EventDispatcher {
-	    private listeners;
-	    private target;
-	    constructor(target?: any);
-	    /**
-	     * Add an event listener
-	     * @method addEventListener
-	     * @param {String} Name of event to add a listener for
-	     * @param {Function} Callback function
-	     */
-	    addEventListener(type: string, listener: Function): void;
-	    /**
-	     * Remove an event listener
-	     * @method removeEventListener
-	     * @param {String} Name of event to remove a listener for
-	     * @param {Function} Callback function
-	     */
-	    removeEventListener(type: string, listener: Function): void;
-	    /**
-	     * Dispatch an event
-	     * @method dispatchEvent
-	     * @param {Event} Event to dispatch
-	     */
-	    dispatchEvent(event: Event): void;
-	    /**
-	     * get Event Listener Index in array. Returns -1 if no listener is added
-	     * @method getEventListenerIndex
-	     * @param {String} Name of event to remove a listener for
-	     * @param {Function} Callback function
-	     */
-	    private getEventListenerIndex(type, listener);
-	    /**
-	     * check if an object has an event listener assigned to it
-	     * @method hasListener
-	     * @param {String} Name of event to remove a listener for
-	     * @param {Function} Callback function
-	     */
-	    hasEventListener(type: string, listener?: Function): boolean;
-	}
-	export = EventDispatcher;
-	
-}
-declare module "awayjs-core/lib/library/AssetBase" {
-	import IAssetClass = require("awayjs-core/lib/library/IAssetClass");
-	import EventDispatcher = require("awayjs-core/lib/events/EventDispatcher");
-	class AssetBase extends EventDispatcher {
-	    static ID_COUNT: number;
-	    private _originalName;
-	    private _namespace;
-	    private _name;
-	    private _id;
-	    private _full_path;
-	    static DEFAULT_NAMESPACE: string;
-	    constructor(name?: string);
-	    /**
-	     *
-	     */
-	    assetType: string;
-	    /**
-	     * The original name used for this asset in the resource (e.g. file) in which
-	     * it was found. This may not be the same as <code>name</code>, which may
-	     * have changed due to of a name conflict.
-	     */
-	    originalName: string;
-	    /**
-	     * A unique id for the asset, used to identify assets in an associative array
-	     */
-	    id: number;
-	    name: string;
-	    dispose(): void;
-	    assetNamespace: string;
-	    assetFullPath: Array<string>;
-	    assetPathEquals(name: string, ns: string): boolean;
-	    isAsset(assetClass: IAssetClass): boolean;
-	    resetAssetPath(name: string, ns?: string, overrideOriginal?: boolean): void;
-	    private updateFullPath();
-	}
-	export = AssetBase;
-	
-}
-declare module "awayjs-core/lib/data/Geometry" {
-	import SubGeometryBase = require("awayjs-core/lib/data/SubGeometryBase");
-	import Matrix3D = require("awayjs-core/lib/geom/Matrix3D");
-	import IAsset = require("awayjs-core/lib/library/IAsset");
-	import AssetBase = require("awayjs-core/lib/library/AssetBase");
-	/**
-	 *
-	 * Geometry is a collection of SubGeometries, each of which contain the actual geometrical data such as vertices,
-	 * normals, uvs, etc. It also contains a reference to an animation class, which defines how the geometry moves.
-	 * A Geometry object is assigned to a Mesh, a scene graph occurence of the geometry, which in turn assigns
-	 * the SubGeometries to its respective TriangleSubMesh objects.
-	 *
-	 *
-	 *
-	 * @see away.core.base.SubGeometry
-	 * @see away.entities.Mesh
-	 *
-	 * @class Geometry
-	 */
-	class Geometry extends AssetBase implements IAsset {
-	    static assetType: string;
-	    private _subGeometries;
-	    assetType: string;
-	    /**
-	     * A collection of TriangleSubGeometry objects, each of which contain geometrical data such as vertices, normals, etc.
-	     */
-	    subGeometries: Array<SubGeometryBase>;
-	    /**
-	     * Creates a new Geometry object.
-	     */
-	    constructor();
-	    applyTransformation(transform: Matrix3D): void;
-	    /**
-	     * Adds a new TriangleSubGeometry object to the list.
-	     * @param subGeometry The TriangleSubGeometry object to be added.
-	     */
-	    addSubGeometry(subGeometry: SubGeometryBase): void;
-	    /**
-	     * Removes a new TriangleSubGeometry object from the list.
-	     * @param subGeometry The TriangleSubGeometry object to be removed.
-	     */
-	    removeSubGeometry(subGeometry: SubGeometryBase): void;
-	    /**
-	     * Clones the geometry.
-	     * @return An exact duplicate of the current Geometry object.
-	     */
-	    clone(): Geometry;
-	    /**
-	     * Scales the geometry.
-	     * @param scale The amount by which to scale.
-	     */
-	    scale(scale: number): void;
-	    /**
-	     * Clears all resources used by the Geometry object, including SubGeometries.
-	     */
-	    dispose(): void;
-	    /**
-	     * Scales the uv coordinates (tiling)
-	     * @param scaleU The amount by which to scale on the u axis. Default is 1;
-	     * @param scaleV The amount by which to scale on the v axis. Default is 1;
-	     */
-	    scaleUV(scaleU?: number, scaleV?: number): void;
-	    iInvalidateBounds(subGeom: SubGeometryBase): void;
-	}
-	export = Geometry;
-	
-}
-declare module "awayjs-core/lib/events/SubGeometryEvent" {
-	import Event = require("awayjs-core/lib/events/Event");
-	/**
-	 * Dispatched to notify changes in a sub geometry object's state.
-	 *
-	 * @class away.events.SubGeometryEvent
-	 * @see away.core.base.Geometry
-	 */
-	class SubGeometryEvent extends Event {
-	    /**
-	     * Dispatched when a TriangleSubGeometry's index data has been updated.
-	     */
-	    static INDICES_UPDATED: string;
-	    /**
-	     * Dispatched when a TriangleSubGeometry's vertex data has been updated.
-	     */
-	    static VERTICES_UPDATED: string;
-	    private _dataType;
-	    /**
-	     * Create a new GeometryEvent
-	     * @param type The event type.
-	     * @param dataType An optional data type of the vertex data being updated.
-	     */
-	    constructor(type: string, dataType?: string);
-	    /**
-	     * The data type of the vertex data.
-	     */
-	    dataType: string;
-	    /**
-	     * Clones the event.
-	     *
-	     * @return An exact duplicate of the current object.
-	     */
-	    clone(): Event;
-	}
-	export = SubGeometryEvent;
-	
-}
-declare module "awayjs-core/lib/data/SubGeometryBase" {
-	import Geometry = require("awayjs-core/lib/data/Geometry");
-	import Matrix3D = require("awayjs-core/lib/geom/Matrix3D");
-	import AssetBase = require("awayjs-core/lib/library/AssetBase");
-	/**
-	 * @class away.base.TriangleSubGeometry
-	 */
-	class SubGeometryBase extends AssetBase {
-	    static VERTEX_DATA: string;
-	    _pStrideOffsetDirty: boolean;
-	    _pIndices: Array<number>;
-	    _pVertices: Array<number>;
-	    private _numIndices;
-	    private _numTriangles;
-	    _pNumVertices: number;
-	    _pConcatenateArrays: boolean;
-	    private _indicesUpdated;
-	    _pStride: Object;
-	    _pOffset: Object;
-	    _pUpdateStrideOffset(): void;
-	    /**
-	     *
-	     */
-	    concatenateArrays: boolean;
-	    /**
-	     * The raw index data that define the faces.
-	     */
-	    indices: Array<number>;
-	    /**
-	     *
-	     */
-	    vertices: Array<number>;
-	    /**
-	     * The total amount of triangles in the TriangleSubGeometry.
-	     */
-	    numTriangles: number;
-	    numVertices: number;
-	    /**
-	     *
-	     */
-	    constructor(concatenatedArrays: boolean);
-	    /**
-	     *
-	     */
-	    getStride(dataType: string): any;
-	    /**
-	     *
-	     */
-	    getOffset(dataType: string): any;
-	    updateVertices(): void;
-	    /**
-	     *
-	     */
-	    dispose(): void;
-	    /**
-	     * Updates the face indices of the TriangleSubGeometry.
-	     *
-	     * @param indices The face indices to upload.
-	     */
-	    updateIndices(indices: Array<number>): void;
-	    /**
-	     * @protected
-	     */
-	    pInvalidateBounds(): void;
-	    /**
-	     * The Geometry object that 'owns' this TriangleSubGeometry object.
-	     *
-	     * @private
-	     */
-	    parentGeometry: Geometry;
-	    /**
-	     * Clones the current object
-	     * @return An exact duplicate of the current object.
-	     */
-	    clone(): SubGeometryBase;
-	    applyTransformation(transform: Matrix3D): void;
-	    /**
-	     * Scales the geometry.
-	     * @param scale The amount by which to scale.
-	     */
-	    scale(scale: number): void;
-	    scaleUV(scaleU?: number, scaleV?: number): void;
-	    getBoundingPositions(): Array<number>;
-	    private notifyIndicesUpdate();
-	    _pNotifyVerticesUpdate(): void;
-	}
-	export = SubGeometryBase;
-	
-}
-declare module "awayjs-core/lib/data/CurveSubGeometry" {
+}declare module "awayjs-core/lib/data/CurveSubGeometry" {
 	import SubGeometryBase = require("awayjs-core/lib/data/SubGeometryBase");
 	import Matrix3D = require("awayjs-core/lib/geom/Matrix3D");
 	/**
@@ -3199,8 +826,268 @@ declare module "awayjs-core/lib/data/CurveSubGeometry" {
 	}
 	export = CurveSubGeometry;
 	
-}
-declare module "awayjs-core/lib/data/TriangleSubGeometry" {
+}declare module "awayjs-core/lib/data/Geometry" {
+	import SubGeometryBase = require("awayjs-core/lib/data/SubGeometryBase");
+	import Matrix3D = require("awayjs-core/lib/geom/Matrix3D");
+	import IAsset = require("awayjs-core/lib/library/IAsset");
+	import AssetBase = require("awayjs-core/lib/library/AssetBase");
+	/**
+	 *
+	 * Geometry is a collection of SubGeometries, each of which contain the actual geometrical data such as vertices,
+	 * normals, uvs, etc. It also contains a reference to an animation class, which defines how the geometry moves.
+	 * A Geometry object is assigned to a Mesh, a scene graph occurence of the geometry, which in turn assigns
+	 * the SubGeometries to its respective TriangleSubMesh objects.
+	 *
+	 *
+	 *
+	 * @see away.core.base.SubGeometry
+	 * @see away.entities.Mesh
+	 *
+	 * @class Geometry
+	 */
+	class Geometry extends AssetBase implements IAsset {
+	    static assetType: string;
+	    private _subGeometries;
+	    assetType: string;
+	    /**
+	     * A collection of TriangleSubGeometry objects, each of which contain geometrical data such as vertices, normals, etc.
+	     */
+	    subGeometries: Array<SubGeometryBase>;
+	    /**
+	     * Creates a new Geometry object.
+	     */
+	    constructor();
+	    applyTransformation(transform: Matrix3D): void;
+	    /**
+	     * Adds a new TriangleSubGeometry object to the list.
+	     * @param subGeometry The TriangleSubGeometry object to be added.
+	     */
+	    addSubGeometry(subGeometry: SubGeometryBase): void;
+	    /**
+	     * Removes a new TriangleSubGeometry object from the list.
+	     * @param subGeometry The TriangleSubGeometry object to be removed.
+	     */
+	    removeSubGeometry(subGeometry: SubGeometryBase): void;
+	    /**
+	     * Clones the geometry.
+	     * @return An exact duplicate of the current Geometry object.
+	     */
+	    clone(): Geometry;
+	    /**
+	     * Scales the geometry.
+	     * @param scale The amount by which to scale.
+	     */
+	    scale(scale: number): void;
+	    /**
+	     * Clears all resources used by the Geometry object, including SubGeometries.
+	     */
+	    dispose(): void;
+	    /**
+	     * Scales the uv coordinates (tiling)
+	     * @param scaleU The amount by which to scale on the u axis. Default is 1;
+	     * @param scaleV The amount by which to scale on the v axis. Default is 1;
+	     */
+	    scaleUV(scaleU?: number, scaleV?: number): void;
+	    iInvalidateBounds(subGeom: SubGeometryBase): void;
+	}
+	export = Geometry;
+	
+}declare module "awayjs-core/lib/data/LineSubGeometry" {
+	import Geometry = require("awayjs-core/lib/data/Geometry");
+	import SubGeometryBase = require("awayjs-core/lib/data/SubGeometryBase");
+	/**
+	 * @class LineSubGeometry
+	 */
+	class LineSubGeometry extends SubGeometryBase {
+	    static assetType: string;
+	    static VERTEX_DATA: string;
+	    static START_POSITION_DATA: string;
+	    static END_POSITION_DATA: string;
+	    static THICKNESS_DATA: string;
+	    static COLOR_DATA: string;
+	    static POSITION_FORMAT: string;
+	    static COLOR_FORMAT: string;
+	    static THICKNESS_FORMAT: string;
+	    private _positionsDirty;
+	    private _boundingPositionDirty;
+	    private _thicknessDirty;
+	    private _colorsDirty;
+	    private _startPositions;
+	    private _endPositions;
+	    private _boundingPositions;
+	    private _thickness;
+	    private _startColors;
+	    private _endColors;
+	    private _numSegments;
+	    private _positionsUpdated;
+	    private _thicknessUpdated;
+	    private _colorUpdated;
+	    /**
+	     *
+	     * @returns {string}
+	     */
+	    assetType: string;
+	    _pUpdateStrideOffset(): void;
+	    /**
+	     *
+	     */
+	    vertices: Array<number>;
+	    /**
+	     *
+	     */
+	    startPositions: Array<number>;
+	    /**
+	     *
+	     */
+	    endPositions: Array<number>;
+	    /**
+	     *
+	     */
+	    thickness: Array<number>;
+	    /**
+	     *
+	     */
+	    startColors: Array<number>;
+	    /**
+	     *
+	     */
+	    endColors: Array<number>;
+	    /**
+	     * The total amount of segments in the TriangleSubGeometry.
+	     */
+	    numSegments: number;
+	    /**
+	     *
+	     */
+	    constructor();
+	    getBoundingPositions(): Array<number>;
+	    /**
+	     *
+	     */
+	    updatePositions(startValues: Array<number>, endValues: Array<number>): void;
+	    /**
+	     * Updates the thickness.
+	     */
+	    updateThickness(values: Array<number>): void;
+	    /**
+	     *
+	     */
+	    updateColors(startValues: Array<number>, endValues: Array<number>): void;
+	    /**
+	     *
+	     */
+	    dispose(): void;
+	    /**
+	     * @protected
+	     */
+	    pInvalidateBounds(): void;
+	    /**
+	     * The Geometry object that 'owns' this TriangleSubGeometry object.
+	     *
+	     * @private
+	     */
+	    parentGeometry: Geometry;
+	    /**
+	     * Clones the current object
+	     * @return An exact duplicate of the current object.
+	     */
+	    clone(): LineSubGeometry;
+	    _pNotifyVerticesUpdate(): void;
+	    private notifyPositionsUpdate();
+	    private notifyThicknessUpdate();
+	    private notifyColorsUpdate();
+	}
+	export = LineSubGeometry;
+	
+}declare module "awayjs-core/lib/data/SubGeometryBase" {
+	import Geometry = require("awayjs-core/lib/data/Geometry");
+	import Matrix3D = require("awayjs-core/lib/geom/Matrix3D");
+	import AssetBase = require("awayjs-core/lib/library/AssetBase");
+	/**
+	 * @class away.base.TriangleSubGeometry
+	 */
+	class SubGeometryBase extends AssetBase {
+	    static VERTEX_DATA: string;
+	    _pStrideOffsetDirty: boolean;
+	    _pIndices: Array<number>;
+	    _pVertices: Array<number>;
+	    private _numIndices;
+	    private _numTriangles;
+	    _pNumVertices: number;
+	    _pConcatenateArrays: boolean;
+	    private _indicesUpdated;
+	    _pStride: Object;
+	    _pOffset: Object;
+	    _pUpdateStrideOffset(): void;
+	    /**
+	     *
+	     */
+	    concatenateArrays: boolean;
+	    /**
+	     * The raw index data that define the faces.
+	     */
+	    indices: Array<number>;
+	    /**
+	     *
+	     */
+	    vertices: Array<number>;
+	    /**
+	     * The total amount of triangles in the TriangleSubGeometry.
+	     */
+	    numTriangles: number;
+	    numVertices: number;
+	    /**
+	     *
+	     */
+	    constructor(concatenatedArrays: boolean);
+	    /**
+	     *
+	     */
+	    getStride(dataType: string): any;
+	    /**
+	     *
+	     */
+	    getOffset(dataType: string): any;
+	    updateVertices(): void;
+	    /**
+	     *
+	     */
+	    dispose(): void;
+	    /**
+	     * Updates the face indices of the TriangleSubGeometry.
+	     *
+	     * @param indices The face indices to upload.
+	     */
+	    updateIndices(indices: Array<number>): void;
+	    /**
+	     * @protected
+	     */
+	    pInvalidateBounds(): void;
+	    /**
+	     * The Geometry object that 'owns' this TriangleSubGeometry object.
+	     *
+	     * @private
+	     */
+	    parentGeometry: Geometry;
+	    /**
+	     * Clones the current object
+	     * @return An exact duplicate of the current object.
+	     */
+	    clone(): SubGeometryBase;
+	    applyTransformation(transform: Matrix3D): void;
+	    /**
+	     * Scales the geometry.
+	     * @param scale The amount by which to scale.
+	     */
+	    scale(scale: number): void;
+	    scaleUV(scaleU?: number, scaleV?: number): void;
+	    getBoundingPositions(): Array<number>;
+	    private notifyIndicesUpdate();
+	    _pNotifyVerticesUpdate(): void;
+	}
+	export = SubGeometryBase;
+	
+}declare module "awayjs-core/lib/data/TriangleSubGeometry" {
 	import SubGeometryBase = require("awayjs-core/lib/data/SubGeometryBase");
 	import Matrix3D = require("awayjs-core/lib/geom/Matrix3D");
 	/**
@@ -3414,116 +1301,40 @@ declare module "awayjs-core/lib/data/TriangleSubGeometry" {
 	}
 	export = TriangleSubGeometry;
 	
-}
-declare module "awayjs-core/lib/data/LineSubGeometry" {
-	import Geometry = require("awayjs-core/lib/data/Geometry");
-	import SubGeometryBase = require("awayjs-core/lib/data/SubGeometryBase");
+}declare module "awayjs-core/lib/errors/AbstractMethodError" {
+	import Error = require("awayjs-core/lib/errors/Error");
 	/**
-	 * @class LineSubGeometry
+	 * AbstractMethodError is thrown when an abstract method is called. The method in question should be overridden
+	 * by a concrete subclass.
 	 */
-	class LineSubGeometry extends SubGeometryBase {
-	    static assetType: string;
-	    static VERTEX_DATA: string;
-	    static START_POSITION_DATA: string;
-	    static END_POSITION_DATA: string;
-	    static THICKNESS_DATA: string;
-	    static COLOR_DATA: string;
-	    static POSITION_FORMAT: string;
-	    static COLOR_FORMAT: string;
-	    static THICKNESS_FORMAT: string;
-	    private _positionsDirty;
-	    private _boundingPositionDirty;
-	    private _thicknessDirty;
-	    private _colorsDirty;
-	    private _startPositions;
-	    private _endPositions;
-	    private _boundingPositions;
-	    private _thickness;
-	    private _startColors;
-	    private _endColors;
-	    private _numSegments;
-	    private _positionsUpdated;
-	    private _thicknessUpdated;
-	    private _colorUpdated;
+	class AbstractMethodError extends Error {
 	    /**
-	     *
-	     * @returns {string}
+	     * Create a new AbstractMethodError.
+	     * @param message An optional message to override the default error message.
+	     * @param id The id of the error.
 	     */
-	    assetType: string;
-	    _pUpdateStrideOffset(): void;
-	    /**
-	     *
-	     */
-	    vertices: Array<number>;
-	    /**
-	     *
-	     */
-	    startPositions: Array<number>;
-	    /**
-	     *
-	     */
-	    endPositions: Array<number>;
-	    /**
-	     *
-	     */
-	    thickness: Array<number>;
-	    /**
-	     *
-	     */
-	    startColors: Array<number>;
-	    /**
-	     *
-	     */
-	    endColors: Array<number>;
-	    /**
-	     * The total amount of segments in the TriangleSubGeometry.
-	     */
-	    numSegments: number;
-	    /**
-	     *
-	     */
-	    constructor();
-	    getBoundingPositions(): Array<number>;
-	    /**
-	     *
-	     */
-	    updatePositions(startValues: Array<number>, endValues: Array<number>): void;
-	    /**
-	     * Updates the thickness.
-	     */
-	    updateThickness(values: Array<number>): void;
-	    /**
-	     *
-	     */
-	    updateColors(startValues: Array<number>, endValues: Array<number>): void;
-	    /**
-	     *
-	     */
-	    dispose(): void;
-	    /**
-	     * @protected
-	     */
-	    pInvalidateBounds(): void;
-	    /**
-	     * The Geometry object that 'owns' this TriangleSubGeometry object.
-	     *
-	     * @private
-	     */
-	    parentGeometry: Geometry;
-	    /**
-	     * Clones the current object
-	     * @return An exact duplicate of the current object.
-	     */
-	    clone(): LineSubGeometry;
-	    _pNotifyVerticesUpdate(): void;
-	    private notifyPositionsUpdate();
-	    private notifyThicknessUpdate();
-	    private notifyColorsUpdate();
+	    constructor(message?: string, id?: number);
 	}
-	export = LineSubGeometry;
+	export = AbstractMethodError;
 	
-}
-declare module "awayjs-core/lib/errors/DocumentError" {
+}declare module "awayjs-core/lib/errors/ArgumentError" {
+	import Error = require("awayjs-core/lib/errors/Error");
+	/**
+	 * AbstractMethodError is thrown when an abstract method is called. The method in question should be overridden
+	 * by a concrete subclass.
+	 */
+	class ArgumentError extends Error {
+	    /**
+	     * Create a new ArgumentError.
+	     *
+	     * @param message An optional message to override the default error message.
+	     * @param id The id of the error.
+	     */
+	    constructor(message?: string, id?: number);
+	}
+	export = ArgumentError;
+	
+}declare module "awayjs-core/lib/errors/DocumentError" {
 	import Error = require("awayjs-core/lib/errors/Error");
 	class DocumentError extends Error {
 	    static DOCUMENT_DOES_NOT_EXIST: string;
@@ -3531,8 +1342,39 @@ declare module "awayjs-core/lib/errors/DocumentError" {
 	}
 	export = DocumentError;
 	
-}
-declare module "awayjs-core/lib/errors/PartialImplementationError" {
+}declare module "awayjs-core/lib/errors/Error" {
+	class Error {
+	    private _errorID;
+	    private _messsage;
+	    private _name;
+	    constructor(message?: string, id?: number, _name?: string);
+	    /**
+	     *
+	     * @returns {string}
+	     */
+	    /**
+	     *
+	     * @param value
+	     */
+	    message: string;
+	    /**
+	     *
+	     * @returns {string}
+	     */
+	    /**
+	     *
+	     * @param value
+	     */
+	    name: string;
+	    /**
+	     *
+	     * @returns {number}
+	     */
+	    errorID: number;
+	}
+	export = Error;
+	
+}declare module "awayjs-core/lib/errors/PartialImplementationError" {
 	import Error = require("awayjs-core/lib/errors/Error");
 	/**
 	 * AbstractMethodError is thrown when an abstract method is called. The method in question should be overridden
@@ -3548,8 +1390,7 @@ declare module "awayjs-core/lib/errors/PartialImplementationError" {
 	}
 	export = PartialImplementationError;
 	
-}
-declare module "awayjs-core/lib/errors/RangeError" {
+}declare module "awayjs-core/lib/errors/RangeError" {
 	import Error = require("awayjs-core/lib/errors/Error");
 	/**
 	 * RangeError is thrown when an index is accessed out of range of the number of
@@ -3566,8 +1407,171 @@ declare module "awayjs-core/lib/errors/RangeError" {
 	}
 	export = RangeError;
 	
-}
-declare module "awayjs-core/lib/events/HTTPStatusEvent" {
+}declare module "awayjs-core/lib/events/AssetEvent" {
+	import IAsset = require("awayjs-core/lib/library/IAsset");
+	import Event = require("awayjs-core/lib/events/Event");
+	/**
+	 * @class away.events.AssetEvent
+	 */
+	class AssetEvent extends Event {
+	    /**
+	     *
+	     */
+	    static ASSET_COMPLETE: string;
+	    /**
+	     *
+	     */
+	    static ASSET_RENAME: string;
+	    /**
+	     *
+	     */
+	    static ASSET_CONFLICT_RESOLVED: string;
+	    /**
+	     *
+	     */
+	    static TEXTURE_SIZE_ERROR: string;
+	    private _asset;
+	    private _prevName;
+	    /**
+	     *
+	     */
+	    constructor(type: string, asset?: IAsset, prevName?: string);
+	    /**
+	     *
+	     */
+	    asset: IAsset;
+	    /**
+	     *
+	     */
+	    assetPrevName: string;
+	    /**
+	     *
+	     */
+	    clone(): Event;
+	}
+	export = AssetEvent;
+	
+}declare module "awayjs-core/lib/events/Event" {
+	class Event {
+	    static COMPLETE: string;
+	    static OPEN: string;
+	    static ENTER_FRAME: string;
+	    static EXIT_FRAME: string;
+	    static RESIZE: string;
+	    static ERROR: string;
+	    static CHANGE: string;
+	    /**
+	     * Type of event
+	     * @property type
+	     * @type String
+	     */
+	    type: string;
+	    /**
+	     * Reference to target object
+	     * @property target
+	     * @type Object
+	     */
+	    target: any;
+	    constructor(type: string);
+	    /**
+	     * Clones the current event.
+	     * @return An exact duplicate of the current event.
+	     */
+	    clone(): Event;
+	}
+	export = Event;
+	
+}declare module "awayjs-core/lib/events/EventDispatcher" {
+	import Event = require("awayjs-core/lib/events/Event");
+	/**
+	 * Base class for dispatching events
+	*
+	* @class away.events.EventDispatcher
+	*
+	*/
+	class EventDispatcher {
+	    private listeners;
+	    private target;
+	    constructor(target?: any);
+	    /**
+	     * Add an event listener
+	     * @method addEventListener
+	     * @param {String} Name of event to add a listener for
+	     * @param {Function} Callback function
+	     */
+	    addEventListener(type: string, listener: Function): void;
+	    /**
+	     * Remove an event listener
+	     * @method removeEventListener
+	     * @param {String} Name of event to remove a listener for
+	     * @param {Function} Callback function
+	     */
+	    removeEventListener(type: string, listener: Function): void;
+	    /**
+	     * Dispatch an event
+	     * @method dispatchEvent
+	     * @param {Event} Event to dispatch
+	     */
+	    dispatchEvent(event: Event): void;
+	    /**
+	     * get Event Listener Index in array. Returns -1 if no listener is added
+	     * @method getEventListenerIndex
+	     * @param {String} Name of event to remove a listener for
+	     * @param {Function} Callback function
+	     */
+	    private getEventListenerIndex(type, listener);
+	    /**
+	     * check if an object has an event listener assigned to it
+	     * @method hasListener
+	     * @param {String} Name of event to remove a listener for
+	     * @param {Function} Callback function
+	     */
+	    hasEventListener(type: string, listener?: Function): boolean;
+	}
+	export = EventDispatcher;
+	
+}declare module "awayjs-core/lib/events/GeometryEvent" {
+	import SubGeometryBase = require("awayjs-core/lib/data/SubGeometryBase");
+	import Event = require("awayjs-core/lib/events/Event");
+	/**
+	* Dispatched to notify changes in a geometry object's state.
+	*
+	* @class away.events.GeometryEvent
+	* @see away3d.core.base.Geometry
+	*/
+	class GeometryEvent extends Event {
+	    /**
+	     * Dispatched when a TriangleSubGeometry was added to the dispatching Geometry.
+	     */
+	    static SUB_GEOMETRY_ADDED: string;
+	    /**
+	     * Dispatched when a TriangleSubGeometry was removed from the dispatching Geometry.
+	     */
+	    static SUB_GEOMETRY_REMOVED: string;
+	    /**
+	     *
+	     */
+	    static BOUNDS_INVALID: string;
+	    private _subGeometry;
+	    /**
+	     * Create a new GeometryEvent
+	     * @param type The event type.
+	     * @param subGeometry An optional TriangleSubGeometry object that is the subject of this event.
+	     */
+	    constructor(type: string, subGeometry?: SubGeometryBase);
+	    /**
+	     * The TriangleSubGeometry object that is the subject of this event, if appropriate.
+	     */
+	    subGeometry: SubGeometryBase;
+	    /**
+	     * Clones the event.
+	     * @return An exact duplicate of the current object.
+	     */
+	    clone(): Event;
+	}
+	export = GeometryEvent;
+	
+}declare module "awayjs-core/lib/events/HTTPStatusEvent" {
 	import Event = require("awayjs-core/lib/events/Event");
 	/**
 	 * @class away.events.HTTPStatusEvent
@@ -3579,8 +1583,47 @@ declare module "awayjs-core/lib/events/HTTPStatusEvent" {
 	}
 	export = HTTPStatusEvent;
 	
-}
-declare module "awayjs-core/lib/events/IOErrorEvent" {
+}declare module "awayjs-core/lib/events/IEventDispatcher" {
+	import Event = require("awayjs-core/lib/events/Event");
+	/**
+	 * Base interface for dispatching events
+	 *
+	 * @interface away.events.IEventDispatcher
+	 *
+	 */
+	interface IEventDispatcher {
+	    /**
+	     * Add an event listener
+	     * @method addEventListener
+	     * @param {String} Name of event to add a listener for
+	     * @param {Function} Callback function
+	     */
+	    addEventListener(type: string, listener: Function): any;
+	    /**
+	     * Remove an event listener
+	     * @method removeEventListener
+	     * @param {String} Name of event to remove a listener for
+	     * @param {Function} Callback function
+	     */
+	    removeEventListener(type: string, listener: Function): any;
+	    /**
+	     * Dispatch an event
+	     * @method dispatchEvent
+	     * @param {Event} Event to dispatch
+	     */
+	    dispatchEvent(event: Event): any;
+	    /**
+	     * check if an object has an event listener assigned to it
+	     * @method hasListener
+	     * @param {String} Name of event to remove a listener for
+	     * @param {Function} Callback function
+	     * @param {Object} Target object listener is added to
+	     */
+	    hasEventListener(type: string, listener?: Function): boolean;
+	}
+	export = IEventDispatcher;
+	
+}declare module "awayjs-core/lib/events/IOErrorEvent" {
 	import Event = require("awayjs-core/lib/events/Event");
 	class IOErrorEvent extends Event {
 	    static IO_ERROR: string;
@@ -3588,8 +1631,7 @@ declare module "awayjs-core/lib/events/IOErrorEvent" {
 	}
 	export = IOErrorEvent;
 	
-}
-declare module "awayjs-core/lib/events/LoaderEvent" {
+}declare module "awayjs-core/lib/events/LoaderEvent" {
 	import IAsset = require("awayjs-core/lib/library/IAsset");
 	import Event = require("awayjs-core/lib/events/Event");
 	class LoaderEvent extends Event {
@@ -3628,8 +1670,7 @@ declare module "awayjs-core/lib/events/LoaderEvent" {
 	}
 	export = LoaderEvent;
 	
-}
-declare module "awayjs-core/lib/events/ParserEvent" {
+}declare module "awayjs-core/lib/events/ParserEvent" {
 	import Event = require("awayjs-core/lib/events/Event");
 	class ParserEvent extends Event {
 	    private _message;
@@ -3657,8 +1698,7 @@ declare module "awayjs-core/lib/events/ParserEvent" {
 	}
 	export = ParserEvent;
 	
-}
-declare module "awayjs-core/lib/events/ProgressEvent" {
+}declare module "awayjs-core/lib/events/ProgressEvent" {
 	import Event = require("awayjs-core/lib/events/Event");
 	class ProgressEvent extends Event {
 	    static PROGRESS: string;
@@ -3668,34 +1708,7 @@ declare module "awayjs-core/lib/events/ProgressEvent" {
 	}
 	export = ProgressEvent;
 	
-}
-declare module "awayjs-core/lib/projections/IProjection" {
-	import Matrix3D = require("awayjs-core/lib/geom/Matrix3D");
-	import Vector3D = require("awayjs-core/lib/geom/Vector3D");
-	import IEventDispatcher = require("awayjs-core/lib/events/IEventDispatcher");
-	/**
-	 * IMaterialOwner provides an interface for objects that can use materials.
-	 *
-	 * @interface away.base.IMaterialOwner
-	 */
-	interface IProjection extends IEventDispatcher {
-	    coordinateSystem: string;
-	    frustumCorners: Array<number>;
-	    matrix: Matrix3D;
-	    near: number;
-	    originX: number;
-	    originY: number;
-	    far: number;
-	    _iAspectRatio: number;
-	    project(point3d: Vector3D): Vector3D;
-	    unproject(nX: number, nY: number, sZ: number): Vector3D;
-	    _iUpdateScissorRect(x: number, y: number, width: number, height: number): any;
-	    _iUpdateViewport(x: number, y: number, width: number, height: number): any;
-	}
-	export = IProjection;
-	
-}
-declare module "awayjs-core/lib/events/ProjectionEvent" {
+}declare module "awayjs-core/lib/events/ProjectionEvent" {
 	import Event = require("awayjs-core/lib/events/Event");
 	import IProjection = require("awayjs-core/lib/projections/IProjection");
 	class ProjectionEvent extends Event {
@@ -3706,8 +1719,44 @@ declare module "awayjs-core/lib/events/ProjectionEvent" {
 	}
 	export = ProjectionEvent;
 	
-}
-declare module "awayjs-core/lib/events/TimerEvent" {
+}declare module "awayjs-core/lib/events/SubGeometryEvent" {
+	import Event = require("awayjs-core/lib/events/Event");
+	/**
+	 * Dispatched to notify changes in a sub geometry object's state.
+	 *
+	 * @class away.events.SubGeometryEvent
+	 * @see away.core.base.Geometry
+	 */
+	class SubGeometryEvent extends Event {
+	    /**
+	     * Dispatched when a TriangleSubGeometry's index data has been updated.
+	     */
+	    static INDICES_UPDATED: string;
+	    /**
+	     * Dispatched when a TriangleSubGeometry's vertex data has been updated.
+	     */
+	    static VERTICES_UPDATED: string;
+	    private _dataType;
+	    /**
+	     * Create a new GeometryEvent
+	     * @param type The event type.
+	     * @param dataType An optional data type of the vertex data being updated.
+	     */
+	    constructor(type: string, dataType?: string);
+	    /**
+	     * The data type of the vertex data.
+	     */
+	    dataType: string;
+	    /**
+	     * Clones the event.
+	     *
+	     * @return An exact duplicate of the current object.
+	     */
+	    clone(): Event;
+	}
+	export = SubGeometryEvent;
+	
+}declare module "awayjs-core/lib/events/TimerEvent" {
 	import Event = require("awayjs-core/lib/events/Event");
 	class TimerEvent extends Event {
 	    static TIMER: string;
@@ -3716,8 +1765,7 @@ declare module "awayjs-core/lib/events/TimerEvent" {
 	}
 	export = TimerEvent;
 	
-}
-declare module "awayjs-core/lib/geom/Box" {
+}declare module "awayjs-core/lib/geom/Box" {
 	import Vector3D = require("awayjs-core/lib/geom/Vector3D");
 	/**
 	 * A Box object is an area defined by its position, as indicated by its
@@ -4087,8 +2135,146 @@ declare module "awayjs-core/lib/geom/Box" {
 	}
 	export = Box;
 	
-}
-declare module "awayjs-core/lib/geom/MathConsts" {
+}declare module "awayjs-core/lib/geom/ColorTransform" {
+	/**
+	 * The ColorTransform class lets you adjust the color values in a display
+	 * object. The color adjustment or <i>color transformation</i> can be applied
+	 * to all four channels: red, green, blue, and alpha transparency.
+	 *
+	 * <p>When a ColorTransform object is applied to a display object, a new value
+	 * for each color channel is calculated like this:</p>
+	 *
+	 * <ul>
+	 *   <li>New red value = (old red value * <code>redMultiplier</code>) +
+	 * <code>redOffset</code></li>
+	 *   <li>New green value = (old green value * <code>greenMultiplier</code>) +
+	 * <code>greenOffset</code></li>
+	 *   <li>New blue value = (old blue value * <code>blueMultiplier</code>) +
+	 * <code>blueOffset</code></li>
+	 *   <li>New alpha value = (old alpha value * <code>alphaMultiplier</code>) +
+	 * <code>alphaOffset</code></li>
+	 * </ul>
+	 *
+	 * <p>If any of the color channel values is greater than 255 after the
+	 * calculation, it is set to 255. If it is less than 0, it is set to 0.</p>
+	 *
+	 * <p>You can use ColorTransform objects in the following ways:</p>
+	 *
+	 * <ul>
+	 *   <li>In the <code>colorTransform</code> parameter of the
+	 * <code>colorTransform()</code> method of the BitmapData class</li>
+	 *   <li>As the <code>colorTransform</code> property of a Transform object
+	 * (which can be used as the <code>transform</code> property of a display
+	 * object)</li>
+	 * </ul>
+	 *
+	 * <p>You must use the <code>new ColorTransform()</code> constructor to create
+	 * a ColorTransform object before you can call the methods of the
+	 * ColorTransform object.</p>
+	 *
+	 * <p>Color transformations do not apply to the background color of a movie
+	 * clip(such as a loaded SWF object). They apply only to graphics and symbols
+	 * that are attached to the movie clip.</p>
+	 */
+	class ColorTransform {
+	    /**
+	     * A decimal value that is multiplied with the alpha transparency channel
+	     * value.
+	     *
+	     * <p>If you set the alpha transparency value of a display object directly by
+	     * using the <code>alpha</code> property of the DisplayObject instance, it
+	     * affects the value of the <code>alphaMultiplier</code> property of that
+	     * display object's <code>transform.colorTransform</code> property.</p>
+	     */
+	    alphaMultiplier: number;
+	    /**
+	     * A number from -255 to 255 that is added to the alpha transparency channel
+	     * value after it has been multiplied by the <code>alphaMultiplier</code>
+	     * value.
+	     */
+	    alphaOffset: number;
+	    /**
+	     * A decimal value that is multiplied with the blue channel value.
+	     */
+	    blueMultiplier: number;
+	    /**
+	     * A number from -255 to 255 that is added to the blue channel value after it
+	     * has been multiplied by the <code>blueMultiplier</code> value.
+	     */
+	    blueOffset: number;
+	    /**
+	     * A decimal value that is multiplied with the green channel value.
+	     */
+	    greenMultiplier: number;
+	    /**
+	     * A number from -255 to 255 that is added to the green channel value after
+	     * it has been multiplied by the <code>greenMultiplier</code> value.
+	     */
+	    greenOffset: number;
+	    /**
+	     * A decimal value that is multiplied with the red channel value.
+	     */
+	    redMultiplier: number;
+	    /**
+	     * A number from -255 to 255 that is added to the red channel value after it
+	     * has been multiplied by the <code>redMultiplier</code> value.
+	     */
+	    redOffset: number;
+	    /**
+	     * The RGB color value for a ColorTransform object.
+	     *
+	     * <p>When you set this property, it changes the three color offset values
+	     * (<code>redOffset</code>, <code>greenOffset</code>, and
+	     * <code>blueOffset</code>) accordingly, and it sets the three color
+	     * multiplier values(<code>redMultiplier</code>,
+	     * <code>greenMultiplier</code>, and <code>blueMultiplier</code>) to 0. The
+	     * alpha transparency multiplier and offset values do not change.</p>
+	     *
+	     * <p>When you pass a value for this property, use the format
+	     * 0x<i>RRGGBB</i>. <i>RR</i>, <i>GG</i>, and <i>BB</i> each consist of two
+	     * hexadecimal digits that specify the offset of each color component. The 0x
+	     * tells the ActionScript compiler that the number is a hexadecimal
+	     * value.</p>
+	     */
+	    color: number;
+	    /**
+	     * Creates a ColorTransform object for a display object with the specified
+	     * color channel values and alpha values.
+	     *
+	     * @param redMultiplier   The value for the red multiplier, in the range from
+	     *                        0 to 1.
+	     * @param greenMultiplier The value for the green multiplier, in the range
+	     *                        from 0 to 1.
+	     * @param blueMultiplier  The value for the blue multiplier, in the range
+	     *                        from 0 to 1.
+	     * @param alphaMultiplier The value for the alpha transparency multiplier, in
+	     *                        the range from 0 to 1.
+	     * @param redOffset       The offset value for the red color channel, in the
+	     *                        range from -255 to 255.
+	     * @param greenOffset     The offset value for the green color channel, in
+	     *                        the range from -255 to 255.
+	     * @param blueOffset      The offset for the blue color channel value, in the
+	     *                        range from -255 to 255.
+	     * @param alphaOffset     The offset for alpha transparency channel value, in
+	     *                        the range from -255 to 255.
+	     */
+	    constructor(redMultiplier?: number, greenMultiplier?: number, blueMultiplier?: number, alphaMultiplier?: number, redOffset?: number, greenOffset?: number, blueOffset?: number, alphaOffset?: number);
+	    /**
+	     * Concatenates the ColorTranform object specified by the <code>second</code>
+	     * parameter with the current ColorTransform object and sets the current
+	     * object as the result, which is an additive combination of the two color
+	     * transformations. When you apply the concatenated ColorTransform object,
+	     * the effect is the same as applying the <code>second</code> color
+	     * transformation after the <i>original</i> color transformation.
+	     *
+	     * @param second The ColorTransform object to be combined with the current
+	     *               ColorTransform object.
+	     */
+	    concat(second: ColorTransform): void;
+	}
+	export = ColorTransform;
+	
+}declare module "awayjs-core/lib/geom/MathConsts" {
 	/**
 	* MathConsts provides some commonly used mathematical constants
 	*/
@@ -4104,8 +2290,554 @@ declare module "awayjs-core/lib/geom/MathConsts" {
 	}
 	export = MathConsts;
 	
-}
-declare module "awayjs-core/lib/geom/PerspectiveProjection" {
+}declare module "awayjs-core/lib/geom/Matrix" {
+	import Point = require("awayjs-core/lib/geom/Point");
+	import Vector3D = require("awayjs-core/lib/geom/Vector3D");
+	/**
+	 * The Matrix class represents a transformation matrix that determines how to
+	 * map points from one coordinate space to another. You can perform various
+	 * graphical transformations on a display object by setting the properties of
+	 * a Matrix object, applying that Matrix object to the <code>matrix</code>
+	 * property of a Transform object, and then applying that Transform object as
+	 * the <code>transform</code> property of the display object. These
+	 * transformation functions include translation(<i>x</i> and <i>y</i>
+	 * repositioning), rotation, scaling, and skewing.
+	 *
+	 * <p>Together these types of transformations are known as <i>affine
+	 * transformations</i>. Affine transformations preserve the straightness of
+	 * lines while transforming, so that parallel lines stay parallel.</p>
+	 *
+	 * <p>To apply a transformation matrix to a display object, you create a
+	 * Transform object, set its <code>matrix</code> property to the
+	 * transformation matrix, and then set the <code>transform</code> property of
+	 * the display object to the Transform object. Matrix objects are also used as
+	 * parameters of some methods, such as the following:</p>
+	 *
+	 * <ul>
+	 *   <li>The <code>draw()</code> method of a BitmapData object</li>
+	 *   <li>The <code>beginBitmapFill()</code> method,
+	 * <code>beginGradientFill()</code> method, or
+	 * <code>lineGradientStyle()</code> method of a Graphics object</li>
+	 * </ul>
+	 *
+	 * <p>A transformation matrix object is a 3 x 3 matrix with the following
+	 * contents:</p>
+	 *
+	 * <p>In traditional transformation matrixes, the <code>u</code>,
+	 * <code>v</code>, and <code>w</code> properties provide extra capabilities.
+	 * The Matrix class can only operate in two-dimensional space, so it always
+	 * assumes that the property values <code>u</code> and <code>v</code> are 0.0,
+	 * and that the property value <code>w</code> is 1.0. The effective values of
+	 * the matrix are as follows:</p>
+	 *
+	 * <p>You can get and set the values of all six of the other properties in a
+	 * Matrix object: <code>a</code>, <code>b</code>, <code>c</code>,
+	 * <code>d</code>, <code>tx</code>, and <code>ty</code>.</p>
+	 *
+	 * <p>The Matrix class supports the four major types of transformations:
+	 * translation, scaling, rotation, and skewing. You can set three of these
+	 * transformations by using specialized methods, as described in the following
+	 * table: </p>
+	 *
+	 * <p>Each transformation function alters the current matrix properties so
+	 * that you can effectively combine multiple transformations. To do this, you
+	 * call more than one transformation function before applying the matrix to
+	 * its display object target(by using the <code>transform</code> property of
+	 * that display object).</p>
+	 *
+	 * <p>Use the <code>new Matrix()</code> constructor to create a Matrix object
+	 * before you can call the methods of the Matrix object.</p>
+	 */
+	class Matrix {
+	    /**
+	     * The value that affects the positioning of pixels along the <i>x</i> axis
+	     * when scaling or rotating an image.
+	     */
+	    a: number;
+	    /**
+	     * The value that affects the positioning of pixels along the <i>y</i> axis
+	     * when rotating or skewing an image.
+	     */
+	    b: number;
+	    /**
+	     * The value that affects the positioning of pixels along the <i>x</i> axis
+	     * when rotating or skewing an image.
+	     */
+	    c: number;
+	    /**
+	     * The value that affects the positioning of pixels along the <i>y</i> axis
+	     * when scaling or rotating an image.
+	     */
+	    d: number;
+	    /**
+	     * The distance by which to translate each point along the <i>x</i> axis.
+	     */
+	    tx: number;
+	    /**
+	     * The distance by which to translate each point along the <i>y</i> axis.
+	     */
+	    ty: number;
+	    /**
+	     * Creates a new Matrix object with the specified parameters. In matrix
+	     * notation, the properties are organized like this:
+	     *
+	     * <p>If you do not provide any parameters to the <code>new Matrix()</code>
+	     * constructor, it creates an <i>identity matrix</i> with the following
+	     * values:</p>
+	     *
+	     * <p>In matrix notation, the identity matrix looks like this:</p>
+	     *
+	     * @param a  The value that affects the positioning of pixels along the
+	     *           <i>x</i> axis when scaling or rotating an image.
+	     * @param b  The value that affects the positioning of pixels along the
+	     *           <i>y</i> axis when rotating or skewing an image.
+	     * @param c  The value that affects the positioning of pixels along the
+	     *           <i>x</i> axis when rotating or skewing an image.
+	     * @param d  The value that affects the positioning of pixels along the
+	     *           <i>y</i> axis when scaling or rotating an image..
+	     * @param tx The distance by which to translate each point along the <i>x</i>
+	     *           axis.
+	     * @param ty The distance by which to translate each point along the <i>y</i>
+	     *           axis.
+	     */
+	    constructor(a?: number, b?: number, c?: number, d?: number, tx?: number, ty?: number);
+	    /**
+	     * Returns a new Matrix object that is a clone of this matrix, with an exact
+	     * copy of the contained object.
+	     *
+	     * @return A Matrix object.
+	     */
+	    clone(): Matrix;
+	    /**
+	     * Concatenates a matrix with the current matrix, effectively combining the
+	     * geometric effects of the two. In mathematical terms, concatenating two
+	     * matrixes is the same as combining them using matrix multiplication.
+	     *
+	     * <p>For example, if matrix <code>m1</code> scales an object by a factor of
+	     * four, and matrix <code>m2</code> rotates an object by 1.5707963267949
+	     * radians(<code>Math.PI/2</code>), then <code>m1.concat(m2)</code>
+	     * transforms <code>m1</code> into a matrix that scales an object by a factor
+	     * of four and rotates the object by <code>Math.PI/2</code> radians. </p>
+	     *
+	     * <p>This method replaces the source matrix with the concatenated matrix. If
+	     * you want to concatenate two matrixes without altering either of the two
+	     * source matrixes, first copy the source matrix by using the
+	     * <code>clone()</code> method, as shown in the Class Examples section.</p>
+	     *
+	     * @param matrix The matrix to be concatenated to the source matrix.
+	     */
+	    concat(matrix: Matrix): void;
+	    /**
+	     * Copies a Vector3D object into specific column of the calling Matrix3D
+	     * object.
+	     *
+	     * @param column   The column from which to copy the data from.
+	     * @param vector3D The Vector3D object from which to copy the data.
+	     */
+	    copyColumnFrom(column: number, vector3D: Vector3D): void;
+	    /**
+	     * Copies specific column of the calling Matrix object into the Vector3D
+	     * object. The w element of the Vector3D object will not be changed.
+	     *
+	     * @param column   The column from which to copy the data from.
+	     * @param vector3D The Vector3D object from which to copy the data.
+	     */
+	    copyColumnTo(column: number, vector3D: Vector3D): void;
+	    /**
+	     * Copies all of the matrix data from the source Point object into the
+	     * calling Matrix object.
+	     *
+	     * @param sourceMatrix The Matrix object from which to copy the data.
+	     */
+	    copyFrom(sourceMatrix: Matrix): void;
+	    /**
+	     * Copies a Vector3D object into specific row of the calling Matrix object.
+	     *
+	     * @param row      The row from which to copy the data from.
+	     * @param vector3D The Vector3D object from which to copy the data.
+	     */
+	    copyRowFrom(row: number, vector3D: Vector3D): void;
+	    /**
+	     * Copies specific row of the calling Matrix object into the Vector3D object.
+	     * The w element of the Vector3D object will not be changed.
+	     *
+	     * @param row      The row from which to copy the data from.
+	     * @param vector3D The Vector3D object from which to copy the data.
+	     */
+	    copyRowTo(row: number, vector3D: Vector3D): void;
+	    /**
+	     * Includes parameters for scaling, rotation, and translation. When applied
+	     * to a matrix it sets the matrix's values based on those parameters.
+	     *
+	     * <p>Using the <code>createBox()</code> method lets you obtain the same
+	     * matrix as you would if you applied the <code>identity()</code>,
+	     * <code>rotate()</code>, <code>scale()</code>, and <code>translate()</code>
+	     * methods in succession. For example, <code>mat1.createBox(2,2,Math.PI/4,
+	     * 100, 100)</code> has the same effect as the following:</p>
+	     *
+	     * @param scaleX   The factor by which to scale horizontally.
+	     * @param scaleY   The factor by which scale vertically.
+	     * @param rotation The amount to rotate, in radians.
+	     * @param tx       The number of pixels to translate(move) to the right
+	     *                 along the <i>x</i> axis.
+	     * @param ty       The number of pixels to translate(move) down along the
+	     *                 <i>y</i> axis.
+	     */
+	    createBox(scaleX: number, scaleY: number, rotation?: number, tx?: number, ty?: number): void;
+	    /**
+	     * Creates the specific style of matrix expected by the
+	     * <code>beginGradientFill()</code> and <code>lineGradientStyle()</code>
+	     * methods of the Graphics class. Width and height are scaled to a
+	     * <code>scaleX</code>/<code>scaleY</code> pair and the
+	     * <code>tx</code>/<code>ty</code> values are offset by half the width and
+	     * height.
+	     *
+	     * <p>For example, consider a gradient with the following
+	     * characteristics:</p>
+	     *
+	     * <ul>
+	     *   <li><code>GradientType.LINEAR</code></li>
+	     *   <li>Two colors, green and blue, with the ratios array set to <code>[0,
+	     * 255]</code></li>
+	     *   <li><code>SpreadMethod.PAD</code></li>
+	     *   <li><code>InterpolationMethod.LINEAR_RGB</code></li>
+	     * </ul>
+	     *
+	     * <p>The following illustrations show gradients in which the matrix was
+	     * defined using the <code>createGradientBox()</code> method with different
+	     * parameter settings:</p>
+	     *
+	     * @param width    The width of the gradient box.
+	     * @param height   The height of the gradient box.
+	     * @param rotation The amount to rotate, in radians.
+	     * @param tx       The distance, in pixels, to translate to the right along
+	     *                 the <i>x</i> axis. This value is offset by half of the
+	     *                 <code>width</code> parameter.
+	     * @param ty       The distance, in pixels, to translate down along the
+	     *                 <i>y</i> axis. This value is offset by half of the
+	     *                 <code>height</code> parameter.
+	     */
+	    createGradientBox(width: number, height: number, rotation?: number, tx?: number, ty?: number): void;
+	    /**
+	     * Given a point in the pretransform coordinate space, returns the
+	     * coordinates of that point after the transformation occurs. Unlike the
+	     * standard transformation applied using the <code>transformPoint()</code>
+	     * method, the <code>deltaTransformPoint()</code> method's transformation
+	     * does not consider the translation parameters <code>tx</code> and
+	     * <code>ty</code>.
+	     *
+	     * @param point The point for which you want to get the result of the matrix
+	     *              transformation.
+	     * @return The point resulting from applying the matrix transformation.
+	     */
+	    deltaTransformPoint(point: Point): Point;
+	    /**
+	     * Sets each matrix property to a value that causes a null transformation. An
+	     * object transformed by applying an identity matrix will be identical to the
+	     * original.
+	     *
+	     * <p>After calling the <code>identity()</code> method, the resulting matrix
+	     * has the following properties: <code>a</code>=1, <code>b</code>=0,
+	     * <code>c</code>=0, <code>d</code>=1, <code>tx</code>=0,
+	     * <code>ty</code>=0.</p>
+	     *
+	     * <p>In matrix notation, the identity matrix looks like this:</p>
+	     *
+	     */
+	    identity(): void;
+	    /**
+	     * Performs the opposite transformation of the original matrix. You can apply
+	     * an inverted matrix to an object to undo the transformation performed when
+	     * applying the original matrix.
+	     */
+	    invert(): void;
+	    /**
+	     * Returns a new Matrix object that is a clone of this matrix, with an exact
+	     * copy of the contained object.
+	     *
+	     * @param matrix The matrix for which you want to get the result of the matrix
+	     *               transformation.
+	     * @return A Matrix object.
+	     */
+	    multiply(matrix: Matrix): Matrix;
+	    /**
+	     * Applies a rotation transformation to the Matrix object.
+	     *
+	     * <p>The <code>rotate()</code> method alters the <code>a</code>,
+	     * <code>b</code>, <code>c</code>, and <code>d</code> properties of the
+	     * Matrix object. In matrix notation, this is the same as concatenating the
+	     * current matrix with the following:</p>
+	     *
+	     * @param angle The rotation angle in radians.
+	     */
+	    rotate(angle: number): void;
+	    /**
+	     * Applies a scaling transformation to the matrix. The <i>x</i> axis is
+	     * multiplied by <code>sx</code>, and the <i>y</i> axis it is multiplied by
+	     * <code>sy</code>.
+	     *
+	     * <p>The <code>scale()</code> method alters the <code>a</code> and
+	     * <code>d</code> properties of the Matrix object. In matrix notation, this
+	     * is the same as concatenating the current matrix with the following
+	     * matrix:</p>
+	     *
+	     * @param sx A multiplier used to scale the object along the <i>x</i> axis.
+	     * @param sy A multiplier used to scale the object along the <i>y</i> axis.
+	     */
+	    scale(sx: number, sy: number): void;
+	    /**
+	     * Sets the members of Matrix to the specified values.
+	     *
+	     * @param a  The value that affects the positioning of pixels along the
+	     *           <i>x</i> axis when scaling or rotating an image.
+	     * @param b  The value that affects the positioning of pixels along the
+	     *           <i>y</i> axis when rotating or skewing an image.
+	     * @param c  The value that affects the positioning of pixels along the
+	     *           <i>x</i> axis when rotating or skewing an image.
+	     * @param d  The value that affects the positioning of pixels along the
+	     *           <i>y</i> axis when scaling or rotating an image..
+	     * @param tx The distance by which to translate each point along the <i>x</i>
+	     *           axis.
+	     * @param ty The distance by which to translate each point along the <i>y</i>
+	     *           axis.
+	     */
+	    setTo(a: number, b: number, c: number, d: number, tx: number, ty: number): void;
+	    /**
+	     * Returns a text value listing the properties of the Matrix object.
+	     *
+	     * @return A string containing the values of the properties of the Matrix
+	     *         object: <code>a</code>, <code>b</code>, <code>c</code>,
+	     *         <code>d</code>, <code>tx</code>, and <code>ty</code>.
+	     */
+	    toString(): string;
+	    /**
+	     * Returns the result of applying the geometric transformation represented by
+	     * the Matrix object to the specified point.
+	     *
+	     * @param point The point for which you want to get the result of the Matrix
+	     *              transformation.
+	     * @return The point resulting from applying the Matrix transformation.
+	     */
+	    transformPoint(point: Point): Point;
+	    /**
+	     * Translates the matrix along the <i>x</i> and <i>y</i> axes, as specified
+	     * by the <code>dx</code> and <code>dy</code> parameters.
+	     *
+	     * @param dx The amount of movement along the <i>x</i> axis to the right, in
+	     *           pixels.
+	     * @param dy The amount of movement down along the <i>y</i> axis, in pixels.
+	     */
+	    translate(dx: number, dy: number): void;
+	}
+	export = Matrix;
+	
+}declare module "awayjs-core/lib/geom/Matrix3D" {
+	import Vector3D = require("awayjs-core/lib/geom/Vector3D");
+	class Matrix3D {
+	    /**
+	     * A Vector of 16 Numbers, where every four elements is a column of a 4x4 matrix.
+	     *
+	     * <p>An exception is thrown if the rawData property is set to a matrix that is not invertible. The Matrix3D
+	     * object must be invertible. If a non-invertible matrix is needed, create a subclass of the Matrix3D object.</p>
+	     */
+	    rawData: number[];
+	    /**
+	     * Creates a Matrix3D object.
+	     */
+	    constructor(v?: number[]);
+	    /**
+	     * Appends the matrix by multiplying another Matrix3D object by the current Matrix3D object.
+	     */
+	    append(lhs: Matrix3D): void;
+	    /**
+	     * Appends an incremental rotation to a Matrix3D object.
+	     */
+	    appendRotation(degrees: number, axis: Vector3D): void;
+	    /**
+	     * Appends an incremental scale change along the x, y, and z axes to a Matrix3D object.
+	     */
+	    appendScale(xScale: number, yScale: number, zScale: number): void;
+	    /**
+	     * Appends an incremental translation, a repositioning along the x, y, and z axes, to a Matrix3D object.
+	     */
+	    appendTranslation(x: number, y: number, z: number): void;
+	    /**
+	     * Returns a new Matrix3D object that is an exact copy of the current Matrix3D object.
+	     */
+	    clone(): Matrix3D;
+	    /**
+	     * Copies a Vector3D object into specific column of the calling Matrix3D object.
+	     */
+	    copyColumnFrom(column: number, vector3D: Vector3D): void;
+	    /**
+	     * Copies specific column of the calling Matrix3D object into the Vector3D object.
+	     */
+	    copyColumnTo(column: number, vector3D: Vector3D): void;
+	    /**
+	     * Copies all of the matrix data from the source Matrix3D object into the calling Matrix3D object.
+	     */
+	    copyFrom(sourceMatrix3D: Matrix3D): void;
+	    copyRawDataFrom(vector: number[], index?: number, transpose?: boolean): void;
+	    copyRawDataTo(vector: number[], index?: number, transpose?: boolean): void;
+	    /**
+	     * Copies a Vector3D object into specific row of the calling Matrix3D object.
+	     */
+	    copyRowFrom(row: number, vector3D: Vector3D): void;
+	    /**
+	     * Copies specific row of the calling Matrix3D object into the Vector3D object.
+	     */
+	    copyRowTo(row: number, vector3D: Vector3D): void;
+	    /**
+	     * Copies this Matrix3D object into a destination Matrix3D object.
+	     */
+	    copyToMatrix3D(dest: Matrix3D): void;
+	    /**
+	     * Returns the transformation matrix's translation, rotation, and scale settings as a Vector of three Vector3D objects.
+	     */
+	    decompose(orientationStyle?: string): Vector3D[];
+	    /**
+	     * Uses the transformation matrix without its translation elements to transform a Vector3D object from one space
+	     * coordinate to another.
+	     */
+	    deltaTransformVector(v: Vector3D): Vector3D;
+	    /**
+	     * Converts the current matrix to an identity or unit matrix.
+	     */
+	    identity(): void;
+	    /**
+	     * [static] Interpolates the translation, rotation, and scale transformation of one matrix toward those of the target matrix.
+	     */
+	    static interpolate(thisMat: Matrix3D, toMat: Matrix3D, percent: number): Matrix3D;
+	    /**
+	     * Interpolates this matrix towards the translation, rotation, and scale transformations of the target matrix.
+	     */
+	    interpolateTo(toMat: Matrix3D, percent: number): void;
+	    /**
+	     * Inverts the current matrix.
+	     */
+	    invert(): boolean;
+	    /**
+	     * Prepends a matrix by multiplying the current Matrix3D object by another Matrix3D object.
+	     */
+	    prepend(rhs: Matrix3D): void;
+	    /**
+	     * Prepends an incremental rotation to a Matrix3D object.
+	     */
+	    prependRotation(degrees: number, axis: Vector3D): void;
+	    /**
+	     * Prepends an incremental scale change along the x, y, and z axes to a Matrix3D object.
+	     */
+	    prependScale(xScale: number, yScale: number, zScale: number): void;
+	    /**
+	     * Prepends an incremental translation, a repositioning along the x, y, and z axes, to a Matrix3D object.
+	     */
+	    prependTranslation(x: number, y: number, z: number): void;
+	    /**
+	     * Sets the transformation matrix's translation, rotation, and scale settings.
+	     */
+	    recompose(components: Vector3D[]): boolean;
+	    transformVector(v: Vector3D): Vector3D;
+	    /**
+	     * Uses the transformation matrix to transform a Vector of Numbers from one coordinate space to another.
+	     */
+	    transformVectors(vin: number[], vout: number[]): void;
+	    /**
+	     * Converts the current Matrix3D object to a matrix where the rows and columns are swapped.
+	     */
+	    transpose(): void;
+	    static getAxisRotation(x: number, y: number, z: number, degrees: number): Matrix3D;
+	    /**
+	     * [read-only] A Number that determines whether a matrix is invertible.
+	     */
+	    determinant: number;
+	    /**
+	     * A Vector3D object that holds the position, the 3D coordinate (x,y,z) of a display object within the
+	     * transformation's frame of reference.
+	     */
+	    position: Vector3D;
+	    toFixed(decimalPlace: number): string;
+	    toString(): string;
+	}
+	export = Matrix3D;
+	
+}declare module "awayjs-core/lib/geom/Matrix3DUtils" {
+	import Quaternion = require("awayjs-core/lib/geom/Quaternion");
+	import Matrix3D = require("awayjs-core/lib/geom/Matrix3D");
+	import Plane3D = require("awayjs-core/lib/geom/Plane3D");
+	import Vector3D = require("awayjs-core/lib/geom/Vector3D");
+	/**
+	 * away.geom.Matrix3DUtils provides additional Matrix3D functions.
+	 */
+	class Matrix3DUtils {
+	    /**
+	     * A reference to a Vector to be used as a temporary raw data container, to prevent object creation.
+	     */
+	    static RAW_DATA_CONTAINER: number[];
+	    static CALCULATION_MATRIX: Matrix3D;
+	    /**
+	     * Fills the 3d matrix object with values representing the transformation made by the given quaternion.
+	     *
+	     * @param    quarternion    The quarterion object to convert.
+	     */
+	    static quaternion2matrix(quarternion: Quaternion, m?: Matrix3D): Matrix3D;
+	    /**
+	     * Returns a normalised <code>Vector3D</code> object representing the forward vector of the given matrix.
+	     * @param    m        The Matrix3D object to use to get the forward vector
+	     * @param    v        [optional] A vector holder to prevent make new Vector3D instance if already exists. Default is null.
+	     * @return            The forward vector
+	     */
+	    static getForward(m: Matrix3D, v?: Vector3D): Vector3D;
+	    /**
+	     * Returns a normalised <code>Vector3D</code> object representing the up vector of the given matrix.
+	     * @param    m        The Matrix3D object to use to get the up vector
+	     * @param    v        [optional] A vector holder to prevent make new Vector3D instance if already exists. Default is null.
+	     * @return            The up vector
+	     */
+	    static getUp(m: Matrix3D, v?: Vector3D): Vector3D;
+	    /**
+	     * Returns a normalised <code>Vector3D</code> object representing the right vector of the given matrix.
+	     * @param    m        The Matrix3D object to use to get the right vector
+	     * @param    v        [optional] A vector holder to prevent make new Vector3D instance if already exists. Default is null.
+	     * @return            The right vector
+	     */
+	    static getRight(m: Matrix3D, v?: Vector3D): Vector3D;
+	    /**
+	     * Returns a boolean value representing whether there is any significant difference between the two given 3d matrices.
+	     */
+	    static compare(m1: Matrix3D, m2: Matrix3D): boolean;
+	    static lookAt(matrix: Matrix3D, pos: Vector3D, dir: Vector3D, up: Vector3D): void;
+	    static reflection(plane: Plane3D, target?: Matrix3D): Matrix3D;
+	    static transformVector(matrix: Matrix3D, vector: Vector3D, result?: Vector3D): Vector3D;
+	    static deltaTransformVector(matrix: Matrix3D, vector: Vector3D, result?: Vector3D): Vector3D;
+	    static getTranslation(transform: Matrix3D, result?: Vector3D): Vector3D;
+	    static deltaTransformVectors(matrix: Matrix3D, vin: Array<number>, vout: Array<number>): void;
+	}
+	export = Matrix3DUtils;
+	
+}declare module "awayjs-core/lib/geom/Orientation3D" {
+	/**
+	 * A Quaternion object which can be used to represent rotations.
+	 */
+	class Orientation3D {
+	    /**
+	     * The axis angle orientation uses a combination of an axis and an angle to determine the orientation.
+	     * @type {string}
+	     */
+	    static AXIS_ANGLE: string;
+	    /**
+	     * The default orientation for decompose() and recompose() methods, defines the orientation with three separate angles of rotation for each axis.
+	     * @type {string}
+	     */
+	    static EULER_ANGLES: string;
+	    /**
+	     * The quaternion orientation uses complex numbers.
+	     * @type {string}
+	     */
+	    static QUATERNION: string;
+	}
+	export = Orientation3D;
+	
+}declare module "awayjs-core/lib/geom/PerspectiveProjection" {
 	import Matrix3D = require("awayjs-core/lib/geom/Matrix3D");
 	import Point = require("awayjs-core/lib/geom/Point");
 	/**
@@ -4234,8 +2966,224 @@ declare module "awayjs-core/lib/geom/PerspectiveProjection" {
 	}
 	export = PerspectiveProjection;
 	
-}
-declare module "awayjs-core/lib/geom/PoissonLookup" {
+}declare module "awayjs-core/lib/geom/Plane3D" {
+	import Vector3D = require("awayjs-core/lib/geom/Vector3D");
+	class Plane3D {
+	    /**
+	     * The A coefficient of this plane. (Also the x dimension of the plane normal)
+	     */
+	    a: number;
+	    /**
+	     * The B coefficient of this plane. (Also the y dimension of the plane normal)
+	     */
+	    b: number;
+	    /**
+	     * The C coefficient of this plane. (Also the z dimension of the plane normal)
+	     */
+	    c: number;
+	    /**
+	     * The D coefficient of this plane. (Also the inverse dot product between normal and point)
+	     */
+	    d: number;
+	    _iAlignment: number;
+	    static ALIGN_ANY: number;
+	    static ALIGN_XY_AXIS: number;
+	    static ALIGN_YZ_AXIS: number;
+	    static ALIGN_XZ_AXIS: number;
+	    /**
+	     * Create a Plane3D with ABCD coefficients
+	     */
+	    constructor(a?: number, b?: number, c?: number, d?: number);
+	    /**
+	     * Fills this Plane3D with the coefficients from 3 points in 3d space.
+	     * @param p0 Vector3D
+	     * @param p1 Vector3D
+	     * @param p2 Vector3D
+	     */
+	    fromPoints(p0: Vector3D, p1: Vector3D, p2: Vector3D): void;
+	    /**
+	     * Fills this Plane3D with the coefficients from the plane's normal and a point in 3d space.
+	     * @param normal Vector3D
+	     * @param point  Vector3D
+	     */
+	    fromNormalAndPoint(normal: Vector3D, point: Vector3D): void;
+	    /**
+	     * Normalize this Plane3D
+	     * @return Plane3D This Plane3D.
+	     */
+	    normalize(): Plane3D;
+	    /**
+	     * Returns the signed distance between this Plane3D and the point p.
+	     * @param p Vector3D
+	     * @returns Number
+	     */
+	    distance(p: Vector3D): number;
+	    /**
+	     * Classify a point against this Plane3D. (in front, back or intersecting)
+	     * @param p Vector3D
+	     * @return int Plane3.FRONT or Plane3D.BACK or Plane3D.INTERSECT
+	     */
+	    classifyPoint(p: Vector3D, epsilon?: number): number;
+	    toString(): string;
+	}
+	export = Plane3D;
+	
+}declare module "awayjs-core/lib/geom/PlaneClassification" {
+	class PlaneClassification {
+	    static BACK: number;
+	    static FRONT: number;
+	    static IN: number;
+	    static OUT: number;
+	    static INTERSECT: number;
+	}
+	export = PlaneClassification;
+	
+}declare module "awayjs-core/lib/geom/Point" {
+	/**
+	 * The Point object represents a location in a two-dimensional coordinate
+	 * system, where <i>x</i> represents the horizontal axis and <i>y</i>
+	 * represents the vertical axis.
+	 *
+	 * <p>The following code creates a point at(0,0):</p>
+	 *
+	 * <p>Methods and properties of the following classes use Point objects:</p>
+	 *
+	 * <ul>
+	 *   <li>BitmapData</li>
+	 *   <li>DisplayObject</li>
+	 *   <li>DisplayObjectContainer</li>
+	 *   <li>DisplacementMapFilter</li>
+	 *   <li>NativeWindow</li>
+	 *   <li>Matrix</li>
+	 *   <li>Rectangle</li>
+	 * </ul>
+	 *
+	 * <p>You can use the <code>new Point()</code> constructor to create a Point
+	 * object.</p>
+	 */
+	class Point {
+	    /**
+	     * The horizontal coordinate of the point. The default value is 0.
+	     */
+	    x: number;
+	    /**
+	     * The vertical coordinate of the point. The default value is 0.
+	     */
+	    y: number;
+	    /**
+	     * The length of the line segment from(0,0) to this point.
+	     */
+	    length: number;
+	    /**
+	     * Creates a new point. If you pass no parameters to this method, a point is
+	     * created at(0,0).
+	     *
+	     * @param x The horizontal coordinate.
+	     * @param y The vertical coordinate.
+	     */
+	    constructor(x?: number, y?: number);
+	    /**
+	     * Adds the coordinates of another point to the coordinates of this point to
+	     * create a new point.
+	     *
+	     * @param v The point to be added.
+	     * @return The new point.
+	     */
+	    add(v: Point): Point;
+	    /**
+	     * Creates a copy of this Point object.
+	     *
+	     * @return The new Point object.
+	     */
+	    clone(): Point;
+	    copyFrom(sourcePoint: Point): void;
+	    /**
+	     * Determines whether two points are equal. Two points are equal if they have
+	     * the same <i>x</i> and <i>y</i> values.
+	     *
+	     * @param toCompare The point to be compared.
+	     * @return A value of <code>true</code> if the object is equal to this Point
+	     *         object; <code>false</code> if it is not equal.
+	     */
+	    equals(toCompare: Point): boolean;
+	    /**
+	     * Scales the line segment between(0,0) and the current point to a set
+	     * length.
+	     *
+	     * @param thickness The scaling value. For example, if the current point is
+	     *                 (0,5), and you normalize it to 1, the point returned is
+	     *                  at(0,1).
+	     */
+	    normalize(thickness?: number): void;
+	    /**
+	     * Offsets the Point object by the specified amount. The value of
+	     * <code>dx</code> is added to the original value of <i>x</i> to create the
+	     * new <i>x</i> value. The value of <code>dy</code> is added to the original
+	     * value of <i>y</i> to create the new <i>y</i> value.
+	     *
+	     * @param dx The amount by which to offset the horizontal coordinate,
+	     *           <i>x</i>.
+	     * @param dy The amount by which to offset the vertical coordinate, <i>y</i>.
+	     */
+	    offset(dx: number, dy: number): void;
+	    setTo(xa: number, ya: number): void;
+	    /**
+	     * Subtracts the coordinates of another point from the coordinates of this
+	     * point to create a new point.
+	     *
+	     * @param v The point to be subtracted.
+	     * @return The new point.
+	     */
+	    subtract(v: Point): Point;
+	    /**
+	     * Returns a string that contains the values of the <i>x</i> and <i>y</i>
+	     * coordinates. The string has the form <code>"(x=<i>x</i>,
+	     * y=<i>y</i>)"</code>, so calling the <code>toString()</code> method for a
+	     * point at 23,17 would return <code>"(x=23, y=17)"</code>.
+	     *
+	     * @return The string representation of the coordinates.
+	     */
+	    toString(): string;
+	    /**
+	     * Returns the distance between <code>pt1</code> and <code>pt2</code>.
+	     *
+	     * @param pt1 The first point.
+	     * @param pt2 The second point.
+	     * @return The distance between the first and second points.
+	     */
+	    static distance(pt1: Point, pt2: Point): number;
+	    /**
+	     * Determines a point between two specified points. The parameter
+	     * <code>f</code> determines where the new interpolated point is located
+	     * relative to the two end points specified by parameters <code>pt1</code>
+	     * and <code>pt2</code>. The closer the value of the parameter <code>f</code>
+	     * is to <code>1.0</code>, the closer the interpolated point is to the first
+	     * point(parameter <code>pt1</code>). The closer the value of the parameter
+	     * <code>f</code> is to 0, the closer the interpolated point is to the second
+	     * point(parameter <code>pt2</code>).
+	     *
+	     * @param pt1 The first point.
+	     * @param pt2 The second point.
+	     * @param f   The level of interpolation between the two points. Indicates
+	     *            where the new point will be, along the line between
+	     *            <code>pt1</code> and <code>pt2</code>. If <code>f</code>=1,
+	     *            <code>pt1</code> is returned; if <code>f</code>=0,
+	     *            <code>pt2</code> is returned.
+	     * @return The new, interpolated point.
+	     */
+	    static interpolate(pt1: Point, pt2: Point, f: number): Point;
+	    /**
+	     * Converts a pair of polar coordinates to a Cartesian point coordinate.
+	     *
+	     * @param len   The length coordinate of the polar pair.
+	     * @param angle The angle, in radians, of the polar pair.
+	     * @return The Cartesian point.
+	     */
+	    static polar(len: number, angle: number): Point;
+	}
+	export = Point;
+	
+}declare module "awayjs-core/lib/geom/PoissonLookup" {
 	class PoissonLookup {
 	    static _distributions: Array<Array<number>>;
 	    static initDistributions(): void;
@@ -4243,8 +3191,463 @@ declare module "awayjs-core/lib/geom/PoissonLookup" {
 	}
 	export = PoissonLookup;
 	
-}
-declare module "awayjs-core/lib/geom/Sphere" {
+}declare module "awayjs-core/lib/geom/Quaternion" {
+	import Matrix3D = require("awayjs-core/lib/geom/Matrix3D");
+	import Vector3D = require("awayjs-core/lib/geom/Vector3D");
+	/**
+	 * A Quaternion object which can be used to represent rotations.
+	 */
+	class Quaternion {
+	    /**
+	     * The x value of the quaternion.
+	     */
+	    x: number;
+	    /**
+	     * The y value of the quaternion.
+	     */
+	    y: number;
+	    /**
+	     * The z value of the quaternion.
+	     */
+	    z: number;
+	    /**
+	     * The w value of the quaternion.
+	     */
+	    w: number;
+	    /**
+	     * Creates a new Quaternion object.
+	     * @param x The x value of the quaternion.
+	     * @param y The y value of the quaternion.
+	     * @param z The z value of the quaternion.
+	     * @param w The w value of the quaternion.
+	     */
+	    constructor(x?: number, y?: number, z?: number, w?: number);
+	    /**
+	     * Returns the magnitude of the quaternion object.
+	     */
+	    magnitude: number;
+	    /**
+	     * Fills the quaternion object with the result from a multiplication of two quaternion objects.
+	     *
+	     * @param    qa    The first quaternion in the multiplication.
+	     * @param    qb    The second quaternion in the multiplication.
+	     */
+	    multiply(qa: Quaternion, qb: Quaternion): void;
+	    multiplyVector(vector: Vector3D, target?: Quaternion): Quaternion;
+	    /**
+	     * Fills the quaternion object with values representing the given rotation around a vector.
+	     *
+	     * @param    axis    The axis around which to rotate
+	     * @param    angle    The angle in radians of the rotation.
+	     */
+	    fromAxisAngle(axis: Vector3D, angle: number): void;
+	    /**
+	     * Spherically interpolates between two quaternions, providing an interpolation between rotations with constant angle change rate.
+	     * @param qa The first quaternion to interpolate.
+	     * @param qb The second quaternion to interpolate.
+	     * @param t The interpolation weight, a value between 0 and 1.
+	     */
+	    slerp(qa: Quaternion, qb: Quaternion, t: number): void;
+	    /**
+	     * Linearly interpolates between two quaternions.
+	     * @param qa The first quaternion to interpolate.
+	     * @param qb The second quaternion to interpolate.
+	     * @param t The interpolation weight, a value between 0 and 1.
+	     */
+	    lerp(qa: Quaternion, qb: Quaternion, t: number): void;
+	    /**
+	     * Fills the quaternion object with values representing the given euler rotation.
+	     *
+	     * @param    ax        The angle in radians of the rotation around the ax axis.
+	     * @param    ay        The angle in radians of the rotation around the ay axis.
+	     * @param    az        The angle in radians of the rotation around the az axis.
+	     */
+	    fromEulerAngles(ax: number, ay: number, az: number): void;
+	    /**
+	     * Fills a target Vector3D object with the Euler angles that form the rotation represented by this quaternion.
+	     * @param target An optional Vector3D object to contain the Euler angles. If not provided, a new object is created.
+	     * @return The Vector3D containing the Euler angles.
+	     */
+	    toEulerAngles(target?: Vector3D): Vector3D;
+	    /**
+	     * Normalises the quaternion object.
+	     */
+	    normalize(val?: number): void;
+	    /**
+	     * Used to trace the values of a quaternion.
+	     *
+	     * @return A string representation of the quaternion object.
+	     */
+	    toString(): string;
+	    /**
+	     * Converts the quaternion to a Matrix3D object representing an equivalent rotation.
+	     * @param target An optional Matrix3D container to store the transformation in. If not provided, a new object is created.
+	     * @return A Matrix3D object representing an equivalent rotation.
+	     */
+	    toMatrix3D(target?: Matrix3D): Matrix3D;
+	    /**
+	     * Extracts a quaternion rotation matrix out of a given Matrix3D object.
+	     * @param matrix The Matrix3D out of which the rotation will be extracted.
+	     */
+	    fromMatrix(matrix: Matrix3D): void;
+	    /**
+	     * Converts the quaternion to a Vector.&lt;Number&gt; matrix representation of a rotation equivalent to this quaternion.
+	     * @param target The Vector.&lt;Number&gt; to contain the raw matrix data.
+	     * @param exclude4thRow If true, the last row will be omitted, and a 4x3 matrix will be generated instead of a 4x4.
+	     */
+	    toRawData(target: number[], exclude4thRow?: boolean): void;
+	    /**
+	     * Clones the quaternion.
+	     * @return An exact duplicate of the current Quaternion.
+	     */
+	    clone(): Quaternion;
+	    /**
+	     * Rotates a point.
+	     * @param vector The Vector3D object to be rotated.
+	     * @param target An optional Vector3D object that will contain the rotated coordinates. If not provided, a new object will be created.
+	     * @return A Vector3D object containing the rotated point.
+	     */
+	    rotatePoint(vector: Vector3D, target?: Vector3D): Vector3D;
+	    /**
+	     * Copies the data from a quaternion into this instance.
+	     * @param q The quaternion to copy from.
+	     */
+	    copyFrom(q: Quaternion): void;
+	}
+	export = Quaternion;
+	
+}declare module "awayjs-core/lib/geom/Rectangle" {
+	import Point = require("awayjs-core/lib/geom/Point");
+	/**
+	 * A Rectangle object is an area defined by its position, as indicated by its
+	 * top-left corner point(<i>x</i>, <i>y</i>) and by its width and its height.
+	 *
+	 *
+	 * <p>The <code>x</code>, <code>y</code>, <code>width</code>, and
+	 * <code>height</code> properties of the Rectangle class are independent of
+	 * each other; changing the value of one property has no effect on the others.
+	 * However, the <code>right</code> and <code>bottom</code> properties are
+	 * integrally related to those four properties. For example, if you change the
+	 * value of the <code>right</code> property, the value of the
+	 * <code>width</code> property changes; if you change the <code>bottom</code>
+	 * property, the value of the <code>height</code> property changes. </p>
+	 *
+	 * <p>The following methods and properties use Rectangle objects:</p>
+	 *
+	 * <ul>
+	 *   <li>The <code>applyFilter()</code>, <code>colorTransform()</code>,
+	 * <code>copyChannel()</code>, <code>copyPixels()</code>, <code>draw()</code>,
+	 * <code>fillRect()</code>, <code>generateFilterRect()</code>,
+	 * <code>getColorBoundsRect()</code>, <code>getPixels()</code>,
+	 * <code>merge()</code>, <code>paletteMap()</code>,
+	 * <code>pixelDisolve()</code>, <code>setPixels()</code>, and
+	 * <code>threshold()</code> methods, and the <code>rect</code> property of the
+	 * BitmapData class</li>
+	 *   <li>The <code>getBounds()</code> and <code>getRect()</code> methods, and
+	 * the <code>scrollRect</code> and <code>scale9Grid</code> properties of the
+	 * DisplayObject class</li>
+	 *   <li>The <code>getCharBoundaries()</code> method of the TextField
+	 * class</li>
+	 *   <li>The <code>pixelBounds</code> property of the Transform class</li>
+	 *   <li>The <code>bounds</code> parameter for the <code>startDrag()</code>
+	 * method of the Sprite class</li>
+	 *   <li>The <code>printArea</code> parameter of the <code>addPage()</code>
+	 * method of the PrintJob class</li>
+	 * </ul>
+	 *
+	 * <p>You can use the <code>new Rectangle()</code> constructor to create a
+	 * Rectangle object.</p>
+	 *
+	 * <p><b>Note:</b> The Rectangle class does not define a rectangular Shape
+	 * display object. To draw a rectangular Shape object onscreen, use the
+	 * <code>drawRect()</code> method of the Graphics class.</p>
+	 */
+	class Rectangle {
+	    private _size;
+	    private _bottomRight;
+	    private _topLeft;
+	    /**
+	     * The height of the rectangle, in pixels. Changing the <code>height</code>
+	     * value of a Rectangle object has no effect on the <code>x</code>,
+	     * <code>y</code>, and <code>width</code> properties.
+	     */
+	    height: number;
+	    /**
+	     * The width of the rectangle, in pixels. Changing the <code>width</code>
+	     * value of a Rectangle object has no effect on the <code>x</code>,
+	     * <code>y</code>, and <code>height</code> properties.
+	     */
+	    width: number;
+	    /**
+	     * The <i>x</i> coordinate of the top-left corner of the rectangle. Changing
+	     * the value of the <code>x</code> property of a Rectangle object has no
+	     * effect on the <code>y</code>, <code>width</code>, and <code>height</code>
+	     * properties.
+	     *
+	     * <p>The value of the <code>x</code> property is equal to the value of the
+	     * <code>left</code> property.</p>
+	     */
+	    x: number;
+	    /**
+	     * The <i>y</i> coordinate of the top-left corner of the rectangle. Changing
+	     * the value of the <code>y</code> property of a Rectangle object has no
+	     * effect on the <code>x</code>, <code>width</code>, and <code>height</code>
+	     * properties.
+	     *
+	     * <p>The value of the <code>y</code> property is equal to the value of the
+	     * <code>top</code> property.</p>
+	     */
+	    y: number;
+	    /**
+	     * The sum of the <code>y</code> and <code>height</code> properties.
+	     */
+	    bottom: number;
+	    /**
+	     * The location of the Rectangle object's bottom-right corner, determined by
+	     * the values of the <code>right</code> and <code>bottom</code> properties.
+	     */
+	    bottomRight: Point;
+	    /**
+	     * The <i>x</i> coordinate of the top-left corner of the rectangle. Changing
+	     * the <code>left</code> property of a Rectangle object has no effect on the
+	     * <code>y</code> and <code>height</code> properties. However it does affect
+	     * the <code>width</code> property, whereas changing the <code>x</code> value
+	     * does <i>not</i> affect the <code>width</code> property.
+	     *
+	     * <p>The value of the <code>left</code> property is equal to the value of
+	     * the <code>x</code> property.</p>
+	     */
+	    left: number;
+	    /**
+	     * The sum of the <code>x</code> and <code>width</code> properties.
+	     */
+	    right: number;
+	    /**
+	     * The size of the Rectangle object, expressed as a Point object with the
+	     * values of the <code>width</code> and <code>height</code> properties.
+	     */
+	    size: Point;
+	    /**
+	     * The <i>y</i> coordinate of the top-left corner of the rectangle. Changing
+	     * the <code>top</code> property of a Rectangle object has no effect on the
+	     * <code>x</code> and <code>width</code> properties. However it does affect
+	     * the <code>height</code> property, whereas changing the <code>y</code>
+	     * value does <i>not</i> affect the <code>height</code> property.
+	     *
+	     * <p>The value of the <code>top</code> property is equal to the value of the
+	     * <code>y</code> property.</p>
+	     */
+	    top: number;
+	    /**
+	     * The location of the Rectangle object's top-left corner, determined by the
+	     * <i>x</i> and <i>y</i> coordinates of the point.
+	     */
+	    topLeft: Point;
+	    /**
+	     * Creates a new Rectangle object with the top-left corner specified by the
+	     * <code>x</code> and <code>y</code> parameters and with the specified
+	     * <code>width</code> and <code>height</code> parameters. If you call this
+	     * public without parameters, a rectangle with <code>x</code>,
+	     * <code>y</code>, <code>width</code>, and <code>height</code> properties set
+	     * to 0 is created.
+	     *
+	     * @param x      The <i>x</i> coordinate of the top-left corner of the
+	     *               rectangle.
+	     * @param y      The <i>y</i> coordinate of the top-left corner of the
+	     *               rectangle.
+	     * @param width  The width of the rectangle, in pixels.
+	     * @param height The height of the rectangle, in pixels.
+	     */
+	    constructor(x?: number, y?: number, width?: number, height?: number);
+	    /**
+	     * Returns a new Rectangle object with the same values for the
+	     * <code>x</code>, <code>y</code>, <code>width</code>, and
+	     * <code>height</code> properties as the original Rectangle object.
+	     *
+	     * @return A new Rectangle object with the same values for the
+	     *         <code>x</code>, <code>y</code>, <code>width</code>, and
+	     *         <code>height</code> properties as the original Rectangle object.
+	     */
+	    clone(): Rectangle;
+	    /**
+	     * Determines whether the specified point is contained within the rectangular
+	     * region defined by this Rectangle object.
+	     *
+	     * @param x The <i>x</i> coordinate(horizontal position) of the point.
+	     * @param y The <i>y</i> coordinate(vertical position) of the point.
+	     * @return A value of <code>true</code> if the Rectangle object contains the
+	     *         specified point; otherwise <code>false</code>.
+	     */
+	    contains(x: number, y: number): boolean;
+	    /**
+	     * Determines whether the specified point is contained within the rectangular
+	     * region defined by this Rectangle object. This method is similar to the
+	     * <code>Rectangle.contains()</code> method, except that it takes a Point
+	     * object as a parameter.
+	     *
+	     * @param point The point, as represented by its <i>x</i> and <i>y</i>
+	     *              coordinates.
+	     * @return A value of <code>true</code> if the Rectangle object contains the
+	     *         specified point; otherwise <code>false</code>.
+	     */
+	    containsPoint(point: Point): boolean;
+	    /**
+	     * Determines whether the Rectangle object specified by the <code>rect</code>
+	     * parameter is contained within this Rectangle object. A Rectangle object is
+	     * said to contain another if the second Rectangle object falls entirely
+	     * within the boundaries of the first.
+	     *
+	     * @param rect The Rectangle object being checked.
+	     * @return A value of <code>true</code> if the Rectangle object that you
+	     *         specify is contained by this Rectangle object; otherwise
+	     *         <code>false</code>.
+	     */
+	    containsRect(rect: Rectangle): boolean;
+	    /**
+	     * Copies all of rectangle data from the source Rectangle object into the
+	     * calling Rectangle object.
+	     *
+	     * @param sourceRect The Rectangle object from which to copy the data.
+	     */
+	    copyFrom(sourceRect: Rectangle): void;
+	    /**
+	     * Determines whether the object specified in the <code>toCompare</code>
+	     * parameter is equal to this Rectangle object. This method compares the
+	     * <code>x</code>, <code>y</code>, <code>width</code>, and
+	     * <code>height</code> properties of an object against the same properties of
+	     * this Rectangle object.
+	     *
+	     * @param toCompare The rectangle to compare to this Rectangle object.
+	     * @return A value of <code>true</code> if the object has exactly the same
+	     *         values for the <code>x</code>, <code>y</code>, <code>width</code>,
+	     *         and <code>height</code> properties as this Rectangle object;
+	     *         otherwise <code>false</code>.
+	     */
+	    equals(toCompare: Rectangle): boolean;
+	    /**
+	     * Increases the size of the Rectangle object by the specified amounts, in
+	     * pixels. The center point of the Rectangle object stays the same, and its
+	     * size increases to the left and right by the <code>dx</code> value, and to
+	     * the top and the bottom by the <code>dy</code> value.
+	     *
+	     * @param dx The value to be added to the left and the right of the Rectangle
+	     *           object. The following equation is used to calculate the new
+	     *           width and position of the rectangle:
+	     * @param dy The value to be added to the top and the bottom of the
+	     *           Rectangle. The following equation is used to calculate the new
+	     *           height and position of the rectangle:
+	     */
+	    inflate(dx: number, dy: number): void;
+	    /**
+	     * Increases the size of the Rectangle object. This method is similar to the
+	     * <code>Rectangle.inflate()</code> method except it takes a Point object as
+	     * a parameter.
+	     *
+	     * <p>The following two code examples give the same result:</p>
+	     *
+	     * @param point The <code>x</code> property of this Point object is used to
+	     *              increase the horizontal dimension of the Rectangle object.
+	     *              The <code>y</code> property is used to increase the vertical
+	     *              dimension of the Rectangle object.
+	     */
+	    inflatePoint(point: Point): void;
+	    /**
+	     * If the Rectangle object specified in the <code>toIntersect</code>
+	     * parameter intersects with this Rectangle object, returns the area of
+	     * intersection as a Rectangle object. If the rectangles do not intersect,
+	     * this method returns an empty Rectangle object with its properties set to
+	     * 0.
+	     *
+	     * @param toIntersect The Rectangle object to compare against to see if it
+	     *                    intersects with this Rectangle object.
+	     * @return A Rectangle object that equals the area of intersection. If the
+	     *         rectangles do not intersect, this method returns an empty
+	     *         Rectangle object; that is, a rectangle with its <code>x</code>,
+	     *         <code>y</code>, <code>width</code>, and <code>height</code>
+	     *         properties set to 0.
+	     */
+	    intersection(toIntersect: Rectangle): Rectangle;
+	    /**
+	     * Determines whether the object specified in the <code>toIntersect</code>
+	     * parameter intersects with this Rectangle object. This method checks the
+	     * <code>x</code>, <code>y</code>, <code>width</code>, and
+	     * <code>height</code> properties of the specified Rectangle object to see if
+	     * it intersects with this Rectangle object.
+	     *
+	     * @param toIntersect The Rectangle object to compare against this Rectangle
+	     *                    object.
+	     * @return A value of <code>true</code> if the specified object intersects
+	     *         with this Rectangle object; otherwise <code>false</code>.
+	     */
+	    intersects(toIntersect: Rectangle): boolean;
+	    /**
+	     * Determines whether or not this Rectangle object is empty.
+	     *
+	     * @return A value of <code>true</code> if the Rectangle object's width or
+	     *         height is less than or equal to 0; otherwise <code>false</code>.
+	     */
+	    isEmpty(): boolean;
+	    /**
+	     * Adjusts the location of the Rectangle object, as determined by its
+	     * top-left corner, by the specified amounts.
+	     *
+	     * @param dx Moves the <i>x</i> value of the Rectangle object by this amount.
+	     * @param dy Moves the <i>y</i> value of the Rectangle object by this amount.
+	     */
+	    offset(dx: number, dy: number): void;
+	    /**
+	     * Adjusts the location of the Rectangle object using a Point object as a
+	     * parameter. This method is similar to the <code>Rectangle.offset()</code>
+	     * method, except that it takes a Point object as a parameter.
+	     *
+	     * @param point A Point object to use to offset this Rectangle object.
+	     */
+	    offsetPoint(point: Point): void;
+	    /**
+	     * Sets all of the Rectangle object's properties to 0. A Rectangle object is
+	     * empty if its width or height is less than or equal to 0.
+	     *
+	     * <p> This method sets the values of the <code>x</code>, <code>y</code>,
+	     * <code>width</code>, and <code>height</code> properties to 0.</p>
+	     *
+	     */
+	    setEmpty(): void;
+	    /**
+	     * Sets the members of Rectangle to the specified values
+	     *
+	     * @param xa      The <i>x</i> coordinate of the top-left corner of the
+	     *                rectangle.
+	     * @param ya      The <i>y</i> coordinate of the top-left corner of the
+	     *                rectangle.
+	     * @param widtha  The width of the rectangle, in pixels.
+	     * @param heighta The height of the rectangle, in pixels.
+	     */
+	    setTo(xa: number, ya: number, widtha: number, heighta: number): void;
+	    /**
+	     * Builds and returns a string that lists the horizontal and vertical
+	     * positions and the width and height of the Rectangle object.
+	     *
+	     * @return A string listing the value of each of the following properties of
+	     *         the Rectangle object: <code>x</code>, <code>y</code>,
+	     *         <code>width</code>, and <code>height</code>.
+	     */
+	    toString(): string;
+	    /**
+	     * Adds two rectangles together to create a new Rectangle object, by filling
+	     * in the horizontal and vertical space between the two rectangles.
+	     *
+	     * <p><b>Note:</b> The <code>union()</code> method ignores rectangles with
+	     * <code>0</code> as the height or width value, such as: <code>var
+	     * rect2:Rectangle = new Rectangle(300,300,50,0);</code></p>
+	     *
+	     * @param toUnion A Rectangle object to add to this Rectangle object.
+	     * @return A new Rectangle object that is the union of the two rectangles.
+	     */
+	    union(toUnion: Rectangle): Rectangle;
+	}
+	export = Rectangle;
+	
+}declare module "awayjs-core/lib/geom/Sphere" {
 	import Vector3D = require("awayjs-core/lib/geom/Vector3D");
 	class Sphere {
 	    /**
@@ -4273,8 +3676,7 @@ declare module "awayjs-core/lib/geom/Sphere" {
 	}
 	export = Sphere;
 	
-}
-declare module "awayjs-core/lib/geom/UVTransform" {
+}declare module "awayjs-core/lib/geom/UVTransform" {
 	import Matrix = require("awayjs-core/lib/geom/Matrix");
 	class UVTransform {
 	    private _uvMatrix;
@@ -4316,70 +3718,730 @@ declare module "awayjs-core/lib/geom/UVTransform" {
 	}
 	export = UVTransform;
 	
-}
-declare module "awayjs-core/lib/net/URLRequestMethod" {
-	class URLRequestMethod {
+}declare module "awayjs-core/lib/geom/Vector3D" {
+	/**
+	 * The Vector3D class represents a point or a location in the three-dimensional
+	 * space using the Cartesian coordinates x, y, and z. As in a two-dimensional
+	 * space, the x property represents the horizontal axis and the y property
+	 * represents the vertical axis. In three-dimensional space, the z property
+	 * represents depth. The value of the x property increases as the object moves
+	 * to the right. The value of the y property increases as the object moves
+	 * down. The z property increases as the object moves farther from the point
+	 * of view. Using perspective projection and scaling, the object is seen to be
+	 * bigger when near and smaller when farther away from the screen. As in a
+	 * right-handed three-dimensional coordinate system, the positive z-axis points
+	 * away from the viewer and the value of the z property increases as the object
+	 * moves away from the viewer's eye. The origin point (0,0,0) of the global
+	 * space is the upper-left corner of the stage.
+	 *
+	 * <p>The Vector3D class can also represent a direction, an arrow pointing from
+	 * the origin of the coordinates, such as (0,0,0), to an endpoint; or a
+	 * floating-point component of an RGB (Red, Green, Blue) color model.</p>
+	 *
+	 * <p>Quaternion notation introduces a fourth element, the w property, which
+	 * provides additional orientation information. For example, the w property can
+	 * define an angle of rotation of a Vector3D object. The combination of the
+	 * angle of rotation and the coordinates x, y, and z can determine the display
+	 * object's orientation. Here is a representation of Vector3D elements in
+	 * matrix notation:</p>
+	 */
+	class Vector3D {
+	    /**
+	     * The x axis defined as a Vector3D object with coordinates (1,0,0).
+	     */
+	    static X_AXIS: Vector3D;
+	    /**
+	     * The y axis defined as a Vector3D object with coordinates (0,1,0).
+	     */
+	    static Y_AXIS: Vector3D;
+	    /**
+	     * The z axis defined as a Vector3D object with coordinates (0,0,1).
+	     */
+	    static Z_AXIS: Vector3D;
+	    /**
+	     * The first element of a Vector3D object, such as the x coordinate of
+	     * a point in the three-dimensional space. The default value is 0.
+	     */
+	    x: number;
+	    y: number;
+	    /**
+	     * The third element of a Vector3D object, such as the y coordinate of
+	     * a point in the three-dimensional space. The default value is 0.
+	     */
+	    z: number;
+	    /**
+	     * TThe fourth element of a Vector3D object (in addition to the x, y,
+	     * and z properties) can hold data such as the angle of rotation. The
+	     * default value is 0.
+	     *
+	     * <p>Quaternion notation employs an angle as the fourth element in
+	     * its calculation of three-dimensional rotation. The w property can
+	     * be used to define the angle of rotation about the Vector3D object.
+	     * The combination of the rotation angle and the coordinates (x,y,z)
+	     * determines the display object's orientation.</p>
+	     *
+	     * <p>In addition, the w property can be used as a perspective warp
+	     * factor for a projected three-dimensional position or as a projection
+	     * transform value in representing a three-dimensional coordinate
+	     * projected into the two-dimensional space. For example, you can
+	     * create a projection matrix using the <code>Matrix3D.rawData</code>
+	     * property, that, when applied to a Vector3D object, produces a
+	     * transform value in the Vector3D object's fourth element (the w
+	     * property). Dividing the Vector3D object's other elements by the
+	     * transform value then produces a projected Vector3D object. You can
+	     * use the <code>Vector3D.project()</code> method to divide the first
+	     * three elements of a Vector3D object by its fourth element.</p>
+	     */
+	    w: number;
+	    /**
+	     * The length, magnitude, of the current Vector3D object from the
+	     * origin (0,0,0) to the object's x, y, and z coordinates. The w
+	     * property is ignored. A unit vector has a length or magnitude of
+	     * one.
+	     */
+	    length: number;
+	    /**
+	     * The square of the length of the current Vector3D object, calculated
+	     * using the x, y, and z properties. The w property is ignored. Use the
+	     * <code>lengthSquared()</code> method whenever possible instead of the
+	     * slower <code>Math.sqrt()</code> method call of the
+	     * <code>Vector3D.length()</code> method.
+	     */
+	    lengthSquared: number;
+	    /**
+	     * Creates an instance of a Vector3D object. If you do not specify a
+	     * parameter for the constructor, a Vector3D object is created with
+	     * the elements (0,0,0,0).
+	     *
+	     * @param x The first element, such as the x coordinate.
+	     * @param y The second element, such as the y coordinate.
+	     * @param z The third element, such as the z coordinate.
+	     * @param w An optional element for additional data such as the angle
+	     *          of rotation.
+	     */
+	    constructor(x?: number, y?: number, z?: number, w?: number);
+	    /**
+	     * Adds the value of the x, y, and z elements of the current Vector3D
+	     * object to the values of the x, y, and z elements of another Vector3D
+	     * object. The <code>add()</code> method does not change the current
+	     * Vector3D object. Instead, it returns a new Vector3D object with
+	     * the new values.
+	     *
+	     * <p>The result of adding two vectors together is a resultant vector.
+	     * One way to visualize the result is by drawing a vector from the
+	     * origin or tail of the first vector to the end or head of the second
+	     * vector. The resultant vector is the distance between the origin
+	     * point of the first vector and the end point of the second vector.
+	     * </p>
+	     */
+	    add(a: Vector3D): Vector3D;
+	    /**
+	     * Returns the angle in radians between two vectors. The returned angle
+	     * is the smallest radian the first Vector3D object rotates until it
+	     * aligns with the second Vector3D object.
+	     *
+	     * <p>The <code>angleBetween()</code> method is a static method. You
+	     * can use it directly as a method of the Vector3D class.</p>
+	     *
+	     * <p>To convert a degree to a radian, you can use the following
+	     * formula:</p>
+	     *
+	     * <p><code>radian = Math.PI/180 * degree</code></p>
+	     *
+	     * @param a The first Vector3D object.
+	     * @param b The second Vector3D object.
+	     * @returns The angle between two Vector3D objects.
+	     */
+	    static angleBetween(a: Vector3D, b: Vector3D): number;
+	    /**
+	     * Returns a new Vector3D object that is an exact copy of the current
+	     * Vector3D object.
+	     *
+	     * @returns A new Vector3D object that is a copy of the current
+	     * Vector3D object.
+	     */
+	    clone(): Vector3D;
+	    /**
+	     * Copies all of vector data from the source Vector3D object into the
+	     * calling Vector3D object.
+	     *
+	     * @param src The Vector3D object from which to copy the data.
+	     */
+	    copyFrom(src: Vector3D): void;
+	    /**
+	     * Returns a new Vector3D object that is perpendicular (at a right
+	     * angle) to the current Vector3D and another Vector3D object. If the
+	     * returned Vector3D object's coordinates are (0,0,0), then the two
+	     * Vector3D objects are parallel to each other.
+	     *
+	     * <p>You can use the normalized cross product of two vertices of a
+	     * polygon surface with the normalized vector of the camera or eye
+	     * viewpoint to get a dot product. The value of the dot product can
+	     * identify whether a surface of a three-dimensional object is hidden
+	     * from the viewpoint.</p>
+	     *
+	     * @param a A second Vector3D object.
+	     * @returns A new Vector3D object that is perpendicular to the current
+	     *          Vector3D object and the Vector3D object specified as the
+	     *          parameter.
+	     */
+	    crossProduct(a: Vector3D): Vector3D;
+	    /**
+	     * Decrements the value of the x, y, and z elements of the current
+	     * Vector3D object by the values of the x, y, and z elements of
+	     * specified Vector3D object. Unlike the
+	     * <code>Vector3D.subtract()</code> method, the
+	     * <code>decrementBy()</code> method changes the current Vector3D
+	     * object and does not return a new Vector3D object.
+	     *
+	     * @param a The Vector3D object containing the values to subtract from
+	     *          the current Vector3D object.
+	     */
+	    decrementBy(a: Vector3D): void;
+	    /**
+	     * Returns the distance between two Vector3D objects. The
+	     * <code>distance()</code> method is a static method. You can use it
+	     * directly as a method of the Vector3D class to get the Euclidean
+	     * distance between two three-dimensional points.
+	     *
+	     * @param pt1 A Vector3D object as the first three-dimensional point.
+	     * @param pt2 A Vector3D object as the second three-dimensional point.
+	     * @returns The distance between two Vector3D objects.
+	     */
+	    static distance(pt1: Vector3D, pt2: Vector3D): number;
+	    /**
+	     * If the current Vector3D object and the one specified as the
+	     * parameter are unit vertices, this method returns the cosine of the
+	     * angle between the two vertices. Unit vertices are vertices that
+	     * point to the same direction but their length is one. They remove the
+	     * length of the vector as a factor in the result. You can use the
+	     * <code>normalize()</code> method to convert a vector to a unit
+	     * vector.
+	     *
+	     * <p>The <code>dotProduct()</code> method finds the angle between two
+	     * vertices. It is also used in backface culling or lighting
+	     * calculations. Backface culling is a procedure for determining which
+	     * surfaces are hidden from the viewpoint. You can use the normalized
+	     * vertices from the camera, or eye, viewpoint and the cross product of
+	     * the vertices of a polygon surface to get the dot product. If the dot
+	     * product is less than zero, then the surface is facing the camera or
+	     * the viewer. If the two unit vertices are perpendicular to each
+	     * other, they are orthogonal and the dot product is zero. If the two
+	     * vertices are parallel to each other, the dot product is one.</p>
+	     *
+	     * @param a The second Vector3D object.
+	     * @returns A scalar which is the dot product of the current Vector3D
+	     *          object and the specified Vector3D object.
+	     *
+	     * @see away.geom.Vector3D#crossProduct()
+	     * @see away.geom.Vector3D#normalize()
+	     */
+	    dotProduct(a: Vector3D): number;
+	    /**
+	     * Determines whether two Vector3D objects are equal by comparing the
+	     * x, y, and z elements of the current Vector3D object with a
+	     * specified Vector3D object. If the values of these elements are the
+	     * same, the two Vector3D objects are equal. If the second optional
+	     * parameter is set to true, all four elements of the Vector3D objects,
+	     * including the w property, are compared.
+	     */
 	    /**
 	     *
-	     * @type {string}
+	     * @param toCompare The Vector3D object to be compared with the current
+	     *                  Vector3D object.
+	     * @param allFour   An optional parameter that specifies whether the w
+	     *                  property of the Vector3D objects is used in the
+	     *                  comparison.
+	     * @returns A value of true if the specified Vector3D object is equal
+	     *          to the current Vector3D object; false if it is not equal.
 	     */
-	    static POST: string;
+	    equals(toCompare: Vector3D, allFour?: boolean): boolean;
+	    /**
+	     * Increments the value of the x, y, and z elements of the current
+	     * Vector3D object by the values of the x, y, and z elements of a
+	     * specified Vector3D object. Unlike the <code>Vector3D.add()</code>
+	     * method, the <code>incrementBy()</code> method changes the current
+	     * Vector3D object and does not return a new Vector3D object.
+	     *
+	     * @param a The Vector3D object to be added to the current Vector3D
+	     *          object.
+	     */
+	    incrementBy(a: Vector3D): void;
+	    /**
+	     * Compares the elements of the current Vector3D object with the
+	     * elements of a specified Vector3D object to determine whether they
+	     * are nearly equal. The two Vector3D objects are nearly equal if the
+	     * value of all the elements of the two vertices are equal, or the
+	     * result of the comparison is within the tolerance range. The
+	     * difference between two elements must be less than the number
+	     * specified as the tolerance parameter. If the third optional
+	     * parameter is set to <code>true</code>, all four elements of the
+	     * Vector3D objects, including the <code>w</code> property, are
+	     * compared. Otherwise, only the x, y, and z elements are included in
+	     * the comparison.
+	     */
 	    /**
 	     *
-	     * @type {string}
+	     * @param toCompare The Vector3D object to be compared with the current
+	     *                  Vector3D object.
+	     * @param tolerance A number determining the tolerance factor. If the
+	     *                  difference between the values of the Vector3D
+	     *                  element specified in the toCompare parameter and
+	     *                  the current Vector3D element is less than the
+	     *                  tolerance number, the two values are considered
+	     *                  nearly equal.
+	     * @param allFour   An optional parameter that specifies whether the w
+	     *                  property of the Vector3D objects is used in the
+	     *                  comparison.
+	     * @returns A value of true if the specified Vector3D object is nearly
+	     *          equal to the current Vector3D object; false if it is not
+	     *          equal.
+	     *
+	     * @see away.geom.Vector3D#equals()
 	     */
-	    static GET: string;
+	    nearEquals(toCompare: Vector3D, tolerance: number, allFour?: boolean): boolean;
+	    /**
+	     * Sets the current Vector3D object to its inverse. The inverse object
+	     * is also considered the opposite of the original object. The value of
+	     * the x, y, and z properties of the current Vector3D object is changed
+	     * to -x, -y, and -z.
+	     */
+	    negate(): void;
+	    /**
+	     * Converts a Vector3D object to a unit vector by dividing the first
+	     * three elements (x, y, z) by the length of the vector. Unit vertices
+	     * are vertices that have a direction but their length is one. They
+	     * simplify vector calculations by removing length as a factor.
+	     */
+	    /**
+	     * Scales the line segment between(0,0) and the current point to a set
+	     * length.
+	     *
+	     * @param thickness The scaling value. For example, if the current
+	     *                  Vector3D object is (0,3,4), and you normalize it to
+	     *                  1, the point returned is at(0,0.6,0.8).
+	     */
+	    normalize(thickness?: number): void;
+	    /**
+	     * Divides the value of the <code>x</code>, <code>y</code>, and
+	     * <code>z</code> properties of the current Vector3D object by the
+	     * value of its <code>w</code> property.
+	     *
+	     * <p>If the current Vector3D object is the result of multiplying a
+	     * Vector3D object by a projection Matrix3D object, the w property can
+	     * hold the transform value. The <code>project()</code> method then can
+	     * complete the projection by dividing the elements by the
+	     * <code>w</code> property. Use the <code>Matrix3D.rawData</code>
+	     * property to create a projection Matrix3D object.</p>
+	     */
+	    project(): void;
+	    /**
+	     * Scales the current Vector3D object by a scalar, a magnitude. The
+	     * Vector3D object's x, y, and z elements are multiplied by the scalar
+	     * number specified in the parameter. For example, if the vector is
+	     * scaled by ten, the result is a vector that is ten times longer. The
+	     * scalar can also change the direction of the vector. Multiplying the
+	     * vector by a negative number reverses its direction.
+	     *
+	     * @param s A multiplier (scalar) used to scale a Vector3D object.
+	
+	     */
+	    scaleBy(s: number): void;
+	    /**
+	     * Sets the members of Vector3D to the specified values
+	     *
+	     * @param xa The first element, such as the x coordinate.
+	     * @param ya The second element, such as the y coordinate.
+	     * @param za The third element, such as the z coordinate.
+	     */
+	    setTo(xa: number, ya: number, za: number): void;
+	    /**
+	     * Subtracts the value of the x, y, and z elements of the current
+	     * Vector3D object from the values of the x, y, and z elements of
+	     * another Vector3D object. The <code>subtract()</code> method does not
+	     * change the current Vector3D object. Instead, this method returns a
+	     * new Vector3D object with the new values.
+	     *
+	     * @param a The Vector3D object to be subtracted from the current
+	     *          Vector3D object.
+	     * @returns A new Vector3D object that is the difference between the
+	     *          current Vector3D and the specified Vector3D object.
+	     *
+	     * @see away.geom.Vector3D#decrementBy()
+	     */
+	    subtract(a: Vector3D): Vector3D;
+	    /**
+	     * Returns a string representation of the current Vector3D object. The
+	     * string contains the values of the x, y, and z properties.
+	     */
+	    toString(): string;
 	}
-	export = URLRequestMethod;
+	export = Vector3D;
 	
-}
-declare module "awayjs-core/lib/net/URLRequest" {
-	class URLRequest {
-	    /**
-	     * Object containing data to be transmited with URL Request ( URL Variables / binary / string )
-	     *
-	     */
-	    data: any;
-	    /**
-	     *
-	     * away.net.URLRequestMethod.GET
-	     * away.net.URLRequestMethod.POST
-	     *
-	     * @type {string}
-	     */
-	    method: string;
-	    /**
-	     * Use asynchronous XMLHttpRequest
-	     * @type {boolean}
-	     */
-	    async: boolean;
+}declare module "awayjs-core/lib/library/AssetBase" {
+	import IAssetClass = require("awayjs-core/lib/library/IAssetClass");
+	import EventDispatcher = require("awayjs-core/lib/events/EventDispatcher");
+	class AssetBase extends EventDispatcher {
+	    static ID_COUNT: number;
+	    private _originalName;
+	    private _namespace;
+	    private _name;
+	    private _id;
+	    private _full_path;
+	    static DEFAULT_NAMESPACE: string;
+	    constructor(name?: string);
 	    /**
 	     *
 	     */
-	    private _url;
+	    assetType: string;
 	    /**
-	
-	     * @param url
+	     * The original name used for this asset in the resource (e.g. file) in which
+	     * it was found. This may not be the same as <code>name</code>, which may
+	     * have changed due to of a name conflict.
 	     */
-	    constructor(url?: string);
+	    originalName: string;
 	    /**
-	     *
-	     * @returns {string}
+	     * A unique id for the asset, used to identify assets in an associative array
 	     */
-	    /**
-	     *
-	     * @param value
-	     */
-	    url: string;
-	    /**
-	     * dispose
-	     */
+	    id: number;
+	    name: string;
 	    dispose(): void;
+	    assetNamespace: string;
+	    assetFullPath: Array<string>;
+	    assetPathEquals(name: string, ns: string): boolean;
+	    isAsset(assetClass: IAssetClass): boolean;
+	    resetAssetPath(name: string, ns?: string, overrideOriginal?: boolean): void;
+	    private updateFullPath();
 	}
-	export = URLRequest;
+	export = AssetBase;
 	
-}
-declare module "awayjs-core/lib/library/AssetLibraryIterator" {
+}declare module "awayjs-core/lib/library/AssetLibrary" {
+	import URLRequest = require("awayjs-core/lib/net/URLRequest");
+	import AssetLibraryBundle = require("awayjs-core/lib/library/AssetLibraryBundle");
+	import AssetLibraryIterator = require("awayjs-core/lib/library/AssetLibraryIterator");
+	import AssetLoaderContext = require("awayjs-core/lib/library/AssetLoaderContext");
+	import AssetLoaderToken = require("awayjs-core/lib/library/AssetLoaderToken");
+	import ConflictStrategyBase = require("awayjs-core/lib/library/ConflictStrategyBase");
+	import IAsset = require("awayjs-core/lib/library/IAsset");
+	import ParserBase = require("awayjs-core/lib/parsers/ParserBase");
+	/**
+	 * AssetLibrary enforces a singleton pattern and is not intended to be instanced.
+	 * It's purpose is to allow access to the default library bundle through a set of static shortcut methods.
+	 * If you are interested in creating multiple library bundles, please use the <code>getBundle()</code> method.
+	 */
+	class AssetLibrary {
+	    /**
+	     * Creates a new <code>AssetLibrary</code> object.
+	     *
+	     */
+	    constructor();
+	    /**
+	     * Returns an AssetLibrary bundle instance. If no key is given, returns the default bundle (which is
+	     * similar to using the AssetLibraryBundle as a singleton). To keep several separated library bundles,
+	     * pass a string key to this method to define which bundle should be returned. This is
+	     * referred to as using the AssetLibraryBundle as a multiton.
+	     *
+	     * @param key Defines which multiton instance should be returned.
+	     * @return An instance of the asset library
+	     */
+	    static getBundle(key?: string): AssetLibraryBundle;
+	    /**
+	     *
+	     */
+	    static enableParser(parserClass: any): void;
+	    /**
+	     *
+	     */
+	    static enableParsers(parserClasses: Array<Object>): void;
+	    /**
+	     * Short-hand for conflictStrategy property on default asset library bundle.
+	     *
+	     * @see AssetLibraryBundle.conflictStrategy
+	     */
+	    static conflictStrategy: ConflictStrategyBase;
+	    /**
+	     * Short-hand for conflictPrecedence property on default asset library bundle.
+	     *
+	     * @see AssetLibraryBundle.conflictPrecedence
+	     */
+	    static conflictPrecedence: string;
+	    /**
+	     * Short-hand for createIterator() method on default asset library bundle.
+	     *
+	     * @see AssetLibraryBundle.createIterator()
+	     */
+	    static createIterator(assetTypeFilter?: string, namespaceFilter?: string, filterFunc?: any): AssetLibraryIterator;
+	    /**
+	     * Short-hand for load() method on default asset library bundle.
+	     *
+	     * @see AssetLibraryBundle.load()
+	     */
+	    static load(req: URLRequest, context?: AssetLoaderContext, ns?: string, parser?: ParserBase): AssetLoaderToken;
+	    /**
+	     * Short-hand for loadData() method on default asset library bundle.
+	     *
+	     * @see AssetLibraryBundle.loadData()
+	     */
+	    static loadData(data: any, context?: AssetLoaderContext, ns?: string, parser?: ParserBase): AssetLoaderToken;
+	    static stopLoad(): void;
+	    /**
+	     * Short-hand for getAsset() method on default asset library bundle.
+	     *
+	     * @see AssetLibraryBundle.getAsset()
+	     */
+	    static getAsset(name: string, ns?: string): IAsset;
+	    /**
+	     * Short-hand for addEventListener() method on default asset library bundle.
+	     */
+	    static addEventListener(type: string, listener: Function): void;
+	    /**
+	     * Short-hand for removeEventListener() method on default asset library bundle.
+	     */
+	    static removeEventListener(type: string, listener: Function): void;
+	    /**
+	     * Short-hand for hasEventListener() method on default asset library bundle.
+	
+	     public static hasEventListener(type:string):boolean
+	     {
+	        return AssetLibrary.getBundle().hasEventListener(type);
+	    }
+	
+	     public static willTrigger(type:string):boolean
+	     {
+	        return getBundle().willTrigger(type);
+	    }
+	     */
+	    /**
+	     * Short-hand for addAsset() method on default asset library bundle.
+	     *
+	     * @see AssetLibraryBundle.addAsset()
+	     */
+	    static addAsset(asset: IAsset): void;
+	    /**
+	     * Short-hand for removeAsset() method on default asset library bundle.
+	     *
+	     * @param asset The asset which should be removed from the library.
+	     * @param dispose Defines whether the assets should also be disposed.
+	     *
+	     * @see AssetLibraryBundle.removeAsset()
+	     */
+	    static removeAsset(asset: IAsset, dispose?: boolean): void;
+	    /**
+	     * Short-hand for removeAssetByName() method on default asset library bundle.
+	     *
+	     * @param name The name of the asset to be removed.
+	     * @param ns The namespace to which the desired asset belongs.
+	     * @param dispose Defines whether the assets should also be disposed.
+	     *
+	     * @see AssetLibraryBundle.removeAssetByName()
+	     */
+	    static removeAssetByName(name: string, ns?: string, dispose?: boolean): IAsset;
+	    /**
+	     * Short-hand for removeAllAssets() method on default asset library bundle.
+	     *
+	     * @param dispose Defines whether the assets should also be disposed.
+	     *
+	     * @see AssetLibraryBundle.removeAllAssets()
+	     */
+	    static removeAllAssets(dispose?: boolean): void;
+	    /**
+	     * Short-hand for removeNamespaceAssets() method on default asset library bundle.
+	     *
+	     * @see AssetLibraryBundle.removeNamespaceAssets()
+	     */
+	    static removeNamespaceAssets(ns?: string, dispose?: boolean): void;
+	}
+	export = AssetLibrary;
+	
+}declare module "awayjs-core/lib/library/AssetLibraryBundle" {
+	import URLRequest = require("awayjs-core/lib/net/URLRequest");
+	import AssetLibraryIterator = require("awayjs-core/lib/library/AssetLibraryIterator");
+	import AssetLoaderToken = require("awayjs-core/lib/library/AssetLoaderToken");
+	import AssetLoaderContext = require("awayjs-core/lib/library/AssetLoaderContext");
+	import ConflictStrategyBase = require("awayjs-core/lib/library/ConflictStrategyBase");
+	import IAsset = require("awayjs-core/lib/library/IAsset");
+	import EventDispatcher = require("awayjs-core/lib/events/EventDispatcher");
+	import ParserBase = require("awayjs-core/lib/parsers/ParserBase");
+	/**
+	 * AssetLibraryBundle enforces a multiton pattern and is not intended to be instanced directly.
+	 * Its purpose is to create a container for 3D data management, both before and after parsing.
+	 * If you are interested in creating multiple library bundles, please use the <code>getInstance()</code> method.
+	 */
+	class AssetLibraryBundle extends EventDispatcher {
+	    static _iInstances: Object;
+	    private _loadingSessions;
+	    private _strategy;
+	    private _strategyPreference;
+	    private _assets;
+	    private _assetDictionary;
+	    private _assetDictDirty;
+	    private _loadingSessionsGarbage;
+	    private _gcTimeoutIID;
+	    private _onAssetRenameDelegate;
+	    private _onAssetConflictResolvedDelegate;
+	    private _onResourceCompleteDelegate;
+	    private _onTextureSizeErrorDelegate;
+	    private _onAssetCompleteDelegate;
+	    private _onLoadErrorDelegate;
+	    private _onParseErrorDelegate;
+	    /**
+	     * Creates a new <code>AssetLibraryBundle</code> object.
+	     *
+	     * @param me A multiton enforcer for the AssetLibraryBundle ensuring it cannnot be instanced.
+	     */
+	    constructor();
+	    /**
+	     * Returns an AssetLibraryBundle instance. If no key is given, returns the default bundle instance (which is
+	     * similar to using the AssetLibraryBundle as a singleton.) To keep several separated library bundles,
+	     * pass a string key to this method to define which bundle should be returned. This is
+	     * referred to as using the AssetLibrary as a multiton.
+	     *
+	     * @param key Defines which multiton instance should be returned.
+	     * @return An instance of the asset library
+	     */
+	    static getInstance(key?: string): AssetLibraryBundle;
+	    /**
+	     *
+	     */
+	    enableParser(parserClass: Object): void;
+	    /**
+	     *
+	     */
+	    enableParsers(parserClasses: Object[]): void;
+	    /**
+	     * Defines which strategy should be used for resolving naming conflicts, when two library
+	     * assets are given the same name. By default, <code>ConflictStrategy.APPEND_NUM_SUFFIX</code>
+	     * is used which means that a numeric suffix is appended to one of the assets. The
+	     * <code>conflictPrecedence</code> property defines which of the two conflicting assets will
+	     * be renamed.
+	     *
+	     * @see naming.ConflictStrategy
+	     * @see AssetLibrary.conflictPrecedence
+	     */
+	    conflictStrategy: ConflictStrategyBase;
+	    /**
+	     * Defines which asset should have precedence when resolving a naming conflict between
+	     * two assets of which one has just been renamed by the user or by a parser. By default
+	     * <code>ConflictPrecedence.FAVOR_NEW</code> is used, meaning that the newly renamed
+	     * asset will keep it's new name while the older asset gets renamed to not conflict.
+	     *
+	     * This property is ignored for conflict strategies that do not actually rename an
+	     * asset automatically, such as ConflictStrategy.IGNORE and ConflictStrategy.THROW_ERROR.
+	     *
+	     * @see away.library.ConflictPrecedence
+	     * @see away.library.ConflictStrategy
+	     */
+	    conflictPrecedence: string;
+	    /**
+	     * Create an AssetLibraryIterator instance that can be used to iterate over the assets
+	     * in this asset library instance. The iterator can filter assets on asset type and/or
+	     * namespace. A "null" filter value means no filter of that type is used.
+	     *
+	     * @param assetTypeFilter Asset type to filter on (from the AssetType enum class.) Use
+	     * null to not filter on asset type.
+	     * @param namespaceFilter Namespace to filter on. Use null to not filter on namespace.
+	     * @param filterFunc Callback function to use when deciding whether an asset should be
+	     * included in the iteration or not. This needs to be a function that takes a single
+	     * parameter of type IAsset and returns a boolean where true means it should be included.
+	     *
+	     * @see away.library.AssetType
+	     */
+	    createIterator(assetTypeFilter?: string, namespaceFilter?: string, filterFunc?: any): AssetLibraryIterator;
+	    /**
+	     * Loads a file and (optionally) all of its dependencies.
+	     *
+	     * @param req The URLRequest object containing the URL of the file to be loaded.
+	     * @param context An optional context object providing additional parameters for loading
+	     * @param ns An optional namespace string under which the file is to be loaded, allowing the differentiation of two resources with identical assets
+	     * @param parser An optional parser object for translating the loaded data into a usable resource. If not provided, AssetLoader will attempt to auto-detect the file type.
+	     * @return A handle to the retrieved resource.
+	     */
+	    load(req: URLRequest, context?: AssetLoaderContext, ns?: string, parser?: ParserBase): AssetLoaderToken;
+	    /**
+	     * Loads a resource from existing data in memory.
+	     *
+	     * @param data The data object containing all resource information.
+	     * @param context An optional context object providing additional parameters for loading
+	     * @param ns An optional namespace string under which the file is to be loaded, allowing the differentiation of two resources with identical assets
+	     * @param parser An optional parser object for translating the loaded data into a usable resource. If not provided, AssetLoader will attempt to auto-detect the file type.
+	     * @return A handle to the retrieved resource.
+	     */
+	    loadData(data: any, context?: AssetLoaderContext, ns?: string, parser?: ParserBase): AssetLoaderToken;
+	    /**
+	     *
+	     */
+	    getAsset(name: string, ns?: string): IAsset;
+	    /**
+	     * Adds an asset to the asset library, first making sure that it's name is unique
+	     * using the method defined by the <code>conflictStrategy</code> and
+	     * <code>conflictPrecedence</code> properties.
+	     */
+	    addAsset(asset: IAsset): void;
+	    /**
+	     * Removes an asset from the library, and optionally disposes that asset by calling
+	     * it's disposeAsset() method (which for most assets is implemented as a default
+	     * version of that type's dispose() method.
+	     *
+	     * @param asset The asset which should be removed from this library.
+	     * @param dispose Defines whether the assets should also be disposed.
+	     */
+	    removeAsset(asset: IAsset, dispose?: boolean): void;
+	    /**
+	     * Removes an asset which is specified using name and namespace.
+	     *
+	     * @param name The name of the asset to be removed.
+	     * @param ns The namespace to which the desired asset belongs.
+	     * @param dispose Defines whether the assets should also be disposed.
+	     *
+	     * @see away.library.AssetLibrary.removeAsset()
+	     */
+	    removeAssetByName(name: string, ns?: string, dispose?: boolean): IAsset;
+	    /**
+	     * Removes all assets from the asset library, optionally disposing them as they
+	     * are removed.
+	     *
+	     * @param dispose Defines whether the assets should also be disposed.
+	     */
+	    removeAllAssets(dispose?: boolean): void;
+	    /**
+	     * Removes all assets belonging to a particular namespace (null for default)
+	     * from the asset library, and optionall disposes them by calling their
+	     * disposeAsset() method.
+	     *
+	     * @param ns The namespace from which all assets should be removed.
+	     * @param dispose Defines whether the assets should also be disposed.
+	     *
+	     * @see away.library.AssetLibrary.removeAsset()
+	     */
+	    removeNamespaceAssets(ns?: string, dispose?: boolean): void;
+	    private removeAssetFromDict(asset, autoRemoveEmptyNamespace?);
+	    stopAllLoadingSessions(): void;
+	    private rehashAssetDict();
+	    /**
+	     * Called when a an error occurs during loading.
+	     */
+	    private onLoadError(event);
+	    /**
+	     * Called when a an error occurs during parsing.
+	     */
+	    private onParseError(event);
+	    private onAssetComplete(event);
+	    private onTextureSizeError(event);
+	    /**
+	     * Called when the resource and all of its dependencies was retrieved.
+	     */
+	    private onResourceComplete(event);
+	    private loadingSessionGC();
+	    private killLoadingSession(loader);
+	    /**
+	     * Called when unespected error occurs
+	     */
+	    private onAssetRename(event);
+	    private onAssetConflictResolved(event);
+	}
+	export = AssetLibraryBundle;
+	
+}declare module "awayjs-core/lib/library/AssetLibraryIterator" {
 	import IAsset = require("awayjs-core/lib/library/IAsset");
 	class AssetLibraryIterator {
 	    private _assets;
@@ -4395,1106 +4457,7 @@ declare module "awayjs-core/lib/library/AssetLibraryIterator" {
 	}
 	export = AssetLibraryIterator;
 	
-}
-declare module "awayjs-core/lib/library/AssetLoaderContext" {
-	class AssetLoaderContext {
-	    static UNDEFINED: number;
-	    static SINGLEPASS_MATERIALS: number;
-	    static MULTIPASS_MATERIALS: number;
-	    private _includeDependencies;
-	    private _dependencyBaseUrl;
-	    private _embeddedDataByUrl;
-	    private _remappedUrls;
-	    private _materialMode;
-	    private _overrideAbsPath;
-	    private _overrideFullUrls;
-	    /**
-	     * AssetLoaderContext provides configuration for the AssetLoader load() and parse() operations.
-	     * Use it to configure how (and if) dependencies are loaded, or to map dependency URLs to
-	     * embedded data.
-	     *
-	     * @see away.loading.AssetLoader
-	     */
-	    constructor(includeDependencies?: boolean, dependencyBaseUrl?: string);
-	    /**
-	     * Defines whether dependencies (all files except the one at the URL given to the load() or
-	     * parseData() operations) should be automatically loaded. Defaults to true.
-	     */
-	    includeDependencies: boolean;
-	    /**
-	     * MaterialMode defines, if the Parser should create SinglePass or MultiPass Materials
-	     * Options:
-	     * 0 (Default / undefined) - All Parsers will create SinglePassMaterials, but the AWD2.1parser will create Materials as they are defined in the file
-	     * 1 (Force SinglePass) - All Parsers create SinglePassMaterials
-	     * 2 (Force MultiPass) - All Parsers will create MultiPassMaterials
-	     *
-	     */
-	    materialMode: number;
-	    /**
-	     * A base URL that will be prepended to all relative dependency URLs found in a loaded resource.
-	     * Absolute paths will not be affected by the value of this property.
-	     */
-	    dependencyBaseUrl: string;
-	    /**
-	     * Defines whether absolute paths (defined as paths that begin with a "/") should be overridden
-	     * with the dependencyBaseUrl defined in this context. If this is true, and the base path is
-	     * "base", /path/to/asset.jpg will be resolved as base/path/to/asset.jpg.
-	     */
-	    overrideAbsolutePaths: boolean;
-	    /**
-	     * Defines whether "full" URLs (defined as a URL that includes a scheme, e.g. http://) should be
-	     * overridden with the dependencyBaseUrl defined in this context. If this is true, and the base
-	     * path is "base", http://example.com/path/to/asset.jpg will be resolved as base/path/to/asset.jpg.
-	     */
-	    overrideFullURLs: boolean;
-	    /**
-	     * Map a URL to another URL, so that files that are referred to by the original URL will instead
-	     * be loaded from the new URL. Use this when your file structure does not match the one that is
-	     * expected by the loaded file.
-	     *
-	     * @param originalUrl The original URL which is referenced in the loaded resource.
-	     * @param newUrl The URL from which away.should load the resource instead.
-	     *
-	     * @see mapUrlToData()
-	     */
-	    mapUrl(originalUrl: string, newUrl: string): void;
-	    /**
-	     * Map a URL to embedded data, so that instead of trying to load a dependency from the URL at
-	     * which it's referenced, the dependency data will be retrieved straight from the memory instead.
-	     *
-	     * @param originalUrl The original URL which is referenced in the loaded resource.
-	     * @param data The embedded data. Can be ByteArray or a class which can be used to create a bytearray.
-	     */
-	    mapUrlToData(originalUrl: string, data: any): void;
-	    /**
-	     * @private
-	     * Defines whether embedded data has been mapped to a particular URL.
-	     */
-	    _iHasDataForUrl(url: string): boolean;
-	    /**
-	     * @private
-	     * Returns embedded data for a particular URL.
-	     */
-	    _iGetDataForUrl(url: string): any;
-	    /**
-	     * @private
-	     * Defines whether a replacement URL has been mapped to a particular URL.
-	     */
-	    _iHasMappingForUrl(url: string): boolean;
-	    /**
-	     * @private
-	     * Returns new (replacement) URL for a particular original URL.
-	     */
-	    _iGetRemappedUrl(originalUrl: string): string;
-	}
-	export = AssetLoaderContext;
-	
-}
-declare module "awayjs-core/lib/library/AssetLoaderToken" {
-	import AssetLoader = require("awayjs-core/lib/library/AssetLoader");
-	import EventDispatcher = require("awayjs-core/lib/events/EventDispatcher");
-	/**
-	 * Dispatched when any asset finishes parsing. Also see specific events for each
-	 * individual asset type (meshes, materials et c.)
-	 *
-	 * @eventType away.events.AssetEvent
-	 */
-	/**
-	 * Dispatched when a full resource (including dependencies) finishes loading.
-	 *
-	 * @eventType away.events.LoaderEvent
-	 */
-	/**
-	 * Dispatched when a single dependency (which may be the main file of a resource)
-	 * finishes loading.
-	 *
-	 * @eventType away.events.LoaderEvent
-	 */
-	/**
-	 * Dispatched when an error occurs during loading. I
-	 *
-	 * @eventType away.events.LoaderEvent
-	 */
-	/**
-	 * Dispatched when an error occurs during parsing.
-	 *
-	 * @eventType away.events.ParserEvent
-	 */
-	/**
-	 * Dispatched when a skybox asset has been costructed from a ressource.
-	 *
-	 * @eventType away.events.AssetEvent
-	 */
-	/**
-	 * Dispatched when a camera3d asset has been costructed from a ressource.
-	 *
-	 * @eventType away.events.AssetEvent
-	 */
-	/**
-	 * Dispatched when a mesh asset has been costructed from a ressource.
-	 *
-	 * @eventType away.events.AssetEvent
-	 */
-	/**
-	 * Dispatched when a geometry asset has been constructed from a resource.
-	 *
-	 * @eventType away.events.AssetEvent
-	 */
-	/**
-	 * Dispatched when a skeleton asset has been constructed from a resource.
-	 *
-	 * @eventType away.events.AssetEvent
-	 */
-	/**
-	 * Dispatched when a skeleton pose asset has been constructed from a resource.
-	 *
-	 * @eventType away.events.AssetEvent
-	 */
-	/**
-	 * Dispatched when a container asset has been constructed from a resource.
-	 *
-	 * @eventType away.events.AssetEvent
-	 */
-	/**
-	 * Dispatched when a texture asset has been constructed from a resource.
-	 *
-	 * @eventType away.events.AssetEvent
-	 */
-	/**
-	 * Dispatched when a texture projector asset has been constructed from a resource.
-	 *
-	 * @eventType away.events.AssetEvent
-	 */
-	/**
-	 * Dispatched when a material asset has been constructed from a resource.
-	 *
-	 * @eventType away.events.AssetEvent
-	 */
-	/**
-	 * Dispatched when a animator asset has been constructed from a resource.
-	 *
-	 * @eventType away.events.AssetEvent
-	 */
-	/**
-	 * Dispatched when an animation set has been constructed from a group of animation state resources.
-	 *
-	 * @eventType away.events.AssetEvent
-	 */
-	/**
-	 * Dispatched when an animation state has been constructed from a group of animation node resources.
-	 *
-	 * @eventType away.events.AssetEvent
-	 */
-	/**
-	 * Dispatched when an animation node has been constructed from a resource.
-	 *
-	 * @eventType away.events.AssetEvent
-	 */
-	/**
-	 * Dispatched when an animation state transition has been constructed from a group of animation node resources.
-	 *
-	 * @eventType away.events.AssetEvent
-	 */
-	/**
-	 * Dispatched when an light asset has been constructed from a resources.
-	 *
-	 * @eventType away.events.AssetEvent
-	 */
-	/**
-	 * Dispatched when an light picker asset has been constructed from a resources.
-	 *
-	 * @eventType away.events.AssetEvent
-	 */
-	/**
-	 * Dispatched when an effect method asset has been constructed from a resources.
-	 *
-	 * @eventType away.events.AssetEvent
-	 */
-	/**
-	 * Dispatched when an shadow map method asset has been constructed from a resources.
-	 *
-	 * @eventType away.events.AssetEvent
-	 */
-	/**
-	 * Instances of this class are returned as tokens by loading operations
-	 * to provide an object on which events can be listened for in cases where
-	 * the actual asset loader is not directly available (e.g. when using the
-	 * AssetLibrary to perform the load.)
-	 *
-	 * By listening for events on this class instead of directly on the
-	 * AssetLibrary, one can distinguish different loads from each other.
-	 *
-	 * The token will dispatch all events that the original AssetLoader dispatches,
-	 * while not providing an interface to obstruct the load and is as such a
-	 * safer return value for loader wrappers than the loader itself.
-	 */
-	class AssetLoaderToken extends EventDispatcher {
-	    _iLoader: AssetLoader;
-	    constructor(loader: AssetLoader);
-	    addEventListener(type: string, listener: Function): void;
-	    removeEventListener(type: string, listener: Function): void;
-	    hasEventListener(type: string, listener?: Function): boolean;
-	}
-	export = AssetLoaderToken;
-	
-}
-declare module "awayjs-core/lib/net/URLLoaderDataFormat" {
-	class URLLoaderDataFormat {
-	    /**
-	     * TEXT
-	     * @type {string}
-	     */
-	    static TEXT: string;
-	    /**
-	     * Variables / Value Pairs
-	     * @type {string}
-	     */
-	    static VARIABLES: string;
-	    /**
-	     *
-	     * @type {string}
-	     */
-	    static BLOB: string;
-	    /**
-	     *
-	     * @type {string}
-	     */
-	    static ARRAY_BUFFER: string;
-	    /**
-	     *
-	     * @type {string}
-	     */
-	    static BINARY: string;
-	}
-	export = URLLoaderDataFormat;
-	
-}
-declare module "awayjs-core/lib/net/URLVariables" {
-	class URLVariables {
-	    private _variables;
-	    /**
-	     *
-	     * @param source
-	     */
-	    constructor(source?: string);
-	    /**
-	     *
-	     * @param source
-	     */
-	    decode(source: string): void;
-	    /**
-	     *
-	     * @returns {string}
-	     */
-	    toString(): string;
-	    /**
-	     *
-	     * @returns {Object}
-	     */
-	    /**
-	     *
-	     * @returns {Object}
-	     */
-	    variables: Object;
-	    /**
-	     *
-	     * @returns {Object}
-	     */
-	    formData: FormData;
-	}
-	export = URLVariables;
-	
-}
-declare module "awayjs-core/lib/net/URLLoader" {
-	import URLRequest = require("awayjs-core/lib/net/URLRequest");
-	import EventDispatcher = require("awayjs-core/lib/events/EventDispatcher");
-	/**
-	 * The URLLoader is used to load a single file, as part of a resource.
-	 *
-	 * While URLLoader can be used directly, e.g. to create a third-party asset
-	 * management system, it's recommended to use any of the classes Loader3D, AssetLoader
-	 * and AssetLibrary instead in most cases.
-	 *
-	 * @see AssetLoader
-	 * @see away.library.AssetLibrary
-	 */
-	class URLLoader extends EventDispatcher {
-	    private _XHR;
-	    private _bytesLoaded;
-	    private _bytesTotal;
-	    private _dataFormat;
-	    private _loadError;
-	    private _request;
-	    private _data;
-	    private _loadStartEvent;
-	    private _loadErrorEvent;
-	    private _loadCompleteEvent;
-	    private _progressEvent;
-	    /**
-	     * Creates a new URLLoader object.
-	     */
-	    constructor();
-	    /**
-	     *
-	     */
-	    url: string;
-	    /**
-	     *
-	     */
-	    data: any;
-	    /**
-	     *
-	     * URLLoaderDataFormat.BINARY
-	     * URLLoaderDataFormat.TEXT
-	     * URLLoaderDataFormat.VARIABLES
-	     *
-	     * @param format
-	     */
-	    dataFormat: string;
-	    /**
-	     *
-	     * @returns {number}
-	     */
-	    bytesLoaded: number;
-	    /**
-	     *
-	     * @returns {number}
-	     */
-	    bytesTotal: number;
-	    /**
-	     * Load a resource from a file.
-	     *
-	     * @param request The URLRequest object containing the URL of the object to be loaded.
-	     */
-	    load(request: URLRequest): void;
-	    /**
-	     *
-	     */
-	    close(): void;
-	    /**
-	     *
-	     */
-	    dispose(): void;
-	    /**
-	     *
-	     * @param xhr
-	     * @param responseType
-	     */
-	    private setResponseType(xhr, responseType);
-	    /**
-	     *
-	     * @param request {URLRequest}
-	     */
-	    private getRequest(request);
-	    /**
-	     *
-	     * @param request {URLRequest}
-	     */
-	    private postRequest(request);
-	    /**
-	     *
-	     * @param error {XMLHttpRequestException}
-	     */
-	    private handleXmlHttpRequestException(error);
-	    /**
-	     *
-	     */
-	    private initXHR();
-	    /**
-	     *
-	     */
-	    private disposeXHR();
-	    /**
-	     *
-	     * @param source
-	     */
-	    decodeURLVariables(source: string): Object;
-	    /**
-	     * When XHR state changes
-	     * @param event
-	     */
-	    private onReadyStateChange(event);
-	    /**
-	     * When the request has completed, regardless of whether or not it was successful.
-	     * @param event
-	     */
-	    private onLoadEnd(event);
-	    /**
-	     * When the author specified timeout has passed before the request could complete.
-	     * @param event
-	     */
-	    private onTimeOut(event);
-	    /**
-	     * When the request has been aborted, either by invoking the abort() method or navigating away from the page.
-	     * @param event
-	     */
-	    private onAbort(event);
-	    /**
-	     * While loading and sending data.
-	     * @param event
-	     */
-	    private onProgress(event);
-	    /**
-	     * When the request starts.
-	     * @param event
-	     */
-	    private onLoadStart(event);
-	    /**
-	     * When the request has successfully completed.
-	     * @param event
-	     */
-	    private onLoadComplete(event);
-	    /**
-	     * When the request has failed. ( due to network issues ).
-	     * @param event
-	     */
-	    private onLoadError(event);
-	}
-	export = URLLoader;
-	
-}
-declare module "awayjs-core/lib/parsers/ParserUtils" {
-	import ByteArray = require("awayjs-core/lib/utils/ByteArray");
-	class ParserUtils {
-	    /**
-	     * Converts an ArrayBuffer to a base64 string
-	     *
-	     * @param image data as a ByteArray
-	     *
-	     * @return HTMLImageElement
-	     *
-	     */
-	    static arrayBufferToImage(data: ArrayBuffer): HTMLImageElement;
-	    /**
-	     * Converts an ByteArray to an Image - returns an HTMLImageElement
-	     *
-	     * @param image data as a ByteArray
-	     *
-	     * @return HTMLImageElement
-	     *
-	     */
-	    static byteArrayToImage(data: ByteArray): HTMLImageElement;
-	    /**
-	     * Converts an Blob to an Image - returns an HTMLImageElement
-	     *
-	     * @param image data as a Blob
-	     *
-	     * @return HTMLImageElement
-	     *
-	     */
-	    static blobToImage(data: Blob): HTMLImageElement;
-	    /**
-	     * Returns a object as ByteArray, if possible.
-	     *
-	     * @param data The object to return as ByteArray
-	     *
-	     * @return The ByteArray or null
-	     *
-	     */
-	    static toByteArray(data: any): ByteArray;
-	    /**
-	     * Returns a object as String, if possible.
-	     *
-	     * @param data The object to return as String
-	     * @param length The length of the returned String
-	     *
-	     * @return The String or null
-	     *
-	     */
-	    static toString(data: any, length?: number): string;
-	}
-	export = ParserUtils;
-	
-}
-declare module "awayjs-core/lib/parsers/ResourceDependency" {
-	import IAsset = require("awayjs-core/lib/library/IAsset");
-	import URLLoader = require("awayjs-core/lib/net/URLLoader");
-	import URLRequest = require("awayjs-core/lib/net/URLRequest");
-	import ParserBase = require("awayjs-core/lib/parsers/ParserBase");
-	/**
-	 * ResourceDependency represents the data required to load, parse and resolve additional files ("dependencies")
-	 * required by a parser, used by ResourceLoadSession.
-	 *
-	 */
-	class ResourceDependency {
-	    private _id;
-	    private _request;
-	    private _assets;
-	    private _parser;
-	    private _parentParser;
-	    private _data;
-	    private _retrieveAsRawData;
-	    private _suppressAssetEvents;
-	    private _dependencies;
-	    _iLoader: URLLoader;
-	    _iSuccess: boolean;
-	    constructor(id: string, request: URLRequest, data: any, parser: ParserBase, parentParser: ParserBase, retrieveAsRawData?: boolean, suppressAssetEvents?: boolean);
-	    /**
-	     *
-	     */
-	    id: string;
-	    /**
-	     *
-	     */
-	    request: URLRequest;
-	    /**
-	     * The data containing the dependency to be parsed, if the resource was already loaded.
-	     */
-	    data: any;
-	    /**
-	     *
-	     */
-	    parser: ParserBase;
-	    /**
-	     * The parser which is dependent on this ResourceDependency object.
-	     */
-	    parentParser: ParserBase;
-	    /**
-	     *
-	     */
-	    retrieveAsRawData: boolean;
-	    /**
-	     *
-	     */
-	    suppresAssetEvents: boolean;
-	    /**
-	     *
-	     */
-	    assets: Array<IAsset>;
-	    /**
-	     *
-	     */
-	    dependencies: Array<ResourceDependency>;
-	    /**
-	     * @private
-	     * Method to set data after having already created the dependency object, e.g. after load.
-	     */
-	    _iSetData(data: any): void;
-	    /**
-	     * @private
-	     *
-	     */
-	    _iSetParser(parser: ParserBase): void;
-	    /**
-	     * Resolve the dependency when it's loaded with the parent parser. For example, a dependency containing an
-	     * ImageResource would be assigned to a Mesh instance as a BitmapMaterial, a scene graph object would be added
-	     * to its intended parent. The dependency should be a member of the dependencies property.
-	     */
-	    resolve(): void;
-	    /**
-	     * Resolve a dependency failure. For example, map loading failure from a 3d file
-	     */
-	    resolveFailure(): void;
-	    /**
-	     * Resolve the dependencies name
-	     */
-	    resolveName(asset: IAsset): string;
-	}
-	export = ResourceDependency;
-	
-}
-declare module "awayjs-core/lib/utils/TextureUtils" {
-	import BitmapData = require("awayjs-core/lib/data/BitmapData");
-	class TextureUtils {
-	    private static MAX_SIZE;
-	    static isBitmapDataValid(bitmapData: BitmapData): boolean;
-	    static isHTMLImageElementValid(image: HTMLImageElement): boolean;
-	    static isDimensionValid(d: number): boolean;
-	    static isPowerOfTwo(value: number): boolean;
-	    static getBestPowerOf2(value: number): number;
-	}
-	export = TextureUtils;
-	
-}
-declare module "awayjs-core/lib/utils/Timer" {
-	import EventDispatcher = require("awayjs-core/lib/events/EventDispatcher");
-	class Timer extends EventDispatcher {
-	    private _delay;
-	    private _repeatCount;
-	    private _currentCount;
-	    private _iid;
-	    private _running;
-	    constructor(delay: number, repeatCount?: number);
-	    currentCount: number;
-	    delay: number;
-	    repeatCount: number;
-	    reset(): void;
-	    running: boolean;
-	    start(): void;
-	    stop(): void;
-	    private tick();
-	}
-	export = Timer;
-	
-}
-declare module "awayjs-core/lib/utils/getTimer" {
-	/**
-	 *
-	 *
-	 * @returns {number}
-	 */
-	function getTimer(): number;
-	export = getTimer;
-	
-}
-declare module "awayjs-core/lib/parsers/ParserBase" {
-	import BitmapData = require("awayjs-core/lib/data/BitmapData");
-	import IAsset = require("awayjs-core/lib/library/IAsset");
-	import URLRequest = require("awayjs-core/lib/net/URLRequest");
-	import EventDispatcher = require("awayjs-core/lib/events/EventDispatcher");
-	import TimerEvent = require("awayjs-core/lib/events/TimerEvent");
-	import ResourceDependency = require("awayjs-core/lib/parsers/ResourceDependency");
-	import ByteArray = require("awayjs-core/lib/utils/ByteArray");
-	/**
-	 * <code>ParserBase</code> provides an abstract base class for objects that convert blocks of data to data structures
-	 * supported by away.
-	 *
-	 * If used by <code>AssetLoader</code> to automatically determine the parser type, two public static methods should
-	 * be implemented, with the following signatures:
-	 *
-	 * <code>public static supportsType(extension : string) : boolean</code>
-	 * Indicates whether or not a given file extension is supported by the parser.
-	 *
-	 * <code>public static supportsData(data : *) : boolean</code>
-	 * Tests whether a data block can be parsed by the parser.
-	 *
-	 * Furthermore, for any concrete subtype, the method <code>initHandle</code> should be overridden to immediately
-	 * create the object that will contain the parsed data. This allows <code>ResourceManager</code> to return an object
-	 * handle regardless of whether the object was loaded or not.
-	 *
-	 * @see AssetLoader
-	 */
-	class ParserBase extends EventDispatcher {
-	    _iFileName: string;
-	    private _dataFormat;
-	    private _data;
-	    private _frameLimit;
-	    private _lastFrameTime;
-	    private _pOnIntervalDelegate;
-	    _pContent: IAsset;
-	    static supportsType(extension: string): boolean;
-	    private _dependencies;
-	    private _parsingPaused;
-	    private _parsingComplete;
-	    private _parsingFailure;
-	    private _timer;
-	    private _materialMode;
-	    /**
-	     * Returned by <code>proceedParsing</code> to indicate no more parsing is needed.
-	     */
-	    static PARSING_DONE: boolean;
-	    /**
-	     * Returned by <code>proceedParsing</code> to indicate more parsing is needed, allowing asynchronous parsing.
-	     */
-	    static MORE_TO_PARSE: boolean;
-	    content: IAsset;
-	    /**
-	     * Creates a new ParserBase object
-	     * @param format The data format of the file data to be parsed. Can be either <code>ParserDataFormat.BINARY</code> or <code>ParserDataFormat.PLAIN_TEXT</code>, and should be provided by the concrete subtype.
-	     *
-	     * @see away.loading.parsers.ParserDataFormat
-	     */
-	    constructor(format: string);
-	    /**
-	     * Validates a bitmapData loaded before assigning to a default BitmapMaterial
-	     */
-	    isBitmapDataValid(bitmapData: BitmapData): boolean;
-	    parsingFailure: boolean;
-	    parsingPaused: boolean;
-	    parsingComplete: boolean;
-	    materialMode: number;
-	    data: any;
-	    /**
-	     * The data format of the file data to be parsed. Options are <code>URLLoaderDataFormat.BINARY</code>, <code>URLLoaderDataFormat.ARRAY_BUFFER</code>, <code>URLLoaderDataFormat.BLOB</code>, <code>URLLoaderDataFormat.VARIABLES</code> or <code>URLLoaderDataFormat.TEXT</code>.
-	     */
-	    dataFormat: string;
-	    /**
-	     * Parse data (possibly containing bytearry, plain text or BitmapAsset) asynchronously, meaning that
-	     * the parser will periodically stop parsing so that the AVM may proceed to the
-	     * next frame.
-	     *
-	     * @param data The untyped data object in which the loaded data resides.
-	     * @param frameLimit number of milliseconds of parsing allowed per frame. The
-	     * actual time spent on a frame can exceed this number since time-checks can
-	     * only be performed between logical sections of the parsing procedure.
-	     */
-	    parseAsync(data: any, frameLimit?: number): void;
-	    /**
-	     * A list of dependencies that need to be loaded and resolved for the object being parsed.
-	     */
-	    dependencies: Array<ResourceDependency>;
-	    /**
-	     * Resolve a dependency when it's loaded. For example, a dependency containing an ImageResource would be assigned
-	     * to a Mesh instance as a BitmapMaterial, a scene graph object would be added to its intended parent. The
-	     * dependency should be a member of the dependencies property.
-	     *
-	     * @param resourceDependency The dependency to be resolved.
-	     */
-	    _iResolveDependency(resourceDependency: ResourceDependency): void;
-	    /**
-	     * Resolve a dependency loading failure. Used by parser to eventually provide a default map
-	     *
-	     * @param resourceDependency The dependency to be resolved.
-	     */
-	    _iResolveDependencyFailure(resourceDependency: ResourceDependency): void;
-	    /**
-	     * Resolve a dependency name
-	     *
-	     * @param resourceDependency The dependency to be resolved.
-	     */
-	    _iResolveDependencyName(resourceDependency: ResourceDependency, asset: IAsset): string;
-	    _iResumeParsingAfterDependencies(): void;
-	    _pFinalizeAsset(asset: IAsset, name?: string): void;
-	    /**
-	     * Parse the next block of data.
-	     * @return Whether or not more data needs to be parsed. Can be <code>ParserBase.ParserBase.PARSING_DONE</code> or
-	     * <code>ParserBase.ParserBase.MORE_TO_PARSE</code>.
-	     */
-	    _pProceedParsing(): boolean;
-	    _pDieWithError(message?: string): void;
-	    _pAddDependency(id: string, req: URLRequest, retrieveAsRawData?: boolean, data?: any, suppressErrorEvents?: boolean): ResourceDependency;
-	    _pPauseAndRetrieveDependencies(): void;
-	    /**
-	     * Tests whether or not there is still time left for parsing within the maximum allowed time frame per session.
-	     * @return True if there is still time left, false if the maximum allotted time was exceeded and parsing should be interrupted.
-	     */
-	    _pHasTime(): boolean;
-	    /**
-	     * Called when the parsing pause interval has passed and parsing can proceed.
-	     */
-	    _pOnInterval(event?: TimerEvent): void;
-	    /**
-	     * Initializes the parsing of data.
-	     * @param frameLimit The maximum duration of a parsing session.
-	     */
-	    _pStartParsing(frameLimit: number): void;
-	    /**
-	     * Finish parsing the data.
-	     */
-	    _pFinishParsing(): void;
-	    /**
-	     *
-	     * @returns {string}
-	     * @private
-	     */
-	    _pGetTextData(): string;
-	    /**
-	     *
-	     * @returns {string}
-	     * @private
-	     */
-	    _pGetByteData(): ByteArray;
-	}
-	export = ParserBase;
-	
-}
-declare module "awayjs-core/lib/textures/MipmapGenerator" {
-	import BitmapData = require("awayjs-core/lib/data/BitmapData");
-	/**
-	 * MipmapGenerator is a helper class that uploads BitmapData to a Texture including mipmap levels.
-	 */
-	class MipmapGenerator {
-	    private static _mipMaps;
-	    private static _mipMapUses;
-	    private static _matrix;
-	    private static _rect;
-	    private static _source;
-	    /**
-	     * Uploads a BitmapData with mip maps to a target Texture object.
-	     * @param source The source to upload.
-	     * @param target The target Texture to upload to.
-	     * @param mipmap An optional mip map holder to avoids creating new instances for fe animated materials.
-	     * @param alpha Indicate whether or not the uploaded bitmapData is transparent.
-	     */
-	    static generateMipMaps(source: HTMLImageElement, output?: Array<BitmapData>, alpha?: boolean): any;
-	    static generateMipMaps(source: BitmapData, output?: Array<BitmapData>, alpha?: boolean): any;
-	    private static _getMipmapHolder(mipMapHolder, newW, newH);
-	    static freeMipMapHolder(mipMapHolder: BitmapData): void;
-	}
-	export = MipmapGenerator;
-	
-}
-declare module "awayjs-core/lib/pool/ITextureData" {
-	/**
-	 * ITextureData is an interface for classes that are used in the rendering pipeline to render the
-	 * contents of a texture
-	 *
-	 * @class away.pool.ITextureData
-	 */
-	interface ITextureData {
-	    /**
-	     *
-	     */
-	    dispose(): any;
-	    /**
-	     *
-	     */
-	    invalidate(): any;
-	}
-	export = ITextureData;
-	
-}
-declare module "awayjs-core/lib/textures/TextureBase" {
-	import IAsset = require("awayjs-core/lib/library/IAsset");
-	import AssetBase = require("awayjs-core/lib/library/AssetBase");
-	import ITextureData = require("awayjs-core/lib/pool/ITextureData");
-	/**
-	 *
-	 */
-	class TextureProxyBase extends AssetBase implements IAsset {
-	    _pSize: number;
-	    _pFormat: string;
-	    private _textureData;
-	    static assetType: string;
-	    /**
-	     *
-	     */
-	    constructor(generateMipmaps?: boolean);
-	    size: number;
-	    /**
-	     *
-	     * @returns {string}
-	     */
-	    format: string;
-	    /**
-	     *
-	     * @returns {string}
-	     */
-	    assetType: string;
-	    /**
-	     *
-	     */
-	    invalidateContent(): void;
-	    /**
-	     *
-	     * @private
-	     */
-	    invalidateSize(): void;
-	    /**
-	     * @inheritDoc
-	     */
-	    dispose(): void;
-	    _iAddTextureData(textureData: ITextureData): ITextureData;
-	    _iRemoveTextureData(textureData: ITextureData): ITextureData;
-	}
-	export = TextureProxyBase;
-	
-}
-declare module "awayjs-core/lib/textures/CubeTextureBase" {
-	import BitmapData = require("awayjs-core/lib/data/BitmapData");
-	import TextureBase = require("awayjs-core/lib/textures/TextureBase");
-	class CubeTextureBase extends TextureBase {
-	    _mipmapDataArray: Array<Array<BitmapData>>;
-	    _mipmapDataDirtyArray: Array<boolean>;
-	    constructor();
-	    /**
-	     *
-	     * @param width
-	     * @param height
-	     * @private
-	     */
-	    _pSetSize(size: number): void;
-	    /**
-	     * @inheritDoc
-	     */
-	    dispose(): void;
-	    /**
-	     *
-	     */
-	    invalidateContent(): void;
-	    _iGetMipmapData(side: number): Array<BitmapData>;
-	    _iGetTextureData(side: number): any;
-	}
-	export = CubeTextureBase;
-	
-}
-declare module "awayjs-core/lib/textures/ImageCubeTexture" {
-	import CubeTextureBase = require("awayjs-core/lib/textures/CubeTextureBase");
-	class ImageCubeTexture extends CubeTextureBase {
-	    private _htmlImageElements;
-	    /**
-	     * The texture on the cube's right face.
-	     */
-	    positiveX: HTMLImageElement;
-	    /**
-	     * The texture on the cube's left face.
-	     */
-	    negativeX: HTMLImageElement;
-	    /**
-	     * The texture on the cube's top face.
-	     */
-	    positiveY: HTMLImageElement;
-	    /**
-	     * The texture on the cube's bottom face.
-	     */
-	    negativeY: HTMLImageElement;
-	    /**
-	     * The texture on the cube's far face.
-	     */
-	    positiveZ: HTMLImageElement;
-	    /**
-	     * The texture on the cube's near face.
-	     */
-	    negativeZ: HTMLImageElement;
-	    constructor(posX: HTMLImageElement, negX: HTMLImageElement, posY: HTMLImageElement, negY: HTMLImageElement, posZ: HTMLImageElement, negZ: HTMLImageElement);
-	    private _testSize(value);
-	    _iGetTextureData(side: number): HTMLImageElement;
-	}
-	export = ImageCubeTexture;
-	
-}
-declare module "awayjs-core/lib/textures/Texture2DBase" {
-	import BitmapData = require("awayjs-core/lib/data/BitmapData");
-	import TextureBase = require("awayjs-core/lib/textures/TextureBase");
-	class Texture2DBase extends TextureBase {
-	    private _mipmapData;
-	    private _mipmapDataDirty;
-	    _pWidth: number;
-	    _pHeight: number;
-	    /**
-	     *
-	     * @returns {number}
-	     */
-	    width: number;
-	    /**
-	     *
-	     * @returns {number}
-	     */
-	    height: number;
-	    size: number;
-	    constructor();
-	    /**
-	     * @inheritDoc
-	     */
-	    dispose(): void;
-	    /**
-	     *
-	     */
-	    invalidateContent(): void;
-	    /**
-	     *
-	     * @param width
-	     * @param height
-	     * @private
-	     */
-	    _pSetSize(width: number, height: number): void;
-	    _iGetMipmapData(): Array<BitmapData>;
-	    _iGetTextureData(): any;
-	}
-	export = Texture2DBase;
-	
-}
-declare module "awayjs-core/lib/textures/ImageTexture" {
-	import Texture2DBase = require("awayjs-core/lib/textures/Texture2DBase");
-	class ImageTexture extends Texture2DBase {
-	    private _htmlImageElement;
-	    /**
-	     *
-	     * @param htmlImageElement
-	     * @param generateMipmaps
-	     */
-	    constructor(htmlImageElement: HTMLImageElement);
-	    /**
-	     *
-	     */
-	    htmlImageElement: HTMLImageElement;
-	    _iGetTextureData(): HTMLImageElement;
-	}
-	export = ImageTexture;
-	
-}
-declare module "awayjs-core/lib/parsers/CubeTextureParser" {
-	import ParserBase = require("awayjs-core/lib/parsers/ParserBase");
-	import ResourceDependency = require("awayjs-core/lib/parsers/ResourceDependency");
-	/**
-	 * CubeTextureParser provides a "parser" for natively supported image types (jpg, png). While it simply loads bytes into
-	 * a loader object, it wraps it in a BitmapDataResource so resource management can happen consistently without
-	 * exception cases.
-	 */
-	class CubeTextureParser extends ParserBase {
-	    private static posX;
-	    private static negX;
-	    private static posY;
-	    private static negY;
-	    private static posZ;
-	    private static negZ;
-	    private _imgDependencyDictionary;
-	    /**
-	     * Creates a new CubeTextureParser object.
-	     * @param uri The url or id of the data or file to be parsed.
-	     * @param extra The holder for extra contextual data that the parser might need.
-	     */
-	    constructor();
-	    /**
-	     * Indicates whether or not a given file extension is supported by the parser.
-	     * @param extension The file extension of a potential file to be parsed.
-	     * @return Whether or not the given file type is supported.
-	     */
-	    static supportsType(extension: string): boolean;
-	    /**
-	     * Tests whether a data block can be parsed by the parser.
-	     * @param data The data block to potentially be parsed.
-	     * @return Whether or not the given data is supported.
-	     */
-	    static supportsData(data: any): boolean;
-	    /**
-	     * @inheritDoc
-	     */
-	    _iResolveDependency(resourceDependency: ResourceDependency): void;
-	    /**
-	     * @inheritDoc
-	     */
-	    _iResolveDependencyFailure(resourceDependency: ResourceDependency): void;
-	    /**
-	     * @inheritDoc
-	     */
-	    _pProceedParsing(): boolean;
-	    private _validateCubeData();
-	    private _getHTMLImageElement(name);
-	}
-	export = CubeTextureParser;
-	
-}
-declare module "awayjs-core/lib/parsers/Texture2DParser" {
-	import ParserBase = require("awayjs-core/lib/parsers/ParserBase");
-	/**
-	 * Texture2DParser provides a "parser" for natively supported image types (jpg, png). While it simply loads bytes into
-	 * a loader object, it wraps it in a BitmapDataResource so resource management can happen consistently without
-	 * exception cases.
-	 */
-	class Texture2DParser extends ParserBase {
-	    private _startedParsing;
-	    private _doneParsing;
-	    private _loadingImage;
-	    private _htmlImageElement;
-	    /**
-	     * Creates a new Texture2DParser object.
-	     * @param uri The url or id of the data or file to be parsed.
-	     * @param extra The holder for extra contextual data that the parser might need.
-	     */
-	    constructor();
-	    /**
-	     * Indicates whether or not a given file extension is supported by the parser.
-	     * @param extension The file extension of a potential file to be parsed.
-	     * @return Whether or not the given file type is supported.
-	     */
-	    static supportsType(extension: string): boolean;
-	    /**
-	     * Tests whether a data block can be parsed by the parser.
-	     * @param data The data block to potentially be parsed.
-	     * @return Whether or not the given data is supported.
-	     */
-	    static supportsData(data: any): boolean;
-	    /**
-	     * @inheritDoc
-	     */
-	    _pProceedParsing(): boolean;
-	    onLoadComplete(event: any): void;
-	}
-	export = Texture2DParser;
-	
-}
-declare module "awayjs-core/lib/library/AssetLoader" {
+}declare module "awayjs-core/lib/library/AssetLoader" {
 	import AssetLoaderContext = require("awayjs-core/lib/library/AssetLoaderContext");
 	import AssetLoaderToken = require("awayjs-core/lib/library/AssetLoaderToken");
 	import URLRequest = require("awayjs-core/lib/net/URLRequest");
@@ -5689,8 +4652,247 @@ declare module "awayjs-core/lib/library/AssetLoader" {
 	}
 	export = AssetLoader;
 	
-}
-declare module "awayjs-core/lib/library/ConflictPrecedence" {
+}declare module "awayjs-core/lib/library/AssetLoaderContext" {
+	class AssetLoaderContext {
+	    static UNDEFINED: number;
+	    static SINGLEPASS_MATERIALS: number;
+	    static MULTIPASS_MATERIALS: number;
+	    private _includeDependencies;
+	    private _dependencyBaseUrl;
+	    private _embeddedDataByUrl;
+	    private _remappedUrls;
+	    private _materialMode;
+	    private _overrideAbsPath;
+	    private _overrideFullUrls;
+	    /**
+	     * AssetLoaderContext provides configuration for the AssetLoader load() and parse() operations.
+	     * Use it to configure how (and if) dependencies are loaded, or to map dependency URLs to
+	     * embedded data.
+	     *
+	     * @see away.loading.AssetLoader
+	     */
+	    constructor(includeDependencies?: boolean, dependencyBaseUrl?: string);
+	    /**
+	     * Defines whether dependencies (all files except the one at the URL given to the load() or
+	     * parseData() operations) should be automatically loaded. Defaults to true.
+	     */
+	    includeDependencies: boolean;
+	    /**
+	     * MaterialMode defines, if the Parser should create SinglePass or MultiPass Materials
+	     * Options:
+	     * 0 (Default / undefined) - All Parsers will create SinglePassMaterials, but the AWD2.1parser will create Materials as they are defined in the file
+	     * 1 (Force SinglePass) - All Parsers create SinglePassMaterials
+	     * 2 (Force MultiPass) - All Parsers will create MultiPassMaterials
+	     *
+	     */
+	    materialMode: number;
+	    /**
+	     * A base URL that will be prepended to all relative dependency URLs found in a loaded resource.
+	     * Absolute paths will not be affected by the value of this property.
+	     */
+	    dependencyBaseUrl: string;
+	    /**
+	     * Defines whether absolute paths (defined as paths that begin with a "/") should be overridden
+	     * with the dependencyBaseUrl defined in this context. If this is true, and the base path is
+	     * "base", /path/to/asset.jpg will be resolved as base/path/to/asset.jpg.
+	     */
+	    overrideAbsolutePaths: boolean;
+	    /**
+	     * Defines whether "full" URLs (defined as a URL that includes a scheme, e.g. http://) should be
+	     * overridden with the dependencyBaseUrl defined in this context. If this is true, and the base
+	     * path is "base", http://example.com/path/to/asset.jpg will be resolved as base/path/to/asset.jpg.
+	     */
+	    overrideFullURLs: boolean;
+	    /**
+	     * Map a URL to another URL, so that files that are referred to by the original URL will instead
+	     * be loaded from the new URL. Use this when your file structure does not match the one that is
+	     * expected by the loaded file.
+	     *
+	     * @param originalUrl The original URL which is referenced in the loaded resource.
+	     * @param newUrl The URL from which away.should load the resource instead.
+	     *
+	     * @see mapUrlToData()
+	     */
+	    mapUrl(originalUrl: string, newUrl: string): void;
+	    /**
+	     * Map a URL to embedded data, so that instead of trying to load a dependency from the URL at
+	     * which it's referenced, the dependency data will be retrieved straight from the memory instead.
+	     *
+	     * @param originalUrl The original URL which is referenced in the loaded resource.
+	     * @param data The embedded data. Can be ByteArray or a class which can be used to create a bytearray.
+	     */
+	    mapUrlToData(originalUrl: string, data: any): void;
+	    /**
+	     * @private
+	     * Defines whether embedded data has been mapped to a particular URL.
+	     */
+	    _iHasDataForUrl(url: string): boolean;
+	    /**
+	     * @private
+	     * Returns embedded data for a particular URL.
+	     */
+	    _iGetDataForUrl(url: string): any;
+	    /**
+	     * @private
+	     * Defines whether a replacement URL has been mapped to a particular URL.
+	     */
+	    _iHasMappingForUrl(url: string): boolean;
+	    /**
+	     * @private
+	     * Returns new (replacement) URL for a particular original URL.
+	     */
+	    _iGetRemappedUrl(originalUrl: string): string;
+	}
+	export = AssetLoaderContext;
+	
+}declare module "awayjs-core/lib/library/AssetLoaderToken" {
+	import AssetLoader = require("awayjs-core/lib/library/AssetLoader");
+	import EventDispatcher = require("awayjs-core/lib/events/EventDispatcher");
+	/**
+	 * Dispatched when any asset finishes parsing. Also see specific events for each
+	 * individual asset type (meshes, materials et c.)
+	 *
+	 * @eventType away.events.AssetEvent
+	 */
+	/**
+	 * Dispatched when a full resource (including dependencies) finishes loading.
+	 *
+	 * @eventType away.events.LoaderEvent
+	 */
+	/**
+	 * Dispatched when a single dependency (which may be the main file of a resource)
+	 * finishes loading.
+	 *
+	 * @eventType away.events.LoaderEvent
+	 */
+	/**
+	 * Dispatched when an error occurs during loading. I
+	 *
+	 * @eventType away.events.LoaderEvent
+	 */
+	/**
+	 * Dispatched when an error occurs during parsing.
+	 *
+	 * @eventType away.events.ParserEvent
+	 */
+	/**
+	 * Dispatched when a skybox asset has been costructed from a ressource.
+	 *
+	 * @eventType away.events.AssetEvent
+	 */
+	/**
+	 * Dispatched when a camera3d asset has been costructed from a ressource.
+	 *
+	 * @eventType away.events.AssetEvent
+	 */
+	/**
+	 * Dispatched when a mesh asset has been costructed from a ressource.
+	 *
+	 * @eventType away.events.AssetEvent
+	 */
+	/**
+	 * Dispatched when a geometry asset has been constructed from a resource.
+	 *
+	 * @eventType away.events.AssetEvent
+	 */
+	/**
+	 * Dispatched when a skeleton asset has been constructed from a resource.
+	 *
+	 * @eventType away.events.AssetEvent
+	 */
+	/**
+	 * Dispatched when a skeleton pose asset has been constructed from a resource.
+	 *
+	 * @eventType away.events.AssetEvent
+	 */
+	/**
+	 * Dispatched when a container asset has been constructed from a resource.
+	 *
+	 * @eventType away.events.AssetEvent
+	 */
+	/**
+	 * Dispatched when a texture asset has been constructed from a resource.
+	 *
+	 * @eventType away.events.AssetEvent
+	 */
+	/**
+	 * Dispatched when a texture projector asset has been constructed from a resource.
+	 *
+	 * @eventType away.events.AssetEvent
+	 */
+	/**
+	 * Dispatched when a material asset has been constructed from a resource.
+	 *
+	 * @eventType away.events.AssetEvent
+	 */
+	/**
+	 * Dispatched when a animator asset has been constructed from a resource.
+	 *
+	 * @eventType away.events.AssetEvent
+	 */
+	/**
+	 * Dispatched when an animation set has been constructed from a group of animation state resources.
+	 *
+	 * @eventType away.events.AssetEvent
+	 */
+	/**
+	 * Dispatched when an animation state has been constructed from a group of animation node resources.
+	 *
+	 * @eventType away.events.AssetEvent
+	 */
+	/**
+	 * Dispatched when an animation node has been constructed from a resource.
+	 *
+	 * @eventType away.events.AssetEvent
+	 */
+	/**
+	 * Dispatched when an animation state transition has been constructed from a group of animation node resources.
+	 *
+	 * @eventType away.events.AssetEvent
+	 */
+	/**
+	 * Dispatched when an light asset has been constructed from a resources.
+	 *
+	 * @eventType away.events.AssetEvent
+	 */
+	/**
+	 * Dispatched when an light picker asset has been constructed from a resources.
+	 *
+	 * @eventType away.events.AssetEvent
+	 */
+	/**
+	 * Dispatched when an effect method asset has been constructed from a resources.
+	 *
+	 * @eventType away.events.AssetEvent
+	 */
+	/**
+	 * Dispatched when an shadow map method asset has been constructed from a resources.
+	 *
+	 * @eventType away.events.AssetEvent
+	 */
+	/**
+	 * Instances of this class are returned as tokens by loading operations
+	 * to provide an object on which events can be listened for in cases where
+	 * the actual asset loader is not directly available (e.g. when using the
+	 * AssetLibrary to perform the load.)
+	 *
+	 * By listening for events on this class instead of directly on the
+	 * AssetLibrary, one can distinguish different loads from each other.
+	 *
+	 * The token will dispatch all events that the original AssetLoader dispatches,
+	 * while not providing an interface to obstruct the load and is as such a
+	 * safer return value for loader wrappers than the loader itself.
+	 */
+	class AssetLoaderToken extends EventDispatcher {
+	    _iLoader: AssetLoader;
+	    constructor(loader: AssetLoader);
+	    addEventListener(type: string, listener: Function): void;
+	    removeEventListener(type: string, listener: Function): void;
+	    hasEventListener(type: string, listener?: Function): boolean;
+	}
+	export = AssetLoaderToken;
+	
+}declare module "awayjs-core/lib/library/ConflictPrecedence" {
 	/**
 	 * Enumaration class for precedence when resolving naming conflicts in the library.
 	 *
@@ -5714,8 +4916,42 @@ declare module "awayjs-core/lib/library/ConflictPrecedence" {
 	}
 	export = ConflictPrecedence;
 	
-}
-declare module "awayjs-core/lib/library/ConflictStrategyBase" {
+}declare module "awayjs-core/lib/library/ConflictStrategy" {
+	import ConflictStrategyBase = require("awayjs-core/lib/library/ConflictStrategyBase");
+	/**
+	 * Enumeration class for bundled conflict strategies. Set one of these values (or an
+	 * instance of a self-defined sub-class of ConflictStrategyBase) to the conflictStrategy
+	 * property on an AssetLibrary to define how that library resolves naming conflicts.
+	 *
+	 * The value of the <code>AssetLibrary.conflictPrecedence</code> property defines which
+	 * of the conflicting assets will get to keep it's name, and which is renamed (if any.)
+	 *
+	 * @see away.library.AssetLibrary.conflictStrategy
+	 * @see away.library.naming.ConflictStrategyBase
+	 */
+	class ConflictStrategy {
+	    /**
+	     * Specifies that in case of a naming conflict, one of the assets will be renamed and
+	     * a numeric suffix appended to the base name.
+	     */
+	    static APPEND_NUM_SUFFIX: ConflictStrategyBase;
+	    /**
+	     * Specifies that naming conflicts should be ignored. This is not recommended in most
+	     * cases, unless it can be 100% guaranteed that the application does not cause naming
+	     * conflicts in the library (i.e. when an app-level system is in place to prevent this.)
+	     */
+	    static IGNORE: ConflictStrategyBase;
+	    /**
+	     * Specifies that an error should be thrown if a naming conflict is discovered. Use this
+	     * to be 100% sure that naming conflicts never occur unnoticed, and when it's undesirable
+	     * to have the library automatically rename assets to avoid such conflicts.
+	     */
+	    static THROW_ERROR: ConflictStrategyBase;
+	    constructor(include?: ConflictStrategyBase);
+	}
+	export = ConflictStrategy;
+	
+}declare module "awayjs-core/lib/library/ConflictStrategyBase" {
 	import IAsset = require("awayjs-core/lib/library/IAsset");
 	/**
 	 * Abstract base class for naming conflict resolution classes. Extend this to create a
@@ -5755,8 +4991,7 @@ declare module "awayjs-core/lib/library/ConflictStrategyBase" {
 	}
 	export = ConflictStrategyBase;
 	
-}
-declare module "awayjs-core/lib/library/ErrorConflictStrategy" {
+}declare module "awayjs-core/lib/library/ErrorConflictStrategy" {
 	import ConflictStrategyBase = require("awayjs-core/lib/library/ConflictStrategyBase");
 	import IAsset = require("awayjs-core/lib/library/IAsset");
 	class ErrorConflictStrategy extends ConflictStrategyBase {
@@ -5766,396 +5001,63 @@ declare module "awayjs-core/lib/library/ErrorConflictStrategy" {
 	}
 	export = ErrorConflictStrategy;
 	
-}
-declare module "awayjs-core/lib/library/IgnoreConflictStrategy" {
-	import ConflictStrategyBase = require("awayjs-core/lib/library/ConflictStrategyBase");
+}declare module "awayjs-core/lib/library/IAsset" {
+	import IEventDispatcher = require("awayjs-core/lib/events/IEventDispatcher");
+	interface IAsset extends IEventDispatcher {
+	    /**
+	     *
+	     */
+	    name: string;
+	    /**
+	     *
+	     */
+	    id: number;
+	    /**
+	     *
+	     */
+	    assetNamespace: string;
+	    /**
+	     *
+	     */
+	    assetType: string;
+	    /**
+	     *
+	     */
+	    assetFullPath: Array<string>;
+	    /**
+	     *
+	     * @param name
+	     * @param ns
+	     */
+	    assetPathEquals(name: string, ns: string): boolean;
+	    /**
+	     *
+	     */
+	    dispose(): any;
+	    /**
+	     *
+	     * @param IAssetClass
+	     */
+	    isAsset(IAssetClass: any): boolean;
+	    /**
+	     *
+	     * @param name
+	     * @param ns
+	     * @param overrideOriginal
+	     */
+	    resetAssetPath(name: string, ns: string, overrideOriginal?: boolean): void;
+	}
+	export = IAsset;
+	
+}declare module "awayjs-core/lib/library/IAssetClass" {
 	import IAsset = require("awayjs-core/lib/library/IAsset");
-	class IgnoreConflictStrategy extends ConflictStrategyBase {
-	    constructor();
-	    resolveConflict(changedAsset: IAsset, oldAsset: IAsset, assetsDictionary: Object, precedence: string): void;
-	    create(): ConflictStrategyBase;
+	interface IAssetClass {
+	    assetType: string;
+	    new (): IAsset;
 	}
-	export = IgnoreConflictStrategy;
+	export = IAssetClass;
 	
-}
-declare module "awayjs-core/lib/library/NumSuffixConflictStrategy" {
-	import ConflictStrategyBase = require("awayjs-core/lib/library/ConflictStrategyBase");
-	import IAsset = require("awayjs-core/lib/library/IAsset");
-	class NumSuffixConflictStrategy extends ConflictStrategyBase {
-	    private _separator;
-	    private _next_suffix;
-	    constructor(separator?: string);
-	    resolveConflict(changedAsset: IAsset, oldAsset: IAsset, assetsDictionary: Object, precedence: string): void;
-	    create(): ConflictStrategyBase;
-	}
-	export = NumSuffixConflictStrategy;
-	
-}
-declare module "awayjs-core/lib/library/ConflictStrategy" {
-	import ConflictStrategyBase = require("awayjs-core/lib/library/ConflictStrategyBase");
-	/**
-	 * Enumeration class for bundled conflict strategies. Set one of these values (or an
-	 * instance of a self-defined sub-class of ConflictStrategyBase) to the conflictStrategy
-	 * property on an AssetLibrary to define how that library resolves naming conflicts.
-	 *
-	 * The value of the <code>AssetLibrary.conflictPrecedence</code> property defines which
-	 * of the conflicting assets will get to keep it's name, and which is renamed (if any.)
-	 *
-	 * @see away.library.AssetLibrary.conflictStrategy
-	 * @see away.library.naming.ConflictStrategyBase
-	 */
-	class ConflictStrategy {
-	    /**
-	     * Specifies that in case of a naming conflict, one of the assets will be renamed and
-	     * a numeric suffix appended to the base name.
-	     */
-	    static APPEND_NUM_SUFFIX: ConflictStrategyBase;
-	    /**
-	     * Specifies that naming conflicts should be ignored. This is not recommended in most
-	     * cases, unless it can be 100% guaranteed that the application does not cause naming
-	     * conflicts in the library (i.e. when an app-level system is in place to prevent this.)
-	     */
-	    static IGNORE: ConflictStrategyBase;
-	    /**
-	     * Specifies that an error should be thrown if a naming conflict is discovered. Use this
-	     * to be 100% sure that naming conflicts never occur unnoticed, and when it's undesirable
-	     * to have the library automatically rename assets to avoid such conflicts.
-	     */
-	    static THROW_ERROR: ConflictStrategyBase;
-	    constructor(include?: ConflictStrategyBase);
-	}
-	export = ConflictStrategy;
-	
-}
-declare module "awayjs-core/lib/library/AssetLibraryBundle" {
-	import URLRequest = require("awayjs-core/lib/net/URLRequest");
-	import AssetLibraryIterator = require("awayjs-core/lib/library/AssetLibraryIterator");
-	import AssetLoaderToken = require("awayjs-core/lib/library/AssetLoaderToken");
-	import AssetLoaderContext = require("awayjs-core/lib/library/AssetLoaderContext");
-	import ConflictStrategyBase = require("awayjs-core/lib/library/ConflictStrategyBase");
-	import IAsset = require("awayjs-core/lib/library/IAsset");
-	import EventDispatcher = require("awayjs-core/lib/events/EventDispatcher");
-	import ParserBase = require("awayjs-core/lib/parsers/ParserBase");
-	/**
-	 * AssetLibraryBundle enforces a multiton pattern and is not intended to be instanced directly.
-	 * Its purpose is to create a container for 3D data management, both before and after parsing.
-	 * If you are interested in creating multiple library bundles, please use the <code>getInstance()</code> method.
-	 */
-	class AssetLibraryBundle extends EventDispatcher {
-	    static _iInstances: Object;
-	    private _loadingSessions;
-	    private _strategy;
-	    private _strategyPreference;
-	    private _assets;
-	    private _assetDictionary;
-	    private _assetDictDirty;
-	    private _loadingSessionsGarbage;
-	    private _gcTimeoutIID;
-	    private _onAssetRenameDelegate;
-	    private _onAssetConflictResolvedDelegate;
-	    private _onResourceCompleteDelegate;
-	    private _onTextureSizeErrorDelegate;
-	    private _onAssetCompleteDelegate;
-	    private _onLoadErrorDelegate;
-	    private _onParseErrorDelegate;
-	    /**
-	     * Creates a new <code>AssetLibraryBundle</code> object.
-	     *
-	     * @param me A multiton enforcer for the AssetLibraryBundle ensuring it cannnot be instanced.
-	     */
-	    constructor();
-	    /**
-	     * Returns an AssetLibraryBundle instance. If no key is given, returns the default bundle instance (which is
-	     * similar to using the AssetLibraryBundle as a singleton.) To keep several separated library bundles,
-	     * pass a string key to this method to define which bundle should be returned. This is
-	     * referred to as using the AssetLibrary as a multiton.
-	     *
-	     * @param key Defines which multiton instance should be returned.
-	     * @return An instance of the asset library
-	     */
-	    static getInstance(key?: string): AssetLibraryBundle;
-	    /**
-	     *
-	     */
-	    enableParser(parserClass: Object): void;
-	    /**
-	     *
-	     */
-	    enableParsers(parserClasses: Object[]): void;
-	    /**
-	     * Defines which strategy should be used for resolving naming conflicts, when two library
-	     * assets are given the same name. By default, <code>ConflictStrategy.APPEND_NUM_SUFFIX</code>
-	     * is used which means that a numeric suffix is appended to one of the assets. The
-	     * <code>conflictPrecedence</code> property defines which of the two conflicting assets will
-	     * be renamed.
-	     *
-	     * @see naming.ConflictStrategy
-	     * @see AssetLibrary.conflictPrecedence
-	     */
-	    conflictStrategy: ConflictStrategyBase;
-	    /**
-	     * Defines which asset should have precedence when resolving a naming conflict between
-	     * two assets of which one has just been renamed by the user or by a parser. By default
-	     * <code>ConflictPrecedence.FAVOR_NEW</code> is used, meaning that the newly renamed
-	     * asset will keep it's new name while the older asset gets renamed to not conflict.
-	     *
-	     * This property is ignored for conflict strategies that do not actually rename an
-	     * asset automatically, such as ConflictStrategy.IGNORE and ConflictStrategy.THROW_ERROR.
-	     *
-	     * @see away.library.ConflictPrecedence
-	     * @see away.library.ConflictStrategy
-	     */
-	    conflictPrecedence: string;
-	    /**
-	     * Create an AssetLibraryIterator instance that can be used to iterate over the assets
-	     * in this asset library instance. The iterator can filter assets on asset type and/or
-	     * namespace. A "null" filter value means no filter of that type is used.
-	     *
-	     * @param assetTypeFilter Asset type to filter on (from the AssetType enum class.) Use
-	     * null to not filter on asset type.
-	     * @param namespaceFilter Namespace to filter on. Use null to not filter on namespace.
-	     * @param filterFunc Callback function to use when deciding whether an asset should be
-	     * included in the iteration or not. This needs to be a function that takes a single
-	     * parameter of type IAsset and returns a boolean where true means it should be included.
-	     *
-	     * @see away.library.AssetType
-	     */
-	    createIterator(assetTypeFilter?: string, namespaceFilter?: string, filterFunc?: any): AssetLibraryIterator;
-	    /**
-	     * Loads a file and (optionally) all of its dependencies.
-	     *
-	     * @param req The URLRequest object containing the URL of the file to be loaded.
-	     * @param context An optional context object providing additional parameters for loading
-	     * @param ns An optional namespace string under which the file is to be loaded, allowing the differentiation of two resources with identical assets
-	     * @param parser An optional parser object for translating the loaded data into a usable resource. If not provided, AssetLoader will attempt to auto-detect the file type.
-	     * @return A handle to the retrieved resource.
-	     */
-	    load(req: URLRequest, context?: AssetLoaderContext, ns?: string, parser?: ParserBase): AssetLoaderToken;
-	    /**
-	     * Loads a resource from existing data in memory.
-	     *
-	     * @param data The data object containing all resource information.
-	     * @param context An optional context object providing additional parameters for loading
-	     * @param ns An optional namespace string under which the file is to be loaded, allowing the differentiation of two resources with identical assets
-	     * @param parser An optional parser object for translating the loaded data into a usable resource. If not provided, AssetLoader will attempt to auto-detect the file type.
-	     * @return A handle to the retrieved resource.
-	     */
-	    loadData(data: any, context?: AssetLoaderContext, ns?: string, parser?: ParserBase): AssetLoaderToken;
-	    /**
-	     *
-	     */
-	    getAsset(name: string, ns?: string): IAsset;
-	    /**
-	     * Adds an asset to the asset library, first making sure that it's name is unique
-	     * using the method defined by the <code>conflictStrategy</code> and
-	     * <code>conflictPrecedence</code> properties.
-	     */
-	    addAsset(asset: IAsset): void;
-	    /**
-	     * Removes an asset from the library, and optionally disposes that asset by calling
-	     * it's disposeAsset() method (which for most assets is implemented as a default
-	     * version of that type's dispose() method.
-	     *
-	     * @param asset The asset which should be removed from this library.
-	     * @param dispose Defines whether the assets should also be disposed.
-	     */
-	    removeAsset(asset: IAsset, dispose?: boolean): void;
-	    /**
-	     * Removes an asset which is specified using name and namespace.
-	     *
-	     * @param name The name of the asset to be removed.
-	     * @param ns The namespace to which the desired asset belongs.
-	     * @param dispose Defines whether the assets should also be disposed.
-	     *
-	     * @see away.library.AssetLibrary.removeAsset()
-	     */
-	    removeAssetByName(name: string, ns?: string, dispose?: boolean): IAsset;
-	    /**
-	     * Removes all assets from the asset library, optionally disposing them as they
-	     * are removed.
-	     *
-	     * @param dispose Defines whether the assets should also be disposed.
-	     */
-	    removeAllAssets(dispose?: boolean): void;
-	    /**
-	     * Removes all assets belonging to a particular namespace (null for default)
-	     * from the asset library, and optionall disposes them by calling their
-	     * disposeAsset() method.
-	     *
-	     * @param ns The namespace from which all assets should be removed.
-	     * @param dispose Defines whether the assets should also be disposed.
-	     *
-	     * @see away.library.AssetLibrary.removeAsset()
-	     */
-	    removeNamespaceAssets(ns?: string, dispose?: boolean): void;
-	    private removeAssetFromDict(asset, autoRemoveEmptyNamespace?);
-	    stopAllLoadingSessions(): void;
-	    private rehashAssetDict();
-	    /**
-	     * Called when a an error occurs during loading.
-	     */
-	    private onLoadError(event);
-	    /**
-	     * Called when a an error occurs during parsing.
-	     */
-	    private onParseError(event);
-	    private onAssetComplete(event);
-	    private onTextureSizeError(event);
-	    /**
-	     * Called when the resource and all of its dependencies was retrieved.
-	     */
-	    private onResourceComplete(event);
-	    private loadingSessionGC();
-	    private killLoadingSession(loader);
-	    /**
-	     * Called when unespected error occurs
-	     */
-	    private onAssetRename(event);
-	    private onAssetConflictResolved(event);
-	}
-	export = AssetLibraryBundle;
-	
-}
-declare module "awayjs-core/lib/library/AssetLibrary" {
-	import URLRequest = require("awayjs-core/lib/net/URLRequest");
-	import AssetLibraryBundle = require("awayjs-core/lib/library/AssetLibraryBundle");
-	import AssetLibraryIterator = require("awayjs-core/lib/library/AssetLibraryIterator");
-	import AssetLoaderContext = require("awayjs-core/lib/library/AssetLoaderContext");
-	import AssetLoaderToken = require("awayjs-core/lib/library/AssetLoaderToken");
-	import ConflictStrategyBase = require("awayjs-core/lib/library/ConflictStrategyBase");
-	import IAsset = require("awayjs-core/lib/library/IAsset");
-	import ParserBase = require("awayjs-core/lib/parsers/ParserBase");
-	/**
-	 * AssetLibrary enforces a singleton pattern and is not intended to be instanced.
-	 * It's purpose is to allow access to the default library bundle through a set of static shortcut methods.
-	 * If you are interested in creating multiple library bundles, please use the <code>getBundle()</code> method.
-	 */
-	class AssetLibrary {
-	    /**
-	     * Creates a new <code>AssetLibrary</code> object.
-	     *
-	     */
-	    constructor();
-	    /**
-	     * Returns an AssetLibrary bundle instance. If no key is given, returns the default bundle (which is
-	     * similar to using the AssetLibraryBundle as a singleton). To keep several separated library bundles,
-	     * pass a string key to this method to define which bundle should be returned. This is
-	     * referred to as using the AssetLibraryBundle as a multiton.
-	     *
-	     * @param key Defines which multiton instance should be returned.
-	     * @return An instance of the asset library
-	     */
-	    static getBundle(key?: string): AssetLibraryBundle;
-	    /**
-	     *
-	     */
-	    static enableParser(parserClass: any): void;
-	    /**
-	     *
-	     */
-	    static enableParsers(parserClasses: Array<Object>): void;
-	    /**
-	     * Short-hand for conflictStrategy property on default asset library bundle.
-	     *
-	     * @see AssetLibraryBundle.conflictStrategy
-	     */
-	    static conflictStrategy: ConflictStrategyBase;
-	    /**
-	     * Short-hand for conflictPrecedence property on default asset library bundle.
-	     *
-	     * @see AssetLibraryBundle.conflictPrecedence
-	     */
-	    static conflictPrecedence: string;
-	    /**
-	     * Short-hand for createIterator() method on default asset library bundle.
-	     *
-	     * @see AssetLibraryBundle.createIterator()
-	     */
-	    static createIterator(assetTypeFilter?: string, namespaceFilter?: string, filterFunc?: any): AssetLibraryIterator;
-	    /**
-	     * Short-hand for load() method on default asset library bundle.
-	     *
-	     * @see AssetLibraryBundle.load()
-	     */
-	    static load(req: URLRequest, context?: AssetLoaderContext, ns?: string, parser?: ParserBase): AssetLoaderToken;
-	    /**
-	     * Short-hand for loadData() method on default asset library bundle.
-	     *
-	     * @see AssetLibraryBundle.loadData()
-	     */
-	    static loadData(data: any, context?: AssetLoaderContext, ns?: string, parser?: ParserBase): AssetLoaderToken;
-	    static stopLoad(): void;
-	    /**
-	     * Short-hand for getAsset() method on default asset library bundle.
-	     *
-	     * @see AssetLibraryBundle.getAsset()
-	     */
-	    static getAsset(name: string, ns?: string): IAsset;
-	    /**
-	     * Short-hand for addEventListener() method on default asset library bundle.
-	     */
-	    static addEventListener(type: string, listener: Function): void;
-	    /**
-	     * Short-hand for removeEventListener() method on default asset library bundle.
-	     */
-	    static removeEventListener(type: string, listener: Function): void;
-	    /**
-	     * Short-hand for hasEventListener() method on default asset library bundle.
-	
-	     public static hasEventListener(type:string):boolean
-	     {
-	        return AssetLibrary.getBundle().hasEventListener(type);
-	    }
-	
-	     public static willTrigger(type:string):boolean
-	     {
-	        return getBundle().willTrigger(type);
-	    }
-	     */
-	    /**
-	     * Short-hand for addAsset() method on default asset library bundle.
-	     *
-	     * @see AssetLibraryBundle.addAsset()
-	     */
-	    static addAsset(asset: IAsset): void;
-	    /**
-	     * Short-hand for removeAsset() method on default asset library bundle.
-	     *
-	     * @param asset The asset which should be removed from the library.
-	     * @param dispose Defines whether the assets should also be disposed.
-	     *
-	     * @see AssetLibraryBundle.removeAsset()
-	     */
-	    static removeAsset(asset: IAsset, dispose?: boolean): void;
-	    /**
-	     * Short-hand for removeAssetByName() method on default asset library bundle.
-	     *
-	     * @param name The name of the asset to be removed.
-	     * @param ns The namespace to which the desired asset belongs.
-	     * @param dispose Defines whether the assets should also be disposed.
-	     *
-	     * @see AssetLibraryBundle.removeAssetByName()
-	     */
-	    static removeAssetByName(name: string, ns?: string, dispose?: boolean): IAsset;
-	    /**
-	     * Short-hand for removeAllAssets() method on default asset library bundle.
-	     *
-	     * @param dispose Defines whether the assets should also be disposed.
-	     *
-	     * @see AssetLibraryBundle.removeAllAssets()
-	     */
-	    static removeAllAssets(dispose?: boolean): void;
-	    /**
-	     * Short-hand for removeNamespaceAssets() method on default asset library bundle.
-	     *
-	     * @see AssetLibraryBundle.removeNamespaceAssets()
-	     */
-	    static removeNamespaceAssets(ns?: string, dispose?: boolean): void;
-	}
-	export = AssetLibrary;
-	
-}
-declare module "awayjs-core/lib/library/IDUtil" {
+}declare module "awayjs-core/lib/library/IDUtil" {
 	class IDUtil {
 	    /**
 	     *  @private
@@ -6184,16 +5086,509 @@ declare module "awayjs-core/lib/library/IDUtil" {
 	}
 	export = IDUtil;
 	
-}
-declare module "awayjs-core/lib/net/CrossDomainPolicy" {
+}declare module "awayjs-core/lib/library/IgnoreConflictStrategy" {
+	import ConflictStrategyBase = require("awayjs-core/lib/library/ConflictStrategyBase");
+	import IAsset = require("awayjs-core/lib/library/IAsset");
+	class IgnoreConflictStrategy extends ConflictStrategyBase {
+	    constructor();
+	    resolveConflict(changedAsset: IAsset, oldAsset: IAsset, assetsDictionary: Object, precedence: string): void;
+	    create(): ConflictStrategyBase;
+	}
+	export = IgnoreConflictStrategy;
+	
+}declare module "awayjs-core/lib/library/NumSuffixConflictStrategy" {
+	import ConflictStrategyBase = require("awayjs-core/lib/library/ConflictStrategyBase");
+	import IAsset = require("awayjs-core/lib/library/IAsset");
+	class NumSuffixConflictStrategy extends ConflictStrategyBase {
+	    private _separator;
+	    private _next_suffix;
+	    constructor(separator?: string);
+	    resolveConflict(changedAsset: IAsset, oldAsset: IAsset, assetsDictionary: Object, precedence: string): void;
+	    create(): ConflictStrategyBase;
+	}
+	export = NumSuffixConflictStrategy;
+	
+}declare module "awayjs-core/lib/net/CrossDomainPolicy" {
 	class CrossDomainPolicy {
 	    static ANONYMOUS: string;
 	    static USE_CREDENTIALS: string;
 	}
 	export = CrossDomainPolicy;
 	
-}
-declare module "awayjs-core/lib/parsers/ParserDataFormat" {
+}declare module "awayjs-core/lib/net/URLLoader" {
+	import URLRequest = require("awayjs-core/lib/net/URLRequest");
+	import EventDispatcher = require("awayjs-core/lib/events/EventDispatcher");
+	/**
+	 * The URLLoader is used to load a single file, as part of a resource.
+	 *
+	 * While URLLoader can be used directly, e.g. to create a third-party asset
+	 * management system, it's recommended to use any of the classes Loader3D, AssetLoader
+	 * and AssetLibrary instead in most cases.
+	 *
+	 * @see AssetLoader
+	 * @see away.library.AssetLibrary
+	 */
+	class URLLoader extends EventDispatcher {
+	    private _XHR;
+	    private _bytesLoaded;
+	    private _bytesTotal;
+	    private _dataFormat;
+	    private _loadError;
+	    private _request;
+	    private _data;
+	    private _loadStartEvent;
+	    private _loadErrorEvent;
+	    private _loadCompleteEvent;
+	    private _progressEvent;
+	    /**
+	     * Creates a new URLLoader object.
+	     */
+	    constructor();
+	    /**
+	     *
+	     */
+	    url: string;
+	    /**
+	     *
+	     */
+	    data: any;
+	    /**
+	     *
+	     * URLLoaderDataFormat.BINARY
+	     * URLLoaderDataFormat.TEXT
+	     * URLLoaderDataFormat.VARIABLES
+	     *
+	     * @param format
+	     */
+	    dataFormat: string;
+	    /**
+	     *
+	     * @returns {number}
+	     */
+	    bytesLoaded: number;
+	    /**
+	     *
+	     * @returns {number}
+	     */
+	    bytesTotal: number;
+	    /**
+	     * Load a resource from a file.
+	     *
+	     * @param request The URLRequest object containing the URL of the object to be loaded.
+	     */
+	    load(request: URLRequest): void;
+	    /**
+	     *
+	     */
+	    close(): void;
+	    /**
+	     *
+	     */
+	    dispose(): void;
+	    /**
+	     *
+	     * @param xhr
+	     * @param responseType
+	     */
+	    private setResponseType(xhr, responseType);
+	    /**
+	     *
+	     * @param request {URLRequest}
+	     */
+	    private getRequest(request);
+	    /**
+	     *
+	     * @param request {URLRequest}
+	     */
+	    private postRequest(request);
+	    /**
+	     *
+	     * @param error {XMLHttpRequestException}
+	     */
+	    private handleXmlHttpRequestException(error);
+	    /**
+	     *
+	     */
+	    private initXHR();
+	    /**
+	     *
+	     */
+	    private disposeXHR();
+	    /**
+	     *
+	     * @param source
+	     */
+	    decodeURLVariables(source: string): Object;
+	    /**
+	     * When XHR state changes
+	     * @param event
+	     */
+	    private onReadyStateChange(event);
+	    /**
+	     * When the request has completed, regardless of whether or not it was successful.
+	     * @param event
+	     */
+	    private onLoadEnd(event);
+	    /**
+	     * When the author specified timeout has passed before the request could complete.
+	     * @param event
+	     */
+	    private onTimeOut(event);
+	    /**
+	     * When the request has been aborted, either by invoking the abort() method or navigating away from the page.
+	     * @param event
+	     */
+	    private onAbort(event);
+	    /**
+	     * While loading and sending data.
+	     * @param event
+	     */
+	    private onProgress(event);
+	    /**
+	     * When the request starts.
+	     * @param event
+	     */
+	    private onLoadStart(event);
+	    /**
+	     * When the request has successfully completed.
+	     * @param event
+	     */
+	    private onLoadComplete(event);
+	    /**
+	     * When the request has failed. ( due to network issues ).
+	     * @param event
+	     */
+	    private onLoadError(event);
+	}
+	export = URLLoader;
+	
+}declare module "awayjs-core/lib/net/URLLoaderDataFormat" {
+	class URLLoaderDataFormat {
+	    /**
+	     * TEXT
+	     * @type {string}
+	     */
+	    static TEXT: string;
+	    /**
+	     * Variables / Value Pairs
+	     * @type {string}
+	     */
+	    static VARIABLES: string;
+	    /**
+	     *
+	     * @type {string}
+	     */
+	    static BLOB: string;
+	    /**
+	     *
+	     * @type {string}
+	     */
+	    static ARRAY_BUFFER: string;
+	    /**
+	     *
+	     * @type {string}
+	     */
+	    static BINARY: string;
+	}
+	export = URLLoaderDataFormat;
+	
+}declare module "awayjs-core/lib/net/URLRequest" {
+	class URLRequest {
+	    /**
+	     * Object containing data to be transmited with URL Request ( URL Variables / binary / string )
+	     *
+	     */
+	    data: any;
+	    /**
+	     *
+	     * away.net.URLRequestMethod.GET
+	     * away.net.URLRequestMethod.POST
+	     *
+	     * @type {string}
+	     */
+	    method: string;
+	    /**
+	     * Use asynchronous XMLHttpRequest
+	     * @type {boolean}
+	     */
+	    async: boolean;
+	    /**
+	     *
+	     */
+	    private _url;
+	    /**
+	
+	     * @param url
+	     */
+	    constructor(url?: string);
+	    /**
+	     *
+	     * @returns {string}
+	     */
+	    /**
+	     *
+	     * @param value
+	     */
+	    url: string;
+	    /**
+	     * dispose
+	     */
+	    dispose(): void;
+	}
+	export = URLRequest;
+	
+}declare module "awayjs-core/lib/net/URLRequestMethod" {
+	class URLRequestMethod {
+	    /**
+	     *
+	     * @type {string}
+	     */
+	    static POST: string;
+	    /**
+	     *
+	     * @type {string}
+	     */
+	    static GET: string;
+	}
+	export = URLRequestMethod;
+	
+}declare module "awayjs-core/lib/net/URLVariables" {
+	class URLVariables {
+	    private _variables;
+	    /**
+	     *
+	     * @param source
+	     */
+	    constructor(source?: string);
+	    /**
+	     *
+	     * @param source
+	     */
+	    decode(source: string): void;
+	    /**
+	     *
+	     * @returns {string}
+	     */
+	    toString(): string;
+	    /**
+	     *
+	     * @returns {Object}
+	     */
+	    /**
+	     *
+	     * @returns {Object}
+	     */
+	    variables: Object;
+	    /**
+	     *
+	     * @returns {Object}
+	     */
+	    formData: FormData;
+	}
+	export = URLVariables;
+	
+}declare module "awayjs-core/lib/parsers/CubeTextureParser" {
+	import ParserBase = require("awayjs-core/lib/parsers/ParserBase");
+	import ResourceDependency = require("awayjs-core/lib/parsers/ResourceDependency");
+	/**
+	 * CubeTextureParser provides a "parser" for natively supported image types (jpg, png). While it simply loads bytes into
+	 * a loader object, it wraps it in a BitmapDataResource so resource management can happen consistently without
+	 * exception cases.
+	 */
+	class CubeTextureParser extends ParserBase {
+	    private static posX;
+	    private static negX;
+	    private static posY;
+	    private static negY;
+	    private static posZ;
+	    private static negZ;
+	    private _imgDependencyDictionary;
+	    /**
+	     * Creates a new CubeTextureParser object.
+	     * @param uri The url or id of the data or file to be parsed.
+	     * @param extra The holder for extra contextual data that the parser might need.
+	     */
+	    constructor();
+	    /**
+	     * Indicates whether or not a given file extension is supported by the parser.
+	     * @param extension The file extension of a potential file to be parsed.
+	     * @return Whether or not the given file type is supported.
+	     */
+	    static supportsType(extension: string): boolean;
+	    /**
+	     * Tests whether a data block can be parsed by the parser.
+	     * @param data The data block to potentially be parsed.
+	     * @return Whether or not the given data is supported.
+	     */
+	    static supportsData(data: any): boolean;
+	    /**
+	     * @inheritDoc
+	     */
+	    _iResolveDependency(resourceDependency: ResourceDependency): void;
+	    /**
+	     * @inheritDoc
+	     */
+	    _iResolveDependencyFailure(resourceDependency: ResourceDependency): void;
+	    /**
+	     * @inheritDoc
+	     */
+	    _pProceedParsing(): boolean;
+	    private _validateCubeData();
+	    private _getHTMLImageElement(name);
+	}
+	export = CubeTextureParser;
+	
+}declare module "awayjs-core/lib/parsers/ParserBase" {
+	import BitmapData = require("awayjs-core/lib/data/BitmapData");
+	import IAsset = require("awayjs-core/lib/library/IAsset");
+	import URLRequest = require("awayjs-core/lib/net/URLRequest");
+	import EventDispatcher = require("awayjs-core/lib/events/EventDispatcher");
+	import TimerEvent = require("awayjs-core/lib/events/TimerEvent");
+	import ResourceDependency = require("awayjs-core/lib/parsers/ResourceDependency");
+	import ByteArray = require("awayjs-core/lib/utils/ByteArray");
+	/**
+	 * <code>ParserBase</code> provides an abstract base class for objects that convert blocks of data to data structures
+	 * supported by away.
+	 *
+	 * If used by <code>AssetLoader</code> to automatically determine the parser type, two public static methods should
+	 * be implemented, with the following signatures:
+	 *
+	 * <code>public static supportsType(extension : string) : boolean</code>
+	 * Indicates whether or not a given file extension is supported by the parser.
+	 *
+	 * <code>public static supportsData(data : *) : boolean</code>
+	 * Tests whether a data block can be parsed by the parser.
+	 *
+	 * Furthermore, for any concrete subtype, the method <code>initHandle</code> should be overridden to immediately
+	 * create the object that will contain the parsed data. This allows <code>ResourceManager</code> to return an object
+	 * handle regardless of whether the object was loaded or not.
+	 *
+	 * @see AssetLoader
+	 */
+	class ParserBase extends EventDispatcher {
+	    _iFileName: string;
+	    private _dataFormat;
+	    private _data;
+	    private _frameLimit;
+	    private _lastFrameTime;
+	    private _pOnIntervalDelegate;
+	    _pContent: IAsset;
+	    static supportsType(extension: string): boolean;
+	    private _dependencies;
+	    private _parsingPaused;
+	    private _parsingComplete;
+	    private _parsingFailure;
+	    private _timer;
+	    private _materialMode;
+	    /**
+	     * Returned by <code>proceedParsing</code> to indicate no more parsing is needed.
+	     */
+	    static PARSING_DONE: boolean;
+	    /**
+	     * Returned by <code>proceedParsing</code> to indicate more parsing is needed, allowing asynchronous parsing.
+	     */
+	    static MORE_TO_PARSE: boolean;
+	    content: IAsset;
+	    /**
+	     * Creates a new ParserBase object
+	     * @param format The data format of the file data to be parsed. Can be either <code>ParserDataFormat.BINARY</code> or <code>ParserDataFormat.PLAIN_TEXT</code>, and should be provided by the concrete subtype.
+	     *
+	     * @see away.loading.parsers.ParserDataFormat
+	     */
+	    constructor(format: string);
+	    /**
+	     * Validates a bitmapData loaded before assigning to a default BitmapMaterial
+	     */
+	    isBitmapDataValid(bitmapData: BitmapData): boolean;
+	    parsingFailure: boolean;
+	    parsingPaused: boolean;
+	    parsingComplete: boolean;
+	    materialMode: number;
+	    data: any;
+	    /**
+	     * The data format of the file data to be parsed. Options are <code>URLLoaderDataFormat.BINARY</code>, <code>URLLoaderDataFormat.ARRAY_BUFFER</code>, <code>URLLoaderDataFormat.BLOB</code>, <code>URLLoaderDataFormat.VARIABLES</code> or <code>URLLoaderDataFormat.TEXT</code>.
+	     */
+	    dataFormat: string;
+	    /**
+	     * Parse data (possibly containing bytearry, plain text or BitmapAsset) asynchronously, meaning that
+	     * the parser will periodically stop parsing so that the AVM may proceed to the
+	     * next frame.
+	     *
+	     * @param data The untyped data object in which the loaded data resides.
+	     * @param frameLimit number of milliseconds of parsing allowed per frame. The
+	     * actual time spent on a frame can exceed this number since time-checks can
+	     * only be performed between logical sections of the parsing procedure.
+	     */
+	    parseAsync(data: any, frameLimit?: number): void;
+	    /**
+	     * A list of dependencies that need to be loaded and resolved for the object being parsed.
+	     */
+	    dependencies: Array<ResourceDependency>;
+	    /**
+	     * Resolve a dependency when it's loaded. For example, a dependency containing an ImageResource would be assigned
+	     * to a Mesh instance as a BitmapMaterial, a scene graph object would be added to its intended parent. The
+	     * dependency should be a member of the dependencies property.
+	     *
+	     * @param resourceDependency The dependency to be resolved.
+	     */
+	    _iResolveDependency(resourceDependency: ResourceDependency): void;
+	    /**
+	     * Resolve a dependency loading failure. Used by parser to eventually provide a default map
+	     *
+	     * @param resourceDependency The dependency to be resolved.
+	     */
+	    _iResolveDependencyFailure(resourceDependency: ResourceDependency): void;
+	    /**
+	     * Resolve a dependency name
+	     *
+	     * @param resourceDependency The dependency to be resolved.
+	     */
+	    _iResolveDependencyName(resourceDependency: ResourceDependency, asset: IAsset): string;
+	    _iResumeParsingAfterDependencies(): void;
+	    _pFinalizeAsset(asset: IAsset, name?: string): void;
+	    /**
+	     * Parse the next block of data.
+	     * @return Whether or not more data needs to be parsed. Can be <code>ParserBase.ParserBase.PARSING_DONE</code> or
+	     * <code>ParserBase.ParserBase.MORE_TO_PARSE</code>.
+	     */
+	    _pProceedParsing(): boolean;
+	    _pDieWithError(message?: string): void;
+	    _pAddDependency(id: string, req: URLRequest, retrieveAsRawData?: boolean, data?: any, suppressErrorEvents?: boolean): ResourceDependency;
+	    _pPauseAndRetrieveDependencies(): void;
+	    /**
+	     * Tests whether or not there is still time left for parsing within the maximum allowed time frame per session.
+	     * @return True if there is still time left, false if the maximum allotted time was exceeded and parsing should be interrupted.
+	     */
+	    _pHasTime(): boolean;
+	    /**
+	     * Called when the parsing pause interval has passed and parsing can proceed.
+	     */
+	    _pOnInterval(event?: TimerEvent): void;
+	    /**
+	     * Initializes the parsing of data.
+	     * @param frameLimit The maximum duration of a parsing session.
+	     */
+	    _pStartParsing(frameLimit: number): void;
+	    /**
+	     * Finish parsing the data.
+	     */
+	    _pFinishParsing(): void;
+	    /**
+	     *
+	     * @returns {string}
+	     * @private
+	     */
+	    _pGetTextData(): string;
+	    /**
+	     *
+	     * @returns {string}
+	     * @private
+	     */
+	    _pGetByteData(): ByteArray;
+	}
+	export = ParserBase;
+	
+}declare module "awayjs-core/lib/parsers/ParserDataFormat" {
 	/**
 	 * An enumeration providing values to describe the data format of parsed data.
 	 */
@@ -6213,8 +5608,202 @@ declare module "awayjs-core/lib/parsers/ParserDataFormat" {
 	}
 	export = ParserDataFormat;
 	
-}
-declare module "awayjs-core/lib/projections/CoordinateSystem" {
+}declare module "awayjs-core/lib/parsers/ParserUtils" {
+	import ByteArray = require("awayjs-core/lib/utils/ByteArray");
+	class ParserUtils {
+	    /**
+	     * Converts an ArrayBuffer to a base64 string
+	     *
+	     * @param image data as a ByteArray
+	     *
+	     * @return HTMLImageElement
+	     *
+	     */
+	    static arrayBufferToImage(data: ArrayBuffer): HTMLImageElement;
+	    /**
+	     * Converts an ByteArray to an Image - returns an HTMLImageElement
+	     *
+	     * @param image data as a ByteArray
+	     *
+	     * @return HTMLImageElement
+	     *
+	     */
+	    static byteArrayToImage(data: ByteArray): HTMLImageElement;
+	    /**
+	     * Converts an Blob to an Image - returns an HTMLImageElement
+	     *
+	     * @param image data as a Blob
+	     *
+	     * @return HTMLImageElement
+	     *
+	     */
+	    static blobToImage(data: Blob): HTMLImageElement;
+	    /**
+	     * Returns a object as ByteArray, if possible.
+	     *
+	     * @param data The object to return as ByteArray
+	     *
+	     * @return The ByteArray or null
+	     *
+	     */
+	    static toByteArray(data: any): ByteArray;
+	    /**
+	     * Returns a object as String, if possible.
+	     *
+	     * @param data The object to return as String
+	     * @param length The length of the returned String
+	     *
+	     * @return The String or null
+	     *
+	     */
+	    static toString(data: any, length?: number): string;
+	}
+	export = ParserUtils;
+	
+}declare module "awayjs-core/lib/parsers/ResourceDependency" {
+	import IAsset = require("awayjs-core/lib/library/IAsset");
+	import URLLoader = require("awayjs-core/lib/net/URLLoader");
+	import URLRequest = require("awayjs-core/lib/net/URLRequest");
+	import ParserBase = require("awayjs-core/lib/parsers/ParserBase");
+	/**
+	 * ResourceDependency represents the data required to load, parse and resolve additional files ("dependencies")
+	 * required by a parser, used by ResourceLoadSession.
+	 *
+	 */
+	class ResourceDependency {
+	    private _id;
+	    private _request;
+	    private _assets;
+	    private _parser;
+	    private _parentParser;
+	    private _data;
+	    private _retrieveAsRawData;
+	    private _suppressAssetEvents;
+	    private _dependencies;
+	    _iLoader: URLLoader;
+	    _iSuccess: boolean;
+	    constructor(id: string, request: URLRequest, data: any, parser: ParserBase, parentParser: ParserBase, retrieveAsRawData?: boolean, suppressAssetEvents?: boolean);
+	    /**
+	     *
+	     */
+	    id: string;
+	    /**
+	     *
+	     */
+	    request: URLRequest;
+	    /**
+	     * The data containing the dependency to be parsed, if the resource was already loaded.
+	     */
+	    data: any;
+	    /**
+	     *
+	     */
+	    parser: ParserBase;
+	    /**
+	     * The parser which is dependent on this ResourceDependency object.
+	     */
+	    parentParser: ParserBase;
+	    /**
+	     *
+	     */
+	    retrieveAsRawData: boolean;
+	    /**
+	     *
+	     */
+	    suppresAssetEvents: boolean;
+	    /**
+	     *
+	     */
+	    assets: Array<IAsset>;
+	    /**
+	     *
+	     */
+	    dependencies: Array<ResourceDependency>;
+	    /**
+	     * @private
+	     * Method to set data after having already created the dependency object, e.g. after load.
+	     */
+	    _iSetData(data: any): void;
+	    /**
+	     * @private
+	     *
+	     */
+	    _iSetParser(parser: ParserBase): void;
+	    /**
+	     * Resolve the dependency when it's loaded with the parent parser. For example, a dependency containing an
+	     * ImageResource would be assigned to a Mesh instance as a BitmapMaterial, a scene graph object would be added
+	     * to its intended parent. The dependency should be a member of the dependencies property.
+	     */
+	    resolve(): void;
+	    /**
+	     * Resolve a dependency failure. For example, map loading failure from a 3d file
+	     */
+	    resolveFailure(): void;
+	    /**
+	     * Resolve the dependencies name
+	     */
+	    resolveName(asset: IAsset): string;
+	}
+	export = ResourceDependency;
+	
+}declare module "awayjs-core/lib/parsers/Texture2DParser" {
+	import ParserBase = require("awayjs-core/lib/parsers/ParserBase");
+	/**
+	 * Texture2DParser provides a "parser" for natively supported image types (jpg, png). While it simply loads bytes into
+	 * a loader object, it wraps it in a BitmapDataResource so resource management can happen consistently without
+	 * exception cases.
+	 */
+	class Texture2DParser extends ParserBase {
+	    private _startedParsing;
+	    private _doneParsing;
+	    private _loadingImage;
+	    private _htmlImageElement;
+	    /**
+	     * Creates a new Texture2DParser object.
+	     * @param uri The url or id of the data or file to be parsed.
+	     * @param extra The holder for extra contextual data that the parser might need.
+	     */
+	    constructor();
+	    /**
+	     * Indicates whether or not a given file extension is supported by the parser.
+	     * @param extension The file extension of a potential file to be parsed.
+	     * @return Whether or not the given file type is supported.
+	     */
+	    static supportsType(extension: string): boolean;
+	    /**
+	     * Tests whether a data block can be parsed by the parser.
+	     * @param data The data block to potentially be parsed.
+	     * @return Whether or not the given data is supported.
+	     */
+	    static supportsData(data: any): boolean;
+	    /**
+	     * @inheritDoc
+	     */
+	    _pProceedParsing(): boolean;
+	    onLoadComplete(event: any): void;
+	}
+	export = Texture2DParser;
+	
+}declare module "awayjs-core/lib/pool/ITextureData" {
+	/**
+	 * ITextureData is an interface for classes that are used in the rendering pipeline to render the
+	 * contents of a texture
+	 *
+	 * @class away.pool.ITextureData
+	 */
+	interface ITextureData {
+	    /**
+	     *
+	     */
+	    dispose(): any;
+	    /**
+	     *
+	     */
+	    invalidate(): any;
+	}
+	export = ITextureData;
+	
+}declare module "awayjs-core/lib/projections/CoordinateSystem" {
 	/**
 	 * Provides constant values for camera lens projection options use the the <code>coordinateSystem</code> property
 	 *
@@ -6232,8 +5821,139 @@ declare module "awayjs-core/lib/projections/CoordinateSystem" {
 	}
 	export = CoordinateSystem;
 	
-}
-declare module "awayjs-core/lib/projections/ProjectionBase" {
+}declare module "awayjs-core/lib/projections/FreeMatrixProjection" {
+	import ProjectionBase = require("awayjs-core/lib/projections/ProjectionBase");
+	class FreeMatrixProjection extends ProjectionBase {
+	    constructor();
+	    near: number;
+	    far: number;
+	    iAspectRatio: number;
+	    clone(): ProjectionBase;
+	    pUpdateMatrix(): void;
+	}
+	export = FreeMatrixProjection;
+	
+}declare module "awayjs-core/lib/projections/IProjection" {
+	import Matrix3D = require("awayjs-core/lib/geom/Matrix3D");
+	import Vector3D = require("awayjs-core/lib/geom/Vector3D");
+	import IEventDispatcher = require("awayjs-core/lib/events/IEventDispatcher");
+	/**
+	 * IMaterialOwner provides an interface for objects that can use materials.
+	 *
+	 * @interface away.base.IMaterialOwner
+	 */
+	interface IProjection extends IEventDispatcher {
+	    coordinateSystem: string;
+	    frustumCorners: Array<number>;
+	    matrix: Matrix3D;
+	    near: number;
+	    originX: number;
+	    originY: number;
+	    far: number;
+	    _iAspectRatio: number;
+	    project(point3d: Vector3D): Vector3D;
+	    unproject(nX: number, nY: number, sZ: number): Vector3D;
+	    _iUpdateScissorRect(x: number, y: number, width: number, height: number): any;
+	    _iUpdateViewport(x: number, y: number, width: number, height: number): any;
+	}
+	export = IProjection;
+	
+}declare module "awayjs-core/lib/projections/ObliqueNearPlaneProjection" {
+	import Plane3D = require("awayjs-core/lib/geom/Plane3D");
+	import IProjection = require("awayjs-core/lib/projections/IProjection");
+	import ProjectionBase = require("awayjs-core/lib/projections/ProjectionBase");
+	class ObliqueNearPlaneProjection extends ProjectionBase {
+	    private _baseProjection;
+	    private _plane;
+	    private _onProjectionMatrixChangedDelegate;
+	    constructor(baseProjection: IProjection, plane: Plane3D);
+	    frustumCorners: number[];
+	    near: number;
+	    far: number;
+	    iAspectRatio: number;
+	    plane: Plane3D;
+	    baseProjection: IProjection;
+	    private onProjectionMatrixChanged(event);
+	    pUpdateMatrix(): void;
+	}
+	export = ObliqueNearPlaneProjection;
+	
+}declare module "awayjs-core/lib/projections/OrthographicOffCenterProjection" {
+	import Vector3D = require("awayjs-core/lib/geom/Vector3D");
+	import ProjectionBase = require("awayjs-core/lib/projections/ProjectionBase");
+	class OrthographicOffCenterProjection extends ProjectionBase {
+	    private _minX;
+	    private _maxX;
+	    private _minY;
+	    private _maxY;
+	    constructor(minX: number, maxX: number, minY: number, maxY: number);
+	    minX: number;
+	    maxX: number;
+	    minY: number;
+	    maxY: number;
+	    unproject(nX: number, nY: number, sZ: number): Vector3D;
+	    clone(): ProjectionBase;
+	    pUpdateMatrix(): void;
+	}
+	export = OrthographicOffCenterProjection;
+	
+}declare module "awayjs-core/lib/projections/OrthographicProjection" {
+	import Vector3D = require("awayjs-core/lib/geom/Vector3D");
+	import ProjectionBase = require("awayjs-core/lib/projections/ProjectionBase");
+	class OrthographicProjection extends ProjectionBase {
+	    private _projectionHeight;
+	    private _xMax;
+	    private _yMax;
+	    constructor(projectionHeight?: number);
+	    projectionHeight: number;
+	    unproject(nX: number, nY: number, sZ: number): Vector3D;
+	    clone(): ProjectionBase;
+	    pUpdateMatrix(): void;
+	}
+	export = OrthographicProjection;
+	
+}declare module "awayjs-core/lib/projections/PerspectiveProjection" {
+	import Vector3D = require("awayjs-core/lib/geom/Vector3D");
+	import ProjectionBase = require("awayjs-core/lib/projections/ProjectionBase");
+	class PerspectiveProjection extends ProjectionBase {
+	    private _fieldOfView;
+	    private _focalLength;
+	    private _hFieldOfView;
+	    private _hFocalLength;
+	    private _preserveAspectRatio;
+	    private _preserveFocalLength;
+	    constructor(fieldOfView?: number, coordinateSystem?: string);
+	    /**
+	     *
+	     */
+	    preserveAspectRatio: boolean;
+	    /**
+	     *
+	     */
+	    preserveFocalLength: boolean;
+	    /**
+	     *
+	     */
+	    fieldOfView: number;
+	    /**
+	     *
+	     */
+	    focalLength: number;
+	    /**
+	     *
+	     */
+	    hFieldOfView: number;
+	    /**
+	     *
+	     */
+	    hFocalLength: number;
+	    unproject(nX: number, nY: number, sZ: number): Vector3D;
+	    clone(): ProjectionBase;
+	    pUpdateMatrix(): void;
+	}
+	export = PerspectiveProjection;
+	
+}declare module "awayjs-core/lib/projections/ProjectionBase" {
 	import Matrix3D = require("awayjs-core/lib/geom/Matrix3D");
 	import Rectangle = require("awayjs-core/lib/geom/Rectangle");
 	import Vector3D = require("awayjs-core/lib/geom/Vector3D");
@@ -6276,120 +5996,7 @@ declare module "awayjs-core/lib/projections/ProjectionBase" {
 	}
 	export = ProjectionBase;
 	
-}
-declare module "awayjs-core/lib/projections/PerspectiveProjection" {
-	import Vector3D = require("awayjs-core/lib/geom/Vector3D");
-	import ProjectionBase = require("awayjs-core/lib/projections/ProjectionBase");
-	class PerspectiveProjection extends ProjectionBase {
-	    private _fieldOfView;
-	    private _focalLength;
-	    private _hFieldOfView;
-	    private _hFocalLength;
-	    private _preserveAspectRatio;
-	    private _preserveFocalLength;
-	    constructor(fieldOfView?: number, coordinateSystem?: string);
-	    /**
-	     *
-	     */
-	    preserveAspectRatio: boolean;
-	    /**
-	     *
-	     */
-	    preserveFocalLength: boolean;
-	    /**
-	     *
-	     */
-	    fieldOfView: number;
-	    /**
-	     *
-	     */
-	    focalLength: number;
-	    /**
-	     *
-	     */
-	    hFieldOfView: number;
-	    /**
-	     *
-	     */
-	    hFocalLength: number;
-	    unproject(nX: number, nY: number, sZ: number): Vector3D;
-	    clone(): ProjectionBase;
-	    pUpdateMatrix(): void;
-	}
-	export = PerspectiveProjection;
-	
-}
-declare module "awayjs-core/lib/projections/FreeMatrixProjection" {
-	import ProjectionBase = require("awayjs-core/lib/projections/ProjectionBase");
-	class FreeMatrixProjection extends ProjectionBase {
-	    constructor();
-	    near: number;
-	    far: number;
-	    iAspectRatio: number;
-	    clone(): ProjectionBase;
-	    pUpdateMatrix(): void;
-	}
-	export = FreeMatrixProjection;
-	
-}
-declare module "awayjs-core/lib/projections/ObliqueNearPlaneProjection" {
-	import Plane3D = require("awayjs-core/lib/geom/Plane3D");
-	import IProjection = require("awayjs-core/lib/projections/IProjection");
-	import ProjectionBase = require("awayjs-core/lib/projections/ProjectionBase");
-	class ObliqueNearPlaneProjection extends ProjectionBase {
-	    private _baseProjection;
-	    private _plane;
-	    private _onProjectionMatrixChangedDelegate;
-	    constructor(baseProjection: IProjection, plane: Plane3D);
-	    frustumCorners: number[];
-	    near: number;
-	    far: number;
-	    iAspectRatio: number;
-	    plane: Plane3D;
-	    baseProjection: IProjection;
-	    private onProjectionMatrixChanged(event);
-	    pUpdateMatrix(): void;
-	}
-	export = ObliqueNearPlaneProjection;
-	
-}
-declare module "awayjs-core/lib/projections/OrthographicOffCenterProjection" {
-	import Vector3D = require("awayjs-core/lib/geom/Vector3D");
-	import ProjectionBase = require("awayjs-core/lib/projections/ProjectionBase");
-	class OrthographicOffCenterProjection extends ProjectionBase {
-	    private _minX;
-	    private _maxX;
-	    private _minY;
-	    private _maxY;
-	    constructor(minX: number, maxX: number, minY: number, maxY: number);
-	    minX: number;
-	    maxX: number;
-	    minY: number;
-	    maxY: number;
-	    unproject(nX: number, nY: number, sZ: number): Vector3D;
-	    clone(): ProjectionBase;
-	    pUpdateMatrix(): void;
-	}
-	export = OrthographicOffCenterProjection;
-	
-}
-declare module "awayjs-core/lib/projections/OrthographicProjection" {
-	import Vector3D = require("awayjs-core/lib/geom/Vector3D");
-	import ProjectionBase = require("awayjs-core/lib/projections/ProjectionBase");
-	class OrthographicProjection extends ProjectionBase {
-	    private _projectionHeight;
-	    private _xMax;
-	    private _yMax;
-	    constructor(projectionHeight?: number);
-	    projectionHeight: number;
-	    unproject(nX: number, nY: number, sZ: number): Vector3D;
-	    clone(): ProjectionBase;
-	    pUpdateMatrix(): void;
-	}
-	export = OrthographicProjection;
-	
-}
-declare module "awayjs-core/lib/textures/BitmapCubeTexture" {
+}declare module "awayjs-core/lib/textures/BitmapCubeTexture" {
 	import BitmapData = require("awayjs-core/lib/data/BitmapData");
 	import CubeTextureBase = require("awayjs-core/lib/textures/CubeTextureBase");
 	class BitmapCubeTexture extends CubeTextureBase {
@@ -6430,8 +6037,7 @@ declare module "awayjs-core/lib/textures/BitmapCubeTexture" {
 	}
 	export = BitmapCubeTexture;
 	
-}
-declare module "awayjs-core/lib/textures/BitmapTexture" {
+}declare module "awayjs-core/lib/textures/BitmapTexture" {
 	import BitmapData = require("awayjs-core/lib/data/BitmapData");
 	import Texture2DBase = require("awayjs-core/lib/textures/Texture2DBase");
 	class BitmapTexture extends Texture2DBase {
@@ -6447,8 +6053,111 @@ declare module "awayjs-core/lib/textures/BitmapTexture" {
 	}
 	export = BitmapTexture;
 	
-}
-declare module "awayjs-core/lib/textures/RenderTexture" {
+}declare module "awayjs-core/lib/textures/CubeTextureBase" {
+	import BitmapData = require("awayjs-core/lib/data/BitmapData");
+	import TextureBase = require("awayjs-core/lib/textures/TextureBase");
+	class CubeTextureBase extends TextureBase {
+	    _mipmapDataArray: Array<Array<BitmapData>>;
+	    _mipmapDataDirtyArray: Array<boolean>;
+	    constructor();
+	    /**
+	     *
+	     * @param width
+	     * @param height
+	     * @private
+	     */
+	    _pSetSize(size: number): void;
+	    /**
+	     * @inheritDoc
+	     */
+	    dispose(): void;
+	    /**
+	     *
+	     */
+	    invalidateContent(): void;
+	    _iGetMipmapData(side: number): Array<BitmapData>;
+	    _iGetTextureData(side: number): any;
+	}
+	export = CubeTextureBase;
+	
+}declare module "awayjs-core/lib/textures/ImageCubeTexture" {
+	import CubeTextureBase = require("awayjs-core/lib/textures/CubeTextureBase");
+	class ImageCubeTexture extends CubeTextureBase {
+	    private _htmlImageElements;
+	    /**
+	     * The texture on the cube's right face.
+	     */
+	    positiveX: HTMLImageElement;
+	    /**
+	     * The texture on the cube's left face.
+	     */
+	    negativeX: HTMLImageElement;
+	    /**
+	     * The texture on the cube's top face.
+	     */
+	    positiveY: HTMLImageElement;
+	    /**
+	     * The texture on the cube's bottom face.
+	     */
+	    negativeY: HTMLImageElement;
+	    /**
+	     * The texture on the cube's far face.
+	     */
+	    positiveZ: HTMLImageElement;
+	    /**
+	     * The texture on the cube's near face.
+	     */
+	    negativeZ: HTMLImageElement;
+	    constructor(posX: HTMLImageElement, negX: HTMLImageElement, posY: HTMLImageElement, negY: HTMLImageElement, posZ: HTMLImageElement, negZ: HTMLImageElement);
+	    private _testSize(value);
+	    _iGetTextureData(side: number): HTMLImageElement;
+	}
+	export = ImageCubeTexture;
+	
+}declare module "awayjs-core/lib/textures/ImageTexture" {
+	import Texture2DBase = require("awayjs-core/lib/textures/Texture2DBase");
+	class ImageTexture extends Texture2DBase {
+	    private _htmlImageElement;
+	    /**
+	     *
+	     * @param htmlImageElement
+	     * @param generateMipmaps
+	     */
+	    constructor(htmlImageElement: HTMLImageElement);
+	    /**
+	     *
+	     */
+	    htmlImageElement: HTMLImageElement;
+	    _iGetTextureData(): HTMLImageElement;
+	}
+	export = ImageTexture;
+	
+}declare module "awayjs-core/lib/textures/MipmapGenerator" {
+	import BitmapData = require("awayjs-core/lib/data/BitmapData");
+	/**
+	 * MipmapGenerator is a helper class that uploads BitmapData to a Texture including mipmap levels.
+	 */
+	class MipmapGenerator {
+	    private static _mipMaps;
+	    private static _mipMapUses;
+	    private static _matrix;
+	    private static _rect;
+	    private static _source;
+	    /**
+	     * Uploads a BitmapData with mip maps to a target Texture object.
+	     * @param source The source to upload.
+	     * @param target The target Texture to upload to.
+	     * @param mipmap An optional mip map holder to avoids creating new instances for fe animated materials.
+	     * @param alpha Indicate whether or not the uploaded bitmapData is transparent.
+	     */
+	    static generateMipMaps(source: HTMLImageElement, output?: Array<BitmapData>, alpha?: boolean): any;
+	    static generateMipMaps(source: BitmapData, output?: Array<BitmapData>, alpha?: boolean): any;
+	    private static _getMipmapHolder(mipMapHolder, newW, newH);
+	    static freeMipMapHolder(mipMapHolder: BitmapData): void;
+	}
+	export = MipmapGenerator;
+	
+}declare module "awayjs-core/lib/textures/RenderTexture" {
 	import Texture2DBase = require("awayjs-core/lib/textures/Texture2DBase");
 	class RenderTexture extends Texture2DBase {
 	    /**
@@ -6465,8 +6174,7 @@ declare module "awayjs-core/lib/textures/RenderTexture" {
 	}
 	export = RenderTexture;
 	
-}
-declare module "awayjs-core/lib/textures/SpecularBitmapTexture" {
+}declare module "awayjs-core/lib/textures/SpecularBitmapTexture" {
 	import BitmapData = require("awayjs-core/lib/data/BitmapData");
 	import BitmapTexture = require("awayjs-core/lib/textures/BitmapTexture");
 	/**
@@ -6483,8 +6191,92 @@ declare module "awayjs-core/lib/textures/SpecularBitmapTexture" {
 	}
 	export = SpecularBitmapTexture;
 	
-}
-declare module "awayjs-core/lib/ui/Keyboard" {
+}declare module "awayjs-core/lib/textures/Texture2DBase" {
+	import BitmapData = require("awayjs-core/lib/data/BitmapData");
+	import TextureBase = require("awayjs-core/lib/textures/TextureBase");
+	class Texture2DBase extends TextureBase {
+	    private _mipmapData;
+	    private _mipmapDataDirty;
+	    _pWidth: number;
+	    _pHeight: number;
+	    /**
+	     *
+	     * @returns {number}
+	     */
+	    width: number;
+	    /**
+	     *
+	     * @returns {number}
+	     */
+	    height: number;
+	    size: number;
+	    constructor();
+	    /**
+	     * @inheritDoc
+	     */
+	    dispose(): void;
+	    /**
+	     *
+	     */
+	    invalidateContent(): void;
+	    /**
+	     *
+	     * @param width
+	     * @param height
+	     * @private
+	     */
+	    _pSetSize(width: number, height: number): void;
+	    _iGetMipmapData(): Array<BitmapData>;
+	    _iGetTextureData(): any;
+	}
+	export = Texture2DBase;
+	
+}declare module "awayjs-core/lib/textures/TextureBase" {
+	import IAsset = require("awayjs-core/lib/library/IAsset");
+	import AssetBase = require("awayjs-core/lib/library/AssetBase");
+	import ITextureData = require("awayjs-core/lib/pool/ITextureData");
+	/**
+	 *
+	 */
+	class TextureProxyBase extends AssetBase implements IAsset {
+	    _pSize: number;
+	    _pFormat: string;
+	    private _textureData;
+	    static assetType: string;
+	    /**
+	     *
+	     */
+	    constructor(generateMipmaps?: boolean);
+	    size: number;
+	    /**
+	     *
+	     * @returns {string}
+	     */
+	    format: string;
+	    /**
+	     *
+	     * @returns {string}
+	     */
+	    assetType: string;
+	    /**
+	     *
+	     */
+	    invalidateContent(): void;
+	    /**
+	     *
+	     * @private
+	     */
+	    invalidateSize(): void;
+	    /**
+	     * @inheritDoc
+	     */
+	    dispose(): void;
+	    _iAddTextureData(textureData: ITextureData): ITextureData;
+	    _iRemoveTextureData(textureData: ITextureData): ITextureData;
+	}
+	export = TextureProxyBase;
+	
+}declare module "awayjs-core/lib/ui/Keyboard" {
 	class Keyboard {
 	    /**
 	     * Constant associated with the key code value for the A key (65).
@@ -7306,8 +7098,65 @@ declare module "awayjs-core/lib/ui/Keyboard" {
 	}
 	export = Keyboard;
 	
-}
-declare module "awayjs-core/lib/utils/ByteArrayBuffer" {
+}declare module "awayjs-core/lib/utils/ByteArray" {
+	import ByteArrayBase = require("awayjs-core/lib/utils/ByteArrayBase");
+	class ByteArray extends ByteArrayBase {
+	    maxlength: number;
+	    arraybytes: any;
+	    unalignedarraybytestemp: any;
+	    constructor();
+	    ensureWriteableSpace(n: number): void;
+	    setArrayBuffer(aBuffer: ArrayBuffer): void;
+	    getBytesAvailable(): number;
+	    ensureSpace(n: number): void;
+	    writeByte(b: number): void;
+	    readByte(): number;
+	    readBytes(bytes: ByteArray, offset?: number, length?: number): void;
+	    writeUnsignedByte(b: number): void;
+	    readUnsignedByte(): number;
+	    writeUnsignedShort(b: number): void;
+	    readUTFBytes(len: number): string;
+	    readInt(): number;
+	    readShort(): number;
+	    readDouble(): number;
+	    readUnsignedShort(): number;
+	    writeUnsignedInt(b: number): void;
+	    readUnsignedInt(): number;
+	    writeFloat(b: number): void;
+	    readFloat(): number;
+	}
+	export = ByteArray;
+	
+}declare module "awayjs-core/lib/utils/ByteArrayBase" {
+	class ByteArrayBase {
+	    position: number;
+	    length: number;
+	    _mode: string;
+	    static Base64Key: string;
+	    constructor();
+	    writeByte(b: number): void;
+	    readByte(): number;
+	    writeUnsignedByte(b: number): void;
+	    readUnsignedByte(): number;
+	    writeUnsignedShort(b: number): void;
+	    readUnsignedShort(): number;
+	    writeUnsignedInt(b: number): void;
+	    readUnsignedInt(): number;
+	    writeFloat(b: number): void;
+	    toFloatBits(x: number): void;
+	    readFloat(b: number): void;
+	    fromFloatBits(x: number): void;
+	    getBytesAvailable(): number;
+	    toString(): string;
+	    compareEqual(other: any, count: any): boolean;
+	    writeBase64String(s: string): void;
+	    dumpToConsole(): void;
+	    readBase64String(count: number): string;
+	    static internalGetBase64String(count: any, getUnsignedByteFunc: any, self: any): string;
+	}
+	export = ByteArrayBase;
+	
+}declare module "awayjs-core/lib/utils/ByteArrayBuffer" {
 	import ByteArrayBase = require("awayjs-core/lib/utils/ByteArrayBase");
 	class ByteArrayBuffer extends ByteArrayBase {
 	    _bytes: number[];
@@ -7327,8 +7176,7 @@ declare module "awayjs-core/lib/utils/ByteArrayBuffer" {
 	}
 	export = ByteArrayBuffer;
 	
-}
-declare module "awayjs-core/lib/utils/CSS" {
+}declare module "awayjs-core/lib/utils/CSS" {
 	class CSS {
 	    static setElementSize(element: HTMLElement, width: number, height: number): void;
 	    static setElementWidth(element: HTMLElement, width: number): void;
@@ -7342,8 +7190,19 @@ declare module "awayjs-core/lib/utils/CSS" {
 	}
 	export = CSS;
 	
-}
-declare module "awayjs-core/lib/utils/Debug" {
+}declare module "awayjs-core/lib/utils/ColorUtils" {
+	/**
+	 *
+	 */
+	class ColorUtils {
+	    static float32ColorToARGB(float32Color: number): number[];
+	    private static componentToHex(c);
+	    static RGBToHexString(argb: number[]): string;
+	    static ARGBToHexString(argb: number[]): string;
+	}
+	export = ColorUtils;
+	
+}declare module "awayjs-core/lib/utils/Debug" {
 	/**
 	 *
 	 */
@@ -7360,8 +7219,7 @@ declare module "awayjs-core/lib/utils/Debug" {
 	}
 	export = Debug;
 	
-}
-declare module "awayjs-core/lib/utils/RequestAnimationFrame" {
+}declare module "awayjs-core/lib/utils/RequestAnimationFrame" {
 	class RequestAnimationFrame {
 	    private _callback;
 	    private _callbackContext;
@@ -7399,5 +7257,46 @@ declare module "awayjs-core/lib/utils/RequestAnimationFrame" {
 	    private _tick();
 	}
 	export = RequestAnimationFrame;
+	
+}declare module "awayjs-core/lib/utils/TextureUtils" {
+	import BitmapData = require("awayjs-core/lib/data/BitmapData");
+	class TextureUtils {
+	    private static MAX_SIZE;
+	    static isBitmapDataValid(bitmapData: BitmapData): boolean;
+	    static isHTMLImageElementValid(image: HTMLImageElement): boolean;
+	    static isDimensionValid(d: number): boolean;
+	    static isPowerOfTwo(value: number): boolean;
+	    static getBestPowerOf2(value: number): number;
+	}
+	export = TextureUtils;
+	
+}declare module "awayjs-core/lib/utils/Timer" {
+	import EventDispatcher = require("awayjs-core/lib/events/EventDispatcher");
+	class Timer extends EventDispatcher {
+	    private _delay;
+	    private _repeatCount;
+	    private _currentCount;
+	    private _iid;
+	    private _running;
+	    constructor(delay: number, repeatCount?: number);
+	    currentCount: number;
+	    delay: number;
+	    repeatCount: number;
+	    reset(): void;
+	    running: boolean;
+	    start(): void;
+	    stop(): void;
+	    private tick();
+	}
+	export = Timer;
+	
+}declare module "awayjs-core/lib/utils/getTimer" {
+	/**
+	 *
+	 *
+	 * @returns {number}
+	 */
+	function getTimer(): number;
+	export = getTimer;
 	
 }

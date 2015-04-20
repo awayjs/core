@@ -499,7 +499,9 @@ declare module "awayjs-core/lib/data/BitmapData" {
 	}
 	export = BitmapData;
 	
-}declare module "awayjs-core/lib/data/BitmapDataChannel" {
+}
+
+declare module "awayjs-core/lib/data/BitmapDataChannel" {
 	class BitmapDataChannel {
 	    static ALPHA: number;
 	    static BLUE: number;
@@ -508,7 +510,9 @@ declare module "awayjs-core/lib/data/BitmapData" {
 	}
 	export = BitmapDataChannel;
 	
-}declare module "awayjs-core/lib/data/BlendMode" {
+}
+
+declare module "awayjs-core/lib/data/BlendMode" {
 	/**
 	 * A class that provides constant values for visual blend mode effects. These
 	 * constants are used in the following:
@@ -684,7 +688,9 @@ declare module "awayjs-core/lib/data/BitmapData" {
 	}
 	export = BlendMode;
 	
-}declare module "awayjs-core/lib/data/CurveSubGeometry" {
+}
+
+declare module "awayjs-core/lib/data/CurveSubGeometry" {
 	import SubGeometryBase = require("awayjs-core/lib/data/SubGeometryBase");
 	import Matrix3D = require("awayjs-core/lib/geom/Matrix3D");
 	/**
@@ -826,7 +832,9 @@ declare module "awayjs-core/lib/data/BitmapData" {
 	}
 	export = CurveSubGeometry;
 	
-}declare module "awayjs-core/lib/data/Geometry" {
+}
+
+declare module "awayjs-core/lib/data/Geometry" {
 	import SubGeometryBase = require("awayjs-core/lib/data/SubGeometryBase");
 	import Matrix3D = require("awayjs-core/lib/geom/Matrix3D");
 	import IAsset = require("awayjs-core/lib/library/IAsset");
@@ -892,7 +900,9 @@ declare module "awayjs-core/lib/data/BitmapData" {
 	}
 	export = Geometry;
 	
-}declare module "awayjs-core/lib/data/LineSubGeometry" {
+}
+
+declare module "awayjs-core/lib/data/LineSubGeometry" {
 	import Geometry = require("awayjs-core/lib/data/Geometry");
 	import SubGeometryBase = require("awayjs-core/lib/data/SubGeometryBase");
 	/**
@@ -999,7 +1009,9 @@ declare module "awayjs-core/lib/data/BitmapData" {
 	}
 	export = LineSubGeometry;
 	
-}declare module "awayjs-core/lib/data/SubGeometryBase" {
+}
+
+declare module "awayjs-core/lib/data/SubGeometryBase" {
 	import Geometry = require("awayjs-core/lib/data/Geometry");
 	import Matrix3D = require("awayjs-core/lib/geom/Matrix3D");
 	import AssetBase = require("awayjs-core/lib/library/AssetBase");
@@ -1087,7 +1099,9 @@ declare module "awayjs-core/lib/data/BitmapData" {
 	}
 	export = SubGeometryBase;
 	
-}declare module "awayjs-core/lib/data/TriangleSubGeometry" {
+}
+
+declare module "awayjs-core/lib/data/TriangleSubGeometry" {
 	import SubGeometryBase = require("awayjs-core/lib/data/SubGeometryBase");
 	import Matrix3D = require("awayjs-core/lib/geom/Matrix3D");
 	/**
@@ -1301,7 +1315,9 @@ declare module "awayjs-core/lib/data/BitmapData" {
 	}
 	export = TriangleSubGeometry;
 	
-}declare module "awayjs-core/lib/errors/AbstractMethodError" {
+}
+
+declare module "awayjs-core/lib/errors/AbstractMethodError" {
 	import Error = require("awayjs-core/lib/errors/Error");
 	/**
 	 * AbstractMethodError is thrown when an abstract method is called. The method in question should be overridden
@@ -1317,7 +1333,9 @@ declare module "awayjs-core/lib/data/BitmapData" {
 	}
 	export = AbstractMethodError;
 	
-}declare module "awayjs-core/lib/errors/ArgumentError" {
+}
+
+declare module "awayjs-core/lib/errors/ArgumentError" {
 	import Error = require("awayjs-core/lib/errors/Error");
 	/**
 	 * AbstractMethodError is thrown when an abstract method is called. The method in question should be overridden
@@ -1334,7 +1352,9 @@ declare module "awayjs-core/lib/data/BitmapData" {
 	}
 	export = ArgumentError;
 	
-}declare module "awayjs-core/lib/errors/DocumentError" {
+}
+
+declare module "awayjs-core/lib/errors/DocumentError" {
 	import Error = require("awayjs-core/lib/errors/Error");
 	class DocumentError extends Error {
 	    static DOCUMENT_DOES_NOT_EXIST: string;
@@ -1342,7 +1362,9 @@ declare module "awayjs-core/lib/data/BitmapData" {
 	}
 	export = DocumentError;
 	
-}declare module "awayjs-core/lib/errors/Error" {
+}
+
+declare module "awayjs-core/lib/errors/Error" {
 	class Error {
 	    private _errorID;
 	    private _messsage;
@@ -1374,7 +1396,9 @@ declare module "awayjs-core/lib/data/BitmapData" {
 	}
 	export = Error;
 	
-}declare module "awayjs-core/lib/errors/PartialImplementationError" {
+}
+
+declare module "awayjs-core/lib/errors/PartialImplementationError" {
 	import Error = require("awayjs-core/lib/errors/Error");
 	/**
 	 * AbstractMethodError is thrown when an abstract method is called. The method in question should be overridden
@@ -1390,7 +1414,9 @@ declare module "awayjs-core/lib/data/BitmapData" {
 	}
 	export = PartialImplementationError;
 	
-}declare module "awayjs-core/lib/errors/RangeError" {
+}
+
+declare module "awayjs-core/lib/errors/RangeError" {
 	import Error = require("awayjs-core/lib/errors/Error");
 	/**
 	 * RangeError is thrown when an index is accessed out of range of the number of
@@ -1407,7 +1433,9 @@ declare module "awayjs-core/lib/data/BitmapData" {
 	}
 	export = RangeError;
 	
-}declare module "awayjs-core/lib/events/AssetEvent" {
+}
+
+declare module "awayjs-core/lib/events/AssetEvent" {
 	import IAsset = require("awayjs-core/lib/library/IAsset");
 	import Event = require("awayjs-core/lib/events/Event");
 	/**
@@ -1451,7 +1479,9 @@ declare module "awayjs-core/lib/data/BitmapData" {
 	}
 	export = AssetEvent;
 	
-}declare module "awayjs-core/lib/events/Event" {
+}
+
+declare module "awayjs-core/lib/events/Event" {
 	class Event {
 	    static COMPLETE: string;
 	    static OPEN: string;
@@ -1481,7 +1511,9 @@ declare module "awayjs-core/lib/data/BitmapData" {
 	}
 	export = Event;
 	
-}declare module "awayjs-core/lib/events/EventDispatcher" {
+}
+
+declare module "awayjs-core/lib/events/EventDispatcher" {
 	import Event = require("awayjs-core/lib/events/Event");
 	/**
 	 * Base class for dispatching events
@@ -1530,7 +1562,9 @@ declare module "awayjs-core/lib/data/BitmapData" {
 	}
 	export = EventDispatcher;
 	
-}declare module "awayjs-core/lib/events/GeometryEvent" {
+}
+
+declare module "awayjs-core/lib/events/GeometryEvent" {
 	import SubGeometryBase = require("awayjs-core/lib/data/SubGeometryBase");
 	import Event = require("awayjs-core/lib/events/Event");
 	/**
@@ -1571,7 +1605,9 @@ declare module "awayjs-core/lib/data/BitmapData" {
 	}
 	export = GeometryEvent;
 	
-}declare module "awayjs-core/lib/events/HTTPStatusEvent" {
+}
+
+declare module "awayjs-core/lib/events/HTTPStatusEvent" {
 	import Event = require("awayjs-core/lib/events/Event");
 	/**
 	 * @class away.events.HTTPStatusEvent
@@ -1583,7 +1619,9 @@ declare module "awayjs-core/lib/data/BitmapData" {
 	}
 	export = HTTPStatusEvent;
 	
-}declare module "awayjs-core/lib/events/IEventDispatcher" {
+}
+
+declare module "awayjs-core/lib/events/IEventDispatcher" {
 	import Event = require("awayjs-core/lib/events/Event");
 	/**
 	 * Base interface for dispatching events
@@ -1623,7 +1661,9 @@ declare module "awayjs-core/lib/data/BitmapData" {
 	}
 	export = IEventDispatcher;
 	
-}declare module "awayjs-core/lib/events/IOErrorEvent" {
+}
+
+declare module "awayjs-core/lib/events/IOErrorEvent" {
 	import Event = require("awayjs-core/lib/events/Event");
 	class IOErrorEvent extends Event {
 	    static IO_ERROR: string;
@@ -1631,7 +1671,9 @@ declare module "awayjs-core/lib/data/BitmapData" {
 	}
 	export = IOErrorEvent;
 	
-}declare module "awayjs-core/lib/events/LoaderEvent" {
+}
+
+declare module "awayjs-core/lib/events/LoaderEvent" {
 	import IAsset = require("awayjs-core/lib/library/IAsset");
 	import Event = require("awayjs-core/lib/events/Event");
 	class LoaderEvent extends Event {
@@ -1670,7 +1712,9 @@ declare module "awayjs-core/lib/data/BitmapData" {
 	}
 	export = LoaderEvent;
 	
-}declare module "awayjs-core/lib/events/ParserEvent" {
+}
+
+declare module "awayjs-core/lib/events/ParserEvent" {
 	import Event = require("awayjs-core/lib/events/Event");
 	class ParserEvent extends Event {
 	    private _message;
@@ -1698,7 +1742,9 @@ declare module "awayjs-core/lib/data/BitmapData" {
 	}
 	export = ParserEvent;
 	
-}declare module "awayjs-core/lib/events/ProgressEvent" {
+}
+
+declare module "awayjs-core/lib/events/ProgressEvent" {
 	import Event = require("awayjs-core/lib/events/Event");
 	class ProgressEvent extends Event {
 	    static PROGRESS: string;
@@ -1708,7 +1754,9 @@ declare module "awayjs-core/lib/data/BitmapData" {
 	}
 	export = ProgressEvent;
 	
-}declare module "awayjs-core/lib/events/ProjectionEvent" {
+}
+
+declare module "awayjs-core/lib/events/ProjectionEvent" {
 	import Event = require("awayjs-core/lib/events/Event");
 	import IProjection = require("awayjs-core/lib/projections/IProjection");
 	class ProjectionEvent extends Event {
@@ -1719,7 +1767,9 @@ declare module "awayjs-core/lib/data/BitmapData" {
 	}
 	export = ProjectionEvent;
 	
-}declare module "awayjs-core/lib/events/SubGeometryEvent" {
+}
+
+declare module "awayjs-core/lib/events/SubGeometryEvent" {
 	import Event = require("awayjs-core/lib/events/Event");
 	/**
 	 * Dispatched to notify changes in a sub geometry object's state.
@@ -1756,7 +1806,9 @@ declare module "awayjs-core/lib/data/BitmapData" {
 	}
 	export = SubGeometryEvent;
 	
-}declare module "awayjs-core/lib/events/TimerEvent" {
+}
+
+declare module "awayjs-core/lib/events/TimerEvent" {
 	import Event = require("awayjs-core/lib/events/Event");
 	class TimerEvent extends Event {
 	    static TIMER: string;
@@ -1765,7 +1817,9 @@ declare module "awayjs-core/lib/data/BitmapData" {
 	}
 	export = TimerEvent;
 	
-}declare module "awayjs-core/lib/geom/Box" {
+}
+
+declare module "awayjs-core/lib/geom/Box" {
 	import Vector3D = require("awayjs-core/lib/geom/Vector3D");
 	/**
 	 * A Box object is an area defined by its position, as indicated by its
@@ -2135,7 +2189,9 @@ declare module "awayjs-core/lib/data/BitmapData" {
 	}
 	export = Box;
 	
-}declare module "awayjs-core/lib/geom/ColorTransform" {
+}
+
+declare module "awayjs-core/lib/geom/ColorTransform" {
 	/**
 	 * The ColorTransform class lets you adjust the color values in a display
 	 * object. The color adjustment or <i>color transformation</i> can be applied
@@ -2274,7 +2330,9 @@ declare module "awayjs-core/lib/data/BitmapData" {
 	}
 	export = ColorTransform;
 	
-}declare module "awayjs-core/lib/geom/MathConsts" {
+}
+
+declare module "awayjs-core/lib/geom/MathConsts" {
 	/**
 	* MathConsts provides some commonly used mathematical constants
 	*/
@@ -2290,7 +2348,9 @@ declare module "awayjs-core/lib/data/BitmapData" {
 	}
 	export = MathConsts;
 	
-}declare module "awayjs-core/lib/geom/Matrix" {
+}
+
+declare module "awayjs-core/lib/geom/Matrix" {
 	import Point = require("awayjs-core/lib/geom/Point");
 	import Vector3D = require("awayjs-core/lib/geom/Vector3D");
 	/**
@@ -2631,7 +2691,9 @@ declare module "awayjs-core/lib/data/BitmapData" {
 	}
 	export = Matrix;
 	
-}declare module "awayjs-core/lib/geom/Matrix3D" {
+}
+
+declare module "awayjs-core/lib/geom/Matrix3D" {
 	import Vector3D = require("awayjs-core/lib/geom/Vector3D");
 	class Matrix3D {
 	    /**
@@ -2760,7 +2822,9 @@ declare module "awayjs-core/lib/data/BitmapData" {
 	}
 	export = Matrix3D;
 	
-}declare module "awayjs-core/lib/geom/Matrix3DUtils" {
+}
+
+declare module "awayjs-core/lib/geom/Matrix3DUtils" {
 	import Quaternion = require("awayjs-core/lib/geom/Quaternion");
 	import Matrix3D = require("awayjs-core/lib/geom/Matrix3D");
 	import Plane3D = require("awayjs-core/lib/geom/Plane3D");
@@ -2814,7 +2878,9 @@ declare module "awayjs-core/lib/data/BitmapData" {
 	}
 	export = Matrix3DUtils;
 	
-}declare module "awayjs-core/lib/geom/Orientation3D" {
+}
+
+declare module "awayjs-core/lib/geom/Orientation3D" {
 	/**
 	 * A Quaternion object which can be used to represent rotations.
 	 */
@@ -2837,7 +2903,9 @@ declare module "awayjs-core/lib/data/BitmapData" {
 	}
 	export = Orientation3D;
 	
-}declare module "awayjs-core/lib/geom/PerspectiveProjection" {
+}
+
+declare module "awayjs-core/lib/geom/PerspectiveProjection" {
 	import Matrix3D = require("awayjs-core/lib/geom/Matrix3D");
 	import Point = require("awayjs-core/lib/geom/Point");
 	/**
@@ -2966,7 +3034,9 @@ declare module "awayjs-core/lib/data/BitmapData" {
 	}
 	export = PerspectiveProjection;
 	
-}declare module "awayjs-core/lib/geom/Plane3D" {
+}
+
+declare module "awayjs-core/lib/geom/Plane3D" {
 	import Vector3D = require("awayjs-core/lib/geom/Vector3D");
 	class Plane3D {
 	    /**
@@ -3028,7 +3098,9 @@ declare module "awayjs-core/lib/data/BitmapData" {
 	}
 	export = Plane3D;
 	
-}declare module "awayjs-core/lib/geom/PlaneClassification" {
+}
+
+declare module "awayjs-core/lib/geom/PlaneClassification" {
 	class PlaneClassification {
 	    static BACK: number;
 	    static FRONT: number;
@@ -3038,7 +3110,9 @@ declare module "awayjs-core/lib/data/BitmapData" {
 	}
 	export = PlaneClassification;
 	
-}declare module "awayjs-core/lib/geom/Point" {
+}
+
+declare module "awayjs-core/lib/geom/Point" {
 	/**
 	 * The Point object represents a location in a two-dimensional coordinate
 	 * system, where <i>x</i> represents the horizontal axis and <i>y</i>
@@ -3183,7 +3257,9 @@ declare module "awayjs-core/lib/data/BitmapData" {
 	}
 	export = Point;
 	
-}declare module "awayjs-core/lib/geom/PoissonLookup" {
+}
+
+declare module "awayjs-core/lib/geom/PoissonLookup" {
 	class PoissonLookup {
 	    static _distributions: Array<Array<number>>;
 	    static initDistributions(): void;
@@ -3191,7 +3267,9 @@ declare module "awayjs-core/lib/data/BitmapData" {
 	}
 	export = PoissonLookup;
 	
-}declare module "awayjs-core/lib/geom/Quaternion" {
+}
+
+declare module "awayjs-core/lib/geom/Quaternion" {
 	import Matrix3D = require("awayjs-core/lib/geom/Matrix3D");
 	import Vector3D = require("awayjs-core/lib/geom/Vector3D");
 	/**
@@ -3316,7 +3394,9 @@ declare module "awayjs-core/lib/data/BitmapData" {
 	}
 	export = Quaternion;
 	
-}declare module "awayjs-core/lib/geom/Rectangle" {
+}
+
+declare module "awayjs-core/lib/geom/Rectangle" {
 	import Point = require("awayjs-core/lib/geom/Point");
 	/**
 	 * A Rectangle object is an area defined by its position, as indicated by its
@@ -3647,7 +3727,9 @@ declare module "awayjs-core/lib/data/BitmapData" {
 	}
 	export = Rectangle;
 	
-}declare module "awayjs-core/lib/geom/Sphere" {
+}
+
+declare module "awayjs-core/lib/geom/Sphere" {
 	import Vector3D = require("awayjs-core/lib/geom/Vector3D");
 	class Sphere {
 	    /**
@@ -3676,7 +3758,9 @@ declare module "awayjs-core/lib/data/BitmapData" {
 	}
 	export = Sphere;
 	
-}declare module "awayjs-core/lib/geom/UVTransform" {
+}
+
+declare module "awayjs-core/lib/geom/UVTransform" {
 	import Matrix = require("awayjs-core/lib/geom/Matrix");
 	class UVTransform {
 	    private _uvMatrix;
@@ -3718,7 +3802,9 @@ declare module "awayjs-core/lib/data/BitmapData" {
 	}
 	export = UVTransform;
 	
-}declare module "awayjs-core/lib/geom/Vector3D" {
+}
+
+declare module "awayjs-core/lib/geom/Vector3D" {
 	/**
 	 * The Vector3D class represents a point or a location in the three-dimensional
 	 * space using the Cartesian coordinates x, y, and z. As in a two-dimensional
@@ -4078,7 +4164,9 @@ declare module "awayjs-core/lib/data/BitmapData" {
 	}
 	export = Vector3D;
 	
-}declare module "awayjs-core/lib/library/AssetBase" {
+}
+
+declare module "awayjs-core/lib/library/AssetBase" {
 	import IAssetClass = require("awayjs-core/lib/library/IAssetClass");
 	import EventDispatcher = require("awayjs-core/lib/events/EventDispatcher");
 	class AssetBase extends EventDispatcher {
@@ -4115,7 +4203,9 @@ declare module "awayjs-core/lib/data/BitmapData" {
 	}
 	export = AssetBase;
 	
-}declare module "awayjs-core/lib/library/AssetLibrary" {
+}
+
+declare module "awayjs-core/lib/library/AssetLibrary" {
 	import URLRequest = require("awayjs-core/lib/net/URLRequest");
 	import AssetLibraryBundle = require("awayjs-core/lib/library/AssetLibraryBundle");
 	import AssetLibraryIterator = require("awayjs-core/lib/library/AssetLibraryIterator");
@@ -4253,7 +4343,9 @@ declare module "awayjs-core/lib/data/BitmapData" {
 	}
 	export = AssetLibrary;
 	
-}declare module "awayjs-core/lib/library/AssetLibraryBundle" {
+}
+
+declare module "awayjs-core/lib/library/AssetLibraryBundle" {
 	import URLRequest = require("awayjs-core/lib/net/URLRequest");
 	import AssetLibraryIterator = require("awayjs-core/lib/library/AssetLibraryIterator");
 	import AssetLoaderToken = require("awayjs-core/lib/library/AssetLoaderToken");
@@ -4441,7 +4533,9 @@ declare module "awayjs-core/lib/data/BitmapData" {
 	}
 	export = AssetLibraryBundle;
 	
-}declare module "awayjs-core/lib/library/AssetLibraryIterator" {
+}
+
+declare module "awayjs-core/lib/library/AssetLibraryIterator" {
 	import IAsset = require("awayjs-core/lib/library/IAsset");
 	class AssetLibraryIterator {
 	    private _assets;
@@ -4457,7 +4551,9 @@ declare module "awayjs-core/lib/data/BitmapData" {
 	}
 	export = AssetLibraryIterator;
 	
-}declare module "awayjs-core/lib/library/AssetLoader" {
+}
+
+declare module "awayjs-core/lib/library/AssetLoader" {
 	import AssetLoaderContext = require("awayjs-core/lib/library/AssetLoaderContext");
 	import AssetLoaderToken = require("awayjs-core/lib/library/AssetLoaderToken");
 	import URLRequest = require("awayjs-core/lib/net/URLRequest");
@@ -4652,7 +4748,9 @@ declare module "awayjs-core/lib/data/BitmapData" {
 	}
 	export = AssetLoader;
 	
-}declare module "awayjs-core/lib/library/AssetLoaderContext" {
+}
+
+declare module "awayjs-core/lib/library/AssetLoaderContext" {
 	class AssetLoaderContext {
 	    static UNDEFINED: number;
 	    static SINGLEPASS_MATERIALS: number;
@@ -4745,7 +4843,9 @@ declare module "awayjs-core/lib/data/BitmapData" {
 	}
 	export = AssetLoaderContext;
 	
-}declare module "awayjs-core/lib/library/AssetLoaderToken" {
+}
+
+declare module "awayjs-core/lib/library/AssetLoaderToken" {
 	import AssetLoader = require("awayjs-core/lib/library/AssetLoader");
 	import EventDispatcher = require("awayjs-core/lib/events/EventDispatcher");
 	/**
@@ -4892,7 +4992,9 @@ declare module "awayjs-core/lib/data/BitmapData" {
 	}
 	export = AssetLoaderToken;
 	
-}declare module "awayjs-core/lib/library/ConflictPrecedence" {
+}
+
+declare module "awayjs-core/lib/library/ConflictPrecedence" {
 	/**
 	 * Enumaration class for precedence when resolving naming conflicts in the library.
 	 *
@@ -4916,7 +5018,9 @@ declare module "awayjs-core/lib/data/BitmapData" {
 	}
 	export = ConflictPrecedence;
 	
-}declare module "awayjs-core/lib/library/ConflictStrategy" {
+}
+
+declare module "awayjs-core/lib/library/ConflictStrategy" {
 	import ConflictStrategyBase = require("awayjs-core/lib/library/ConflictStrategyBase");
 	/**
 	 * Enumeration class for bundled conflict strategies. Set one of these values (or an
@@ -4951,7 +5055,9 @@ declare module "awayjs-core/lib/data/BitmapData" {
 	}
 	export = ConflictStrategy;
 	
-}declare module "awayjs-core/lib/library/ConflictStrategyBase" {
+}
+
+declare module "awayjs-core/lib/library/ConflictStrategyBase" {
 	import IAsset = require("awayjs-core/lib/library/IAsset");
 	/**
 	 * Abstract base class for naming conflict resolution classes. Extend this to create a
@@ -4991,7 +5097,9 @@ declare module "awayjs-core/lib/data/BitmapData" {
 	}
 	export = ConflictStrategyBase;
 	
-}declare module "awayjs-core/lib/library/ErrorConflictStrategy" {
+}
+
+declare module "awayjs-core/lib/library/ErrorConflictStrategy" {
 	import ConflictStrategyBase = require("awayjs-core/lib/library/ConflictStrategyBase");
 	import IAsset = require("awayjs-core/lib/library/IAsset");
 	class ErrorConflictStrategy extends ConflictStrategyBase {
@@ -5001,7 +5109,9 @@ declare module "awayjs-core/lib/data/BitmapData" {
 	}
 	export = ErrorConflictStrategy;
 	
-}declare module "awayjs-core/lib/library/IAsset" {
+}
+
+declare module "awayjs-core/lib/library/IAsset" {
 	import IEventDispatcher = require("awayjs-core/lib/events/IEventDispatcher");
 	interface IAsset extends IEventDispatcher {
 	    /**
@@ -5049,7 +5159,9 @@ declare module "awayjs-core/lib/data/BitmapData" {
 	}
 	export = IAsset;
 	
-}declare module "awayjs-core/lib/library/IAssetClass" {
+}
+
+declare module "awayjs-core/lib/library/IAssetClass" {
 	import IAsset = require("awayjs-core/lib/library/IAsset");
 	interface IAssetClass {
 	    assetType: string;
@@ -5057,7 +5169,9 @@ declare module "awayjs-core/lib/data/BitmapData" {
 	}
 	export = IAssetClass;
 	
-}declare module "awayjs-core/lib/library/IDUtil" {
+}
+
+declare module "awayjs-core/lib/library/IDUtil" {
 	class IDUtil {
 	    /**
 	     *  @private
@@ -5086,7 +5200,9 @@ declare module "awayjs-core/lib/data/BitmapData" {
 	}
 	export = IDUtil;
 	
-}declare module "awayjs-core/lib/library/IgnoreConflictStrategy" {
+}
+
+declare module "awayjs-core/lib/library/IgnoreConflictStrategy" {
 	import ConflictStrategyBase = require("awayjs-core/lib/library/ConflictStrategyBase");
 	import IAsset = require("awayjs-core/lib/library/IAsset");
 	class IgnoreConflictStrategy extends ConflictStrategyBase {
@@ -5096,7 +5212,9 @@ declare module "awayjs-core/lib/data/BitmapData" {
 	}
 	export = IgnoreConflictStrategy;
 	
-}declare module "awayjs-core/lib/library/NumSuffixConflictStrategy" {
+}
+
+declare module "awayjs-core/lib/library/NumSuffixConflictStrategy" {
 	import ConflictStrategyBase = require("awayjs-core/lib/library/ConflictStrategyBase");
 	import IAsset = require("awayjs-core/lib/library/IAsset");
 	class NumSuffixConflictStrategy extends ConflictStrategyBase {
@@ -5108,14 +5226,18 @@ declare module "awayjs-core/lib/data/BitmapData" {
 	}
 	export = NumSuffixConflictStrategy;
 	
-}declare module "awayjs-core/lib/net/CrossDomainPolicy" {
+}
+
+declare module "awayjs-core/lib/net/CrossDomainPolicy" {
 	class CrossDomainPolicy {
 	    static ANONYMOUS: string;
 	    static USE_CREDENTIALS: string;
 	}
 	export = CrossDomainPolicy;
 	
-}declare module "awayjs-core/lib/net/URLLoader" {
+}
+
+declare module "awayjs-core/lib/net/URLLoader" {
 	import URLRequest = require("awayjs-core/lib/net/URLRequest");
 	import EventDispatcher = require("awayjs-core/lib/events/EventDispatcher");
 	/**
@@ -5262,7 +5384,9 @@ declare module "awayjs-core/lib/data/BitmapData" {
 	}
 	export = URLLoader;
 	
-}declare module "awayjs-core/lib/net/URLLoaderDataFormat" {
+}
+
+declare module "awayjs-core/lib/net/URLLoaderDataFormat" {
 	class URLLoaderDataFormat {
 	    /**
 	     * TEXT
@@ -5292,7 +5416,9 @@ declare module "awayjs-core/lib/data/BitmapData" {
 	}
 	export = URLLoaderDataFormat;
 	
-}declare module "awayjs-core/lib/net/URLRequest" {
+}
+
+declare module "awayjs-core/lib/net/URLRequest" {
 	class URLRequest {
 	    /**
 	     * Object containing data to be transmited with URL Request ( URL Variables / binary / string )
@@ -5337,7 +5463,9 @@ declare module "awayjs-core/lib/data/BitmapData" {
 	}
 	export = URLRequest;
 	
-}declare module "awayjs-core/lib/net/URLRequestMethod" {
+}
+
+declare module "awayjs-core/lib/net/URLRequestMethod" {
 	class URLRequestMethod {
 	    /**
 	     *
@@ -5352,7 +5480,9 @@ declare module "awayjs-core/lib/data/BitmapData" {
 	}
 	export = URLRequestMethod;
 	
-}declare module "awayjs-core/lib/net/URLVariables" {
+}
+
+declare module "awayjs-core/lib/net/URLVariables" {
 	class URLVariables {
 	    private _variables;
 	    /**
@@ -5387,7 +5517,9 @@ declare module "awayjs-core/lib/data/BitmapData" {
 	}
 	export = URLVariables;
 	
-}declare module "awayjs-core/lib/parsers/CubeTextureParser" {
+}
+
+declare module "awayjs-core/lib/parsers/CubeTextureParser" {
 	import ParserBase = require("awayjs-core/lib/parsers/ParserBase");
 	import ResourceDependency = require("awayjs-core/lib/parsers/ResourceDependency");
 	/**
@@ -5438,7 +5570,9 @@ declare module "awayjs-core/lib/data/BitmapData" {
 	}
 	export = CubeTextureParser;
 	
-}declare module "awayjs-core/lib/parsers/ParserBase" {
+}
+
+declare module "awayjs-core/lib/parsers/ParserBase" {
 	import BitmapData = require("awayjs-core/lib/data/BitmapData");
 	import IAsset = require("awayjs-core/lib/library/IAsset");
 	import URLRequest = require("awayjs-core/lib/net/URLRequest");
@@ -5553,7 +5687,7 @@ declare module "awayjs-core/lib/data/BitmapData" {
 	     */
 	    _pProceedParsing(): boolean;
 	    _pDieWithError(message?: string): void;
-	    _pAddDependency(id: string, req: URLRequest, retrieveAsRawData?: boolean, data?: any, suppressErrorEvents?: boolean): ResourceDependency;
+	    _pAddDependency(id: string, req: URLRequest, retrieveAsRawData?: boolean, data?: any, suppressErrorEvents?: boolean, sub_id?: number): ResourceDependency;
 	    _pPauseAndRetrieveDependencies(): void;
 	    /**
 	     * Tests whether or not there is still time left for parsing within the maximum allowed time frame per session.
@@ -5588,7 +5722,9 @@ declare module "awayjs-core/lib/data/BitmapData" {
 	}
 	export = ParserBase;
 	
-}declare module "awayjs-core/lib/parsers/ParserDataFormat" {
+}
+
+declare module "awayjs-core/lib/parsers/ParserDataFormat" {
 	/**
 	 * An enumeration providing values to describe the data format of parsed data.
 	 */
@@ -5608,7 +5744,9 @@ declare module "awayjs-core/lib/data/BitmapData" {
 	}
 	export = ParserDataFormat;
 	
-}declare module "awayjs-core/lib/parsers/ParserUtils" {
+}
+
+declare module "awayjs-core/lib/parsers/ParserUtils" {
 	import ByteArray = require("awayjs-core/lib/utils/ByteArray");
 	class ParserUtils {
 	    /**
@@ -5660,7 +5798,9 @@ declare module "awayjs-core/lib/data/BitmapData" {
 	}
 	export = ParserUtils;
 	
-}declare module "awayjs-core/lib/parsers/ResourceDependency" {
+}
+
+declare module "awayjs-core/lib/parsers/ResourceDependency" {
 	import IAsset = require("awayjs-core/lib/library/IAsset");
 	import URLLoader = require("awayjs-core/lib/net/URLLoader");
 	import URLRequest = require("awayjs-core/lib/net/URLRequest");
@@ -5672,6 +5812,7 @@ declare module "awayjs-core/lib/data/BitmapData" {
 	 */
 	class ResourceDependency {
 	    private _id;
+	    private _sub_id;
 	    private _request;
 	    private _assets;
 	    private _parser;
@@ -5682,11 +5823,12 @@ declare module "awayjs-core/lib/data/BitmapData" {
 	    private _dependencies;
 	    _iLoader: URLLoader;
 	    _iSuccess: boolean;
-	    constructor(id: string, request: URLRequest, data: any, parser: ParserBase, parentParser: ParserBase, retrieveAsRawData?: boolean, suppressAssetEvents?: boolean);
+	    constructor(id: string, request: URLRequest, data: any, parser: ParserBase, parentParser: ParserBase, retrieveAsRawData?: boolean, suppressAssetEvents?: boolean, sub_id?: number);
 	    /**
 	     *
 	     */
 	    id: string;
+	    sub_id: number;
 	    /**
 	     *
 	     */
@@ -5746,7 +5888,9 @@ declare module "awayjs-core/lib/data/BitmapData" {
 	}
 	export = ResourceDependency;
 	
-}declare module "awayjs-core/lib/parsers/Texture2DParser" {
+}
+
+declare module "awayjs-core/lib/parsers/Texture2DParser" {
 	import ParserBase = require("awayjs-core/lib/parsers/ParserBase");
 	/**
 	 * Texture2DParser provides a "parser" for natively supported image types (jpg, png). While it simply loads bytes into
@@ -5784,7 +5928,9 @@ declare module "awayjs-core/lib/data/BitmapData" {
 	}
 	export = Texture2DParser;
 	
-}declare module "awayjs-core/lib/pool/ITextureData" {
+}
+
+declare module "awayjs-core/lib/pool/ITextureData" {
 	/**
 	 * ITextureData is an interface for classes that are used in the rendering pipeline to render the
 	 * contents of a texture
@@ -5803,7 +5949,9 @@ declare module "awayjs-core/lib/data/BitmapData" {
 	}
 	export = ITextureData;
 	
-}declare module "awayjs-core/lib/projections/CoordinateSystem" {
+}
+
+declare module "awayjs-core/lib/projections/CoordinateSystem" {
 	/**
 	 * Provides constant values for camera lens projection options use the the <code>coordinateSystem</code> property
 	 *
@@ -5821,7 +5969,9 @@ declare module "awayjs-core/lib/data/BitmapData" {
 	}
 	export = CoordinateSystem;
 	
-}declare module "awayjs-core/lib/projections/FreeMatrixProjection" {
+}
+
+declare module "awayjs-core/lib/projections/FreeMatrixProjection" {
 	import ProjectionBase = require("awayjs-core/lib/projections/ProjectionBase");
 	class FreeMatrixProjection extends ProjectionBase {
 	    constructor();
@@ -5833,7 +5983,9 @@ declare module "awayjs-core/lib/data/BitmapData" {
 	}
 	export = FreeMatrixProjection;
 	
-}declare module "awayjs-core/lib/projections/IProjection" {
+}
+
+declare module "awayjs-core/lib/projections/IProjection" {
 	import Matrix3D = require("awayjs-core/lib/geom/Matrix3D");
 	import Vector3D = require("awayjs-core/lib/geom/Vector3D");
 	import IEventDispatcher = require("awayjs-core/lib/events/IEventDispatcher");
@@ -5858,7 +6010,9 @@ declare module "awayjs-core/lib/data/BitmapData" {
 	}
 	export = IProjection;
 	
-}declare module "awayjs-core/lib/projections/ObliqueNearPlaneProjection" {
+}
+
+declare module "awayjs-core/lib/projections/ObliqueNearPlaneProjection" {
 	import Plane3D = require("awayjs-core/lib/geom/Plane3D");
 	import IProjection = require("awayjs-core/lib/projections/IProjection");
 	import ProjectionBase = require("awayjs-core/lib/projections/ProjectionBase");
@@ -5878,7 +6032,9 @@ declare module "awayjs-core/lib/data/BitmapData" {
 	}
 	export = ObliqueNearPlaneProjection;
 	
-}declare module "awayjs-core/lib/projections/OrthographicOffCenterProjection" {
+}
+
+declare module "awayjs-core/lib/projections/OrthographicOffCenterProjection" {
 	import Vector3D = require("awayjs-core/lib/geom/Vector3D");
 	import ProjectionBase = require("awayjs-core/lib/projections/ProjectionBase");
 	class OrthographicOffCenterProjection extends ProjectionBase {
@@ -5897,7 +6053,9 @@ declare module "awayjs-core/lib/data/BitmapData" {
 	}
 	export = OrthographicOffCenterProjection;
 	
-}declare module "awayjs-core/lib/projections/OrthographicProjection" {
+}
+
+declare module "awayjs-core/lib/projections/OrthographicProjection" {
 	import Vector3D = require("awayjs-core/lib/geom/Vector3D");
 	import ProjectionBase = require("awayjs-core/lib/projections/ProjectionBase");
 	class OrthographicProjection extends ProjectionBase {
@@ -5912,7 +6070,9 @@ declare module "awayjs-core/lib/data/BitmapData" {
 	}
 	export = OrthographicProjection;
 	
-}declare module "awayjs-core/lib/projections/PerspectiveProjection" {
+}
+
+declare module "awayjs-core/lib/projections/PerspectiveProjection" {
 	import Vector3D = require("awayjs-core/lib/geom/Vector3D");
 	import ProjectionBase = require("awayjs-core/lib/projections/ProjectionBase");
 	class PerspectiveProjection extends ProjectionBase {
@@ -5953,7 +6113,9 @@ declare module "awayjs-core/lib/data/BitmapData" {
 	}
 	export = PerspectiveProjection;
 	
-}declare module "awayjs-core/lib/projections/ProjectionBase" {
+}
+
+declare module "awayjs-core/lib/projections/ProjectionBase" {
 	import Matrix3D = require("awayjs-core/lib/geom/Matrix3D");
 	import Rectangle = require("awayjs-core/lib/geom/Rectangle");
 	import Vector3D = require("awayjs-core/lib/geom/Vector3D");
@@ -5996,7 +6158,9 @@ declare module "awayjs-core/lib/data/BitmapData" {
 	}
 	export = ProjectionBase;
 	
-}declare module "awayjs-core/lib/textures/BitmapCubeTexture" {
+}
+
+declare module "awayjs-core/lib/textures/BitmapCubeTexture" {
 	import BitmapData = require("awayjs-core/lib/data/BitmapData");
 	import CubeTextureBase = require("awayjs-core/lib/textures/CubeTextureBase");
 	class BitmapCubeTexture extends CubeTextureBase {
@@ -6037,7 +6201,9 @@ declare module "awayjs-core/lib/data/BitmapData" {
 	}
 	export = BitmapCubeTexture;
 	
-}declare module "awayjs-core/lib/textures/BitmapTexture" {
+}
+
+declare module "awayjs-core/lib/textures/BitmapTexture" {
 	import BitmapData = require("awayjs-core/lib/data/BitmapData");
 	import Texture2DBase = require("awayjs-core/lib/textures/Texture2DBase");
 	class BitmapTexture extends Texture2DBase {
@@ -6053,7 +6219,9 @@ declare module "awayjs-core/lib/data/BitmapData" {
 	}
 	export = BitmapTexture;
 	
-}declare module "awayjs-core/lib/textures/CubeTextureBase" {
+}
+
+declare module "awayjs-core/lib/textures/CubeTextureBase" {
 	import BitmapData = require("awayjs-core/lib/data/BitmapData");
 	import TextureBase = require("awayjs-core/lib/textures/TextureBase");
 	class CubeTextureBase extends TextureBase {
@@ -6080,7 +6248,9 @@ declare module "awayjs-core/lib/data/BitmapData" {
 	}
 	export = CubeTextureBase;
 	
-}declare module "awayjs-core/lib/textures/ImageCubeTexture" {
+}
+
+declare module "awayjs-core/lib/textures/ImageCubeTexture" {
 	import CubeTextureBase = require("awayjs-core/lib/textures/CubeTextureBase");
 	class ImageCubeTexture extends CubeTextureBase {
 	    private _htmlImageElements;
@@ -6114,7 +6284,9 @@ declare module "awayjs-core/lib/data/BitmapData" {
 	}
 	export = ImageCubeTexture;
 	
-}declare module "awayjs-core/lib/textures/ImageTexture" {
+}
+
+declare module "awayjs-core/lib/textures/ImageTexture" {
 	import Texture2DBase = require("awayjs-core/lib/textures/Texture2DBase");
 	class ImageTexture extends Texture2DBase {
 	    private _htmlImageElement;
@@ -6132,7 +6304,9 @@ declare module "awayjs-core/lib/data/BitmapData" {
 	}
 	export = ImageTexture;
 	
-}declare module "awayjs-core/lib/textures/MipmapGenerator" {
+}
+
+declare module "awayjs-core/lib/textures/MipmapGenerator" {
 	import BitmapData = require("awayjs-core/lib/data/BitmapData");
 	/**
 	 * MipmapGenerator is a helper class that uploads BitmapData to a Texture including mipmap levels.
@@ -6157,7 +6331,9 @@ declare module "awayjs-core/lib/data/BitmapData" {
 	}
 	export = MipmapGenerator;
 	
-}declare module "awayjs-core/lib/textures/RenderTexture" {
+}
+
+declare module "awayjs-core/lib/textures/RenderTexture" {
 	import Texture2DBase = require("awayjs-core/lib/textures/Texture2DBase");
 	class RenderTexture extends Texture2DBase {
 	    /**
@@ -6174,7 +6350,9 @@ declare module "awayjs-core/lib/data/BitmapData" {
 	}
 	export = RenderTexture;
 	
-}declare module "awayjs-core/lib/textures/SpecularBitmapTexture" {
+}
+
+declare module "awayjs-core/lib/textures/SpecularBitmapTexture" {
 	import BitmapData = require("awayjs-core/lib/data/BitmapData");
 	import BitmapTexture = require("awayjs-core/lib/textures/BitmapTexture");
 	/**
@@ -6191,7 +6369,9 @@ declare module "awayjs-core/lib/data/BitmapData" {
 	}
 	export = SpecularBitmapTexture;
 	
-}declare module "awayjs-core/lib/textures/Texture2DBase" {
+}
+
+declare module "awayjs-core/lib/textures/Texture2DBase" {
 	import BitmapData = require("awayjs-core/lib/data/BitmapData");
 	import TextureBase = require("awayjs-core/lib/textures/TextureBase");
 	class Texture2DBase extends TextureBase {
@@ -6231,7 +6411,9 @@ declare module "awayjs-core/lib/data/BitmapData" {
 	}
 	export = Texture2DBase;
 	
-}declare module "awayjs-core/lib/textures/TextureBase" {
+}
+
+declare module "awayjs-core/lib/textures/TextureBase" {
 	import IAsset = require("awayjs-core/lib/library/IAsset");
 	import AssetBase = require("awayjs-core/lib/library/AssetBase");
 	import ITextureData = require("awayjs-core/lib/pool/ITextureData");
@@ -6276,7 +6458,9 @@ declare module "awayjs-core/lib/data/BitmapData" {
 	}
 	export = TextureProxyBase;
 	
-}declare module "awayjs-core/lib/ui/Keyboard" {
+}
+
+declare module "awayjs-core/lib/ui/Keyboard" {
 	class Keyboard {
 	    /**
 	     * Constant associated with the key code value for the A key (65).
@@ -7098,7 +7282,9 @@ declare module "awayjs-core/lib/data/BitmapData" {
 	}
 	export = Keyboard;
 	
-}declare module "awayjs-core/lib/utils/ByteArray" {
+}
+
+declare module "awayjs-core/lib/utils/ByteArray" {
 	import ByteArrayBase = require("awayjs-core/lib/utils/ByteArrayBase");
 	class ByteArray extends ByteArrayBase {
 	    maxlength: number;
@@ -7127,7 +7313,9 @@ declare module "awayjs-core/lib/data/BitmapData" {
 	}
 	export = ByteArray;
 	
-}declare module "awayjs-core/lib/utils/ByteArrayBase" {
+}
+
+declare module "awayjs-core/lib/utils/ByteArrayBase" {
 	class ByteArrayBase {
 	    position: number;
 	    length: number;
@@ -7156,7 +7344,9 @@ declare module "awayjs-core/lib/data/BitmapData" {
 	}
 	export = ByteArrayBase;
 	
-}declare module "awayjs-core/lib/utils/ByteArrayBuffer" {
+}
+
+declare module "awayjs-core/lib/utils/ByteArrayBuffer" {
 	import ByteArrayBase = require("awayjs-core/lib/utils/ByteArrayBase");
 	class ByteArrayBuffer extends ByteArrayBase {
 	    _bytes: number[];
@@ -7176,7 +7366,9 @@ declare module "awayjs-core/lib/data/BitmapData" {
 	}
 	export = ByteArrayBuffer;
 	
-}declare module "awayjs-core/lib/utils/CSS" {
+}
+
+declare module "awayjs-core/lib/utils/CSS" {
 	class CSS {
 	    static setElementSize(element: HTMLElement, width: number, height: number): void;
 	    static setElementWidth(element: HTMLElement, width: number): void;
@@ -7190,7 +7382,9 @@ declare module "awayjs-core/lib/data/BitmapData" {
 	}
 	export = CSS;
 	
-}declare module "awayjs-core/lib/utils/ColorUtils" {
+}
+
+declare module "awayjs-core/lib/utils/ColorUtils" {
 	/**
 	 *
 	 */
@@ -7202,7 +7396,9 @@ declare module "awayjs-core/lib/data/BitmapData" {
 	}
 	export = ColorUtils;
 	
-}declare module "awayjs-core/lib/utils/Debug" {
+}
+
+declare module "awayjs-core/lib/utils/Debug" {
 	/**
 	 *
 	 */
@@ -7219,7 +7415,9 @@ declare module "awayjs-core/lib/data/BitmapData" {
 	}
 	export = Debug;
 	
-}declare module "awayjs-core/lib/utils/RequestAnimationFrame" {
+}
+
+declare module "awayjs-core/lib/utils/RequestAnimationFrame" {
 	class RequestAnimationFrame {
 	    private _callback;
 	    private _callbackContext;
@@ -7258,7 +7456,9 @@ declare module "awayjs-core/lib/data/BitmapData" {
 	}
 	export = RequestAnimationFrame;
 	
-}declare module "awayjs-core/lib/utils/TextureUtils" {
+}
+
+declare module "awayjs-core/lib/utils/TextureUtils" {
 	import BitmapData = require("awayjs-core/lib/data/BitmapData");
 	class TextureUtils {
 	    private static MAX_SIZE;
@@ -7270,7 +7470,9 @@ declare module "awayjs-core/lib/data/BitmapData" {
 	}
 	export = TextureUtils;
 	
-}declare module "awayjs-core/lib/utils/Timer" {
+}
+
+declare module "awayjs-core/lib/utils/Timer" {
 	import EventDispatcher = require("awayjs-core/lib/events/EventDispatcher");
 	class Timer extends EventDispatcher {
 	    private _delay;
@@ -7290,7 +7492,9 @@ declare module "awayjs-core/lib/data/BitmapData" {
 	}
 	export = Timer;
 	
-}declare module "awayjs-core/lib/utils/getTimer" {
+}
+
+declare module "awayjs-core/lib/utils/getTimer" {
 	/**
 	 *
 	 *
@@ -7300,3 +7504,4 @@ declare module "awayjs-core/lib/data/BitmapData" {
 	export = getTimer;
 	
 }
+

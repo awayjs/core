@@ -11031,11 +11031,12 @@ var ParserBase = (function (_super) {
         }
         this.dispatchEvent(new ParserEvent(ParserEvent.PARSE_ERROR, message));
     };
-    ParserBase.prototype._pAddDependency = function (id, req, retrieveAsRawData, data, suppressErrorEvents) {
+    ParserBase.prototype._pAddDependency = function (id, req, retrieveAsRawData, data, suppressErrorEvents, sub_id) {
         if (retrieveAsRawData === void 0) { retrieveAsRawData = false; }
         if (data === void 0) { data = null; }
         if (suppressErrorEvents === void 0) { suppressErrorEvents = false; }
-        var dependency = new ResourceDependency(id, req, data, null, this, retrieveAsRawData, suppressErrorEvents);
+        if (sub_id === void 0) { sub_id = 0; }
+        var dependency = new ResourceDependency(id, req, data, null, this, retrieveAsRawData, suppressErrorEvents, sub_id);
         this._dependencies.push(dependency);
         return dependency;
     };
@@ -11259,10 +11260,12 @@ module.exports = ParserUtils;
  *
  */
 var ResourceDependency = (function () {
-    function ResourceDependency(id, request, data, parser, parentParser, retrieveAsRawData, suppressAssetEvents) {
+    function ResourceDependency(id, request, data, parser, parentParser, retrieveAsRawData, suppressAssetEvents, sub_id) {
         if (retrieveAsRawData === void 0) { retrieveAsRawData = false; }
         if (suppressAssetEvents === void 0) { suppressAssetEvents = false; }
+        if (sub_id === void 0) { sub_id = 0; }
         this._id = id;
+        this._sub_id = sub_id;
         this._request = request;
         this._data = data;
         this._parser = parser;
@@ -11278,6 +11281,13 @@ var ResourceDependency = (function () {
          */
         get: function () {
             return this._id;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(ResourceDependency.prototype, "sub_id", {
+        get: function () {
+            return this._sub_id;
         },
         enumerable: true,
         configurable: true

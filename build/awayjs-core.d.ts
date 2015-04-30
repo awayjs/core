@@ -8087,8 +8087,8 @@ declare module "awayjs-core/lib/utils/MipmapGenerator" {
 	     * @param mipmap An optional mip map holder to avoids creating new instances for fe animated materials.
 	     * @param alpha Indicate whether or not the uploaded bitmapData is transparent.
 	     */
-	    static _generateMipMaps(source: HTMLElement, alpha?: boolean): any;
-	    static _generateMipMaps(source: BitmapImage2D, alpha?: boolean): any;
+	    static _generateMipMaps(source: HTMLElement, output?: Array<BitmapImage2D>, alpha?: boolean): any;
+	    static _generateMipMaps(source: BitmapImage2D, output?: Array<BitmapImage2D>, alpha?: boolean): any;
 	    private static _getMipmapHolder(mipMapHolder, newW, newH);
 	    static _freeMipMapHolder(mipMapHolder: BitmapImage2D): void;
 	}

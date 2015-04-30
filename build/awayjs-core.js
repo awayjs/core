@@ -15348,13 +15348,12 @@ var Rectangle = require("awayjs-core/lib/geom/Rectangle");
 var MipmapGenerator = (function () {
     function MipmapGenerator() {
     }
-    MipmapGenerator._generateMipMaps = function (source, alpha) {
+    MipmapGenerator._generateMipMaps = function (source, output, alpha) {
         if (alpha === void 0) { alpha = false; }
         var w = source.width;
         var h = source.height;
         var i = 0;
         var mipmap;
-        var output = new Array();
         MipmapGenerator._rect.width = w;
         MipmapGenerator._rect.height = h;
         while (w >= 1 || h >= 1) {
@@ -15370,7 +15369,6 @@ var MipmapGenerator = (function () {
             MipmapGenerator._rect.height = h > 1 ? h : 1;
             i++;
         }
-        return output;
     };
     MipmapGenerator._getMipmapHolder = function (mipMapHolder, newW, newH) {
         if (mipMapHolder) {

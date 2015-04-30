@@ -1,18 +1,17 @@
+import BitmapImage2D			= require("awayjs-core/lib/data/BitmapImage2D");
 import IAsset					= require("awayjs-core/lib/library/IAsset");
 import URLLoaderDataFormat		= require("awayjs-core/lib/net/URLLoaderDataFormat");
 import ParserBase				= require("awayjs-core/lib/parsers/ParserBase");
 import ParserUtils				= require("awayjs-core/lib/parsers/ParserUtils");
 import ByteArray				= require("awayjs-core/lib/utils/ByteArray");
-import TextureUtils				= require("awayjs-core/lib/utils/TextureUtils");
-import ImageTexture				= require("awayjs-core/lib/textures/ImageTexture");
-import Texture2DBase			= require("awayjs-core/lib/textures/Texture2DBase");
+import ImageUtils				= require("awayjs-core/lib/utils/ImageUtils");
 
 /**
- * Texture2DParser provides a "parser" for natively supported image types (jpg, png). While it simply loads bytes into
+ * Image2DParser provides a "parser" for natively supported image types (jpg, png). While it simply loads bytes into
  * a loader object, it wraps it in a BitmapDataResource so resource management can happen consistently without
  * exception cases.
  */
-class Texture2DParser extends ParserBase
+class Image2DParser extends ParserBase
 {
 	private _startedParsing:boolean;
 	private _doneParsing:boolean;
@@ -20,7 +19,7 @@ class Texture2DParser extends ParserBase
 	private _htmlImageElement:HTMLImageElement;
 
 	/**
-	 * Creates a new Texture2DParser object.
+	 * Creates a new Image2DParser object.
 	 * @param uri The url or id of the data or file to be parsed.
 	 * @param extra The holder for extra contextual data that the parser might need.
 	 */
@@ -88,20 +87,21 @@ class Texture2DParser extends ParserBase
 	public _pProceedParsing():boolean
 	{
 
-		var asset:Texture2DBase;
+		var asset:BitmapImage2D;
 		var sizeError:boolean = false;
 
 		if (this._loadingImage) {
 			return ParserBase.MORE_TO_PARSE;
 		} else if (this._htmlImageElement) {
-			if (TextureUtils.isHTMLImageElementValid(this._htmlImageElement)) {
-				asset = new ImageTexture(this._htmlImageElement);
+			if (ImageUtils.isHTMLImageElementValid(this._htmlImageElement)) {
+				asset = ParserUtils.imageToBitmapImage2D(this._htmlImageElement);
 				this._pFinalizeAsset(<IAsset> asset, this._iFileName);
 			}
 		} else if (this.data instanceof HTMLImageElement) {// Parse HTMLImageElement
+			var htmlImageElement:HTMLImageElement = <HTMLImageElement> this.data;
+			if (ImageUtils.isHTMLImageElementValid(htmlImageElement)) {
 
-			if (TextureUtils.isHTMLImageElementValid(<HTMLImageElement> this.data)) {
-				asset = new ImageTexture(<HTMLImageElement> this.data);
+				asset = ParserUtils.imageToBitmapImage2D(htmlImageElement);
 				this._pFinalizeAsset(<IAsset> asset, this._iFileName);
 			} else {
 				sizeError = true;
@@ -113,8 +113,8 @@ class Texture2DParser extends ParserBase
 			ba.position = 0;
 			var htmlImageElement:HTMLImageElement = ParserUtils.byteArrayToImage(this.data);
 
-			if (TextureUtils.isHTMLImageElementValid(htmlImageElement)) {
-				asset = new ImageTexture(htmlImageElement);
+			if (ImageUtils.isHTMLImageElementValid(htmlImageElement)) {
+				asset = ParserUtils.imageToBitmapImage2D(htmlImageElement);
 				this._pFinalizeAsset(<IAsset> asset, this._iFileName);
 			} else {
 				sizeError = true;
@@ -124,7 +124,7 @@ class Texture2DParser extends ParserBase
 
 			this._htmlImageElement = ParserUtils.arrayBufferToImage(this.data);
 
-			asset = new ImageTexture(this._htmlImageElement);
+			asset = ParserUtils.imageToBitmapImage2D(this._htmlImageElement);
 			this._pFinalizeAsset(<IAsset> asset, this._iFileName);
 
 		} else if (this.data instanceof Blob) { // Parse a Blob
@@ -156,4 +156,4 @@ class Texture2DParser extends ParserBase
 	}
 }
 
-export = Texture2DParser;
+export = Image2DParser;

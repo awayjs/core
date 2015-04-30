@@ -1,17 +1,17 @@
+import BitmapImage2D			= require("awayjs-core/lib/data/BitmapImage2D");
+import BitmapImageCube			= require("awayjs-core/lib/data/BitmapImageCube");
 import IAsset					= require("awayjs-core/lib/library/IAsset");
 import URLLoaderDataFormat		= require("awayjs-core/lib/net/URLLoaderDataFormat");
 import URLRequest				= require("awayjs-core/lib/net/URLRequest");
 import ParserBase				= require("awayjs-core/lib/parsers/ParserBase");
 import ResourceDependency		= require("awayjs-core/lib/parsers/ResourceDependency");
-import ImageCubeTexture			= require("awayjs-core/lib/textures/ImageCubeTexture");
-import ImageTexture				= require("awayjs-core/lib/textures/ImageTexture");
 
 /**
- * CubeTextureParser provides a "parser" for natively supported image types (jpg, png). While it simply loads bytes into
- * a loader object, it wraps it in a BitmapDataResource so resource management can happen consistently without
+ * ImageCubeParser provides a "parser" for natively supported image types (jpg, png). While it simply loads bytes into
+ * a loader object, it wraps it in a BitmapImage2DResource so resource management can happen consistently without
  * exception cases.
  */
-class CubeTextureParser extends ParserBase
+class ImageCubeParser extends ParserBase
 {
 	private static posX:string = 'posX';
 	private static negX:string = 'negX';
@@ -23,7 +23,7 @@ class CubeTextureParser extends ParserBase
 	private _imgDependencyDictionary:Object;
 
 	/**
-	 * Creates a new CubeTextureParser object.
+	 * Creates a new ImageCubeParser object.
 	 * @param uri The url or id of the data or file to be parsed.
 	 * @param extra The holder for extra contextual data that the parser might need.
 	 */
@@ -87,9 +87,14 @@ class CubeTextureParser extends ParserBase
 	public _pProceedParsing():boolean
 	{
 		if (this._imgDependencyDictionary != null) { //all images loaded
-			var asset:ImageCubeTexture = new ImageCubeTexture(
+			var asset:BitmapImageCube = new BitmapImageCube(this._getBitmapImage2D(ImageCubeParser.posX).width);
 
-				this._getHTMLImageElement(CubeTextureParser.posX), this._getHTMLImageElement(CubeTextureParser.negX), this._getHTMLImageElement(CubeTextureParser.posY), this._getHTMLImageElement(CubeTextureParser.negY), this._getHTMLImageElement(CubeTextureParser.posZ), this._getHTMLImageElement(CubeTextureParser.negZ));
+			asset.draw(BitmapImageCube.posX, this._getBitmapImage2D(ImageCubeParser.posX));
+			asset.draw(BitmapImageCube.negX, this._getBitmapImage2D(ImageCubeParser.negX));
+			asset.draw(BitmapImageCube.posY, this._getBitmapImage2D(ImageCubeParser.posY));
+			asset.draw(BitmapImageCube.negY, this._getBitmapImage2D(ImageCubeParser.negY));
+			asset.draw(BitmapImageCube.posZ, this._getBitmapImage2D(ImageCubeParser.posZ));
+			asset.draw(BitmapImageCube.negZ, this._getBitmapImage2D(ImageCubeParser.negZ));
 
 			//clear dictionary
 			this._imgDependencyDictionary = null;
@@ -107,7 +112,7 @@ class CubeTextureParser extends ParserBase
 			var rec:any;
 
 			if (data.length != 6)
-				this._pDieWithError('CubeTextureParser: Error - cube texture should have exactly 6 images');
+				this._pDieWithError('ImageCubeParser: Error - cube texture should have exactly 6 images');
 
 			if (json) {
 				this._imgDependencyDictionary = new Object();
@@ -119,7 +124,7 @@ class CubeTextureParser extends ParserBase
 
 				if (!this._validateCubeData()) {
 
-					this._pDieWithError("CubeTextureParser: JSON data error - cubes require id of:   \n" + CubeTextureParser.posX + ', ' + CubeTextureParser.negX + ',  \n' + CubeTextureParser.posY + ', ' + CubeTextureParser.negY + ',  \n' + CubeTextureParser.posZ + ', ' + CubeTextureParser.negZ);
+					this._pDieWithError("ImageCubeParser: JSON data error - cubes require id of:   \n" + ImageCubeParser.posX + ', ' + ImageCubeParser.negX + ',  \n' + ImageCubeParser.posY + ', ' + ImageCubeParser.negY + ',  \n' + ImageCubeParser.posZ + ', ' + ImageCubeParser.negZ);
 
 					return ParserBase.PARSING_DONE;
 
@@ -139,20 +144,19 @@ class CubeTextureParser extends ParserBase
 
 	private _validateCubeData():boolean
 	{
-		return  ( this._imgDependencyDictionary[ CubeTextureParser.posX ] != null && this._imgDependencyDictionary[ CubeTextureParser.negX ] != null && this._imgDependencyDictionary[ CubeTextureParser.posY ] != null && this._imgDependencyDictionary[ CubeTextureParser.negY ] != null && this._imgDependencyDictionary[ CubeTextureParser.posZ ] != null && this._imgDependencyDictionary[ CubeTextureParser.negZ ] != null );
+		return  ( this._imgDependencyDictionary[ ImageCubeParser.posX ] != null && this._imgDependencyDictionary[ ImageCubeParser.negX ] != null && this._imgDependencyDictionary[ ImageCubeParser.posY ] != null && this._imgDependencyDictionary[ ImageCubeParser.negY ] != null && this._imgDependencyDictionary[ ImageCubeParser.posZ ] != null && this._imgDependencyDictionary[ ImageCubeParser.negZ ] != null );
 	}
 
-	private _getHTMLImageElement(name:string):HTMLImageElement
+	private _getBitmapImage2D(name:string):BitmapImage2D
 	{
 		var dependency:ResourceDependency = <ResourceDependency> this._imgDependencyDictionary[ name ];
 
-		if (dependency) {
-			return <HTMLImageElement> (<ImageTexture> dependency.assets[0]).htmlImageElement;
-		}
+		if (dependency)
+			return <BitmapImage2D> dependency.assets[0];
 
 		return null;
 	}
 
 }
 
-export = CubeTextureParser;
+export = ImageCubeParser;

@@ -10,10 +10,13 @@ import EventDispatcher			= require("awayjs-core/lib/events/EventDispatcher");
 import IOErrorEvent				= require("awayjs-core/lib/events/IOErrorEvent");
 import LoaderEvent				= require("awayjs-core/lib/events/LoaderEvent");
 import ParserEvent				= require("awayjs-core/lib/events/ParserEvent");
-import CubeTextureParser		= require("awayjs-core/lib/parsers/CubeTextureParser");
+import Image2DParser			= require("awayjs-core/lib/parsers/Image2DParser");
+import ImageCubeParser			= require("awayjs-core/lib/parsers/ImageCubeParser");
+import TextureAtlasParser		= require("awayjs-core/lib/parsers/TextureAtlasParser");
 import ParserBase				= require("awayjs-core/lib/parsers/ParserBase");
 import ResourceDependency		= require("awayjs-core/lib/parsers/ResourceDependency");
-import Texture2DParser			= require("awayjs-core/lib/parsers/Texture2DParser");
+
+
 
 /**
  * Dispatched when any asset finishes parsing. Also see specific events for each
@@ -98,7 +101,7 @@ class AssetLoader extends EventDispatcher
 	private _onAssetCompleteDelegate:(event:AssetEvent) => void;
 
 	// Image parser only parser that is added by default, to save file size.
-	private static _parsers:Array<any> = new Array<any>(Texture2DParser, CubeTextureParser);
+	private static _parsers:Array<any> = new Array<any>(Image2DParser, ImageCubeParser, TextureAtlasParser);
 
 	/**
 	 * Enables a specific parser.

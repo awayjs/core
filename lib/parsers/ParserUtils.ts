@@ -1,3 +1,4 @@
+import BitmapImage2D			= require("awayjs-core/lib/data/BitmapImage2D");
 import ByteArray				= require("awayjs-core/lib/utils/ByteArray");
 
 class ParserUtils
@@ -69,6 +70,17 @@ class ParserUtils
 		img.src = src;
 
 		return img;
+	}
+
+	/**
+	 *
+	 */
+	public static imageToBitmapImage2D(img:HTMLImageElement):BitmapImage2D
+	{
+		var bitmapData:BitmapImage2D = new BitmapImage2D(img.width, img.height, true);
+		bitmapData.draw(img);
+
+		return bitmapData;
 	}
 
 	/**

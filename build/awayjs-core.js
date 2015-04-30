@@ -1,38 +1,33 @@
-require=(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({"awayjs-core/lib/data/BitmapDataChannel":[function(require,module,exports){
-var BitmapDataChannel = (function () {
-    function BitmapDataChannel() {
-    }
-    BitmapDataChannel.ALPHA = 8;
-    BitmapDataChannel.BLUE = 4;
-    BitmapDataChannel.GREEN = 2;
-    BitmapDataChannel.RED = 1;
-    return BitmapDataChannel;
-})();
-module.exports = BitmapDataChannel;
-
-},{}],"awayjs-core/lib/data/BitmapData":[function(require,module,exports){
-var Rectangle = require("awayjs-core/lib/geom/Rectangle");
+require=(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({"awayjs-core/lib/data/BitmapImage2D":[function(require,module,exports){
+var __extends = this.__extends || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    __.prototype = b.prototype;
+    d.prototype = new __();
+};
+var Image2D = require("awayjs-core/lib/data/Image2D");
 var ColorUtils = require("awayjs-core/lib/utils/ColorUtils");
+var BitmapImageUtils = require("awayjs-core/lib/utils/BitmapImageUtils");
 /**
- * The BitmapData class lets you work with the data(pixels) of a Bitmap
- * object. You can use the methods of the BitmapData class to create
+ * The BitmapImage2D class lets you work with the data(pixels) of a Bitmap
+ * object. You can use the methods of the BitmapImage2D class to create
  * arbitrarily sized transparent or opaque bitmap images and manipulate them
- * in various ways at runtime. You can also access the BitmapData for a bitmap
+ * in various ways at runtime. You can also access the BitmapImage2D for a bitmap
  * image that you load with the <code>flash.Assets</code> or
  * <code>flash.display.Loader</code> classes.
  *
  * <p>This class lets you separate bitmap rendering operations from the
  * internal display updating routines of flash. By manipulating a
- * BitmapData object directly, you can create complex images without incurring
+ * BitmapImage2D object directly, you can create complex images without incurring
  * the per-frame overhead of constantly redrawing the content from vector
  * data.</p>
  *
- * <p>The methods of the BitmapData class support effects that are not
+ * <p>The methods of the BitmapImage2D class support effects that are not
  * available through the filters available to non-bitmap display objects.</p>
  *
- * <p>A BitmapData object contains an array of pixel data. This data can
+ * <p>A BitmapImage2D object contains an array of pixel data. This data can
  * represent either a fully opaque bitmap or a transparent bitmap that
- * contains alpha channel data. Either type of BitmapData object is stored as
+ * contains alpha channel data. Either type of BitmapImage2D object is stored as
  * a buffer of 32-bit integers. Each 32-bit integer determines the properties
  * of a single pixel in the bitmap.</p>
  *
@@ -42,37 +37,38 @@ var ColorUtils = require("awayjs-core/lib/utils/ColorUtils");
  * represents the alpha channel value, followed by red, green, and blue.)</p>
  *
  * <p>The four channels(alpha, red, green, and blue) are represented as
- * numbers when you use them with the <code>BitmapData.copyChannel()</code>
+ * numbers when you use them with the <code>BitmapImage2D.copyChannel()</code>
  * method or the <code>DisplacementMapFilter.componentX</code> and
  * <code>DisplacementMapFilter.componentY</code> properties, and these numbers
- * are represented by the following constants in the BitmapDataChannel
+ * are represented by the following constants in the BitmapImage2DChannel
  * class:</p>
  *
  * <ul>
- *   <li><code>BitmapDataChannel.ALPHA</code></li>
- *   <li><code>BitmapDataChannel.RED</code></li>
- *   <li><code>BitmapDataChannel.GREEN</code></li>
- *   <li><code>BitmapDataChannel.BLUE</code></li>
+ *   <li><code>BitmapImage2DChannel.ALPHA</code></li>
+ *   <li><code>BitmapImage2DChannel.RED</code></li>
+ *   <li><code>BitmapImage2DChannel.GREEN</code></li>
+ *   <li><code>BitmapImage2DChannel.BLUE</code></li>
  * </ul>
  *
- * <p>You can attach BitmapData objects to a Bitmap object by using the
+ * <p>You can attach BitmapImage2D objects to a Bitmap object by using the
  * <code>bitmapData</code> property of the Bitmap object.</p>
  *
- * <p>You can use a BitmapData object to fill a Graphics object by using the
+ * <p>You can use a BitmapImage2D object to fill a Graphics object by using the
  * <code>Graphics.beginBitmapFill()</code> method.</p>
  *
- * <p>You can also use a BitmapData object to perform batch tile rendering
+ * <p>You can also use a BitmapImage2D object to perform batch tile rendering
  * using the <code>flash.display.Tilesheet</code> class.</p>
  *
- * <p>In Flash Player 10, the maximum size for a BitmapData object
+ * <p>In Flash Player 10, the maximum size for a BitmapImage2D object
  * is 8,191 pixels in width or height, and the total number of pixels cannot
- * exceed 16,777,215 pixels.(So, if a BitmapData object is 8,191 pixels wide,
+ * exceed 16,777,215 pixels.(So, if a BitmapImage2D object is 8,191 pixels wide,
  * it can only be 2,048 pixels high.) In Flash Player 9 and earlier, the limitation
  * is 2,880 pixels in height and 2,880 in width.</p>
  */
-var BitmapData = (function () {
+var BitmapImage2D = (function (_super) {
+    __extends(BitmapImage2D, _super);
     /**
-     * Creates a BitmapData object with a specified width and height. If you
+     * Creates a BitmapImage2D object with a specified width and height. If you
      * specify a value for the <code>fillColor</code> parameter, every pixel in
      * the bitmap is set to that color.
      *
@@ -99,57 +95,36 @@ var BitmapData = (function () {
      *                    bitmap image area. The default value is
      *                    0xFFFFFFFF(solid white).
      */
-    function BitmapData(width, height, transparent, fillColor) {
+    function BitmapImage2D(width, height, transparent, fillColor) {
         if (transparent === void 0) { transparent = true; }
         if (fillColor === void 0) { fillColor = null; }
+        _super.call(this, width, height);
         this._locked = false;
         this._transparent = transparent;
         this._imageCanvas = document.createElement("canvas");
         this._imageCanvas.width = width;
         this._imageCanvas.height = height;
         this._context = this._imageCanvas.getContext("2d");
-        this._rect = new Rectangle(0, 0, width, height);
         if (fillColor != null)
             this.fillRect(this._rect, fillColor);
     }
-    Object.defineProperty(BitmapData.prototype, "height", {
+    Object.defineProperty(BitmapImage2D.prototype, "assetType", {
         /**
-         * The height of the bitmap image in pixels.
+         *
+         * @returns {string}
          */
         get: function () {
-            return this._rect.height;
-        },
-        set: function (value) {
-            if (this._rect.height == value)
-                return;
-            this._rect.height = value;
-            if (this._locked)
-                this._context.putImageData(this._imageData, 0, 0);
-            this._imageCanvas.height = value;
-            if (this._locked)
-                this._imageData = this._context.getImageData(0, 0, this._rect.width, this._rect.height);
+            return BitmapImage2D.assetType;
         },
         enumerable: true,
         configurable: true
     });
-    Object.defineProperty(BitmapData.prototype, "rect", {
-        /**
-         * The rectangle that defines the size and location of the bitmap image. The
-         * top and left of the rectangle are 0; the width and height are equal to the
-         * width and height in pixels of the BitmapData object.
-         */
-        get: function () {
-            return this._rect;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(BitmapData.prototype, "transparent", {
+    Object.defineProperty(BitmapImage2D.prototype, "transparent", {
         /**
          * Defines whether the bitmap image supports per-pixel transparency. You can
-         * set this value only when you construct a BitmapData object by passing in
+         * set this value only when you construct a BitmapImage2D object by passing in
          * <code>true</code> for the <code>transparent</code> parameter of the
-         * constructor. Then, after you create a BitmapData object, you can check
+         * constructor. Then, after you create a BitmapImage2D object, you can check
          * whether it supports per-pixel transparency by determining if the value of
          * the <code>transparent</code> property is <code>true</code>.
          */
@@ -162,34 +137,14 @@ var BitmapData = (function () {
         enumerable: true,
         configurable: true
     });
-    Object.defineProperty(BitmapData.prototype, "width", {
-        /**
-         * The width of the bitmap image in pixels.
-         */
-        get: function () {
-            return this._rect.width;
-        },
-        set: function (value) {
-            if (this._rect.width == value)
-                return;
-            this._rect.width = value;
-            if (this._locked)
-                this._context.putImageData(this._imageData, 0, 0);
-            this._imageCanvas.width = value;
-            if (this._locked)
-                this._imageData = this._context.getImageData(0, 0, this._rect.width, this._rect.height);
-        },
-        enumerable: true,
-        configurable: true
-    });
     /**
-     * Returns a new BitmapData object that is a clone of the original instance
+     * Returns a new BitmapImage2D object that is a clone of the original instance
      * with an exact copy of the contained bitmap.
      *
-     * @return A new BitmapData object that is identical to the original.
+     * @return A new BitmapImage2D object that is identical to the original.
      */
-    BitmapData.prototype.clone = function () {
-        var t = new BitmapData(this.width, this.height, this.transparent);
+    BitmapImage2D.prototype.clone = function () {
+        var t = new BitmapImage2D(this.width, this.height, this.transparent);
         t.draw(this);
         return t;
     };
@@ -204,7 +159,7 @@ var BitmapData = (function () {
      * @param colorTransform A ColorTransform object that describes the color
      *                       transformation values to apply.
      */
-    BitmapData.prototype.colorTransform = function (rect, colorTransform) {
+    BitmapImage2D.prototype.colorTransform = function (rect, colorTransform) {
         if (!this._locked)
             this._imageData = this._context.getImageData(0, 0, this._rect.width, this._rect.height);
         var data = this._imageData.data;
@@ -222,30 +177,31 @@ var BitmapData = (function () {
             this._context.putImageData(this._imageData, 0, 0);
             this._imageData = null;
         }
+        this.invalidateContent();
     };
     /**
-     * Transfers data from one channel of another BitmapData object or the
-     * current BitmapData object into a channel of the current BitmapData object.
-     * All of the data in the other channels in the destination BitmapData object
+     * Transfers data from one channel of another BitmapImage2D object or the
+     * current BitmapImage2D object into a channel of the current BitmapImage2D object.
+     * All of the data in the other channels in the destination BitmapImage2D object
      * are preserved.
      *
      * <p>The source channel value and destination channel value can be one of
      * following values: </p>
      *
      * <ul>
-     *   <li><code>BitmapDataChannel.RED</code></li>
-     *   <li><code>BitmapDataChannel.GREEN</code></li>
-     *   <li><code>BitmapDataChannel.BLUE</code></li>
-     *   <li><code>BitmapDataChannel.ALPHA</code></li>
+     *   <li><code>BitmapImage2DChannel.RED</code></li>
+     *   <li><code>BitmapImage2DChannel.GREEN</code></li>
+     *   <li><code>BitmapImage2DChannel.BLUE</code></li>
+     *   <li><code>BitmapImage2DChannel.ALPHA</code></li>
      * </ul>
      *
-     * @param sourceBitmapData The input bitmap image to use. The source image
-     *                         can be a different BitmapData object or it can
-     *                         refer to the current BitmapData object.
+     * @param sourceBitmapImage2D The input bitmap image to use. The source image
+     *                         can be a different BitmapImage2D object or it can
+     *                         refer to the current BitmapImage2D object.
      * @param sourceRect       The source Rectangle object. To copy only channel
      *                         data from a smaller area within the bitmap,
      *                         specify a source rectangle that is smaller than
-     *                         the overall size of the BitmapData object.
+     *                         the overall size of the BitmapImage2D object.
      * @param destPoint        The destination Point object that represents the
      *                         upper-left corner of the rectangular area where
      *                         the new channel data is placed. To copy only
@@ -253,24 +209,24 @@ var BitmapData = (function () {
      *                         the destination image, specify a point other than
      *                        (0,0).
      * @param sourceChannel    The source channel. Use a value from the
-     *                         BitmapDataChannel class
-     *                        (<code>BitmapDataChannel.RED</code>,
-     *                         <code>BitmapDataChannel.BLUE</code>,
-     *                         <code>BitmapDataChannel.GREEN</code>,
-     *                         <code>BitmapDataChannel.ALPHA</code>).
+     *                         BitmapImage2DChannel class
+     *                        (<code>BitmapImage2DChannel.RED</code>,
+     *                         <code>BitmapImage2DChannel.BLUE</code>,
+     *                         <code>BitmapImage2DChannel.GREEN</code>,
+     *                         <code>BitmapImage2DChannel.ALPHA</code>).
      * @param destChannel      The destination channel. Use a value from the
-     *                         BitmapDataChannel class
-     *                        (<code>BitmapDataChannel.RED</code>,
-     *                         <code>BitmapDataChannel.BLUE</code>,
-     *                         <code>BitmapDataChannel.GREEN</code>,
-     *                         <code>BitmapDataChannel.ALPHA</code>).
-     * @throws TypeError The sourceBitmapData, sourceRect or destPoint are null.
+     *                         BitmapImage2DChannel class
+     *                        (<code>BitmapImage2DChannel.RED</code>,
+     *                         <code>BitmapImage2DChannel.BLUE</code>,
+     *                         <code>BitmapImage2DChannel.GREEN</code>,
+     *                         <code>BitmapImage2DChannel.ALPHA</code>).
+     * @throws TypeError The sourceBitmapImage2D, sourceRect or destPoint are null.
      */
-    BitmapData.prototype.copyChannel = function (sourceBitmap, sourceRect, destPoint, sourceChannel, destChannel) {
-        var imageData = sourceBitmap.imageData;
+    BitmapImage2D.prototype.copyChannel = function (sourceBitmap, sourceRect, destPoint, sourceChannel, destChannel) {
+        var imageData = sourceBitmap.getImageData();
         if (!this._locked)
             this._imageData = this._context.getImageData(0, 0, this._rect.width, this._rect.height);
-        var sourceData = sourceBitmap.imageData.data;
+        var sourceData = sourceBitmap.getImageData().data;
         var destData = this._imageData.data;
         var sourceOffset = Math.round(Math.log(sourceChannel) / Math.log(2));
         var destOffset = Math.round(Math.log(destChannel) / Math.log(2));
@@ -286,52 +242,11 @@ var BitmapData = (function () {
             this._context.putImageData(this._imageData, 0, 0);
             this._imageData = null;
         }
+        this.invalidateContent();
     };
-    BitmapData.prototype.copyPixels = function (bmpd, sourceRect, destRect) {
-        if (this._locked) {
-            // If canvas is locked:
-            //
-            //      1) copy image data back to canvas
-            //      2) draw object
-            //      3) read _imageData back out
-            if (this._imageData)
-                this._context.putImageData(this._imageData, 0, 0); // at coords 0,0
-            this._copyPixels(bmpd, sourceRect, destRect);
-            if (this._imageData)
-                this._imageData = this._context.getImageData(0, 0, this._rect.width, this._rect.height);
-        }
-        else {
-            this._copyPixels(bmpd, sourceRect, destRect);
-        }
-    };
-    /**
-     * Frees memory that is used to store the BitmapData object.
-     *
-     * <p>When the <code>dispose()</code> method is called on an image, the width
-     * and height of the image are set to 0. All subsequent calls to methods or
-     * properties of this BitmapData instance fail, and an exception is thrown.
-     * </p>
-     *
-     * <p><code>BitmapData.dispose()</code> releases the memory occupied by the
-     * actual bitmap data, immediately(a bitmap can consume up to 64 MB of
-     * memory). After using <code>BitmapData.dispose()</code>, the BitmapData
-     * object is no longer usable and an exception may be thrown if
-     * you call functions on the BitmapData object. However,
-     * <code>BitmapData.dispose()</code> does not garbage collect the BitmapData
-     * object(approximately 128 bytes); the memory occupied by the actual
-     * BitmapData object is released at the time the BitmapData object is
-     * collected by the garbage collector.</p>
-     *
-     */
-    BitmapData.prototype.dispose = function () {
-        this._context = null;
-        this._imageCanvas = null;
-        this._imageData = null;
-        this._rect = null;
-        this._transparent = null;
-        this._locked = null;
-    };
-    BitmapData.prototype.draw = function (source, matrix, colorTransform, blendMode, clipRect, smoothing) {
+    BitmapImage2D.prototype.copyPixels = function (source, sourceRect, destRect) {
+        if (source instanceof BitmapImage2D)
+            source = source.getCanvas();
         if (this._locked) {
             // If canvas is locked:
             //
@@ -339,12 +254,59 @@ var BitmapData = (function () {
             //      2) draw object
             //      3) read _imageData back out
             this._context.putImageData(this._imageData, 0, 0); // at coords 0,0
-            this._draw(source, matrix, colorTransform, blendMode, clipRect, smoothing);
+            BitmapImageUtils._copyPixels(this._context, source, sourceRect, destRect);
             this._imageData = this._context.getImageData(0, 0, this._rect.width, this._rect.height);
         }
         else {
-            this._draw(source, matrix, colorTransform, blendMode, clipRect, smoothing);
+            BitmapImageUtils._copyPixels(this._context, source, sourceRect, destRect);
         }
+        this.invalidateContent();
+    };
+    /**
+     * Frees memory that is used to store the BitmapImage2D object.
+     *
+     * <p>When the <code>dispose()</code> method is called on an image, the width
+     * and height of the image are set to 0. All subsequent calls to methods or
+     * properties of this BitmapImage2D instance fail, and an exception is thrown.
+     * </p>
+     *
+     * <p><code>BitmapImage2D.dispose()</code> releases the memory occupied by the
+     * actual bitmap data, immediately(a bitmap can consume up to 64 MB of
+     * memory). After using <code>BitmapImage2D.dispose()</code>, the BitmapImage2D
+     * object is no longer usable and an exception may be thrown if
+     * you call functions on the BitmapImage2D object. However,
+     * <code>BitmapImage2D.dispose()</code> does not garbage collect the BitmapImage2D
+     * object(approximately 128 bytes); the memory occupied by the actual
+     * BitmapImage2D object is released at the time the BitmapImage2D object is
+     * collected by the garbage collector.</p>
+     *
+     */
+    BitmapImage2D.prototype.dispose = function () {
+        _super.prototype.dispose.call(this);
+        this._context = null;
+        this._imageCanvas = null;
+        this._imageData = null;
+        this._rect = null;
+        this._transparent = null;
+        this._locked = null;
+    };
+    BitmapImage2D.prototype.draw = function (source, matrix, colorTransform, blendMode, clipRect, smoothing) {
+        if (source instanceof BitmapImage2D)
+            source = source.getCanvas();
+        if (this._locked) {
+            // If canvas is locked:
+            //
+            //      1) copy image data back to canvas
+            //      2) draw object
+            //      3) read _imageData back out
+            this._context.putImageData(this._imageData, 0, 0); // at coords 0,0
+            BitmapImageUtils._draw(this._context, source, matrix, colorTransform, blendMode, clipRect, smoothing);
+            this._imageData = this._context.getImageData(0, 0, this._rect.width, this._rect.height);
+        }
+        else {
+            BitmapImageUtils._draw(this._context, source, matrix, colorTransform, blendMode, clipRect, smoothing);
+        }
+        this.invalidateContent();
     };
     /**
      * Fills a rectangular area of pixels with a specified ARGB color.
@@ -355,7 +317,7 @@ var BitmapData = (function () {
      *              0xFF336699.
      * @throws TypeError The rect is null.
      */
-    BitmapData.prototype.fillRect = function (rect, color) {
+    BitmapImage2D.prototype.fillRect = function (rect, color) {
         if (this._locked) {
             // If canvas is locked:
             //
@@ -364,26 +326,27 @@ var BitmapData = (function () {
             //      3) read _imageData back out
             if (this._imageData)
                 this._context.putImageData(this._imageData, 0, 0); // at coords 0,0
-            this._fillRect(rect, color);
+            BitmapImageUtils._fillRect(this._context, rect, color, this._transparent);
             if (this._imageData)
                 this._imageData = this._context.getImageData(0, 0, this._rect.width, this._rect.height);
         }
         else {
-            this._fillRect(rect, color);
+            BitmapImageUtils._fillRect(this._context, rect, color, this._transparent);
         }
+        this.invalidateContent();
     };
     /**
-     * Returns an integer that represents an RGB pixel value from a BitmapData
+     * Returns an integer that represents an RGB pixel value from a BitmapImage2D
      * object at a specific point(<i>x</i>, <i>y</i>). The
      * <code>getPixel()</code> method returns an unmultiplied pixel value. No
      * alpha information is returned.
      *
-     * <p>All pixels in a BitmapData object are stored as premultiplied color
+     * <p>All pixels in a BitmapImage2D object are stored as premultiplied color
      * values. A premultiplied image pixel has the red, green, and blue color
      * channel values already multiplied by the alpha data. For example, if the
      * alpha value is 0, the values for the RGB channels are also 0, independent
      * of their unmultiplied values. This loss of data can cause some problems
-     * when you perform operations. All BitmapData methods take and return
+     * when you perform operations. All BitmapImage2D methods take and return
      * unmultiplied values. The internal pixel representation is converted from
      * premultiplied to unmultiplied before it is returned as a value. During a
      * set operation, the pixel value is premultiplied before the raw image pixel
@@ -395,7 +358,7 @@ var BitmapData = (function () {
      *         <i>y</i>) coordinates are outside the bounds of the image, the
      *         method returns 0.
      */
-    BitmapData.prototype.getPixel = function (x, y) {
+    BitmapImage2D.prototype.getPixel = function (x, y) {
         var r;
         var g;
         var b;
@@ -424,12 +387,12 @@ var BitmapData = (function () {
      * This method is similar to the <code>getPixel()</code> method, which
      * returns an RGB color without alpha channel data.
      *
-     * <p>All pixels in a BitmapData object are stored as premultiplied color
+     * <p>All pixels in a BitmapImage2D object are stored as premultiplied color
      * values. A premultiplied image pixel has the red, green, and blue color
      * channel values already multiplied by the alpha data. For example, if the
      * alpha value is 0, the values for the RGB channels are also 0, independent
      * of their unmultiplied values. This loss of data can cause some problems
-     * when you perform operations. All BitmapData methods take and return
+     * when you perform operations. All BitmapImage2D methods take and return
      * unmultiplied values. The internal pixel representation is converted from
      * premultiplied to unmultiplied before it is returned as a value. During a
      * set operation, the pixel value is premultiplied before the raw image pixel
@@ -441,7 +404,7 @@ var BitmapData = (function () {
      *         <i>y</i>) coordinates are outside the bounds of the image, 0 is
      *         returned.
      */
-    BitmapData.prototype.getPixel32 = function (x, y) {
+    BitmapImage2D.prototype.getPixel32 = function (x, y) {
         var r;
         var g;
         var b;
@@ -463,14 +426,14 @@ var BitmapData = (function () {
         return (a << 24) | (r << 16) | (g << 8) | b;
     };
     /**
-     * Locks an image so that any objects that reference the BitmapData object,
-     * such as Bitmap objects, are not updated when this BitmapData object
+     * Locks an image so that any objects that reference the BitmapImage2D object,
+     * such as Bitmap objects, are not updated when this BitmapImage2D object
      * changes. To improve performance, use this method along with the
      * <code>unlock()</code> method before and after numerous calls to the
      * <code>setPixel()</code> or <code>setPixel32()</code> method.
      *
      */
-    BitmapData.prototype.lock = function () {
+    BitmapImage2D.prototype.lock = function () {
         if (this._locked)
             return;
         this._locked = true;
@@ -478,17 +441,17 @@ var BitmapData = (function () {
     };
     /**
      * Converts an Array into a rectangular region of pixel data. For each pixel,
-     * an Array element is read and written into the BitmapData pixel. The data
+     * an Array element is read and written into the BitmapImage2D pixel. The data
      * in the Array is expected to be 32-bit ARGB pixel values.
      *
-     * @param rect        Specifies the rectangular region of the BitmapData
+     * @param rect        Specifies the rectangular region of the BitmapImage2D
      *                    object.
      * @param inputArray  An Array that consists of 32-bit unmultiplied pixel
      *                    values to be used in the rectangular region.
      * @throws RangeError The vector array is not large enough to read all the
      *                    pixel data.
      */
-    BitmapData.prototype.setArray = function (rect, inputArray) {
+    BitmapImage2D.prototype.setArray = function (rect, inputArray) {
         if (!this._locked)
             this._imageData = this._context.getImageData(0, 0, this._rect.width, this._rect.height);
         var i /*uint*/, j /*uint*/, index /*uint*/, argb /*uint*/;
@@ -506,9 +469,10 @@ var BitmapData = (function () {
             this._context.putImageData(this._imageData, 0, 0);
             this._imageData = null;
         }
+        this.invalidateContent();
     };
     /**
-     * Sets a single pixel of a BitmapData object. The current alpha channel
+     * Sets a single pixel of a BitmapImage2D object. The current alpha channel
      * value of the image pixel is preserved during this operation. The value of
      * the RGB color parameter is treated as an unmultiplied color value.
      *
@@ -517,14 +481,14 @@ var BitmapData = (function () {
      * call the <code>lock()</code> method before you call the
      * <code>setPixel()</code> or <code>setPixel32()</code> method, and then call
      * the <code>unlock()</code> method when you have made all pixel changes.
-     * This process prevents objects that reference this BitmapData instance from
+     * This process prevents objects that reference this BitmapImage2D instance from
      * updating until you finish making the pixel changes.</p>
      *
      * @param x     The <i>x</i> position of the pixel whose value changes.
      * @param y     The <i>y</i> position of the pixel whose value changes.
      * @param color The resulting RGB color for the pixel.
      */
-    BitmapData.prototype.setPixel = function (x, y, color) {
+    BitmapImage2D.prototype.setPixel = function (x, y, color) {
         var argb = ColorUtils.float32ColorToARGB(color);
         if (!this._locked)
             this._imageData = this._context.getImageData(0, 0, this._rect.width, this._rect.height);
@@ -537,19 +501,20 @@ var BitmapData = (function () {
             this._context.putImageData(this._imageData, 0, 0);
             this._imageData = null;
         }
+        this.invalidateContent();
     };
     /**
      * Sets the color and alpha transparency values of a single pixel of a
-     * BitmapData object. This method is similar to the <code>setPixel()</code>
+     * BitmapImage2D object. This method is similar to the <code>setPixel()</code>
      * method; the main difference is that the <code>setPixel32()</code> method
      * takes an ARGB color value that contains alpha channel information.
      *
-     * <p>All pixels in a BitmapData object are stored as premultiplied color
+     * <p>All pixels in a BitmapImage2D object are stored as premultiplied color
      * values. A premultiplied image pixel has the red, green, and blue color
      * channel values already multiplied by the alpha data. For example, if the
      * alpha value is 0, the values for the RGB channels are also 0, independent
      * of their unmultiplied values. This loss of data can cause some problems
-     * when you perform operations. All BitmapData methods take and return
+     * when you perform operations. All BitmapImage2D methods take and return
      * unmultiplied values. The internal pixel representation is converted from
      * premultiplied to unmultiplied before it is returned as a value. During a
      * set operation, the pixel value is premultiplied before the raw image pixel
@@ -560,7 +525,7 @@ var BitmapData = (function () {
      * call the <code>lock()</code> method before you call the
      * <code>setPixel()</code> or <code>setPixel32()</code> method, and then call
      * the <code>unlock()</code> method when you have made all pixel changes.
-     * This process prevents objects that reference this BitmapData instance from
+     * This process prevents objects that reference this BitmapImage2D instance from
      * updating until you finish making the pixel changes.</p>
      *
      * @param x     The <i>x</i> position of the pixel whose value changes.
@@ -569,7 +534,7 @@ var BitmapData = (function () {
      *              opaque(not transparent), the alpha transparency portion of
      *              this color value is ignored.
      */
-    BitmapData.prototype.setPixel32 = function (x, y, color) {
+    BitmapImage2D.prototype.setPixel32 = function (x, y, color) {
         var argb = ColorUtils.float32ColorToARGB(color);
         if (!this._locked)
             this._imageData = this._context.getImageData(0, 0, this._rect.width, this._rect.height);
@@ -582,6 +547,7 @@ var BitmapData = (function () {
             this._context.putImageData(this._imageData, 0, 0);
             this._imageData = null;
         }
+        this.invalidateContent();
     };
     /**
      * Converts a byte array into a rectangular region of pixel data. For each
@@ -591,7 +557,7 @@ var BitmapData = (function () {
      * array is expected to be 32-bit ARGB pixel values. No seeking is performed
      * on the byte array before or after the pixels are read.
      *
-     * @param rect           Specifies the rectangular region of the BitmapData
+     * @param rect           Specifies the rectangular region of the BitmapImage2D
      *                       object.
      * @param inputByteArray A ByteArray object that consists of 32-bit
      *                       unmultiplied pixel values to be used in the
@@ -602,7 +568,7 @@ var BitmapData = (function () {
      *                   before throwing the exception.
      * @throws TypeError The rect or inputByteArray are null.
      */
-    BitmapData.prototype.setPixels = function (rect, inputByteArray) {
+    BitmapImage2D.prototype.setPixels = function (rect, inputByteArray) {
         if (!this._locked)
             this._imageData = this._context.getImageData(0, 0, this._rect.width, this._rect.height);
         inputByteArray.position = 0;
@@ -620,98 +586,742 @@ var BitmapData = (function () {
             this._context.putImageData(this._imageData, 0, 0);
             this._imageData = null;
         }
+        this.invalidateContent();
     };
     /**
-     * Unlocks an image so that any objects that reference the BitmapData object,
-     * such as Bitmap objects, are updated when this BitmapData object changes.
+     * Unlocks an image so that any objects that reference the BitmapImage2D object,
+     * such as Bitmap objects, are updated when this BitmapImage2D object changes.
      * To improve performance, use this method along with the <code>lock()</code>
      * method before and after numerous calls to the <code>setPixel()</code> or
      * <code>setPixel32()</code> method.
      *
-     * @param changeRect The area of the BitmapData object that has changed. If
+     * @param changeRect The area of the BitmapImage2D object that has changed. If
      *                   you do not specify a value for this parameter, the
-     *                   entire area of the BitmapData object is considered
+     *                   entire area of the BitmapImage2D object is considered
      *                   changed.
      */
-    BitmapData.prototype.unlock = function () {
+    BitmapImage2D.prototype.unlock = function () {
         if (!this._locked)
             return;
         this._locked = false;
         this._context.putImageData(this._imageData, 0, 0); // at coords 0,0
         this._imageData = null;
     };
-    BitmapData.prototype._copyPixels = function (bmpd, sourceRect, destRect) {
-        if (bmpd instanceof BitmapData) {
-            this._context.drawImage(bmpd.canvas, sourceRect.x, sourceRect.y, sourceRect.width, sourceRect.height, destRect.x, destRect.y, destRect.width, destRect.height);
-        }
-        else if (bmpd instanceof HTMLImageElement) {
-            this._context.drawImage(bmpd, sourceRect.x, sourceRect.y, sourceRect.width, sourceRect.height, destRect.x, destRect.y, destRect.width, destRect.height);
-        }
+    /**
+     *
+     * @returns {ImageData}
+     */
+    BitmapImage2D.prototype.getImageData = function () {
+        if (!this._locked)
+            return this._context.getImageData(0, 0, this._rect.width, this._rect.height);
+        return this._imageData;
     };
-    BitmapData.prototype._draw = function (source, matrix, colorTransform, blendMode, clipRect, smoothing) {
-        if (source instanceof BitmapData) {
-            this._context.save();
-            if (matrix != null)
-                this._context.setTransform(matrix.a, matrix.b, matrix.c, matrix.d, matrix.tx, matrix.ty);
-            if (clipRect != null)
-                this._context.drawImage(source.canvas, clipRect.x, clipRect.y, clipRect.width, clipRect.height);
-            else
-                this._context.drawImage(source.canvas, 0, 0);
-            this._context.restore();
-        }
-        else if (source instanceof HTMLElement) {
-            this._context.save();
-            if (matrix != null)
-                this._context.setTransform(matrix.a, matrix.b, matrix.c, matrix.d, matrix.tx, matrix.ty);
-            if (clipRect != null)
-                this._context.drawImage(source, clipRect.x, clipRect.y, clipRect.width, clipRect.height);
-            else
-                this._context.drawImage(source, 0, 0);
-            this._context.restore();
-        }
+    /**
+     *
+     * @returns {HTMLCanvasElement}
+     */
+    BitmapImage2D.prototype.getCanvas = function () {
+        return this._imageCanvas;
     };
-    BitmapData.prototype._fillRect = function (rect, color) {
-        if (color == 0x0 && this._transparent) {
-            this._context.clearRect(rect.x, rect.y, rect.width, rect.height);
+    /**
+     *
+     * @param width
+     * @param height
+     * @private
+     */
+    BitmapImage2D.prototype._setSize = function (width, height) {
+        if (this._locked)
+            this._context.putImageData(this._imageData, 0, 0);
+        this._imageCanvas.width = width;
+        this._imageCanvas.height = height;
+        _super.prototype._setSize.call(this, width, height);
+        if (this._locked)
+            this._imageData = this._context.getImageData(0, 0, this._rect.width, this._rect.height);
+    };
+    BitmapImage2D.assetType = "[asset BitmapImage2D]";
+    return BitmapImage2D;
+})(Image2D);
+module.exports = BitmapImage2D;
+
+},{"awayjs-core/lib/data/Image2D":"awayjs-core/lib/data/Image2D","awayjs-core/lib/utils/BitmapImageUtils":"awayjs-core/lib/utils/BitmapImageUtils","awayjs-core/lib/utils/ColorUtils":"awayjs-core/lib/utils/ColorUtils"}],"awayjs-core/lib/data/BitmapImageChannel":[function(require,module,exports){
+var BitmapImageChannel = (function () {
+    function BitmapImageChannel() {
+    }
+    BitmapImageChannel.ALPHA = 8;
+    BitmapImageChannel.BLUE = 4;
+    BitmapImageChannel.GREEN = 2;
+    BitmapImageChannel.RED = 1;
+    return BitmapImageChannel;
+})();
+module.exports = BitmapImageChannel;
+
+},{}],"awayjs-core/lib/data/BitmapImageCube":[function(require,module,exports){
+var __extends = this.__extends || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    __.prototype = b.prototype;
+    d.prototype = new __();
+};
+var BitmapImage2D = require("awayjs-core/lib/data/BitmapImage2D");
+var ImageCube = require("awayjs-core/lib/data/ImageCube");
+var Rectangle = require("awayjs-core/lib/geom/Rectangle");
+var ColorUtils = require("awayjs-core/lib/utils/ColorUtils");
+var BitmapImageUtils = require("awayjs-core/lib/utils/BitmapImageUtils");
+/**
+ * The BitmapImage2D class lets you work with the data(pixels) of a Bitmap
+ * object. You can use the methods of the BitmapImage2D class to create
+ * arbitrarily sized transparent or opaque bitmap images and manipulate them
+ * in various ways at runtime. You can also access the BitmapImage2D for a bitmap
+ * image that you load with the <code>flash.Assets</code> or
+ * <code>flash.display.Loader</code> classes.
+ *
+ * <p>This class lets you separate bitmap rendering operations from the
+ * internal display updating routines of flash. By manipulating a
+ * BitmapImage2D object directly, you can create complex images without incurring
+ * the per-frame overhead of constantly redrawing the content from vector
+ * data.</p>
+ *
+ * <p>The methods of the BitmapImage2D class support effects that are not
+ * available through the filters available to non-bitmap display objects.</p>
+ *
+ * <p>A BitmapImage2D object contains an array of pixel data. This data can
+ * represent either a fully opaque bitmap or a transparent bitmap that
+ * contains alpha channel data. Either type of BitmapImage2D object is stored as
+ * a buffer of 32-bit integers. Each 32-bit integer determines the properties
+ * of a single pixel in the bitmap.</p>
+ *
+ * <p>Each 32-bit integer is a combination of four 8-bit channel values(from
+ * 0 to 255) that describe the alpha transparency and the red, green, and blue
+ * (ARGB) values of the pixel.(For ARGB values, the most significant byte
+ * represents the alpha channel value, followed by red, green, and blue.)</p>
+ *
+ * <p>The four channels(alpha, red, green, and blue) are represented as
+ * numbers when you use them with the <code>BitmapImage2D.copyChannel()</code>
+ * method or the <code>DisplacementMapFilter.componentX</code> and
+ * <code>DisplacementMapFilter.componentY</code> properties, and these numbers
+ * are represented by the following constants in the BitmapImage2DChannel
+ * class:</p>
+ *
+ * <ul>
+ *   <li><code>BitmapImage2DChannel.ALPHA</code></li>
+ *   <li><code>BitmapImage2DChannel.RED</code></li>
+ *   <li><code>BitmapImage2DChannel.GREEN</code></li>
+ *   <li><code>BitmapImage2DChannel.BLUE</code></li>
+ * </ul>
+ *
+ * <p>You can attach BitmapImage2D objects to a Bitmap object by using the
+ * <code>bitmapData</code> property of the Bitmap object.</p>
+ *
+ * <p>You can use a BitmapImage2D object to fill a Graphics object by using the
+ * <code>Graphics.beginBitmapFill()</code> method.</p>
+ *
+ * <p>You can also use a BitmapImage2D object to perform batch tile rendering
+ * using the <code>flash.display.Tilesheet</code> class.</p>
+ *
+ * <p>In Flash Player 10, the maximum size for a BitmapImage2D object
+ * is 8,191 pixels in width or height, and the total number of pixels cannot
+ * exceed 16,777,215 pixels.(So, if a BitmapImage2D object is 8,191 pixels wide,
+ * it can only be 2,048 pixels high.) In Flash Player 9 and earlier, the limitation
+ * is 2,880 pixels in height and 2,880 in width.</p>
+ */
+var BitmapImageCube = (function (_super) {
+    __extends(BitmapImageCube, _super);
+    /**
+     * Creates a BitmapImage2D object with a specified width and height. If you
+     * specify a value for the <code>fillColor</code> parameter, every pixel in
+     * the bitmap is set to that color.
+     *
+     * <p>By default, the bitmap is created as transparent, unless you pass
+     * the value <code>false</code> for the transparent parameter. After you
+     * create an opaque bitmap, you cannot change it to a transparent bitmap.
+     * Every pixel in an opaque bitmap uses only 24 bits of color channel
+     * information. If you define the bitmap as transparent, every pixel uses 32
+     * bits of color channel information, including an alpha transparency
+     * channel.</p>
+     *
+     * @param width       The width of the bitmap image in pixels.
+     * @param height      The height of the bitmap image in pixels.
+     * @param transparent Specifies whether the bitmap image supports per-pixel
+     *                    transparency. The default value is <code>true</code>
+     *                    (transparent). To create a fully transparent bitmap,
+     *                    set the value of the <code>transparent</code>
+     *                    parameter to <code>true</code> and the value of the
+     *                    <code>fillColor</code> parameter to 0x00000000(or to
+     *                    0). Setting the <code>transparent</code> property to
+     *                    <code>false</code> can result in minor improvements
+     *                    in rendering performance.
+     * @param fillColor   A 32-bit ARGB color value that you use to fill the
+     *                    bitmap image area. The default value is
+     *                    0xFFFFFFFF(solid white).
+     */
+    function BitmapImageCube(size, transparent, fillColor) {
+        if (transparent === void 0) { transparent = true; }
+        if (fillColor === void 0) { fillColor = null; }
+        _super.call(this, size);
+        this._imageCanvas = new Array(6);
+        this._context = new Array(6);
+        this._imageData = new Array(6);
+        this._locked = false;
+        this._transparent = transparent;
+        for (var i = 0; i < 6; i++) {
+            this._imageCanvas[i] = document.createElement("canvas");
+            this._imageCanvas[i].width = size;
+            this._imageCanvas[i].height = size;
+            this._context[i] = this._imageCanvas[i].getContext("2d");
+            if (fillColor != null)
+                this.fillRect(i, new Rectangle(0, 0, size, size), fillColor);
+        }
+    }
+    Object.defineProperty(BitmapImageCube.prototype, "assetType", {
+        /**
+         *
+         * @returns {string}
+         */
+        get: function () {
+            return BitmapImageCube.assetType;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(BitmapImageCube.prototype, "transparent", {
+        /**
+         * Defines whether the bitmap image supports per-pixel transparency. You can
+         * set this value only when you construct a BitmapImage2D object by passing in
+         * <code>true</code> for the <code>transparent</code> parameter of the
+         * constructor. Then, after you create a BitmapImage2D object, you can check
+         * whether it supports per-pixel transparency by determining if the value of
+         * the <code>transparent</code> property is <code>true</code>.
+         */
+        get: function () {
+            return this._transparent;
+        },
+        set: function (value) {
+            this._transparent = value;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    /**
+     * Returns a new BitmapImage2D object that is a clone of the original instance
+     * with an exact copy of the contained bitmap.
+     *
+     * @return A new BitmapImage2D object that is identical to the original.
+     */
+    BitmapImageCube.prototype.clone = function () {
+        var t = new BitmapImageCube(this._size, this.transparent);
+        for (var i = 0; i < 6; i++) {
+            t.draw(i, this.getCanvas(i));
+        }
+        return t;
+    };
+    /**
+     * Adjusts the color values in a specified area of a bitmap image by using a
+     * <code>ColorTransform</code> object. If the rectangle matches the
+     * boundaries of the bitmap image, this method transforms the color values of
+     * the entire image.
+     *
+     * @param rect           A Rectangle object that defines the area of the
+     *                       image in which the ColorTransform object is applied.
+     * @param colorTransform A ColorTransform object that describes the color
+     *                       transformation values to apply.
+     */
+    BitmapImageCube.prototype.colorTransform = function (side, rect, colorTransform) {
+        if (!this._locked)
+            this._imageData[side] = this._context[side].getImageData(0, 0, this._size, this._size);
+        var data = this._imageData[side].data;
+        var i /*uint*/, j /*uint*/, index /*uint*/;
+        for (i = 0; i < rect.width; ++i) {
+            for (j = 0; j < rect.height; ++j) {
+                index = (i + rect.x + (j + rect.y) * this._size) * 4;
+                data[index] = data[index] * colorTransform.redMultiplier + colorTransform.redOffset;
+                data[index + 1] = data[index + 1] * colorTransform.greenMultiplier + colorTransform.greenOffset;
+                data[index + 2] = data[index + 2] * colorTransform.blueMultiplier + colorTransform.blueOffset;
+                data[index + 3] = data[index + 3] * colorTransform.alphaMultiplier + colorTransform.alphaOffset;
+            }
+        }
+        if (!this._locked) {
+            this._context[side].putImageData(this._imageData[side], 0, 0);
+            this._imageData[side] = null;
+        }
+        this.invalidateContent();
+    };
+    /**
+     * Transfers data from one channel of another BitmapImage2D object or the
+     * current BitmapImage2D object into a channel of the current BitmapImage2D object.
+     * All of the data in the other channels in the destination BitmapImage2D object
+     * are preserved.
+     *
+     * <p>The source channel value and destination channel value can be one of
+     * following values: </p>
+     *
+     * <ul>
+     *   <li><code>BitmapImage2DChannel.RED</code></li>
+     *   <li><code>BitmapImage2DChannel.GREEN</code></li>
+     *   <li><code>BitmapImage2DChannel.BLUE</code></li>
+     *   <li><code>BitmapImage2DChannel.ALPHA</code></li>
+     * </ul>
+     *
+     * @param sourceBitmapImage2D The input bitmap image to use. The source image
+     *                         can be a different BitmapImage2D object or it can
+     *                         refer to the current BitmapImage2D object.
+     * @param sourceRect       The source Rectangle object. To copy only channel
+     *                         data from a smaller area within the bitmap,
+     *                         specify a source rectangle that is smaller than
+     *                         the overall size of the BitmapImage2D object.
+     * @param destPoint        The destination Point object that represents the
+     *                         upper-left corner of the rectangular area where
+     *                         the new channel data is placed. To copy only
+     *                         channel data from one area to a different area in
+     *                         the destination image, specify a point other than
+     *                        (0,0).
+     * @param sourceChannel    The source channel. Use a value from the
+     *                         BitmapImage2DChannel class
+     *                        (<code>BitmapImage2DChannel.RED</code>,
+     *                         <code>BitmapImage2DChannel.BLUE</code>,
+     *                         <code>BitmapImage2DChannel.GREEN</code>,
+     *                         <code>BitmapImage2DChannel.ALPHA</code>).
+     * @param destChannel      The destination channel. Use a value from the
+     *                         BitmapImage2DChannel class
+     *                        (<code>BitmapImage2DChannel.RED</code>,
+     *                         <code>BitmapImage2DChannel.BLUE</code>,
+     *                         <code>BitmapImage2DChannel.GREEN</code>,
+     *                         <code>BitmapImage2DChannel.ALPHA</code>).
+     * @throws TypeError The sourceBitmapImage2D, sourceRect or destPoint are null.
+     */
+    BitmapImageCube.prototype.copyChannel = function (side, sourceBitmap, sourceRect, destPoint, sourceChannel, destChannel) {
+        var imageData = sourceBitmap.getImageData();
+        if (!this._locked)
+            this._imageData[side] = this._context[side].getImageData(0, 0, this._size, this._size);
+        var sourceData = sourceBitmap.getImageData().data;
+        var destData = this._imageData[side].data;
+        var sourceOffset = Math.round(Math.log(sourceChannel) / Math.log(2));
+        var destOffset = Math.round(Math.log(destChannel) / Math.log(2));
+        var i /*uint*/, j /*uint*/, sourceIndex /*uint*/, destIndex /*uint*/;
+        for (i = 0; i < sourceRect.width; ++i) {
+            for (j = 0; j < sourceRect.height; ++j) {
+                sourceIndex = (i + sourceRect.x + (j + sourceRect.y) * sourceBitmap.width) * 4;
+                destIndex = (i + destPoint.x + (j + destPoint.y) * this._size) * 4;
+                destData[destIndex + destOffset] = sourceData[sourceIndex + sourceOffset];
+            }
+        }
+        if (!this._locked) {
+            this._context[side].putImageData(this._imageData[side], 0, 0);
+            this._imageData[side] = null;
+        }
+        this.invalidateContent();
+    };
+    BitmapImageCube.prototype.copyPixels = function (side, source, sourceRect, destRect) {
+        if (source instanceof BitmapImage2D)
+            source = source.getCanvas();
+        if (this._locked) {
+            // If canvas is locked:
+            //
+            //      1) copy image data back to canvas
+            //      2) draw object
+            //      3) read _imageData back out
+            this._context[side].putImageData(this._imageData[side], 0, 0); // at coords 0,0
+            BitmapImageUtils._copyPixels(this._context[side], source, sourceRect, destRect);
+            this._imageData[side] = this._context[side].getImageData(0, 0, this._size, this._size);
         }
         else {
-            var argb = ColorUtils.float32ColorToARGB(color);
-            if (this._transparent)
-                this._context.fillStyle = 'rgba(' + argb[1] + ',' + argb[2] + ',' + argb[3] + ',' + argb[0] / 255 + ')';
-            else
-                this._context.fillStyle = 'rgba(' + argb[1] + ',' + argb[2] + ',' + argb[3] + ',1)';
-            this._context.fillRect(rect.x, rect.y, rect.width, rect.height);
+            BitmapImageUtils._copyPixels(this._context[side], source, sourceRect, destRect);
+        }
+        this.invalidateContent();
+    };
+    /**
+     * Frees memory that is used to store the BitmapImage2D object.
+     *
+     * <p>When the <code>dispose()</code> method is called on an image, the width
+     * and height of the image are set to 0. All subsequent calls to methods or
+     * properties of this BitmapImage2D instance fail, and an exception is thrown.
+     * </p>
+     *
+     * <p><code>BitmapImage2D.dispose()</code> releases the memory occupied by the
+     * actual bitmap data, immediately(a bitmap can consume up to 64 MB of
+     * memory). After using <code>BitmapImage2D.dispose()</code>, the BitmapImage2D
+     * object is no longer usable and an exception may be thrown if
+     * you call functions on the BitmapImage2D object. However,
+     * <code>BitmapImage2D.dispose()</code> does not garbage collect the BitmapImage2D
+     * object(approximately 128 bytes); the memory occupied by the actual
+     * BitmapImage2D object is released at the time the BitmapImage2D object is
+     * collected by the garbage collector.</p>
+     *
+     */
+    BitmapImageCube.prototype.dispose = function () {
+        _super.prototype.dispose.call(this);
+        for (var i = 0; i < 6; i++) {
+            this._context[i] = null;
+            this._imageCanvas[i] = null;
+            this._imageData[i] = null;
+        }
+        this._transparent = null;
+        this._locked = null;
+    };
+    BitmapImageCube.prototype.draw = function (side, source, matrix, colorTransform, blendMode, clipRect, smoothing) {
+        if (source instanceof BitmapImage2D)
+            source = source.getCanvas();
+        if (this._locked) {
+            // If canvas is locked:
+            //
+            //      1) copy image data back to canvas
+            //      2) draw object
+            //      3) read _imageData back out
+            this._context[side].putImageData(this._imageData[side], 0, 0); // at coords 0,0
+            BitmapImageUtils._draw(this._context[side], source, matrix, colorTransform, blendMode, clipRect, smoothing);
+            this._imageData[side] = this._context[side].getImageData(0, 0, this._size, this._size);
+        }
+        else {
+            BitmapImageUtils._draw(this._context[side], source, matrix, colorTransform, blendMode, clipRect, smoothing);
+        }
+        this.invalidateContent();
+    };
+    /**
+     * Fills a rectangular area of pixels with a specified ARGB color.
+     *
+     * @param rect  The rectangular area to fill.
+     * @param color The ARGB color value that fills the area. ARGB colors are
+     *              often specified in hexadecimal format; for example,
+     *              0xFF336699.
+     * @throws TypeError The rect is null.
+     */
+    BitmapImageCube.prototype.fillRect = function (side, rect, color) {
+        if (this._locked) {
+            // If canvas is locked:
+            //
+            //      1) copy image data back to canvas
+            //      2) apply fill
+            //      3) read _imageData back out
+            if (this._imageData[side])
+                this._context[side].putImageData(this._imageData[side], 0, 0); // at coords 0,0
+            BitmapImageUtils._fillRect(this._context[side], rect, color, this._transparent);
+            if (this._imageData[side])
+                this._imageData[side] = this._context[side].getImageData(0, 0, this._size, this._size);
+        }
+        else {
+            BitmapImageUtils._fillRect(this._context[side], rect, color, this._transparent);
+        }
+        this.invalidateContent();
+    };
+    /**
+     * Returns an integer that represents an RGB pixel value from a BitmapImage2D
+     * object at a specific point(<i>x</i>, <i>y</i>). The
+     * <code>getPixel()</code> method returns an unmultiplied pixel value. No
+     * alpha information is returned.
+     *
+     * <p>All pixels in a BitmapImage2D object are stored as premultiplied color
+     * values. A premultiplied image pixel has the red, green, and blue color
+     * channel values already multiplied by the alpha data. For example, if the
+     * alpha value is 0, the values for the RGB channels are also 0, independent
+     * of their unmultiplied values. This loss of data can cause some problems
+     * when you perform operations. All BitmapImage2D methods take and return
+     * unmultiplied values. The internal pixel representation is converted from
+     * premultiplied to unmultiplied before it is returned as a value. During a
+     * set operation, the pixel value is premultiplied before the raw image pixel
+     * is set.</p>
+     *
+     * @param x The <i>x</i> position of the pixel.
+     * @param y The <i>y</i> position of the pixel.
+     * @return A number that represents an RGB pixel value. If the(<i>x</i>,
+     *         <i>y</i>) coordinates are outside the bounds of the image, the
+     *         method returns 0.
+     */
+    BitmapImageCube.prototype.getPixel = function (side, x, y) {
+        var r;
+        var g;
+        var b;
+        var a;
+        if (!this._locked) {
+            var pixelData = this._context[side].getImageData(x, y, 1, 1);
+            r = pixelData.data[0];
+            g = pixelData.data[1];
+            b = pixelData.data[2];
+            a = pixelData.data[3];
+        }
+        else {
+            var index = (x + y * this._size) * 4;
+            r = this._imageData[side].data[index + 0];
+            g = this._imageData[side].data[index + 1];
+            b = this._imageData[side].data[index + 2];
+            a = this._imageData[side].data[index + 3];
+        }
+        //returns black if fully transparent
+        if (!a)
+            return 0x0;
+        return (r << 16) | (g << 8) | b;
+    };
+    /**
+     * Returns an ARGB color value that contains alpha channel data and RGB data.
+     * This method is similar to the <code>getPixel()</code> method, which
+     * returns an RGB color without alpha channel data.
+     *
+     * <p>All pixels in a BitmapImage2D object are stored as premultiplied color
+     * values. A premultiplied image pixel has the red, green, and blue color
+     * channel values already multiplied by the alpha data. For example, if the
+     * alpha value is 0, the values for the RGB channels are also 0, independent
+     * of their unmultiplied values. This loss of data can cause some problems
+     * when you perform operations. All BitmapImage2D methods take and return
+     * unmultiplied values. The internal pixel representation is converted from
+     * premultiplied to unmultiplied before it is returned as a value. During a
+     * set operation, the pixel value is premultiplied before the raw image pixel
+     * is set.</p>
+     *
+     * @param x The <i>x</i> position of the pixel.
+     * @param y The <i>y</i> position of the pixel.
+     * @return A number representing an ARGB pixel value. If the(<i>x</i>,
+     *         <i>y</i>) coordinates are outside the bounds of the image, 0 is
+     *         returned.
+     */
+    BitmapImageCube.prototype.getPixel32 = function (side, x, y) {
+        var r;
+        var g;
+        var b;
+        var a;
+        if (!this._locked) {
+            var pixelData = this._context[side].getImageData(x, y, 1, 1);
+            r = pixelData.data[0];
+            g = pixelData.data[1];
+            b = pixelData.data[2];
+            a = pixelData.data[3];
+        }
+        else {
+            var index = (x + y * this._size) * 4;
+            r = this._imageData[side].data[index + 0];
+            g = this._imageData[side].data[index + 1];
+            b = this._imageData[side].data[index + 2];
+            a = this._imageData[side].data[index + 3];
+        }
+        return (a << 24) | (r << 16) | (g << 8) | b;
+    };
+    /**
+     * Locks an image so that any objects that reference the BitmapImage2D object,
+     * such as Bitmap objects, are not updated when this BitmapImage2D object
+     * changes. To improve performance, use this method along with the
+     * <code>unlock()</code> method before and after numerous calls to the
+     * <code>setPixel()</code> or <code>setPixel32()</code> method.
+     *
+     */
+    BitmapImageCube.prototype.lock = function () {
+        if (this._locked)
+            return;
+        this._locked = true;
+        for (var i = 0; i < 6; i++)
+            this._imageData[i] = this._context[i].getImageData(0, 0, this._size, this._size);
+    };
+    /**
+     * Converts an Array into a rectangular region of pixel data. For each pixel,
+     * an Array element is read and written into the BitmapImage2D pixel. The data
+     * in the Array is expected to be 32-bit ARGB pixel values.
+     *
+     * @param rect        Specifies the rectangular region of the BitmapImage2D
+     *                    object.
+     * @param inputArray  An Array that consists of 32-bit unmultiplied pixel
+     *                    values to be used in the rectangular region.
+     * @throws RangeError The vector array is not large enough to read all the
+     *                    pixel data.
+     */
+    BitmapImageCube.prototype.setArray = function (side, rect, inputArray) {
+        if (!this._locked)
+            this._imageData[side] = this._context[side].getImageData(0, 0, this._size, this._size);
+        var i /*uint*/, j /*uint*/, index /*uint*/, argb /*uint*/;
+        for (i = 0; i < rect.width; ++i) {
+            for (j = 0; j < rect.height; ++j) {
+                argb = ColorUtils.float32ColorToARGB(inputArray[i + j * rect.width]);
+                index = (i + rect.x + (j + rect.y) * this._size) * 4;
+                this._imageData[side].data[index + 0] = argb[1];
+                this._imageData[side].data[index + 1] = argb[2];
+                this._imageData[side].data[index + 2] = argb[3];
+                this._imageData[side].data[index + 3] = argb[0];
+            }
+        }
+        if (!this._locked) {
+            this._context[side].putImageData(this._imageData[side], 0, 0);
+            this._imageData[side] = null;
+        }
+        this.invalidateContent();
+    };
+    /**
+     * Sets a single pixel of a BitmapImage2D object. The current alpha channel
+     * value of the image pixel is preserved during this operation. The value of
+     * the RGB color parameter is treated as an unmultiplied color value.
+     *
+     * <p><b>Note:</b> To increase performance, when you use the
+     * <code>setPixel()</code> or <code>setPixel32()</code> method repeatedly,
+     * call the <code>lock()</code> method before you call the
+     * <code>setPixel()</code> or <code>setPixel32()</code> method, and then call
+     * the <code>unlock()</code> method when you have made all pixel changes.
+     * This process prevents objects that reference this BitmapImage2D instance from
+     * updating until you finish making the pixel changes.</p>
+     *
+     * @param x     The <i>x</i> position of the pixel whose value changes.
+     * @param y     The <i>y</i> position of the pixel whose value changes.
+     * @param color The resulting RGB color for the pixel.
+     */
+    BitmapImageCube.prototype.setPixel = function (side, x, y, color) {
+        var argb = ColorUtils.float32ColorToARGB(color);
+        if (!this._locked)
+            this._imageData[side] = this._context[side].getImageData(0, 0, this._size, this._size);
+        var index = (x + y * this._size) * 4;
+        this._imageData[side].data[index + 0] = argb[1];
+        this._imageData[side].data[index + 1] = argb[2];
+        this._imageData[side].data[index + 2] = argb[3];
+        this._imageData[side].data[index + 3] = 255;
+        if (!this._locked) {
+            this._context[side].putImageData(this._imageData[side], 0, 0);
+            this._imageData = null;
+        }
+        this.invalidateContent();
+    };
+    /**
+     * Sets the color and alpha transparency values of a single pixel of a
+     * BitmapImage2D object. This method is similar to the <code>setPixel()</code>
+     * method; the main difference is that the <code>setPixel32()</code> method
+     * takes an ARGB color value that contains alpha channel information.
+     *
+     * <p>All pixels in a BitmapImage2D object are stored as premultiplied color
+     * values. A premultiplied image pixel has the red, green, and blue color
+     * channel values already multiplied by the alpha data. For example, if the
+     * alpha value is 0, the values for the RGB channels are also 0, independent
+     * of their unmultiplied values. This loss of data can cause some problems
+     * when you perform operations. All BitmapImage2D methods take and return
+     * unmultiplied values. The internal pixel representation is converted from
+     * premultiplied to unmultiplied before it is returned as a value. During a
+     * set operation, the pixel value is premultiplied before the raw image pixel
+     * is set.</p>
+     *
+     * <p><b>Note:</b> To increase performance, when you use the
+     * <code>setPixel()</code> or <code>setPixel32()</code> method repeatedly,
+     * call the <code>lock()</code> method before you call the
+     * <code>setPixel()</code> or <code>setPixel32()</code> method, and then call
+     * the <code>unlock()</code> method when you have made all pixel changes.
+     * This process prevents objects that reference this BitmapImage2D instance from
+     * updating until you finish making the pixel changes.</p>
+     *
+     * @param x     The <i>x</i> position of the pixel whose value changes.
+     * @param y     The <i>y</i> position of the pixel whose value changes.
+     * @param color The resulting ARGB color for the pixel. If the bitmap is
+     *              opaque(not transparent), the alpha transparency portion of
+     *              this color value is ignored.
+     */
+    BitmapImageCube.prototype.setPixel32 = function (side, x, y, color) {
+        var argb = ColorUtils.float32ColorToARGB(color);
+        if (!this._locked)
+            this._imageData[side] = this._context[side].getImageData(0, 0, this._size, this._size);
+        var index = (x + y * this._size) * 4;
+        this._imageData[side].data[index + 0] = argb[1];
+        this._imageData[side].data[index + 1] = argb[2];
+        this._imageData[side].data[index + 2] = argb[3];
+        this._imageData[side].data[index + 3] = argb[0];
+        if (!this._locked) {
+            this._context[side].putImageData(this._imageData[side], 0, 0);
+            this._imageData[side] = null;
+        }
+        this.invalidateContent();
+    };
+    /**
+     * Converts a byte array into a rectangular region of pixel data. For each
+     * pixel, the <code>ByteArray.readUnsignedInt()</code> method is called and
+     * the return value is written into the pixel. If the byte array ends before
+     * the full rectangle is written, the function returns. The data in the byte
+     * array is expected to be 32-bit ARGB pixel values. No seeking is performed
+     * on the byte array before or after the pixels are read.
+     *
+     * @param rect           Specifies the rectangular region of the BitmapImage2D
+     *                       object.
+     * @param inputByteArray A ByteArray object that consists of 32-bit
+     *                       unmultiplied pixel values to be used in the
+     *                       rectangular region.
+     * @throws EOFError  The <code>inputByteArray</code> object does not include
+     *                   enough data to fill the area of the <code>rect</code>
+     *                   rectangle. The method fills as many pixels as possible
+     *                   before throwing the exception.
+     * @throws TypeError The rect or inputByteArray are null.
+     */
+    BitmapImageCube.prototype.setPixels = function (side, rect, inputByteArray) {
+        if (!this._locked)
+            this._imageData[side] = this._context[side].getImageData(0, 0, this._size, this._size);
+        inputByteArray.position = 0;
+        var i /*uint*/, j /*uint*/, index /*uint*/;
+        for (i = 0; i < rect.width; ++i) {
+            for (j = 0; j < rect.height; ++j) {
+                index = (i + rect.x + (j + rect.y) * this._size) * 4;
+                this._imageData[side].data[index + 0] = inputByteArray.readUnsignedInt();
+                this._imageData[side].data[index + 1] = inputByteArray.readUnsignedInt();
+                this._imageData[side].data[index + 2] = inputByteArray.readUnsignedInt();
+                this._imageData[side].data[index + 3] = inputByteArray.readUnsignedInt();
+            }
+        }
+        if (!this._locked) {
+            this._context[side].putImageData(this._imageData[side], 0, 0);
+            this._imageData[side] = null;
+        }
+        this.invalidateContent();
+    };
+    /**
+     * Unlocks an image so that any objects that reference the BitmapImage2D object,
+     * such as Bitmap objects, are updated when this BitmapImage2D object changes.
+     * To improve performance, use this method along with the <code>lock()</code>
+     * method before and after numerous calls to the <code>setPixel()</code> or
+     * <code>setPixel32()</code> method.
+     *
+     * @param changeRect The area of the BitmapImage2D object that has changed. If
+     *                   you do not specify a value for this parameter, the
+     *                   entire area of the BitmapImage2D object is considered
+     *                   changed.
+     */
+    BitmapImageCube.prototype.unlock = function () {
+        if (!this._locked)
+            return;
+        this._locked = false;
+        for (var i = 0; i < 6; i++) {
+            this._context[i].putImageData(this._imageData[i], 0, 0); // at coords 0,0
+            this._imageData[i] = null;
         }
     };
-    Object.defineProperty(BitmapData.prototype, "imageData", {
-        /**
-         *
-         * @returns {ImageData}
-         */
-        get: function () {
-            if (!this._locked)
-                return this._context.getImageData(0, 0, this._rect.width, this._rect.height);
-            return this._imageData;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(BitmapData.prototype, "canvas", {
-        /**
-         *
-         * @returns {HTMLCanvasElement}
-         */
-        get: function () {
-            return this._imageCanvas;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    return BitmapData;
-})();
-module.exports = BitmapData;
+    /**
+     *
+     * @returns {ImageData}
+     */
+    BitmapImageCube.prototype.getImageData = function (side) {
+        if (!this._locked)
+            return this._context[side].getImageData(0, 0, this._size, this._size);
+        return this._imageData[side];
+    };
+    /**
+     *
+     * @returns {HTMLCanvasElement}
+     */
+    BitmapImageCube.prototype.getCanvas = function (side) {
+        return this._imageCanvas[side];
+    };
+    /**
+     *
+     * @param width
+     * @param height
+     * @private
+     */
+    BitmapImageCube.prototype._setSize = function (size) {
+        _super.prototype._setSize.call(this, size);
+        for (var i = 0; i < 6; i++) {
+            if (this._locked)
+                this._context[i].putImageData(this._imageData[i], 0, 0);
+            this._imageCanvas[i].width = size;
+            this._imageCanvas[i].height = size;
+            if (this._locked)
+                this._imageData[i] = this._context[i].getImageData(0, 0, this._size, this._size);
+        }
+    };
+    BitmapImageCube.assetType = "[asset BitmapImageCube]";
+    BitmapImageCube.posX = 0;
+    BitmapImageCube.negX = 1;
+    BitmapImageCube.posY = 2;
+    BitmapImageCube.negY = 3;
+    BitmapImageCube.posZ = 4;
+    BitmapImageCube.negZ = 5;
+    return BitmapImageCube;
+})(ImageCube);
+module.exports = BitmapImageCube;
 
-},{"awayjs-core/lib/geom/Rectangle":"awayjs-core/lib/geom/Rectangle","awayjs-core/lib/utils/ColorUtils":"awayjs-core/lib/utils/ColorUtils"}],"awayjs-core/lib/data/BlendMode":[function(require,module,exports){
+},{"awayjs-core/lib/data/BitmapImage2D":"awayjs-core/lib/data/BitmapImage2D","awayjs-core/lib/data/ImageCube":"awayjs-core/lib/data/ImageCube","awayjs-core/lib/geom/Rectangle":"awayjs-core/lib/geom/Rectangle","awayjs-core/lib/utils/BitmapImageUtils":"awayjs-core/lib/utils/BitmapImageUtils","awayjs-core/lib/utils/ColorUtils":"awayjs-core/lib/utils/ColorUtils"}],"awayjs-core/lib/data/BlendMode":[function(require,module,exports){
 /**
  * A class that provides constant values for visual blend mode effects. These
  * constants are used in the following:
@@ -1608,7 +2218,228 @@ var Geometry = (function (_super) {
 })(AssetBase);
 module.exports = Geometry;
 
-},{"awayjs-core/lib/events/GeometryEvent":"awayjs-core/lib/events/GeometryEvent","awayjs-core/lib/library/AssetBase":"awayjs-core/lib/library/AssetBase"}],"awayjs-core/lib/data/LineSubGeometry":[function(require,module,exports){
+},{"awayjs-core/lib/events/GeometryEvent":"awayjs-core/lib/events/GeometryEvent","awayjs-core/lib/library/AssetBase":"awayjs-core/lib/library/AssetBase"}],"awayjs-core/lib/data/Image2D":[function(require,module,exports){
+var __extends = this.__extends || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    __.prototype = b.prototype;
+    d.prototype = new __();
+};
+var ImageBase = require("awayjs-core/lib/data/ImageBase");
+var Rectangle = require("awayjs-core/lib/geom/Rectangle");
+var ImageUtils = require("awayjs-core/lib/utils/ImageUtils");
+var Image2D = (function (_super) {
+    __extends(Image2D, _super);
+    /**
+     *
+     */
+    function Image2D(width, height) {
+        _super.call(this);
+        this._rect = new Rectangle(0, 0, width, height);
+        this._testDimensions();
+    }
+    Object.defineProperty(Image2D.prototype, "assetType", {
+        /**
+         *
+         * @returns {string}
+         */
+        get: function () {
+            return Image2D.assetType;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Image2D.prototype, "height", {
+        /**
+         * The height of the image in pixels.
+         */
+        get: function () {
+            return this._rect.height;
+        },
+        set: function (value) {
+            if (this._rect.height == value)
+                return;
+            this._setSize(this._rect.width, value);
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Image2D.prototype, "rect", {
+        /**
+         * The rectangle that defines the size and location of the bitmap image. The
+         * top and left of the rectangle are 0; the width and height are equal to the
+         * width and height in pixels of the BitmapData object.
+         */
+        get: function () {
+            return this._rect;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Image2D.prototype, "width", {
+        /**
+         * The width of the bitmap image in pixels.
+         */
+        get: function () {
+            return this._rect.width;
+        },
+        set: function (value) {
+            if (this._rect.width == value)
+                return;
+            this._setSize(value, this._rect.height);
+        },
+        enumerable: true,
+        configurable: true
+    });
+    /**
+     *
+     * @param width
+     * @param height
+     * @private
+     */
+    Image2D.prototype._setSize = function (width, height) {
+        if (this._rect.width != width || this._rect.height != height)
+            this.invalidateSize();
+        this._rect.width = width;
+        this._rect.height = height;
+        this._testDimensions();
+    };
+    /**
+     *
+     * @private
+     */
+    Image2D.prototype._testDimensions = function () {
+        if (!ImageUtils.isDimensionValid(this._rect.width) || !ImageUtils.isDimensionValid(this._rect.height))
+            throw new Error("Invalid dimension: Width and height must be power of 2 and cannot exceed 2048");
+    };
+    Image2D.assetType = "[asset Image2D]";
+    return Image2D;
+})(ImageBase);
+module.exports = Image2D;
+
+},{"awayjs-core/lib/data/ImageBase":"awayjs-core/lib/data/ImageBase","awayjs-core/lib/geom/Rectangle":"awayjs-core/lib/geom/Rectangle","awayjs-core/lib/utils/ImageUtils":"awayjs-core/lib/utils/ImageUtils"}],"awayjs-core/lib/data/ImageBase":[function(require,module,exports){
+var __extends = this.__extends || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    __.prototype = b.prototype;
+    d.prototype = new __();
+};
+var AssetBase = require("awayjs-core/lib/library/AssetBase");
+var ImageBase = (function (_super) {
+    __extends(ImageBase, _super);
+    /**
+     *
+     */
+    function ImageBase() {
+        _super.call(this);
+        this._imageObject = new Array();
+    }
+    /**
+     *
+     */
+    ImageBase.prototype.invalidateContent = function () {
+        var len = this._imageObject.length;
+        for (var i = 0; i < len; i++)
+            this._imageObject[i].invalidate();
+    };
+    /**
+     *
+     * @private
+     */
+    ImageBase.prototype.invalidateSize = function () {
+        while (this._imageObject.length)
+            this._imageObject[0].dispose();
+    };
+    /**
+     * @inheritDoc
+     */
+    ImageBase.prototype.dispose = function () {
+        while (this._imageObject.length)
+            this._imageObject[0].dispose();
+    };
+    ImageBase.prototype._iAddImageObject = function (ImageObject) {
+        this._imageObject.push(ImageObject);
+        return ImageObject;
+    };
+    ImageBase.prototype._iRemoveImageObject = function (ImageObject) {
+        this._imageObject.splice(this._imageObject.indexOf(ImageObject), 1);
+        return ImageObject;
+    };
+    return ImageBase;
+})(AssetBase);
+module.exports = ImageBase;
+
+},{"awayjs-core/lib/library/AssetBase":"awayjs-core/lib/library/AssetBase"}],"awayjs-core/lib/data/ImageCube":[function(require,module,exports){
+var __extends = this.__extends || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    __.prototype = b.prototype;
+    d.prototype = new __();
+};
+var ImageBase = require("awayjs-core/lib/data/ImageBase");
+var ImageUtils = require("awayjs-core/lib/utils/ImageUtils");
+var ImageCube = (function (_super) {
+    __extends(ImageCube, _super);
+    /**
+     *
+     */
+    function ImageCube(size) {
+        _super.call(this);
+        this._size = size;
+        this._testDimensions();
+    }
+    Object.defineProperty(ImageCube.prototype, "assetType", {
+        /**
+         *
+         * @returns {string}
+         */
+        get: function () {
+            return ImageCube.assetType;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(ImageCube.prototype, "size", {
+        /**
+         * The size of the cube bitmap in pixels.
+         */
+        get: function () {
+            return this._size;
+        },
+        set: function (value) {
+            if (this._size == value)
+                return;
+            this._setSize(this._size);
+        },
+        enumerable: true,
+        configurable: true
+    });
+    /**
+     *
+     * @param width
+     * @param height
+     * @private
+     */
+    ImageCube.prototype._setSize = function (size) {
+        if (this._size != size)
+            this.invalidateSize();
+        this._size = size;
+        this._testDimensions();
+    };
+    /**
+     *
+     * @private
+     */
+    ImageCube.prototype._testDimensions = function () {
+        if (!ImageUtils.isDimensionValid(this._size))
+            throw new Error("Invalid dimension: Width and height must be power of 2 and cannot exceed 2048");
+    };
+    ImageCube.assetType = "[asset ImageCube]";
+    return ImageCube;
+})(ImageBase);
+module.exports = ImageCube;
+
+},{"awayjs-core/lib/data/ImageBase":"awayjs-core/lib/data/ImageBase","awayjs-core/lib/utils/ImageUtils":"awayjs-core/lib/utils/ImageUtils"}],"awayjs-core/lib/data/LineSubGeometry":[function(require,module,exports){
 var __extends = this.__extends || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
@@ -1962,7 +2793,490 @@ var LineSubGeometry = (function (_super) {
 })(SubGeometryBase);
 module.exports = LineSubGeometry;
 
-},{"awayjs-core/lib/data/SubGeometryBase":"awayjs-core/lib/data/SubGeometryBase","awayjs-core/lib/data/TriangleSubGeometry":"awayjs-core/lib/data/TriangleSubGeometry","awayjs-core/lib/events/SubGeometryEvent":"awayjs-core/lib/events/SubGeometryEvent"}],"awayjs-core/lib/data/SubGeometryBase":[function(require,module,exports){
+},{"awayjs-core/lib/data/SubGeometryBase":"awayjs-core/lib/data/SubGeometryBase","awayjs-core/lib/data/TriangleSubGeometry":"awayjs-core/lib/data/TriangleSubGeometry","awayjs-core/lib/events/SubGeometryEvent":"awayjs-core/lib/events/SubGeometryEvent"}],"awayjs-core/lib/data/Sampler2D":[function(require,module,exports){
+var __extends = this.__extends || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    __.prototype = b.prototype;
+    d.prototype = new __();
+};
+var SamplerBase = require("awayjs-core/lib/data/SamplerBase");
+/**
+ * The Sampler2D class represents display objects that represent bitmap images.
+ * These can be images that you load with the <code>flash.Assets</code> or
+ * <code>flash.display.Loader</code> classes, or they can be images that you
+ * create with the <code>Sampler2D()</code> constructor.
+ *
+ * <p>The <code>Sampler2D()</code> constructor allows you to create a Sampler2D
+ * object that contains a reference to a Image2D object. After you create a
+ * Sampler2D object, use the <code>addChild()</code> or <code>addChildAt()</code>
+ * method of the parent DisplayObjectContainer instance to place the bitmap on
+ * the display list.</p>
+ *
+ * <p>A Sampler2D object can share its Image2D reference among several Sampler2D
+ * objects, independent of translation or rotation properties. Because you can
+ * create multiple Sampler2D objects that reference the same Image2D object,
+ * multiple texture objects can use the same complex Image2D object without
+ * incurring the memory overhead of a Image2D object for each texture
+ * object instance.</p>
+
+ */
+var Sampler2D = (function (_super) {
+    __extends(Sampler2D, _super);
+    /**
+     *
+     * @param image2D
+     * @param smoothing
+     */
+    function Sampler2D(image2D, repeat, smooth, mipmap) {
+        if (image2D === void 0) { image2D = null; }
+        if (repeat === void 0) { repeat = false; }
+        if (smooth === void 0) { smooth = false; }
+        if (mipmap === void 0) { mipmap = false; }
+        _super.call(this);
+        this._offsetX = 0;
+        this._offsetY = 0;
+        this._scaleX = 1;
+        this._scaleY = 1;
+        this.image2D = image2D;
+        this.repeat = repeat;
+        this.smooth = smooth;
+        this.mipmap = mipmap;
+        this._updateRect();
+    }
+    Object.defineProperty(Sampler2D.prototype, "assetType", {
+        /**
+         *
+         * @returns {string}
+         */
+        get: function () {
+            return Sampler2D.assetType;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Sampler2D.prototype, "offsetX", {
+        /**
+         * Controls whether or not the Sampler2D object is snapped to the nearest pixel.
+         * This value is ignored in the native and HTML5 targets.
+         * The PixelSnapping class includes possible values:
+         * <ul>
+         *   <li><code>PixelSnapping.NEVER</code> - No pixel snapping occurs.</li>
+         *   <li><code>PixelSnapping.ALWAYS</code> - The image is always snapped to
+         * the nearest pixel, independent of transformation.</li>
+         *   <li><code>PixelSnapping.AUTO</code> - The image is snapped to the
+         * nearest pixel if it is drawn with no rotation or skew and it is drawn at a
+         * scale factor of 99.9% to 100.1%. If these conditions are satisfied, the
+         * bitmap image is drawn at 100% scale, snapped to the nearest pixel.
+         * When targeting Flash Player, this value allows the image to be drawn as fast
+         * as possible using the internal vector renderer.</li>
+         * </ul>
+         */
+        //var pixelSnapping:PixelSnapping;
+        /**
+         * Controls whether or not the bitmap is smoothed when scaled. If
+         * <code>true</code>, the bitmap is smoothed when scaled. If
+         * <code>false</code>, the bitmap is not smoothed when scaled.
+         */
+        /**
+         *
+         */
+        get: function () {
+            return this._offsetX;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Sampler2D.prototype, "offsetY", {
+        /**
+         *
+         */
+        get: function () {
+            return this._offsetY;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Sampler2D.prototype, "scaleX", {
+        /**
+         *
+         */
+        get: function () {
+            return this._scaleX;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Sampler2D.prototype, "scaleY", {
+        /**
+         *
+         */
+        get: function () {
+            return this._scaleY;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Sampler2D.prototype, "repeat", {
+        /**
+         *
+         */
+        get: function () {
+            return this._repeat;
+        },
+        set: function (value) {
+            if (this._repeat == value)
+                return;
+            this._repeat = value;
+            //TODO: update dependencies
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Sampler2D.prototype, "imageRect", {
+        /**
+         *
+         */
+        get: function () {
+            return this._imageRect;
+        },
+        set: function (value) {
+            if (this._imageRect == value)
+                return;
+            this._imageRect = value;
+            this._updateRect();
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Sampler2D.prototype, "frameRect", {
+        /**
+         *
+         */
+        get: function () {
+            return this._frameRect;
+        },
+        set: function (value) {
+            if (this._frameRect == value)
+                return;
+            this._frameRect = value;
+            this._updateRect();
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Sampler2D.prototype, "rect", {
+        /**
+         *
+         */
+        get: function () {
+            return this._rect;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Sampler2D.prototype._updateRect = function () {
+        if (this._imageRect)
+            this._rect = this._imageRect;
+        else
+            this._rect = this.image2D.rect;
+        if (this._imageRect) {
+            this._offsetX = this._imageRect.x / this.image2D.width;
+            this._offsetY = this._imageRect.y / this.image2D.height;
+            this._scaleX = this._imageRect.width / this.image2D.width;
+            this._scaleY = this._imageRect.height / this.image2D.height;
+        }
+        else {
+            this._offsetX = 0;
+            this._offsetY = 0;
+            this._scaleX = 1;
+            this._scaleY = 1;
+        }
+    };
+    Sampler2D.assetType = "[asset Sampler2D]";
+    return Sampler2D;
+})(SamplerBase);
+module.exports = Sampler2D;
+
+},{"awayjs-core/lib/data/SamplerBase":"awayjs-core/lib/data/SamplerBase"}],"awayjs-core/lib/data/SamplerBase":[function(require,module,exports){
+var __extends = this.__extends || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    __.prototype = b.prototype;
+    d.prototype = new __();
+};
+var AssetBase = require("awayjs-core/lib/library/AssetBase");
+/**
+ *
+ */
+var SamplerBase = (function (_super) {
+    __extends(SamplerBase, _super);
+    /**
+     *
+     */
+    function SamplerBase() {
+        _super.call(this);
+        this._pFormat = "bgra";
+    }
+    Object.defineProperty(SamplerBase.prototype, "smooth", {
+        /**
+         *
+         */
+        get: function () {
+            return this._smooth;
+        },
+        set: function (value) {
+            if (this._smooth == value)
+                return;
+            this._smooth = value;
+            //TODO: update dependencies
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(SamplerBase.prototype, "mipmap", {
+        /**
+         *
+         */
+        get: function () {
+            return this._mipmap;
+        },
+        set: function (value) {
+            if (this._mipmap == value)
+                return;
+            this._mipmap = value;
+            //TODO: update dependencies
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(SamplerBase.prototype, "format", {
+        /**
+         *
+         * @returns {string}
+         */
+        get: function () {
+            return this._pFormat;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    return SamplerBase;
+})(AssetBase);
+module.exports = SamplerBase;
+
+},{"awayjs-core/lib/library/AssetBase":"awayjs-core/lib/library/AssetBase"}],"awayjs-core/lib/data/SamplerCube":[function(require,module,exports){
+var __extends = this.__extends || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    __.prototype = b.prototype;
+    d.prototype = new __();
+};
+var SamplerBase = require("awayjs-core/lib/data/SamplerBase");
+/**
+ * The Bitmap class represents display objects that represent bitmap images.
+ * These can be images that you load with the <code>flash.Assets</code> or
+ * <code>flash.display.Loader</code> classes, or they can be images that you
+ * create with the <code>Bitmap()</code> constructor.
+ *
+ * <p>The <code>Bitmap()</code> constructor allows you to create a Bitmap
+ * object that contains a reference to a BitmapData object. After you create a
+ * Bitmap object, use the <code>addChild()</code> or <code>addChildAt()</code>
+ * method of the parent DisplayObjectContainer instance to place the bitmap on
+ * the display list.</p>
+ *
+ * <p>A Bitmap object can share its BitmapData reference among several Bitmap
+ * objects, independent of translation or rotation properties. Because you can
+ * create multiple Bitmap objects that reference the same BitmapData object,
+ * multiple texture objects can use the same complex BitmapData object without
+ * incurring the memory overhead of a BitmapData object for each texture
+ * object instance.</p>
+
+ */
+var SamplerCube = (function (_super) {
+    __extends(SamplerCube, _super);
+    /**
+     *
+     * @param bitmapData
+     * @param smoothing
+     */
+    function SamplerCube(imageCube) {
+        if (imageCube === void 0) { imageCube = null; }
+        _super.call(this);
+        this.imageCube = imageCube;
+    }
+    Object.defineProperty(SamplerCube.prototype, "assetType", {
+        /**
+         *
+         * @returns {string}
+         */
+        get: function () {
+            return SamplerCube.assetType;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    SamplerCube.assetType = "[asset SamplerCube]";
+    return SamplerCube;
+})(SamplerBase);
+module.exports = SamplerCube;
+
+},{"awayjs-core/lib/data/SamplerBase":"awayjs-core/lib/data/SamplerBase"}],"awayjs-core/lib/data/SpecularImage2D":[function(require,module,exports){
+var __extends = this.__extends || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    __.prototype = b.prototype;
+    d.prototype = new __();
+};
+var BitmapImage2D = require("awayjs-core/lib/data/BitmapImage2D");
+var BitmapImageChannel = require("awayjs-core/lib/data/BitmapImageChannel");
+var Image2D = require("awayjs-core/lib/data/Image2D");
+var Point = require("awayjs-core/lib/geom/Point");
+/**
+ *
+ */
+var SpecularImage2D = (function (_super) {
+    __extends(SpecularImage2D, _super);
+    /**
+     *
+     */
+    function SpecularImage2D(specularSource, glossSource) {
+        if (specularSource === void 0) { specularSource = null; }
+        if (glossSource === void 0) { glossSource = null; }
+        _super.call(this, 1, 1);
+        this._specularSource = specularSource;
+        this._glossSource = glossSource;
+        this._output = new BitmapImage2D(1, 1, false, 0xffffff);
+        this._testSize();
+    }
+    Object.defineProperty(SpecularImage2D.prototype, "assetType", {
+        /**
+         *
+         * @returns {string}
+         */
+        get: function () {
+            return SpecularImage2D.assetType;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(SpecularImage2D.prototype, "specularSource", {
+        get: function () {
+            return this._specularSource;
+        },
+        set: function (value) {
+            if (this._specularSource == value)
+                return;
+            this._specularSource = value;
+            this.invalidateContent();
+            this._testSize();
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(SpecularImage2D.prototype, "glossSource", {
+        get: function () {
+            return this._glossSource;
+        },
+        set: function (value) {
+            if (this._glossSource == value)
+                return;
+            this._glossSource = value;
+            this.invalidateContent();
+            this._testSize();
+        },
+        enumerable: true,
+        configurable: true
+    });
+    /**
+     * Returns a new SpecularImage2D object that is a clone of the original instance
+     * with an exact copy of the contained bitmap.
+     *
+     * @return A new SpecularImage2D object that is identical to the original.
+     */
+    SpecularImage2D.prototype.clone = function () {
+        return new SpecularImage2D(this._specularSource, this._glossSource);
+    };
+    /**
+     * Frees memory that is used to store the SpecularImage2D object.
+     *
+     * <p>When the <code>dispose()</code> method is called on an image, the width
+     * and height of the image are set to 0. All subsequent calls to methods or
+     * properties of this SpecularImage2D instance fail, and an exception is thrown.
+     * </p>
+     *
+     * <p><code>SpecularImage2D.dispose()</code> releases the memory occupied by the
+     * actual bitmap data, immediately(a bitmap can consume up to 64 MB of
+     * memory). After using <code>SpecularImage2D.dispose()</code>, the SpecularImage2D
+     * object is no longer usable and an exception may be thrown if
+     * you call functions on the SpecularImage2D object. However,
+     * <code>SpecularImage2D.dispose()</code> does not garbage collect the SpecularImage2D
+     * object(approximately 128 bytes); the memory occupied by the actual
+     * SpecularImage2D object is released at the time the SpecularImage2D object is
+     * collected by the garbage collector.</p>
+     *
+     */
+    SpecularImage2D.prototype.dispose = function () {
+        _super.prototype.dispose.call(this);
+        this._rect = null;
+        this._output.dispose();
+    };
+    /**
+     *
+     * @returns {ImageData}
+     */
+    SpecularImage2D.prototype.getImageData = function () {
+        var origin = new Point();
+        this._output.fillRect(this._rect, 0xffffff);
+        if (this._glossSource)
+            this._output.copyChannel(this._glossSource, this._rect, origin, BitmapImageChannel.GREEN, BitmapImageChannel.GREEN);
+        if (this._specularSource)
+            this._output.copyChannel(this._specularSource, this._rect, origin, BitmapImageChannel.RED, BitmapImageChannel.RED);
+        return this._output.getImageData();
+    };
+    /**
+     *
+     * @returns {HTMLCanvasElement}
+     */
+    SpecularImage2D.prototype.getCanvas = function () {
+        return this._output.getCanvas();
+    };
+    /**
+     *
+     * @param width
+     * @param height
+     * @private
+     */
+    SpecularImage2D.prototype._setSize = function (width, height) {
+        _super.prototype._setSize.call(this, width, height);
+        this._output._setSize(width, height);
+    };
+    SpecularImage2D.prototype._testSize = function () {
+        var w, h;
+        if (this._specularSource) {
+            w = this._specularSource.width;
+            h = this._specularSource.height;
+        }
+        else if (this._glossSource) {
+            w = this._glossSource.width;
+            h = this._glossSource.height;
+        }
+        else {
+            w = 1;
+            h = 1;
+        }
+        if (w != this._output.width && h != this._output.height) {
+            this._output.dispose();
+            this._output = new BitmapImage2D(w, h, false, 0xffffff);
+        }
+        this._setSize(w, h);
+    };
+    SpecularImage2D.assetType = "[asset SpecularImage2D]";
+    return SpecularImage2D;
+})(Image2D);
+module.exports = SpecularImage2D;
+
+},{"awayjs-core/lib/data/BitmapImage2D":"awayjs-core/lib/data/BitmapImage2D","awayjs-core/lib/data/BitmapImageChannel":"awayjs-core/lib/data/BitmapImageChannel","awayjs-core/lib/data/Image2D":"awayjs-core/lib/data/Image2D","awayjs-core/lib/geom/Point":"awayjs-core/lib/geom/Point"}],"awayjs-core/lib/data/SubGeometryBase":[function(require,module,exports){
 var __extends = this.__extends || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
@@ -9343,9 +10657,10 @@ var EventDispatcher = require("awayjs-core/lib/events/EventDispatcher");
 var IOErrorEvent = require("awayjs-core/lib/events/IOErrorEvent");
 var LoaderEvent = require("awayjs-core/lib/events/LoaderEvent");
 var ParserEvent = require("awayjs-core/lib/events/ParserEvent");
-var CubeTextureParser = require("awayjs-core/lib/parsers/CubeTextureParser");
+var Image2DParser = require("awayjs-core/lib/parsers/Image2DParser");
+var ImageCubeParser = require("awayjs-core/lib/parsers/ImageCubeParser");
+var TextureAtlasParser = require("awayjs-core/lib/parsers/TextureAtlasParser");
 var ResourceDependency = require("awayjs-core/lib/parsers/ResourceDependency");
-var Texture2DParser = require("awayjs-core/lib/parsers/Texture2DParser");
 /**
  * Dispatched when any asset finishes parsing. Also see specific events for each
  * individual asset type (meshes, materials et c.)
@@ -9873,12 +11188,12 @@ var AssetLoader = (function (_super) {
         return null;
     };
     // Image parser only parser that is added by default, to save file size.
-    AssetLoader._parsers = new Array(Texture2DParser, CubeTextureParser);
+    AssetLoader._parsers = new Array(Image2DParser, ImageCubeParser, TextureAtlasParser);
     return AssetLoader;
 })(EventDispatcher);
 module.exports = AssetLoader;
 
-},{"awayjs-core/lib/errors/Error":"awayjs-core/lib/errors/Error","awayjs-core/lib/events/AssetEvent":"awayjs-core/lib/events/AssetEvent","awayjs-core/lib/events/Event":"awayjs-core/lib/events/Event","awayjs-core/lib/events/EventDispatcher":"awayjs-core/lib/events/EventDispatcher","awayjs-core/lib/events/IOErrorEvent":"awayjs-core/lib/events/IOErrorEvent","awayjs-core/lib/events/LoaderEvent":"awayjs-core/lib/events/LoaderEvent","awayjs-core/lib/events/ParserEvent":"awayjs-core/lib/events/ParserEvent","awayjs-core/lib/library/AssetLoaderToken":"awayjs-core/lib/library/AssetLoaderToken","awayjs-core/lib/net/URLLoader":"awayjs-core/lib/net/URLLoader","awayjs-core/lib/net/URLLoaderDataFormat":"awayjs-core/lib/net/URLLoaderDataFormat","awayjs-core/lib/parsers/CubeTextureParser":"awayjs-core/lib/parsers/CubeTextureParser","awayjs-core/lib/parsers/ResourceDependency":"awayjs-core/lib/parsers/ResourceDependency","awayjs-core/lib/parsers/Texture2DParser":"awayjs-core/lib/parsers/Texture2DParser"}],"awayjs-core/lib/library/ConflictPrecedence":[function(require,module,exports){
+},{"awayjs-core/lib/errors/Error":"awayjs-core/lib/errors/Error","awayjs-core/lib/events/AssetEvent":"awayjs-core/lib/events/AssetEvent","awayjs-core/lib/events/Event":"awayjs-core/lib/events/Event","awayjs-core/lib/events/EventDispatcher":"awayjs-core/lib/events/EventDispatcher","awayjs-core/lib/events/IOErrorEvent":"awayjs-core/lib/events/IOErrorEvent","awayjs-core/lib/events/LoaderEvent":"awayjs-core/lib/events/LoaderEvent","awayjs-core/lib/events/ParserEvent":"awayjs-core/lib/events/ParserEvent","awayjs-core/lib/library/AssetLoaderToken":"awayjs-core/lib/library/AssetLoaderToken","awayjs-core/lib/net/URLLoader":"awayjs-core/lib/net/URLLoader","awayjs-core/lib/net/URLLoaderDataFormat":"awayjs-core/lib/net/URLLoaderDataFormat","awayjs-core/lib/parsers/Image2DParser":"awayjs-core/lib/parsers/Image2DParser","awayjs-core/lib/parsers/ImageCubeParser":"awayjs-core/lib/parsers/ImageCubeParser","awayjs-core/lib/parsers/ResourceDependency":"awayjs-core/lib/parsers/ResourceDependency","awayjs-core/lib/parsers/TextureAtlasParser":"awayjs-core/lib/parsers/TextureAtlasParser"}],"awayjs-core/lib/library/ConflictPrecedence":[function(require,module,exports){
 /**
  * Enumaration class for precedence when resolving naming conflicts in the library.
  *
@@ -10090,6 +11405,8 @@ var IDUtil = (function () {
     return IDUtil;
 })();
 module.exports = IDUtil;
+
+},{}],"awayjs-core/lib/library/IWrapperClass":[function(require,module,exports){
 
 },{}],"awayjs-core/lib/library/IgnoreConflictStrategy":[function(require,module,exports){
 var __extends = this.__extends || function (d, b) {
@@ -10695,7 +12012,7 @@ var URLVariables = (function () {
 })();
 module.exports = URLVariables;
 
-},{}],"awayjs-core/lib/parsers/CubeTextureParser":[function(require,module,exports){
+},{}],"awayjs-core/lib/parsers/Image2DParser":[function(require,module,exports){
 var __extends = this.__extends || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
@@ -10703,22 +12020,147 @@ var __extends = this.__extends || function (d, b) {
     d.prototype = new __();
 };
 var URLLoaderDataFormat = require("awayjs-core/lib/net/URLLoaderDataFormat");
-var URLRequest = require("awayjs-core/lib/net/URLRequest");
 var ParserBase = require("awayjs-core/lib/parsers/ParserBase");
-var ImageCubeTexture = require("awayjs-core/lib/textures/ImageCubeTexture");
+var ParserUtils = require("awayjs-core/lib/parsers/ParserUtils");
+var ByteArray = require("awayjs-core/lib/utils/ByteArray");
+var ImageUtils = require("awayjs-core/lib/utils/ImageUtils");
 /**
- * CubeTextureParser provides a "parser" for natively supported image types (jpg, png). While it simply loads bytes into
+ * Image2DParser provides a "parser" for natively supported image types (jpg, png). While it simply loads bytes into
  * a loader object, it wraps it in a BitmapDataResource so resource management can happen consistently without
  * exception cases.
  */
-var CubeTextureParser = (function (_super) {
-    __extends(CubeTextureParser, _super);
+var Image2DParser = (function (_super) {
+    __extends(Image2DParser, _super);
     /**
-     * Creates a new CubeTextureParser object.
+     * Creates a new Image2DParser object.
      * @param uri The url or id of the data or file to be parsed.
      * @param extra The holder for extra contextual data that the parser might need.
      */
-    function CubeTextureParser() {
+    function Image2DParser() {
+        _super.call(this, URLLoaderDataFormat.BLOB);
+    }
+    /**
+     * Indicates whether or not a given file extension is supported by the parser.
+     * @param extension The file extension of a potential file to be parsed.
+     * @return Whether or not the given file type is supported.
+     */
+    Image2DParser.supportsType = function (extension) {
+        extension = extension.toLowerCase();
+        return extension == "jpg" || extension == "jpeg" || extension == "png" || extension == "gif"; //|| extension == "bmp";//|| extension == "atf";
+    };
+    /**
+     * Tests whether a data block can be parsed by the parser.
+     * @param data The data block to potentially be parsed.
+     * @return Whether or not the given data is supported.
+     */
+    Image2DParser.supportsData = function (data) {
+        if (data instanceof HTMLImageElement)
+            return true;
+        if (!(data instanceof ByteArray))
+            return false;
+        var ba = data;
+        ba.position = 0;
+        if (ba.readUnsignedShort() == 0xffd8)
+            return true; // JPEG, maybe check for "JFIF" as well?
+        ba.position = 0;
+        if (ba.readShort() == 0x424D)
+            return true; // BMP
+        ba.position = 1;
+        if (ba.readUTFBytes(3) == 'PNG')
+            return true;
+        ba.position = 0;
+        if (ba.readUTFBytes(3) == 'GIF' && ba.readShort() == 0x3839 && ba.readByte() == 0x61)
+            return true;
+        ba.position = 0;
+        if (ba.readUTFBytes(3) == 'ATF')
+            return true;
+        return false;
+    };
+    /**
+     * @inheritDoc
+     */
+    Image2DParser.prototype._pProceedParsing = function () {
+        var _this = this;
+        var asset;
+        var sizeError = false;
+        if (this._loadingImage) {
+            return ParserBase.MORE_TO_PARSE;
+        }
+        else if (this._htmlImageElement) {
+            if (ImageUtils.isHTMLImageElementValid(this._htmlImageElement)) {
+                asset = ParserUtils.imageToBitmapImage2D(this._htmlImageElement);
+                this._pFinalizeAsset(asset, this._iFileName);
+            }
+        }
+        else if (this.data instanceof HTMLImageElement) {
+            var htmlImageElement = this.data;
+            if (ImageUtils.isHTMLImageElementValid(htmlImageElement)) {
+                asset = ParserUtils.imageToBitmapImage2D(htmlImageElement);
+                this._pFinalizeAsset(asset, this._iFileName);
+            }
+            else {
+                sizeError = true;
+            }
+        }
+        else if (this.data instanceof ByteArray) {
+            var ba = this.data;
+            ba.position = 0;
+            var htmlImageElement = ParserUtils.byteArrayToImage(this.data);
+            if (ImageUtils.isHTMLImageElementValid(htmlImageElement)) {
+                asset = ParserUtils.imageToBitmapImage2D(htmlImageElement);
+                this._pFinalizeAsset(asset, this._iFileName);
+            }
+            else {
+                sizeError = true;
+            }
+        }
+        else if (this.data instanceof ArrayBuffer) {
+            this._htmlImageElement = ParserUtils.arrayBufferToImage(this.data);
+            asset = ParserUtils.imageToBitmapImage2D(this._htmlImageElement);
+            this._pFinalizeAsset(asset, this._iFileName);
+        }
+        else if (this.data instanceof Blob) {
+            this._htmlImageElement = ParserUtils.blobToImage(this.data);
+            this._htmlImageElement.onload = function (event) { return _this.onLoadComplete(event); };
+            this._loadingImage = true;
+            return ParserBase.MORE_TO_PARSE;
+        }
+        if (sizeError == true) {
+        }
+        this._pContent = asset;
+        return ParserBase.PARSING_DONE;
+    };
+    Image2DParser.prototype.onLoadComplete = function (event) {
+        this._loadingImage = false;
+    };
+    return Image2DParser;
+})(ParserBase);
+module.exports = Image2DParser;
+
+},{"awayjs-core/lib/net/URLLoaderDataFormat":"awayjs-core/lib/net/URLLoaderDataFormat","awayjs-core/lib/parsers/ParserBase":"awayjs-core/lib/parsers/ParserBase","awayjs-core/lib/parsers/ParserUtils":"awayjs-core/lib/parsers/ParserUtils","awayjs-core/lib/utils/ByteArray":"awayjs-core/lib/utils/ByteArray","awayjs-core/lib/utils/ImageUtils":"awayjs-core/lib/utils/ImageUtils"}],"awayjs-core/lib/parsers/ImageCubeParser":[function(require,module,exports){
+var __extends = this.__extends || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    __.prototype = b.prototype;
+    d.prototype = new __();
+};
+var BitmapImageCube = require("awayjs-core/lib/data/BitmapImageCube");
+var URLLoaderDataFormat = require("awayjs-core/lib/net/URLLoaderDataFormat");
+var URLRequest = require("awayjs-core/lib/net/URLRequest");
+var ParserBase = require("awayjs-core/lib/parsers/ParserBase");
+/**
+ * ImageCubeParser provides a "parser" for natively supported image types (jpg, png). While it simply loads bytes into
+ * a loader object, it wraps it in a BitmapImage2DResource so resource management can happen consistently without
+ * exception cases.
+ */
+var ImageCubeParser = (function (_super) {
+    __extends(ImageCubeParser, _super);
+    /**
+     * Creates a new ImageCubeParser object.
+     * @param uri The url or id of the data or file to be parsed.
+     * @param extra The holder for extra contextual data that the parser might need.
+     */
+    function ImageCubeParser() {
         _super.call(this, URLLoaderDataFormat.TEXT);
     }
     /**
@@ -10726,7 +12168,7 @@ var CubeTextureParser = (function (_super) {
      * @param extension The file extension of a potential file to be parsed.
      * @return Whether or not the given file type is supported.
      */
-    CubeTextureParser.supportsType = function (extension) {
+    ImageCubeParser.supportsType = function (extension) {
         extension = extension.toLowerCase();
         return extension == "cube";
     };
@@ -10735,7 +12177,7 @@ var CubeTextureParser = (function (_super) {
      * @param data The data block to potentially be parsed.
      * @return Whether or not the given data is supported.
      */
-    CubeTextureParser.supportsData = function (data) {
+    ImageCubeParser.supportsData = function (data) {
         try {
             var obj = JSON.parse(data);
             if (obj) {
@@ -10751,19 +12193,25 @@ var CubeTextureParser = (function (_super) {
     /**
      * @inheritDoc
      */
-    CubeTextureParser.prototype._iResolveDependency = function (resourceDependency) {
+    ImageCubeParser.prototype._iResolveDependency = function (resourceDependency) {
     };
     /**
      * @inheritDoc
      */
-    CubeTextureParser.prototype._iResolveDependencyFailure = function (resourceDependency) {
+    ImageCubeParser.prototype._iResolveDependencyFailure = function (resourceDependency) {
     };
     /**
      * @inheritDoc
      */
-    CubeTextureParser.prototype._pProceedParsing = function () {
+    ImageCubeParser.prototype._pProceedParsing = function () {
         if (this._imgDependencyDictionary != null) {
-            var asset = new ImageCubeTexture(this._getHTMLImageElement(CubeTextureParser.posX), this._getHTMLImageElement(CubeTextureParser.negX), this._getHTMLImageElement(CubeTextureParser.posY), this._getHTMLImageElement(CubeTextureParser.negY), this._getHTMLImageElement(CubeTextureParser.posZ), this._getHTMLImageElement(CubeTextureParser.negZ));
+            var asset = new BitmapImageCube(this._getBitmapImage2D(ImageCubeParser.posX).width);
+            asset.draw(BitmapImageCube.posX, this._getBitmapImage2D(ImageCubeParser.posX));
+            asset.draw(BitmapImageCube.negX, this._getBitmapImage2D(ImageCubeParser.negX));
+            asset.draw(BitmapImageCube.posY, this._getBitmapImage2D(ImageCubeParser.posY));
+            asset.draw(BitmapImageCube.negY, this._getBitmapImage2D(ImageCubeParser.negY));
+            asset.draw(BitmapImageCube.posZ, this._getBitmapImage2D(ImageCubeParser.posZ));
+            asset.draw(BitmapImageCube.negZ, this._getBitmapImage2D(ImageCubeParser.negZ));
             //clear dictionary
             this._imgDependencyDictionary = null;
             asset.name = this._iFileName;
@@ -10775,7 +12223,7 @@ var CubeTextureParser = (function (_super) {
             var data = json.data;
             var rec;
             if (data.length != 6)
-                this._pDieWithError('CubeTextureParser: Error - cube texture should have exactly 6 images');
+                this._pDieWithError('ImageCubeParser: Error - cube texture should have exactly 6 images');
             if (json) {
                 this._imgDependencyDictionary = new Object();
                 for (var c = 0; c < data.length; c++) {
@@ -10783,7 +12231,7 @@ var CubeTextureParser = (function (_super) {
                     this._imgDependencyDictionary[rec.id] = this._pAddDependency(rec.id, new URLRequest(rec.image.toString()));
                 }
                 if (!this._validateCubeData()) {
-                    this._pDieWithError("CubeTextureParser: JSON data error - cubes require id of:   \n" + CubeTextureParser.posX + ', ' + CubeTextureParser.negX + ',  \n' + CubeTextureParser.posY + ', ' + CubeTextureParser.negY + ',  \n' + CubeTextureParser.posZ + ', ' + CubeTextureParser.negZ);
+                    this._pDieWithError("ImageCubeParser: JSON data error - cubes require id of:   \n" + ImageCubeParser.posX + ', ' + ImageCubeParser.negX + ',  \n' + ImageCubeParser.posY + ', ' + ImageCubeParser.negY + ',  \n' + ImageCubeParser.posZ + ', ' + ImageCubeParser.negZ);
                     return ParserBase.PARSING_DONE;
                 }
                 this._pPauseAndRetrieveDependencies();
@@ -10795,27 +12243,26 @@ var CubeTextureParser = (function (_super) {
         }
         return ParserBase.PARSING_DONE;
     };
-    CubeTextureParser.prototype._validateCubeData = function () {
-        return (this._imgDependencyDictionary[CubeTextureParser.posX] != null && this._imgDependencyDictionary[CubeTextureParser.negX] != null && this._imgDependencyDictionary[CubeTextureParser.posY] != null && this._imgDependencyDictionary[CubeTextureParser.negY] != null && this._imgDependencyDictionary[CubeTextureParser.posZ] != null && this._imgDependencyDictionary[CubeTextureParser.negZ] != null);
+    ImageCubeParser.prototype._validateCubeData = function () {
+        return (this._imgDependencyDictionary[ImageCubeParser.posX] != null && this._imgDependencyDictionary[ImageCubeParser.negX] != null && this._imgDependencyDictionary[ImageCubeParser.posY] != null && this._imgDependencyDictionary[ImageCubeParser.negY] != null && this._imgDependencyDictionary[ImageCubeParser.posZ] != null && this._imgDependencyDictionary[ImageCubeParser.negZ] != null);
     };
-    CubeTextureParser.prototype._getHTMLImageElement = function (name) {
+    ImageCubeParser.prototype._getBitmapImage2D = function (name) {
         var dependency = this._imgDependencyDictionary[name];
-        if (dependency) {
-            return dependency.assets[0].htmlImageElement;
-        }
+        if (dependency)
+            return dependency.assets[0];
         return null;
     };
-    CubeTextureParser.posX = 'posX';
-    CubeTextureParser.negX = 'negX';
-    CubeTextureParser.posY = 'posY';
-    CubeTextureParser.negY = 'negY';
-    CubeTextureParser.posZ = 'posZ';
-    CubeTextureParser.negZ = 'negZ';
-    return CubeTextureParser;
+    ImageCubeParser.posX = 'posX';
+    ImageCubeParser.negX = 'negX';
+    ImageCubeParser.posY = 'posY';
+    ImageCubeParser.negY = 'negY';
+    ImageCubeParser.posZ = 'posZ';
+    ImageCubeParser.negZ = 'negZ';
+    return ImageCubeParser;
 })(ParserBase);
-module.exports = CubeTextureParser;
+module.exports = ImageCubeParser;
 
-},{"awayjs-core/lib/net/URLLoaderDataFormat":"awayjs-core/lib/net/URLLoaderDataFormat","awayjs-core/lib/net/URLRequest":"awayjs-core/lib/net/URLRequest","awayjs-core/lib/parsers/ParserBase":"awayjs-core/lib/parsers/ParserBase","awayjs-core/lib/textures/ImageCubeTexture":"awayjs-core/lib/textures/ImageCubeTexture"}],"awayjs-core/lib/parsers/ParserBase":[function(require,module,exports){
+},{"awayjs-core/lib/data/BitmapImageCube":"awayjs-core/lib/data/BitmapImageCube","awayjs-core/lib/net/URLLoaderDataFormat":"awayjs-core/lib/net/URLLoaderDataFormat","awayjs-core/lib/net/URLRequest":"awayjs-core/lib/net/URLRequest","awayjs-core/lib/parsers/ParserBase":"awayjs-core/lib/parsers/ParserBase"}],"awayjs-core/lib/parsers/ParserBase":[function(require,module,exports){
 var __extends = this.__extends || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
@@ -10829,7 +12276,7 @@ var ParserEvent = require("awayjs-core/lib/events/ParserEvent");
 var TimerEvent = require("awayjs-core/lib/events/TimerEvent");
 var ParserUtils = require("awayjs-core/lib/parsers/ParserUtils");
 var ResourceDependency = require("awayjs-core/lib/parsers/ResourceDependency");
-var TextureUtils = require("awayjs-core/lib/utils/TextureUtils");
+var ImageUtils = require("awayjs-core/lib/utils/ImageUtils");
 var Timer = require("awayjs-core/lib/utils/Timer");
 var getTimer = require("awayjs-core/lib/utils/getTimer");
 /**
@@ -10888,8 +12335,8 @@ var ParserBase = (function (_super) {
     /**
      * Validates a bitmapData loaded before assigning to a default BitmapMaterial
      */
-    ParserBase.prototype.isBitmapDataValid = function (bitmapData) {
-        var isValid = TextureUtils.isBitmapDataValid(bitmapData);
+    ParserBase.prototype.isBitmapImage2DValid = function (bitmapImage2D) {
+        var isValid = ImageUtils.isImage2DValid(bitmapImage2D);
         if (!isValid) {
             console.log(">> Bitmap loaded is not having power of 2 dimensions or is higher than 2048");
         }
@@ -11113,7 +12560,7 @@ var ParserBase = (function (_super) {
 })(EventDispatcher);
 module.exports = ParserBase;
 
-},{"awayjs-core/lib/errors/AbstractMethodError":"awayjs-core/lib/errors/AbstractMethodError","awayjs-core/lib/events/AssetEvent":"awayjs-core/lib/events/AssetEvent","awayjs-core/lib/events/EventDispatcher":"awayjs-core/lib/events/EventDispatcher","awayjs-core/lib/events/ParserEvent":"awayjs-core/lib/events/ParserEvent","awayjs-core/lib/events/TimerEvent":"awayjs-core/lib/events/TimerEvent","awayjs-core/lib/parsers/ParserUtils":"awayjs-core/lib/parsers/ParserUtils","awayjs-core/lib/parsers/ResourceDependency":"awayjs-core/lib/parsers/ResourceDependency","awayjs-core/lib/utils/TextureUtils":"awayjs-core/lib/utils/TextureUtils","awayjs-core/lib/utils/Timer":"awayjs-core/lib/utils/Timer","awayjs-core/lib/utils/getTimer":"awayjs-core/lib/utils/getTimer"}],"awayjs-core/lib/parsers/ParserDataFormat":[function(require,module,exports){
+},{"awayjs-core/lib/errors/AbstractMethodError":"awayjs-core/lib/errors/AbstractMethodError","awayjs-core/lib/events/AssetEvent":"awayjs-core/lib/events/AssetEvent","awayjs-core/lib/events/EventDispatcher":"awayjs-core/lib/events/EventDispatcher","awayjs-core/lib/events/ParserEvent":"awayjs-core/lib/events/ParserEvent","awayjs-core/lib/events/TimerEvent":"awayjs-core/lib/events/TimerEvent","awayjs-core/lib/parsers/ParserUtils":"awayjs-core/lib/parsers/ParserUtils","awayjs-core/lib/parsers/ResourceDependency":"awayjs-core/lib/parsers/ResourceDependency","awayjs-core/lib/utils/ImageUtils":"awayjs-core/lib/utils/ImageUtils","awayjs-core/lib/utils/Timer":"awayjs-core/lib/utils/Timer","awayjs-core/lib/utils/getTimer":"awayjs-core/lib/utils/getTimer"}],"awayjs-core/lib/parsers/ParserDataFormat":[function(require,module,exports){
 /**
  * An enumeration providing values to describe the data format of parsed data.
  */
@@ -11137,6 +12584,7 @@ var ParserDataFormat = (function () {
 module.exports = ParserDataFormat;
 
 },{}],"awayjs-core/lib/parsers/ParserUtils":[function(require,module,exports){
+var BitmapImage2D = require("awayjs-core/lib/data/BitmapImage2D");
 var ByteArray = require("awayjs-core/lib/utils/ByteArray");
 var ParserUtils = (function () {
     function ParserUtils() {
@@ -11197,6 +12645,14 @@ var ParserUtils = (function () {
         return img;
     };
     /**
+     *
+     */
+    ParserUtils.imageToBitmapImage2D = function (img) {
+        var bitmapData = new BitmapImage2D(img.width, img.height, true);
+        bitmapData.draw(img);
+        return bitmapData;
+    };
+    /**
      * Returns a object as ByteArray, if possible.
      *
      * @param data The object to return as ByteArray
@@ -11253,7 +12709,7 @@ var ParserUtils = (function () {
 })();
 module.exports = ParserUtils;
 
-},{"awayjs-core/lib/utils/ByteArray":"awayjs-core/lib/utils/ByteArray"}],"awayjs-core/lib/parsers/ResourceDependency":[function(require,module,exports){
+},{"awayjs-core/lib/data/BitmapImage2D":"awayjs-core/lib/data/BitmapImage2D","awayjs-core/lib/utils/ByteArray":"awayjs-core/lib/utils/ByteArray"}],"awayjs-core/lib/parsers/ResourceDependency":[function(require,module,exports){
 /**
  * ResourceDependency represents the data required to load, parse and resolve additional files ("dependencies")
  * required by a parser, used by ResourceLoadSession.
@@ -11414,132 +12870,154 @@ var ResourceDependency = (function () {
 })();
 module.exports = ResourceDependency;
 
-},{}],"awayjs-core/lib/parsers/Texture2DParser":[function(require,module,exports){
+},{}],"awayjs-core/lib/parsers/TextureAtlasParser":[function(require,module,exports){
 var __extends = this.__extends || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
     __.prototype = b.prototype;
     d.prototype = new __();
 };
+var Sampler2D = require("awayjs-core/lib/data/Sampler2D");
+var Rectangle = require("awayjs-core/lib/geom/Rectangle");
 var URLLoaderDataFormat = require("awayjs-core/lib/net/URLLoaderDataFormat");
+var URLRequest = require("awayjs-core/lib/net/URLRequest");
 var ParserBase = require("awayjs-core/lib/parsers/ParserBase");
 var ParserUtils = require("awayjs-core/lib/parsers/ParserUtils");
-var ByteArray = require("awayjs-core/lib/utils/ByteArray");
-var TextureUtils = require("awayjs-core/lib/utils/TextureUtils");
-var ImageTexture = require("awayjs-core/lib/textures/ImageTexture");
+var XmlUtils = require("awayjs-core/lib/utils/XmlUtils");
 /**
- * Texture2DParser provides a "parser" for natively supported image types (jpg, png). While it simply loads bytes into
- * a loader object, it wraps it in a BitmapDataResource so resource management can happen consistently without
+ * TextureAtlasParser provides a "parser" for natively supported image types (jpg, png). While it simply loads bytes into
+ * a loader object, it wraps it in a BitmapImage2DResource so resource management can happen consistently without
  * exception cases.
  */
-var Texture2DParser = (function (_super) {
-    __extends(Texture2DParser, _super);
+var TextureAtlasParser = (function (_super) {
+    __extends(TextureAtlasParser, _super);
     /**
-     * Creates a new Texture2DParser object.
+     * Creates a new TextureAtlasParser object.
      * @param uri The url or id of the data or file to be parsed.
      * @param extra The holder for extra contextual data that the parser might need.
      */
-    function Texture2DParser() {
-        _super.call(this, URLLoaderDataFormat.BLOB);
+    function TextureAtlasParser() {
+        _super.call(this, URLLoaderDataFormat.TEXT);
+        this._parseState = 0;
     }
     /**
      * Indicates whether or not a given file extension is supported by the parser.
      * @param extension The file extension of a potential file to be parsed.
      * @return Whether or not the given file type is supported.
      */
-    Texture2DParser.supportsType = function (extension) {
+    TextureAtlasParser.supportsType = function (extension) {
         extension = extension.toLowerCase();
-        return extension == "jpg" || extension == "jpeg" || extension == "png" || extension == "gif"; //|| extension == "bmp";//|| extension == "atf";
+        return extension == "xml";
     };
     /**
      * Tests whether a data block can be parsed by the parser.
      * @param data The data block to potentially be parsed.
      * @return Whether or not the given data is supported.
      */
-    Texture2DParser.supportsData = function (data) {
-        if (data instanceof HTMLImageElement)
-            return true;
-        if (!(data instanceof ByteArray))
+    TextureAtlasParser.supportsData = function (data) {
+        try {
+            var content = ParserUtils.toString(data);
+            if (content.indexOf("TextureAtlas") != -1 || content.indexOf("textureatlas") != -1)
+                return true;
             return false;
-        var ba = data;
-        ba.position = 0;
-        if (ba.readUnsignedShort() == 0xffd8)
-            return true; // JPEG, maybe check for "JFIF" as well?
-        ba.position = 0;
-        if (ba.readShort() == 0x424D)
-            return true; // BMP
-        ba.position = 1;
-        if (ba.readUTFBytes(3) == 'PNG')
-            return true;
-        ba.position = 0;
-        if (ba.readUTFBytes(3) == 'GIF' && ba.readShort() == 0x3839 && ba.readByte() == 0x61)
-            return true;
-        ba.position = 0;
-        if (ba.readUTFBytes(3) == 'ATF')
-            return true;
+        }
+        catch (e) {
+            return false;
+        }
         return false;
     };
     /**
      * @inheritDoc
      */
-    Texture2DParser.prototype._pProceedParsing = function () {
-        var _this = this;
-        var asset;
-        var sizeError = false;
-        if (this._loadingImage) {
-            return ParserBase.MORE_TO_PARSE;
+    TextureAtlasParser.prototype._iResolveDependency = function (resourceDependency) {
+        if (resourceDependency.assets.length) {
+            this._imageData = resourceDependency.assets[0];
+            this._parseState = TextureAtlasParserState.PARSE_SUBTEXTURES;
         }
-        else if (this._htmlImageElement) {
-            if (TextureUtils.isHTMLImageElementValid(this._htmlImageElement)) {
-                asset = new ImageTexture(this._htmlImageElement);
-                this._pFinalizeAsset(asset, this._iFileName);
-            }
+        else {
+            this._parseState = TextureAtlasParserState.PARSE_COMPLETE;
         }
-        else if (this.data instanceof HTMLImageElement) {
-            if (TextureUtils.isHTMLImageElementValid(this.data)) {
-                asset = new ImageTexture(this.data);
-                this._pFinalizeAsset(asset, this._iFileName);
-            }
-            else {
-                sizeError = true;
-            }
-        }
-        else if (this.data instanceof ByteArray) {
-            var ba = this.data;
-            ba.position = 0;
-            var htmlImageElement = ParserUtils.byteArrayToImage(this.data);
-            if (TextureUtils.isHTMLImageElementValid(htmlImageElement)) {
-                asset = new ImageTexture(htmlImageElement);
-                this._pFinalizeAsset(asset, this._iFileName);
-            }
-            else {
-                sizeError = true;
-            }
-        }
-        else if (this.data instanceof ArrayBuffer) {
-            this._htmlImageElement = ParserUtils.arrayBufferToImage(this.data);
-            asset = new ImageTexture(this._htmlImageElement);
-            this._pFinalizeAsset(asset, this._iFileName);
-        }
-        else if (this.data instanceof Blob) {
-            this._htmlImageElement = ParserUtils.blobToImage(this.data);
-            this._htmlImageElement.onload = function (event) { return _this.onLoadComplete(event); };
-            this._loadingImage = true;
-            return ParserBase.MORE_TO_PARSE;
-        }
-        if (sizeError == true) {
-        }
-        this._pContent = asset;
-        return ParserBase.PARSING_DONE;
     };
-    Texture2DParser.prototype.onLoadComplete = function (event) {
-        this._loadingImage = false;
+    /**
+     * @inheritDoc
+     */
+    TextureAtlasParser.prototype._iResolveDependencyFailure = function (resourceDependency) {
+        this._parseState = TextureAtlasParserState.PARSE_COMPLETE;
     };
-    return Texture2DParser;
+    /**
+     * @inheritDoc
+     */
+    TextureAtlasParser.prototype._pProceedParsing = function () {
+        var nodes;
+        switch (this._parseState) {
+            case TextureAtlasParserState.PARSE_XML:
+                try {
+                    this._doc = XmlUtils.getChildrenWithTag(XmlUtils.strToXml(this._pGetTextData()), "TextureAtlas")[0];
+                    this._imagePath = XmlUtils.readAttributeValue(this._doc, "imagePath");
+                    this._subTextureNodes = XmlUtils.getChildrenWithTag(this._doc, "SubTexture");
+                    this._parseState = TextureAtlasParserState.PARSE_IMAGE;
+                }
+                catch (Error) {
+                    return ParserBase.PARSING_DONE;
+                }
+                break;
+            case TextureAtlasParserState.PARSE_IMAGE:
+                if (this._imagePath) {
+                    this._pAddDependency(this._imagePath, new URLRequest(this._imagePath));
+                    this._pPauseAndRetrieveDependencies();
+                }
+                else {
+                    return ParserBase.PARSING_DONE;
+                }
+                break;
+            case TextureAtlasParserState.PARSE_SUBTEXTURES:
+                var bitmap;
+                var element;
+                var x;
+                var y;
+                var width;
+                var height;
+                var len = this._subTextureNodes.length;
+                for (var i = 0; i < len; i++) {
+                    element = this._subTextureNodes[i];
+                    bitmap = new Sampler2D(this._imageData);
+                    //setup subtexture rect
+                    x = XmlUtils.readAttributeValue(element, "x");
+                    y = XmlUtils.readAttributeValue(element, "y");
+                    width = XmlUtils.readAttributeValue(element, "width");
+                    height = XmlUtils.readAttributeValue(element, "height");
+                    if (x || y || width || height)
+                        bitmap.imageRect = new Rectangle(parseInt(x), parseInt(y), parseInt(width), parseInt(height));
+                    //setup frame rect
+                    x = XmlUtils.readAttributeValue(element, "frameX");
+                    y = XmlUtils.readAttributeValue(element, "frameY");
+                    width = XmlUtils.readAttributeValue(element, "frameWidth");
+                    height = XmlUtils.readAttributeValue(element, "frameHeight");
+                    if (x || y || width || height)
+                        bitmap.frameRect = new Rectangle(parseInt(x), parseInt(y), parseInt(width), parseInt(height));
+                    this._pFinalizeAsset(bitmap, XmlUtils.readAttributeValue(element, "name"));
+                }
+                this._parseState = TextureAtlasParserState.PARSE_COMPLETE;
+                break;
+            case TextureAtlasParserState.PARSE_COMPLETE:
+                return ParserBase.PARSING_DONE;
+        }
+        return ParserBase.MORE_TO_PARSE;
+    };
+    return TextureAtlasParser;
 })(ParserBase);
-module.exports = Texture2DParser;
+var TextureAtlasParserState = (function () {
+    function TextureAtlasParserState() {
+    }
+    TextureAtlasParserState.PARSE_XML = 0;
+    TextureAtlasParserState.PARSE_IMAGE = 1;
+    TextureAtlasParserState.PARSE_SUBTEXTURES = 2;
+    TextureAtlasParserState.PARSE_COMPLETE = 3;
+    return TextureAtlasParserState;
+})();
+module.exports = TextureAtlasParser;
 
-},{"awayjs-core/lib/net/URLLoaderDataFormat":"awayjs-core/lib/net/URLLoaderDataFormat","awayjs-core/lib/parsers/ParserBase":"awayjs-core/lib/parsers/ParserBase","awayjs-core/lib/parsers/ParserUtils":"awayjs-core/lib/parsers/ParserUtils","awayjs-core/lib/textures/ImageTexture":"awayjs-core/lib/textures/ImageTexture","awayjs-core/lib/utils/ByteArray":"awayjs-core/lib/utils/ByteArray","awayjs-core/lib/utils/TextureUtils":"awayjs-core/lib/utils/TextureUtils"}],"awayjs-core/lib/pool/ITextureData":[function(require,module,exports){
+},{"awayjs-core/lib/data/Sampler2D":"awayjs-core/lib/data/Sampler2D","awayjs-core/lib/geom/Rectangle":"awayjs-core/lib/geom/Rectangle","awayjs-core/lib/net/URLLoaderDataFormat":"awayjs-core/lib/net/URLLoaderDataFormat","awayjs-core/lib/net/URLRequest":"awayjs-core/lib/net/URLRequest","awayjs-core/lib/parsers/ParserBase":"awayjs-core/lib/parsers/ParserBase","awayjs-core/lib/parsers/ParserUtils":"awayjs-core/lib/parsers/ParserUtils","awayjs-core/lib/utils/XmlUtils":"awayjs-core/lib/utils/XmlUtils"}],"awayjs-core/lib/pool/IImageObject":[function(require,module,exports){
 
 },{}],"awayjs-core/lib/projections/CoordinateSystem":[function(require,module,exports){
 /**
@@ -12327,834 +13805,7 @@ var ProjectionBase = (function (_super) {
 })(EventDispatcher);
 module.exports = ProjectionBase;
 
-},{"awayjs-core/lib/errors/AbstractMethodError":"awayjs-core/lib/errors/AbstractMethodError","awayjs-core/lib/events/EventDispatcher":"awayjs-core/lib/events/EventDispatcher","awayjs-core/lib/events/ProjectionEvent":"awayjs-core/lib/events/ProjectionEvent","awayjs-core/lib/geom/Matrix3D":"awayjs-core/lib/geom/Matrix3D","awayjs-core/lib/geom/Rectangle":"awayjs-core/lib/geom/Rectangle"}],"awayjs-core/lib/textures/BitmapCubeTexture":[function(require,module,exports){
-var __extends = this.__extends || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    __.prototype = b.prototype;
-    d.prototype = new __();
-};
-var Error = require("awayjs-core/lib/errors/Error");
-var CubeTextureBase = require("awayjs-core/lib/textures/CubeTextureBase");
-var TextureUtils = require("awayjs-core/lib/utils/TextureUtils");
-var BitmapCubeTexture = (function (_super) {
-    __extends(BitmapCubeTexture, _super);
-    function BitmapCubeTexture(posX, negX, posY, negY, posZ, negZ) {
-        _super.call(this);
-        this._bitmapDatas = new Array(6);
-        this._testSize(this._bitmapDatas[0] = posX);
-        this._testSize(this._bitmapDatas[1] = negX);
-        this._testSize(this._bitmapDatas[2] = posY);
-        this._testSize(this._bitmapDatas[3] = negY);
-        this._testSize(this._bitmapDatas[4] = posZ);
-        this._testSize(this._bitmapDatas[5] = negZ);
-        this.invalidateContent();
-        this._pSetSize(posX.width);
-    }
-    Object.defineProperty(BitmapCubeTexture.prototype, "positiveX", {
-        /**
-         * The texture on the cube's right face.
-         */
-        get: function () {
-            return this._bitmapDatas[0];
-        },
-        set: function (value) {
-            this._testSize(value);
-            this.invalidateContent();
-            this._pSetSize(value.width);
-            this._bitmapDatas[0] = value;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(BitmapCubeTexture.prototype, "negativeX", {
-        /**
-         * The texture on the cube's left face.
-         */
-        get: function () {
-            return this._bitmapDatas[1];
-        },
-        set: function (value) {
-            this._testSize(value);
-            this.invalidateContent();
-            this._pSetSize(value.width);
-            this._bitmapDatas[1] = value;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(BitmapCubeTexture.prototype, "positiveY", {
-        /**
-         * The texture on the cube's top face.
-         */
-        get: function () {
-            return this._bitmapDatas[2];
-        },
-        set: function (value) {
-            this._testSize(value);
-            this.invalidateContent();
-            this._pSetSize(value.width);
-            this._bitmapDatas[2] = value;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(BitmapCubeTexture.prototype, "negativeY", {
-        /**
-         * The texture on the cube's bottom face.
-         */
-        get: function () {
-            return this._bitmapDatas[3];
-        },
-        set: function (value) {
-            this._testSize(value);
-            this.invalidateContent();
-            this._pSetSize(value.width);
-            this._bitmapDatas[3] = value;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(BitmapCubeTexture.prototype, "positiveZ", {
-        /**
-         * The texture on the cube's far face.
-         */
-        get: function () {
-            return this._bitmapDatas[4];
-        },
-        set: function (value) {
-            this._testSize(value);
-            this.invalidateContent();
-            this._pSetSize(value.width);
-            this._bitmapDatas[4] = value;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(BitmapCubeTexture.prototype, "negativeZ", {
-        /**
-         * The texture on the cube's near face.
-         */
-        get: function () {
-            return this._bitmapDatas[5];
-        },
-        set: function (value) {
-            this._testSize(value);
-            this.invalidateContent();
-            this._pSetSize(value.width);
-            this._bitmapDatas[5] = value;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    /**
-     *
-     * @param value
-     * @private
-     */
-    BitmapCubeTexture.prototype._testSize = function (value) {
-        if (value.width != value.height)
-            throw new Error("BitmapData should have equal width and height!");
-        if (!TextureUtils.isBitmapDataValid(value))
-            throw new Error("Invalid bitmapData: Width and height must be power of 2 and cannot exceed 2048");
-    };
-    BitmapCubeTexture.prototype.dispose = function () {
-        _super.prototype.dispose.call(this);
-        var len = this._bitmapDatas.length;
-        for (var i = 0; i < len; i++) {
-            this._bitmapDatas[i].dispose();
-            this._bitmapDatas[i] = null;
-        }
-        this._bitmapDatas = null;
-    };
-    BitmapCubeTexture.prototype._iGetTextureData = function (side) {
-        return this._bitmapDatas[side];
-    };
-    return BitmapCubeTexture;
-})(CubeTextureBase);
-module.exports = BitmapCubeTexture;
-
-},{"awayjs-core/lib/errors/Error":"awayjs-core/lib/errors/Error","awayjs-core/lib/textures/CubeTextureBase":"awayjs-core/lib/textures/CubeTextureBase","awayjs-core/lib/utils/TextureUtils":"awayjs-core/lib/utils/TextureUtils"}],"awayjs-core/lib/textures/BitmapTexture":[function(require,module,exports){
-var __extends = this.__extends || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    __.prototype = b.prototype;
-    d.prototype = new __();
-};
-var Error = require("awayjs-core/lib/errors/Error");
-var Texture2DBase = require("awayjs-core/lib/textures/Texture2DBase");
-var TextureUtils = require("awayjs-core/lib/utils/TextureUtils");
-var BitmapTexture = (function (_super) {
-    __extends(BitmapTexture, _super);
-    function BitmapTexture(bitmapData) {
-        _super.call(this);
-        this.bitmapData = bitmapData;
-    }
-    Object.defineProperty(BitmapTexture.prototype, "bitmapData", {
-        /**
-         *
-         * @returns {BitmapData}
-         */
-        get: function () {
-            return this._bitmapData;
-        },
-        set: function (value) {
-            if (this._bitmapData == value)
-                return;
-            if (!TextureUtils.isBitmapDataValid(value))
-                throw new Error("Invalid bitmapData: Width and height must be power of 2 and cannot exceed 2048");
-            this._bitmapData = value;
-            this.invalidateContent();
-            this._pSetSize(value.width, value.height);
-        },
-        enumerable: true,
-        configurable: true
-    });
-    BitmapTexture.prototype.dispose = function () {
-        _super.prototype.dispose.call(this);
-        this._bitmapData.dispose();
-        this._bitmapData = null;
-    };
-    BitmapTexture.prototype._iGetTextureData = function () {
-        return this._bitmapData;
-    };
-    return BitmapTexture;
-})(Texture2DBase);
-module.exports = BitmapTexture;
-
-},{"awayjs-core/lib/errors/Error":"awayjs-core/lib/errors/Error","awayjs-core/lib/textures/Texture2DBase":"awayjs-core/lib/textures/Texture2DBase","awayjs-core/lib/utils/TextureUtils":"awayjs-core/lib/utils/TextureUtils"}],"awayjs-core/lib/textures/CubeTextureBase":[function(require,module,exports){
-var __extends = this.__extends || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    __.prototype = b.prototype;
-    d.prototype = new __();
-};
-var AbstractMethodError = require("awayjs-core/lib/errors/AbstractMethodError");
-var MipmapGenerator = require("awayjs-core/lib/textures/MipmapGenerator");
-var TextureBase = require("awayjs-core/lib/textures/TextureBase");
-var CubeTextureBase = (function (_super) {
-    __extends(CubeTextureBase, _super);
-    function CubeTextureBase() {
-        _super.call(this);
-        this._mipmapDataArray = new Array(6);
-        this._mipmapDataDirtyArray = new Array(6);
-    }
-    /**
-     *
-     * @param width
-     * @param height
-     * @private
-     */
-    CubeTextureBase.prototype._pSetSize = function (size) {
-        if (this._pSize != size)
-            this.invalidateSize();
-        for (var i = 0; i < 6; i++)
-            this._mipmapDataDirtyArray[i] = true;
-        this._pSize = size;
-    };
-    /**
-     * @inheritDoc
-     */
-    CubeTextureBase.prototype.dispose = function () {
-        _super.prototype.dispose.call(this);
-        for (var i = 0; i < 6; i++) {
-            var mipmapData = this._mipmapDataArray[i];
-            var len = mipmapData.length;
-            for (var j = 0; j < len; j++)
-                MipmapGenerator.freeMipMapHolder(mipmapData[j]);
-        }
-    };
-    /**
-     *
-     */
-    CubeTextureBase.prototype.invalidateContent = function () {
-        _super.prototype.invalidateContent.call(this);
-        for (var i = 0; i < 6; i++)
-            this._mipmapDataDirtyArray[i] = true;
-    };
-    CubeTextureBase.prototype._iGetMipmapData = function (side) {
-        if (this._mipmapDataDirtyArray[side]) {
-            this._mipmapDataDirtyArray[side] = false;
-            var mipmapData = this._mipmapDataArray[side] || (this._mipmapDataArray[side] = new Array());
-            MipmapGenerator.generateMipMaps(this._iGetTextureData(side), mipmapData, true);
-        }
-        return this._mipmapDataArray[side];
-    };
-    CubeTextureBase.prototype._iGetTextureData = function (side) {
-        throw new AbstractMethodError();
-    };
-    return CubeTextureBase;
-})(TextureBase);
-module.exports = CubeTextureBase;
-
-},{"awayjs-core/lib/errors/AbstractMethodError":"awayjs-core/lib/errors/AbstractMethodError","awayjs-core/lib/textures/MipmapGenerator":"awayjs-core/lib/textures/MipmapGenerator","awayjs-core/lib/textures/TextureBase":"awayjs-core/lib/textures/TextureBase"}],"awayjs-core/lib/textures/ImageCubeTexture":[function(require,module,exports){
-var __extends = this.__extends || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    __.prototype = b.prototype;
-    d.prototype = new __();
-};
-var Error = require("awayjs-core/lib/errors/Error");
-var CubeTextureBase = require("awayjs-core/lib/textures/CubeTextureBase");
-var TextureUtils = require("awayjs-core/lib/utils/TextureUtils");
-var ImageCubeTexture = (function (_super) {
-    __extends(ImageCubeTexture, _super);
-    function ImageCubeTexture(posX, negX, posY, negY, posZ, negZ) {
-        _super.call(this);
-        this._htmlImageElements = new Array(6);
-        this._testSize(this._htmlImageElements[0] = posX);
-        this._testSize(this._htmlImageElements[1] = negX);
-        this._testSize(this._htmlImageElements[2] = posY);
-        this._testSize(this._htmlImageElements[3] = negY);
-        this._testSize(this._htmlImageElements[4] = posZ);
-        this._testSize(this._htmlImageElements[5] = negZ);
-        this.invalidateContent();
-        this._pSetSize(posX.width);
-    }
-    Object.defineProperty(ImageCubeTexture.prototype, "positiveX", {
-        /**
-         * The texture on the cube's right face.
-         */
-        get: function () {
-            return this._htmlImageElements[0];
-        },
-        set: function (value) {
-            this._testSize(value);
-            this.invalidateContent();
-            this._pSetSize(value.width);
-            this._htmlImageElements[0] = value;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(ImageCubeTexture.prototype, "negativeX", {
-        /**
-         * The texture on the cube's left face.
-         */
-        get: function () {
-            return this._htmlImageElements[1];
-        },
-        set: function (value) {
-            this._testSize(value);
-            this.invalidateContent();
-            this._pSetSize(value.width);
-            this._htmlImageElements[1] = value;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(ImageCubeTexture.prototype, "positiveY", {
-        /**
-         * The texture on the cube's top face.
-         */
-        get: function () {
-            return this._htmlImageElements[2];
-        },
-        set: function (value) {
-            this._testSize(value);
-            this.invalidateContent();
-            this._pSetSize(value.width);
-            this._htmlImageElements[2] = value;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(ImageCubeTexture.prototype, "negativeY", {
-        /**
-         * The texture on the cube's bottom face.
-         */
-        get: function () {
-            return this._htmlImageElements[3];
-        },
-        set: function (value) {
-            this._testSize(value);
-            this.invalidateContent();
-            this._pSetSize(value.width);
-            this._htmlImageElements[3] = value;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(ImageCubeTexture.prototype, "positiveZ", {
-        /**
-         * The texture on the cube's far face.
-         */
-        get: function () {
-            return this._htmlImageElements[4];
-        },
-        set: function (value) {
-            this._testSize(value);
-            this.invalidateContent();
-            this._pSetSize(value.width);
-            this._htmlImageElements[4] = value;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(ImageCubeTexture.prototype, "negativeZ", {
-        /**
-         * The texture on the cube's near face.
-         */
-        get: function () {
-            return this._htmlImageElements[5];
-        },
-        set: function (value) {
-            this._testSize(value);
-            this.invalidateContent();
-            this._pSetSize(value.width);
-            this._htmlImageElements[5] = value;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    ImageCubeTexture.prototype._testSize = function (value) {
-        if (value.width != value.height)
-            throw new Error("BitmapData should have equal width and height!");
-        if (!TextureUtils.isHTMLImageElementValid(value))
-            throw new Error("Invalid bitmapData: Width and height must be power of 2 and cannot exceed 2048");
-    };
-    ImageCubeTexture.prototype._iGetTextureData = function (side) {
-        return this._htmlImageElements[side];
-    };
-    return ImageCubeTexture;
-})(CubeTextureBase);
-module.exports = ImageCubeTexture;
-
-},{"awayjs-core/lib/errors/Error":"awayjs-core/lib/errors/Error","awayjs-core/lib/textures/CubeTextureBase":"awayjs-core/lib/textures/CubeTextureBase","awayjs-core/lib/utils/TextureUtils":"awayjs-core/lib/utils/TextureUtils"}],"awayjs-core/lib/textures/ImageTexture":[function(require,module,exports){
-var __extends = this.__extends || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    __.prototype = b.prototype;
-    d.prototype = new __();
-};
-var Error = require("awayjs-core/lib/errors/Error");
-var Texture2DBase = require("awayjs-core/lib/textures/Texture2DBase");
-var TextureUtils = require("awayjs-core/lib/utils/TextureUtils");
-var ImageTexture = (function (_super) {
-    __extends(ImageTexture, _super);
-    /**
-     *
-     * @param htmlImageElement
-     * @param generateMipmaps
-     */
-    function ImageTexture(htmlImageElement) {
-        _super.call(this);
-        this.htmlImageElement = htmlImageElement;
-    }
-    Object.defineProperty(ImageTexture.prototype, "htmlImageElement", {
-        /**
-         *
-         */
-        get: function () {
-            return this._htmlImageElement;
-        },
-        set: function (value) {
-            if (this._htmlImageElement == value)
-                return;
-            if (!TextureUtils.isHTMLImageElementValid(value))
-                throw new Error("Invalid bitmapData: Width and height must be power of 2 and cannot exceed 2048");
-            this._htmlImageElement = value;
-            this.invalidateContent();
-            this._pSetSize(value.width, value.height);
-        },
-        enumerable: true,
-        configurable: true
-    });
-    ImageTexture.prototype._iGetTextureData = function () {
-        return this._htmlImageElement;
-    };
-    return ImageTexture;
-})(Texture2DBase);
-module.exports = ImageTexture;
-
-},{"awayjs-core/lib/errors/Error":"awayjs-core/lib/errors/Error","awayjs-core/lib/textures/Texture2DBase":"awayjs-core/lib/textures/Texture2DBase","awayjs-core/lib/utils/TextureUtils":"awayjs-core/lib/utils/TextureUtils"}],"awayjs-core/lib/textures/MipmapGenerator":[function(require,module,exports){
-var BitmapData = require("awayjs-core/lib/data/BitmapData");
-var Matrix = require("awayjs-core/lib/geom/Matrix");
-var Rectangle = require("awayjs-core/lib/geom/Rectangle");
-/**
- * MipmapGenerator is a helper class that uploads BitmapData to a Texture including mipmap levels.
- */
-var MipmapGenerator = (function () {
-    function MipmapGenerator() {
-    }
-    MipmapGenerator.generateMipMaps = function (source, output, alpha) {
-        if (alpha === void 0) { alpha = false; }
-        var w = source.width;
-        var h = source.height;
-        var i = 0;
-        var mipmap;
-        MipmapGenerator._rect.width = w;
-        MipmapGenerator._rect.height = h;
-        while (w >= 1 || h >= 1) {
-            mipmap = output[i] = MipmapGenerator._getMipmapHolder(output[i], MipmapGenerator._rect.width, MipmapGenerator._rect.height);
-            if (alpha)
-                mipmap.fillRect(MipmapGenerator._rect, 0);
-            MipmapGenerator._matrix.a = MipmapGenerator._rect.width / source.width;
-            MipmapGenerator._matrix.d = MipmapGenerator._rect.height / source.height;
-            mipmap.draw(source, MipmapGenerator._matrix); //TODO: smoothing?
-            w >>= 1;
-            h >>= 1;
-            MipmapGenerator._rect.width = w > 1 ? w : 1;
-            MipmapGenerator._rect.height = h > 1 ? h : 1;
-            i++;
-        }
-    };
-    MipmapGenerator._getMipmapHolder = function (mipMapHolder, newW, newH) {
-        if (mipMapHolder) {
-            if (mipMapHolder.width == newW && mipMapHolder.height == newH)
-                return mipMapHolder;
-            MipmapGenerator.freeMipMapHolder(mipMapHolder);
-        }
-        if (!MipmapGenerator._mipMaps[newW]) {
-            MipmapGenerator._mipMaps[newW] = [];
-            MipmapGenerator._mipMapUses[newW] = [];
-        }
-        if (!MipmapGenerator._mipMaps[newW][newH]) {
-            mipMapHolder = MipmapGenerator._mipMaps[newW][newH] = new BitmapData(newW, newH, true);
-            MipmapGenerator._mipMapUses[newW][newH] = 1;
-        }
-        else {
-            MipmapGenerator._mipMapUses[newW][newH] = MipmapGenerator._mipMapUses[newW][newH] + 1;
-            mipMapHolder = MipmapGenerator._mipMaps[newW][newH];
-        }
-        return mipMapHolder;
-    };
-    MipmapGenerator.freeMipMapHolder = function (mipMapHolder) {
-        var holderWidth = mipMapHolder.width;
-        var holderHeight = mipMapHolder.height;
-        if (--MipmapGenerator._mipMapUses[holderWidth][holderHeight] == 0) {
-            MipmapGenerator._mipMaps[holderWidth][holderHeight].dispose();
-            MipmapGenerator._mipMaps[holderWidth][holderHeight] = null;
-        }
-    };
-    MipmapGenerator._mipMaps = [];
-    MipmapGenerator._mipMapUses = [];
-    MipmapGenerator._matrix = new Matrix();
-    MipmapGenerator._rect = new Rectangle();
-    return MipmapGenerator;
-})();
-module.exports = MipmapGenerator;
-
-},{"awayjs-core/lib/data/BitmapData":"awayjs-core/lib/data/BitmapData","awayjs-core/lib/geom/Matrix":"awayjs-core/lib/geom/Matrix","awayjs-core/lib/geom/Rectangle":"awayjs-core/lib/geom/Rectangle"}],"awayjs-core/lib/textures/RenderTexture":[function(require,module,exports){
-var __extends = this.__extends || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    __.prototype = b.prototype;
-    d.prototype = new __();
-};
-var Error = require("awayjs-core/lib/errors/Error");
-var Texture2DBase = require("awayjs-core/lib/textures/Texture2DBase");
-var TextureUtils = require("awayjs-core/lib/utils/TextureUtils");
-var RenderTexture = (function (_super) {
-    __extends(RenderTexture, _super);
-    function RenderTexture(width, height) {
-        _super.call(this);
-        this._pSetSize(width, height);
-    }
-    Object.defineProperty(RenderTexture.prototype, "width", {
-        /**
-         *
-         * @returns {number}
-         */
-        get: function () {
-            return this._pWidth;
-        },
-        set: function (value) {
-            if (value == this._pWidth)
-                return;
-            if (!TextureUtils.isDimensionValid(value))
-                throw new Error("Invalid size: Width and height must be power of 2 and cannot exceed 2048");
-            this.invalidateContent();
-            this._pSetSize(value, this._pHeight);
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(RenderTexture.prototype, "height", {
-        /**
-         *
-         * @returns {number}
-         */
-        get: function () {
-            return this._pHeight;
-        },
-        set: function (value) {
-            if (value == this._pHeight)
-                return;
-            if (!TextureUtils.isDimensionValid(value))
-                throw new Error("Invalid size: Width and height must be power of 2 and cannot exceed 2048");
-            this.invalidateContent();
-            this._pSetSize(this._pWidth, value);
-        },
-        enumerable: true,
-        configurable: true
-    });
-    return RenderTexture;
-})(Texture2DBase);
-module.exports = RenderTexture;
-
-},{"awayjs-core/lib/errors/Error":"awayjs-core/lib/errors/Error","awayjs-core/lib/textures/Texture2DBase":"awayjs-core/lib/textures/Texture2DBase","awayjs-core/lib/utils/TextureUtils":"awayjs-core/lib/utils/TextureUtils"}],"awayjs-core/lib/textures/SpecularBitmapTexture":[function(require,module,exports){
-var __extends = this.__extends || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    __.prototype = b.prototype;
-    d.prototype = new __();
-};
-var BitmapData = require("awayjs-core/lib/data/BitmapData");
-var BitmapDataChannel = require("awayjs-core/lib/data/BitmapDataChannel");
-var Point = require("awayjs-core/lib/geom/Point");
-var BitmapTexture = require("awayjs-core/lib/textures/BitmapTexture");
-/**
- * A convenience texture that encodes a specular map in the red channel, and the gloss map in the green channel, as expected by BasicSpecularMapMethod
- */
-var SpecularBitmapTexture = (function (_super) {
-    __extends(SpecularBitmapTexture, _super);
-    function SpecularBitmapTexture(specularMap, glossMap) {
-        if (specularMap === void 0) { specularMap = null; }
-        if (glossMap === void 0) { glossMap = null; }
-        var bmd = specularMap ? specularMap : glossMap;
-        bmd = bmd ? new BitmapData(bmd.width, bmd.height, false, 0xffffff) : new BitmapData(1, 1, false, 0xffffff);
-        _super.call(this, bmd);
-        this.specularMap = specularMap;
-        this.glossMap = glossMap;
-    }
-    Object.defineProperty(SpecularBitmapTexture.prototype, "specularMap", {
-        get: function () {
-            return this._specularMap;
-        },
-        set: function (value) {
-            this._specularMap = value;
-            this.invalidateContent();
-            this._testSize();
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(SpecularBitmapTexture.prototype, "glossMap", {
-        get: function () {
-            return this._glossMap;
-        },
-        set: function (value) {
-            this._glossMap = value;
-            this.invalidateContent();
-            this._testSize();
-        },
-        enumerable: true,
-        configurable: true
-    });
-    SpecularBitmapTexture.prototype._testSize = function () {
-        var w, h;
-        if (this._specularMap) {
-            w = this._specularMap.width;
-            h = this._specularMap.height;
-        }
-        else if (this._glossMap) {
-            w = this._glossMap.width;
-            h = this._glossMap.height;
-        }
-        else {
-            w = 1;
-            h = 1;
-        }
-        if (w != this._bitmapData.width && h != this._bitmapData.height) {
-            var oldBitmap = this._bitmapData;
-            this.bitmapData = new BitmapData(this._specularMap.width, this._specularMap.height, false, 0xffffff);
-            oldBitmap.dispose();
-        }
-    };
-    SpecularBitmapTexture.prototype._iGetTextureData = function () {
-        var rect = this._specularMap.rect;
-        var origin = new Point();
-        this._bitmapData.fillRect(rect, 0xffffff);
-        if (this._glossMap)
-            this._bitmapData.copyChannel(this._glossMap, rect, origin, BitmapDataChannel.GREEN, BitmapDataChannel.GREEN);
-        if (this._specularMap)
-            this._bitmapData.copyChannel(this._specularMap, rect, origin, BitmapDataChannel.RED, BitmapDataChannel.RED);
-        return this._bitmapData;
-    };
-    return SpecularBitmapTexture;
-})(BitmapTexture);
-module.exports = SpecularBitmapTexture;
-
-},{"awayjs-core/lib/data/BitmapData":"awayjs-core/lib/data/BitmapData","awayjs-core/lib/data/BitmapDataChannel":"awayjs-core/lib/data/BitmapDataChannel","awayjs-core/lib/geom/Point":"awayjs-core/lib/geom/Point","awayjs-core/lib/textures/BitmapTexture":"awayjs-core/lib/textures/BitmapTexture"}],"awayjs-core/lib/textures/Texture2DBase":[function(require,module,exports){
-var __extends = this.__extends || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    __.prototype = b.prototype;
-    d.prototype = new __();
-};
-var AbstractMethodError = require("awayjs-core/lib/errors/AbstractMethodError");
-var MipmapGenerator = require("awayjs-core/lib/textures/MipmapGenerator");
-var TextureBase = require("awayjs-core/lib/textures/TextureBase");
-var Texture2DBase = (function (_super) {
-    __extends(Texture2DBase, _super);
-    function Texture2DBase() {
-        _super.call(this);
-    }
-    Object.defineProperty(Texture2DBase.prototype, "width", {
-        /**
-         *
-         * @returns {number}
-         */
-        get: function () {
-            return this._pWidth;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Texture2DBase.prototype, "height", {
-        /**
-         *
-         * @returns {number}
-         */
-        get: function () {
-            return this._pHeight;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Texture2DBase.prototype, "size", {
-        get: function () {
-            return this._pWidth;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    /**
-     * @inheritDoc
-     */
-    Texture2DBase.prototype.dispose = function () {
-        _super.prototype.dispose.call(this);
-        if (this._mipmapData) {
-            var len = this._mipmapData.length;
-            for (var i = 0; i < len; i++)
-                MipmapGenerator.freeMipMapHolder(this._mipmapData[i]);
-        }
-    };
-    /**
-     *
-     */
-    Texture2DBase.prototype.invalidateContent = function () {
-        _super.prototype.invalidateContent.call(this);
-        this._mipmapDataDirty = true;
-    };
-    /**
-     *
-     * @param width
-     * @param height
-     * @private
-     */
-    Texture2DBase.prototype._pSetSize = function (width, height) {
-        if (this._pWidth != width || this._pHeight != height)
-            this.invalidateSize();
-        this._mipmapDataDirty = true;
-        this._pWidth = width;
-        this._pHeight = height;
-    };
-    Texture2DBase.prototype._iGetMipmapData = function () {
-        if (this._mipmapDataDirty) {
-            this._mipmapDataDirty = false;
-            if (!this._mipmapData)
-                this._mipmapData = new Array();
-            MipmapGenerator.generateMipMaps(this._iGetTextureData(), this._mipmapData, true);
-        }
-        return this._mipmapData;
-    };
-    Texture2DBase.prototype._iGetTextureData = function () {
-        throw new AbstractMethodError();
-    };
-    return Texture2DBase;
-})(TextureBase);
-module.exports = Texture2DBase;
-
-},{"awayjs-core/lib/errors/AbstractMethodError":"awayjs-core/lib/errors/AbstractMethodError","awayjs-core/lib/textures/MipmapGenerator":"awayjs-core/lib/textures/MipmapGenerator","awayjs-core/lib/textures/TextureBase":"awayjs-core/lib/textures/TextureBase"}],"awayjs-core/lib/textures/TextureBase":[function(require,module,exports){
-var __extends = this.__extends || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    __.prototype = b.prototype;
-    d.prototype = new __();
-};
-var AssetBase = require("awayjs-core/lib/library/AssetBase");
-/**
- *
- */
-var TextureProxyBase = (function (_super) {
-    __extends(TextureProxyBase, _super);
-    /**
-     *
-     */
-    function TextureProxyBase(generateMipmaps) {
-        if (generateMipmaps === void 0) { generateMipmaps = false; }
-        _super.call(this);
-        this._pFormat = "bgra";
-        this._textureData = new Array();
-    }
-    Object.defineProperty(TextureProxyBase.prototype, "size", {
-        get: function () {
-            return this._pSize;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(TextureProxyBase.prototype, "format", {
-        /**
-         *
-         * @returns {string}
-         */
-        get: function () {
-            return this._pFormat;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(TextureProxyBase.prototype, "assetType", {
-        /**
-         *
-         * @returns {string}
-         */
-        get: function () {
-            return TextureProxyBase.assetType;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    /**
-     *
-     */
-    TextureProxyBase.prototype.invalidateContent = function () {
-        var len = this._textureData.length;
-        for (var i = 0; i < len; i++)
-            this._textureData[i].invalidate();
-    };
-    /**
-     *
-     * @private
-     */
-    TextureProxyBase.prototype.invalidateSize = function () {
-        while (this._textureData.length)
-            this._textureData[0].dispose();
-    };
-    /**
-     * @inheritDoc
-     */
-    TextureProxyBase.prototype.dispose = function () {
-        while (this._textureData.length)
-            this._textureData[0].dispose();
-    };
-    TextureProxyBase.prototype._iAddTextureData = function (textureData) {
-        this._textureData.push(textureData);
-        return textureData;
-    };
-    TextureProxyBase.prototype._iRemoveTextureData = function (textureData) {
-        this._textureData.splice(this._textureData.indexOf(textureData), 1);
-        return textureData;
-    };
-    TextureProxyBase.assetType = "[asset Texture]";
-    return TextureProxyBase;
-})(AssetBase);
-module.exports = TextureProxyBase;
-
-},{"awayjs-core/lib/library/AssetBase":"awayjs-core/lib/library/AssetBase"}],"awayjs-core/lib/ui/Keyboard":[function(require,module,exports){
+},{"awayjs-core/lib/errors/AbstractMethodError":"awayjs-core/lib/errors/AbstractMethodError","awayjs-core/lib/events/EventDispatcher":"awayjs-core/lib/events/EventDispatcher","awayjs-core/lib/events/ProjectionEvent":"awayjs-core/lib/events/ProjectionEvent","awayjs-core/lib/geom/Matrix3D":"awayjs-core/lib/geom/Matrix3D","awayjs-core/lib/geom/Rectangle":"awayjs-core/lib/geom/Rectangle"}],"awayjs-core/lib/ui/Keyboard":[function(require,module,exports){
 var Keyboard = (function () {
     function Keyboard() {
     }
@@ -13975,7 +14626,42 @@ var Keyboard = (function () {
 })();
 module.exports = Keyboard;
 
-},{}],"awayjs-core/lib/utils/ByteArrayBase":[function(require,module,exports){
+},{}],"awayjs-core/lib/utils/BitmapImageUtils":[function(require,module,exports){
+var ColorUtils = require("awayjs-core/lib/utils/ColorUtils");
+var BitmapImageUtils = (function () {
+    function BitmapImageUtils() {
+    }
+    BitmapImageUtils._fillRect = function (context, rect, color, transparent) {
+        if (color == 0x0 && transparent) {
+            context.clearRect(rect.x, rect.y, rect.width, rect.height);
+        }
+        else {
+            var argb = ColorUtils.float32ColorToARGB(color);
+            if (transparent)
+                context.fillStyle = 'rgba(' + argb[1] + ',' + argb[2] + ',' + argb[3] + ',' + argb[0] / 255 + ')';
+            else
+                context.fillStyle = 'rgba(' + argb[1] + ',' + argb[2] + ',' + argb[3] + ',1)';
+            context.fillRect(rect.x, rect.y, rect.width, rect.height);
+        }
+    };
+    BitmapImageUtils._copyPixels = function (context, bmpd, sourceRect, destRect) {
+        context.drawImage(bmpd, sourceRect.x, sourceRect.y, sourceRect.width, sourceRect.height, destRect.x, destRect.y, destRect.width, destRect.height);
+    };
+    BitmapImageUtils._draw = function (context, source, matrix, colorTransform, blendMode, clipRect, smoothing) {
+        context.save();
+        if (matrix != null)
+            context.setTransform(matrix.a, matrix.b, matrix.c, matrix.d, matrix.tx, matrix.ty);
+        if (clipRect != null)
+            context.drawImage(source, clipRect.x, clipRect.y, clipRect.width, clipRect.height);
+        else
+            context.drawImage(source, 0, 0);
+        context.restore();
+    };
+    return BitmapImageUtils;
+})();
+module.exports = BitmapImageUtils;
+
+},{"awayjs-core/lib/utils/ColorUtils":"awayjs-core/lib/utils/ColorUtils"}],"awayjs-core/lib/utils/ByteArrayBase":[function(require,module,exports){
 var AbstractMethodError = require("awayjs-core/lib/errors/AbstractMethodError");
 var ByteArrayBase = (function () {
     function ByteArrayBase() {
@@ -14622,7 +15308,107 @@ var Debug = (function () {
 })();
 module.exports = Debug;
 
-},{"awayjs-core/lib/errors/PartialImplementationError":"awayjs-core/lib/errors/PartialImplementationError"}],"awayjs-core/lib/utils/RequestAnimationFrame":[function(require,module,exports){
+},{"awayjs-core/lib/errors/PartialImplementationError":"awayjs-core/lib/errors/PartialImplementationError"}],"awayjs-core/lib/utils/ImageUtils":[function(require,module,exports){
+var ImageUtils = (function () {
+    function ImageUtils() {
+    }
+    ImageUtils.isImage2DValid = function (image2D) {
+        if (image2D == null)
+            return true;
+        return ImageUtils.isDimensionValid(image2D.width) && ImageUtils.isDimensionValid(image2D.height);
+    };
+    ImageUtils.isHTMLImageElementValid = function (image) {
+        if (image == null)
+            return true;
+        return ImageUtils.isDimensionValid(image.width) && ImageUtils.isDimensionValid(image.height);
+    };
+    ImageUtils.isDimensionValid = function (d) {
+        return d >= 1 && d <= ImageUtils.MAX_SIZE && ImageUtils.isPowerOfTwo(d);
+    };
+    ImageUtils.isPowerOfTwo = function (value) {
+        return value ? ((value & -value) == value) : false;
+    };
+    ImageUtils.getBestPowerOf2 = function (value) {
+        var p = 1;
+        while (p < value)
+            p <<= 1;
+        if (p > ImageUtils.MAX_SIZE)
+            p = ImageUtils.MAX_SIZE;
+        return p;
+    };
+    ImageUtils.MAX_SIZE = 2048;
+    return ImageUtils;
+})();
+module.exports = ImageUtils;
+
+},{}],"awayjs-core/lib/utils/MipmapGenerator":[function(require,module,exports){
+var BitmapImage2D = require("awayjs-core/lib/data/BitmapImage2D");
+var Matrix = require("awayjs-core/lib/geom/Matrix");
+var Rectangle = require("awayjs-core/lib/geom/Rectangle");
+var MipmapGenerator = (function () {
+    function MipmapGenerator() {
+    }
+    MipmapGenerator._generateMipMaps = function (source, alpha) {
+        if (alpha === void 0) { alpha = false; }
+        var w = source.width;
+        var h = source.height;
+        var i = 0;
+        var mipmap;
+        var output = new Array();
+        MipmapGenerator._rect.width = w;
+        MipmapGenerator._rect.height = h;
+        while (w >= 1 || h >= 1) {
+            mipmap = output[i] = MipmapGenerator._getMipmapHolder(output[i], MipmapGenerator._rect.width, MipmapGenerator._rect.height);
+            if (alpha)
+                mipmap.fillRect(MipmapGenerator._rect, 0);
+            MipmapGenerator._matrix.a = MipmapGenerator._rect.width / source.width;
+            MipmapGenerator._matrix.d = MipmapGenerator._rect.height / source.height;
+            mipmap.draw(source, MipmapGenerator._matrix); //TODO: smoothing?
+            w >>= 1;
+            h >>= 1;
+            MipmapGenerator._rect.width = w > 1 ? w : 1;
+            MipmapGenerator._rect.height = h > 1 ? h : 1;
+            i++;
+        }
+        return output;
+    };
+    MipmapGenerator._getMipmapHolder = function (mipMapHolder, newW, newH) {
+        if (mipMapHolder) {
+            if (mipMapHolder.width == newW && mipMapHolder.height == newH)
+                return mipMapHolder;
+            MipmapGenerator._freeMipMapHolder(mipMapHolder);
+        }
+        if (!MipmapGenerator._mipMaps[newW]) {
+            MipmapGenerator._mipMaps[newW] = [];
+            MipmapGenerator._mipMapUses[newW] = [];
+        }
+        if (!MipmapGenerator._mipMaps[newW][newH]) {
+            mipMapHolder = MipmapGenerator._mipMaps[newW][newH] = new BitmapImage2D(newW, newH, true);
+            MipmapGenerator._mipMapUses[newW][newH] = 1;
+        }
+        else {
+            MipmapGenerator._mipMapUses[newW][newH] = MipmapGenerator._mipMapUses[newW][newH] + 1;
+            mipMapHolder = MipmapGenerator._mipMaps[newW][newH];
+        }
+        return mipMapHolder;
+    };
+    MipmapGenerator._freeMipMapHolder = function (mipMapHolder) {
+        var holderWidth = mipMapHolder.width;
+        var holderHeight = mipMapHolder.height;
+        if (--MipmapGenerator._mipMapUses[holderWidth][holderHeight] == 0) {
+            MipmapGenerator._mipMaps[holderWidth][holderHeight].dispose();
+            MipmapGenerator._mipMaps[holderWidth][holderHeight] = null;
+        }
+    };
+    MipmapGenerator._mipMaps = [];
+    MipmapGenerator._mipMapUses = [];
+    MipmapGenerator._matrix = new Matrix();
+    MipmapGenerator._rect = new Rectangle();
+    return MipmapGenerator;
+})();
+module.exports = MipmapGenerator;
+
+},{"awayjs-core/lib/data/BitmapImage2D":"awayjs-core/lib/data/BitmapImage2D","awayjs-core/lib/geom/Matrix":"awayjs-core/lib/geom/Matrix","awayjs-core/lib/geom/Rectangle":"awayjs-core/lib/geom/Rectangle"}],"awayjs-core/lib/utils/RequestAnimationFrame":[function(require,module,exports){
 var getTimer = require("awayjs-core/lib/utils/getTimer");
 var RequestAnimationFrame = (function () {
     function RequestAnimationFrame(callback, callbackContext) {
@@ -14700,40 +15486,7 @@ var RequestAnimationFrame = (function () {
 })();
 module.exports = RequestAnimationFrame;
 
-},{"awayjs-core/lib/utils/getTimer":"awayjs-core/lib/utils/getTimer"}],"awayjs-core/lib/utils/TextureUtils":[function(require,module,exports){
-var TextureUtils = (function () {
-    function TextureUtils() {
-    }
-    TextureUtils.isBitmapDataValid = function (bitmapData) {
-        if (bitmapData == null)
-            return true;
-        return TextureUtils.isDimensionValid(bitmapData.width) && TextureUtils.isDimensionValid(bitmapData.height);
-    };
-    TextureUtils.isHTMLImageElementValid = function (image) {
-        if (image == null)
-            return true;
-        return TextureUtils.isDimensionValid(image.width) && TextureUtils.isDimensionValid(image.height);
-    };
-    TextureUtils.isDimensionValid = function (d) {
-        return d >= 1 && d <= TextureUtils.MAX_SIZE && TextureUtils.isPowerOfTwo(d);
-    };
-    TextureUtils.isPowerOfTwo = function (value) {
-        return value ? ((value & -value) == value) : false;
-    };
-    TextureUtils.getBestPowerOf2 = function (value) {
-        var p = 1;
-        while (p < value)
-            p <<= 1;
-        if (p > TextureUtils.MAX_SIZE)
-            p = TextureUtils.MAX_SIZE;
-        return p;
-    };
-    TextureUtils.MAX_SIZE = 2048;
-    return TextureUtils;
-})();
-module.exports = TextureUtils;
-
-},{}],"awayjs-core/lib/utils/Timer":[function(require,module,exports){
+},{"awayjs-core/lib/utils/getTimer":"awayjs-core/lib/utils/getTimer"}],"awayjs-core/lib/utils/Timer":[function(require,module,exports){
 var __extends = this.__extends || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
@@ -14824,7 +15577,84 @@ var Timer = (function (_super) {
 })(EventDispatcher);
 module.exports = Timer;
 
-},{"awayjs-core/lib/errors/Error":"awayjs-core/lib/errors/Error","awayjs-core/lib/events/EventDispatcher":"awayjs-core/lib/events/EventDispatcher","awayjs-core/lib/events/TimerEvent":"awayjs-core/lib/events/TimerEvent"}],"awayjs-core/lib/utils/getTimer":[function(require,module,exports){
+},{"awayjs-core/lib/errors/Error":"awayjs-core/lib/errors/Error","awayjs-core/lib/events/EventDispatcher":"awayjs-core/lib/events/EventDispatcher","awayjs-core/lib/events/TimerEvent":"awayjs-core/lib/events/TimerEvent"}],"awayjs-core/lib/utils/XmlUtils":[function(require,module,exports){
+var XmlUtils = (function () {
+    function XmlUtils() {
+    }
+    XmlUtils.getChildrenWithTag = function (node, tag) {
+        var fragment = document.createDocumentFragment();
+        if (node) {
+            var num = node.childNodes.length;
+            for (var i = 0; i < num; i++) {
+                var child = node.childNodes[i];
+                if (child != null) {
+                    if (child.nodeName == tag) {
+                        fragment.appendChild(child);
+                    }
+                }
+            }
+        }
+        return fragment.childNodes;
+    };
+    XmlUtils.filterListByParam = function (nodes, paramName, paramValue) {
+        var fragment = document.createDocumentFragment();
+        if (nodes) {
+            var num = nodes.length;
+            for (var i = 0; i < num; i++) {
+                var child = nodes[i];
+                if (child != null) {
+                    if (child.attributes.getNamedItem(paramName).value == paramValue) {
+                        fragment.appendChild(child);
+                    }
+                }
+            }
+        }
+        return fragment.childNodes;
+    };
+    XmlUtils.strToXml = function (str) {
+        var parser = new DOMParser();
+        var node = parser.parseFromString(str, "text/xml");
+        return node;
+    };
+    XmlUtils.nodeToString = function (node) {
+        if (!node)
+            return "";
+        var str = (new XMLSerializer()).serializeToString(node);
+        return str;
+    };
+    XmlUtils.readAttributeValue = function (node, attrName) {
+        var attrs = node.attributes;
+        if (attrs == undefined) {
+            return "";
+        }
+        var attribute = attrs.getNamedItem(attrName);
+        if (!attribute) {
+            //console.log("XmlUltils - readAttributeValue() - name: " + attrName + ", attribute does not exist.");
+            return "";
+        }
+        //console.log("XmlUltils - readAttributeValue() - name: " + attrName + ", value: " + attribute.value);
+        return attribute.value;
+    };
+    XmlUtils.writeAttributeValue = function (node, attrName, attrValue) {
+        var attribute = new Attr();
+        attribute.name = attrName;
+        attribute.value = attrValue;
+        attribute = node.attributes.setNamedItem(attribute);
+        console.log("XmlUltils - writeAttributeValue() - name: " + attribute.name + ", value: " + attribute.value);
+    };
+    XmlUtils.hasAttribute = function (node, attrName) {
+        var attrs = node.attributes;
+        if (attrs == undefined) {
+            return false;
+        }
+        var attribute = attrs.getNamedItem(attrName);
+        return attribute != null;
+    };
+    return XmlUtils;
+})();
+module.exports = XmlUtils;
+
+},{}],"awayjs-core/lib/utils/getTimer":[function(require,module,exports){
 /**
  *
  *

@@ -18,16 +18,15 @@ class MipmapGenerator
 	 * @param mipmap An optional mip map holder to avoids creating new instances for fe animated materials.
 	 * @param alpha Indicate whether or not the uploaded bitmapData is transparent.
 	 */
-	public static _generateMipMaps(source:HTMLElement, alpha?:boolean);
-	public static _generateMipMaps(source:BitmapImage2D, alpha?:boolean);
-	public static _generateMipMaps(source:any, alpha:boolean = false):Array<BitmapImage2D>
+	public static _generateMipMaps(source:HTMLElement, output?:Array<BitmapImage2D>, alpha?:boolean);
+	public static _generateMipMaps(source:BitmapImage2D, output?:Array<BitmapImage2D>, alpha?:boolean);
+	public static _generateMipMaps(source:any, output?:Array<BitmapImage2D>, alpha:boolean = false)
 	{
 		var w:number = source.width;
 		var h:number = source.height;
 		var i:number = 0;
 
 		var mipmap:BitmapImage2D;
-		var output:Array<BitmapImage2D> = new Array<BitmapImage2D>();
 
 		MipmapGenerator._rect.width = w;
 		MipmapGenerator._rect.height = h;
@@ -53,8 +52,6 @@ class MipmapGenerator
 
 			i++;
 		}
-
-		return output;
 	}
 
 	private static _getMipmapHolder(mipMapHolder:BitmapImage2D, newW:number, newH:number):BitmapImage2D

@@ -32,12 +32,6 @@
             harness.addTest( '(Console) Utils.RAF '             , 'tests.utils.RequestAnimationFrameTest'   , 'utils/RequestAnimationFrameTest.js'  , 'utils/RequestAnimationFrameTest.ts'  );
             harness.addTest( '(Console) Utils.TimerTest'        , 'tests.utils.TimerTest'                   , 'utils/TimerTest.js'                  , 'utils/TimerTest.ts'  );
 
-            //---------------------------------------------------------------------------
-            // Test - Textures
-            //---------------------------------------------------------------------------
-
-            harness.addSeperator( 'Textures' );
-            harness.addTest( '(Console) Textures.BitmapTextureTest'                 , 'tests.textures.BitmapTextureTest'            , 'textures/BitmapTextureTest.js'              , 'textures/BitmapTextureTest.ts'  );
 
             //---------------------------------------------------------------------------
             // Test - Net
@@ -45,7 +39,7 @@
 
             harness.addSeperator( 'Net' );
             harness.addTest( 'Net.URLLoader'       , 'tests.net.LoaderTest'  , 'net/URLLoaderTests.js' , 'net/URLLoaderTests.ts'  );
-            harness.addTest( '(Console) Test'    ,  'Test'  , 'net/Test.js'    , 'net/AssetLoaderTest.ts'  );
+            harness.addTest( '(Console) AssetLoaderTest'    ,  'tests.net.AssetLoaderTest'  , 'net/AssetLoaderTest.js'    , 'net/AssetLoaderTest.ts'  );
             harness.addTest( 'Loaders.IMGLoaderTest'                ,  'tests.net.IMGLoaderTest'    , 'net/IMGLoaderTest.js'      , 'net/IMGLoaderTest.ts'  );
 
             //---------------------------------------------------------------------------
@@ -75,12 +69,12 @@
             // Test - Display
             //---------------------------------------------------------------------------
 
-            harness.addSeperator( 'Base' );
-            harness.addTest( 'Base.BitmapDataTest'  ,  'tests.base.BitmapDataTest'      , 'base/BitmapDataTest.js'    , 'base/BitmapDataTest.ts'  );
+            harness.addSeperator( 'Data' );
+            harness.addTest( 'Data.BitmapImage2DTest'  ,  'tests.data.BitmapImage2DTest'      , 'data/BitmapImage2DTest.js'    , 'data/BitmapImage2DTest.ts'  );
 
             //---------------------------------------------------------------------------
             // Load a default
-            harness.load( 'tests.textures.BitmapTextureTest', 'textures/BitmapTextureTest.js'     , 'textures/BitmapTextureTest.ts'  );
+            harness.load( 'tests.utils.MipMapTest', 'utils/MipMapTest.js'     , 'uti    ls/MipMapTest.ts'  );
             harness.start(); // Start
 
         }

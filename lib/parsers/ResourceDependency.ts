@@ -11,6 +11,8 @@ import ParserBase				= require("awayjs-core/lib/parsers/ParserBase");
 class ResourceDependency
 {
 	private _id:string;
+	private _sub_id:number;
+
 	private _request:URLRequest;
 	private _assets:Array<IAsset>;
 	private _parser:ParserBase;
@@ -24,16 +26,16 @@ class ResourceDependency
 	public _iSuccess:boolean;
 
 
-	constructor(id:string, request:URLRequest, data:any, parser:ParserBase, parentParser:ParserBase, retrieveAsRawData:boolean = false, suppressAssetEvents:boolean = false)
+	constructor(id:string, request:URLRequest, data:any, parser:ParserBase, parentParser:ParserBase, retrieveAsRawData:boolean = false, suppressAssetEvents:boolean = false, sub_id:number=0)
 	{
 		this._id = id;
+		this._sub_id = sub_id;
 		this._request = request;
 		this._data = data;
 		this._parser = parser;
 		this._parentParser = parentParser;
 		this._retrieveAsRawData = retrieveAsRawData;
 		this._suppressAssetEvents = suppressAssetEvents;
-
 		this._assets = new Array<IAsset>();
 		this._dependencies = new Array<ResourceDependency>();
 	}
@@ -44,6 +46,10 @@ class ResourceDependency
 	public get id():string
 	{
 		return this._id;
+	}
+	public get sub_id():number
+	{
+		return this._sub_id;
 	}
 
 	/**

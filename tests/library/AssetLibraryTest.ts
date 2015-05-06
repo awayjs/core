@@ -1,3 +1,4 @@
+import BitmapImage2D		= require("awayjs-core/lib/data/BitmapImage2D");
 import AssetEvent			= require("awayjs-core/lib/events/AssetEvent");
 import LoaderEvent			= require("awayjs-core/lib/events/LoaderEvent");
 import ParserEvent			= require("awayjs-core/lib/events/ParserEvent");
@@ -6,8 +7,6 @@ import AssetLoader			= require("awayjs-core/lib/library/AssetLoader");
 import AssetLoaderToken		= require("awayjs-core/lib/library/AssetLoaderToken");
 import IAsset				= require("awayjs-core/lib/library/IAsset");
 import URLRequest			= require("awayjs-core/lib/net/URLRequest");
-import ImageTexture			= require("awayjs-core/lib/textures/ImageTexture");
-import Texture2DBase		= require("awayjs-core/lib/textures/Texture2DBase");
 import ParserBase			= require("awayjs-core/lib/parsers/ParserBase");
 import ParserDataFormat		= require("awayjs-core/lib/parsers/ParserDataFormat");
 import ResourceDependency	= require("awayjs-core/lib/parsers/ResourceDependency");
@@ -21,7 +20,7 @@ class AssetLibraryTest
 	constructor()
 	{
 
-		AssetLibrary.enableParser(JSONTextureParser) ;
+		AssetLibrary.enableParser(JSONTextureParser);
 
 		this.token = AssetLibrary.load(new URLRequest('assets/JSNParserTest.json') );
 		this.token.addEventListener( LoaderEvent.RESOURCE_COMPLETE , (event:LoaderEvent) => this.onResourceComplete(event) );
@@ -31,25 +30,30 @@ class AssetLibraryTest
 		this.token.addEventListener( LoaderEvent.RESOURCE_COMPLETE , (event:LoaderEvent) => this.onResourceComplete(event) );
 		this.token.addEventListener(AssetEvent.ASSET_COMPLETE , (event:AssetEvent) => this.onAssetComplete(event) );
 
+		this.token = AssetLibrary.load(new URLRequest('assets/atlas.xml') );
+		this.token.addEventListener( LoaderEvent.RESOURCE_COMPLETE , (event:LoaderEvent) => this.onResourceComplete(event) );
+		this.token.addEventListener(AssetEvent.ASSET_COMPLETE , (event:AssetEvent) => this.onAssetComplete(event) );
+
 	}
 
 	public onAssetComplete(event:AssetEvent)
 	{
 
 		console.log( '------------------------------------------------------------------------------');
-		console.log( 'AssetEvent.ASSET_COMPLETE' , AssetLibrary.getAsset(event.asset.name) );
+		console.log( 'AssetEvent.ASSET_COMPLETE' , event.asset);
 		console.log( '------------------------------------------------------------------------------');
 
-		var imageTexture : ImageTexture = <ImageTexture> AssetLibrary.getAsset(event.asset.name);
+		if (event.asset.isAsset(BitmapImage2D)) {
+			var bitmapData : BitmapImage2D = <BitmapImage2D> event.asset;
 
-		document.body.appendChild( imageTexture.htmlImageElement );
+			document.body.appendChild( bitmapData.getCanvas() );
 
-		imageTexture.htmlImageElement.style.position = 'absolute';
-		imageTexture.htmlImageElement.style.top = this.height + 'px';
+			bitmapData.getCanvas().style.position = 'absolute';
+			bitmapData.getCanvas().style.top = this.height + 'px';
 
 
-		this.height += ( imageTexture.htmlImageElement.height + 10 ) ;
-
+			this.height += ( bitmapData.getCanvas().height + 10 ) ;
+		}
 	}
 	public onResourceComplete(event:LoaderEvent)
 	{
@@ -66,7 +70,7 @@ class AssetLibraryTest
 
 /**
 * ImageParser provides a "parser" for natively supported image types (jpg, png). While it simply loads bytes into
-* a loader object, it wraps it in a BitmapDataResource so resource management can happen consistently without
+* a loader object, it wraps it in a BitmapImage2DResource so resource management can happen consistently without
 * exception cases.
 */
 class JSONTextureParser extends ParserBase
@@ -79,7 +83,7 @@ class JSONTextureParser extends ParserBase
 	private _startedParsing:boolean;
 	private _doneParsing:boolean;
 	private _dependencyCount:number = 0;
-	private _loadedTextures:Array<Texture2DBase>;
+	private _loadedTextures:Array<BitmapImage2D>;
 
 	/**
 	 * Creates a new ImageParser object.
@@ -90,7 +94,7 @@ class JSONTextureParser extends ParserBase
 	{
 		super(ParserDataFormat.PLAIN_TEXT);
 
-		this._loadedTextures = new Array<Texture2DBase>();
+		this._loadedTextures = new Array<BitmapImage2D>();
 		this._state = this.STATE_PARSE_DATA;
 	}
 
@@ -132,7 +136,7 @@ class JSONTextureParser extends ParserBase
 	 */
 	public _iResolveDependency(resourceDependency:ResourceDependency)
 	{
-		var resource : Texture2DBase = <Texture2DBase> resourceDependency.assets[0];
+		var resource : BitmapImage2D = <BitmapImage2D> resourceDependency.assets[0];
 
 		this._pFinalizeAsset(<IAsset> resource, resourceDependency._iLoader.url);
 

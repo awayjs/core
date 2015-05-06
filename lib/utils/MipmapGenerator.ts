@@ -1,10 +1,7 @@
-import BitmapData				= require("awayjs-core/lib/data/BitmapData");
+import BitmapImage2D			= require("awayjs-core/lib/data/BitmapImage2D");
 import Matrix					= require("awayjs-core/lib/geom/Matrix");
 import Rectangle				= require("awayjs-core/lib/geom/Rectangle");
 
-/**
- * MipmapGenerator is a helper class that uploads BitmapData to a Texture including mipmap levels.
- */
 class MipmapGenerator
 {
 	private static _mipMaps = [];
@@ -12,24 +9,24 @@ class MipmapGenerator
 
 	private static _matrix:Matrix = new Matrix();
 	private static _rect:Rectangle = new Rectangle();
-	private static _source:BitmapData;
+	private static _source:BitmapImage2D;
 
 	/**
-	 * Uploads a BitmapData with mip maps to a target Texture object.
+	 * Uploads a BitmapImage2D with mip maps to a target Texture object.
 	 * @param source The source to upload.
 	 * @param target The target Texture to upload to.
 	 * @param mipmap An optional mip map holder to avoids creating new instances for fe animated materials.
 	 * @param alpha Indicate whether or not the uploaded bitmapData is transparent.
 	 */
-	public static generateMipMaps(source:HTMLImageElement, output?:Array<BitmapData>, alpha?:boolean);
-	public static generateMipMaps(source:BitmapData, output?:Array<BitmapData>, alpha?:boolean);
-	public static generateMipMaps(source:any, output?:Array<BitmapData>, alpha:boolean = false)
+	public static _generateMipMaps(source:HTMLElement, output?:Array<BitmapImage2D>, alpha?:boolean);
+	public static _generateMipMaps(source:BitmapImage2D, output?:Array<BitmapImage2D>, alpha?:boolean);
+	public static _generateMipMaps(source:any, output?:Array<BitmapImage2D>, alpha:boolean = false)
 	{
 		var w:number = source.width;
 		var h:number = source.height;
 		var i:number = 0;
 
-		var mipmap:BitmapData;
+		var mipmap:BitmapImage2D;
 
 		MipmapGenerator._rect.width = w;
 		MipmapGenerator._rect.height = h;
@@ -57,13 +54,13 @@ class MipmapGenerator
 		}
 	}
 
-	private static _getMipmapHolder(mipMapHolder:BitmapData, newW:number, newH:number):BitmapData
+	private static _getMipmapHolder(mipMapHolder:BitmapImage2D, newW:number, newH:number):BitmapImage2D
 	{
 		if (mipMapHolder) {
 			if (mipMapHolder.width == newW && mipMapHolder.height == newH)
 				return mipMapHolder;
 
-			MipmapGenerator.freeMipMapHolder(mipMapHolder);
+			MipmapGenerator._freeMipMapHolder(mipMapHolder);
 		}
 
 		if (!MipmapGenerator._mipMaps[newW]) {
@@ -72,7 +69,7 @@ class MipmapGenerator
 		}
 
 		if (!MipmapGenerator._mipMaps[newW][newH]) {
-			mipMapHolder = MipmapGenerator._mipMaps[newW][newH] = new BitmapData(newW, newH, true);
+			mipMapHolder = MipmapGenerator._mipMaps[newW][newH] = new BitmapImage2D(newW, newH, true);
 			MipmapGenerator._mipMapUses[newW][newH] = 1;
 		} else {
 			MipmapGenerator._mipMapUses[newW][newH] = MipmapGenerator._mipMapUses[newW][newH] + 1;
@@ -82,7 +79,7 @@ class MipmapGenerator
 		return mipMapHolder;
 	}
 
-	public static freeMipMapHolder(mipMapHolder:BitmapData)
+	public static _freeMipMapHolder(mipMapHolder:BitmapImage2D)
 	{
 		var holderWidth:number = mipMapHolder.width;
 		var holderHeight:number = mipMapHolder.height;

@@ -1,4 +1,4 @@
-import BitmapData				= require("awayjs-core/lib/data/BitmapData");
+import BitmapImage2D			= require("awayjs-core/lib/data/BitmapImage2D");
 import Matrix					= require("awayjs-core/lib/geom/Matrix");
 import Rectangle				= require("awayjs-core/lib/geom/Rectangle");
 import URLLoader				= require("awayjs-core/lib/net/URLLoader");
@@ -9,10 +9,10 @@ import IOErrorEvent				= require("awayjs-core/lib/events/IOErrorEvent");
 import ParserUtils				= require("awayjs-core/lib/parsers/ParserUtils");
 import ColorUtils				= require("awayjs-core/lib/utils/ColorUtils");
 
-class BitmapDataTest
+class BitmapImage2DTest
 {
-	private bitmapData:BitmapData;
-	private bitmapDataB:BitmapData;
+	private bitmapData:BitmapImage2D;
+	private bitmapDataB:BitmapImage2D;
 	private urlLoader:URLLoader;
 	private urlRequest:URLRequest;
 	private image:HTMLImageElement;
@@ -34,19 +34,19 @@ class BitmapDataTest
 		this.urlLoader.addEventListener(IOErrorEvent.IO_ERROR, (event:IOErrorEvent) => this.imgLoadedError(event));
 
 		//---------------------------------------
-		// BitmapData Object - 1
-		this.bitmapData = new BitmapData(256,  256, transparent, initcolour);
-		document.body.appendChild(this.bitmapData.canvas);
+		// BitmapImage2D Object - 1
+		this.bitmapData = new BitmapImage2D(256,  256, transparent, initcolour);
+		document.body.appendChild(this.bitmapData.getCanvas());
 
 		//---------------------------------------
-		// BitmapData Object - 2
-		this.bitmapDataB = new BitmapData(256, 256, transparent, initcolour);
-		this.bitmapDataB.canvas.style.position = 'absolute';
-		this.bitmapDataB.canvas.style.left = '540px';
-		document.body.appendChild(this.bitmapDataB.canvas);
+		// BitmapImage2D Object - 2
+		this.bitmapDataB = new BitmapImage2D(256, 256, transparent, initcolour);
+		this.bitmapDataB.getCanvas().style.position = 'absolute';
+		this.bitmapDataB.getCanvas().style.left = '540px';
+		document.body.appendChild(this.bitmapDataB.getCanvas());
 
 		//---------------------------------------
-		// BitmapData - setPixel test
+		// BitmapImage2D - setPixel test
 		console['time']("bitmapdata"); // start setPixel operation benchmark ( TypeScript does not support console.time - so hacking it in ) .
 
 		this.bitmapDataB.lock();
@@ -66,16 +66,16 @@ class BitmapDataTest
 	private onMouseDown(event:MouseEvent)
 	{
 		if ( this.bitmapData.width === 512 ) {// Test to toggle resize of bitmapData
-			if ( this.image.complete ) {// If image is loaded copy that to the BitmapData object
+			if ( this.image.complete ) {// If image is loaded copy that to the BitmapImage2D object
 				this.bitmapDataB.lock(); // Lock bitmap - speeds up setPixelOperations
 				
 				//---------------------------------------
-				// Resize BitmapData
+				// Resize BitmapImage2D
 				this.bitmapData.width  = 256;
 				this.bitmapData.height = 256;
 
 				//---------------------------------------
-				// copy loaded image to first BitmapData
+				// copy loaded image to first BitmapImage2D
 
 				var rect:Rectangle = new Rectangle(0, 0, this.image.width, this.image.height);
 				this.bitmapData.draw(this.image);

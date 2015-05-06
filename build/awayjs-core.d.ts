@@ -1,4 +1,5 @@
-declare module "awayjs-core/lib/data/BitmapData" {
+declare module "awayjs-core/lib/data/BitmapImage2D" {
+	import Image2D = require("awayjs-core/lib/data/Image2D");
 	import BlendMode = require("awayjs-core/lib/data/BlendMode");
 	import ColorTransform = require("awayjs-core/lib/geom/ColorTransform");
 	import Matrix = require("awayjs-core/lib/geom/Matrix");
@@ -6,25 +7,25 @@ declare module "awayjs-core/lib/data/BitmapData" {
 	import Point = require("awayjs-core/lib/geom/Point");
 	import ByteArray = require("awayjs-core/lib/utils/ByteArray");
 	/**
-	 * The BitmapData class lets you work with the data(pixels) of a Bitmap
-	 * object. You can use the methods of the BitmapData class to create
+	 * The BitmapImage2D class lets you work with the data(pixels) of a Bitmap
+	 * object. You can use the methods of the BitmapImage2D class to create
 	 * arbitrarily sized transparent or opaque bitmap images and manipulate them
-	 * in various ways at runtime. You can also access the BitmapData for a bitmap
+	 * in various ways at runtime. You can also access the BitmapImage2D for a bitmap
 	 * image that you load with the <code>flash.Assets</code> or
 	 * <code>flash.display.Loader</code> classes.
 	 *
 	 * <p>This class lets you separate bitmap rendering operations from the
 	 * internal display updating routines of flash. By manipulating a
-	 * BitmapData object directly, you can create complex images without incurring
+	 * BitmapImage2D object directly, you can create complex images without incurring
 	 * the per-frame overhead of constantly redrawing the content from vector
 	 * data.</p>
 	 *
-	 * <p>The methods of the BitmapData class support effects that are not
+	 * <p>The methods of the BitmapImage2D class support effects that are not
 	 * available through the filters available to non-bitmap display objects.</p>
 	 *
-	 * <p>A BitmapData object contains an array of pixel data. This data can
+	 * <p>A BitmapImage2D object contains an array of pixel data. This data can
 	 * represent either a fully opaque bitmap or a transparent bitmap that
-	 * contains alpha channel data. Either type of BitmapData object is stored as
+	 * contains alpha channel data. Either type of BitmapImage2D object is stored as
 	 * a buffer of 32-bit integers. Each 32-bit integer determines the properties
 	 * of a single pixel in the bitmap.</p>
 	 *
@@ -34,66 +35,57 @@ declare module "awayjs-core/lib/data/BitmapData" {
 	 * represents the alpha channel value, followed by red, green, and blue.)</p>
 	 *
 	 * <p>The four channels(alpha, red, green, and blue) are represented as
-	 * numbers when you use them with the <code>BitmapData.copyChannel()</code>
+	 * numbers when you use them with the <code>BitmapImage2D.copyChannel()</code>
 	 * method or the <code>DisplacementMapFilter.componentX</code> and
 	 * <code>DisplacementMapFilter.componentY</code> properties, and these numbers
-	 * are represented by the following constants in the BitmapDataChannel
+	 * are represented by the following constants in the BitmapImage2DChannel
 	 * class:</p>
 	 *
 	 * <ul>
-	 *   <li><code>BitmapDataChannel.ALPHA</code></li>
-	 *   <li><code>BitmapDataChannel.RED</code></li>
-	 *   <li><code>BitmapDataChannel.GREEN</code></li>
-	 *   <li><code>BitmapDataChannel.BLUE</code></li>
+	 *   <li><code>BitmapImage2DChannel.ALPHA</code></li>
+	 *   <li><code>BitmapImage2DChannel.RED</code></li>
+	 *   <li><code>BitmapImage2DChannel.GREEN</code></li>
+	 *   <li><code>BitmapImage2DChannel.BLUE</code></li>
 	 * </ul>
 	 *
-	 * <p>You can attach BitmapData objects to a Bitmap object by using the
+	 * <p>You can attach BitmapImage2D objects to a Bitmap object by using the
 	 * <code>bitmapData</code> property of the Bitmap object.</p>
 	 *
-	 * <p>You can use a BitmapData object to fill a Graphics object by using the
+	 * <p>You can use a BitmapImage2D object to fill a Graphics object by using the
 	 * <code>Graphics.beginBitmapFill()</code> method.</p>
 	 *
-	 * <p>You can also use a BitmapData object to perform batch tile rendering
+	 * <p>You can also use a BitmapImage2D object to perform batch tile rendering
 	 * using the <code>flash.display.Tilesheet</code> class.</p>
 	 *
-	 * <p>In Flash Player 10, the maximum size for a BitmapData object
+	 * <p>In Flash Player 10, the maximum size for a BitmapImage2D object
 	 * is 8,191 pixels in width or height, and the total number of pixels cannot
-	 * exceed 16,777,215 pixels.(So, if a BitmapData object is 8,191 pixels wide,
+	 * exceed 16,777,215 pixels.(So, if a BitmapImage2D object is 8,191 pixels wide,
 	 * it can only be 2,048 pixels high.) In Flash Player 9 and earlier, the limitation
 	 * is 2,880 pixels in height and 2,880 in width.</p>
 	 */
-	class BitmapData {
+	class BitmapImage2D extends Image2D {
+	    static assetType: string;
 	    private _imageCanvas;
 	    private _context;
 	    private _imageData;
-	    private _rect;
 	    private _transparent;
 	    private _locked;
 	    /**
-	     * The height of the bitmap image in pixels.
+	     *
+	     * @returns {string}
 	     */
-	    height: number;
-	    /**
-	     * The rectangle that defines the size and location of the bitmap image. The
-	     * top and left of the rectangle are 0; the width and height are equal to the
-	     * width and height in pixels of the BitmapData object.
-	     */
-	    rect: Rectangle;
+	    assetType: string;
 	    /**
 	     * Defines whether the bitmap image supports per-pixel transparency. You can
-	     * set this value only when you construct a BitmapData object by passing in
+	     * set this value only when you construct a BitmapImage2D object by passing in
 	     * <code>true</code> for the <code>transparent</code> parameter of the
-	     * constructor. Then, after you create a BitmapData object, you can check
+	     * constructor. Then, after you create a BitmapImage2D object, you can check
 	     * whether it supports per-pixel transparency by determining if the value of
 	     * the <code>transparent</code> property is <code>true</code>.
 	     */
 	    transparent: boolean;
 	    /**
-	     * The width of the bitmap image in pixels.
-	     */
-	    width: number;
-	    /**
-	     * Creates a BitmapData object with a specified width and height. If you
+	     * Creates a BitmapImage2D object with a specified width and height. If you
 	     * specify a value for the <code>fillColor</code> parameter, every pixel in
 	     * the bitmap is set to that color.
 	     *
@@ -122,12 +114,12 @@ declare module "awayjs-core/lib/data/BitmapData" {
 	     */
 	    constructor(width: number, height: number, transparent?: boolean, fillColor?: number);
 	    /**
-	     * Returns a new BitmapData object that is a clone of the original instance
+	     * Returns a new BitmapImage2D object that is a clone of the original instance
 	     * with an exact copy of the contained bitmap.
 	     *
-	     * @return A new BitmapData object that is identical to the original.
+	     * @return A new BitmapImage2D object that is identical to the original.
 	     */
-	    clone(): BitmapData;
+	    clone(): BitmapImage2D;
 	    /**
 	     * Adjusts the color values in a specified area of a bitmap image by using a
 	     * <code>ColorTransform</code> object. If the rectangle matches the
@@ -141,28 +133,28 @@ declare module "awayjs-core/lib/data/BitmapData" {
 	     */
 	    colorTransform(rect: Rectangle, colorTransform: ColorTransform): void;
 	    /**
-	     * Transfers data from one channel of another BitmapData object or the
-	     * current BitmapData object into a channel of the current BitmapData object.
-	     * All of the data in the other channels in the destination BitmapData object
+	     * Transfers data from one channel of another BitmapImage2D object or the
+	     * current BitmapImage2D object into a channel of the current BitmapImage2D object.
+	     * All of the data in the other channels in the destination BitmapImage2D object
 	     * are preserved.
 	     *
 	     * <p>The source channel value and destination channel value can be one of
 	     * following values: </p>
 	     *
 	     * <ul>
-	     *   <li><code>BitmapDataChannel.RED</code></li>
-	     *   <li><code>BitmapDataChannel.GREEN</code></li>
-	     *   <li><code>BitmapDataChannel.BLUE</code></li>
-	     *   <li><code>BitmapDataChannel.ALPHA</code></li>
+	     *   <li><code>BitmapImage2DChannel.RED</code></li>
+	     *   <li><code>BitmapImage2DChannel.GREEN</code></li>
+	     *   <li><code>BitmapImage2DChannel.BLUE</code></li>
+	     *   <li><code>BitmapImage2DChannel.ALPHA</code></li>
 	     * </ul>
 	     *
-	     * @param sourceBitmapData The input bitmap image to use. The source image
-	     *                         can be a different BitmapData object or it can
-	     *                         refer to the current BitmapData object.
+	     * @param sourceBitmapImage2D The input bitmap image to use. The source image
+	     *                         can be a different BitmapImage2D object or it can
+	     *                         refer to the current BitmapImage2D object.
 	     * @param sourceRect       The source Rectangle object. To copy only channel
 	     *                         data from a smaller area within the bitmap,
 	     *                         specify a source rectangle that is smaller than
-	     *                         the overall size of the BitmapData object.
+	     *                         the overall size of the BitmapImage2D object.
 	     * @param destPoint        The destination Point object that represents the
 	     *                         upper-left corner of the rectangular area where
 	     *                         the new channel data is placed. To copy only
@@ -170,25 +162,25 @@ declare module "awayjs-core/lib/data/BitmapData" {
 	     *                         the destination image, specify a point other than
 	     *                        (0,0).
 	     * @param sourceChannel    The source channel. Use a value from the
-	     *                         BitmapDataChannel class
-	     *                        (<code>BitmapDataChannel.RED</code>,
-	     *                         <code>BitmapDataChannel.BLUE</code>,
-	     *                         <code>BitmapDataChannel.GREEN</code>,
-	     *                         <code>BitmapDataChannel.ALPHA</code>).
+	     *                         BitmapImage2DChannel class
+	     *                        (<code>BitmapImage2DChannel.RED</code>,
+	     *                         <code>BitmapImage2DChannel.BLUE</code>,
+	     *                         <code>BitmapImage2DChannel.GREEN</code>,
+	     *                         <code>BitmapImage2DChannel.ALPHA</code>).
 	     * @param destChannel      The destination channel. Use a value from the
-	     *                         BitmapDataChannel class
-	     *                        (<code>BitmapDataChannel.RED</code>,
-	     *                         <code>BitmapDataChannel.BLUE</code>,
-	     *                         <code>BitmapDataChannel.GREEN</code>,
-	     *                         <code>BitmapDataChannel.ALPHA</code>).
-	     * @throws TypeError The sourceBitmapData, sourceRect or destPoint are null.
+	     *                         BitmapImage2DChannel class
+	     *                        (<code>BitmapImage2DChannel.RED</code>,
+	     *                         <code>BitmapImage2DChannel.BLUE</code>,
+	     *                         <code>BitmapImage2DChannel.GREEN</code>,
+	     *                         <code>BitmapImage2DChannel.ALPHA</code>).
+	     * @throws TypeError The sourceBitmapImage2D, sourceRect or destPoint are null.
 	     */
-	    copyChannel(sourceBitmap: BitmapData, sourceRect: Rectangle, destPoint: Point, sourceChannel: number, destChannel: number): void;
+	    copyChannel(sourceBitmap: BitmapImage2D, sourceRect: Rectangle, destPoint: Point, sourceChannel: number, destChannel: number): void;
 	    /**
 	     * Provides a fast routine to perform pixel manipulation between images with
 	     * no stretching, rotation, or color effects. This method copies a
 	     * rectangular area of a source image to a rectangular area of the same size
-	     * at the destination point of the destination BitmapData object.
+	     * at the destination point of the destination BitmapImage2D object.
 	     *
 	     * <p>If you include the <code>alphaBitmap</code> and <code>alphaPoint</code>
 	     * parameters, you can use a secondary image as an alpha source for the
@@ -205,42 +197,42 @@ declare module "awayjs-core/lib/data/BitmapData" {
 	     * <code>mergeAlpha</code> property to <code>true</code>. By default, the
 	     * <code>mergeAlpha</code> property is <code>false</code>.</p>
 	     *
-	     * @param sourceBitmapData The input bitmap image from which to copy pixels.
-	     *                         The source image can be a different BitmapData
+	     * @param sourceBitmapImage2D The input bitmap image from which to copy pixels.
+	     *                         The source image can be a different BitmapImage2D
 	     *                         instance, or it can refer to the current
-	     *                         BitmapData instance.
+	     *                         BitmapImage2D instance.
 	     * @param sourceRect       A rectangle that defines the area of the source
 	     *                         image to use as input.
 	     * @param destPoint        The destination point that represents the
 	     *                         upper-left corner of the rectangular area where
 	     *                         the new pixels are placed.
-	     * @param alphaBitmapData  A secondary, alpha BitmapData object source.
-	     * @param alphaPoint       The point in the alpha BitmapData object source
+	     * @param alphaBitmapImage2D  A secondary, alpha BitmapImage2D object source.
+	     * @param alphaPoint       The point in the alpha BitmapImage2D object source
 	     *                         that corresponds to the upper-left corner of the
 	     *                         <code>sourceRect</code> parameter.
 	     * @param mergeAlpha       To use the alpha channel, set the value to
 	     *                         <code>true</code>. To copy pixels with no alpha
 	     *                         channel, set the value to <code>false</code>.
-	     * @throws TypeError The sourceBitmapData, sourceRect, destPoint are null.
+	     * @throws TypeError The sourceBitmapImage2D, sourceRect, destPoint are null.
 	     */
-	    copyPixels(bmpd: BitmapData, sourceRect: Rectangle, destRect: Rectangle): any;
-	    copyPixels(bmpd: HTMLImageElement, sourceRect: Rectangle, destRect: Rectangle): any;
+	    copyPixels(source: BitmapImage2D, sourceRect: Rectangle, destRect: Rectangle): any;
+	    copyPixels(source: HTMLElement, sourceRect: Rectangle, destRect: Rectangle): any;
 	    /**
-	     * Frees memory that is used to store the BitmapData object.
+	     * Frees memory that is used to store the BitmapImage2D object.
 	     *
 	     * <p>When the <code>dispose()</code> method is called on an image, the width
 	     * and height of the image are set to 0. All subsequent calls to methods or
-	     * properties of this BitmapData instance fail, and an exception is thrown.
+	     * properties of this BitmapImage2D instance fail, and an exception is thrown.
 	     * </p>
 	     *
-	     * <p><code>BitmapData.dispose()</code> releases the memory occupied by the
+	     * <p><code>BitmapImage2D.dispose()</code> releases the memory occupied by the
 	     * actual bitmap data, immediately(a bitmap can consume up to 64 MB of
-	     * memory). After using <code>BitmapData.dispose()</code>, the BitmapData
+	     * memory). After using <code>BitmapImage2D.dispose()</code>, the BitmapImage2D
 	     * object is no longer usable and an exception may be thrown if
-	     * you call functions on the BitmapData object. However,
-	     * <code>BitmapData.dispose()</code> does not garbage collect the BitmapData
+	     * you call functions on the BitmapImage2D object. However,
+	     * <code>BitmapImage2D.dispose()</code> does not garbage collect the BitmapImage2D
 	     * object(approximately 128 bytes); the memory occupied by the actual
-	     * BitmapData object is released at the time the BitmapData object is
+	     * BitmapImage2D object is released at the time the BitmapImage2D object is
 	     * collected by the garbage collector.</p>
 	     *
 	     */
@@ -251,7 +243,7 @@ declare module "awayjs-core/lib/data/BitmapData" {
 	     * <code>colorTransform</code>, <code>blendMode</code>, and a destination
 	     * <code>clipRect</code> parameter to control how the rendering performs.
 	     * Optionally, you can specify whether the bitmap should be smoothed when
-	     * scaled(this works only if the source object is a BitmapData object).
+	     * scaled(this works only if the source object is a BitmapImage2D object).
 	     *
 	     * <p>The source display object does not use any of its applied
 	     * transformations for this call. It is treated as it exists in the library
@@ -259,11 +251,11 @@ declare module "awayjs-core/lib/data/BitmapData" {
 	     * To draw a display object(such as a movie clip) by using its own transform
 	     * properties, you can copy its <code>transform</code> property object to the
 	     * <code>transform</code> property of the Bitmap object that uses the
-	     * BitmapData object.</p>
+	     * BitmapImage2D object.</p>
 	     *
-	     * @param source         The display object or BitmapData object to draw to
-	     *                       the BitmapData object.(The DisplayObject and
-	     *                       BitmapData classes implement the IBitmapDrawable
+	     * @param source         The display object or BitmapImage2D object to draw to
+	     *                       the BitmapImage2D object.(The DisplayObject and
+	     *                       BitmapImage2D classes implement the IBitmapDrawable
 	     *                       interface.)
 	     * @param matrix         A Matrix object used to scale, rotate, or translate
 	     *                       the coordinates of the bitmap. If you do not want to
@@ -286,16 +278,16 @@ declare module "awayjs-core/lib/data/BitmapData" {
 	     *                       source object to draw. If you do not supply this
 	     *                       value, no clipping occurs and the entire source
 	     *                       object is drawn.
-	     * @param smoothing      A Boolean value that determines whether a BitmapData
+	     * @param smoothing      A Boolean value that determines whether a BitmapImage2D
 	     *                       object is smoothed when scaled or rotated, due to a
 	     *                       scaling or rotation in the <code>matrix</code>
 	     *                       parameter. The <code>smoothing</code> parameter only
 	     *                       applies if the <code>source</code> parameter is a
-	     *                       BitmapData object. With <code>smoothing</code> set
+	     *                       BitmapImage2D object. With <code>smoothing</code> set
 	     *                       to <code>false</code>, the rotated or scaled
-	     *                       BitmapData image can appear pixelated or jagged. For
+	     *                       BitmapImage2D image can appear pixelated or jagged. For
 	     *                       example, the following two images use the same
-	     *                       BitmapData object for the <code>source</code>
+	     *                       BitmapImage2D object for the <code>source</code>
 	     *                       parameter, but the <code>smoothing</code> parameter
 	     *                       is set to <code>true</code> on the left and
 	     *                       <code>false</code> on the right:
@@ -305,7 +297,7 @@ declare module "awayjs-core/lib/data/BitmapData" {
 	     *                       <code>smoothing</code> set to
 	     *                       <code>false</code>.</p>
 	     * @throws ArgumentError The <code>source</code> parameter is not a
-	     *                       BitmapData or DisplayObject object.
+	     *                       BitmapImage2D or DisplayObject object.
 	     * @throws ArgumentError The source is null or not a valid IBitmapDrawable
 	     *                       object.
 	     * @throws SecurityError The <code>source</code> object and(in the case of a
@@ -317,7 +309,7 @@ declare module "awayjs-core/lib/data/BitmapData" {
 	     *                       restriction does not apply to AIR content in the
 	     *                       application security sandbox.
 	     */
-	    draw(source: BitmapData, matrix?: Matrix, colorTransform?: ColorTransform, blendMode?: BlendMode, clipRect?: Rectangle, smoothing?: boolean): any;
+	    draw(source: BitmapImage2D, matrix?: Matrix, colorTransform?: ColorTransform, blendMode?: BlendMode, clipRect?: Rectangle, smoothing?: boolean): any;
 	    draw(source: HTMLElement, matrix?: Matrix, colorTransform?: ColorTransform, blendMode?: BlendMode, clipRect?: Rectangle, smoothing?: boolean): any;
 	    /**
 	     * Fills a rectangular area of pixels with a specified ARGB color.
@@ -330,17 +322,17 @@ declare module "awayjs-core/lib/data/BitmapData" {
 	     */
 	    fillRect(rect: Rectangle, color: number): void;
 	    /**
-	     * Returns an integer that represents an RGB pixel value from a BitmapData
+	     * Returns an integer that represents an RGB pixel value from a BitmapImage2D
 	     * object at a specific point(<i>x</i>, <i>y</i>). The
 	     * <code>getPixel()</code> method returns an unmultiplied pixel value. No
 	     * alpha information is returned.
 	     *
-	     * <p>All pixels in a BitmapData object are stored as premultiplied color
+	     * <p>All pixels in a BitmapImage2D object are stored as premultiplied color
 	     * values. A premultiplied image pixel has the red, green, and blue color
 	     * channel values already multiplied by the alpha data. For example, if the
 	     * alpha value is 0, the values for the RGB channels are also 0, independent
 	     * of their unmultiplied values. This loss of data can cause some problems
-	     * when you perform operations. All BitmapData methods take and return
+	     * when you perform operations. All BitmapImage2D methods take and return
 	     * unmultiplied values. The internal pixel representation is converted from
 	     * premultiplied to unmultiplied before it is returned as a value. During a
 	     * set operation, the pixel value is premultiplied before the raw image pixel
@@ -358,12 +350,12 @@ declare module "awayjs-core/lib/data/BitmapData" {
 	     * This method is similar to the <code>getPixel()</code> method, which
 	     * returns an RGB color without alpha channel data.
 	     *
-	     * <p>All pixels in a BitmapData object are stored as premultiplied color
+	     * <p>All pixels in a BitmapImage2D object are stored as premultiplied color
 	     * values. A premultiplied image pixel has the red, green, and blue color
 	     * channel values already multiplied by the alpha data. For example, if the
 	     * alpha value is 0, the values for the RGB channels are also 0, independent
 	     * of their unmultiplied values. This loss of data can cause some problems
-	     * when you perform operations. All BitmapData methods take and return
+	     * when you perform operations. All BitmapImage2D methods take and return
 	     * unmultiplied values. The internal pixel representation is converted from
 	     * premultiplied to unmultiplied before it is returned as a value. During a
 	     * set operation, the pixel value is premultiplied before the raw image pixel
@@ -377,8 +369,8 @@ declare module "awayjs-core/lib/data/BitmapData" {
 	     */
 	    getPixel32(x: any, y: any): number;
 	    /**
-	     * Locks an image so that any objects that reference the BitmapData object,
-	     * such as Bitmap objects, are not updated when this BitmapData object
+	     * Locks an image so that any objects that reference the BitmapImage2D object,
+	     * such as Bitmap objects, are not updated when this BitmapImage2D object
 	     * changes. To improve performance, use this method along with the
 	     * <code>unlock()</code> method before and after numerous calls to the
 	     * <code>setPixel()</code> or <code>setPixel32()</code> method.
@@ -387,10 +379,10 @@ declare module "awayjs-core/lib/data/BitmapData" {
 	    lock(): void;
 	    /**
 	     * Converts an Array into a rectangular region of pixel data. For each pixel,
-	     * an Array element is read and written into the BitmapData pixel. The data
+	     * an Array element is read and written into the BitmapImage2D pixel. The data
 	     * in the Array is expected to be 32-bit ARGB pixel values.
 	     *
-	     * @param rect        Specifies the rectangular region of the BitmapData
+	     * @param rect        Specifies the rectangular region of the BitmapImage2D
 	     *                    object.
 	     * @param inputArray  An Array that consists of 32-bit unmultiplied pixel
 	     *                    values to be used in the rectangular region.
@@ -399,7 +391,7 @@ declare module "awayjs-core/lib/data/BitmapData" {
 	     */
 	    setArray(rect: Rectangle, inputArray: Array<number>): void;
 	    /**
-	     * Sets a single pixel of a BitmapData object. The current alpha channel
+	     * Sets a single pixel of a BitmapImage2D object. The current alpha channel
 	     * value of the image pixel is preserved during this operation. The value of
 	     * the RGB color parameter is treated as an unmultiplied color value.
 	     *
@@ -408,7 +400,7 @@ declare module "awayjs-core/lib/data/BitmapData" {
 	     * call the <code>lock()</code> method before you call the
 	     * <code>setPixel()</code> or <code>setPixel32()</code> method, and then call
 	     * the <code>unlock()</code> method when you have made all pixel changes.
-	     * This process prevents objects that reference this BitmapData instance from
+	     * This process prevents objects that reference this BitmapImage2D instance from
 	     * updating until you finish making the pixel changes.</p>
 	     *
 	     * @param x     The <i>x</i> position of the pixel whose value changes.
@@ -418,16 +410,16 @@ declare module "awayjs-core/lib/data/BitmapData" {
 	    setPixel(x: number, y: number, color: number): void;
 	    /**
 	     * Sets the color and alpha transparency values of a single pixel of a
-	     * BitmapData object. This method is similar to the <code>setPixel()</code>
+	     * BitmapImage2D object. This method is similar to the <code>setPixel()</code>
 	     * method; the main difference is that the <code>setPixel32()</code> method
 	     * takes an ARGB color value that contains alpha channel information.
 	     *
-	     * <p>All pixels in a BitmapData object are stored as premultiplied color
+	     * <p>All pixels in a BitmapImage2D object are stored as premultiplied color
 	     * values. A premultiplied image pixel has the red, green, and blue color
 	     * channel values already multiplied by the alpha data. For example, if the
 	     * alpha value is 0, the values for the RGB channels are also 0, independent
 	     * of their unmultiplied values. This loss of data can cause some problems
-	     * when you perform operations. All BitmapData methods take and return
+	     * when you perform operations. All BitmapImage2D methods take and return
 	     * unmultiplied values. The internal pixel representation is converted from
 	     * premultiplied to unmultiplied before it is returned as a value. During a
 	     * set operation, the pixel value is premultiplied before the raw image pixel
@@ -438,7 +430,7 @@ declare module "awayjs-core/lib/data/BitmapData" {
 	     * call the <code>lock()</code> method before you call the
 	     * <code>setPixel()</code> or <code>setPixel32()</code> method, and then call
 	     * the <code>unlock()</code> method when you have made all pixel changes.
-	     * This process prevents objects that reference this BitmapData instance from
+	     * This process prevents objects that reference this BitmapImage2D instance from
 	     * updating until you finish making the pixel changes.</p>
 	     *
 	     * @param x     The <i>x</i> position of the pixel whose value changes.
@@ -456,7 +448,7 @@ declare module "awayjs-core/lib/data/BitmapData" {
 	     * array is expected to be 32-bit ARGB pixel values. No seeking is performed
 	     * on the byte array before or after the pixels are read.
 	     *
-	     * @param rect           Specifies the rectangular region of the BitmapData
+	     * @param rect           Specifies the rectangular region of the BitmapImage2D
 	     *                       object.
 	     * @param inputByteArray A ByteArray object that consists of 32-bit
 	     *                       unmultiplied pixel values to be used in the
@@ -469,46 +461,556 @@ declare module "awayjs-core/lib/data/BitmapData" {
 	     */
 	    setPixels(rect: Rectangle, inputByteArray: ByteArray): void;
 	    /**
-	     * Unlocks an image so that any objects that reference the BitmapData object,
-	     * such as Bitmap objects, are updated when this BitmapData object changes.
+	     * Unlocks an image so that any objects that reference the BitmapImage2D object,
+	     * such as Bitmap objects, are updated when this BitmapImage2D object changes.
 	     * To improve performance, use this method along with the <code>lock()</code>
 	     * method before and after numerous calls to the <code>setPixel()</code> or
 	     * <code>setPixel32()</code> method.
 	     *
-	     * @param changeRect The area of the BitmapData object that has changed. If
+	     * @param changeRect The area of the BitmapImage2D object that has changed. If
 	     *                   you do not specify a value for this parameter, the
-	     *                   entire area of the BitmapData object is considered
+	     *                   entire area of the BitmapImage2D object is considered
 	     *                   changed.
 	     */
 	    unlock(): void;
-	    private _copyPixels(bmpd, sourceRect, destRect);
-	    private _copyPixels(bmpd, sourceRect, destRect);
-	    private _draw(source, matrix, colorTransform, blendMode, clipRect, smoothing);
-	    private _draw(source, matrix, colorTransform, blendMode, clipRect, smoothing);
-	    private _fillRect(rect, color);
 	    /**
 	     *
 	     * @returns {ImageData}
 	     */
-	    imageData: ImageData;
+	    getImageData(): ImageData;
 	    /**
 	     *
 	     * @returns {HTMLCanvasElement}
 	     */
-	    canvas: HTMLCanvasElement;
+	    getCanvas(): HTMLCanvasElement;
+	    /**
+	     *
+	     * @param width
+	     * @param height
+	     * @private
+	     */
+	    _setSize(width: number, height: number): void;
 	}
-	export = BitmapData;
+	export = BitmapImage2D;
 	
-}declare module "awayjs-core/lib/data/BitmapDataChannel" {
-	class BitmapDataChannel {
+}
+
+declare module "awayjs-core/lib/data/BitmapImageChannel" {
+	class BitmapImageChannel {
 	    static ALPHA: number;
 	    static BLUE: number;
 	    static GREEN: number;
 	    static RED: number;
 	}
-	export = BitmapDataChannel;
+	export = BitmapImageChannel;
 	
-}declare module "awayjs-core/lib/data/BlendMode" {
+}
+
+declare module "awayjs-core/lib/data/BitmapImageCube" {
+	import BitmapImage2D = require("awayjs-core/lib/data/BitmapImage2D");
+	import ImageCube = require("awayjs-core/lib/data/ImageCube");
+	import BlendMode = require("awayjs-core/lib/data/BlendMode");
+	import ColorTransform = require("awayjs-core/lib/geom/ColorTransform");
+	import Matrix = require("awayjs-core/lib/geom/Matrix");
+	import Rectangle = require("awayjs-core/lib/geom/Rectangle");
+	import Point = require("awayjs-core/lib/geom/Point");
+	import ByteArray = require("awayjs-core/lib/utils/ByteArray");
+	/**
+	 * The BitmapImage2D class lets you work with the data(pixels) of a Bitmap
+	 * object. You can use the methods of the BitmapImage2D class to create
+	 * arbitrarily sized transparent or opaque bitmap images and manipulate them
+	 * in various ways at runtime. You can also access the BitmapImage2D for a bitmap
+	 * image that you load with the <code>flash.Assets</code> or
+	 * <code>flash.display.Loader</code> classes.
+	 *
+	 * <p>This class lets you separate bitmap rendering operations from the
+	 * internal display updating routines of flash. By manipulating a
+	 * BitmapImage2D object directly, you can create complex images without incurring
+	 * the per-frame overhead of constantly redrawing the content from vector
+	 * data.</p>
+	 *
+	 * <p>The methods of the BitmapImage2D class support effects that are not
+	 * available through the filters available to non-bitmap display objects.</p>
+	 *
+	 * <p>A BitmapImage2D object contains an array of pixel data. This data can
+	 * represent either a fully opaque bitmap or a transparent bitmap that
+	 * contains alpha channel data. Either type of BitmapImage2D object is stored as
+	 * a buffer of 32-bit integers. Each 32-bit integer determines the properties
+	 * of a single pixel in the bitmap.</p>
+	 *
+	 * <p>Each 32-bit integer is a combination of four 8-bit channel values(from
+	 * 0 to 255) that describe the alpha transparency and the red, green, and blue
+	 * (ARGB) values of the pixel.(For ARGB values, the most significant byte
+	 * represents the alpha channel value, followed by red, green, and blue.)</p>
+	 *
+	 * <p>The four channels(alpha, red, green, and blue) are represented as
+	 * numbers when you use them with the <code>BitmapImage2D.copyChannel()</code>
+	 * method or the <code>DisplacementMapFilter.componentX</code> and
+	 * <code>DisplacementMapFilter.componentY</code> properties, and these numbers
+	 * are represented by the following constants in the BitmapImage2DChannel
+	 * class:</p>
+	 *
+	 * <ul>
+	 *   <li><code>BitmapImage2DChannel.ALPHA</code></li>
+	 *   <li><code>BitmapImage2DChannel.RED</code></li>
+	 *   <li><code>BitmapImage2DChannel.GREEN</code></li>
+	 *   <li><code>BitmapImage2DChannel.BLUE</code></li>
+	 * </ul>
+	 *
+	 * <p>You can attach BitmapImage2D objects to a Bitmap object by using the
+	 * <code>bitmapData</code> property of the Bitmap object.</p>
+	 *
+	 * <p>You can use a BitmapImage2D object to fill a Graphics object by using the
+	 * <code>Graphics.beginBitmapFill()</code> method.</p>
+	 *
+	 * <p>You can also use a BitmapImage2D object to perform batch tile rendering
+	 * using the <code>flash.display.Tilesheet</code> class.</p>
+	 *
+	 * <p>In Flash Player 10, the maximum size for a BitmapImage2D object
+	 * is 8,191 pixels in width or height, and the total number of pixels cannot
+	 * exceed 16,777,215 pixels.(So, if a BitmapImage2D object is 8,191 pixels wide,
+	 * it can only be 2,048 pixels high.) In Flash Player 9 and earlier, the limitation
+	 * is 2,880 pixels in height and 2,880 in width.</p>
+	 */
+	class BitmapImageCube extends ImageCube {
+	    static assetType: string;
+	    static posX: number;
+	    static negX: number;
+	    static posY: number;
+	    static negY: number;
+	    static posZ: number;
+	    static negZ: number;
+	    private _imageCanvas;
+	    private _context;
+	    private _imageData;
+	    private _transparent;
+	    private _locked;
+	    /**
+	     *
+	     * @returns {string}
+	     */
+	    assetType: string;
+	    /**
+	     * Defines whether the bitmap image supports per-pixel transparency. You can
+	     * set this value only when you construct a BitmapImage2D object by passing in
+	     * <code>true</code> for the <code>transparent</code> parameter of the
+	     * constructor. Then, after you create a BitmapImage2D object, you can check
+	     * whether it supports per-pixel transparency by determining if the value of
+	     * the <code>transparent</code> property is <code>true</code>.
+	     */
+	    transparent: boolean;
+	    /**
+	     * Creates a BitmapImage2D object with a specified width and height. If you
+	     * specify a value for the <code>fillColor</code> parameter, every pixel in
+	     * the bitmap is set to that color.
+	     *
+	     * <p>By default, the bitmap is created as transparent, unless you pass
+	     * the value <code>false</code> for the transparent parameter. After you
+	     * create an opaque bitmap, you cannot change it to a transparent bitmap.
+	     * Every pixel in an opaque bitmap uses only 24 bits of color channel
+	     * information. If you define the bitmap as transparent, every pixel uses 32
+	     * bits of color channel information, including an alpha transparency
+	     * channel.</p>
+	     *
+	     * @param width       The width of the bitmap image in pixels.
+	     * @param height      The height of the bitmap image in pixels.
+	     * @param transparent Specifies whether the bitmap image supports per-pixel
+	     *                    transparency. The default value is <code>true</code>
+	     *                    (transparent). To create a fully transparent bitmap,
+	     *                    set the value of the <code>transparent</code>
+	     *                    parameter to <code>true</code> and the value of the
+	     *                    <code>fillColor</code> parameter to 0x00000000(or to
+	     *                    0). Setting the <code>transparent</code> property to
+	     *                    <code>false</code> can result in minor improvements
+	     *                    in rendering performance.
+	     * @param fillColor   A 32-bit ARGB color value that you use to fill the
+	     *                    bitmap image area. The default value is
+	     *                    0xFFFFFFFF(solid white).
+	     */
+	    constructor(size: number, transparent?: boolean, fillColor?: number);
+	    /**
+	     * Returns a new BitmapImage2D object that is a clone of the original instance
+	     * with an exact copy of the contained bitmap.
+	     *
+	     * @return A new BitmapImage2D object that is identical to the original.
+	     */
+	    clone(): BitmapImageCube;
+	    /**
+	     * Adjusts the color values in a specified area of a bitmap image by using a
+	     * <code>ColorTransform</code> object. If the rectangle matches the
+	     * boundaries of the bitmap image, this method transforms the color values of
+	     * the entire image.
+	     *
+	     * @param rect           A Rectangle object that defines the area of the
+	     *                       image in which the ColorTransform object is applied.
+	     * @param colorTransform A ColorTransform object that describes the color
+	     *                       transformation values to apply.
+	     */
+	    colorTransform(side: number, rect: Rectangle, colorTransform: ColorTransform): void;
+	    /**
+	     * Transfers data from one channel of another BitmapImage2D object or the
+	     * current BitmapImage2D object into a channel of the current BitmapImage2D object.
+	     * All of the data in the other channels in the destination BitmapImage2D object
+	     * are preserved.
+	     *
+	     * <p>The source channel value and destination channel value can be one of
+	     * following values: </p>
+	     *
+	     * <ul>
+	     *   <li><code>BitmapImage2DChannel.RED</code></li>
+	     *   <li><code>BitmapImage2DChannel.GREEN</code></li>
+	     *   <li><code>BitmapImage2DChannel.BLUE</code></li>
+	     *   <li><code>BitmapImage2DChannel.ALPHA</code></li>
+	     * </ul>
+	     *
+	     * @param sourceBitmapImage2D The input bitmap image to use. The source image
+	     *                         can be a different BitmapImage2D object or it can
+	     *                         refer to the current BitmapImage2D object.
+	     * @param sourceRect       The source Rectangle object. To copy only channel
+	     *                         data from a smaller area within the bitmap,
+	     *                         specify a source rectangle that is smaller than
+	     *                         the overall size of the BitmapImage2D object.
+	     * @param destPoint        The destination Point object that represents the
+	     *                         upper-left corner of the rectangular area where
+	     *                         the new channel data is placed. To copy only
+	     *                         channel data from one area to a different area in
+	     *                         the destination image, specify a point other than
+	     *                        (0,0).
+	     * @param sourceChannel    The source channel. Use a value from the
+	     *                         BitmapImage2DChannel class
+	     *                        (<code>BitmapImage2DChannel.RED</code>,
+	     *                         <code>BitmapImage2DChannel.BLUE</code>,
+	     *                         <code>BitmapImage2DChannel.GREEN</code>,
+	     *                         <code>BitmapImage2DChannel.ALPHA</code>).
+	     * @param destChannel      The destination channel. Use a value from the
+	     *                         BitmapImage2DChannel class
+	     *                        (<code>BitmapImage2DChannel.RED</code>,
+	     *                         <code>BitmapImage2DChannel.BLUE</code>,
+	     *                         <code>BitmapImage2DChannel.GREEN</code>,
+	     *                         <code>BitmapImage2DChannel.ALPHA</code>).
+	     * @throws TypeError The sourceBitmapImage2D, sourceRect or destPoint are null.
+	     */
+	    copyChannel(side: number, sourceBitmap: BitmapImage2D, sourceRect: Rectangle, destPoint: Point, sourceChannel: number, destChannel: number): void;
+	    /**
+	     * Provides a fast routine to perform pixel manipulation between images with
+	     * no stretching, rotation, or color effects. This method copies a
+	     * rectangular area of a source image to a rectangular area of the same size
+	     * at the destination point of the destination BitmapImage2D object.
+	     *
+	     * <p>If you include the <code>alphaBitmap</code> and <code>alphaPoint</code>
+	     * parameters, you can use a secondary image as an alpha source for the
+	     * source image. If the source image has alpha data, both sets of alpha data
+	     * are used to composite pixels from the source image to the destination
+	     * image. The <code>alphaPoint</code> parameter is the point in the alpha
+	     * image that corresponds to the upper-left corner of the source rectangle.
+	     * Any pixels outside the intersection of the source image and alpha image
+	     * are not copied to the destination image.</p>
+	     *
+	     * <p>The <code>mergeAlpha</code> property controls whether or not the alpha
+	     * channel is used when a transparent image is copied onto another
+	     * transparent image. To copy pixels with the alpha channel data, set the
+	     * <code>mergeAlpha</code> property to <code>true</code>. By default, the
+	     * <code>mergeAlpha</code> property is <code>false</code>.</p>
+	     *
+	     * @param sourceBitmapImage2D The input bitmap image from which to copy pixels.
+	     *                         The source image can be a different BitmapImage2D
+	     *                         instance, or it can refer to the current
+	     *                         BitmapImage2D instance.
+	     * @param sourceRect       A rectangle that defines the area of the source
+	     *                         image to use as input.
+	     * @param destPoint        The destination point that represents the
+	     *                         upper-left corner of the rectangular area where
+	     *                         the new pixels are placed.
+	     * @param alphaBitmapImage2D  A secondary, alpha BitmapImage2D object source.
+	     * @param alphaPoint       The point in the alpha BitmapImage2D object source
+	     *                         that corresponds to the upper-left corner of the
+	     *                         <code>sourceRect</code> parameter.
+	     * @param mergeAlpha       To use the alpha channel, set the value to
+	     *                         <code>true</code>. To copy pixels with no alpha
+	     *                         channel, set the value to <code>false</code>.
+	     * @throws TypeError The sourceBitmapImage2D, sourceRect, destPoint are null.
+	     */
+	    copyPixels(side: number, source: BitmapImage2D, sourceRect: Rectangle, destRect: Rectangle): any;
+	    copyPixels(side: number, source: HTMLImageElement, sourceRect: Rectangle, destRect: Rectangle): any;
+	    /**
+	     * Frees memory that is used to store the BitmapImage2D object.
+	     *
+	     * <p>When the <code>dispose()</code> method is called on an image, the width
+	     * and height of the image are set to 0. All subsequent calls to methods or
+	     * properties of this BitmapImage2D instance fail, and an exception is thrown.
+	     * </p>
+	     *
+	     * <p><code>BitmapImage2D.dispose()</code> releases the memory occupied by the
+	     * actual bitmap data, immediately(a bitmap can consume up to 64 MB of
+	     * memory). After using <code>BitmapImage2D.dispose()</code>, the BitmapImage2D
+	     * object is no longer usable and an exception may be thrown if
+	     * you call functions on the BitmapImage2D object. However,
+	     * <code>BitmapImage2D.dispose()</code> does not garbage collect the BitmapImage2D
+	     * object(approximately 128 bytes); the memory occupied by the actual
+	     * BitmapImage2D object is released at the time the BitmapImage2D object is
+	     * collected by the garbage collector.</p>
+	     *
+	     */
+	    dispose(): void;
+	    /**
+	     * Draws the <code>source</code> display object onto the bitmap image, using
+	     * the NME software renderer. You can specify <code>matrix</code>,
+	     * <code>colorTransform</code>, <code>blendMode</code>, and a destination
+	     * <code>clipRect</code> parameter to control how the rendering performs.
+	     * Optionally, you can specify whether the bitmap should be smoothed when
+	     * scaled(this works only if the source object is a BitmapImage2D object).
+	     *
+	     * <p>The source display object does not use any of its applied
+	     * transformations for this call. It is treated as it exists in the library
+	     * or file, with no matrix transform, no color transform, and no blend mode.
+	     * To draw a display object(such as a movie clip) by using its own transform
+	     * properties, you can copy its <code>transform</code> property object to the
+	     * <code>transform</code> property of the Bitmap object that uses the
+	     * BitmapImage2D object.</p>
+	     *
+	     * @param source         The display object or BitmapImage2D object to draw to
+	     *                       the BitmapImage2D object.(The DisplayObject and
+	     *                       BitmapImage2D classes implement the IBitmapDrawable
+	     *                       interface.)
+	     * @param matrix         A Matrix object used to scale, rotate, or translate
+	     *                       the coordinates of the bitmap. If you do not want to
+	     *                       apply a matrix transformation to the image, set this
+	     *                       parameter to an identity matrix, created with the
+	     *                       default <code>new Matrix()</code> constructor, or
+	     *                       pass a <code>null</code> value.
+	     * @param colorTransform A ColorTransform object that you use to adjust the
+	     *                       color values of the bitmap. If no object is
+	     *                       supplied, the bitmap image's colors are not
+	     *                       transformed. If you must pass this parameter but you
+	     *                       do not want to transform the image, set this
+	     *                       parameter to a ColorTransform object created with
+	     *                       the default <code>new ColorTransform()</code>
+	     *                       constructor.
+	     * @param blendMode      A string value, from the flash.display.BlendMode
+	     *                       class, specifying the blend mode to be applied to
+	     *                       the resulting bitmap.
+	     * @param clipRect       A Rectangle object that defines the area of the
+	     *                       source object to draw. If you do not supply this
+	     *                       value, no clipping occurs and the entire source
+	     *                       object is drawn.
+	     * @param smoothing      A Boolean value that determines whether a BitmapImage2D
+	     *                       object is smoothed when scaled or rotated, due to a
+	     *                       scaling or rotation in the <code>matrix</code>
+	     *                       parameter. The <code>smoothing</code> parameter only
+	     *                       applies if the <code>source</code> parameter is a
+	     *                       BitmapImage2D object. With <code>smoothing</code> set
+	     *                       to <code>false</code>, the rotated or scaled
+	     *                       BitmapImage2D image can appear pixelated or jagged. For
+	     *                       example, the following two images use the same
+	     *                       BitmapImage2D object for the <code>source</code>
+	     *                       parameter, but the <code>smoothing</code> parameter
+	     *                       is set to <code>true</code> on the left and
+	     *                       <code>false</code> on the right:
+	     *
+	     *                       <p>Drawing a bitmap with <code>smoothing</code> set
+	     *                       to <code>true</code> takes longer than doing so with
+	     *                       <code>smoothing</code> set to
+	     *                       <code>false</code>.</p>
+	     * @throws ArgumentError The <code>source</code> parameter is not a
+	     *                       BitmapImage2D or DisplayObject object.
+	     * @throws ArgumentError The source is null or not a valid IBitmapDrawable
+	     *                       object.
+	     * @throws SecurityError The <code>source</code> object and(in the case of a
+	     *                       Sprite or MovieClip object) all of its child objects
+	     *                       do not come from the same domain as the caller, or
+	     *                       are not in a content that is accessible to the
+	     *                       caller by having called the
+	     *                       <code>Security.allowDomain()</code> method. This
+	     *                       restriction does not apply to AIR content in the
+	     *                       application security sandbox.
+	     */
+	    draw(side: number, source: BitmapImage2D, matrix?: Matrix, colorTransform?: ColorTransform, blendMode?: BlendMode, clipRect?: Rectangle, smoothing?: boolean): any;
+	    draw(side: number, source: HTMLElement, matrix?: Matrix, colorTransform?: ColorTransform, blendMode?: BlendMode, clipRect?: Rectangle, smoothing?: boolean): any;
+	    /**
+	     * Fills a rectangular area of pixels with a specified ARGB color.
+	     *
+	     * @param rect  The rectangular area to fill.
+	     * @param color The ARGB color value that fills the area. ARGB colors are
+	     *              often specified in hexadecimal format; for example,
+	     *              0xFF336699.
+	     * @throws TypeError The rect is null.
+	     */
+	    fillRect(side: number, rect: Rectangle, color: number): void;
+	    /**
+	     * Returns an integer that represents an RGB pixel value from a BitmapImage2D
+	     * object at a specific point(<i>x</i>, <i>y</i>). The
+	     * <code>getPixel()</code> method returns an unmultiplied pixel value. No
+	     * alpha information is returned.
+	     *
+	     * <p>All pixels in a BitmapImage2D object are stored as premultiplied color
+	     * values. A premultiplied image pixel has the red, green, and blue color
+	     * channel values already multiplied by the alpha data. For example, if the
+	     * alpha value is 0, the values for the RGB channels are also 0, independent
+	     * of their unmultiplied values. This loss of data can cause some problems
+	     * when you perform operations. All BitmapImage2D methods take and return
+	     * unmultiplied values. The internal pixel representation is converted from
+	     * premultiplied to unmultiplied before it is returned as a value. During a
+	     * set operation, the pixel value is premultiplied before the raw image pixel
+	     * is set.</p>
+	     *
+	     * @param x The <i>x</i> position of the pixel.
+	     * @param y The <i>y</i> position of the pixel.
+	     * @return A number that represents an RGB pixel value. If the(<i>x</i>,
+	     *         <i>y</i>) coordinates are outside the bounds of the image, the
+	     *         method returns 0.
+	     */
+	    getPixel(side: number, x: number, y: number): number;
+	    /**
+	     * Returns an ARGB color value that contains alpha channel data and RGB data.
+	     * This method is similar to the <code>getPixel()</code> method, which
+	     * returns an RGB color without alpha channel data.
+	     *
+	     * <p>All pixels in a BitmapImage2D object are stored as premultiplied color
+	     * values. A premultiplied image pixel has the red, green, and blue color
+	     * channel values already multiplied by the alpha data. For example, if the
+	     * alpha value is 0, the values for the RGB channels are also 0, independent
+	     * of their unmultiplied values. This loss of data can cause some problems
+	     * when you perform operations. All BitmapImage2D methods take and return
+	     * unmultiplied values. The internal pixel representation is converted from
+	     * premultiplied to unmultiplied before it is returned as a value. During a
+	     * set operation, the pixel value is premultiplied before the raw image pixel
+	     * is set.</p>
+	     *
+	     * @param x The <i>x</i> position of the pixel.
+	     * @param y The <i>y</i> position of the pixel.
+	     * @return A number representing an ARGB pixel value. If the(<i>x</i>,
+	     *         <i>y</i>) coordinates are outside the bounds of the image, 0 is
+	     *         returned.
+	     */
+	    getPixel32(side: number, x: any, y: any): number;
+	    /**
+	     * Locks an image so that any objects that reference the BitmapImage2D object,
+	     * such as Bitmap objects, are not updated when this BitmapImage2D object
+	     * changes. To improve performance, use this method along with the
+	     * <code>unlock()</code> method before and after numerous calls to the
+	     * <code>setPixel()</code> or <code>setPixel32()</code> method.
+	     *
+	     */
+	    lock(): void;
+	    /**
+	     * Converts an Array into a rectangular region of pixel data. For each pixel,
+	     * an Array element is read and written into the BitmapImage2D pixel. The data
+	     * in the Array is expected to be 32-bit ARGB pixel values.
+	     *
+	     * @param rect        Specifies the rectangular region of the BitmapImage2D
+	     *                    object.
+	     * @param inputArray  An Array that consists of 32-bit unmultiplied pixel
+	     *                    values to be used in the rectangular region.
+	     * @throws RangeError The vector array is not large enough to read all the
+	     *                    pixel data.
+	     */
+	    setArray(side: number, rect: Rectangle, inputArray: Array<number>): void;
+	    /**
+	     * Sets a single pixel of a BitmapImage2D object. The current alpha channel
+	     * value of the image pixel is preserved during this operation. The value of
+	     * the RGB color parameter is treated as an unmultiplied color value.
+	     *
+	     * <p><b>Note:</b> To increase performance, when you use the
+	     * <code>setPixel()</code> or <code>setPixel32()</code> method repeatedly,
+	     * call the <code>lock()</code> method before you call the
+	     * <code>setPixel()</code> or <code>setPixel32()</code> method, and then call
+	     * the <code>unlock()</code> method when you have made all pixel changes.
+	     * This process prevents objects that reference this BitmapImage2D instance from
+	     * updating until you finish making the pixel changes.</p>
+	     *
+	     * @param x     The <i>x</i> position of the pixel whose value changes.
+	     * @param y     The <i>y</i> position of the pixel whose value changes.
+	     * @param color The resulting RGB color for the pixel.
+	     */
+	    setPixel(side: number, x: number, y: number, color: number): void;
+	    /**
+	     * Sets the color and alpha transparency values of a single pixel of a
+	     * BitmapImage2D object. This method is similar to the <code>setPixel()</code>
+	     * method; the main difference is that the <code>setPixel32()</code> method
+	     * takes an ARGB color value that contains alpha channel information.
+	     *
+	     * <p>All pixels in a BitmapImage2D object are stored as premultiplied color
+	     * values. A premultiplied image pixel has the red, green, and blue color
+	     * channel values already multiplied by the alpha data. For example, if the
+	     * alpha value is 0, the values for the RGB channels are also 0, independent
+	     * of their unmultiplied values. This loss of data can cause some problems
+	     * when you perform operations. All BitmapImage2D methods take and return
+	     * unmultiplied values. The internal pixel representation is converted from
+	     * premultiplied to unmultiplied before it is returned as a value. During a
+	     * set operation, the pixel value is premultiplied before the raw image pixel
+	     * is set.</p>
+	     *
+	     * <p><b>Note:</b> To increase performance, when you use the
+	     * <code>setPixel()</code> or <code>setPixel32()</code> method repeatedly,
+	     * call the <code>lock()</code> method before you call the
+	     * <code>setPixel()</code> or <code>setPixel32()</code> method, and then call
+	     * the <code>unlock()</code> method when you have made all pixel changes.
+	     * This process prevents objects that reference this BitmapImage2D instance from
+	     * updating until you finish making the pixel changes.</p>
+	     *
+	     * @param x     The <i>x</i> position of the pixel whose value changes.
+	     * @param y     The <i>y</i> position of the pixel whose value changes.
+	     * @param color The resulting ARGB color for the pixel. If the bitmap is
+	     *              opaque(not transparent), the alpha transparency portion of
+	     *              this color value is ignored.
+	     */
+	    setPixel32(side: number, x: any, y: any, color: number): void;
+	    /**
+	     * Converts a byte array into a rectangular region of pixel data. For each
+	     * pixel, the <code>ByteArray.readUnsignedInt()</code> method is called and
+	     * the return value is written into the pixel. If the byte array ends before
+	     * the full rectangle is written, the function returns. The data in the byte
+	     * array is expected to be 32-bit ARGB pixel values. No seeking is performed
+	     * on the byte array before or after the pixels are read.
+	     *
+	     * @param rect           Specifies the rectangular region of the BitmapImage2D
+	     *                       object.
+	     * @param inputByteArray A ByteArray object that consists of 32-bit
+	     *                       unmultiplied pixel values to be used in the
+	     *                       rectangular region.
+	     * @throws EOFError  The <code>inputByteArray</code> object does not include
+	     *                   enough data to fill the area of the <code>rect</code>
+	     *                   rectangle. The method fills as many pixels as possible
+	     *                   before throwing the exception.
+	     * @throws TypeError The rect or inputByteArray are null.
+	     */
+	    setPixels(side: number, rect: Rectangle, inputByteArray: ByteArray): void;
+	    /**
+	     * Unlocks an image so that any objects that reference the BitmapImage2D object,
+	     * such as Bitmap objects, are updated when this BitmapImage2D object changes.
+	     * To improve performance, use this method along with the <code>lock()</code>
+	     * method before and after numerous calls to the <code>setPixel()</code> or
+	     * <code>setPixel32()</code> method.
+	     *
+	     * @param changeRect The area of the BitmapImage2D object that has changed. If
+	     *                   you do not specify a value for this parameter, the
+	     *                   entire area of the BitmapImage2D object is considered
+	     *                   changed.
+	     */
+	    unlock(): void;
+	    /**
+	     *
+	     * @returns {ImageData}
+	     */
+	    getImageData(side: number): ImageData;
+	    /**
+	     *
+	     * @returns {HTMLCanvasElement}
+	     */
+	    getCanvas(side: number): HTMLCanvasElement;
+	    /**
+	     *
+	     * @param width
+	     * @param height
+	     * @private
+	     */
+	    _setSize(size: number): void;
+	}
+	export = BitmapImageCube;
+	
+}
+
+declare module "awayjs-core/lib/data/BlendMode" {
 	/**
 	 * A class that provides constant values for visual blend mode effects. These
 	 * constants are used in the following:
@@ -684,7 +1186,9 @@ declare module "awayjs-core/lib/data/BitmapData" {
 	}
 	export = BlendMode;
 	
-}declare module "awayjs-core/lib/data/CurveSubGeometry" {
+}
+
+declare module "awayjs-core/lib/data/CurveSubGeometry" {
 	import SubGeometryBase = require("awayjs-core/lib/data/SubGeometryBase");
 	import Matrix3D = require("awayjs-core/lib/geom/Matrix3D");
 	/**
@@ -826,7 +1330,9 @@ declare module "awayjs-core/lib/data/BitmapData" {
 	}
 	export = CurveSubGeometry;
 	
-}declare module "awayjs-core/lib/data/Geometry" {
+}
+
+declare module "awayjs-core/lib/data/Geometry" {
 	import SubGeometryBase = require("awayjs-core/lib/data/SubGeometryBase");
 	import Matrix3D = require("awayjs-core/lib/geom/Matrix3D");
 	import IAsset = require("awayjs-core/lib/library/IAsset");
@@ -892,7 +1398,120 @@ declare module "awayjs-core/lib/data/BitmapData" {
 	}
 	export = Geometry;
 	
-}declare module "awayjs-core/lib/data/LineSubGeometry" {
+}
+
+declare module "awayjs-core/lib/data/Image2D" {
+	import ImageBase = require("awayjs-core/lib/data/ImageBase");
+	import Rectangle = require("awayjs-core/lib/geom/Rectangle");
+	class Image2D extends ImageBase {
+	    static assetType: string;
+	    _rect: Rectangle;
+	    /**
+	     *
+	     * @returns {string}
+	     */
+	    assetType: string;
+	    /**
+	     * The height of the image in pixels.
+	     */
+	    height: number;
+	    /**
+	     * The rectangle that defines the size and location of the bitmap image. The
+	     * top and left of the rectangle are 0; the width and height are equal to the
+	     * width and height in pixels of the BitmapData object.
+	     */
+	    rect: Rectangle;
+	    /**
+	     * The width of the bitmap image in pixels.
+	     */
+	    width: number;
+	    /**
+	     *
+	     */
+	    constructor(width: number, height: number);
+	    /**
+	     *
+	     * @param width
+	     * @param height
+	     * @private
+	     */
+	    _setSize(width: number, height: number): void;
+	    /**
+	     *
+	     * @private
+	     */
+	    private _testDimensions();
+	}
+	export = Image2D;
+	
+}
+
+declare module "awayjs-core/lib/data/ImageBase" {
+	import IAsset = require("awayjs-core/lib/library/IAsset");
+	import AssetBase = require("awayjs-core/lib/library/AssetBase");
+	import IImageObject = require("awayjs-core/lib/pool/IImageObject");
+	class ImageBase extends AssetBase implements IAsset {
+	    private _imageObject;
+	    /**
+	     *
+	     */
+	    constructor();
+	    /**
+	     *
+	     */
+	    invalidateContent(): void;
+	    /**
+	     *
+	     * @private
+	     */
+	    invalidateSize(): void;
+	    /**
+	     * @inheritDoc
+	     */
+	    dispose(): void;
+	    _iAddImageObject(ImageObject: IImageObject): IImageObject;
+	    _iRemoveImageObject(ImageObject: IImageObject): IImageObject;
+	}
+	export = ImageBase;
+	
+}
+
+declare module "awayjs-core/lib/data/ImageCube" {
+	import ImageBase = require("awayjs-core/lib/data/ImageBase");
+	class ImageCube extends ImageBase {
+	    static assetType: string;
+	    _size: number;
+	    /**
+	     *
+	     * @returns {string}
+	     */
+	    assetType: string;
+	    /**
+	     * The size of the cube bitmap in pixels.
+	     */
+	    size: number;
+	    /**
+	     *
+	     */
+	    constructor(size: number);
+	    /**
+	     *
+	     * @param width
+	     * @param height
+	     * @private
+	     */
+	    _setSize(size: number): void;
+	    /**
+	     *
+	     * @private
+	     */
+	    private _testDimensions();
+	}
+	export = ImageCube;
+	
+}
+
+declare module "awayjs-core/lib/data/LineSubGeometry" {
 	import Geometry = require("awayjs-core/lib/data/Geometry");
 	import SubGeometryBase = require("awayjs-core/lib/data/SubGeometryBase");
 	/**
@@ -999,7 +1618,266 @@ declare module "awayjs-core/lib/data/BitmapData" {
 	}
 	export = LineSubGeometry;
 	
-}declare module "awayjs-core/lib/data/SubGeometryBase" {
+}
+
+declare module "awayjs-core/lib/data/Sampler2D" {
+	import SamplerBase = require("awayjs-core/lib/data/SamplerBase");
+	import Image2D = require("awayjs-core/lib/data/Image2D");
+	import Rectangle = require("awayjs-core/lib/geom/Rectangle");
+	/**
+	 * The Sampler2D class represents display objects that represent bitmap images.
+	 * These can be images that you load with the <code>flash.Assets</code> or
+	 * <code>flash.display.Loader</code> classes, or they can be images that you
+	 * create with the <code>Sampler2D()</code> constructor.
+	 *
+	 * <p>The <code>Sampler2D()</code> constructor allows you to create a Sampler2D
+	 * object that contains a reference to a Image2D object. After you create a
+	 * Sampler2D object, use the <code>addChild()</code> or <code>addChildAt()</code>
+	 * method of the parent DisplayObjectContainer instance to place the bitmap on
+	 * the display list.</p>
+	 *
+	 * <p>A Sampler2D object can share its Image2D reference among several Sampler2D
+	 * objects, independent of translation or rotation properties. Because you can
+	 * create multiple Sampler2D objects that reference the same Image2D object,
+	 * multiple texture objects can use the same complex Image2D object without
+	 * incurring the memory overhead of a Image2D object for each texture
+	 * object instance.</p>
+	
+	 */
+	class Sampler2D extends SamplerBase {
+	    static assetType: string;
+	    private _offsetX;
+	    private _offsetY;
+	    private _scaleX;
+	    private _scaleY;
+	    private _rect;
+	    private _imageRect;
+	    private _frameRect;
+	    private _repeat;
+	    /**
+	     *
+	     * @returns {string}
+	     */
+	    assetType: string;
+	    /**
+	     * The Image2D object being referenced.
+	     */
+	    image2D: Image2D;
+	    /**
+	     * Controls whether or not the Sampler2D object is snapped to the nearest pixel.
+	     * This value is ignored in the native and HTML5 targets.
+	     * The PixelSnapping class includes possible values:
+	     * <ul>
+	     *   <li><code>PixelSnapping.NEVER</code> - No pixel snapping occurs.</li>
+	     *   <li><code>PixelSnapping.ALWAYS</code> - The image is always snapped to
+	     * the nearest pixel, independent of transformation.</li>
+	     *   <li><code>PixelSnapping.AUTO</code> - The image is snapped to the
+	     * nearest pixel if it is drawn with no rotation or skew and it is drawn at a
+	     * scale factor of 99.9% to 100.1%. If these conditions are satisfied, the
+	     * bitmap image is drawn at 100% scale, snapped to the nearest pixel.
+	     * When targeting Flash Player, this value allows the image to be drawn as fast
+	     * as possible using the internal vector renderer.</li>
+	     * </ul>
+	     */
+	    /**
+	     * Controls whether or not the bitmap is smoothed when scaled. If
+	     * <code>true</code>, the bitmap is smoothed when scaled. If
+	     * <code>false</code>, the bitmap is not smoothed when scaled.
+	     */
+	    /**
+	     *
+	     */
+	    offsetX: number;
+	    /**
+	     *
+	     */
+	    offsetY: number;
+	    /**
+	     *
+	     */
+	    scaleX: number;
+	    /**
+	     *
+	     */
+	    scaleY: number;
+	    /**
+	     *
+	     */
+	    repeat: boolean;
+	    /**
+	     *
+	     */
+	    imageRect: Rectangle;
+	    /**
+	     *
+	     */
+	    frameRect: Rectangle;
+	    /**
+	     *
+	     */
+	    rect: Rectangle;
+	    /**
+	     *
+	     * @param image2D
+	     * @param smoothing
+	     */
+	    constructor(image2D?: Image2D, repeat?: boolean, smooth?: boolean, mipmap?: boolean);
+	    private _updateRect();
+	}
+	export = Sampler2D;
+	
+}
+
+declare module "awayjs-core/lib/data/SamplerBase" {
+	import IAsset = require("awayjs-core/lib/library/IAsset");
+	import AssetBase = require("awayjs-core/lib/library/AssetBase");
+	/**
+	 *
+	 */
+	class SamplerBase extends AssetBase implements IAsset {
+	    private _smooth;
+	    private _mipmap;
+	    _pFormat: string;
+	    /**
+	     *
+	     */
+	    smooth: boolean;
+	    /**
+	     *
+	     */
+	    mipmap: boolean;
+	    /**
+	     *
+	     */
+	    constructor();
+	    /**
+	     *
+	     * @returns {string}
+	     */
+	    format: string;
+	}
+	export = SamplerBase;
+	
+}
+
+declare module "awayjs-core/lib/data/SamplerCube" {
+	import SamplerBase = require("awayjs-core/lib/data/SamplerBase");
+	import ImageCube = require("awayjs-core/lib/data/ImageCube");
+	/**
+	 * The Bitmap class represents display objects that represent bitmap images.
+	 * These can be images that you load with the <code>flash.Assets</code> or
+	 * <code>flash.display.Loader</code> classes, or they can be images that you
+	 * create with the <code>Bitmap()</code> constructor.
+	 *
+	 * <p>The <code>Bitmap()</code> constructor allows you to create a Bitmap
+	 * object that contains a reference to a BitmapData object. After you create a
+	 * Bitmap object, use the <code>addChild()</code> or <code>addChildAt()</code>
+	 * method of the parent DisplayObjectContainer instance to place the bitmap on
+	 * the display list.</p>
+	 *
+	 * <p>A Bitmap object can share its BitmapData reference among several Bitmap
+	 * objects, independent of translation or rotation properties. Because you can
+	 * create multiple Bitmap objects that reference the same BitmapData object,
+	 * multiple texture objects can use the same complex BitmapData object without
+	 * incurring the memory overhead of a BitmapData object for each texture
+	 * object instance.</p>
+	
+	 */
+	class SamplerCube extends SamplerBase {
+	    static assetType: string;
+	    /**
+	     *
+	     * @returns {string}
+	     */
+	    assetType: string;
+	    /**
+	     * The ImageCube object being referenced.
+	     */
+	    imageCube: ImageCube;
+	    /**
+	     *
+	     * @param bitmapData
+	     * @param smoothing
+	     */
+	    constructor(imageCube?: ImageCube);
+	}
+	export = SamplerCube;
+	
+}
+
+declare module "awayjs-core/lib/data/SpecularImage2D" {
+	import BitmapImage2D = require("awayjs-core/lib/data/BitmapImage2D");
+	import Image2D = require("awayjs-core/lib/data/Image2D");
+	/**
+	 *
+	 */
+	class SpecularImage2D extends Image2D {
+	    static assetType: string;
+	    private _specularSource;
+	    private _glossSource;
+	    private _output;
+	    /**
+	     *
+	     * @returns {string}
+	     */
+	    assetType: string;
+	    specularSource: BitmapImage2D;
+	    glossSource: BitmapImage2D;
+	    /**
+	     *
+	     */
+	    constructor(specularSource?: BitmapImage2D, glossSource?: BitmapImage2D);
+	    /**
+	     * Returns a new SpecularImage2D object that is a clone of the original instance
+	     * with an exact copy of the contained bitmap.
+	     *
+	     * @return A new SpecularImage2D object that is identical to the original.
+	     */
+	    clone(): SpecularImage2D;
+	    /**
+	     * Frees memory that is used to store the SpecularImage2D object.
+	     *
+	     * <p>When the <code>dispose()</code> method is called on an image, the width
+	     * and height of the image are set to 0. All subsequent calls to methods or
+	     * properties of this SpecularImage2D instance fail, and an exception is thrown.
+	     * </p>
+	     *
+	     * <p><code>SpecularImage2D.dispose()</code> releases the memory occupied by the
+	     * actual bitmap data, immediately(a bitmap can consume up to 64 MB of
+	     * memory). After using <code>SpecularImage2D.dispose()</code>, the SpecularImage2D
+	     * object is no longer usable and an exception may be thrown if
+	     * you call functions on the SpecularImage2D object. However,
+	     * <code>SpecularImage2D.dispose()</code> does not garbage collect the SpecularImage2D
+	     * object(approximately 128 bytes); the memory occupied by the actual
+	     * SpecularImage2D object is released at the time the SpecularImage2D object is
+	     * collected by the garbage collector.</p>
+	     *
+	     */
+	    dispose(): void;
+	    /**
+	     *
+	     * @returns {ImageData}
+	     */
+	    getImageData(): ImageData;
+	    /**
+	     *
+	     * @returns {HTMLCanvasElement}
+	     */
+	    getCanvas(): HTMLCanvasElement;
+	    /**
+	     *
+	     * @param width
+	     * @param height
+	     * @private
+	     */
+	    _setSize(width: number, height: number): void;
+	    private _testSize();
+	}
+	export = SpecularImage2D;
+	
+}
+
+declare module "awayjs-core/lib/data/SubGeometryBase" {
 	import Geometry = require("awayjs-core/lib/data/Geometry");
 	import Matrix3D = require("awayjs-core/lib/geom/Matrix3D");
 	import AssetBase = require("awayjs-core/lib/library/AssetBase");
@@ -1087,7 +1965,9 @@ declare module "awayjs-core/lib/data/BitmapData" {
 	}
 	export = SubGeometryBase;
 	
-}declare module "awayjs-core/lib/data/TriangleSubGeometry" {
+}
+
+declare module "awayjs-core/lib/data/TriangleSubGeometry" {
 	import SubGeometryBase = require("awayjs-core/lib/data/SubGeometryBase");
 	import Matrix3D = require("awayjs-core/lib/geom/Matrix3D");
 	/**
@@ -1301,7 +2181,9 @@ declare module "awayjs-core/lib/data/BitmapData" {
 	}
 	export = TriangleSubGeometry;
 	
-}declare module "awayjs-core/lib/errors/AbstractMethodError" {
+}
+
+declare module "awayjs-core/lib/errors/AbstractMethodError" {
 	import Error = require("awayjs-core/lib/errors/Error");
 	/**
 	 * AbstractMethodError is thrown when an abstract method is called. The method in question should be overridden
@@ -1317,7 +2199,9 @@ declare module "awayjs-core/lib/data/BitmapData" {
 	}
 	export = AbstractMethodError;
 	
-}declare module "awayjs-core/lib/errors/ArgumentError" {
+}
+
+declare module "awayjs-core/lib/errors/ArgumentError" {
 	import Error = require("awayjs-core/lib/errors/Error");
 	/**
 	 * AbstractMethodError is thrown when an abstract method is called. The method in question should be overridden
@@ -1334,7 +2218,9 @@ declare module "awayjs-core/lib/data/BitmapData" {
 	}
 	export = ArgumentError;
 	
-}declare module "awayjs-core/lib/errors/DocumentError" {
+}
+
+declare module "awayjs-core/lib/errors/DocumentError" {
 	import Error = require("awayjs-core/lib/errors/Error");
 	class DocumentError extends Error {
 	    static DOCUMENT_DOES_NOT_EXIST: string;
@@ -1342,7 +2228,9 @@ declare module "awayjs-core/lib/data/BitmapData" {
 	}
 	export = DocumentError;
 	
-}declare module "awayjs-core/lib/errors/Error" {
+}
+
+declare module "awayjs-core/lib/errors/Error" {
 	class Error {
 	    private _errorID;
 	    private _messsage;
@@ -1374,7 +2262,9 @@ declare module "awayjs-core/lib/data/BitmapData" {
 	}
 	export = Error;
 	
-}declare module "awayjs-core/lib/errors/PartialImplementationError" {
+}
+
+declare module "awayjs-core/lib/errors/PartialImplementationError" {
 	import Error = require("awayjs-core/lib/errors/Error");
 	/**
 	 * AbstractMethodError is thrown when an abstract method is called. The method in question should be overridden
@@ -1390,7 +2280,9 @@ declare module "awayjs-core/lib/data/BitmapData" {
 	}
 	export = PartialImplementationError;
 	
-}declare module "awayjs-core/lib/errors/RangeError" {
+}
+
+declare module "awayjs-core/lib/errors/RangeError" {
 	import Error = require("awayjs-core/lib/errors/Error");
 	/**
 	 * RangeError is thrown when an index is accessed out of range of the number of
@@ -1407,7 +2299,9 @@ declare module "awayjs-core/lib/data/BitmapData" {
 	}
 	export = RangeError;
 	
-}declare module "awayjs-core/lib/events/AssetEvent" {
+}
+
+declare module "awayjs-core/lib/events/AssetEvent" {
 	import IAsset = require("awayjs-core/lib/library/IAsset");
 	import Event = require("awayjs-core/lib/events/Event");
 	/**
@@ -1451,7 +2345,9 @@ declare module "awayjs-core/lib/data/BitmapData" {
 	}
 	export = AssetEvent;
 	
-}declare module "awayjs-core/lib/events/Event" {
+}
+
+declare module "awayjs-core/lib/events/Event" {
 	class Event {
 	    static COMPLETE: string;
 	    static OPEN: string;
@@ -1481,7 +2377,9 @@ declare module "awayjs-core/lib/data/BitmapData" {
 	}
 	export = Event;
 	
-}declare module "awayjs-core/lib/events/EventDispatcher" {
+}
+
+declare module "awayjs-core/lib/events/EventDispatcher" {
 	import Event = require("awayjs-core/lib/events/Event");
 	/**
 	 * Base class for dispatching events
@@ -1530,7 +2428,9 @@ declare module "awayjs-core/lib/data/BitmapData" {
 	}
 	export = EventDispatcher;
 	
-}declare module "awayjs-core/lib/events/GeometryEvent" {
+}
+
+declare module "awayjs-core/lib/events/GeometryEvent" {
 	import SubGeometryBase = require("awayjs-core/lib/data/SubGeometryBase");
 	import Event = require("awayjs-core/lib/events/Event");
 	/**
@@ -1571,7 +2471,9 @@ declare module "awayjs-core/lib/data/BitmapData" {
 	}
 	export = GeometryEvent;
 	
-}declare module "awayjs-core/lib/events/HTTPStatusEvent" {
+}
+
+declare module "awayjs-core/lib/events/HTTPStatusEvent" {
 	import Event = require("awayjs-core/lib/events/Event");
 	/**
 	 * @class away.events.HTTPStatusEvent
@@ -1583,7 +2485,9 @@ declare module "awayjs-core/lib/data/BitmapData" {
 	}
 	export = HTTPStatusEvent;
 	
-}declare module "awayjs-core/lib/events/IEventDispatcher" {
+}
+
+declare module "awayjs-core/lib/events/IEventDispatcher" {
 	import Event = require("awayjs-core/lib/events/Event");
 	/**
 	 * Base interface for dispatching events
@@ -1623,7 +2527,9 @@ declare module "awayjs-core/lib/data/BitmapData" {
 	}
 	export = IEventDispatcher;
 	
-}declare module "awayjs-core/lib/events/IOErrorEvent" {
+}
+
+declare module "awayjs-core/lib/events/IOErrorEvent" {
 	import Event = require("awayjs-core/lib/events/Event");
 	class IOErrorEvent extends Event {
 	    static IO_ERROR: string;
@@ -1631,7 +2537,9 @@ declare module "awayjs-core/lib/data/BitmapData" {
 	}
 	export = IOErrorEvent;
 	
-}declare module "awayjs-core/lib/events/LoaderEvent" {
+}
+
+declare module "awayjs-core/lib/events/LoaderEvent" {
 	import IAsset = require("awayjs-core/lib/library/IAsset");
 	import Event = require("awayjs-core/lib/events/Event");
 	class LoaderEvent extends Event {
@@ -1670,7 +2578,9 @@ declare module "awayjs-core/lib/data/BitmapData" {
 	}
 	export = LoaderEvent;
 	
-}declare module "awayjs-core/lib/events/ParserEvent" {
+}
+
+declare module "awayjs-core/lib/events/ParserEvent" {
 	import Event = require("awayjs-core/lib/events/Event");
 	class ParserEvent extends Event {
 	    private _message;
@@ -1698,7 +2608,9 @@ declare module "awayjs-core/lib/data/BitmapData" {
 	}
 	export = ParserEvent;
 	
-}declare module "awayjs-core/lib/events/ProgressEvent" {
+}
+
+declare module "awayjs-core/lib/events/ProgressEvent" {
 	import Event = require("awayjs-core/lib/events/Event");
 	class ProgressEvent extends Event {
 	    static PROGRESS: string;
@@ -1708,7 +2620,9 @@ declare module "awayjs-core/lib/data/BitmapData" {
 	}
 	export = ProgressEvent;
 	
-}declare module "awayjs-core/lib/events/ProjectionEvent" {
+}
+
+declare module "awayjs-core/lib/events/ProjectionEvent" {
 	import Event = require("awayjs-core/lib/events/Event");
 	import IProjection = require("awayjs-core/lib/projections/IProjection");
 	class ProjectionEvent extends Event {
@@ -1719,7 +2633,9 @@ declare module "awayjs-core/lib/data/BitmapData" {
 	}
 	export = ProjectionEvent;
 	
-}declare module "awayjs-core/lib/events/SubGeometryEvent" {
+}
+
+declare module "awayjs-core/lib/events/SubGeometryEvent" {
 	import Event = require("awayjs-core/lib/events/Event");
 	/**
 	 * Dispatched to notify changes in a sub geometry object's state.
@@ -1756,7 +2672,9 @@ declare module "awayjs-core/lib/data/BitmapData" {
 	}
 	export = SubGeometryEvent;
 	
-}declare module "awayjs-core/lib/events/TimerEvent" {
+}
+
+declare module "awayjs-core/lib/events/TimerEvent" {
 	import Event = require("awayjs-core/lib/events/Event");
 	class TimerEvent extends Event {
 	    static TIMER: string;
@@ -1765,7 +2683,9 @@ declare module "awayjs-core/lib/data/BitmapData" {
 	}
 	export = TimerEvent;
 	
-}declare module "awayjs-core/lib/geom/Box" {
+}
+
+declare module "awayjs-core/lib/geom/Box" {
 	import Vector3D = require("awayjs-core/lib/geom/Vector3D");
 	/**
 	 * A Box object is an area defined by its position, as indicated by its
@@ -2135,7 +3055,9 @@ declare module "awayjs-core/lib/data/BitmapData" {
 	}
 	export = Box;
 	
-}declare module "awayjs-core/lib/geom/ColorTransform" {
+}
+
+declare module "awayjs-core/lib/geom/ColorTransform" {
 	/**
 	 * The ColorTransform class lets you adjust the color values in a display
 	 * object. The color adjustment or <i>color transformation</i> can be applied
@@ -2274,7 +3196,9 @@ declare module "awayjs-core/lib/data/BitmapData" {
 	}
 	export = ColorTransform;
 	
-}declare module "awayjs-core/lib/geom/MathConsts" {
+}
+
+declare module "awayjs-core/lib/geom/MathConsts" {
 	/**
 	* MathConsts provides some commonly used mathematical constants
 	*/
@@ -2290,7 +3214,9 @@ declare module "awayjs-core/lib/data/BitmapData" {
 	}
 	export = MathConsts;
 	
-}declare module "awayjs-core/lib/geom/Matrix" {
+}
+
+declare module "awayjs-core/lib/geom/Matrix" {
 	import Point = require("awayjs-core/lib/geom/Point");
 	import Vector3D = require("awayjs-core/lib/geom/Vector3D");
 	/**
@@ -2631,7 +3557,9 @@ declare module "awayjs-core/lib/data/BitmapData" {
 	}
 	export = Matrix;
 	
-}declare module "awayjs-core/lib/geom/Matrix3D" {
+}
+
+declare module "awayjs-core/lib/geom/Matrix3D" {
 	import Vector3D = require("awayjs-core/lib/geom/Vector3D");
 	class Matrix3D {
 	    /**
@@ -2760,7 +3688,9 @@ declare module "awayjs-core/lib/data/BitmapData" {
 	}
 	export = Matrix3D;
 	
-}declare module "awayjs-core/lib/geom/Matrix3DUtils" {
+}
+
+declare module "awayjs-core/lib/geom/Matrix3DUtils" {
 	import Quaternion = require("awayjs-core/lib/geom/Quaternion");
 	import Matrix3D = require("awayjs-core/lib/geom/Matrix3D");
 	import Plane3D = require("awayjs-core/lib/geom/Plane3D");
@@ -2814,7 +3744,9 @@ declare module "awayjs-core/lib/data/BitmapData" {
 	}
 	export = Matrix3DUtils;
 	
-}declare module "awayjs-core/lib/geom/Orientation3D" {
+}
+
+declare module "awayjs-core/lib/geom/Orientation3D" {
 	/**
 	 * A Quaternion object which can be used to represent rotations.
 	 */
@@ -2837,7 +3769,9 @@ declare module "awayjs-core/lib/data/BitmapData" {
 	}
 	export = Orientation3D;
 	
-}declare module "awayjs-core/lib/geom/PerspectiveProjection" {
+}
+
+declare module "awayjs-core/lib/geom/PerspectiveProjection" {
 	import Matrix3D = require("awayjs-core/lib/geom/Matrix3D");
 	import Point = require("awayjs-core/lib/geom/Point");
 	/**
@@ -2966,7 +3900,9 @@ declare module "awayjs-core/lib/data/BitmapData" {
 	}
 	export = PerspectiveProjection;
 	
-}declare module "awayjs-core/lib/geom/Plane3D" {
+}
+
+declare module "awayjs-core/lib/geom/Plane3D" {
 	import Vector3D = require("awayjs-core/lib/geom/Vector3D");
 	class Plane3D {
 	    /**
@@ -3028,7 +3964,9 @@ declare module "awayjs-core/lib/data/BitmapData" {
 	}
 	export = Plane3D;
 	
-}declare module "awayjs-core/lib/geom/PlaneClassification" {
+}
+
+declare module "awayjs-core/lib/geom/PlaneClassification" {
 	class PlaneClassification {
 	    static BACK: number;
 	    static FRONT: number;
@@ -3038,7 +3976,9 @@ declare module "awayjs-core/lib/data/BitmapData" {
 	}
 	export = PlaneClassification;
 	
-}declare module "awayjs-core/lib/geom/Point" {
+}
+
+declare module "awayjs-core/lib/geom/Point" {
 	/**
 	 * The Point object represents a location in a two-dimensional coordinate
 	 * system, where <i>x</i> represents the horizontal axis and <i>y</i>
@@ -3183,7 +4123,9 @@ declare module "awayjs-core/lib/data/BitmapData" {
 	}
 	export = Point;
 	
-}declare module "awayjs-core/lib/geom/PoissonLookup" {
+}
+
+declare module "awayjs-core/lib/geom/PoissonLookup" {
 	class PoissonLookup {
 	    static _distributions: Array<Array<number>>;
 	    static initDistributions(): void;
@@ -3191,7 +4133,9 @@ declare module "awayjs-core/lib/data/BitmapData" {
 	}
 	export = PoissonLookup;
 	
-}declare module "awayjs-core/lib/geom/Quaternion" {
+}
+
+declare module "awayjs-core/lib/geom/Quaternion" {
 	import Matrix3D = require("awayjs-core/lib/geom/Matrix3D");
 	import Vector3D = require("awayjs-core/lib/geom/Vector3D");
 	/**
@@ -3316,7 +4260,9 @@ declare module "awayjs-core/lib/data/BitmapData" {
 	}
 	export = Quaternion;
 	
-}declare module "awayjs-core/lib/geom/Rectangle" {
+}
+
+declare module "awayjs-core/lib/geom/Rectangle" {
 	import Point = require("awayjs-core/lib/geom/Point");
 	/**
 	 * A Rectangle object is an area defined by its position, as indicated by its
@@ -3647,7 +4593,9 @@ declare module "awayjs-core/lib/data/BitmapData" {
 	}
 	export = Rectangle;
 	
-}declare module "awayjs-core/lib/geom/Sphere" {
+}
+
+declare module "awayjs-core/lib/geom/Sphere" {
 	import Vector3D = require("awayjs-core/lib/geom/Vector3D");
 	class Sphere {
 	    /**
@@ -3676,7 +4624,9 @@ declare module "awayjs-core/lib/data/BitmapData" {
 	}
 	export = Sphere;
 	
-}declare module "awayjs-core/lib/geom/UVTransform" {
+}
+
+declare module "awayjs-core/lib/geom/UVTransform" {
 	import Matrix = require("awayjs-core/lib/geom/Matrix");
 	class UVTransform {
 	    private _uvMatrix;
@@ -3718,7 +4668,9 @@ declare module "awayjs-core/lib/data/BitmapData" {
 	}
 	export = UVTransform;
 	
-}declare module "awayjs-core/lib/geom/Vector3D" {
+}
+
+declare module "awayjs-core/lib/geom/Vector3D" {
 	/**
 	 * The Vector3D class represents a point or a location in the three-dimensional
 	 * space using the Cartesian coordinates x, y, and z. As in a two-dimensional
@@ -4078,7 +5030,9 @@ declare module "awayjs-core/lib/data/BitmapData" {
 	}
 	export = Vector3D;
 	
-}declare module "awayjs-core/lib/library/AssetBase" {
+}
+
+declare module "awayjs-core/lib/library/AssetBase" {
 	import IAssetClass = require("awayjs-core/lib/library/IAssetClass");
 	import EventDispatcher = require("awayjs-core/lib/events/EventDispatcher");
 	class AssetBase extends EventDispatcher {
@@ -4115,7 +5069,9 @@ declare module "awayjs-core/lib/data/BitmapData" {
 	}
 	export = AssetBase;
 	
-}declare module "awayjs-core/lib/library/AssetLibrary" {
+}
+
+declare module "awayjs-core/lib/library/AssetLibrary" {
 	import URLRequest = require("awayjs-core/lib/net/URLRequest");
 	import AssetLibraryBundle = require("awayjs-core/lib/library/AssetLibraryBundle");
 	import AssetLibraryIterator = require("awayjs-core/lib/library/AssetLibraryIterator");
@@ -4253,7 +5209,9 @@ declare module "awayjs-core/lib/data/BitmapData" {
 	}
 	export = AssetLibrary;
 	
-}declare module "awayjs-core/lib/library/AssetLibraryBundle" {
+}
+
+declare module "awayjs-core/lib/library/AssetLibraryBundle" {
 	import URLRequest = require("awayjs-core/lib/net/URLRequest");
 	import AssetLibraryIterator = require("awayjs-core/lib/library/AssetLibraryIterator");
 	import AssetLoaderToken = require("awayjs-core/lib/library/AssetLoaderToken");
@@ -4441,7 +5399,9 @@ declare module "awayjs-core/lib/data/BitmapData" {
 	}
 	export = AssetLibraryBundle;
 	
-}declare module "awayjs-core/lib/library/AssetLibraryIterator" {
+}
+
+declare module "awayjs-core/lib/library/AssetLibraryIterator" {
 	import IAsset = require("awayjs-core/lib/library/IAsset");
 	class AssetLibraryIterator {
 	    private _assets;
@@ -4457,7 +5417,9 @@ declare module "awayjs-core/lib/data/BitmapData" {
 	}
 	export = AssetLibraryIterator;
 	
-}declare module "awayjs-core/lib/library/AssetLoader" {
+}
+
+declare module "awayjs-core/lib/library/AssetLoader" {
 	import AssetLoaderContext = require("awayjs-core/lib/library/AssetLoaderContext");
 	import AssetLoaderToken = require("awayjs-core/lib/library/AssetLoaderToken");
 	import URLRequest = require("awayjs-core/lib/net/URLRequest");
@@ -4652,7 +5614,9 @@ declare module "awayjs-core/lib/data/BitmapData" {
 	}
 	export = AssetLoader;
 	
-}declare module "awayjs-core/lib/library/AssetLoaderContext" {
+}
+
+declare module "awayjs-core/lib/library/AssetLoaderContext" {
 	class AssetLoaderContext {
 	    static UNDEFINED: number;
 	    static SINGLEPASS_MATERIALS: number;
@@ -4745,7 +5709,9 @@ declare module "awayjs-core/lib/data/BitmapData" {
 	}
 	export = AssetLoaderContext;
 	
-}declare module "awayjs-core/lib/library/AssetLoaderToken" {
+}
+
+declare module "awayjs-core/lib/library/AssetLoaderToken" {
 	import AssetLoader = require("awayjs-core/lib/library/AssetLoader");
 	import EventDispatcher = require("awayjs-core/lib/events/EventDispatcher");
 	/**
@@ -4892,7 +5858,9 @@ declare module "awayjs-core/lib/data/BitmapData" {
 	}
 	export = AssetLoaderToken;
 	
-}declare module "awayjs-core/lib/library/ConflictPrecedence" {
+}
+
+declare module "awayjs-core/lib/library/ConflictPrecedence" {
 	/**
 	 * Enumaration class for precedence when resolving naming conflicts in the library.
 	 *
@@ -4916,7 +5884,9 @@ declare module "awayjs-core/lib/data/BitmapData" {
 	}
 	export = ConflictPrecedence;
 	
-}declare module "awayjs-core/lib/library/ConflictStrategy" {
+}
+
+declare module "awayjs-core/lib/library/ConflictStrategy" {
 	import ConflictStrategyBase = require("awayjs-core/lib/library/ConflictStrategyBase");
 	/**
 	 * Enumeration class for bundled conflict strategies. Set one of these values (or an
@@ -4951,7 +5921,9 @@ declare module "awayjs-core/lib/data/BitmapData" {
 	}
 	export = ConflictStrategy;
 	
-}declare module "awayjs-core/lib/library/ConflictStrategyBase" {
+}
+
+declare module "awayjs-core/lib/library/ConflictStrategyBase" {
 	import IAsset = require("awayjs-core/lib/library/IAsset");
 	/**
 	 * Abstract base class for naming conflict resolution classes. Extend this to create a
@@ -4991,7 +5963,9 @@ declare module "awayjs-core/lib/data/BitmapData" {
 	}
 	export = ConflictStrategyBase;
 	
-}declare module "awayjs-core/lib/library/ErrorConflictStrategy" {
+}
+
+declare module "awayjs-core/lib/library/ErrorConflictStrategy" {
 	import ConflictStrategyBase = require("awayjs-core/lib/library/ConflictStrategyBase");
 	import IAsset = require("awayjs-core/lib/library/IAsset");
 	class ErrorConflictStrategy extends ConflictStrategyBase {
@@ -5001,7 +5975,9 @@ declare module "awayjs-core/lib/data/BitmapData" {
 	}
 	export = ErrorConflictStrategy;
 	
-}declare module "awayjs-core/lib/library/IAsset" {
+}
+
+declare module "awayjs-core/lib/library/IAsset" {
 	import IEventDispatcher = require("awayjs-core/lib/events/IEventDispatcher");
 	interface IAsset extends IEventDispatcher {
 	    /**
@@ -5049,15 +6025,17 @@ declare module "awayjs-core/lib/data/BitmapData" {
 	}
 	export = IAsset;
 	
-}declare module "awayjs-core/lib/library/IAssetClass" {
-	import IAsset = require("awayjs-core/lib/library/IAsset");
+}
+
+declare module "awayjs-core/lib/library/IAssetClass" {
 	interface IAssetClass {
 	    assetType: string;
-	    new (): IAsset;
 	}
 	export = IAssetClass;
 	
-}declare module "awayjs-core/lib/library/IDUtil" {
+}
+
+declare module "awayjs-core/lib/library/IDUtil" {
 	class IDUtil {
 	    /**
 	     *  @private
@@ -5086,7 +6064,18 @@ declare module "awayjs-core/lib/data/BitmapData" {
 	}
 	export = IDUtil;
 	
-}declare module "awayjs-core/lib/library/IgnoreConflictStrategy" {
+}
+
+declare module "awayjs-core/lib/library/IWrapperClass" {
+	import IAssetClass = require("awayjs-core/lib/library/IAssetClass");
+	interface IWrapperClass {
+	    assetClass: IAssetClass;
+	}
+	export = IWrapperClass;
+	
+}
+
+declare module "awayjs-core/lib/library/IgnoreConflictStrategy" {
 	import ConflictStrategyBase = require("awayjs-core/lib/library/ConflictStrategyBase");
 	import IAsset = require("awayjs-core/lib/library/IAsset");
 	class IgnoreConflictStrategy extends ConflictStrategyBase {
@@ -5096,7 +6085,9 @@ declare module "awayjs-core/lib/data/BitmapData" {
 	}
 	export = IgnoreConflictStrategy;
 	
-}declare module "awayjs-core/lib/library/NumSuffixConflictStrategy" {
+}
+
+declare module "awayjs-core/lib/library/NumSuffixConflictStrategy" {
 	import ConflictStrategyBase = require("awayjs-core/lib/library/ConflictStrategyBase");
 	import IAsset = require("awayjs-core/lib/library/IAsset");
 	class NumSuffixConflictStrategy extends ConflictStrategyBase {
@@ -5108,14 +6099,18 @@ declare module "awayjs-core/lib/data/BitmapData" {
 	}
 	export = NumSuffixConflictStrategy;
 	
-}declare module "awayjs-core/lib/net/CrossDomainPolicy" {
+}
+
+declare module "awayjs-core/lib/net/CrossDomainPolicy" {
 	class CrossDomainPolicy {
 	    static ANONYMOUS: string;
 	    static USE_CREDENTIALS: string;
 	}
 	export = CrossDomainPolicy;
 	
-}declare module "awayjs-core/lib/net/URLLoader" {
+}
+
+declare module "awayjs-core/lib/net/URLLoader" {
 	import URLRequest = require("awayjs-core/lib/net/URLRequest");
 	import EventDispatcher = require("awayjs-core/lib/events/EventDispatcher");
 	/**
@@ -5262,7 +6257,9 @@ declare module "awayjs-core/lib/data/BitmapData" {
 	}
 	export = URLLoader;
 	
-}declare module "awayjs-core/lib/net/URLLoaderDataFormat" {
+}
+
+declare module "awayjs-core/lib/net/URLLoaderDataFormat" {
 	class URLLoaderDataFormat {
 	    /**
 	     * TEXT
@@ -5292,7 +6289,9 @@ declare module "awayjs-core/lib/data/BitmapData" {
 	}
 	export = URLLoaderDataFormat;
 	
-}declare module "awayjs-core/lib/net/URLRequest" {
+}
+
+declare module "awayjs-core/lib/net/URLRequest" {
 	class URLRequest {
 	    /**
 	     * Object containing data to be transmited with URL Request ( URL Variables / binary / string )
@@ -5337,7 +6336,9 @@ declare module "awayjs-core/lib/data/BitmapData" {
 	}
 	export = URLRequest;
 	
-}declare module "awayjs-core/lib/net/URLRequestMethod" {
+}
+
+declare module "awayjs-core/lib/net/URLRequestMethod" {
 	class URLRequestMethod {
 	    /**
 	     *
@@ -5352,7 +6353,9 @@ declare module "awayjs-core/lib/data/BitmapData" {
 	}
 	export = URLRequestMethod;
 	
-}declare module "awayjs-core/lib/net/URLVariables" {
+}
+
+declare module "awayjs-core/lib/net/URLVariables" {
 	class URLVariables {
 	    private _variables;
 	    /**
@@ -5387,15 +6390,57 @@ declare module "awayjs-core/lib/data/BitmapData" {
 	}
 	export = URLVariables;
 	
-}declare module "awayjs-core/lib/parsers/CubeTextureParser" {
+}
+
+declare module "awayjs-core/lib/parsers/Image2DParser" {
 	import ParserBase = require("awayjs-core/lib/parsers/ParserBase");
-	import ResourceDependency = require("awayjs-core/lib/parsers/ResourceDependency");
 	/**
-	 * CubeTextureParser provides a "parser" for natively supported image types (jpg, png). While it simply loads bytes into
+	 * Image2DParser provides a "parser" for natively supported image types (jpg, png). While it simply loads bytes into
 	 * a loader object, it wraps it in a BitmapDataResource so resource management can happen consistently without
 	 * exception cases.
 	 */
-	class CubeTextureParser extends ParserBase {
+	class Image2DParser extends ParserBase {
+	    private _startedParsing;
+	    private _doneParsing;
+	    private _loadingImage;
+	    private _htmlImageElement;
+	    /**
+	     * Creates a new Image2DParser object.
+	     * @param uri The url or id of the data or file to be parsed.
+	     * @param extra The holder for extra contextual data that the parser might need.
+	     */
+	    constructor();
+	    /**
+	     * Indicates whether or not a given file extension is supported by the parser.
+	     * @param extension The file extension of a potential file to be parsed.
+	     * @return Whether or not the given file type is supported.
+	     */
+	    static supportsType(extension: string): boolean;
+	    /**
+	     * Tests whether a data block can be parsed by the parser.
+	     * @param data The data block to potentially be parsed.
+	     * @return Whether or not the given data is supported.
+	     */
+	    static supportsData(data: any): boolean;
+	    /**
+	     * @inheritDoc
+	     */
+	    _pProceedParsing(): boolean;
+	    onLoadComplete(event: any): void;
+	}
+	export = Image2DParser;
+	
+}
+
+declare module "awayjs-core/lib/parsers/ImageCubeParser" {
+	import ParserBase = require("awayjs-core/lib/parsers/ParserBase");
+	import ResourceDependency = require("awayjs-core/lib/parsers/ResourceDependency");
+	/**
+	 * ImageCubeParser provides a "parser" for natively supported image types (jpg, png). While it simply loads bytes into
+	 * a loader object, it wraps it in a BitmapImage2DResource so resource management can happen consistently without
+	 * exception cases.
+	 */
+	class ImageCubeParser extends ParserBase {
 	    private static posX;
 	    private static negX;
 	    private static posY;
@@ -5404,7 +6449,7 @@ declare module "awayjs-core/lib/data/BitmapData" {
 	    private static negZ;
 	    private _imgDependencyDictionary;
 	    /**
-	     * Creates a new CubeTextureParser object.
+	     * Creates a new ImageCubeParser object.
 	     * @param uri The url or id of the data or file to be parsed.
 	     * @param extra The holder for extra contextual data that the parser might need.
 	     */
@@ -5434,12 +6479,14 @@ declare module "awayjs-core/lib/data/BitmapData" {
 	     */
 	    _pProceedParsing(): boolean;
 	    private _validateCubeData();
-	    private _getHTMLImageElement(name);
+	    private _getBitmapImage2D(name);
 	}
-	export = CubeTextureParser;
+	export = ImageCubeParser;
 	
-}declare module "awayjs-core/lib/parsers/ParserBase" {
-	import BitmapData = require("awayjs-core/lib/data/BitmapData");
+}
+
+declare module "awayjs-core/lib/parsers/ParserBase" {
+	import BitmapImage2D = require("awayjs-core/lib/data/BitmapImage2D");
 	import IAsset = require("awayjs-core/lib/library/IAsset");
 	import URLRequest = require("awayjs-core/lib/net/URLRequest");
 	import EventDispatcher = require("awayjs-core/lib/events/EventDispatcher");
@@ -5499,7 +6546,7 @@ declare module "awayjs-core/lib/data/BitmapData" {
 	    /**
 	     * Validates a bitmapData loaded before assigning to a default BitmapMaterial
 	     */
-	    isBitmapDataValid(bitmapData: BitmapData): boolean;
+	    isBitmapImage2DValid(bitmapImage2D: BitmapImage2D): boolean;
 	    parsingFailure: boolean;
 	    parsingPaused: boolean;
 	    parsingComplete: boolean;
@@ -5553,7 +6600,7 @@ declare module "awayjs-core/lib/data/BitmapData" {
 	     */
 	    _pProceedParsing(): boolean;
 	    _pDieWithError(message?: string): void;
-	    _pAddDependency(id: string, req: URLRequest, retrieveAsRawData?: boolean, data?: any, suppressErrorEvents?: boolean): ResourceDependency;
+	    _pAddDependency(id: string, req: URLRequest, retrieveAsRawData?: boolean, data?: any, suppressErrorEvents?: boolean, sub_id?: number): ResourceDependency;
 	    _pPauseAndRetrieveDependencies(): void;
 	    /**
 	     * Tests whether or not there is still time left for parsing within the maximum allowed time frame per session.
@@ -5588,7 +6635,9 @@ declare module "awayjs-core/lib/data/BitmapData" {
 	}
 	export = ParserBase;
 	
-}declare module "awayjs-core/lib/parsers/ParserDataFormat" {
+}
+
+declare module "awayjs-core/lib/parsers/ParserDataFormat" {
 	/**
 	 * An enumeration providing values to describe the data format of parsed data.
 	 */
@@ -5608,7 +6657,10 @@ declare module "awayjs-core/lib/data/BitmapData" {
 	}
 	export = ParserDataFormat;
 	
-}declare module "awayjs-core/lib/parsers/ParserUtils" {
+}
+
+declare module "awayjs-core/lib/parsers/ParserUtils" {
+	import BitmapImage2D = require("awayjs-core/lib/data/BitmapImage2D");
 	import ByteArray = require("awayjs-core/lib/utils/ByteArray");
 	class ParserUtils {
 	    /**
@@ -5639,6 +6691,10 @@ declare module "awayjs-core/lib/data/BitmapData" {
 	     */
 	    static blobToImage(data: Blob): HTMLImageElement;
 	    /**
+	     *
+	     */
+	    static imageToBitmapImage2D(img: HTMLImageElement): BitmapImage2D;
+	    /**
 	     * Returns a object as ByteArray, if possible.
 	     *
 	     * @param data The object to return as ByteArray
@@ -5660,7 +6716,9 @@ declare module "awayjs-core/lib/data/BitmapData" {
 	}
 	export = ParserUtils;
 	
-}declare module "awayjs-core/lib/parsers/ResourceDependency" {
+}
+
+declare module "awayjs-core/lib/parsers/ResourceDependency" {
 	import IAsset = require("awayjs-core/lib/library/IAsset");
 	import URLLoader = require("awayjs-core/lib/net/URLLoader");
 	import URLRequest = require("awayjs-core/lib/net/URLRequest");
@@ -5672,6 +6730,7 @@ declare module "awayjs-core/lib/data/BitmapData" {
 	 */
 	class ResourceDependency {
 	    private _id;
+	    private _sub_id;
 	    private _request;
 	    private _assets;
 	    private _parser;
@@ -5682,11 +6741,12 @@ declare module "awayjs-core/lib/data/BitmapData" {
 	    private _dependencies;
 	    _iLoader: URLLoader;
 	    _iSuccess: boolean;
-	    constructor(id: string, request: URLRequest, data: any, parser: ParserBase, parentParser: ParserBase, retrieveAsRawData?: boolean, suppressAssetEvents?: boolean);
+	    constructor(id: string, request: URLRequest, data: any, parser: ParserBase, parentParser: ParserBase, retrieveAsRawData?: boolean, suppressAssetEvents?: boolean, sub_id?: number);
 	    /**
 	     *
 	     */
 	    id: string;
+	    sub_id: number;
 	    /**
 	     *
 	     */
@@ -5746,20 +6806,24 @@ declare module "awayjs-core/lib/data/BitmapData" {
 	}
 	export = ResourceDependency;
 	
-}declare module "awayjs-core/lib/parsers/Texture2DParser" {
+}
+
+declare module "awayjs-core/lib/parsers/TextureAtlasParser" {
 	import ParserBase = require("awayjs-core/lib/parsers/ParserBase");
+	import ResourceDependency = require("awayjs-core/lib/parsers/ResourceDependency");
 	/**
-	 * Texture2DParser provides a "parser" for natively supported image types (jpg, png). While it simply loads bytes into
-	 * a loader object, it wraps it in a BitmapDataResource so resource management can happen consistently without
+	 * TextureAtlasParser provides a "parser" for natively supported image types (jpg, png). While it simply loads bytes into
+	 * a loader object, it wraps it in a BitmapImage2DResource so resource management can happen consistently without
 	 * exception cases.
 	 */
-	class Texture2DParser extends ParserBase {
-	    private _startedParsing;
-	    private _doneParsing;
-	    private _loadingImage;
-	    private _htmlImageElement;
+	class TextureAtlasParser extends ParserBase {
+	    private _doc;
+	    private _imagePath;
+	    private _imageData;
+	    private _subTextureNodes;
+	    private _parseState;
 	    /**
-	     * Creates a new Texture2DParser object.
+	     * Creates a new TextureAtlasParser object.
 	     * @param uri The url or id of the data or file to be parsed.
 	     * @param extra The holder for extra contextual data that the parser might need.
 	     */
@@ -5779,19 +6843,28 @@ declare module "awayjs-core/lib/data/BitmapData" {
 	    /**
 	     * @inheritDoc
 	     */
+	    _iResolveDependency(resourceDependency: ResourceDependency): void;
+	    /**
+	     * @inheritDoc
+	     */
+	    _iResolveDependencyFailure(resourceDependency: ResourceDependency): void;
+	    /**
+	     * @inheritDoc
+	     */
 	    _pProceedParsing(): boolean;
-	    onLoadComplete(event: any): void;
 	}
-	export = Texture2DParser;
+	export = TextureAtlasParser;
 	
-}declare module "awayjs-core/lib/pool/ITextureData" {
+}
+
+declare module "awayjs-core/lib/pool/IImageObject" {
 	/**
-	 * ITextureData is an interface for classes that are used in the rendering pipeline to render the
+	 * IImageObject is an interface for classes that are used in the rendering pipeline to render the
 	 * contents of a texture
 	 *
-	 * @class away.pool.ITextureData
+	 * @class away.pool.IImageObject
 	 */
-	interface ITextureData {
+	interface IImageObject {
 	    /**
 	     *
 	     */
@@ -5801,9 +6874,11 @@ declare module "awayjs-core/lib/data/BitmapData" {
 	     */
 	    invalidate(): any;
 	}
-	export = ITextureData;
+	export = IImageObject;
 	
-}declare module "awayjs-core/lib/projections/CoordinateSystem" {
+}
+
+declare module "awayjs-core/lib/projections/CoordinateSystem" {
 	/**
 	 * Provides constant values for camera lens projection options use the the <code>coordinateSystem</code> property
 	 *
@@ -5821,7 +6896,9 @@ declare module "awayjs-core/lib/data/BitmapData" {
 	}
 	export = CoordinateSystem;
 	
-}declare module "awayjs-core/lib/projections/FreeMatrixProjection" {
+}
+
+declare module "awayjs-core/lib/projections/FreeMatrixProjection" {
 	import ProjectionBase = require("awayjs-core/lib/projections/ProjectionBase");
 	class FreeMatrixProjection extends ProjectionBase {
 	    constructor();
@@ -5833,7 +6910,9 @@ declare module "awayjs-core/lib/data/BitmapData" {
 	}
 	export = FreeMatrixProjection;
 	
-}declare module "awayjs-core/lib/projections/IProjection" {
+}
+
+declare module "awayjs-core/lib/projections/IProjection" {
 	import Matrix3D = require("awayjs-core/lib/geom/Matrix3D");
 	import Vector3D = require("awayjs-core/lib/geom/Vector3D");
 	import IEventDispatcher = require("awayjs-core/lib/events/IEventDispatcher");
@@ -5858,7 +6937,9 @@ declare module "awayjs-core/lib/data/BitmapData" {
 	}
 	export = IProjection;
 	
-}declare module "awayjs-core/lib/projections/ObliqueNearPlaneProjection" {
+}
+
+declare module "awayjs-core/lib/projections/ObliqueNearPlaneProjection" {
 	import Plane3D = require("awayjs-core/lib/geom/Plane3D");
 	import IProjection = require("awayjs-core/lib/projections/IProjection");
 	import ProjectionBase = require("awayjs-core/lib/projections/ProjectionBase");
@@ -5878,7 +6959,9 @@ declare module "awayjs-core/lib/data/BitmapData" {
 	}
 	export = ObliqueNearPlaneProjection;
 	
-}declare module "awayjs-core/lib/projections/OrthographicOffCenterProjection" {
+}
+
+declare module "awayjs-core/lib/projections/OrthographicOffCenterProjection" {
 	import Vector3D = require("awayjs-core/lib/geom/Vector3D");
 	import ProjectionBase = require("awayjs-core/lib/projections/ProjectionBase");
 	class OrthographicOffCenterProjection extends ProjectionBase {
@@ -5897,7 +6980,9 @@ declare module "awayjs-core/lib/data/BitmapData" {
 	}
 	export = OrthographicOffCenterProjection;
 	
-}declare module "awayjs-core/lib/projections/OrthographicProjection" {
+}
+
+declare module "awayjs-core/lib/projections/OrthographicProjection" {
 	import Vector3D = require("awayjs-core/lib/geom/Vector3D");
 	import ProjectionBase = require("awayjs-core/lib/projections/ProjectionBase");
 	class OrthographicProjection extends ProjectionBase {
@@ -5912,7 +6997,9 @@ declare module "awayjs-core/lib/data/BitmapData" {
 	}
 	export = OrthographicProjection;
 	
-}declare module "awayjs-core/lib/projections/PerspectiveProjection" {
+}
+
+declare module "awayjs-core/lib/projections/PerspectiveProjection" {
 	import Vector3D = require("awayjs-core/lib/geom/Vector3D");
 	import ProjectionBase = require("awayjs-core/lib/projections/ProjectionBase");
 	class PerspectiveProjection extends ProjectionBase {
@@ -5953,7 +7040,9 @@ declare module "awayjs-core/lib/data/BitmapData" {
 	}
 	export = PerspectiveProjection;
 	
-}declare module "awayjs-core/lib/projections/ProjectionBase" {
+}
+
+declare module "awayjs-core/lib/projections/ProjectionBase" {
 	import Matrix3D = require("awayjs-core/lib/geom/Matrix3D");
 	import Rectangle = require("awayjs-core/lib/geom/Rectangle");
 	import Vector3D = require("awayjs-core/lib/geom/Vector3D");
@@ -5996,287 +7085,9 @@ declare module "awayjs-core/lib/data/BitmapData" {
 	}
 	export = ProjectionBase;
 	
-}declare module "awayjs-core/lib/textures/BitmapCubeTexture" {
-	import BitmapData = require("awayjs-core/lib/data/BitmapData");
-	import CubeTextureBase = require("awayjs-core/lib/textures/CubeTextureBase");
-	class BitmapCubeTexture extends CubeTextureBase {
-	    private _bitmapDatas;
-	    /**
-	     * The texture on the cube's right face.
-	     */
-	    positiveX: BitmapData;
-	    /**
-	     * The texture on the cube's left face.
-	     */
-	    negativeX: BitmapData;
-	    /**
-	     * The texture on the cube's top face.
-	     */
-	    positiveY: BitmapData;
-	    /**
-	     * The texture on the cube's bottom face.
-	     */
-	    negativeY: BitmapData;
-	    /**
-	     * The texture on the cube's far face.
-	     */
-	    positiveZ: BitmapData;
-	    /**
-	     * The texture on the cube's near face.
-	     */
-	    negativeZ: BitmapData;
-	    constructor(posX: BitmapData, negX: BitmapData, posY: BitmapData, negY: BitmapData, posZ: BitmapData, negZ: BitmapData);
-	    /**
-	     *
-	     * @param value
-	     * @private
-	     */
-	    private _testSize(value);
-	    dispose(): void;
-	    _iGetTextureData(side: number): BitmapData;
-	}
-	export = BitmapCubeTexture;
-	
-}declare module "awayjs-core/lib/textures/BitmapTexture" {
-	import BitmapData = require("awayjs-core/lib/data/BitmapData");
-	import Texture2DBase = require("awayjs-core/lib/textures/Texture2DBase");
-	class BitmapTexture extends Texture2DBase {
-	    _bitmapData: BitmapData;
-	    /**
-	     *
-	     * @returns {BitmapData}
-	     */
-	    bitmapData: BitmapData;
-	    constructor(bitmapData: BitmapData);
-	    dispose(): void;
-	    _iGetTextureData(): BitmapData;
-	}
-	export = BitmapTexture;
-	
-}declare module "awayjs-core/lib/textures/CubeTextureBase" {
-	import BitmapData = require("awayjs-core/lib/data/BitmapData");
-	import TextureBase = require("awayjs-core/lib/textures/TextureBase");
-	class CubeTextureBase extends TextureBase {
-	    _mipmapDataArray: Array<Array<BitmapData>>;
-	    _mipmapDataDirtyArray: Array<boolean>;
-	    constructor();
-	    /**
-	     *
-	     * @param width
-	     * @param height
-	     * @private
-	     */
-	    _pSetSize(size: number): void;
-	    /**
-	     * @inheritDoc
-	     */
-	    dispose(): void;
-	    /**
-	     *
-	     */
-	    invalidateContent(): void;
-	    _iGetMipmapData(side: number): Array<BitmapData>;
-	    _iGetTextureData(side: number): any;
-	}
-	export = CubeTextureBase;
-	
-}declare module "awayjs-core/lib/textures/ImageCubeTexture" {
-	import CubeTextureBase = require("awayjs-core/lib/textures/CubeTextureBase");
-	class ImageCubeTexture extends CubeTextureBase {
-	    private _htmlImageElements;
-	    /**
-	     * The texture on the cube's right face.
-	     */
-	    positiveX: HTMLImageElement;
-	    /**
-	     * The texture on the cube's left face.
-	     */
-	    negativeX: HTMLImageElement;
-	    /**
-	     * The texture on the cube's top face.
-	     */
-	    positiveY: HTMLImageElement;
-	    /**
-	     * The texture on the cube's bottom face.
-	     */
-	    negativeY: HTMLImageElement;
-	    /**
-	     * The texture on the cube's far face.
-	     */
-	    positiveZ: HTMLImageElement;
-	    /**
-	     * The texture on the cube's near face.
-	     */
-	    negativeZ: HTMLImageElement;
-	    constructor(posX: HTMLImageElement, negX: HTMLImageElement, posY: HTMLImageElement, negY: HTMLImageElement, posZ: HTMLImageElement, negZ: HTMLImageElement);
-	    private _testSize(value);
-	    _iGetTextureData(side: number): HTMLImageElement;
-	}
-	export = ImageCubeTexture;
-	
-}declare module "awayjs-core/lib/textures/ImageTexture" {
-	import Texture2DBase = require("awayjs-core/lib/textures/Texture2DBase");
-	class ImageTexture extends Texture2DBase {
-	    private _htmlImageElement;
-	    /**
-	     *
-	     * @param htmlImageElement
-	     * @param generateMipmaps
-	     */
-	    constructor(htmlImageElement: HTMLImageElement);
-	    /**
-	     *
-	     */
-	    htmlImageElement: HTMLImageElement;
-	    _iGetTextureData(): HTMLImageElement;
-	}
-	export = ImageTexture;
-	
-}declare module "awayjs-core/lib/textures/MipmapGenerator" {
-	import BitmapData = require("awayjs-core/lib/data/BitmapData");
-	/**
-	 * MipmapGenerator is a helper class that uploads BitmapData to a Texture including mipmap levels.
-	 */
-	class MipmapGenerator {
-	    private static _mipMaps;
-	    private static _mipMapUses;
-	    private static _matrix;
-	    private static _rect;
-	    private static _source;
-	    /**
-	     * Uploads a BitmapData with mip maps to a target Texture object.
-	     * @param source The source to upload.
-	     * @param target The target Texture to upload to.
-	     * @param mipmap An optional mip map holder to avoids creating new instances for fe animated materials.
-	     * @param alpha Indicate whether or not the uploaded bitmapData is transparent.
-	     */
-	    static generateMipMaps(source: HTMLImageElement, output?: Array<BitmapData>, alpha?: boolean): any;
-	    static generateMipMaps(source: BitmapData, output?: Array<BitmapData>, alpha?: boolean): any;
-	    private static _getMipmapHolder(mipMapHolder, newW, newH);
-	    static freeMipMapHolder(mipMapHolder: BitmapData): void;
-	}
-	export = MipmapGenerator;
-	
-}declare module "awayjs-core/lib/textures/RenderTexture" {
-	import Texture2DBase = require("awayjs-core/lib/textures/Texture2DBase");
-	class RenderTexture extends Texture2DBase {
-	    /**
-	     *
-	     * @returns {number}
-	     */
-	    width: number;
-	    /**
-	     *
-	     * @returns {number}
-	     */
-	    height: number;
-	    constructor(width: number, height: number);
-	}
-	export = RenderTexture;
-	
-}declare module "awayjs-core/lib/textures/SpecularBitmapTexture" {
-	import BitmapData = require("awayjs-core/lib/data/BitmapData");
-	import BitmapTexture = require("awayjs-core/lib/textures/BitmapTexture");
-	/**
-	 * A convenience texture that encodes a specular map in the red channel, and the gloss map in the green channel, as expected by BasicSpecularMapMethod
-	 */
-	class SpecularBitmapTexture extends BitmapTexture {
-	    private _specularMap;
-	    private _glossMap;
-	    constructor(specularMap?: BitmapData, glossMap?: BitmapData);
-	    specularMap: BitmapData;
-	    glossMap: BitmapData;
-	    private _testSize();
-	    _iGetTextureData(): BitmapData;
-	}
-	export = SpecularBitmapTexture;
-	
-}declare module "awayjs-core/lib/textures/Texture2DBase" {
-	import BitmapData = require("awayjs-core/lib/data/BitmapData");
-	import TextureBase = require("awayjs-core/lib/textures/TextureBase");
-	class Texture2DBase extends TextureBase {
-	    private _mipmapData;
-	    private _mipmapDataDirty;
-	    _pWidth: number;
-	    _pHeight: number;
-	    /**
-	     *
-	     * @returns {number}
-	     */
-	    width: number;
-	    /**
-	     *
-	     * @returns {number}
-	     */
-	    height: number;
-	    size: number;
-	    constructor();
-	    /**
-	     * @inheritDoc
-	     */
-	    dispose(): void;
-	    /**
-	     *
-	     */
-	    invalidateContent(): void;
-	    /**
-	     *
-	     * @param width
-	     * @param height
-	     * @private
-	     */
-	    _pSetSize(width: number, height: number): void;
-	    _iGetMipmapData(): Array<BitmapData>;
-	    _iGetTextureData(): any;
-	}
-	export = Texture2DBase;
-	
-}declare module "awayjs-core/lib/textures/TextureBase" {
-	import IAsset = require("awayjs-core/lib/library/IAsset");
-	import AssetBase = require("awayjs-core/lib/library/AssetBase");
-	import ITextureData = require("awayjs-core/lib/pool/ITextureData");
-	/**
-	 *
-	 */
-	class TextureProxyBase extends AssetBase implements IAsset {
-	    _pSize: number;
-	    _pFormat: string;
-	    private _textureData;
-	    static assetType: string;
-	    /**
-	     *
-	     */
-	    constructor(generateMipmaps?: boolean);
-	    size: number;
-	    /**
-	     *
-	     * @returns {string}
-	     */
-	    format: string;
-	    /**
-	     *
-	     * @returns {string}
-	     */
-	    assetType: string;
-	    /**
-	     *
-	     */
-	    invalidateContent(): void;
-	    /**
-	     *
-	     * @private
-	     */
-	    invalidateSize(): void;
-	    /**
-	     * @inheritDoc
-	     */
-	    dispose(): void;
-	    _iAddTextureData(textureData: ITextureData): ITextureData;
-	    _iRemoveTextureData(textureData: ITextureData): ITextureData;
-	}
-	export = TextureProxyBase;
-	
-}declare module "awayjs-core/lib/ui/Keyboard" {
+}
+
+declare module "awayjs-core/lib/ui/Keyboard" {
 	class Keyboard {
 	    /**
 	     * Constant associated with the key code value for the A key (65).
@@ -7098,7 +7909,23 @@ declare module "awayjs-core/lib/data/BitmapData" {
 	}
 	export = Keyboard;
 	
-}declare module "awayjs-core/lib/utils/ByteArray" {
+}
+
+declare module "awayjs-core/lib/utils/BitmapImageUtils" {
+	import BlendMode = require("awayjs-core/lib/data/BlendMode");
+	import ColorTransform = require("awayjs-core/lib/geom/ColorTransform");
+	import Matrix = require("awayjs-core/lib/geom/Matrix");
+	import Rectangle = require("awayjs-core/lib/geom/Rectangle");
+	class BitmapImageUtils {
+	    static _fillRect(context: CanvasRenderingContext2D, rect: Rectangle, color: number, transparent: boolean): void;
+	    static _copyPixels(context: CanvasRenderingContext2D, bmpd: HTMLElement, sourceRect: Rectangle, destRect: Rectangle): void;
+	    static _draw(context: CanvasRenderingContext2D, source: HTMLElement, matrix: Matrix, colorTransform: ColorTransform, blendMode: BlendMode, clipRect: Rectangle, smoothing: boolean): void;
+	}
+	export = BitmapImageUtils;
+	
+}
+
+declare module "awayjs-core/lib/utils/ByteArray" {
 	import ByteArrayBase = require("awayjs-core/lib/utils/ByteArrayBase");
 	class ByteArray extends ByteArrayBase {
 	    maxlength: number;
@@ -7127,7 +7954,9 @@ declare module "awayjs-core/lib/data/BitmapData" {
 	}
 	export = ByteArray;
 	
-}declare module "awayjs-core/lib/utils/ByteArrayBase" {
+}
+
+declare module "awayjs-core/lib/utils/ByteArrayBase" {
 	class ByteArrayBase {
 	    position: number;
 	    length: number;
@@ -7156,7 +7985,9 @@ declare module "awayjs-core/lib/data/BitmapData" {
 	}
 	export = ByteArrayBase;
 	
-}declare module "awayjs-core/lib/utils/ByteArrayBuffer" {
+}
+
+declare module "awayjs-core/lib/utils/ByteArrayBuffer" {
 	import ByteArrayBase = require("awayjs-core/lib/utils/ByteArrayBase");
 	class ByteArrayBuffer extends ByteArrayBase {
 	    _bytes: number[];
@@ -7176,7 +8007,9 @@ declare module "awayjs-core/lib/data/BitmapData" {
 	}
 	export = ByteArrayBuffer;
 	
-}declare module "awayjs-core/lib/utils/CSS" {
+}
+
+declare module "awayjs-core/lib/utils/CSS" {
 	class CSS {
 	    static setElementSize(element: HTMLElement, width: number, height: number): void;
 	    static setElementWidth(element: HTMLElement, width: number): void;
@@ -7190,7 +8023,9 @@ declare module "awayjs-core/lib/data/BitmapData" {
 	}
 	export = CSS;
 	
-}declare module "awayjs-core/lib/utils/ColorUtils" {
+}
+
+declare module "awayjs-core/lib/utils/ColorUtils" {
 	/**
 	 *
 	 */
@@ -7202,7 +8037,9 @@ declare module "awayjs-core/lib/data/BitmapData" {
 	}
 	export = ColorUtils;
 	
-}declare module "awayjs-core/lib/utils/Debug" {
+}
+
+declare module "awayjs-core/lib/utils/Debug" {
 	/**
 	 *
 	 */
@@ -7219,7 +8056,47 @@ declare module "awayjs-core/lib/data/BitmapData" {
 	}
 	export = Debug;
 	
-}declare module "awayjs-core/lib/utils/RequestAnimationFrame" {
+}
+
+declare module "awayjs-core/lib/utils/ImageUtils" {
+	import Image2D = require("awayjs-core/lib/data/Image2D");
+	class ImageUtils {
+	    private static MAX_SIZE;
+	    static isImage2DValid(image2D: Image2D): boolean;
+	    static isHTMLImageElementValid(image: HTMLImageElement): boolean;
+	    static isDimensionValid(d: number): boolean;
+	    static isPowerOfTwo(value: number): boolean;
+	    static getBestPowerOf2(value: number): number;
+	}
+	export = ImageUtils;
+	
+}
+
+declare module "awayjs-core/lib/utils/MipmapGenerator" {
+	import BitmapImage2D = require("awayjs-core/lib/data/BitmapImage2D");
+	class MipmapGenerator {
+	    private static _mipMaps;
+	    private static _mipMapUses;
+	    private static _matrix;
+	    private static _rect;
+	    private static _source;
+	    /**
+	     * Uploads a BitmapImage2D with mip maps to a target Texture object.
+	     * @param source The source to upload.
+	     * @param target The target Texture to upload to.
+	     * @param mipmap An optional mip map holder to avoids creating new instances for fe animated materials.
+	     * @param alpha Indicate whether or not the uploaded bitmapData is transparent.
+	     */
+	    static _generateMipMaps(source: HTMLElement, output?: Array<BitmapImage2D>, alpha?: boolean): any;
+	    static _generateMipMaps(source: BitmapImage2D, output?: Array<BitmapImage2D>, alpha?: boolean): any;
+	    private static _getMipmapHolder(mipMapHolder, newW, newH);
+	    static _freeMipMapHolder(mipMapHolder: BitmapImage2D): void;
+	}
+	export = MipmapGenerator;
+	
+}
+
+declare module "awayjs-core/lib/utils/RequestAnimationFrame" {
 	class RequestAnimationFrame {
 	    private _callback;
 	    private _callbackContext;
@@ -7258,19 +8135,9 @@ declare module "awayjs-core/lib/data/BitmapData" {
 	}
 	export = RequestAnimationFrame;
 	
-}declare module "awayjs-core/lib/utils/TextureUtils" {
-	import BitmapData = require("awayjs-core/lib/data/BitmapData");
-	class TextureUtils {
-	    private static MAX_SIZE;
-	    static isBitmapDataValid(bitmapData: BitmapData): boolean;
-	    static isHTMLImageElementValid(image: HTMLImageElement): boolean;
-	    static isDimensionValid(d: number): boolean;
-	    static isPowerOfTwo(value: number): boolean;
-	    static getBestPowerOf2(value: number): number;
-	}
-	export = TextureUtils;
-	
-}declare module "awayjs-core/lib/utils/Timer" {
+}
+
+declare module "awayjs-core/lib/utils/Timer" {
 	import EventDispatcher = require("awayjs-core/lib/events/EventDispatcher");
 	class Timer extends EventDispatcher {
 	    private _delay;
@@ -7290,7 +8157,23 @@ declare module "awayjs-core/lib/data/BitmapData" {
 	}
 	export = Timer;
 	
-}declare module "awayjs-core/lib/utils/getTimer" {
+}
+
+declare module "awayjs-core/lib/utils/XmlUtils" {
+	class XmlUtils {
+	    static getChildrenWithTag(node: Node, tag: string): NodeList;
+	    static filterListByParam(nodes: NodeList, paramName: string, paramValue: any): NodeList;
+	    static strToXml(str: string): Node;
+	    static nodeToString(node: Node): string;
+	    static readAttributeValue(node: Node, attrName: string): string;
+	    static writeAttributeValue(node: Node, attrName: string, attrValue: string): void;
+	    static hasAttribute(node: Node, attrName: string): boolean;
+	}
+	export = XmlUtils;
+	
+}
+
+declare module "awayjs-core/lib/utils/getTimer" {
 	/**
 	 *
 	 *
@@ -7300,3 +8183,4 @@ declare module "awayjs-core/lib/data/BitmapData" {
 	export = getTimer;
 	
 }
+

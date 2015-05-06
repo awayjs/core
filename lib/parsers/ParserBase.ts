@@ -1,4 +1,4 @@
-import BitmapData				= require("awayjs-core/lib/data/BitmapData");
+import BitmapImage2D			= require("awayjs-core/lib/data/BitmapImage2D");
 import IAsset					= require("awayjs-core/lib/library/IAsset");
 import URLRequest				= require("awayjs-core/lib/net/URLRequest");
 import AbstractMethodError		= require("awayjs-core/lib/errors/AbstractMethodError");
@@ -9,7 +9,7 @@ import TimerEvent				= require("awayjs-core/lib/events/TimerEvent");
 import ParserUtils				= require("awayjs-core/lib/parsers/ParserUtils");
 import ResourceDependency		= require("awayjs-core/lib/parsers/ResourceDependency");
 import ByteArray				= require("awayjs-core/lib/utils/ByteArray");
-import TextureUtils				= require("awayjs-core/lib/utils/TextureUtils");
+import ImageUtils				= require("awayjs-core/lib/utils/ImageUtils");
 import Timer					= require("awayjs-core/lib/utils/Timer");
 import getTimer					= require("awayjs-core/lib/utils/getTimer");
 
@@ -55,17 +55,6 @@ class ParserBase extends EventDispatcher
 		throw new AbstractMethodError();
 	}
 
-	/* TODO: Implement ParserUtils;
-	 public _pGetTextData():string
-	 {
-	 return ParserUtils.toString(_data);
-	 }
-
-	 public _pGetByteData():ByteArray
-	 {
-	 return ParserUtils.toByteArray(_data);
-	 }
-	 */
 	private _dependencies:Array<ResourceDependency>;
 	private _parsingPaused:boolean;
 	private _parsingComplete:boolean;
@@ -112,9 +101,9 @@ class ParserBase extends EventDispatcher
 	 * Validates a bitmapData loaded before assigning to a default BitmapMaterial
 	 */
 
-	public isBitmapDataValid(bitmapData:BitmapData):boolean
+	public isBitmapImage2DValid(bitmapImage2D:BitmapImage2D):boolean
 	{
-		var isValid:boolean = TextureUtils.isBitmapDataValid(bitmapData);
+		var isValid:boolean = ImageUtils.isImage2DValid(bitmapImage2D);
 
 		if (!isValid) {
 
@@ -268,9 +257,9 @@ class ParserBase extends EventDispatcher
 		this.dispatchEvent(new ParserEvent(ParserEvent.PARSE_ERROR, message));
 	}
 
-	public _pAddDependency(id:string, req:URLRequest, retrieveAsRawData:boolean = false, data:any = null, suppressErrorEvents:boolean = false):ResourceDependency
+	public _pAddDependency(id:string, req:URLRequest, retrieveAsRawData:boolean = false, data:any = null, suppressErrorEvents:boolean = false, sub_id:number=0):ResourceDependency
 	{
-		var dependency:ResourceDependency = new ResourceDependency(id, req, data, null, this, retrieveAsRawData, suppressErrorEvents);
+		var dependency:ResourceDependency = new ResourceDependency(id, req, data, null, this, retrieveAsRawData, suppressErrorEvents, sub_id);
 		this._dependencies.push(dependency);
 
 		return dependency;

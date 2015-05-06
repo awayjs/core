@@ -1,4 +1,4 @@
-class BitmapDataChannel
+class BitmapImageChannel
 {
 	public static ALPHA:number /*uint*/ = 8;
 	public static BLUE:number /*uint*/ = 4;
@@ -6,4 +6,4 @@ class BitmapDataChannel
 	public static RED:number /*uint*/ = 1;
 }
 
-export = BitmapDataChannel;
+export = BitmapImageChannel;

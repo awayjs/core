@@ -2230,6 +2230,24 @@ declare module "awayjs-core/lib/errors/DocumentError" {
 	
 }
 
+declare module "awayjs-core/lib/errors/PartialImplementationError" {
+	import Error = require("awayjs-core/lib/errors/Error");
+	/**
+	 * AbstractMethodError is thrown when an abstract method is called. The method in question should be overridden
+	 * by a concrete subclass.
+	 */
+	class PartialImplementationError extends Error {
+	    /**
+	     * Create a new AbstractMethodError.
+	     * @param message An optional message to override the default error message.
+	     * @param id The id of the error.
+	     */
+	    constructor(dependency?: string, id?: number);
+	}
+	export = PartialImplementationError;
+	
+}
+
 declare module "awayjs-core/lib/errors/Error" {
 	class Error {
 	    private _errorID;
@@ -2261,24 +2279,6 @@ declare module "awayjs-core/lib/errors/Error" {
 	    errorID: number;
 	}
 	export = Error;
-	
-}
-
-declare module "awayjs-core/lib/errors/PartialImplementationError" {
-	import Error = require("awayjs-core/lib/errors/Error");
-	/**
-	 * AbstractMethodError is thrown when an abstract method is called. The method in question should be overridden
-	 * by a concrete subclass.
-	 */
-	class PartialImplementationError extends Error {
-	    /**
-	     * Create a new AbstractMethodError.
-	     * @param message An optional message to override the default error message.
-	     * @param id The id of the error.
-	     */
-	    constructor(dependency?: string, id?: number);
-	}
-	export = PartialImplementationError;
 	
 }
 
@@ -3198,24 +3198,6 @@ declare module "awayjs-core/lib/geom/ColorTransform" {
 	
 }
 
-declare module "awayjs-core/lib/geom/MathConsts" {
-	/**
-	* MathConsts provides some commonly used mathematical constants
-	*/
-	class MathConsts {
-	    /**
-	     * The amount to multiply with when converting radians to degrees.
-	     */
-	    static RADIANS_TO_DEGREES: number;
-	    /**
-	     * The amount to multiply with when converting degrees to radians.
-	     */
-	    static DEGREES_TO_RADIANS: number;
-	}
-	export = MathConsts;
-	
-}
-
 declare module "awayjs-core/lib/geom/Matrix" {
 	import Point = require("awayjs-core/lib/geom/Point");
 	import Vector3D = require("awayjs-core/lib/geom/Vector3D");
@@ -3690,59 +3672,21 @@ declare module "awayjs-core/lib/geom/Matrix3D" {
 	
 }
 
-declare module "awayjs-core/lib/geom/Matrix3DUtils" {
-	import Quaternion = require("awayjs-core/lib/geom/Quaternion");
-	import Matrix3D = require("awayjs-core/lib/geom/Matrix3D");
-	import Plane3D = require("awayjs-core/lib/geom/Plane3D");
-	import Vector3D = require("awayjs-core/lib/geom/Vector3D");
+declare module "awayjs-core/lib/geom/MathConsts" {
 	/**
-	 * away.geom.Matrix3DUtils provides additional Matrix3D functions.
-	 */
-	class Matrix3DUtils {
+	* MathConsts provides some commonly used mathematical constants
+	*/
+	class MathConsts {
 	    /**
-	     * A reference to a Vector to be used as a temporary raw data container, to prevent object creation.
+	     * The amount to multiply with when converting radians to degrees.
 	     */
-	    static RAW_DATA_CONTAINER: number[];
-	    static CALCULATION_MATRIX: Matrix3D;
+	    static RADIANS_TO_DEGREES: number;
 	    /**
-	     * Fills the 3d matrix object with values representing the transformation made by the given quaternion.
-	     *
-	     * @param    quarternion    The quarterion object to convert.
+	     * The amount to multiply with when converting degrees to radians.
 	     */
-	    static quaternion2matrix(quarternion: Quaternion, m?: Matrix3D): Matrix3D;
-	    /**
-	     * Returns a normalised <code>Vector3D</code> object representing the forward vector of the given matrix.
-	     * @param    m        The Matrix3D object to use to get the forward vector
-	     * @param    v        [optional] A vector holder to prevent make new Vector3D instance if already exists. Default is null.
-	     * @return            The forward vector
-	     */
-	    static getForward(m: Matrix3D, v?: Vector3D): Vector3D;
-	    /**
-	     * Returns a normalised <code>Vector3D</code> object representing the up vector of the given matrix.
-	     * @param    m        The Matrix3D object to use to get the up vector
-	     * @param    v        [optional] A vector holder to prevent make new Vector3D instance if already exists. Default is null.
-	     * @return            The up vector
-	     */
-	    static getUp(m: Matrix3D, v?: Vector3D): Vector3D;
-	    /**
-	     * Returns a normalised <code>Vector3D</code> object representing the right vector of the given matrix.
-	     * @param    m        The Matrix3D object to use to get the right vector
-	     * @param    v        [optional] A vector holder to prevent make new Vector3D instance if already exists. Default is null.
-	     * @return            The right vector
-	     */
-	    static getRight(m: Matrix3D, v?: Vector3D): Vector3D;
-	    /**
-	     * Returns a boolean value representing whether there is any significant difference between the two given 3d matrices.
-	     */
-	    static compare(m1: Matrix3D, m2: Matrix3D): boolean;
-	    static lookAt(matrix: Matrix3D, pos: Vector3D, dir: Vector3D, up: Vector3D): void;
-	    static reflection(plane: Plane3D, target?: Matrix3D): Matrix3D;
-	    static transformVector(matrix: Matrix3D, vector: Vector3D, result?: Vector3D): Vector3D;
-	    static deltaTransformVector(matrix: Matrix3D, vector: Vector3D, result?: Vector3D): Vector3D;
-	    static getTranslation(transform: Matrix3D, result?: Vector3D): Vector3D;
-	    static deltaTransformVectors(matrix: Matrix3D, vin: Array<number>, vout: Array<number>): void;
+	    static DEGREES_TO_RADIANS: number;
 	}
-	export = Matrix3DUtils;
+	export = MathConsts;
 	
 }
 
@@ -3768,6 +3712,70 @@ declare module "awayjs-core/lib/geom/Orientation3D" {
 	    static QUATERNION: string;
 	}
 	export = Orientation3D;
+	
+}
+
+declare module "awayjs-core/lib/geom/Plane3D" {
+	import Vector3D = require("awayjs-core/lib/geom/Vector3D");
+	class Plane3D {
+	    /**
+	     * The A coefficient of this plane. (Also the x dimension of the plane normal)
+	     */
+	    a: number;
+	    /**
+	     * The B coefficient of this plane. (Also the y dimension of the plane normal)
+	     */
+	    b: number;
+	    /**
+	     * The C coefficient of this plane. (Also the z dimension of the plane normal)
+	     */
+	    c: number;
+	    /**
+	     * The D coefficient of this plane. (Also the inverse dot product between normal and point)
+	     */
+	    d: number;
+	    _iAlignment: number;
+	    static ALIGN_ANY: number;
+	    static ALIGN_XY_AXIS: number;
+	    static ALIGN_YZ_AXIS: number;
+	    static ALIGN_XZ_AXIS: number;
+	    /**
+	     * Create a Plane3D with ABCD coefficients
+	     */
+	    constructor(a?: number, b?: number, c?: number, d?: number);
+	    /**
+	     * Fills this Plane3D with the coefficients from 3 points in 3d space.
+	     * @param p0 Vector3D
+	     * @param p1 Vector3D
+	     * @param p2 Vector3D
+	     */
+	    fromPoints(p0: Vector3D, p1: Vector3D, p2: Vector3D): void;
+	    /**
+	     * Fills this Plane3D with the coefficients from the plane's normal and a point in 3d space.
+	     * @param normal Vector3D
+	     * @param point  Vector3D
+	     */
+	    fromNormalAndPoint(normal: Vector3D, point: Vector3D): void;
+	    /**
+	     * Normalize this Plane3D
+	     * @return Plane3D This Plane3D.
+	     */
+	    normalize(): Plane3D;
+	    /**
+	     * Returns the signed distance between this Plane3D and the point p.
+	     * @param p Vector3D
+	     * @returns Number
+	     */
+	    distance(p: Vector3D): number;
+	    /**
+	     * Classify a point against this Plane3D. (in front, back or intersecting)
+	     * @param p Vector3D
+	     * @return int Plane3.FRONT or Plane3D.BACK or Plane3D.INTERSECT
+	     */
+	    classifyPoint(p: Vector3D, epsilon?: number): number;
+	    toString(): string;
+	}
+	export = Plane3D;
 	
 }
 
@@ -3899,82 +3907,6 @@ declare module "awayjs-core/lib/geom/PerspectiveProjection" {
 	    toMatrix3D(): Matrix3D;
 	}
 	export = PerspectiveProjection;
-	
-}
-
-declare module "awayjs-core/lib/geom/Plane3D" {
-	import Vector3D = require("awayjs-core/lib/geom/Vector3D");
-	class Plane3D {
-	    /**
-	     * The A coefficient of this plane. (Also the x dimension of the plane normal)
-	     */
-	    a: number;
-	    /**
-	     * The B coefficient of this plane. (Also the y dimension of the plane normal)
-	     */
-	    b: number;
-	    /**
-	     * The C coefficient of this plane. (Also the z dimension of the plane normal)
-	     */
-	    c: number;
-	    /**
-	     * The D coefficient of this plane. (Also the inverse dot product between normal and point)
-	     */
-	    d: number;
-	    _iAlignment: number;
-	    static ALIGN_ANY: number;
-	    static ALIGN_XY_AXIS: number;
-	    static ALIGN_YZ_AXIS: number;
-	    static ALIGN_XZ_AXIS: number;
-	    /**
-	     * Create a Plane3D with ABCD coefficients
-	     */
-	    constructor(a?: number, b?: number, c?: number, d?: number);
-	    /**
-	     * Fills this Plane3D with the coefficients from 3 points in 3d space.
-	     * @param p0 Vector3D
-	     * @param p1 Vector3D
-	     * @param p2 Vector3D
-	     */
-	    fromPoints(p0: Vector3D, p1: Vector3D, p2: Vector3D): void;
-	    /**
-	     * Fills this Plane3D with the coefficients from the plane's normal and a point in 3d space.
-	     * @param normal Vector3D
-	     * @param point  Vector3D
-	     */
-	    fromNormalAndPoint(normal: Vector3D, point: Vector3D): void;
-	    /**
-	     * Normalize this Plane3D
-	     * @return Plane3D This Plane3D.
-	     */
-	    normalize(): Plane3D;
-	    /**
-	     * Returns the signed distance between this Plane3D and the point p.
-	     * @param p Vector3D
-	     * @returns Number
-	     */
-	    distance(p: Vector3D): number;
-	    /**
-	     * Classify a point against this Plane3D. (in front, back or intersecting)
-	     * @param p Vector3D
-	     * @return int Plane3.FRONT or Plane3D.BACK or Plane3D.INTERSECT
-	     */
-	    classifyPoint(p: Vector3D, epsilon?: number): number;
-	    toString(): string;
-	}
-	export = Plane3D;
-	
-}
-
-declare module "awayjs-core/lib/geom/PlaneClassification" {
-	class PlaneClassification {
-	    static BACK: number;
-	    static FRONT: number;
-	    static IN: number;
-	    static OUT: number;
-	    static INTERSECT: number;
-	}
-	export = PlaneClassification;
 	
 }
 
@@ -4122,6 +4054,18 @@ declare module "awayjs-core/lib/geom/Point" {
 	    static polar(len: number, angle: number): Point;
 	}
 	export = Point;
+	
+}
+
+declare module "awayjs-core/lib/geom/PlaneClassification" {
+	class PlaneClassification {
+	    static BACK: number;
+	    static FRONT: number;
+	    static IN: number;
+	    static OUT: number;
+	    static INTERSECT: number;
+	}
+	export = PlaneClassification;
 	
 }
 
@@ -4595,37 +4539,6 @@ declare module "awayjs-core/lib/geom/Rectangle" {
 	
 }
 
-declare module "awayjs-core/lib/geom/Sphere" {
-	import Vector3D = require("awayjs-core/lib/geom/Vector3D");
-	class Sphere {
-	    /**
-	     *
-	     */
-	    x: number;
-	    /**
-	     *
-	     */
-	    y: number;
-	    /**
-	     *
-	     */
-	    z: number;
-	    /**
-	     *
-	     */
-	    radius: number;
-	    /**
-	     * Create a Sphere with ABCD coefficients
-	     */
-	    constructor(x?: number, y?: number, z?: number, radius?: number);
-	    rayIntersection(position: Vector3D, direction: Vector3D, targetNormal: Vector3D): number;
-	    containsPoint(position: Vector3D): boolean;
-	    toString(): string;
-	}
-	export = Sphere;
-	
-}
-
 declare module "awayjs-core/lib/geom/UVTransform" {
 	import Matrix = require("awayjs-core/lib/geom/Matrix");
 	class UVTransform {
@@ -4667,6 +4580,76 @@ declare module "awayjs-core/lib/geom/UVTransform" {
 	    private updateUVMatrix();
 	}
 	export = UVTransform;
+	
+}
+
+declare module "awayjs-core/lib/geom/Sphere" {
+	import Vector3D = require("awayjs-core/lib/geom/Vector3D");
+	class Sphere {
+	    /**
+	     *
+	     */
+	    x: number;
+	    /**
+	     *
+	     */
+	    y: number;
+	    /**
+	     *
+	     */
+	    z: number;
+	    /**
+	     *
+	     */
+	    radius: number;
+	    /**
+	     * Create a Sphere with ABCD coefficients
+	     */
+	    constructor(x?: number, y?: number, z?: number, radius?: number);
+	    rayIntersection(position: Vector3D, direction: Vector3D, targetNormal: Vector3D): number;
+	    containsPoint(position: Vector3D): boolean;
+	    toString(): string;
+	}
+	export = Sphere;
+	
+}
+
+declare module "awayjs-core/lib/library/AssetBase" {
+	import IAssetClass = require("awayjs-core/lib/library/IAssetClass");
+	import EventDispatcher = require("awayjs-core/lib/events/EventDispatcher");
+	class AssetBase extends EventDispatcher {
+	    static ID_COUNT: number;
+	    private _originalName;
+	    private _namespace;
+	    private _name;
+	    private _id;
+	    private _full_path;
+	    static DEFAULT_NAMESPACE: string;
+	    constructor(name?: string);
+	    /**
+	     *
+	     */
+	    assetType: string;
+	    /**
+	     * The original name used for this asset in the resource (e.g. file) in which
+	     * it was found. This may not be the same as <code>name</code>, which may
+	     * have changed due to of a name conflict.
+	     */
+	    originalName: string;
+	    /**
+	     * A unique id for the asset, used to identify assets in an associative array
+	     */
+	    id: number;
+	    name: string;
+	    dispose(): void;
+	    assetNamespace: string;
+	    assetFullPath: Array<string>;
+	    assetPathEquals(name: string, ns: string): boolean;
+	    isAsset(assetClass: IAssetClass): boolean;
+	    resetAssetPath(name: string, ns?: string, overrideOriginal?: boolean): void;
+	    private updateFullPath();
+	}
+	export = AssetBase;
 	
 }
 
@@ -5032,45 +5015,6 @@ declare module "awayjs-core/lib/geom/Vector3D" {
 	
 }
 
-declare module "awayjs-core/lib/library/AssetBase" {
-	import IAssetClass = require("awayjs-core/lib/library/IAssetClass");
-	import EventDispatcher = require("awayjs-core/lib/events/EventDispatcher");
-	class AssetBase extends EventDispatcher {
-	    static ID_COUNT: number;
-	    private _originalName;
-	    private _namespace;
-	    private _name;
-	    private _id;
-	    private _full_path;
-	    static DEFAULT_NAMESPACE: string;
-	    constructor(name?: string);
-	    /**
-	     *
-	     */
-	    assetType: string;
-	    /**
-	     * The original name used for this asset in the resource (e.g. file) in which
-	     * it was found. This may not be the same as <code>name</code>, which may
-	     * have changed due to of a name conflict.
-	     */
-	    originalName: string;
-	    /**
-	     * A unique id for the asset, used to identify assets in an associative array
-	     */
-	    id: number;
-	    name: string;
-	    dispose(): void;
-	    assetNamespace: string;
-	    assetFullPath: Array<string>;
-	    assetPathEquals(name: string, ns: string): boolean;
-	    isAsset(assetClass: IAssetClass): boolean;
-	    resetAssetPath(name: string, ns?: string, overrideOriginal?: boolean): void;
-	    private updateFullPath();
-	}
-	export = AssetBase;
-	
-}
-
 declare module "awayjs-core/lib/library/AssetLibrary" {
 	import URLRequest = require("awayjs-core/lib/net/URLRequest");
 	import AssetLibraryBundle = require("awayjs-core/lib/library/AssetLibraryBundle");
@@ -5419,6 +5363,101 @@ declare module "awayjs-core/lib/library/AssetLibraryIterator" {
 	
 }
 
+declare module "awayjs-core/lib/library/AssetLoaderContext" {
+	class AssetLoaderContext {
+	    static UNDEFINED: number;
+	    static SINGLEPASS_MATERIALS: number;
+	    static MULTIPASS_MATERIALS: number;
+	    private _includeDependencies;
+	    private _dependencyBaseUrl;
+	    private _embeddedDataByUrl;
+	    private _remappedUrls;
+	    private _materialMode;
+	    private _overrideAbsPath;
+	    private _overrideFullUrls;
+	    /**
+	     * AssetLoaderContext provides configuration for the AssetLoader load() and parse() operations.
+	     * Use it to configure how (and if) dependencies are loaded, or to map dependency URLs to
+	     * embedded data.
+	     *
+	     * @see away.loading.AssetLoader
+	     */
+	    constructor(includeDependencies?: boolean, dependencyBaseUrl?: string);
+	    /**
+	     * Defines whether dependencies (all files except the one at the URL given to the load() or
+	     * parseData() operations) should be automatically loaded. Defaults to true.
+	     */
+	    includeDependencies: boolean;
+	    /**
+	     * MaterialMode defines, if the Parser should create SinglePass or MultiPass Materials
+	     * Options:
+	     * 0 (Default / undefined) - All Parsers will create SinglePassMaterials, but the AWD2.1parser will create Materials as they are defined in the file
+	     * 1 (Force SinglePass) - All Parsers create SinglePassMaterials
+	     * 2 (Force MultiPass) - All Parsers will create MultiPassMaterials
+	     *
+	     */
+	    materialMode: number;
+	    /**
+	     * A base URL that will be prepended to all relative dependency URLs found in a loaded resource.
+	     * Absolute paths will not be affected by the value of this property.
+	     */
+	    dependencyBaseUrl: string;
+	    /**
+	     * Defines whether absolute paths (defined as paths that begin with a "/") should be overridden
+	     * with the dependencyBaseUrl defined in this context. If this is true, and the base path is
+	     * "base", /path/to/asset.jpg will be resolved as base/path/to/asset.jpg.
+	     */
+	    overrideAbsolutePaths: boolean;
+	    /**
+	     * Defines whether "full" URLs (defined as a URL that includes a scheme, e.g. http://) should be
+	     * overridden with the dependencyBaseUrl defined in this context. If this is true, and the base
+	     * path is "base", http://example.com/path/to/asset.jpg will be resolved as base/path/to/asset.jpg.
+	     */
+	    overrideFullURLs: boolean;
+	    /**
+	     * Map a URL to another URL, so that files that are referred to by the original URL will instead
+	     * be loaded from the new URL. Use this when your file structure does not match the one that is
+	     * expected by the loaded file.
+	     *
+	     * @param originalUrl The original URL which is referenced in the loaded resource.
+	     * @param newUrl The URL from which away.should load the resource instead.
+	     *
+	     * @see mapUrlToData()
+	     */
+	    mapUrl(originalUrl: string, newUrl: string): void;
+	    /**
+	     * Map a URL to embedded data, so that instead of trying to load a dependency from the URL at
+	     * which it's referenced, the dependency data will be retrieved straight from the memory instead.
+	     *
+	     * @param originalUrl The original URL which is referenced in the loaded resource.
+	     * @param data The embedded data. Can be ByteArray or a class which can be used to create a bytearray.
+	     */
+	    mapUrlToData(originalUrl: string, data: any): void;
+	    /**
+	     * @private
+	     * Defines whether embedded data has been mapped to a particular URL.
+	     */
+	    _iHasDataForUrl(url: string): boolean;
+	    /**
+	     * @private
+	     * Returns embedded data for a particular URL.
+	     */
+	    _iGetDataForUrl(url: string): any;
+	    /**
+	     * @private
+	     * Defines whether a replacement URL has been mapped to a particular URL.
+	     */
+	    _iHasMappingForUrl(url: string): boolean;
+	    /**
+	     * @private
+	     * Returns new (replacement) URL for a particular original URL.
+	     */
+	    _iGetRemappedUrl(originalUrl: string): string;
+	}
+	export = AssetLoaderContext;
+	
+}
+
 declare module "awayjs-core/lib/library/AssetLoader" {
 	import AssetLoaderContext = require("awayjs-core/lib/library/AssetLoaderContext");
 	import AssetLoaderToken = require("awayjs-core/lib/library/AssetLoaderToken");
@@ -5616,101 +5655,6 @@ declare module "awayjs-core/lib/library/AssetLoader" {
 	
 }
 
-declare module "awayjs-core/lib/library/AssetLoaderContext" {
-	class AssetLoaderContext {
-	    static UNDEFINED: number;
-	    static SINGLEPASS_MATERIALS: number;
-	    static MULTIPASS_MATERIALS: number;
-	    private _includeDependencies;
-	    private _dependencyBaseUrl;
-	    private _embeddedDataByUrl;
-	    private _remappedUrls;
-	    private _materialMode;
-	    private _overrideAbsPath;
-	    private _overrideFullUrls;
-	    /**
-	     * AssetLoaderContext provides configuration for the AssetLoader load() and parse() operations.
-	     * Use it to configure how (and if) dependencies are loaded, or to map dependency URLs to
-	     * embedded data.
-	     *
-	     * @see away.loading.AssetLoader
-	     */
-	    constructor(includeDependencies?: boolean, dependencyBaseUrl?: string);
-	    /**
-	     * Defines whether dependencies (all files except the one at the URL given to the load() or
-	     * parseData() operations) should be automatically loaded. Defaults to true.
-	     */
-	    includeDependencies: boolean;
-	    /**
-	     * MaterialMode defines, if the Parser should create SinglePass or MultiPass Materials
-	     * Options:
-	     * 0 (Default / undefined) - All Parsers will create SinglePassMaterials, but the AWD2.1parser will create Materials as they are defined in the file
-	     * 1 (Force SinglePass) - All Parsers create SinglePassMaterials
-	     * 2 (Force MultiPass) - All Parsers will create MultiPassMaterials
-	     *
-	     */
-	    materialMode: number;
-	    /**
-	     * A base URL that will be prepended to all relative dependency URLs found in a loaded resource.
-	     * Absolute paths will not be affected by the value of this property.
-	     */
-	    dependencyBaseUrl: string;
-	    /**
-	     * Defines whether absolute paths (defined as paths that begin with a "/") should be overridden
-	     * with the dependencyBaseUrl defined in this context. If this is true, and the base path is
-	     * "base", /path/to/asset.jpg will be resolved as base/path/to/asset.jpg.
-	     */
-	    overrideAbsolutePaths: boolean;
-	    /**
-	     * Defines whether "full" URLs (defined as a URL that includes a scheme, e.g. http://) should be
-	     * overridden with the dependencyBaseUrl defined in this context. If this is true, and the base
-	     * path is "base", http://example.com/path/to/asset.jpg will be resolved as base/path/to/asset.jpg.
-	     */
-	    overrideFullURLs: boolean;
-	    /**
-	     * Map a URL to another URL, so that files that are referred to by the original URL will instead
-	     * be loaded from the new URL. Use this when your file structure does not match the one that is
-	     * expected by the loaded file.
-	     *
-	     * @param originalUrl The original URL which is referenced in the loaded resource.
-	     * @param newUrl The URL from which away.should load the resource instead.
-	     *
-	     * @see mapUrlToData()
-	     */
-	    mapUrl(originalUrl: string, newUrl: string): void;
-	    /**
-	     * Map a URL to embedded data, so that instead of trying to load a dependency from the URL at
-	     * which it's referenced, the dependency data will be retrieved straight from the memory instead.
-	     *
-	     * @param originalUrl The original URL which is referenced in the loaded resource.
-	     * @param data The embedded data. Can be ByteArray or a class which can be used to create a bytearray.
-	     */
-	    mapUrlToData(originalUrl: string, data: any): void;
-	    /**
-	     * @private
-	     * Defines whether embedded data has been mapped to a particular URL.
-	     */
-	    _iHasDataForUrl(url: string): boolean;
-	    /**
-	     * @private
-	     * Returns embedded data for a particular URL.
-	     */
-	    _iGetDataForUrl(url: string): any;
-	    /**
-	     * @private
-	     * Defines whether a replacement URL has been mapped to a particular URL.
-	     */
-	    _iHasMappingForUrl(url: string): boolean;
-	    /**
-	     * @private
-	     * Returns new (replacement) URL for a particular original URL.
-	     */
-	    _iGetRemappedUrl(originalUrl: string): string;
-	}
-	export = AssetLoaderContext;
-	
-}
-
 declare module "awayjs-core/lib/library/AssetLoaderToken" {
 	import AssetLoader = require("awayjs-core/lib/library/AssetLoader");
 	import EventDispatcher = require("awayjs-core/lib/events/EventDispatcher");
@@ -5860,6 +5804,62 @@ declare module "awayjs-core/lib/library/AssetLoaderToken" {
 	
 }
 
+declare module "awayjs-core/lib/geom/Matrix3DUtils" {
+	import Quaternion = require("awayjs-core/lib/geom/Quaternion");
+	import Matrix3D = require("awayjs-core/lib/geom/Matrix3D");
+	import Plane3D = require("awayjs-core/lib/geom/Plane3D");
+	import Vector3D = require("awayjs-core/lib/geom/Vector3D");
+	/**
+	 * away.geom.Matrix3DUtils provides additional Matrix3D functions.
+	 */
+	class Matrix3DUtils {
+	    /**
+	     * A reference to a Vector to be used as a temporary raw data container, to prevent object creation.
+	     */
+	    static RAW_DATA_CONTAINER: number[];
+	    static CALCULATION_MATRIX: Matrix3D;
+	    /**
+	     * Fills the 3d matrix object with values representing the transformation made by the given quaternion.
+	     *
+	     * @param    quarternion    The quarterion object to convert.
+	     */
+	    static quaternion2matrix(quarternion: Quaternion, m?: Matrix3D): Matrix3D;
+	    /**
+	     * Returns a normalised <code>Vector3D</code> object representing the forward vector of the given matrix.
+	     * @param    m        The Matrix3D object to use to get the forward vector
+	     * @param    v        [optional] A vector holder to prevent make new Vector3D instance if already exists. Default is null.
+	     * @return            The forward vector
+	     */
+	    static getForward(m: Matrix3D, v?: Vector3D): Vector3D;
+	    /**
+	     * Returns a normalised <code>Vector3D</code> object representing the up vector of the given matrix.
+	     * @param    m        The Matrix3D object to use to get the up vector
+	     * @param    v        [optional] A vector holder to prevent make new Vector3D instance if already exists. Default is null.
+	     * @return            The up vector
+	     */
+	    static getUp(m: Matrix3D, v?: Vector3D): Vector3D;
+	    /**
+	     * Returns a normalised <code>Vector3D</code> object representing the right vector of the given matrix.
+	     * @param    m        The Matrix3D object to use to get the right vector
+	     * @param    v        [optional] A vector holder to prevent make new Vector3D instance if already exists. Default is null.
+	     * @return            The right vector
+	     */
+	    static getRight(m: Matrix3D, v?: Vector3D): Vector3D;
+	    /**
+	     * Returns a boolean value representing whether there is any significant difference between the two given 3d matrices.
+	     */
+	    static compare(m1: Matrix3D, m2: Matrix3D): boolean;
+	    static lookAt(matrix: Matrix3D, pos: Vector3D, dir: Vector3D, up: Vector3D): void;
+	    static reflection(plane: Plane3D, target?: Matrix3D): Matrix3D;
+	    static transformVector(matrix: Matrix3D, vector: Vector3D, result?: Vector3D): Vector3D;
+	    static deltaTransformVector(matrix: Matrix3D, vector: Vector3D, result?: Vector3D): Vector3D;
+	    static getTranslation(transform: Matrix3D, result?: Vector3D): Vector3D;
+	    static deltaTransformVectors(matrix: Matrix3D, vin: Array<number>, vout: Array<number>): void;
+	}
+	export = Matrix3DUtils;
+	
+}
+
 declare module "awayjs-core/lib/library/ConflictPrecedence" {
 	/**
 	 * Enumaration class for precedence when resolving naming conflicts in the library.
@@ -5883,43 +5883,6 @@ declare module "awayjs-core/lib/library/ConflictPrecedence" {
 	    static FAVOR_NEW: string;
 	}
 	export = ConflictPrecedence;
-	
-}
-
-declare module "awayjs-core/lib/library/ConflictStrategy" {
-	import ConflictStrategyBase = require("awayjs-core/lib/library/ConflictStrategyBase");
-	/**
-	 * Enumeration class for bundled conflict strategies. Set one of these values (or an
-	 * instance of a self-defined sub-class of ConflictStrategyBase) to the conflictStrategy
-	 * property on an AssetLibrary to define how that library resolves naming conflicts.
-	 *
-	 * The value of the <code>AssetLibrary.conflictPrecedence</code> property defines which
-	 * of the conflicting assets will get to keep it's name, and which is renamed (if any.)
-	 *
-	 * @see away.library.AssetLibrary.conflictStrategy
-	 * @see away.library.naming.ConflictStrategyBase
-	 */
-	class ConflictStrategy {
-	    /**
-	     * Specifies that in case of a naming conflict, one of the assets will be renamed and
-	     * a numeric suffix appended to the base name.
-	     */
-	    static APPEND_NUM_SUFFIX: ConflictStrategyBase;
-	    /**
-	     * Specifies that naming conflicts should be ignored. This is not recommended in most
-	     * cases, unless it can be 100% guaranteed that the application does not cause naming
-	     * conflicts in the library (i.e. when an app-level system is in place to prevent this.)
-	     */
-	    static IGNORE: ConflictStrategyBase;
-	    /**
-	     * Specifies that an error should be thrown if a naming conflict is discovered. Use this
-	     * to be 100% sure that naming conflicts never occur unnoticed, and when it's undesirable
-	     * to have the library automatically rename assets to avoid such conflicts.
-	     */
-	    static THROW_ERROR: ConflictStrategyBase;
-	    constructor(include?: ConflictStrategyBase);
-	}
-	export = ConflictStrategy;
 	
 }
 
@@ -5965,15 +5928,40 @@ declare module "awayjs-core/lib/library/ConflictStrategyBase" {
 	
 }
 
-declare module "awayjs-core/lib/library/ErrorConflictStrategy" {
+declare module "awayjs-core/lib/library/ConflictStrategy" {
 	import ConflictStrategyBase = require("awayjs-core/lib/library/ConflictStrategyBase");
-	import IAsset = require("awayjs-core/lib/library/IAsset");
-	class ErrorConflictStrategy extends ConflictStrategyBase {
-	    constructor();
-	    resolveConflict(changedAsset: IAsset, oldAsset: IAsset, assetsDictionary: Object, precedence: string): void;
-	    create(): ConflictStrategyBase;
+	/**
+	 * Enumeration class for bundled conflict strategies. Set one of these values (or an
+	 * instance of a self-defined sub-class of ConflictStrategyBase) to the conflictStrategy
+	 * property on an AssetLibrary to define how that library resolves naming conflicts.
+	 *
+	 * The value of the <code>AssetLibrary.conflictPrecedence</code> property defines which
+	 * of the conflicting assets will get to keep it's name, and which is renamed (if any.)
+	 *
+	 * @see away.library.AssetLibrary.conflictStrategy
+	 * @see away.library.naming.ConflictStrategyBase
+	 */
+	class ConflictStrategy {
+	    /**
+	     * Specifies that in case of a naming conflict, one of the assets will be renamed and
+	     * a numeric suffix appended to the base name.
+	     */
+	    static APPEND_NUM_SUFFIX: ConflictStrategyBase;
+	    /**
+	     * Specifies that naming conflicts should be ignored. This is not recommended in most
+	     * cases, unless it can be 100% guaranteed that the application does not cause naming
+	     * conflicts in the library (i.e. when an app-level system is in place to prevent this.)
+	     */
+	    static IGNORE: ConflictStrategyBase;
+	    /**
+	     * Specifies that an error should be thrown if a naming conflict is discovered. Use this
+	     * to be 100% sure that naming conflicts never occur unnoticed, and when it's undesirable
+	     * to have the library automatically rename assets to avoid such conflicts.
+	     */
+	    static THROW_ERROR: ConflictStrategyBase;
+	    constructor(include?: ConflictStrategyBase);
 	}
-	export = ErrorConflictStrategy;
+	export = ConflictStrategy;
 	
 }
 
@@ -6027,11 +6015,15 @@ declare module "awayjs-core/lib/library/IAsset" {
 	
 }
 
-declare module "awayjs-core/lib/library/IAssetClass" {
-	interface IAssetClass {
-	    assetType: string;
+declare module "awayjs-core/lib/library/ErrorConflictStrategy" {
+	import ConflictStrategyBase = require("awayjs-core/lib/library/ConflictStrategyBase");
+	import IAsset = require("awayjs-core/lib/library/IAsset");
+	class ErrorConflictStrategy extends ConflictStrategyBase {
+	    constructor();
+	    resolveConflict(changedAsset: IAsset, oldAsset: IAsset, assetsDictionary: Object, precedence: string): void;
+	    create(): ConflictStrategyBase;
 	}
-	export = IAssetClass;
+	export = ErrorConflictStrategy;
 	
 }
 
@@ -6066,15 +6058,6 @@ declare module "awayjs-core/lib/library/IDUtil" {
 	
 }
 
-declare module "awayjs-core/lib/library/IWrapperClass" {
-	import IAssetClass = require("awayjs-core/lib/library/IAssetClass");
-	interface IWrapperClass {
-	    assetClass: IAssetClass;
-	}
-	export = IWrapperClass;
-	
-}
-
 declare module "awayjs-core/lib/library/IgnoreConflictStrategy" {
 	import ConflictStrategyBase = require("awayjs-core/lib/library/ConflictStrategyBase");
 	import IAsset = require("awayjs-core/lib/library/IAsset");
@@ -6084,6 +6067,14 @@ declare module "awayjs-core/lib/library/IgnoreConflictStrategy" {
 	    create(): ConflictStrategyBase;
 	}
 	export = IgnoreConflictStrategy;
+	
+}
+
+declare module "awayjs-core/lib/library/IAssetClass" {
+	interface IAssetClass {
+	    assetType: string;
+	}
+	export = IAssetClass;
 	
 }
 
@@ -6101,12 +6092,12 @@ declare module "awayjs-core/lib/library/NumSuffixConflictStrategy" {
 	
 }
 
-declare module "awayjs-core/lib/net/CrossDomainPolicy" {
-	class CrossDomainPolicy {
-	    static ANONYMOUS: string;
-	    static USE_CREDENTIALS: string;
+declare module "awayjs-core/lib/library/IWrapperClass" {
+	import IAssetClass = require("awayjs-core/lib/library/IAssetClass");
+	interface IWrapperClass {
+	    assetClass: IAssetClass;
 	}
-	export = CrossDomainPolicy;
+	export = IWrapperClass;
 	
 }
 
@@ -6259,35 +6250,12 @@ declare module "awayjs-core/lib/net/URLLoader" {
 	
 }
 
-declare module "awayjs-core/lib/net/URLLoaderDataFormat" {
-	class URLLoaderDataFormat {
-	    /**
-	     * TEXT
-	     * @type {string}
-	     */
-	    static TEXT: string;
-	    /**
-	     * Variables / Value Pairs
-	     * @type {string}
-	     */
-	    static VARIABLES: string;
-	    /**
-	     *
-	     * @type {string}
-	     */
-	    static BLOB: string;
-	    /**
-	     *
-	     * @type {string}
-	     */
-	    static ARRAY_BUFFER: string;
-	    /**
-	     *
-	     * @type {string}
-	     */
-	    static BINARY: string;
+declare module "awayjs-core/lib/net/CrossDomainPolicy" {
+	class CrossDomainPolicy {
+	    static ANONYMOUS: string;
+	    static USE_CREDENTIALS: string;
 	}
-	export = URLLoaderDataFormat;
+	export = CrossDomainPolicy;
 	
 }
 
@@ -6338,20 +6306,35 @@ declare module "awayjs-core/lib/net/URLRequest" {
 	
 }
 
-declare module "awayjs-core/lib/net/URLRequestMethod" {
-	class URLRequestMethod {
+declare module "awayjs-core/lib/net/URLLoaderDataFormat" {
+	class URLLoaderDataFormat {
+	    /**
+	     * TEXT
+	     * @type {string}
+	     */
+	    static TEXT: string;
+	    /**
+	     * Variables / Value Pairs
+	     * @type {string}
+	     */
+	    static VARIABLES: string;
 	    /**
 	     *
 	     * @type {string}
 	     */
-	    static POST: string;
+	    static BLOB: string;
 	    /**
 	     *
 	     * @type {string}
 	     */
-	    static GET: string;
+	    static ARRAY_BUFFER: string;
+	    /**
+	     *
+	     * @type {string}
+	     */
+	    static BINARY: string;
 	}
-	export = URLRequestMethod;
+	export = URLLoaderDataFormat;
 	
 }
 
@@ -6429,6 +6412,23 @@ declare module "awayjs-core/lib/parsers/Image2DParser" {
 	    onLoadComplete(event: any): void;
 	}
 	export = Image2DParser;
+	
+}
+
+declare module "awayjs-core/lib/net/URLRequestMethod" {
+	class URLRequestMethod {
+	    /**
+	     *
+	     * @type {string}
+	     */
+	    static POST: string;
+	    /**
+	     *
+	     * @type {string}
+	     */
+	    static GET: string;
+	}
+	export = URLRequestMethod;
 	
 }
 
@@ -6637,28 +6637,6 @@ declare module "awayjs-core/lib/parsers/ParserBase" {
 	
 }
 
-declare module "awayjs-core/lib/parsers/ParserDataFormat" {
-	/**
-	 * An enumeration providing values to describe the data format of parsed data.
-	 */
-	class ParserDataFormat {
-	    /**
-	     * Describes the format of a binary file.
-	     */
-	    static BINARY: string;
-	    /**
-	     * Describes the format of a plain text file.
-	     */
-	    static PLAIN_TEXT: string;
-	    /**
-	     * Describes the format of an image file
-	     */
-	    static IMAGE: string;
-	}
-	export = ParserDataFormat;
-	
-}
-
 declare module "awayjs-core/lib/parsers/ParserUtils" {
 	import BitmapImage2D = require("awayjs-core/lib/data/BitmapImage2D");
 	import ByteArray = require("awayjs-core/lib/utils/ByteArray");
@@ -6715,6 +6693,28 @@ declare module "awayjs-core/lib/parsers/ParserUtils" {
 	    static toString(data: any, length?: number): string;
 	}
 	export = ParserUtils;
+	
+}
+
+declare module "awayjs-core/lib/parsers/ParserDataFormat" {
+	/**
+	 * An enumeration providing values to describe the data format of parsed data.
+	 */
+	class ParserDataFormat {
+	    /**
+	     * Describes the format of a binary file.
+	     */
+	    static BINARY: string;
+	    /**
+	     * Describes the format of a plain text file.
+	     */
+	    static PLAIN_TEXT: string;
+	    /**
+	     * Describes the format of an image file
+	     */
+	    static IMAGE: string;
+	}
+	export = ParserDataFormat;
 	
 }
 
@@ -6982,23 +6982,6 @@ declare module "awayjs-core/lib/projections/OrthographicOffCenterProjection" {
 	
 }
 
-declare module "awayjs-core/lib/projections/OrthographicProjection" {
-	import Vector3D = require("awayjs-core/lib/geom/Vector3D");
-	import ProjectionBase = require("awayjs-core/lib/projections/ProjectionBase");
-	class OrthographicProjection extends ProjectionBase {
-	    private _projectionHeight;
-	    private _xMax;
-	    private _yMax;
-	    constructor(projectionHeight?: number);
-	    projectionHeight: number;
-	    unproject(nX: number, nY: number, sZ: number): Vector3D;
-	    clone(): ProjectionBase;
-	    pUpdateMatrix(): void;
-	}
-	export = OrthographicProjection;
-	
-}
-
 declare module "awayjs-core/lib/projections/PerspectiveProjection" {
 	import Vector3D = require("awayjs-core/lib/geom/Vector3D");
 	import ProjectionBase = require("awayjs-core/lib/projections/ProjectionBase");
@@ -7084,6 +7067,23 @@ declare module "awayjs-core/lib/projections/ProjectionBase" {
 	    _iUpdateViewport(x: number, y: number, width: number, height: number): void;
 	}
 	export = ProjectionBase;
+	
+}
+
+declare module "awayjs-core/lib/projections/OrthographicProjection" {
+	import Vector3D = require("awayjs-core/lib/geom/Vector3D");
+	import ProjectionBase = require("awayjs-core/lib/projections/ProjectionBase");
+	class OrthographicProjection extends ProjectionBase {
+	    private _projectionHeight;
+	    private _xMax;
+	    private _yMax;
+	    constructor(projectionHeight?: number);
+	    projectionHeight: number;
+	    unproject(nX: number, nY: number, sZ: number): Vector3D;
+	    clone(): ProjectionBase;
+	    pUpdateMatrix(): void;
+	}
+	export = OrthographicProjection;
 	
 }
 
@@ -7987,44 +7987,6 @@ declare module "awayjs-core/lib/utils/ByteArrayBase" {
 	
 }
 
-declare module "awayjs-core/lib/utils/ByteArrayBuffer" {
-	import ByteArrayBase = require("awayjs-core/lib/utils/ByteArrayBase");
-	class ByteArrayBuffer extends ByteArrayBase {
-	    _bytes: number[];
-	    constructor();
-	    writeByte(b: number): void;
-	    readByte(): number;
-	    writeUnsignedByte(b: number): void;
-	    readUnsignedByte(): number;
-	    writeUnsignedShort(b: number): void;
-	    readUnsignedShort(): number;
-	    writeUnsignedInt(b: number): void;
-	    readUnsignedInt(): number;
-	    writeFloat(b: number): void;
-	    toFloatBits(x: number): number;
-	    readFloat(b: number): number;
-	    fromFloatBits(x: number): number;
-	}
-	export = ByteArrayBuffer;
-	
-}
-
-declare module "awayjs-core/lib/utils/CSS" {
-	class CSS {
-	    static setElementSize(element: HTMLElement, width: number, height: number): void;
-	    static setElementWidth(element: HTMLElement, width: number): void;
-	    static setElementHeight(element: HTMLElement, height: number): void;
-	    static setElementX(element: HTMLElement, x: number): void;
-	    static setElementY(element: HTMLElement, y: number): void;
-	    static getElementVisibility(element: HTMLElement): boolean;
-	    static setElementVisibility(element: HTMLElement, visible: boolean): void;
-	    static setElementAlpha(element: HTMLElement, alpha: number): void;
-	    static setElementPosition(element: HTMLElement, x: number, y: number, absolute?: boolean): void;
-	}
-	export = CSS;
-	
-}
-
 declare module "awayjs-core/lib/utils/ColorUtils" {
 	/**
 	 *
@@ -8036,25 +7998,6 @@ declare module "awayjs-core/lib/utils/ColorUtils" {
 	    static ARGBToHexString(argb: number[]): string;
 	}
 	export = ColorUtils;
-	
-}
-
-declare module "awayjs-core/lib/utils/Debug" {
-	/**
-	 *
-	 */
-	class Debug {
-	    static THROW_ERRORS: boolean;
-	    static ENABLE_LOG: boolean;
-	    static LOG_PI_ERRORS: boolean;
-	    private static keyword;
-	    static breakpoint(): void;
-	    static throwPIROnKeyWordOnly(str: string, enable?: boolean): void;
-	    static throwPIR(clss: string, fnc: string, msg: string): void;
-	    private static logPIR(clss, fnc, msg?);
-	    static log(...args: any[]): void;
-	}
-	export = Debug;
 	
 }
 
@@ -8093,6 +8036,41 @@ declare module "awayjs-core/lib/utils/MipmapGenerator" {
 	    static _freeMipMapHolder(mipMapHolder: BitmapImage2D): void;
 	}
 	export = MipmapGenerator;
+	
+}
+
+declare module "awayjs-core/lib/utils/CSS" {
+	class CSS {
+	    static setElementSize(element: HTMLElement, width: number, height: number): void;
+	    static setElementWidth(element: HTMLElement, width: number): void;
+	    static setElementHeight(element: HTMLElement, height: number): void;
+	    static setElementX(element: HTMLElement, x: number): void;
+	    static setElementY(element: HTMLElement, y: number): void;
+	    static getElementVisibility(element: HTMLElement): boolean;
+	    static setElementVisibility(element: HTMLElement, visible: boolean): void;
+	    static setElementAlpha(element: HTMLElement, alpha: number): void;
+	    static setElementPosition(element: HTMLElement, x: number, y: number, absolute?: boolean): void;
+	}
+	export = CSS;
+	
+}
+
+declare module "awayjs-core/lib/utils/Debug" {
+	/**
+	 *
+	 */
+	class Debug {
+	    static THROW_ERRORS: boolean;
+	    static ENABLE_LOG: boolean;
+	    static LOG_PI_ERRORS: boolean;
+	    private static keyword;
+	    static breakpoint(): void;
+	    static throwPIROnKeyWordOnly(str: string, enable?: boolean): void;
+	    static throwPIR(clss: string, fnc: string, msg: string): void;
+	    private static logPIR(clss, fnc, msg?);
+	    static log(...args: any[]): void;
+	}
+	export = Debug;
 	
 }
 
@@ -8181,6 +8159,28 @@ declare module "awayjs-core/lib/utils/getTimer" {
 	 */
 	function getTimer(): number;
 	export = getTimer;
+	
+}
+
+declare module "awayjs-core/lib/utils/ByteArrayBuffer" {
+	import ByteArrayBase = require("awayjs-core/lib/utils/ByteArrayBase");
+	class ByteArrayBuffer extends ByteArrayBase {
+	    _bytes: number[];
+	    constructor();
+	    writeByte(b: number): void;
+	    readByte(): number;
+	    writeUnsignedByte(b: number): void;
+	    readUnsignedByte(): number;
+	    writeUnsignedShort(b: number): void;
+	    readUnsignedShort(): number;
+	    writeUnsignedInt(b: number): void;
+	    readUnsignedInt(): number;
+	    writeFloat(b: number): void;
+	    toFloatBits(x: number): number;
+	    readFloat(b: number): number;
+	    fromFloatBits(x: number): number;
+	}
+	export = ByteArrayBuffer;
 	
 }
 

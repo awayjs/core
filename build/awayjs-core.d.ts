@@ -6939,6 +6939,27 @@ declare module "awayjs-core/lib/projections/IProjection" {
 	
 }
 
+declare module "awayjs-core/lib/projections/OrthographicOffCenterProjection" {
+	import Vector3D = require("awayjs-core/lib/geom/Vector3D");
+	import ProjectionBase = require("awayjs-core/lib/projections/ProjectionBase");
+	class OrthographicOffCenterProjection extends ProjectionBase {
+	    private _minX;
+	    private _maxX;
+	    private _minY;
+	    private _maxY;
+	    constructor(minX: number, maxX: number, minY: number, maxY: number);
+	    minX: number;
+	    maxX: number;
+	    minY: number;
+	    maxY: number;
+	    unproject(nX: number, nY: number, sZ: number): Vector3D;
+	    clone(): ProjectionBase;
+	    pUpdateMatrix(): void;
+	}
+	export = OrthographicOffCenterProjection;
+	
+}
+
 declare module "awayjs-core/lib/projections/ObliqueNearPlaneProjection" {
 	import Plane3D = require("awayjs-core/lib/geom/Plane3D");
 	import IProjection = require("awayjs-core/lib/projections/IProjection");
@@ -6958,27 +6979,6 @@ declare module "awayjs-core/lib/projections/ObliqueNearPlaneProjection" {
 	    pUpdateMatrix(): void;
 	}
 	export = ObliqueNearPlaneProjection;
-	
-}
-
-declare module "awayjs-core/lib/projections/OrthographicOffCenterProjection" {
-	import Vector3D = require("awayjs-core/lib/geom/Vector3D");
-	import ProjectionBase = require("awayjs-core/lib/projections/ProjectionBase");
-	class OrthographicOffCenterProjection extends ProjectionBase {
-	    private _minX;
-	    private _maxX;
-	    private _minY;
-	    private _maxY;
-	    constructor(minX: number, maxX: number, minY: number, maxY: number);
-	    minX: number;
-	    maxX: number;
-	    minY: number;
-	    maxY: number;
-	    unproject(nX: number, nY: number, sZ: number): Vector3D;
-	    clone(): ProjectionBase;
-	    pUpdateMatrix(): void;
-	}
-	export = OrthographicOffCenterProjection;
 	
 }
 

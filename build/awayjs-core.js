@@ -6051,7 +6051,15 @@ var Box = (function () {
 module.exports = Box;
 
 },{"awayjs-core/lib/geom/Vector3D":"awayjs-core/lib/geom/Vector3D"}],"awayjs-core/lib/geom/ColorTransform":[function(require,module,exports){
+var __extends = this.__extends || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    __.prototype = b.prototype;
+    d.prototype = new __();
+};
 var ColorUtils = require("awayjs-core/lib/utils/ColorUtils");
+var EventDispatcher = require("awayjs-core/lib/events/EventDispatcher");
+var Event = require("awayjs-core/lib/events/Event");
 /**
  * The ColorTransform class lets you adjust the color values in a display
  * object. The color adjustment or <i>color transformation</i> can be applied
@@ -6092,7 +6100,8 @@ var ColorUtils = require("awayjs-core/lib/utils/ColorUtils");
  * clip(such as a loaded SWF object). They apply only to graphics and symbols
  * that are attached to the movie clip.</p>
  */
-var ColorTransform = (function () {
+var ColorTransform = (function (_super) {
+    __extends(ColorTransform, _super);
     /**
      * Creates a ColorTransform object for a display object with the specified
      * color channel values and alpha values.
@@ -6123,15 +6132,105 @@ var ColorTransform = (function () {
         if (greenOffset === void 0) { greenOffset = 0; }
         if (blueOffset === void 0) { blueOffset = 0; }
         if (alphaOffset === void 0) { alphaOffset = 0; }
-        this.redMultiplier = redMultiplier;
-        this.greenMultiplier = greenMultiplier;
-        this.blueMultiplier = blueMultiplier;
-        this.alphaMultiplier = alphaMultiplier;
-        this.redOffset = redOffset;
-        this.greenOffset = greenOffset;
-        this.blueOffset = blueOffset;
-        this.alphaOffset = alphaOffset;
+        _super.call(this);
+        this._changeEvent = new Event(Event.CHANGE);
+        this._redMultiplier = redMultiplier;
+        this._greenMultiplier = greenMultiplier;
+        this._blueMultiplier = blueMultiplier;
+        this._alphaMultiplier = alphaMultiplier;
+        this._redOffset = redOffset;
+        this._greenOffset = greenOffset;
+        this._blueOffset = blueOffset;
+        this._alphaOffset = alphaOffset;
     }
+    Object.defineProperty(ColorTransform.prototype, "alphaMultiplier", {
+        get: function () {
+            return this._alphaMultiplier;
+        },
+        set: function (value) {
+            this._alphaMultiplier = value;
+            this._invalidate();
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(ColorTransform.prototype, "alphaOffset", {
+        get: function () {
+            return this._alphaOffset;
+        },
+        set: function (value) {
+            this._alphaOffset = value;
+            this._invalidate();
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(ColorTransform.prototype, "redMultiplier", {
+        get: function () {
+            return this._redMultiplier;
+        },
+        set: function (value) {
+            this._redMultiplier = value;
+            this._invalidate();
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(ColorTransform.prototype, "redOffset", {
+        get: function () {
+            return this._redOffset;
+        },
+        set: function (value) {
+            this._redOffset = value;
+            this._invalidate();
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(ColorTransform.prototype, "greenMultiplier", {
+        get: function () {
+            return this._greenMultiplier;
+        },
+        set: function (value) {
+            this._greenMultiplier = value;
+            this._invalidate();
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(ColorTransform.prototype, "greenOffset", {
+        get: function () {
+            return this._greenOffset;
+        },
+        set: function (value) {
+            this._greenOffset = value;
+            this._invalidate();
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(ColorTransform.prototype, "blueMultiplier", {
+        get: function () {
+            return this._blueMultiplier;
+        },
+        set: function (value) {
+            this._blueMultiplier = value;
+            this._invalidate();
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(ColorTransform.prototype, "blueOffset", {
+        get: function () {
+            return this._blueOffset;
+        },
+        set: function (value) {
+            this._blueOffset = value;
+            this._invalidate();
+        },
+        enumerable: true,
+        configurable: true
+    });
     Object.defineProperty(ColorTransform.prototype, "color", {
         /**
          * The RGB color value for a ColorTransform object.
@@ -6150,42 +6249,60 @@ var ColorTransform = (function () {
          * value.</p>
          */
         get: function () {
-            return ((this.redOffset << 16) | (this.greenOffset << 8) | this.blueOffset);
+            return ((this._redOffset << 16) | (this._greenOffset << 8) | this._blueOffset);
         },
         set: function (value) {
             var argb = ColorUtils.float32ColorToARGB(value);
-            this.redOffset = argb[1]; //(value >> 16) & 0xFF;
-            this.greenOffset = argb[2]; //(value >> 8) & 0xFF;
-            this.blueOffset = argb[3]; //value & 0xFF;
-            this.redMultiplier = 0;
-            this.greenMultiplier = 0;
-            this.blueMultiplier = 0;
+            this._redOffset = argb[1]; //(value >> 16) & 0xFF;
+            this._greenOffset = argb[2]; //(value >> 8) & 0xFF;
+            this._blueOffset = argb[3]; //value & 0xFF;
+            this._redMultiplier = 0;
+            this._greenMultiplier = 0;
+            this._blueMultiplier = 0;
+            this._invalidate();
         },
         enumerable: true,
         configurable: true
     });
-    /**
-     * Concatenates the ColorTranform object specified by the <code>second</code>
-     * parameter with the current ColorTransform object and sets the current
-     * object as the result, which is an additive combination of the two color
-     * transformations. When you apply the concatenated ColorTransform object,
-     * the effect is the same as applying the <code>second</code> color
-     * transformation after the <i>original</i> color transformation.
-     *
-     * @param second The ColorTransform object to be combined with the current
-     *               ColorTransform object.
-     */
-    ColorTransform.prototype.concat = function (second) {
-        this.redMultiplier += second.redMultiplier;
-        this.greenMultiplier += second.greenMultiplier;
-        this.blueMultiplier += second.blueMultiplier;
-        this.alphaMultiplier += second.alphaMultiplier;
+    ColorTransform.prototype.clear = function () {
+        this._redMultiplier = 1;
+        this._greenMultiplier = 1;
+        this._blueMultiplier = 1;
+        this._alphaMultiplier = 1;
+        this._redOffset = 0;
+        this._greenOffset = 0;
+        this._blueOffset = 0;
+        this._alphaOffset = 0;
+    };
+    ColorTransform.prototype.copyFrom = function (source) {
+        this._redMultiplier = source.redMultiplier;
+        this._greenMultiplier = source.greenMultiplier;
+        this._blueMultiplier = source.blueMultiplier;
+        this._alphaMultiplier = source.alphaMultiplier;
+        this._redOffset = source.redOffset;
+        this._greenOffset = source.greenOffset;
+        this._blueOffset = source.blueOffset;
+        this._alphaOffset = source.alphaOffset;
+    };
+    ColorTransform.prototype._invalidate = function () {
+        this.dispatchEvent(this._changeEvent);
+    };
+    ColorTransform.prototype.prepend = function (ct) {
+        this._redOffset += ct.redOffset * this._redMultiplier;
+        this._greenOffset += ct.greenOffset * this._greenMultiplier;
+        this._blueOffset += ct.blueOffset * this._blueMultiplier;
+        this._alphaOffset += ct.alphaOffset * this._alphaMultiplier;
+        this._redMultiplier *= ct.redMultiplier;
+        this._greenMultiplier *= ct.greenMultiplier;
+        this._blueMultiplier *= ct.blueMultiplier;
+        this._alphaMultiplier *= ct.alphaMultiplier;
+        this._invalidate();
     };
     return ColorTransform;
-})();
+})(EventDispatcher);
 module.exports = ColorTransform;
 
-},{"awayjs-core/lib/utils/ColorUtils":"awayjs-core/lib/utils/ColorUtils"}],"awayjs-core/lib/geom/MathConsts":[function(require,module,exports){
+},{"awayjs-core/lib/events/Event":"awayjs-core/lib/events/Event","awayjs-core/lib/events/EventDispatcher":"awayjs-core/lib/events/EventDispatcher","awayjs-core/lib/utils/ColorUtils":"awayjs-core/lib/utils/ColorUtils"}],"awayjs-core/lib/geom/MathConsts":[function(require,module,exports){
 /**
 * MathConsts provides some commonly used mathematical constants
 */

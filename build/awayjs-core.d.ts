@@ -3058,6 +3058,7 @@ declare module "awayjs-core/lib/geom/Box" {
 }
 
 declare module "awayjs-core/lib/geom/ColorTransform" {
+	import EventDispatcher = require("awayjs-core/lib/events/EventDispatcher");
 	/**
 	 * The ColorTransform class lets you adjust the color values in a display
 	 * object. The color adjustment or <i>color transformation</i> can be applied
@@ -3098,7 +3099,7 @@ declare module "awayjs-core/lib/geom/ColorTransform" {
 	 * clip(such as a loaded SWF object). They apply only to graphics and symbols
 	 * that are attached to the movie clip.</p>
 	 */
-	class ColorTransform {
+	class ColorTransform extends EventDispatcher {
 	    /**
 	     * A decimal value that is multiplied with the alpha transparency channel
 	     * value.
@@ -3108,40 +3109,49 @@ declare module "awayjs-core/lib/geom/ColorTransform" {
 	     * affects the value of the <code>alphaMultiplier</code> property of that
 	     * display object's <code>transform.colorTransform</code> property.</p>
 	     */
-	    alphaMultiplier: number;
+	    private _alphaMultiplier;
 	    /**
 	     * A number from -255 to 255 that is added to the alpha transparency channel
 	     * value after it has been multiplied by the <code>alphaMultiplier</code>
 	     * value.
 	     */
-	    alphaOffset: number;
+	    private _alphaOffset;
 	    /**
 	     * A decimal value that is multiplied with the blue channel value.
 	     */
-	    blueMultiplier: number;
+	    private _blueMultiplier;
 	    /**
 	     * A number from -255 to 255 that is added to the blue channel value after it
 	     * has been multiplied by the <code>blueMultiplier</code> value.
 	     */
-	    blueOffset: number;
+	    private _blueOffset;
 	    /**
 	     * A decimal value that is multiplied with the green channel value.
 	     */
-	    greenMultiplier: number;
+	    private _greenMultiplier;
 	    /**
 	     * A number from -255 to 255 that is added to the green channel value after
 	     * it has been multiplied by the <code>greenMultiplier</code> value.
 	     */
-	    greenOffset: number;
+	    private _greenOffset;
 	    /**
 	     * A decimal value that is multiplied with the red channel value.
 	     */
-	    redMultiplier: number;
+	    private _redMultiplier;
 	    /**
 	     * A number from -255 to 255 that is added to the red channel value after it
 	     * has been multiplied by the <code>redMultiplier</code> value.
 	     */
+	    private _redOffset;
+	    private _changeEvent;
+	    alphaMultiplier: number;
+	    alphaOffset: number;
+	    redMultiplier: number;
 	    redOffset: number;
+	    greenMultiplier: number;
+	    greenOffset: number;
+	    blueMultiplier: number;
+	    blueOffset: number;
 	    /**
 	     * The RGB color value for a ColorTransform object.
 	     *
@@ -3181,18 +3191,10 @@ declare module "awayjs-core/lib/geom/ColorTransform" {
 	     *                        the range from -255 to 255.
 	     */
 	    constructor(redMultiplier?: number, greenMultiplier?: number, blueMultiplier?: number, alphaMultiplier?: number, redOffset?: number, greenOffset?: number, blueOffset?: number, alphaOffset?: number);
-	    /**
-	     * Concatenates the ColorTranform object specified by the <code>second</code>
-	     * parameter with the current ColorTransform object and sets the current
-	     * object as the result, which is an additive combination of the two color
-	     * transformations. When you apply the concatenated ColorTransform object,
-	     * the effect is the same as applying the <code>second</code> color
-	     * transformation after the <i>original</i> color transformation.
-	     *
-	     * @param second The ColorTransform object to be combined with the current
-	     *               ColorTransform object.
-	     */
-	    concat(second: ColorTransform): void;
+	    clear(): void;
+	    copyFrom(source: ColorTransform): void;
+	    private _invalidate();
+	    prepend(ct: ColorTransform): void;
 	}
 	export = ColorTransform;
 	
@@ -6939,27 +6941,6 @@ declare module "awayjs-core/lib/projections/IProjection" {
 	
 }
 
-declare module "awayjs-core/lib/projections/OrthographicOffCenterProjection" {
-	import Vector3D = require("awayjs-core/lib/geom/Vector3D");
-	import ProjectionBase = require("awayjs-core/lib/projections/ProjectionBase");
-	class OrthographicOffCenterProjection extends ProjectionBase {
-	    private _minX;
-	    private _maxX;
-	    private _minY;
-	    private _maxY;
-	    constructor(minX: number, maxX: number, minY: number, maxY: number);
-	    minX: number;
-	    maxX: number;
-	    minY: number;
-	    maxY: number;
-	    unproject(nX: number, nY: number, sZ: number): Vector3D;
-	    clone(): ProjectionBase;
-	    pUpdateMatrix(): void;
-	}
-	export = OrthographicOffCenterProjection;
-	
-}
-
 declare module "awayjs-core/lib/projections/ObliqueNearPlaneProjection" {
 	import Plane3D = require("awayjs-core/lib/geom/Plane3D");
 	import IProjection = require("awayjs-core/lib/projections/IProjection");
@@ -6979,6 +6960,27 @@ declare module "awayjs-core/lib/projections/ObliqueNearPlaneProjection" {
 	    pUpdateMatrix(): void;
 	}
 	export = ObliqueNearPlaneProjection;
+	
+}
+
+declare module "awayjs-core/lib/projections/OrthographicOffCenterProjection" {
+	import Vector3D = require("awayjs-core/lib/geom/Vector3D");
+	import ProjectionBase = require("awayjs-core/lib/projections/ProjectionBase");
+	class OrthographicOffCenterProjection extends ProjectionBase {
+	    private _minX;
+	    private _maxX;
+	    private _minY;
+	    private _maxY;
+	    constructor(minX: number, maxX: number, minY: number, maxY: number);
+	    minX: number;
+	    maxX: number;
+	    minY: number;
+	    maxY: number;
+	    unproject(nX: number, nY: number, sZ: number): Vector3D;
+	    clone(): ProjectionBase;
+	    pUpdateMatrix(): void;
+	}
+	export = OrthographicOffCenterProjection;
 	
 }
 

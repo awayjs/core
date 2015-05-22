@@ -1,8 +1,29 @@
 import BitmapImage2D			= require("awayjs-core/lib/data/BitmapImage2D");
+import WaveAudio				= require("awayjs-core/lib/data/WaveAudio");
 import ByteArray				= require("awayjs-core/lib/utils/ByteArray");
 
 class ParserUtils
 {
+	private static arrayBufferToBase64(data:ArrayBuffer, mimeType:string)
+	{
+		var byteStr:string = '';
+		var bytes:Uint8Array = new Uint8Array(data);
+		var len:number = bytes.byteLength;
+
+		for (var i = 0; i < len; i++)
+			byteStr += String.fromCharCode(bytes[ i ])
+
+		var base64Image:string = window.btoa(byteStr);
+		return 'data:' + mimeType + ';base64,' + base64Image;
+	}
+
+	public static arrayBufferToAudio(data:ArrayBuffer, fileType:string):HTMLAudioElement
+	{
+		var str:string = ParserUtils.arrayBufferToBase64(data, 'audio/' + fileType);
+		var audio:HTMLAudioElement = <HTMLAudioElement> new Audio();
+		audio.src = str;
+		return audio;
+	}
 
 	/**
 	 * Converts an ArrayBuffer to a base64 string
@@ -14,18 +35,9 @@ class ParserUtils
 	 */
 	public static arrayBufferToImage(data:ArrayBuffer):HTMLImageElement
 	{
-		var byteStr:string = '';
-		var bytes:Uint8Array = new Uint8Array(data);
-		var len:number = bytes.byteLength;
-
-		for (var i = 0; i < len; i++)
-			byteStr += String.fromCharCode(bytes[ i ])
-
-		var base64Image:string = window.btoa(byteStr);
-		var str:string = 'data:image/png;base64,' + base64Image;
+		var str:string = ParserUtils.arrayBufferToBase64(data, 'image/png');
 		var img:HTMLImageElement = <HTMLImageElement> new Image();
 		img.src = str;
-
 		return img;
 	}
 
@@ -39,19 +51,18 @@ class ParserUtils
 	 */
 	public static byteArrayToImage(data:ByteArray):HTMLImageElement
 	{
-		var byteStr:string = '';
-		var bytes:Uint8Array = new Uint8Array(data.arraybytes);
-		var len:number = bytes.byteLength;
-
-		for (var i = 0; i < len; i++)
-			byteStr += String.fromCharCode(bytes[ i ])
-
-		var base64Image:string = window.btoa(byteStr);
-		var str:string = 'data:image/png;base64,' + base64Image;
+		var str:string = ParserUtils.arrayBufferToBase64(data.arraybytes, 'image/png');
 		var img:HTMLImageElement = <HTMLImageElement> new Image();
 		img.src = str;
-
 		return img;
+	}
+
+	public static byteArrayToAudio(data:ByteArray, filetype:string):HTMLAudioElement
+	{
+		var str:string = ParserUtils.arrayBufferToBase64(data.arraybytes, 'audio/' + filetype);
+		var audio:HTMLAudioElement = <HTMLAudioElement> new Audio();
+		audio.src = str;
+		return audio;
 	}
 
 	/**
@@ -68,7 +79,23 @@ class ParserUtils
 		var src = URLObj.createObjectURL(data);
 		var img:HTMLImageElement = <HTMLImageElement> new Image();
 		img.src = src;
+		return img;
+	}
 
+	/**
+	 * Converts an Blob to audio - returns an HTMLAudioElement
+	 *
+	 * @param audio data as a Blob
+	 *
+	 * @return HTMLAudioElement
+	 *
+	 */
+	public static blobToAudio(data:Blob):HTMLAudioElement
+	{
+		var URLObj:URL = window['URL'] || window['webkitURL'];
+		var src = URLObj.createObjectURL(data);
+		var img:HTMLAudioElement = <HTMLAudioElement> new Audio();
+		img.src = src;
 		return img;
 	}
 
@@ -143,6 +170,11 @@ class ParserUtils
 
 		 */
 
+	}
+
+	public static audioToWaveAudio(htmlAudioElement:HTMLAudioElement):WaveAudio
+	{
+		return new WaveAudio(htmlAudioElement);
 	}
 }
 

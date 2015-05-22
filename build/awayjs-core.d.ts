@@ -2183,6 +2183,28 @@ declare module "awayjs-core/lib/data/TriangleSubGeometry" {
 	
 }
 
+declare module "awayjs-core/lib/data/WaveAudio" {
+	import IAsset = require("awayjs-core/lib/library/IAsset");
+	import AssetBase = require("awayjs-core/lib/library/AssetBase");
+	class WaveAudio extends AssetBase implements IAsset {
+	    static assetType: string;
+	    private _htmlAudioElement;
+	    /**
+	     *
+	     */
+	    constructor(htmlAudioElement: HTMLAudioElement);
+	    /**
+	     *
+	     * @returns {string}
+	     */
+	    assetType: string;
+	    htmlAudioElement: HTMLAudioElement;
+	    dispose(): void;
+	}
+	export = WaveAudio;
+	
+}
+
 declare module "awayjs-core/lib/errors/AbstractMethodError" {
 	import Error = require("awayjs-core/lib/errors/Error");
 	/**
@@ -6663,8 +6685,11 @@ declare module "awayjs-core/lib/parsers/ParserDataFormat" {
 
 declare module "awayjs-core/lib/parsers/ParserUtils" {
 	import BitmapImage2D = require("awayjs-core/lib/data/BitmapImage2D");
+	import WaveAudio = require("awayjs-core/lib/data/WaveAudio");
 	import ByteArray = require("awayjs-core/lib/utils/ByteArray");
 	class ParserUtils {
+	    private static arrayBufferToBase64(data, mimeType);
+	    static arrayBufferToAudio(data: ArrayBuffer, fileType: string): HTMLAudioElement;
 	    /**
 	     * Converts an ArrayBuffer to a base64 string
 	     *
@@ -6683,6 +6708,7 @@ declare module "awayjs-core/lib/parsers/ParserUtils" {
 	     *
 	     */
 	    static byteArrayToImage(data: ByteArray): HTMLImageElement;
+	    static byteArrayToAudio(data: ByteArray, filetype: string): HTMLAudioElement;
 	    /**
 	     * Converts an Blob to an Image - returns an HTMLImageElement
 	     *
@@ -6692,6 +6718,15 @@ declare module "awayjs-core/lib/parsers/ParserUtils" {
 	     *
 	     */
 	    static blobToImage(data: Blob): HTMLImageElement;
+	    /**
+	     * Converts an Blob to audio - returns an HTMLAudioElement
+	     *
+	     * @param audio data as a Blob
+	     *
+	     * @return HTMLAudioElement
+	     *
+	     */
+	    static blobToAudio(data: Blob): HTMLAudioElement;
 	    /**
 	     *
 	     */
@@ -6715,6 +6750,7 @@ declare module "awayjs-core/lib/parsers/ParserUtils" {
 	     *
 	     */
 	    static toString(data: any, length?: number): string;
+	    static audioToWaveAudio(htmlAudioElement: HTMLAudioElement): WaveAudio;
 	}
 	export = ParserUtils;
 	
@@ -6856,6 +6892,22 @@ declare module "awayjs-core/lib/parsers/TextureAtlasParser" {
 	    _pProceedParsing(): boolean;
 	}
 	export = TextureAtlasParser;
+	
+}
+
+declare module "awayjs-core/lib/parsers/WaveAudioParser" {
+	import ParserBase = require("awayjs-core/lib/parsers/ParserBase");
+	class WaveAudioParser extends ParserBase {
+	    private _loadingImage;
+	    private _htmlAudioElement;
+	    constructor();
+	    static supportsType(extension: string): boolean;
+	    static supportsData(data: any): boolean;
+	    _pProceedParsing(): boolean;
+	    onLoadComplete(event: any): void;
+	    private static parseFileType(ba);
+	}
+	export = WaveAudioParser;
 	
 }
 

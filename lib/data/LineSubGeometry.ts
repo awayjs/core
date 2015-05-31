@@ -1,7 +1,13 @@
+import AttributesBuffer			= require("awayjs-core/lib/attributes/AttributesBuffer");
+import AttributesView			= require("awayjs-core/lib/attributes/AttributesView");
+import Byte4Attributes			= require("awayjs-core/lib/attributes/Byte4Attributes");
+import Float3Attributes			= require("awayjs-core/lib/attributes/Float3Attributes");
+import Float1Attributes			= require("awayjs-core/lib/attributes/Float1Attributes");
 import Geometry					= require("awayjs-core/lib/data/Geometry");
 import SubGeometryBase			= require("awayjs-core/lib/data/SubGeometryBase");
 import TriangleSubGeometry		= require("awayjs-core/lib/data/TriangleSubGeometry");
 import SubGeometryEvent			= require("awayjs-core/lib/events/SubGeometryEvent");
+import SubGeometryUtils			= require("awayjs-core/lib/utils/SubGeometryUtils");
 
 /**
  * @class LineSubGeometry
@@ -10,34 +16,11 @@ class LineSubGeometry extends SubGeometryBase
 {
 	public static assetType:string = "[asset LineSubGeometry]";
 
-	public static VERTEX_DATA:string = "vertices";
-	public static START_POSITION_DATA:string = "startPositions";
-	public static END_POSITION_DATA:string = "endPositions";
-	public static THICKNESS_DATA:string = "thickness";
-	public static COLOR_DATA:string = "colors";
+	private _numVertices:number = 0;
 
-	//TODO - move these to StageGL
-	public static POSITION_FORMAT:string = "float3";
-	public static COLOR_FORMAT:string = "float4";
-	public static THICKNESS_FORMAT:string = "float1";
-
-	private _positionsDirty:boolean = true;
-	private _boundingPositionDirty = true;
-	private _thicknessDirty:boolean = true;
-	private _colorsDirty:boolean = true;
-
-	private _startPositions:Array<number>;
-	private _endPositions:Array<number>;
-	private _boundingPositions:Array<number>
-	private _thickness:Array<number>;
-	private _startColors:Array<number>;
-	private _endColors:Array<number>;
-
-	private _numSegments:number;
-
-	private _positionsUpdated:SubGeometryEvent;
-	private _thicknessUpdated:SubGeometryEvent;
-	private _colorUpdated:SubGeometryEvent;
+	private _positions:AttributesView;
+	private _thickness:Float1Attributes;
+	private _colors:Byte4Attributes;
 
 	/**
 	 *
@@ -48,306 +31,217 @@ class LineSubGeometry extends SubGeometryBase
 		return LineSubGeometry.assetType;
 	}
 
-	public _pUpdateStrideOffset()
-	{
-		this._pOffset[LineSubGeometry.VERTEX_DATA] = 0;
-
-		var stride:number = 0;
-		this._pOffset[LineSubGeometry.START_POSITION_DATA] = stride;
-		stride += 3;
-
-		this._pOffset[LineSubGeometry.END_POSITION_DATA] = stride;
-		stride += 3;
-
-		this._pOffset[LineSubGeometry.THICKNESS_DATA] = stride;
-		stride += 1;
-
-		this._pOffset[LineSubGeometry.COLOR_DATA] = stride;
-		stride += 4;
-
-		this._pStride[LineSubGeometry.VERTEX_DATA] = stride;
-		this._pStride[LineSubGeometry.START_POSITION_DATA] = stride;
-		this._pStride[LineSubGeometry.END_POSITION_DATA] = stride;
-		this._pStride[LineSubGeometry.THICKNESS_DATA] = stride;
-		this._pStride[LineSubGeometry.COLOR_DATA] = stride;
-
-		var len:number = this._pNumVertices*stride;
-
-		if (this._pVertices == null)
-			this._pVertices = new Array<number>(len);
-		else if (this._pVertices.length != len)
-			this._pVertices.length = len;
-
-		this._pStrideOffsetDirty = false;
-	}
-
 	/**
-	 * 
+	 *
 	 */
-	public get vertices():Array<number>
+	public get positions():AttributesView
 	{
-		if (this._positionsDirty)
-			this.updatePositions(this._startPositions, this._endPositions);
-
-		if (this._thicknessDirty)
-			this.updateThickness(this._thickness);
-
-		if (this._colorsDirty)
-			this.updateColors(this._startColors, this._endColors);
-
-		return this._pVertices;
+		return this._positions;
 	}
 
 	/**
 	 *
 	 */
-	public get startPositions():Array<number>
+	public get thickness():Float1Attributes
 	{
-		if (this._positionsDirty)
-			this.updatePositions(this._startPositions, this._endPositions);
-
-		return this._startPositions;
-	}
-
-	/**
-	 *
-	 */
-	public get endPositions():Array<number>
-	{
-		if (this._positionsDirty)
-			this.updatePositions(this._startPositions, this._endPositions);
-
-		return this._endPositions;
-	}
-
-	/**
-	 *
-	 */
-	public get thickness():Array<number>
-	{
-		if (this._thicknessDirty)
-			this.updateThickness(this._thickness);
-
 		return this._thickness;
 	}
 
 	/**
 	 *
 	 */
-	public get startColors():Array<number>
+	public get colors():Byte4Attributes
 	{
-		if (this._colorsDirty)
-			this.updateColors(this._startColors, this._endColors);
+		if (!this._colors)
+			this.setColors(this._colors);
 
-		return this._startColors;
+		return this._colors;
+	}
+
+	/**
+	 * The total amount of vertices in the LineSubGeometry.
+	 */
+	public get numVertices():number
+	{
+		return this._numVertices;
 	}
 
 	/**
 	 *
 	 */
-	public get endColors():Array<number>
+	constructor(concatenatedBuffer:AttributesBuffer = null)
 	{
-		if (this._colorsDirty)
-			this.updateColors(this._startColors, this._endColors);
-
-		return this._endColors;
+		super(concatenatedBuffer);
+		
+		this._positions = new AttributesView(Float32Array, 6, concatenatedBuffer);
 	}
 
-	/**
-	 * The total amount of segments in the TriangleSubGeometry.
-	 */
-	public get numSegments():number
+	public getBoundingPositions():Float32Array
 	{
-		return this._numSegments;
+		return <Float32Array> this._positions.get(this._numVertices);
 	}
 
 	/**
 	 *
 	 */
-	constructor()
+	public setPositions(array:Array<number>, offset?:number);
+	public setPositions(float32Array:Float32Array, offset?:number);
+	public setPositions(attributesView:AttributesView, offset?:number);
+	public setPositions(values:any, offset:number = 0)
 	{
-		super(true);
-	}
+		if (values instanceof AttributesView) {
+			this.notifyVerticesDispose(this._positions);
+			this._positions = <AttributesView> values;
+		} else if (values) {
+			var i:number = 0;
+			var j:number = 0;
+			var index:number = 0;
+			var positions:Float32Array = new Float32Array(values.length*4);
+			var indices:Uint16Array = new Uint16Array(values.length);
 
-	public getBoundingPositions():Array<number>
-	{
-		if (this._boundingPositionDirty)
-			this._boundingPositions = this.startPositions.concat(this.endPositions);
+			while (i < values.length) {
+				if (index/6 & 1) {
+					positions[index] = values[i + 3];
+					positions[index + 1] = values[i + 4];
+					positions[index + 2] = values[i + 5];
+					positions[index + 3] = values[i];
+					positions[index + 4] = values[i + 1];
+					positions[index + 5] = values[i + 2];
+				} else {
+					positions[index] = values[i];
+					positions[index + 1] = values[i + 1];
+					positions[index + 2] = values[i + 2];
+					positions[index + 3] = values[i + 3];
+					positions[index + 4] = values[i + 4];
+					positions[index + 5] = values[i + 5];
+				}
 
-		return this._boundingPositions;
-	}
+				index += 6;
 
-	/**
-	 *
-	 */
-	public updatePositions(startValues:Array<number>, endValues:Array<number>)
-	{
-		var i:number;
-		var j:number;
-		var values:Array<number>
-		var index:number;
-		var stride:number;
-		var positions:Array<number>;
-		var indices:Array<number>;
-
-		this._startPositions = startValues;
-
-		if (this._startPositions == null)
-			this._startPositions = new Array<number>();
-
-		this._endPositions = endValues;
-
-		if (this._endPositions == null)
-			this._endPositions = new Array<number>();
-
-		this._boundingPositionDirty = true;
-
-		this._numSegments = this._startPositions.length/3;
-
-		this._pNumVertices = this._numSegments*4;
-
-		var lenV:number = this._pNumVertices*this.getStride(LineSubGeometry.VERTEX_DATA);
-
-		if (this._pVertices == null)
-			this._pVertices = new Array<number>(lenV);
-		else if (this._pVertices.length != lenV)
-			this._pVertices.length = lenV;
-
-		i = 0;
-		j = 0;
-		index = this.getOffset(LineSubGeometry.START_POSITION_DATA);
-		stride = this.getStride(LineSubGeometry.START_POSITION_DATA);
-		positions = this._pVertices;
-		indices = new Array();
-
-		while (i < startValues.length) {
-			values = (index/stride & 1)? endValues : startValues;
-			positions[index] = values[i];
-			positions[index + 1] = values[i + 1];
-			positions[index + 2] = values[i + 2];
-
-			values = (index/stride & 1)? startValues : endValues;
-			positions[index + 3] = values[i];
-			positions[index + 4] = values[i + 1];
-			positions[index + 5] = values[i + 2];
-
-			if (++j == 4) {
-				var o:number = index/stride - 3;
-				indices.push(o, o + 1, o + 2, o + 3, o + 2, o + 1);
-				j = 0;
-				i += 3;
+				if (++j == 4) {
+					var o:number = index/6 - 4;
+					indices.set([o, o + 1, o + 2, o + 3, o + 2, o + 1], i);
+					j = 0;
+					i += 6;
+				}
 			}
+			
+			this._positions.set(positions, offset*4);
 
-			index += stride;
+			this.setIndices(indices, offset);
+		} else {
+			this.notifyVerticesDispose(this._positions);
+			this._positions = new AttributesView(Float32Array, 6, this._concatenatedBuffer);
 		}
 
-		this.updateIndices(indices);
+		this._numVertices = this._positions.count;
 
 		this.pInvalidateBounds();
 
-		this.notifyPositionsUpdate();
+		this.notifyVerticesUpdate(this._positions);
 
-		this._positionsDirty = false;
+		this._verticesDirty[this._positions.id] = false;
 	}
 
 	/**
 	 * Updates the thickness.
 	 */
-	public updateThickness(values:Array<number>)
+	public setThickness(array:Array<number>, offset?:number);
+	public setThickness(float32Array:Float32Array, offset?:number);
+	public setThickness(float1Attributes:Float1Attributes, offset?:number);
+	public setThickness(values:any, offset:number = 0)
 	{
-		var i:number;
-		var j:number;
-		var index:number;
-		var offset:number;
-		var stride:number;
-		var thickness:Array<number>;
+		if (values instanceof Float1Attributes) {
+			this._thickness = <Float1Attributes> values;
+		} else if (values) {
+			if (!this._thickness)
+				this._thickness = new Float1Attributes(this._concatenatedBuffer);
 
-		this._thickness = values;
+			var i:number = 0;
+			var j:number = 0;
+			var index:number = 0;
+			var thickness:Float32Array = new Float32Array(values.length*4);
 
-		if (values != null) {
-			i = 0;
-			j = 0;
-			offset = this.getOffset(LineSubGeometry.THICKNESS_DATA);
-			stride = this.getStride(LineSubGeometry.THICKNESS_DATA);
-			thickness = this._pVertices;
-
-			index = offset
 			while (i < values.length) {
-				thickness[index] = (Math.floor(0.5*(index - offset)/stride + 0.5) & 1)? -values[i] : values[i];
+				thickness[index] = (Math.floor(0.5*index + 0.5) & 1)? -values[i] : values[i];
 
 				if (++j == 4) {
 					j = 0;
 					i++;
 				}
-				index += stride;
+
+				index++;
 			}
+
+			this._thickness.set(thickness, offset*4);
+		} else if (this._thickness) {
+			this._thickness.dispose();
+			this._thickness = null;
 		}
 
-		this.notifyThicknessUpdate();
+		this.notifyVerticesUpdate(this._thickness);
 
-		this._thicknessDirty = false;
+		this._verticesDirty[this._thickness.id] = false;
 	}
 
 	/**
 	 *
 	 */
-	public updateColors(startValues:Array<number>, endValues:Array<number>)
+	public setColors(array:Array<number>, offset?:number);
+	public setColors(float32Array:Float32Array, offset?:number);
+	public setColors(uint8Array:Uint8Array, offset?:number);
+	public setColors(byte4Attributes:Byte4Attributes, offset?:number);
+	public setColors(values:any, offset:number = 0)
 	{
-		var i:number;
-		var j:number;
-		var values:Array<number>
-		var index:number;
-		var offset:number;
-		var stride:number;
-		var colors:Array<number>;
+		if (values) {
+			if (values == this._colors)
+				return;
 
-		this._startColors = startValues;
+			if (values instanceof Byte4Attributes) {
+				this.notifyVerticesDispose(this._colors);
+				this._colors = <Byte4Attributes> values;
+			} else {
+				if (!this._colors)
+					this._colors = new Byte4Attributes(this._concatenatedBuffer);
 
-		this._endColors = endValues;
 
-		//default to white
-		if (this._startColors == null) {
-			this._startColors = new Array(this._numSegments*4);
+				var i:number = 0;
+				var j:number = 0;
+				var index:number = 0;
+				var colors:Uint8Array = new Uint8Array(values.length*4);
 
-			i = 0;
-			while (i < this._startColors.length)
-				this._startColors[i++] = 1;
-		}
+				while (i < values.length) {
+					if (index/4 & 1) {
+						colors[index] = values[i + 4];
+						colors[index + 1] = values[i + 5];
+						colors[index + 2] = values[i + 6];
+						colors[index + 3] = values[i + 7];
+					} else {
+						colors[index] = values[i];
+						colors[index + 1] = values[i + 1];
+						colors[index + 2] = values[i + 2];
+						colors[index + 3] = values[i + 3];
+					}
 
-		if (this._endColors == null) {
-			this._endColors = new Array(this._numSegments*4);
 
-			i = 0;
-			while (i < this._endColors.length)
-				this._endColors[i++] = 1;
-		}
+					if (++j == 4) {
+						j = 0;
+						i += 8;
+					}
 
-		i = 0;
-		j = 0;
-		offset = this.getOffset(LineSubGeometry.COLOR_DATA);
-		stride = this.getStride(LineSubGeometry.COLOR_DATA);
-		colors = this._pVertices;
+					index += 4;
+				}
 
-		index = offset;
-
-		while (i < this._startColors.length) {
-			values = ((index - offset)/stride & 1)? this._endColors : this._startColors;
-			colors[index] = values[i];
-			colors[index + 1] = values[i + 1];
-			colors[index + 2] = values[i + 2];
-			colors[index + 3] = values[i + 3];
-
-			if (++j == 4) {
-				j = 0;
-				i += 4;
+				this._colors.set(values, offset*4);
 			}
-
-			index += stride;
+		} else {
+			//auto-derive colors
+			this._colors = SubGeometryUtils.generateColors(this._pIndices, this._colors, this._concatenatedBuffer, this._numVertices);
 		}
 
-		this.notifyColorsUpdate();
+		this.notifyVerticesUpdate(this._colors);
 
-		this._colorsDirty = false;
+		this._verticesDirty[this._colors.id] = false;
 	}
 
 	/**
@@ -357,28 +251,10 @@ class LineSubGeometry extends SubGeometryBase
 	{
 		super.dispose();
 
-		this._startPositions = null;
-		this._endPositions = null;
+		this._positions = null;
 		this._thickness = null;
-		this._startColors = null;
-		this._endColors = null;
+		this._colors = null;
 	}
-
-	/**
-	 * @protected
-	 */
-	public pInvalidateBounds()
-	{
-		if (this.parentGeometry)
-			this.parentGeometry.iInvalidateBounds(this);
-	}
-
-	/**
-	 * The Geometry object that 'owns' this TriangleSubGeometry object.
-	 *
-	 * @private
-	 */
-	public parentGeometry:Geometry;
 
 	/**
 	 * Clones the current object
@@ -386,61 +262,15 @@ class LineSubGeometry extends SubGeometryBase
 	 */
 	public clone():LineSubGeometry
 	{
-		var clone:LineSubGeometry = new LineSubGeometry();
-		clone.updateIndices(this._pIndices.concat());
-		clone.updatePositions(this._startPositions.concat(), this._endPositions.concat());
-		clone.updateThickness(this._thickness.concat());
-		clone.updatePositions(this._startPositions.concat(), this._endPositions.concat());
+		var clone:LineSubGeometry = new LineSubGeometry(this._concatenatedBuffer? this._concatenatedBuffer.clone() : null);
+
+		clone.setIndices(this._pIndices.clone());
+
+		clone.setPositions(this._positions.clone());
+		clone.setThickness(this._thickness.clone());
+		clone.setColors(this._colors.clone());
 
 		return clone;
-	}
-
-	public _pNotifyVerticesUpdate()
-	{
-		this._pStrideOffsetDirty = true;
-
-		this.notifyPositionsUpdate();
-		this.notifyThicknessUpdate();
-		this.notifyColorsUpdate();
-	}
-
-	private notifyPositionsUpdate()
-	{
-		if (this._positionsDirty)
-			return;
-
-		this._positionsDirty = true;
-
-		if (!this._positionsUpdated)
-			this._positionsUpdated = new SubGeometryEvent(SubGeometryEvent.VERTICES_UPDATED, TriangleSubGeometry.POSITION_DATA);
-
-		this.dispatchEvent(this._positionsUpdated);
-	}
-
-	private notifyThicknessUpdate()
-	{
-		if (this._thicknessDirty)
-			return;
-
-		this._thicknessDirty = true;
-
-		if (!this._thicknessUpdated)
-			this._thicknessUpdated = new SubGeometryEvent(SubGeometryEvent.VERTICES_UPDATED, LineSubGeometry.THICKNESS_DATA);
-
-		this.dispatchEvent(this._thicknessUpdated);
-	}
-
-	private notifyColorsUpdate()
-	{
-		if (this._colorsDirty)
-			return;
-
-		this._colorsDirty = true;
-
-		if (!this._colorUpdated)
-			this._colorUpdated = new SubGeometryEvent(SubGeometryEvent.VERTICES_UPDATED, LineSubGeometry.COLOR_DATA);
-
-		this.dispatchEvent(this._colorUpdated);
 	}
 }
 

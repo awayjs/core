@@ -1,125 +1,78 @@
+import AttributesBuffer			= require("awayjs-core/lib/attributes/AttributesBuffer");
+import AttributesView			= require("awayjs-core/lib/attributes/AttributesView");
+import Float3Attributes			= require("awayjs-core/lib/attributes/Float3Attributes");
+import Short3Attributes			= require("awayjs-core/lib/attributes/Short3Attributes");
 import Geometry					= require("awayjs-core/lib/data/Geometry");
 import AbstractMethodError		= require("awayjs-core/lib/errors/AbstractMethodError");
 import SubGeometryEvent			= require("awayjs-core/lib/events/SubGeometryEvent");
 import Matrix3D					= require("awayjs-core/lib/geom/Matrix3D");
 import Rectangle				= require("awayjs-core/lib/geom/Rectangle");
 import AssetBase				= require("awayjs-core/lib/library/AssetBase");
+import ISubGeometryVO			= require("awayjs-core/lib/vos/ISubGeometryVO");
 
 /**
  * @class away.base.TriangleSubGeometry
  */
 class SubGeometryBase extends AssetBase
 {
-	public static VERTEX_DATA:string = "vertices";
+	private _subGeometryVO:Array<ISubGeometryVO> = new Array<ISubGeometryVO>();
+	
+	public _pIndices:Short3Attributes;
 
-	public _pStrideOffsetDirty:boolean = true;
+	private _numElements:number = 0;
 
-	public _pIndices:Array<number> /*uint*/;
-	public _pVertices:Array<number>;
-
-	private _numIndices:number;
-	private _numTriangles:number;
-	public _pNumVertices:number;
-
-	public _pConcatenateArrays:boolean = true;
+	public _concatenatedBuffer:AttributesBuffer;
 
 	private _indicesUpdated:SubGeometryEvent;
 
-	public _pStride:Object = new Object();
-	public _pOffset:Object = new Object();
+	public _verticesDirty:Object = new Object();
+	public _verticesUpdated:Object = new Object();
 
-	public _pUpdateStrideOffset()
+	public get concatenatedBuffer():AttributesBuffer
 	{
-		throw new AbstractMethodError();
-	}
-
-	/**
-	 *
-	 */
-	public get concatenateArrays():boolean
-	{
-		return this._pConcatenateArrays;
-	}
-
-	public set concatenateArrays(value:boolean)
-	{
-		if (this._pConcatenateArrays == value)
-			return;
-
-		this._pConcatenateArrays = value;
-
-		this._pStrideOffsetDirty = true;
-
-		if (value)
-			this._pNotifyVerticesUpdate();
+		return this._concatenatedBuffer;
 	}
 
 	/**
 	 * The raw index data that define the faces.
 	 */
-	public get indices():Array<number>
+	public get indices():Short3Attributes
 	{
 		return this._pIndices;
 	}
 
 	/**
-	 * 
-	 */
-	public get vertices():Array<number>
-	{
-		this.updateVertices();
-
-		return this._pVertices;
-	}
-
-	/**
 	 * The total amount of triangles in the TriangleSubGeometry.
 	 */
-	public get numTriangles():number
+	public get numElements():number
 	{
-		return this._numTriangles;
+		return this._numElements;
 	}
 
 	public get numVertices():number
 	{
-		return this._pNumVertices;
+		throw new AbstractMethodError();
 	}
 
 	/**
 	 *
 	 */
-	constructor(concatenatedArrays:boolean)
+	constructor(concatenatedBuffer:AttributesBuffer = null)
 	{
 		super();
 
-		this._pConcatenateArrays = concatenatedArrays;
+		this._concatenatedBuffer = concatenatedBuffer;
 	}
+
 
 	/**
 	 *
 	 */
-	public getStride(dataType:string)
+	public invalidate():void
 	{
-		if (this._pStrideOffsetDirty)
-			this._pUpdateStrideOffset();
-
-		return this._pStride[dataType];
-	}
-
-	/**
-	 *
-	 */
-	public getOffset(dataType:string)
-	{
-		if (this._pStrideOffsetDirty)
-			this._pUpdateStrideOffset();
-
-		return this._pOffset[dataType];
-	}
-
-	public updateVertices()
-	{
-		throw new AbstractMethodError();
+		var len:number = this._subGeometryVO.length;
+		for (var i:number = 0; i < len; i++)
+			this._subGeometryVO[i].invalidate();
 	}
 
 	/**
@@ -127,8 +80,11 @@ class SubGeometryBase extends AssetBase
 	 */
 	public dispose()
 	{
+		while (this._subGeometryVO.length)
+			this._subGeometryVO[0].dispose();
+
+		this._pIndices.dispose();
 		this._pIndices = null;
-		this._pVertices = null;
 	}
 
 	/**
@@ -136,14 +92,35 @@ class SubGeometryBase extends AssetBase
 	 *
 	 * @param indices The face indices to upload.
 	 */
-	public updateIndices(indices:Array<number>)
+	public setIndices(array:Array<number>, offset?:number);
+	public setIndices(uint16Array:Uint16Array, offset?:number);
+	public setIndices(short3Attributes:Short3Attributes, offset?:number);
+	public setIndices(values:any, offset:number = 0)
 	{
-		this._pIndices = indices;
-		this._numIndices = indices.length;
+		if (values instanceof Short3Attributes) {
+			if (this._pIndices)
+				this.notifyIndicesDispose();
 
-		this._numTriangles = this._numIndices/3;
+			this._pIndices = <Short3Attributes> values;
+		} else if (values) {
+			if (!this._pIndices)
+				this._pIndices = new Short3Attributes();
 
-		this.notifyIndicesUpdate();
+			this._pIndices.set(values, offset);
+		} else if (this._pIndices) {
+			this._pIndices.dispose();
+			this._pIndices = null;
+
+			this.notifyIndicesDispose();
+		}
+
+		if (this._pIndices) {
+			this._numElements = this._pIndices.count;
+
+			this.notifyIndicesUpdate();
+		} else {
+			this._numElements = 0;
+		}
 	}
 
 	/**
@@ -190,7 +167,7 @@ class SubGeometryBase extends AssetBase
 
 	}
 
-	public getBoundingPositions():Array<number>
+	public getBoundingPositions():Float32Array
 	{
 		throw new AbstractMethodError();
 	}
@@ -198,14 +175,55 @@ class SubGeometryBase extends AssetBase
 	private notifyIndicesUpdate()
 	{
 		if (!this._indicesUpdated)
-			this._indicesUpdated = new SubGeometryEvent(SubGeometryEvent.INDICES_UPDATED);
+			this._indicesUpdated = new SubGeometryEvent(SubGeometryEvent.INDICES_UPDATED, this._pIndices);
 
 		this.dispatchEvent(this._indicesUpdated);
 	}
 
-	public _pNotifyVerticesUpdate()
+	private notifyIndicesDispose()
 	{
-		throw new AbstractMethodError();
+		this.dispatchEvent(new SubGeometryEvent(SubGeometryEvent.INDICES_DISPOSED, this._pIndices));
+	}
+
+	public notifyVerticesUpdate(attributesView:AttributesView)
+	{
+		if (!attributesView || this._verticesDirty[attributesView.id])
+			return;
+
+		this._verticesDirty[attributesView.id] = true;
+
+		if (!this._verticesUpdated[attributesView.id])
+			this._verticesUpdated[attributesView.id] = new SubGeometryEvent(SubGeometryEvent.VERTICES_UPDATED, attributesView);
+
+		this.dispatchEvent(this._verticesUpdated[attributesView.id]);
+	}
+
+
+	public notifyVerticesDispose(attributesView:AttributesView)
+	{
+		if (!attributesView)
+			return;
+
+		attributesView.dispose();
+
+		this.dispatchEvent(new SubGeometryEvent(SubGeometryEvent.VERTICES_DISPOSED, attributesView));
+
+		this._verticesDirty[attributesView.id] = null;
+		this._verticesUpdated[attributesView.id] = null;
+	}
+
+	public _iAddSubGeometryVO(subGeometryVO:ISubGeometryVO):ISubGeometryVO
+	{
+		this._subGeometryVO.push(subGeometryVO);
+
+		return subGeometryVO;
+	}
+
+	public _iRemoveSubGeometryVO(subGeometryVO:ISubGeometryVO):ISubGeometryVO
+	{
+		this._subGeometryVO.splice(this._subGeometryVO.indexOf(subGeometryVO), 1);
+
+		return subGeometryVO;
 	}
 }
 

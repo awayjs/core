@@ -1,3 +1,4 @@
+import AttributesView			= require("awayjs-core/lib/attributes/AttributesView");
 import Event					= require("awayjs-core/lib/events/Event");
 
 /**
@@ -9,35 +10,46 @@ import Event					= require("awayjs-core/lib/events/Event");
 class SubGeometryEvent extends Event
 {
 	/**
-	 * Dispatched when a TriangleSubGeometry's index data has been updated.
+	 * Dispatched when a SubGeometry's index data has been updated.
 	 */
 	public static INDICES_UPDATED:string = "indicesUpdated";
 
 	/**
-	 * Dispatched when a TriangleSubGeometry's vertex data has been updated.
+	 * Dispatched when a SubGeometry's index data has been disposed.
+	 */
+	public static INDICES_DISPOSED:string = "indicesDisposed";
+	
+	/**
+	 * Dispatched when a SubGeometry's vertex data has been updated.
 	 */
 	public static VERTICES_UPDATED:string = "verticesUpdated";
 
-	private _dataType:string;
+	/**
+	 * Dispatched when a SubGeometry's vertex data has been disposed.
+	 */
+	public static VERTICES_DISPOSED:string = "verticesDisposed";
+
+	
+	private _attributesView:AttributesView;
 
 	/**
 	 * Create a new GeometryEvent
 	 * @param type The event type.
-	 * @param dataType An optional data type of the vertex data being updated.
+	 * @param attributesView An optional data type of the vertex data being updated.
 	 */
-	constructor(type:string, dataType:string = "")
+	constructor(type:string, attributesView:AttributesView)
 	{
 		super(type);
 
-		this._dataType = dataType;
+		this._attributesView = attributesView;
 	}
 
 	/**
-	 * The data type of the vertex data.
+	 * The attributes view of the vertex data.
 	 */
-	public get dataType():string
+	public get attributesView():AttributesView
 	{
-		return this._dataType;
+		return this._attributesView;
 	}
 
 	/**
@@ -47,7 +59,7 @@ class SubGeometryEvent extends Event
 	 */
 	public clone():Event
 	{
-		return new SubGeometryEvent(this.type, this._dataType);
+		return new SubGeometryEvent(this.type, this._attributesView);
 	}
 }
 

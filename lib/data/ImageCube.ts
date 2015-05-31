@@ -3,7 +3,7 @@ import ImageUtils				= require("awayjs-core/lib/utils/ImageUtils");
 
 class ImageCube extends ImageBase
 {
-	public static assetType:string = "[asset ImageCube]";
+	public static assetType:string = "[image ImageCube]";
 
 	public _size:number;
 

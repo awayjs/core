@@ -68,7 +68,7 @@ import ImageUtils				= require("awayjs-core/lib/utils/ImageUtils");
  */
 class BitmapImage2D extends Image2D
 {
-	public static assetType:string = "[asset BitmapImage2D]";
+	public static assetType:string = "[image BitmapImage2D]";
 
 	private _imageCanvas:HTMLCanvasElement;
 	private _context:CanvasRenderingContext2D;

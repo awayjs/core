@@ -69,7 +69,7 @@ import BitmapImageUtils			= require("awayjs-core/lib/utils/BitmapImageUtils");
  */
 class BitmapImageCube extends ImageCube
 {
-	public static assetType:string = "[asset BitmapImageCube]";
+	public static assetType:string = "[image BitmapImageCube]";
 
 	public static posX:number = 0;
 	public static negX:number = 1;

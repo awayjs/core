@@ -4,7 +4,7 @@ import ImageUtils				= require("awayjs-core/lib/utils/ImageUtils");
 
 class Image2D extends ImageBase
 {
-	public static assetType:string = "[asset Image2D]";
+	public static assetType:string = "[image Image2D]";
 
 	public _rect:Rectangle;
 

@@ -1,4 +1,703 @@
-require=(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({"awayjs-core/lib/data/BitmapImage2D":[function(require,module,exports){
+require=(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({"awayjs-core/lib/attributes/AttributesBuffer":[function(require,module,exports){
+var __extends = this.__extends || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    __.prototype = b.prototype;
+    d.prototype = new __();
+};
+var AssetBase = require("awayjs-core/lib/library/AssetBase");
+var AttributesBuffer = (function (_super) {
+    __extends(AttributesBuffer, _super);
+    /**
+     *
+     */
+    function AttributesBuffer(stride, count) {
+        if (stride === void 0) { stride = 0; }
+        if (count === void 0) { count = 0; }
+        _super.call(this);
+        this._attributesBufferVO = new Array();
+        this._count = 0;
+        this._stride = 0;
+        this._newStride = 0;
+        this._viewVOs = new Array();
+        this.stride = stride;
+        this.count = count;
+    }
+    Object.defineProperty(AttributesBuffer.prototype, "assetType", {
+        /**
+         *
+         * @returns {string}
+         */
+        get: function () {
+            return AttributesBuffer.assetType;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(AttributesBuffer.prototype, "stride", {
+        get: function () {
+            if (this._lengthDirty)
+                this._updateLength();
+            return this._stride;
+        },
+        set: function (value) {
+            if (this._newStride == value)
+                return;
+            this._newStride = value;
+            this.invalidateLength();
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(AttributesBuffer.prototype, "count", {
+        get: function () {
+            return this._count;
+        },
+        set: function (value) {
+            if (this._count == value)
+                return;
+            this._count = value;
+            this.invalidateLength();
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(AttributesBuffer.prototype, "buffer", {
+        get: function () {
+            if (this._lengthDirty)
+                this._updateLength();
+            return this._buffer;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(AttributesBuffer.prototype, "bufferView", {
+        get: function () {
+            if (this._lengthDirty)
+                this._updateLength();
+            this._contentDirty = false;
+            return this._bufferView;
+        },
+        set: function (value) {
+            this._bufferView = value;
+            this._buffer = this._bufferView.buffer;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(AttributesBuffer.prototype, "length", {
+        get: function () {
+            return this._count * this._stride;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    /**
+     *
+     */
+    AttributesBuffer.prototype.invalidateContent = function () {
+        if (this._contentDirty)
+            return;
+        var len = this._attributesBufferVO.length;
+        for (var i = 0; i < len; i++)
+            this._attributesBufferVO[i].invalidate();
+        this._contentDirty = true;
+    };
+    /**
+     *
+     * @private
+     */
+    AttributesBuffer.prototype.invalidateLength = function () {
+        if (this._lengthDirty)
+            return;
+        while (this._attributesBufferVO.length)
+            this._attributesBufferVO[0].dispose();
+        this._lengthDirty = true;
+    };
+    AttributesBuffer.prototype.clone = function () {
+        var attributesBuffer = new AttributesBuffer(this._stride, this._count);
+        attributesBuffer.bufferView.set(this.bufferView);
+        var len = this._viewVOs.length;
+        for (var i = 0; i < len; i++)
+            this._viewVOs[i].view._internalClone(attributesBuffer);
+        return attributesBuffer;
+    };
+    /**
+     * @inheritDoc
+     */
+    AttributesBuffer.prototype.dispose = function () {
+        while (this._attributesBufferVO.length)
+            this._attributesBufferVO[0].dispose();
+    };
+    AttributesBuffer.prototype._setAttributes = function (viewIndex, arrayBufferView, offset) {
+        if (offset === void 0) { offset = 0; }
+        var array = (arrayBufferView instanceof Uint8Array) ? arrayBufferView : new Uint8Array(arrayBufferView.buffer);
+        var viewVO = this._viewVOs[viewIndex];
+        var vLength = viewVO.length;
+        var vOffset = viewVO.offset;
+        var vCount = array.length / vLength;
+        //make sure there is enough space in the buffer
+        if (this.count < vCount + offset)
+            this.count = vCount + offset;
+        if (this._lengthDirty)
+            this._updateLength();
+        //fast path for separate buffers
+        if (this._viewVOs.length == 1) {
+            this._bufferView.set(array);
+        }
+        else {
+            for (var i = 0; i < vCount; i++)
+                this._bufferView.set(array.subarray(i * vLength, (i + 1) * vLength), (i + offset) * this._stride + vOffset);
+        }
+        this.invalidateContent();
+    };
+    AttributesBuffer.prototype._getLocalArrayBuffer = function (viewIndex) {
+        var viewVO = this._viewVOs[viewIndex];
+        var vLength = viewVO.length;
+        var vOffset = viewVO.offset;
+        if (this._lengthDirty)
+            this._updateLength();
+        //fast path for separate buffers
+        if (this._viewVOs.length == 1)
+            return this._buffer;
+        var localBuffer = new ArrayBuffer(this._count * vLength);
+        var localBufferView = new Uint8Array(localBuffer);
+        for (var i = 0; i < this._count; i++)
+            localBufferView.set(this._bufferView.subarray(i * this._stride + vOffset, i * this._stride + vOffset + vLength), i * vLength);
+        return localBuffer;
+    };
+    AttributesBuffer.prototype._iAddAttributesBufferVO = function (AttributesBufferVO) {
+        this._attributesBufferVO.push(AttributesBufferVO);
+        return AttributesBufferVO;
+    };
+    AttributesBuffer.prototype._iRemoveAttributesBufferVO = function (AttributesBufferVO) {
+        this._attributesBufferVO.splice(this._attributesBufferVO.indexOf(AttributesBufferVO), 1);
+        return AttributesBufferVO;
+    };
+    AttributesBuffer.prototype._addView = function (view) {
+        var viewVO = new ViewVO(view);
+        var len = this._viewVOs.length;
+        viewVO.offset = len ? this._viewVOs[len - 1].offset + this._viewVOs[len - 1].length : 0;
+        this._viewVOs.push(viewVO);
+        if (this._newStride < viewVO.offset + viewVO.length) {
+            this._newStride = viewVO.offset + viewVO.length;
+            this.invalidateLength();
+        }
+        return len;
+    };
+    AttributesBuffer.prototype._removeView = function (viewIndex) {
+        var viewVO = this._viewVOs.splice(viewIndex, 1)[0];
+        var len = this._viewVOs.length;
+        viewVO.dispose();
+        for (var i = viewIndex; i < len; i++) {
+            viewVO = this._viewVOs[i];
+            viewVO.offset = i ? this._viewVOs[i - 1].offset + this._viewVOs[i - 1].length : 0;
+        }
+        this._newStride = viewVO.offset + viewVO.length;
+        this.invalidateLength();
+    };
+    AttributesBuffer.prototype._getOffset = function (viewIndex) {
+        return this._viewVOs[viewIndex].offset;
+    };
+    AttributesBuffer.prototype._updateLength = function () {
+        this._lengthDirty = false;
+        var i;
+        var j;
+        var len = this._viewVOs.length;
+        var newLength = this._newStride * this._count;
+        if (!this._buffer || this._buffer.byteLength != newLength) {
+            var newBuffer = new ArrayBuffer(newLength);
+            var newView = new Uint8Array(newBuffer, 0, newBuffer.byteLength);
+            var viewVO;
+            var vLength;
+            var vOffset;
+            var vOldOffset;
+            if (this._stride != this._newStride) {
+                for (i = 0; i < len; i++) {
+                    viewVO = this._viewVOs[i];
+                    vLength = viewVO.length;
+                    vOffset = viewVO.offset;
+                    vOldOffset = viewVO.oldOffset;
+                    for (j = 0; j < this._count; j++)
+                        if (vOldOffset != null)
+                            newView.set(new Uint8Array(this._buffer, j * this._stride + vOldOffset, vLength), j * this._newStride + vOffset);
+                    viewVO.oldOffset = viewVO.offset;
+                }
+                this._stride = this._newStride;
+            }
+            else {
+                newView.set(new Uint8Array(this._buffer, 0, this._buffer.byteLength));
+            }
+            this._buffer = newBuffer;
+            this._bufferView = newView;
+        }
+    };
+    AttributesBuffer.assetType = "[assets AttributesBuffer]";
+    return AttributesBuffer;
+})(AssetBase);
+var ViewVO = (function () {
+    function ViewVO(view) {
+        this.view = view;
+        this.length = view.size * view.dimensions;
+    }
+    ViewVO.prototype.dispose = function () {
+        this.view = null;
+    };
+    ViewVO.prototype.clone = function () {
+        return new ViewVO(this.view);
+    };
+    return ViewVO;
+})();
+module.exports = AttributesBuffer;
+
+},{"awayjs-core/lib/library/AssetBase":"awayjs-core/lib/library/AssetBase"}],"awayjs-core/lib/attributes/AttributesView":[function(require,module,exports){
+var __extends = this.__extends || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    __.prototype = b.prototype;
+    d.prototype = new __();
+};
+var AttributesBuffer = require("awayjs-core/lib/attributes/AttributesBuffer");
+var AssetBase = require("awayjs-core/lib/library/AssetBase");
+var AttributesView = (function (_super) {
+    __extends(AttributesView, _super);
+    function AttributesView(arrayClass, dimensions, attributesBufferCount) {
+        if (attributesBufferCount === void 0) { attributesBufferCount = 0; }
+        _super.call(this);
+        this._arrayClass = arrayClass;
+        this._size = arrayClass.BYTES_PER_ELEMENT;
+        this._dimensions = dimensions;
+        this._attributesBuffer = (attributesBufferCount instanceof AttributesBuffer) ? attributesBufferCount : new AttributesBuffer(this._dimensions * this._size, attributesBufferCount);
+        this._index = this._attributesBuffer._addView(this);
+    }
+    Object.defineProperty(AttributesView.prototype, "assetType", {
+        /**
+         *
+         * @returns {string}
+         */
+        get: function () {
+            return AttributesView.assetType;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(AttributesView.prototype, "buffer", {
+        get: function () {
+            return this._attributesBuffer;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(AttributesView.prototype, "size", {
+        /**
+         *
+         * @returns {number}
+         */
+        get: function () {
+            return this._size;
+        },
+        set: function (value) {
+            if (this._size == value)
+                return;
+            this._size = value;
+            this._attributesBuffer._removeView(this._index);
+            this._index = this._attributesBuffer._addView(this);
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(AttributesView.prototype, "dimensions", {
+        /**
+         *
+         * @returns {number}
+         */
+        get: function () {
+            return this._dimensions;
+        },
+        set: function (value) {
+            if (this._dimensions == value)
+                return;
+            this._dimensions = value;
+            //reset view
+            this._attributesBuffer._removeView(this._index);
+            this._index = this._attributesBuffer._addView(this);
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(AttributesView.prototype, "count", {
+        get: function () {
+            return this._attributesBuffer.count;
+        },
+        set: function (value) {
+            this._attributesBuffer.count = value;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(AttributesView.prototype, "offset", {
+        get: function () {
+            return this._attributesBuffer._getOffset(this._index);
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(AttributesView.prototype, "length", {
+        get: function () {
+            return this._attributesBuffer.count * this._dimensions;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    AttributesView.prototype.set = function (values, offset) {
+        if (offset === void 0) { offset = 0; }
+        this._attributesBuffer._setAttributes(this._index, (values instanceof Array) ? new (this._arrayClass)(values) : values, offset);
+        this._localArrayBuffer = null;
+    };
+    AttributesView.prototype.get = function (count, offset) {
+        if (offset === void 0) { offset = 0; }
+        if (!this._localArrayBuffer)
+            this._localArrayBuffer = this._attributesBuffer._getLocalArrayBuffer(this._index);
+        var len = this._dimensions * this._size;
+        return new (this._arrayClass)(this._localArrayBuffer, offset * len, count * this._dimensions);
+    };
+    AttributesView.prototype._internalClone = function (attributesBuffer) {
+        return (this._cloneCache = new AttributesView(this._arrayClass, this._dimensions, attributesBuffer));
+    };
+    AttributesView.prototype.clone = function (attributesBuffer) {
+        if (attributesBuffer === void 0) { attributesBuffer = null; }
+        if (attributesBuffer)
+            this._internalClone(attributesBuffer);
+        if (!this._cloneCache)
+            this._attributesBuffer.clone();
+        var cloneCache = this._cloneCache;
+        this._cloneCache = null;
+        return cloneCache;
+    };
+    /**
+     * @inheritDoc
+     */
+    AttributesView.prototype.dispose = function () {
+        this._attributesBuffer._removeView(this._index);
+        this._attributesBuffer = null;
+    };
+    AttributesView.assetType = "[attributes AttributesView]";
+    return AttributesView;
+})(AssetBase);
+module.exports = AttributesView;
+
+},{"awayjs-core/lib/attributes/AttributesBuffer":"awayjs-core/lib/attributes/AttributesBuffer","awayjs-core/lib/library/AssetBase":"awayjs-core/lib/library/AssetBase"}],"awayjs-core/lib/attributes/Byte4Attributes":[function(require,module,exports){
+var __extends = this.__extends || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    __.prototype = b.prototype;
+    d.prototype = new __();
+};
+var AttributesView = require("awayjs-core/lib/attributes/AttributesView");
+var Byte4Attributes = (function (_super) {
+    __extends(Byte4Attributes, _super);
+    function Byte4Attributes(attributesBufferLength, unsigned) {
+        if (unsigned === void 0) { unsigned = true; }
+        _super.call(this, unsigned ? Uint8Array : Int8Array, 4, attributesBufferLength);
+    }
+    Object.defineProperty(Byte4Attributes.prototype, "assetType", {
+        /**
+         *
+         * @returns {string}
+         */
+        get: function () {
+            return Byte4Attributes.assetType;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Byte4Attributes.prototype.set = function (values, offset) {
+        if (offset === void 0) { offset = 0; }
+        _super.prototype.set.call(this, values, offset);
+    };
+    Byte4Attributes.prototype.get = function (count, offset) {
+        if (offset === void 0) { offset = 0; }
+        return _super.prototype.get.call(this, count, offset);
+    };
+    Byte4Attributes.prototype._internalClone = function (attributesBuffer) {
+        return (this._cloneCache = new Byte4Attributes(attributesBuffer, this._arrayClass == Uint8Array));
+    };
+    Byte4Attributes.prototype.clone = function (attributesBuffer) {
+        if (attributesBuffer === void 0) { attributesBuffer = null; }
+        return _super.prototype.clone.call(this, attributesBuffer);
+    };
+    Byte4Attributes.assetType = "[attributes Byte4Attributes]";
+    return Byte4Attributes;
+})(AttributesView);
+module.exports = Byte4Attributes;
+
+},{"awayjs-core/lib/attributes/AttributesView":"awayjs-core/lib/attributes/AttributesView"}],"awayjs-core/lib/attributes/Float1Attributes":[function(require,module,exports){
+var __extends = this.__extends || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    __.prototype = b.prototype;
+    d.prototype = new __();
+};
+var AttributesView = require("awayjs-core/lib/attributes/AttributesView");
+var Float1Attributes = (function (_super) {
+    __extends(Float1Attributes, _super);
+    function Float1Attributes(attributesBufferLength) {
+        _super.call(this, Float32Array, 1, attributesBufferLength);
+    }
+    Object.defineProperty(Float1Attributes.prototype, "assetType", {
+        /**
+         *
+         * @returns {string}
+         */
+        get: function () {
+            return Float1Attributes.assetType;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Float1Attributes.prototype.set = function (values, offset) {
+        if (offset === void 0) { offset = 0; }
+        _super.prototype.set.call(this, values, offset);
+    };
+    Float1Attributes.prototype.get = function (count, offset) {
+        if (offset === void 0) { offset = 0; }
+        return _super.prototype.get.call(this, count, offset);
+    };
+    Float1Attributes.prototype._internalClone = function (attributesBuffer) {
+        return (this._cloneCache = new Float1Attributes(attributesBuffer));
+    };
+    Float1Attributes.prototype.clone = function (attributesBuffer) {
+        if (attributesBuffer === void 0) { attributesBuffer = null; }
+        return _super.prototype.clone.call(this, attributesBuffer);
+    };
+    Float1Attributes.assetType = "[attributes Float1Attributes]";
+    return Float1Attributes;
+})(AttributesView);
+module.exports = Float1Attributes;
+
+},{"awayjs-core/lib/attributes/AttributesView":"awayjs-core/lib/attributes/AttributesView"}],"awayjs-core/lib/attributes/Float2Attributes":[function(require,module,exports){
+var __extends = this.__extends || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    __.prototype = b.prototype;
+    d.prototype = new __();
+};
+var AttributesView = require("awayjs-core/lib/attributes/AttributesView");
+var Float2Attributes = (function (_super) {
+    __extends(Float2Attributes, _super);
+    function Float2Attributes(attributesBufferLength) {
+        _super.call(this, Float32Array, 2, attributesBufferLength);
+    }
+    Object.defineProperty(Float2Attributes.prototype, "assetType", {
+        /**
+         *
+         * @returns {string}
+         */
+        get: function () {
+            return Float2Attributes.assetType;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Float2Attributes.prototype.set = function (values, offset) {
+        if (offset === void 0) { offset = 0; }
+        _super.prototype.set.call(this, values, offset);
+    };
+    Float2Attributes.prototype.get = function (count, offset) {
+        if (offset === void 0) { offset = 0; }
+        return _super.prototype.get.call(this, count, offset);
+    };
+    Float2Attributes.prototype._internalClone = function (attributesBuffer) {
+        return (this._cloneCache = new Float2Attributes(attributesBuffer));
+    };
+    Float2Attributes.prototype.clone = function (attributesBuffer) {
+        if (attributesBuffer === void 0) { attributesBuffer = null; }
+        return _super.prototype.clone.call(this, attributesBuffer);
+    };
+    Float2Attributes.assetType = "[attributes Float2Attributes]";
+    return Float2Attributes;
+})(AttributesView);
+module.exports = Float2Attributes;
+
+},{"awayjs-core/lib/attributes/AttributesView":"awayjs-core/lib/attributes/AttributesView"}],"awayjs-core/lib/attributes/Float3Attributes":[function(require,module,exports){
+var __extends = this.__extends || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    __.prototype = b.prototype;
+    d.prototype = new __();
+};
+var AttributesView = require("awayjs-core/lib/attributes/AttributesView");
+var Float3Attributes = (function (_super) {
+    __extends(Float3Attributes, _super);
+    function Float3Attributes(attributesBufferLength) {
+        _super.call(this, Float32Array, 3, attributesBufferLength);
+    }
+    Object.defineProperty(Float3Attributes.prototype, "assetType", {
+        /**
+         *
+         * @returns {string}
+         */
+        get: function () {
+            return Float3Attributes.assetType;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Float3Attributes.prototype.set = function (values, offset) {
+        if (offset === void 0) { offset = 0; }
+        _super.prototype.set.call(this, values, offset);
+    };
+    Float3Attributes.prototype.get = function (count, offset) {
+        if (offset === void 0) { offset = 0; }
+        return _super.prototype.get.call(this, count, offset);
+    };
+    Float3Attributes.prototype._internalClone = function (attributesBuffer) {
+        return (this._cloneCache = new Float3Attributes(attributesBuffer));
+    };
+    Float3Attributes.prototype.clone = function (attributesBuffer) {
+        if (attributesBuffer === void 0) { attributesBuffer = null; }
+        return _super.prototype.clone.call(this, attributesBuffer);
+    };
+    Float3Attributes.assetType = "[attributes Float3Attributes]";
+    return Float3Attributes;
+})(AttributesView);
+module.exports = Float3Attributes;
+
+},{"awayjs-core/lib/attributes/AttributesView":"awayjs-core/lib/attributes/AttributesView"}],"awayjs-core/lib/attributes/Float4Attributes":[function(require,module,exports){
+var __extends = this.__extends || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    __.prototype = b.prototype;
+    d.prototype = new __();
+};
+var AttributesView = require("awayjs-core/lib/attributes/AttributesView");
+var Float4Attributes = (function (_super) {
+    __extends(Float4Attributes, _super);
+    function Float4Attributes(attributesBufferLength) {
+        _super.call(this, Float32Array, 4, attributesBufferLength);
+    }
+    Object.defineProperty(Float4Attributes.prototype, "assetType", {
+        /**
+         *
+         * @returns {string}
+         */
+        get: function () {
+            return Float4Attributes.assetType;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Float4Attributes.prototype.set = function (values, offset) {
+        if (offset === void 0) { offset = 0; }
+        _super.prototype.set.call(this, values, offset);
+    };
+    Float4Attributes.prototype.get = function (count, offset) {
+        if (offset === void 0) { offset = 0; }
+        return _super.prototype.get.call(this, count, offset);
+    };
+    Float4Attributes.prototype._internalClone = function (attributesBuffer) {
+        return (this._cloneCache = new Float4Attributes(attributesBuffer));
+    };
+    Float4Attributes.prototype.clone = function (attributesBuffer) {
+        if (attributesBuffer === void 0) { attributesBuffer = null; }
+        return _super.prototype.clone.call(this, attributesBuffer);
+    };
+    Float4Attributes.assetType = "[attributes Float4Attributes]";
+    return Float4Attributes;
+})(AttributesView);
+module.exports = Float4Attributes;
+
+},{"awayjs-core/lib/attributes/AttributesView":"awayjs-core/lib/attributes/AttributesView"}],"awayjs-core/lib/attributes/Short2Attributes":[function(require,module,exports){
+var __extends = this.__extends || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    __.prototype = b.prototype;
+    d.prototype = new __();
+};
+var AttributesView = require("awayjs-core/lib/attributes/AttributesView");
+var Short2Attributes = (function (_super) {
+    __extends(Short2Attributes, _super);
+    function Short2Attributes(attributesBufferLength, unsigned) {
+        if (unsigned === void 0) { unsigned = true; }
+        _super.call(this, unsigned ? Uint16Array : Int16Array, 2, attributesBufferLength);
+    }
+    Object.defineProperty(Short2Attributes.prototype, "assetType", {
+        /**
+         *
+         * @returns {string}
+         */
+        get: function () {
+            return Short2Attributes.assetType;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Short2Attributes.prototype.set = function (values, offset) {
+        if (offset === void 0) { offset = 0; }
+        _super.prototype.set.call(this, values, offset);
+    };
+    Short2Attributes.prototype.get = function (count, offset) {
+        if (offset === void 0) { offset = 0; }
+        return _super.prototype.get.call(this, count, offset);
+    };
+    Short2Attributes.prototype._internalClone = function (attributesBuffer) {
+        return (this._cloneCache = new Short2Attributes(attributesBuffer, this._arrayClass == Uint16Array));
+    };
+    Short2Attributes.prototype.clone = function (attributesBuffer) {
+        if (attributesBuffer === void 0) { attributesBuffer = null; }
+        return _super.prototype.clone.call(this, attributesBuffer);
+    };
+    Short2Attributes.assetType = "[attributes Short2Attributes]";
+    return Short2Attributes;
+})(AttributesView);
+module.exports = Short2Attributes;
+
+},{"awayjs-core/lib/attributes/AttributesView":"awayjs-core/lib/attributes/AttributesView"}],"awayjs-core/lib/attributes/Short3Attributes":[function(require,module,exports){
+var __extends = this.__extends || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    __.prototype = b.prototype;
+    d.prototype = new __();
+};
+var AttributesView = require("awayjs-core/lib/attributes/AttributesView");
+var Short3Attributes = (function (_super) {
+    __extends(Short3Attributes, _super);
+    function Short3Attributes(attributesBufferLength, unsigned) {
+        if (unsigned === void 0) { unsigned = true; }
+        _super.call(this, unsigned ? Uint16Array : Int16Array, 3, attributesBufferLength);
+    }
+    Object.defineProperty(Short3Attributes.prototype, "assetType", {
+        /**
+         *
+         * @returns {string}
+         */
+        get: function () {
+            return Short3Attributes.assetType;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Short3Attributes.prototype.set = function (values, offset) {
+        if (offset === void 0) { offset = 0; }
+        _super.prototype.set.call(this, values, offset);
+    };
+    Short3Attributes.prototype.get = function (count, offset) {
+        if (offset === void 0) { offset = 0; }
+        return _super.prototype.get.call(this, count, offset);
+    };
+    Short3Attributes.prototype._internalClone = function (attributesBuffer) {
+        return (this._cloneCache = new Short3Attributes(attributesBuffer, this._arrayClass == Uint16Array));
+    };
+    Short3Attributes.prototype.clone = function (attributesBuffer) {
+        if (attributesBuffer === void 0) { attributesBuffer = null; }
+        return _super.prototype.clone.call(this, attributesBuffer);
+    };
+    Short3Attributes.assetType = "[attributes Short3Attributes]";
+    return Short3Attributes;
+})(AttributesView);
+module.exports = Short3Attributes;
+
+},{"awayjs-core/lib/attributes/AttributesView":"awayjs-core/lib/attributes/AttributesView"}],"awayjs-core/lib/data/BitmapImage2D":[function(require,module,exports){
 var __extends = this.__extends || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
@@ -638,7 +1337,7 @@ var BitmapImage2D = (function (_super) {
         if (this._locked)
             this._imageData = this._context.getImageData(0, 0, this._rect.width, this._rect.height);
     };
-    BitmapImage2D.assetType = "[asset BitmapImage2D]";
+    BitmapImage2D.assetType = "[image BitmapImage2D]";
     return BitmapImage2D;
 })(Image2D);
 module.exports = BitmapImage2D;
@@ -1310,7 +2009,7 @@ var BitmapImageCube = (function (_super) {
                 this._imageData[i] = this._context[i].getImageData(0, 0, this._size, this._size);
         }
     };
-    BitmapImageCube.assetType = "[asset BitmapImageCube]";
+    BitmapImageCube.assetType = "[image BitmapImageCube]";
     BitmapImageCube.posX = 0;
     BitmapImageCube.negX = 1;
     BitmapImageCube.posY = 2;
@@ -1507,9 +2206,10 @@ var __extends = this.__extends || function (d, b) {
     __.prototype = b.prototype;
     d.prototype = new __();
 };
+var Float3Attributes = require("awayjs-core/lib/attributes/Float3Attributes");
+var Float2Attributes = require("awayjs-core/lib/attributes/Float2Attributes");
 var SubGeometryBase = require("awayjs-core/lib/data/SubGeometryBase");
-var Vector3D = require("awayjs-core/lib/geom/Vector3D");
-var SubGeometryEvent = require("awayjs-core/lib/events/SubGeometryEvent");
+var SubGeometryUtils = require("awayjs-core/lib/utils/SubGeometryUtils");
 /**
  * @class away.base.CurveSubGeometry
  */
@@ -1518,26 +2218,46 @@ var CurveSubGeometry = (function (_super) {
     /**
      *
      */
-    function CurveSubGeometry(concatenatedArrays) {
-        _super.call(this, concatenatedArrays);
-        this._positionsDirty = true;
-        this._curvesDirty = true;
-        this._faceNormalsDirty = true;
-        this._vertexNormalsDirty = true;
+    function CurveSubGeometry(concatenatedBuffer) {
+        if (concatenatedBuffer === void 0) { concatenatedBuffer = null; }
+        _super.call(this, concatenatedBuffer);
+        this._numVertices = 0;
         this._uvsDirty = true;
-        this._secondaryUVsDirty = true;
-        this._jointIndicesDirty = true;
-        this._jointWeightsDirty = true;
-        this._concatenateArrays = true;
-        this._autoDeriveNormals = false;
-        this._useFaceWeights = false;
         this._autoDeriveUVs = false;
         this._scaleU = 1;
         this._scaleV = 1;
+        this._positions = new Float3Attributes(this._concatenatedBuffer);
+        this._curves = new Float2Attributes(this._concatenatedBuffer);
     }
     Object.defineProperty(CurveSubGeometry.prototype, "assetType", {
         get: function () {
             return CurveSubGeometry.assetType;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(CurveSubGeometry.prototype, "numVertices", {
+        get: function () {
+            return this._numVertices;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(CurveSubGeometry.prototype, "autoDeriveUVs", {
+        /**
+         * Defines whether a UV buffer should be automatically generated to contain dummy UV coordinates.
+         * Set to true if a geometry lacks UV data but uses a material that requires it, or leave as false
+         * in cases where UV data is explicitly defined or the material does not require UV data.
+         */
+        get: function () {
+            return this._autoDeriveUVs;
+        },
+        set: function (value) {
+            if (this._autoDeriveUVs == value)
+                return;
+            this._autoDeriveUVs = value;
+            if (value)
+                this._uvsDirty = true;
         },
         enumerable: true,
         configurable: true
@@ -1562,116 +2282,11 @@ var CurveSubGeometry = (function (_super) {
         enumerable: true,
         configurable: true
     });
-    Object.defineProperty(CurveSubGeometry.prototype, "useCondensedIndices", {
-        /**
-         * Offers the option of enabling GPU accelerated animation on skeletons larger than 32 joints
-         * by condensing the number of joint index values required per mesh. Only applicable to
-         * skeleton animations that utilise more than one mesh object. Defaults to false.
-         */
-        get: function () {
-            return this._useCondensedIndices;
-        },
-        set: function (value) {
-            if (this._useCondensedIndices == value)
-                return;
-            this._useCondensedIndices = value;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    CurveSubGeometry.prototype._pUpdateStrideOffset = function () {
-        if (this._concatenateArrays) {
-            this._pOffset[CurveSubGeometry.VERTEX_DATA] = 0;
-            //always have positions
-            this._pOffset[CurveSubGeometry.POSITION_DATA] = 0;
-            var stride = 3;
-            if (this._curves != null) {
-                this._pOffset[CurveSubGeometry.CURVE_DATA] = stride;
-                stride += 2;
-            }
-            if (this._uvs != null) {
-                this._pOffset[CurveSubGeometry.UV_DATA] = stride;
-                stride += 2;
-            }
-            this._pStride[CurveSubGeometry.VERTEX_DATA] = stride;
-            this._pStride[CurveSubGeometry.POSITION_DATA] = stride;
-            this._pStride[CurveSubGeometry.CURVE_DATA] = stride;
-            this._pStride[CurveSubGeometry.UV_DATA] = stride;
-            var len = this._pNumVertices * stride;
-            if (this._pVertices == null)
-                this._pVertices = new Array(len);
-            else if (this._pVertices.length != len)
-                this._pVertices.length = len;
-        }
-        else {
-            this._pOffset[CurveSubGeometry.POSITION_DATA] = 0;
-            this._pOffset[CurveSubGeometry.CURVE_DATA] = 0;
-            this._pOffset[CurveSubGeometry.UV_DATA] = 0;
-            this._pStride[CurveSubGeometry.POSITION_DATA] = 3;
-            this._pStride[CurveSubGeometry.CURVE_DATA] = 2;
-            this._pStride[CurveSubGeometry.UV_DATA] = 2;
-        }
-        this._pStrideOffsetDirty = false;
-    };
-    Object.defineProperty(CurveSubGeometry.prototype, "autoDeriveUVs", {
-        /**
-         * Defines whether a UV buffer should be automatically generated to contain dummy UV coordinates.
-         * Set to true if a geometry lacks UV data but uses a material that requires it, or leave as false
-         * in cases where UV data is explicitly defined or the material does not require UV data.
-         */
-        get: function () {
-            return this._autoDeriveUVs;
-        },
-        set: function (value) {
-            if (this._autoDeriveUVs == value)
-                return;
-            this._autoDeriveUVs = value;
-            if (value)
-                this.notifyUVsUpdate();
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(CurveSubGeometry.prototype, "autoDeriveNormals", {
-        /**
-         * True if the vertex normals should be derived from the geometry, false if the vertex normals are set
-         * explicitly.
-         */
-        get: function () {
-            return this._autoDeriveNormals;
-        },
-        //remove
-        set: function (value) {
-            if (this._autoDeriveNormals == value)
-                return;
-            this._autoDeriveNormals = value;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(CurveSubGeometry.prototype, "vertices", {
-        /**
-         *
-         */
-        get: function () {
-            if (this._positionsDirty)
-                this.updatePositions(this._positions);
-            if (this._curvesDirty)
-                this.updateCurves(this._curves);
-            if (this._uvsDirty)
-                this.updateUVs(this._uvs);
-            return this._pVertices;
-        },
-        enumerable: true,
-        configurable: true
-    });
     Object.defineProperty(CurveSubGeometry.prototype, "positions", {
         /**
          *
          */
         get: function () {
-            if (this._positionsDirty)
-                this.updatePositions(this._positions);
             return this._positions;
         },
         enumerable: true,
@@ -1682,21 +2297,7 @@ var CurveSubGeometry = (function (_super) {
          *
          */
         get: function () {
-            if (this._curvesDirty)
-                this.updateCurves(this._curves);
             return this._curves;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(CurveSubGeometry.prototype, "faceNormals", {
-        /**
-         * The raw data of the face normals, in the same order as the faces are listed in the index list.
-         */
-        get: function () {
-            if (this._faceNormalsDirty)
-                this.updateFaceNormals();
-            return this._faceNormals;
         },
         enumerable: true,
         configurable: true
@@ -1707,390 +2308,132 @@ var CurveSubGeometry = (function (_super) {
          */
         get: function () {
             if (this._uvsDirty)
-                this.updateUVs(this._uvs);
+                this.setUVs(this._uvs);
             return this._uvs;
         },
         enumerable: true,
         configurable: true
     });
-    Object.defineProperty(CurveSubGeometry.prototype, "useFaceWeights", {
-        /**
-         * Indicates whether or not to take the size of faces into account when auto-deriving vertex normals and tangents.
-         */
-        get: function () {
-            return this._useFaceWeights;
-        },
-        set: function (value) {
-            if (this._useFaceWeights == value)
-                return;
-            this._useFaceWeights = value;
-            this._faceNormalsDirty = true;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(CurveSubGeometry.prototype, "condensedIndexLookUp", {
-        get: function () {
-            return this._condensedIndexLookUp;
-        },
-        enumerable: true,
-        configurable: true
-    });
     CurveSubGeometry.prototype.getBoundingPositions = function () {
-        if (this._positionsDirty)
-            this.updatePositions(this._positions);
-        return this._positions;
+        return this._positions.get(this._numVertices);
     };
-    /**
-     *
-     */
-    CurveSubGeometry.prototype.updatePositions = function (values) {
-        var i;
-        var index;
-        var stride;
-        var positions;
-        this._positions = values;
-        if (this._positions == null)
-            this._positions = new Array();
-        this._pNumVertices = this._positions.length / 3;
-        if (this._concatenateArrays) {
-            var len = this._pNumVertices * this.getStride(CurveSubGeometry.VERTEX_DATA);
-            if (this._pVertices == null)
-                this._pVertices = new Array(len);
-            else if (this._pVertices.length != len)
-                this._pVertices.length = len;
-            i = 0;
-            index = this.getOffset(CurveSubGeometry.POSITION_DATA);
-            stride = this.getStride(CurveSubGeometry.POSITION_DATA);
-            positions = this._pVertices;
-            while (i < values.length) {
-                positions[index] = values[i++];
-                positions[index + 1] = values[i++];
-                positions[index + 2] = values[i++];
-                index += stride;
-            }
+    CurveSubGeometry.prototype.setPositions = function (values, offset) {
+        if (offset === void 0) { offset = 0; }
+        if (values == this._positions)
+            return;
+        if (values instanceof Float3Attributes) {
+            this.notifyVerticesDispose(this._positions);
+            this._positions = values;
         }
+        else if (values) {
+            this._positions.set(values, offset);
+        }
+        else {
+            this.notifyVerticesDispose(this._positions);
+            this._positions = new Float3Attributes(this._concatenatedBuffer);
+        }
+        this._numVertices = this._positions.count;
+        if (this._autoDeriveUVs)
+            this.notifyVerticesUpdate(this._uvs);
         this.pInvalidateBounds();
-        this.notifyPositionsUpdate();
-        this._positionsDirty = false;
+        this.notifyVerticesUpdate(this._positions);
+        this._verticesDirty[this._positions.id] = false;
     };
-    /**
-     * Updates the vertex normals based on the geometry.
-     */
-    CurveSubGeometry.prototype.updateCurves = function (values) {
-        var i;
-        var index;
-        var offset;
-        var stride;
-        var curves;
-        if (true) {
-            if ((this._curves == null || values == null) && (this._curves != null || values != null)) {
-                if (this._concatenateArrays)
-                    this._pNotifyVerticesUpdate();
-                else
-                    this._pStrideOffsetDirty = true;
-            }
+    CurveSubGeometry.prototype.setCurves = function (values, offset) {
+        if (offset === void 0) { offset = 0; }
+        if (values == this._curves)
+            return;
+        if (values instanceof Float2Attributes) {
+            this.notifyVerticesDispose(this._curves);
             this._curves = values;
-            if (values != null && this._concatenateArrays) {
-                i = 0;
-                index = this.getOffset(CurveSubGeometry.CURVE_DATA);
-                stride = this.getStride(CurveSubGeometry.CURVE_DATA);
-                curves = this._pVertices;
-                while (i < values.length) {
-                    curves[index] = values[i++];
-                    curves[index + 1] = values[i++];
-                    index += stride;
-                }
-            }
         }
-        this.notifyCurvesUpdate();
-        this._curvesDirty = false;
+        else if (values) {
+            this._curves.set(values, offset);
+        }
+        else {
+            this.notifyVerticesDispose(this._curves);
+            this._curves = new Float2Attributes(this._concatenatedBuffer);
+        }
+        this.notifyVerticesUpdate(this._curves);
+        this._verticesDirty[this._curves.id] = false;
     };
-    /**
-     * Updates the uvs based on the geometry.
-     */
-    CurveSubGeometry.prototype.updateUVs = function (values) {
-        var i;
-        var index;
-        var offset;
-        var stride;
-        var uvs;
+    CurveSubGeometry.prototype.setUVs = function (values, offset) {
+        if (offset === void 0) { offset = 0; }
         if (!this._autoDeriveUVs) {
-            if ((this._uvs == null || values == null) && (this._uvs != null || values != null)) {
-                if (this._concatenateArrays)
-                    this._pNotifyVerticesUpdate();
-                else
-                    this._pStrideOffsetDirty = true;
+            if (values == this._uvs)
+                return;
+            if (values instanceof Float2Attributes) {
+                this.notifyVerticesDispose(this._uvs);
+                this._uvs = values;
             }
-            this._uvs = values;
-            if (values != null && this._concatenateArrays) {
-                i = 0;
-                index = this.getOffset(CurveSubGeometry.UV_DATA);
-                stride = this.getStride(CurveSubGeometry.UV_DATA);
-                uvs = this._pVertices;
-                while (i < values.length) {
-                    uvs[index] = values[i++];
-                    uvs[index + 1] = values[i++];
-                    index += stride;
-                }
+            else if (values) {
+                if (!this._uvs)
+                    this._uvs = new Float2Attributes(this._concatenatedBuffer);
+                this._uvs.set(values, offset);
+            }
+            else if (this._uvs) {
+                this.notifyVerticesDispose(this._uvs);
+                this._uvs = null;
+                return;
             }
         }
         else {
-            if (this._uvs == null) {
-                this._uvs = new Array(this._positions.length * 2 / 3);
-                if (this._concatenateArrays)
-                    this._pNotifyVerticesUpdate();
-                else
-                    this._pStrideOffsetDirty = true;
-            }
-            offset = this.getOffset(CurveSubGeometry.UV_DATA);
-            stride = this.getStride(CurveSubGeometry.UV_DATA);
-            //autoderived uvs
-            uvs = this._concatenateArrays ? this._pVertices : this._uvs;
-            i = 0;
-            index = offset;
-            var uvIdx = 0;
-            //clear uv values
-            var lenV = uvs.length;
-            while (index < lenV) {
-                if (this._concatenateArrays) {
-                    this._uvs[i++] = uvs[index] = uvIdx * .5;
-                    this._uvs[i++] = uvs[index + 1] = 1.0 - (uvIdx & 1);
-                }
-                else {
-                    uvs[index] = uvIdx * .5;
-                    uvs[index + 1] = 1.0 - (uvIdx & 1);
-                }
-                if (++uvIdx == 3)
-                    uvIdx = 0;
-                index += stride;
-            }
+            this._uvs = SubGeometryUtils.generateUVs(this._pIndices, this._uvs, this._concatenatedBuffer, this._numVertices);
         }
-        this.notifyUVsUpdate();
-        this._uvsDirty = false;
+        this.notifyVerticesUpdate(this._uvs);
+        this._verticesDirty[this._uvs.id] = false;
     };
     /**
      *
      */
     CurveSubGeometry.prototype.dispose = function () {
         _super.prototype.dispose.call(this);
+        this._positions.dispose();
         this._positions = null;
+        this._curves.dispose();
         this._curves = null;
-        this._uvs = null;
-        this._faceNormals = null;
-        this._faceWeights = null;
-    };
-    /**
-     * Updates the face indices of the CurveSubGeometry.
-     *
-     * @param indices The face indices to upload.
-     */
-    CurveSubGeometry.prototype.updateIndices = function (indices) {
-        _super.prototype.updateIndices.call(this, indices);
-        this._faceNormalsDirty = true;
-        if (this._autoDeriveNormals)
-            this._vertexNormalsDirty = true;
+        if (this._uvs) {
+            this._uvs.dispose();
+            this._uvs = null;
+        }
     };
     /**
      * Clones the current object
      * @return An exact duplicate of the current object.
      */
     CurveSubGeometry.prototype.clone = function () {
-        var clone = new CurveSubGeometry(this._concatenateArrays);
-        clone.updateIndices(this._pIndices.concat());
-        clone.updatePositions(this._positions.concat());
-        if (this._curves)
-            clone.updateCurves(this._curves.concat());
-        else
-            clone.updateCurves(null);
-        if (this._uvs && !this._autoDeriveUVs)
-            clone.updateUVs(this._uvs.concat());
-        else
-            clone.updateUVs(null);
+        var clone = new CurveSubGeometry(this._concatenatedBuffer ? this._concatenatedBuffer.clone() : null);
+        clone.setIndices(this._pIndices.clone());
+        clone.setPositions(this._positions.clone());
+        clone.setCurves(this._curves.clone());
+        clone.setUVs((this._uvs && !this._autoDeriveUVs) ? this._uvs.clone() : null);
         return clone;
     };
     CurveSubGeometry.prototype.scaleUV = function (scaleU, scaleV) {
         if (scaleU === void 0) { scaleU = 1; }
         if (scaleV === void 0) { scaleV = 1; }
-        var index;
-        var offset;
-        var stride;
-        var uvs;
-        uvs = this._uvs;
-        var ratioU = scaleU / this._scaleU;
-        var ratioV = scaleV / this._scaleV;
-        this._scaleU = scaleU;
-        this._scaleV = scaleV;
-        var len = uvs.length;
-        offset = 0;
-        stride = 2;
-        index = offset;
-        while (index < len) {
-            uvs[index] *= ratioU;
-            uvs[index + 1] *= ratioV;
-            index += stride;
-        }
-        this.notifyUVsUpdate();
+        SubGeometryUtils.scaleUVs(scaleU, scaleV, this.uvs, this.uvs.count);
     };
     /**
      * Scales the geometry.
      * @param scale The amount by which to scale.
      */
+    /**
+     * Scales the geometry.
+     * @param scale The amount by which to scale.
+     */
     CurveSubGeometry.prototype.scale = function (scale) {
-        var i;
-        var index;
-        var offset;
-        var stride;
-        var positions;
-        positions = this._positions;
-        var len = positions.length;
-        offset = 0;
-        stride = 3;
-        i = 0;
-        index = offset;
-        while (i < len) {
-            positions[index] *= scale;
-            positions[index + 1] *= scale;
-            positions[index + 2] *= scale;
-            i += 3;
-            index += stride;
-        }
-        this.notifyPositionsUpdate();
+        SubGeometryUtils.scale(scale, this.positions, this._numVertices);
     };
     CurveSubGeometry.prototype.applyTransformation = function (transform) {
-        var positions;
-        if (this._concatenateArrays) {
-            positions = this._pVertices;
-        }
-        else {
-            positions = this._positions;
-        }
-        var len = this._positions.length / 3;
-        var i;
-        var i1;
-        var i2;
-        var vector = new Vector3D();
-        var invTranspose;
-        var vi0 = this.getOffset(CurveSubGeometry.POSITION_DATA);
-        var vStride = this.getStride(CurveSubGeometry.POSITION_DATA);
-        for (i = 0; i < len; ++i) {
-            i1 = vi0 + 1;
-            i2 = vi0 + 2;
-            // bake position
-            vector.x = positions[vi0];
-            vector.y = positions[i1];
-            vector.z = positions[i2];
-            vector = transform.transformVector(vector);
-            positions[vi0] = vector.x;
-            positions[i1] = vector.y;
-            positions[i2] = vector.z;
-            vi0 += vStride;
-        }
-        this.notifyPositionsUpdate();
-    };
-    /**
-     * Updates the normals for each face.
-     */
-    CurveSubGeometry.prototype.updateFaceNormals = function () {
-        var i = 0;
-        var j = 0;
-        var k = 0;
-        var index;
-        var offset;
-        var stride;
-        var x1, x2, x3;
-        var y1, y2, y3;
-        var z1, z2, z3;
-        var dx1, dy1, dz1;
-        var dx2, dy2, dz2;
-        var cx, cy, cz;
-        var d;
-        var positions = this._positions;
-        var len = this._pIndices.length;
-        if (this._faceNormals == null)
-            this._faceNormals = new Array(len);
-        if (this._useFaceWeights && this._faceWeights == null)
-            this._faceWeights = new Array(len / 3);
-        while (i < len) {
-            index = this._pIndices[i++] * 3;
-            x1 = positions[index];
-            y1 = positions[index + 1];
-            z1 = positions[index + 2];
-            index = this._pIndices[i++] * 3;
-            x2 = positions[index];
-            y2 = positions[index + 1];
-            z2 = positions[index + 2];
-            index = this._pIndices[i++] * 3;
-            x3 = positions[index];
-            y3 = positions[index + 1];
-            z3 = positions[index + 2];
-            dx1 = x3 - x1;
-            dy1 = y3 - y1;
-            dz1 = z3 - z1;
-            dx2 = x2 - x1;
-            dy2 = y2 - y1;
-            dz2 = z2 - z1;
-            cx = dz1 * dy2 - dy1 * dz2;
-            cy = dx1 * dz2 - dz1 * dx2;
-            cz = dy1 * dx2 - dx1 * dy2;
-            d = Math.sqrt(cx * cx + cy * cy + cz * cz);
-            // length of cross product = 2*triangle area
-            if (this._useFaceWeights) {
-                var w = d * 10000;
-                if (w < 1)
-                    w = 1;
-                this._faceWeights[k++] = w;
-            }
-            d = 1 / d;
-            this._faceNormals[j++] = cx * d;
-            this._faceNormals[j++] = cy * d;
-            this._faceNormals[j++] = cz * d;
-        }
-        this._faceNormalsDirty = false;
-    };
-    CurveSubGeometry.prototype._pNotifyVerticesUpdate = function () {
-        this._pStrideOffsetDirty = true;
-        this.notifyPositionsUpdate();
-        this.notifyCurvesUpdate();
-        this.notifyUVsUpdate();
-    };
-    CurveSubGeometry.prototype.notifyPositionsUpdate = function () {
-        if (this._positionsDirty)
-            return;
-        this._positionsDirty = true;
-        if (!this._positionsUpdated)
-            this._positionsUpdated = new SubGeometryEvent(SubGeometryEvent.VERTICES_UPDATED, CurveSubGeometry.POSITION_DATA);
-        this.dispatchEvent(this._positionsUpdated);
-    };
-    CurveSubGeometry.prototype.notifyCurvesUpdate = function () {
-        if (this._curvesDirty)
-            return;
-        this._curvesDirty = true;
-        if (!this._curvesUpdated)
-            this._curvesUpdated = new SubGeometryEvent(SubGeometryEvent.VERTICES_UPDATED, CurveSubGeometry.CURVE_DATA);
-        this.dispatchEvent(this._curvesUpdated);
-    };
-    CurveSubGeometry.prototype.notifyUVsUpdate = function () {
-        if (this._uvsDirty)
-            return;
-        this._uvsDirty = true;
-        if (!this._uvsUpdated)
-            this._uvsUpdated = new SubGeometryEvent(SubGeometryEvent.VERTICES_UPDATED, CurveSubGeometry.UV_DATA);
-        this.dispatchEvent(this._uvsUpdated);
+        SubGeometryUtils.applyTransformation(transform, this.positions, null, null, this.positions.count);
     };
     CurveSubGeometry.assetType = "[asset CurveSubGeometry]";
-    CurveSubGeometry.POSITION_DATA = "positions";
-    CurveSubGeometry.CURVE_DATA = "curves";
-    CurveSubGeometry.UV_DATA = "uvs";
-    //TODO - move these to StageGL
-    CurveSubGeometry.POSITION_FORMAT = "float3";
-    CurveSubGeometry.CURVE_FORMAT = "float2";
-    CurveSubGeometry.UV_FORMAT = "float2";
     return CurveSubGeometry;
 })(SubGeometryBase);
 module.exports = CurveSubGeometry;
 
-},{"awayjs-core/lib/data/SubGeometryBase":"awayjs-core/lib/data/SubGeometryBase","awayjs-core/lib/events/SubGeometryEvent":"awayjs-core/lib/events/SubGeometryEvent","awayjs-core/lib/geom/Vector3D":"awayjs-core/lib/geom/Vector3D"}],"awayjs-core/lib/data/Geometry":[function(require,module,exports){
+},{"awayjs-core/lib/attributes/Float2Attributes":"awayjs-core/lib/attributes/Float2Attributes","awayjs-core/lib/attributes/Float3Attributes":"awayjs-core/lib/attributes/Float3Attributes","awayjs-core/lib/data/SubGeometryBase":"awayjs-core/lib/data/SubGeometryBase","awayjs-core/lib/utils/SubGeometryUtils":"awayjs-core/lib/utils/SubGeometryUtils"}],"awayjs-core/lib/data/Geometry":[function(require,module,exports){
 var __extends = this.__extends || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
@@ -2312,7 +2655,7 @@ var Image2D = (function (_super) {
         if (!ImageUtils.isDimensionValid(this._rect.width) || !ImageUtils.isDimensionValid(this._rect.height))
             throw new Error("Invalid dimension: Width and height must be power of 2 and cannot exceed 2048");
     };
-    Image2D.assetType = "[asset Image2D]";
+    Image2D.assetType = "[image Image2D]";
     return Image2D;
 })(ImageBase);
 module.exports = Image2D;
@@ -2434,7 +2777,7 @@ var ImageCube = (function (_super) {
         if (!ImageUtils.isDimensionValid(this._size))
             throw new Error("Invalid dimension: Width and height must be power of 2 and cannot exceed 2048");
     };
-    ImageCube.assetType = "[asset ImageCube]";
+    ImageCube.assetType = "[image ImageCube]";
     return ImageCube;
 })(ImageBase);
 module.exports = ImageCube;
@@ -2446,9 +2789,11 @@ var __extends = this.__extends || function (d, b) {
     __.prototype = b.prototype;
     d.prototype = new __();
 };
+var AttributesView = require("awayjs-core/lib/attributes/AttributesView");
+var Byte4Attributes = require("awayjs-core/lib/attributes/Byte4Attributes");
+var Float1Attributes = require("awayjs-core/lib/attributes/Float1Attributes");
 var SubGeometryBase = require("awayjs-core/lib/data/SubGeometryBase");
-var TriangleSubGeometry = require("awayjs-core/lib/data/TriangleSubGeometry");
-var SubGeometryEvent = require("awayjs-core/lib/events/SubGeometryEvent");
+var SubGeometryUtils = require("awayjs-core/lib/utils/SubGeometryUtils");
 /**
  * @class LineSubGeometry
  */
@@ -2457,12 +2802,11 @@ var LineSubGeometry = (function (_super) {
     /**
      *
      */
-    function LineSubGeometry() {
-        _super.call(this, true);
-        this._positionsDirty = true;
-        this._boundingPositionDirty = true;
-        this._thicknessDirty = true;
-        this._colorsDirty = true;
+    function LineSubGeometry(concatenatedBuffer) {
+        if (concatenatedBuffer === void 0) { concatenatedBuffer = null; }
+        _super.call(this, concatenatedBuffer);
+        this._numVertices = 0;
+        this._positions = new AttributesView(Float32Array, 6, concatenatedBuffer);
     }
     Object.defineProperty(LineSubGeometry.prototype, "assetType", {
         /**
@@ -2475,65 +2819,12 @@ var LineSubGeometry = (function (_super) {
         enumerable: true,
         configurable: true
     });
-    LineSubGeometry.prototype._pUpdateStrideOffset = function () {
-        this._pOffset[LineSubGeometry.VERTEX_DATA] = 0;
-        var stride = 0;
-        this._pOffset[LineSubGeometry.START_POSITION_DATA] = stride;
-        stride += 3;
-        this._pOffset[LineSubGeometry.END_POSITION_DATA] = stride;
-        stride += 3;
-        this._pOffset[LineSubGeometry.THICKNESS_DATA] = stride;
-        stride += 1;
-        this._pOffset[LineSubGeometry.COLOR_DATA] = stride;
-        stride += 4;
-        this._pStride[LineSubGeometry.VERTEX_DATA] = stride;
-        this._pStride[LineSubGeometry.START_POSITION_DATA] = stride;
-        this._pStride[LineSubGeometry.END_POSITION_DATA] = stride;
-        this._pStride[LineSubGeometry.THICKNESS_DATA] = stride;
-        this._pStride[LineSubGeometry.COLOR_DATA] = stride;
-        var len = this._pNumVertices * stride;
-        if (this._pVertices == null)
-            this._pVertices = new Array(len);
-        else if (this._pVertices.length != len)
-            this._pVertices.length = len;
-        this._pStrideOffsetDirty = false;
-    };
-    Object.defineProperty(LineSubGeometry.prototype, "vertices", {
+    Object.defineProperty(LineSubGeometry.prototype, "positions", {
         /**
          *
          */
         get: function () {
-            if (this._positionsDirty)
-                this.updatePositions(this._startPositions, this._endPositions);
-            if (this._thicknessDirty)
-                this.updateThickness(this._thickness);
-            if (this._colorsDirty)
-                this.updateColors(this._startColors, this._endColors);
-            return this._pVertices;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(LineSubGeometry.prototype, "startPositions", {
-        /**
-         *
-         */
-        get: function () {
-            if (this._positionsDirty)
-                this.updatePositions(this._startPositions, this._endPositions);
-            return this._startPositions;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(LineSubGeometry.prototype, "endPositions", {
-        /**
-         *
-         */
-        get: function () {
-            if (this._positionsDirty)
-                this.updatePositions(this._startPositions, this._endPositions);
-            return this._endPositions;
+            return this._positions;
         },
         enumerable: true,
         configurable: true
@@ -2543,257 +2834,186 @@ var LineSubGeometry = (function (_super) {
          *
          */
         get: function () {
-            if (this._thicknessDirty)
-                this.updateThickness(this._thickness);
             return this._thickness;
         },
         enumerable: true,
         configurable: true
     });
-    Object.defineProperty(LineSubGeometry.prototype, "startColors", {
+    Object.defineProperty(LineSubGeometry.prototype, "colors", {
         /**
          *
          */
         get: function () {
-            if (this._colorsDirty)
-                this.updateColors(this._startColors, this._endColors);
-            return this._startColors;
+            if (!this._colors)
+                this.setColors(this._colors);
+            return this._colors;
         },
         enumerable: true,
         configurable: true
     });
-    Object.defineProperty(LineSubGeometry.prototype, "endColors", {
+    Object.defineProperty(LineSubGeometry.prototype, "numVertices", {
         /**
-         *
+         * The total amount of vertices in the LineSubGeometry.
          */
         get: function () {
-            if (this._colorsDirty)
-                this.updateColors(this._startColors, this._endColors);
-            return this._endColors;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(LineSubGeometry.prototype, "numSegments", {
-        /**
-         * The total amount of segments in the TriangleSubGeometry.
-         */
-        get: function () {
-            return this._numSegments;
+            return this._numVertices;
         },
         enumerable: true,
         configurable: true
     });
     LineSubGeometry.prototype.getBoundingPositions = function () {
-        if (this._boundingPositionDirty)
-            this._boundingPositions = this.startPositions.concat(this.endPositions);
-        return this._boundingPositions;
+        return this._positions.get(this._numVertices);
     };
-    /**
-     *
-     */
-    LineSubGeometry.prototype.updatePositions = function (startValues, endValues) {
-        var i;
-        var j;
-        var values;
-        var index;
-        var stride;
-        var positions;
-        var indices;
-        this._startPositions = startValues;
-        if (this._startPositions == null)
-            this._startPositions = new Array();
-        this._endPositions = endValues;
-        if (this._endPositions == null)
-            this._endPositions = new Array();
-        this._boundingPositionDirty = true;
-        this._numSegments = this._startPositions.length / 3;
-        this._pNumVertices = this._numSegments * 4;
-        var lenV = this._pNumVertices * this.getStride(LineSubGeometry.VERTEX_DATA);
-        if (this._pVertices == null)
-            this._pVertices = new Array(lenV);
-        else if (this._pVertices.length != lenV)
-            this._pVertices.length = lenV;
-        i = 0;
-        j = 0;
-        index = this.getOffset(LineSubGeometry.START_POSITION_DATA);
-        stride = this.getStride(LineSubGeometry.START_POSITION_DATA);
-        positions = this._pVertices;
-        indices = new Array();
-        while (i < startValues.length) {
-            values = (index / stride & 1) ? endValues : startValues;
-            positions[index] = values[i];
-            positions[index + 1] = values[i + 1];
-            positions[index + 2] = values[i + 2];
-            values = (index / stride & 1) ? startValues : endValues;
-            positions[index + 3] = values[i];
-            positions[index + 4] = values[i + 1];
-            positions[index + 5] = values[i + 2];
-            if (++j == 4) {
-                var o = index / stride - 3;
-                indices.push(o, o + 1, o + 2, o + 3, o + 2, o + 1);
-                j = 0;
-                i += 3;
-            }
-            index += stride;
+    LineSubGeometry.prototype.setPositions = function (values, offset) {
+        if (offset === void 0) { offset = 0; }
+        if (values instanceof AttributesView) {
+            this.notifyVerticesDispose(this._positions);
+            this._positions = values;
         }
-        this.updateIndices(indices);
-        this.pInvalidateBounds();
-        this.notifyPositionsUpdate();
-        this._positionsDirty = false;
-    };
-    /**
-     * Updates the thickness.
-     */
-    LineSubGeometry.prototype.updateThickness = function (values) {
-        var i;
-        var j;
-        var index;
-        var offset;
-        var stride;
-        var thickness;
-        this._thickness = values;
-        if (values != null) {
-            i = 0;
-            j = 0;
-            offset = this.getOffset(LineSubGeometry.THICKNESS_DATA);
-            stride = this.getStride(LineSubGeometry.THICKNESS_DATA);
-            thickness = this._pVertices;
-            index = offset;
+        else if (values) {
+            var i = 0;
+            var j = 0;
+            var index = 0;
+            var positions = new Float32Array(values.length * 4);
+            var indices = new Uint16Array(values.length);
             while (i < values.length) {
-                thickness[index] = (Math.floor(0.5 * (index - offset) / stride + 0.5) & 1) ? -values[i] : values[i];
+                if (index / 6 & 1) {
+                    positions[index] = values[i + 3];
+                    positions[index + 1] = values[i + 4];
+                    positions[index + 2] = values[i + 5];
+                    positions[index + 3] = values[i];
+                    positions[index + 4] = values[i + 1];
+                    positions[index + 5] = values[i + 2];
+                }
+                else {
+                    positions[index] = values[i];
+                    positions[index + 1] = values[i + 1];
+                    positions[index + 2] = values[i + 2];
+                    positions[index + 3] = values[i + 3];
+                    positions[index + 4] = values[i + 4];
+                    positions[index + 5] = values[i + 5];
+                }
+                index += 6;
+                if (++j == 4) {
+                    var o = index / 6 - 4;
+                    indices.set([o, o + 1, o + 2, o + 3, o + 2, o + 1], i);
+                    j = 0;
+                    i += 6;
+                }
+            }
+            this._positions.set(positions, offset * 4);
+            this.setIndices(indices, offset);
+        }
+        else {
+            this.notifyVerticesDispose(this._positions);
+            this._positions = new AttributesView(Float32Array, 6, this._concatenatedBuffer);
+        }
+        this._numVertices = this._positions.count;
+        this.pInvalidateBounds();
+        this.notifyVerticesUpdate(this._positions);
+        this._verticesDirty[this._positions.id] = false;
+    };
+    LineSubGeometry.prototype.setThickness = function (values, offset) {
+        if (offset === void 0) { offset = 0; }
+        if (values instanceof Float1Attributes) {
+            this._thickness = values;
+        }
+        else if (values) {
+            if (!this._thickness)
+                this._thickness = new Float1Attributes(this._concatenatedBuffer);
+            var i = 0;
+            var j = 0;
+            var index = 0;
+            var thickness = new Float32Array(values.length * 4);
+            while (i < values.length) {
+                thickness[index] = (Math.floor(0.5 * index + 0.5) & 1) ? -values[i] : values[i];
                 if (++j == 4) {
                     j = 0;
                     i++;
                 }
-                index += stride;
+                index++;
             }
+            this._thickness.set(thickness, offset * 4);
         }
-        this.notifyThicknessUpdate();
-        this._thicknessDirty = false;
+        else if (this._thickness) {
+            this._thickness.dispose();
+            this._thickness = null;
+        }
+        this.notifyVerticesUpdate(this._thickness);
+        this._verticesDirty[this._thickness.id] = false;
     };
-    /**
-     *
-     */
-    LineSubGeometry.prototype.updateColors = function (startValues, endValues) {
-        var i;
-        var j;
-        var values;
-        var index;
-        var offset;
-        var stride;
-        var colors;
-        this._startColors = startValues;
-        this._endColors = endValues;
-        //default to white
-        if (this._startColors == null) {
-            this._startColors = new Array(this._numSegments * 4);
-            i = 0;
-            while (i < this._startColors.length)
-                this._startColors[i++] = 1;
-        }
-        if (this._endColors == null) {
-            this._endColors = new Array(this._numSegments * 4);
-            i = 0;
-            while (i < this._endColors.length)
-                this._endColors[i++] = 1;
-        }
-        i = 0;
-        j = 0;
-        offset = this.getOffset(LineSubGeometry.COLOR_DATA);
-        stride = this.getStride(LineSubGeometry.COLOR_DATA);
-        colors = this._pVertices;
-        index = offset;
-        while (i < this._startColors.length) {
-            values = ((index - offset) / stride & 1) ? this._endColors : this._startColors;
-            colors[index] = values[i];
-            colors[index + 1] = values[i + 1];
-            colors[index + 2] = values[i + 2];
-            colors[index + 3] = values[i + 3];
-            if (++j == 4) {
-                j = 0;
-                i += 4;
+    LineSubGeometry.prototype.setColors = function (values, offset) {
+        if (offset === void 0) { offset = 0; }
+        if (values) {
+            if (values == this._colors)
+                return;
+            if (values instanceof Byte4Attributes) {
+                this.notifyVerticesDispose(this._colors);
+                this._colors = values;
             }
-            index += stride;
+            else {
+                if (!this._colors)
+                    this._colors = new Byte4Attributes(this._concatenatedBuffer);
+                var i = 0;
+                var j = 0;
+                var index = 0;
+                var colors = new Uint8Array(values.length * 4);
+                while (i < values.length) {
+                    if (index / 4 & 1) {
+                        colors[index] = values[i + 4];
+                        colors[index + 1] = values[i + 5];
+                        colors[index + 2] = values[i + 6];
+                        colors[index + 3] = values[i + 7];
+                    }
+                    else {
+                        colors[index] = values[i];
+                        colors[index + 1] = values[i + 1];
+                        colors[index + 2] = values[i + 2];
+                        colors[index + 3] = values[i + 3];
+                    }
+                    if (++j == 4) {
+                        j = 0;
+                        i += 8;
+                    }
+                    index += 4;
+                }
+                this._colors.set(values, offset * 4);
+            }
         }
-        this.notifyColorsUpdate();
-        this._colorsDirty = false;
+        else {
+            //auto-derive colors
+            this._colors = SubGeometryUtils.generateColors(this._pIndices, this._colors, this._concatenatedBuffer, this._numVertices);
+        }
+        this.notifyVerticesUpdate(this._colors);
+        this._verticesDirty[this._colors.id] = false;
     };
     /**
      *
      */
     LineSubGeometry.prototype.dispose = function () {
         _super.prototype.dispose.call(this);
-        this._startPositions = null;
-        this._endPositions = null;
+        this._positions = null;
         this._thickness = null;
-        this._startColors = null;
-        this._endColors = null;
-    };
-    /**
-     * @protected
-     */
-    LineSubGeometry.prototype.pInvalidateBounds = function () {
-        if (this.parentGeometry)
-            this.parentGeometry.iInvalidateBounds(this);
+        this._colors = null;
     };
     /**
      * Clones the current object
      * @return An exact duplicate of the current object.
      */
     LineSubGeometry.prototype.clone = function () {
-        var clone = new LineSubGeometry();
-        clone.updateIndices(this._pIndices.concat());
-        clone.updatePositions(this._startPositions.concat(), this._endPositions.concat());
-        clone.updateThickness(this._thickness.concat());
-        clone.updatePositions(this._startPositions.concat(), this._endPositions.concat());
+        var clone = new LineSubGeometry(this._concatenatedBuffer ? this._concatenatedBuffer.clone() : null);
+        clone.setIndices(this._pIndices.clone());
+        clone.setPositions(this._positions.clone());
+        clone.setThickness(this._thickness.clone());
+        clone.setColors(this._colors.clone());
         return clone;
     };
-    LineSubGeometry.prototype._pNotifyVerticesUpdate = function () {
-        this._pStrideOffsetDirty = true;
-        this.notifyPositionsUpdate();
-        this.notifyThicknessUpdate();
-        this.notifyColorsUpdate();
-    };
-    LineSubGeometry.prototype.notifyPositionsUpdate = function () {
-        if (this._positionsDirty)
-            return;
-        this._positionsDirty = true;
-        if (!this._positionsUpdated)
-            this._positionsUpdated = new SubGeometryEvent(SubGeometryEvent.VERTICES_UPDATED, TriangleSubGeometry.POSITION_DATA);
-        this.dispatchEvent(this._positionsUpdated);
-    };
-    LineSubGeometry.prototype.notifyThicknessUpdate = function () {
-        if (this._thicknessDirty)
-            return;
-        this._thicknessDirty = true;
-        if (!this._thicknessUpdated)
-            this._thicknessUpdated = new SubGeometryEvent(SubGeometryEvent.VERTICES_UPDATED, LineSubGeometry.THICKNESS_DATA);
-        this.dispatchEvent(this._thicknessUpdated);
-    };
-    LineSubGeometry.prototype.notifyColorsUpdate = function () {
-        if (this._colorsDirty)
-            return;
-        this._colorsDirty = true;
-        if (!this._colorUpdated)
-            this._colorUpdated = new SubGeometryEvent(SubGeometryEvent.VERTICES_UPDATED, LineSubGeometry.COLOR_DATA);
-        this.dispatchEvent(this._colorUpdated);
-    };
     LineSubGeometry.assetType = "[asset LineSubGeometry]";
-    LineSubGeometry.VERTEX_DATA = "vertices";
-    LineSubGeometry.START_POSITION_DATA = "startPositions";
-    LineSubGeometry.END_POSITION_DATA = "endPositions";
-    LineSubGeometry.THICKNESS_DATA = "thickness";
-    LineSubGeometry.COLOR_DATA = "colors";
-    //TODO - move these to StageGL
-    LineSubGeometry.POSITION_FORMAT = "float3";
-    LineSubGeometry.COLOR_FORMAT = "float4";
-    LineSubGeometry.THICKNESS_FORMAT = "float1";
     return LineSubGeometry;
 })(SubGeometryBase);
 module.exports = LineSubGeometry;
 
-},{"awayjs-core/lib/data/SubGeometryBase":"awayjs-core/lib/data/SubGeometryBase","awayjs-core/lib/data/TriangleSubGeometry":"awayjs-core/lib/data/TriangleSubGeometry","awayjs-core/lib/events/SubGeometryEvent":"awayjs-core/lib/events/SubGeometryEvent"}],"awayjs-core/lib/data/Sampler2D":[function(require,module,exports){
+},{"awayjs-core/lib/attributes/AttributesView":"awayjs-core/lib/attributes/AttributesView","awayjs-core/lib/attributes/Byte4Attributes":"awayjs-core/lib/attributes/Byte4Attributes","awayjs-core/lib/attributes/Float1Attributes":"awayjs-core/lib/attributes/Float1Attributes","awayjs-core/lib/data/SubGeometryBase":"awayjs-core/lib/data/SubGeometryBase","awayjs-core/lib/utils/SubGeometryUtils":"awayjs-core/lib/utils/SubGeometryUtils"}],"awayjs-core/lib/data/Sampler2D":[function(require,module,exports){
 var __extends = this.__extends || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
@@ -3283,6 +3503,7 @@ var __extends = this.__extends || function (d, b) {
     __.prototype = b.prototype;
     d.prototype = new __();
 };
+var Short3Attributes = require("awayjs-core/lib/attributes/Short3Attributes");
 var AbstractMethodError = require("awayjs-core/lib/errors/AbstractMethodError");
 var SubGeometryEvent = require("awayjs-core/lib/events/SubGeometryEvent");
 var AssetBase = require("awayjs-core/lib/library/AssetBase");
@@ -3294,31 +3515,18 @@ var SubGeometryBase = (function (_super) {
     /**
      *
      */
-    function SubGeometryBase(concatenatedArrays) {
+    function SubGeometryBase(concatenatedBuffer) {
+        if (concatenatedBuffer === void 0) { concatenatedBuffer = null; }
         _super.call(this);
-        this._pStrideOffsetDirty = true;
-        this._pConcatenateArrays = true;
-        this._pStride = new Object();
-        this._pOffset = new Object();
-        this._pConcatenateArrays = concatenatedArrays;
+        this._subGeometryVO = new Array();
+        this._numElements = 0;
+        this._verticesDirty = new Object();
+        this._verticesUpdated = new Object();
+        this._concatenatedBuffer = concatenatedBuffer;
     }
-    SubGeometryBase.prototype._pUpdateStrideOffset = function () {
-        throw new AbstractMethodError();
-    };
-    Object.defineProperty(SubGeometryBase.prototype, "concatenateArrays", {
-        /**
-         *
-         */
+    Object.defineProperty(SubGeometryBase.prototype, "concatenatedBuffer", {
         get: function () {
-            return this._pConcatenateArrays;
-        },
-        set: function (value) {
-            if (this._pConcatenateArrays == value)
-                return;
-            this._pConcatenateArrays = value;
-            this._pStrideOffsetDirty = true;
-            if (value)
-                this._pNotifyVerticesUpdate();
+            return this._concatenatedBuffer;
         },
         enumerable: true,
         configurable: true
@@ -3333,30 +3541,19 @@ var SubGeometryBase = (function (_super) {
         enumerable: true,
         configurable: true
     });
-    Object.defineProperty(SubGeometryBase.prototype, "vertices", {
-        /**
-         *
-         */
-        get: function () {
-            this.updateVertices();
-            return this._pVertices;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(SubGeometryBase.prototype, "numTriangles", {
+    Object.defineProperty(SubGeometryBase.prototype, "numElements", {
         /**
          * The total amount of triangles in the TriangleSubGeometry.
          */
         get: function () {
-            return this._numTriangles;
+            return this._numElements;
         },
         enumerable: true,
         configurable: true
     });
     Object.defineProperty(SubGeometryBase.prototype, "numVertices", {
         get: function () {
-            return this._pNumVertices;
+            throw new AbstractMethodError();
         },
         enumerable: true,
         configurable: true
@@ -3364,39 +3561,44 @@ var SubGeometryBase = (function (_super) {
     /**
      *
      */
-    SubGeometryBase.prototype.getStride = function (dataType) {
-        if (this._pStrideOffsetDirty)
-            this._pUpdateStrideOffset();
-        return this._pStride[dataType];
-    };
-    /**
-     *
-     */
-    SubGeometryBase.prototype.getOffset = function (dataType) {
-        if (this._pStrideOffsetDirty)
-            this._pUpdateStrideOffset();
-        return this._pOffset[dataType];
-    };
-    SubGeometryBase.prototype.updateVertices = function () {
-        throw new AbstractMethodError();
+    SubGeometryBase.prototype.invalidate = function () {
+        var len = this._subGeometryVO.length;
+        for (var i = 0; i < len; i++)
+            this._subGeometryVO[i].invalidate();
     };
     /**
      *
      */
     SubGeometryBase.prototype.dispose = function () {
+        while (this._subGeometryVO.length)
+            this._subGeometryVO[0].dispose();
+        this._pIndices.dispose();
         this._pIndices = null;
-        this._pVertices = null;
     };
-    /**
-     * Updates the face indices of the TriangleSubGeometry.
-     *
-     * @param indices The face indices to upload.
-     */
-    SubGeometryBase.prototype.updateIndices = function (indices) {
-        this._pIndices = indices;
-        this._numIndices = indices.length;
-        this._numTriangles = this._numIndices / 3;
-        this.notifyIndicesUpdate();
+    SubGeometryBase.prototype.setIndices = function (values, offset) {
+        if (offset === void 0) { offset = 0; }
+        if (values instanceof Short3Attributes) {
+            if (this._pIndices)
+                this.notifyIndicesDispose();
+            this._pIndices = values;
+        }
+        else if (values) {
+            if (!this._pIndices)
+                this._pIndices = new Short3Attributes();
+            this._pIndices.set(values, offset);
+        }
+        else if (this._pIndices) {
+            this._pIndices.dispose();
+            this._pIndices = null;
+            this.notifyIndicesDispose();
+        }
+        if (this._pIndices) {
+            this._numElements = this._pIndices.count;
+            this.notifyIndicesUpdate();
+        }
+        else {
+            this._numElements = 0;
+        }
     };
     /**
      * @protected
@@ -3429,27 +3631,52 @@ var SubGeometryBase = (function (_super) {
     };
     SubGeometryBase.prototype.notifyIndicesUpdate = function () {
         if (!this._indicesUpdated)
-            this._indicesUpdated = new SubGeometryEvent(SubGeometryEvent.INDICES_UPDATED);
+            this._indicesUpdated = new SubGeometryEvent(SubGeometryEvent.INDICES_UPDATED, this._pIndices);
         this.dispatchEvent(this._indicesUpdated);
     };
-    SubGeometryBase.prototype._pNotifyVerticesUpdate = function () {
-        throw new AbstractMethodError();
+    SubGeometryBase.prototype.notifyIndicesDispose = function () {
+        this.dispatchEvent(new SubGeometryEvent(SubGeometryEvent.INDICES_DISPOSED, this._pIndices));
     };
-    SubGeometryBase.VERTEX_DATA = "vertices";
+    SubGeometryBase.prototype.notifyVerticesUpdate = function (attributesView) {
+        if (!attributesView || this._verticesDirty[attributesView.id])
+            return;
+        this._verticesDirty[attributesView.id] = true;
+        if (!this._verticesUpdated[attributesView.id])
+            this._verticesUpdated[attributesView.id] = new SubGeometryEvent(SubGeometryEvent.VERTICES_UPDATED, attributesView);
+        this.dispatchEvent(this._verticesUpdated[attributesView.id]);
+    };
+    SubGeometryBase.prototype.notifyVerticesDispose = function (attributesView) {
+        if (!attributesView)
+            return;
+        attributesView.dispose();
+        this.dispatchEvent(new SubGeometryEvent(SubGeometryEvent.VERTICES_DISPOSED, attributesView));
+        this._verticesDirty[attributesView.id] = null;
+        this._verticesUpdated[attributesView.id] = null;
+    };
+    SubGeometryBase.prototype._iAddSubGeometryVO = function (subGeometryVO) {
+        this._subGeometryVO.push(subGeometryVO);
+        return subGeometryVO;
+    };
+    SubGeometryBase.prototype._iRemoveSubGeometryVO = function (subGeometryVO) {
+        this._subGeometryVO.splice(this._subGeometryVO.indexOf(subGeometryVO), 1);
+        return subGeometryVO;
+    };
     return SubGeometryBase;
 })(AssetBase);
 module.exports = SubGeometryBase;
 
-},{"awayjs-core/lib/errors/AbstractMethodError":"awayjs-core/lib/errors/AbstractMethodError","awayjs-core/lib/events/SubGeometryEvent":"awayjs-core/lib/events/SubGeometryEvent","awayjs-core/lib/library/AssetBase":"awayjs-core/lib/library/AssetBase"}],"awayjs-core/lib/data/TriangleSubGeometry":[function(require,module,exports){
+},{"awayjs-core/lib/attributes/Short3Attributes":"awayjs-core/lib/attributes/Short3Attributes","awayjs-core/lib/errors/AbstractMethodError":"awayjs-core/lib/errors/AbstractMethodError","awayjs-core/lib/events/SubGeometryEvent":"awayjs-core/lib/events/SubGeometryEvent","awayjs-core/lib/library/AssetBase":"awayjs-core/lib/library/AssetBase"}],"awayjs-core/lib/data/TriangleSubGeometry":[function(require,module,exports){
 var __extends = this.__extends || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
     __.prototype = b.prototype;
     d.prototype = new __();
 };
+var AttributesView = require("awayjs-core/lib/attributes/AttributesView");
+var Float3Attributes = require("awayjs-core/lib/attributes/Float3Attributes");
+var Float2Attributes = require("awayjs-core/lib/attributes/Float2Attributes");
 var SubGeometryBase = require("awayjs-core/lib/data/SubGeometryBase");
-var Vector3D = require("awayjs-core/lib/geom/Vector3D");
-var SubGeometryEvent = require("awayjs-core/lib/events/SubGeometryEvent");
+var SubGeometryUtils = require("awayjs-core/lib/utils/SubGeometryUtils");
 /**
  * @class away.base.TriangleSubGeometry
  */
@@ -3458,24 +3685,16 @@ var TriangleSubGeometry = (function (_super) {
     /**
      *
      */
-    function TriangleSubGeometry(concatenatedArrays) {
-        _super.call(this, concatenatedArrays);
-        this._positionsDirty = true;
+    function TriangleSubGeometry(concatenatedBuffer) {
+        if (concatenatedBuffer === void 0) { concatenatedBuffer = null; }
+        _super.call(this, concatenatedBuffer);
+        this._numVertices = 0;
         this._faceNormalsDirty = true;
         this._faceTangentsDirty = true;
-        this._vertexNormalsDirty = true;
-        this._vertexTangentsDirty = true;
-        this._uvsDirty = true;
-        this._secondaryUVsDirty = true;
-        this._jointIndicesDirty = true;
-        this._jointWeightsDirty = true;
-        this._concatenateArrays = true;
         this._autoDeriveNormals = true;
         this._autoDeriveTangents = true;
         this._autoDeriveUVs = false;
-        this._useFaceWeights = false;
-        this._scaleU = 1;
-        this._scaleV = 1;
+        this._positions = new Float3Attributes(this._concatenatedBuffer);
     }
     Object.defineProperty(TriangleSubGeometry.prototype, "assetType", {
         get: function () {
@@ -3484,22 +3703,9 @@ var TriangleSubGeometry = (function (_super) {
         enumerable: true,
         configurable: true
     });
-    Object.defineProperty(TriangleSubGeometry.prototype, "scaleU", {
-        /**
-         *
-         */
+    Object.defineProperty(TriangleSubGeometry.prototype, "numVertices", {
         get: function () {
-            return this._scaleU;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(TriangleSubGeometry.prototype, "scaleV", {
-        /**
-         *
-         */
-        get: function () {
-            return this._scaleV;
+            return this._numVertices;
         },
         enumerable: true,
         configurable: true
@@ -3517,73 +3723,10 @@ var TriangleSubGeometry = (function (_super) {
             if (this._useCondensedIndices == value)
                 return;
             this._useCondensedIndices = value;
-            this.notifyJointIndicesUpdate();
         },
         enumerable: true,
         configurable: true
     });
-    TriangleSubGeometry.prototype._pUpdateStrideOffset = function () {
-        if (this._concatenateArrays) {
-            this._pOffset[TriangleSubGeometry.VERTEX_DATA] = 0;
-            //always have positions
-            this._pOffset[TriangleSubGeometry.POSITION_DATA] = 0;
-            var stride = 3;
-            if (this._vertexNormals != null) {
-                this._pOffset[TriangleSubGeometry.NORMAL_DATA] = stride;
-                stride += 3;
-            }
-            if (this._vertexTangents != null) {
-                this._pOffset[TriangleSubGeometry.TANGENT_DATA] = stride;
-                stride += 3;
-            }
-            if (this._uvs != null) {
-                this._pOffset[TriangleSubGeometry.UV_DATA] = stride;
-                stride += 2;
-            }
-            if (this._secondaryUVs != null) {
-                this._pOffset[TriangleSubGeometry.SECONDARY_UV_DATA] = stride;
-                stride += 2;
-            }
-            if (this._jointIndices != null) {
-                this._pOffset[TriangleSubGeometry.JOINT_INDEX_DATA] = stride;
-                stride += this._jointsPerVertex;
-            }
-            if (this._jointWeights != null) {
-                this._pOffset[TriangleSubGeometry.JOINT_WEIGHT_DATA] = stride;
-                stride += this._jointsPerVertex;
-            }
-            this._pStride[TriangleSubGeometry.VERTEX_DATA] = stride;
-            this._pStride[TriangleSubGeometry.POSITION_DATA] = stride;
-            this._pStride[TriangleSubGeometry.NORMAL_DATA] = stride;
-            this._pStride[TriangleSubGeometry.TANGENT_DATA] = stride;
-            this._pStride[TriangleSubGeometry.UV_DATA] = stride;
-            this._pStride[TriangleSubGeometry.SECONDARY_UV_DATA] = stride;
-            this._pStride[TriangleSubGeometry.JOINT_INDEX_DATA] = stride;
-            this._pStride[TriangleSubGeometry.JOINT_WEIGHT_DATA] = stride;
-            var len = this._pNumVertices * stride;
-            if (this._pVertices == null)
-                this._pVertices = new Array(len);
-            else if (this._pVertices.length != len)
-                this._pVertices.length = len;
-        }
-        else {
-            this._pOffset[TriangleSubGeometry.POSITION_DATA] = 0;
-            this._pOffset[TriangleSubGeometry.NORMAL_DATA] = 0;
-            this._pOffset[TriangleSubGeometry.TANGENT_DATA] = 0;
-            this._pOffset[TriangleSubGeometry.UV_DATA] = 0;
-            this._pOffset[TriangleSubGeometry.SECONDARY_UV_DATA] = 0;
-            this._pOffset[TriangleSubGeometry.JOINT_INDEX_DATA] = 0;
-            this._pOffset[TriangleSubGeometry.JOINT_WEIGHT_DATA] = 0;
-            this._pStride[TriangleSubGeometry.POSITION_DATA] = 3;
-            this._pStride[TriangleSubGeometry.NORMAL_DATA] = 3;
-            this._pStride[TriangleSubGeometry.TANGENT_DATA] = 3;
-            this._pStride[TriangleSubGeometry.UV_DATA] = 2;
-            this._pStride[TriangleSubGeometry.SECONDARY_UV_DATA] = 2;
-            this._pStride[TriangleSubGeometry.JOINT_INDEX_DATA] = this._jointsPerVertex;
-            this._pStride[TriangleSubGeometry.JOINT_WEIGHT_DATA] = this._jointsPerVertex;
-        }
-        this._pStrideOffsetDirty = false;
-    };
     Object.defineProperty(TriangleSubGeometry.prototype, "jointsPerVertex", {
         /**
          *
@@ -3595,9 +3738,10 @@ var TriangleSubGeometry = (function (_super) {
             if (this._jointsPerVertex == value)
                 return;
             this._jointsPerVertex = value;
-            this._pStrideOffsetDirty = true;
-            if (this._pConcatenateArrays)
-                this._pNotifyVerticesUpdate();
+            if (this._jointIndices)
+                this._jointIndices.dimensions = this._jointsPerVertex;
+            if (this._jointWeights)
+                this._jointWeights.dimensions = this._jointsPerVertex;
         },
         enumerable: true,
         configurable: true
@@ -3616,7 +3760,7 @@ var TriangleSubGeometry = (function (_super) {
                 return;
             this._autoDeriveUVs = value;
             if (value)
-                this.notifyUVsUpdate();
+                this.notifyVerticesUpdate(this._uvs);
         },
         enumerable: true,
         configurable: true
@@ -3634,7 +3778,7 @@ var TriangleSubGeometry = (function (_super) {
                 return;
             this._autoDeriveNormals = value;
             if (value)
-                this.notifyNormalsUpdate();
+                this.notifyVerticesUpdate(this._normals);
         },
         enumerable: true,
         configurable: true
@@ -3652,31 +3796,7 @@ var TriangleSubGeometry = (function (_super) {
                 return;
             this._autoDeriveTangents = value;
             if (value)
-                this.notifyTangentsUpdate();
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(TriangleSubGeometry.prototype, "vertices", {
-        /**
-         *
-         */
-        get: function () {
-            if (this._positionsDirty)
-                this.updatePositions(this._positions);
-            if (this._vertexNormalsDirty)
-                this.updateVertexNormals(this._vertexNormals);
-            if (this._vertexTangentsDirty)
-                this.updateVertexTangents(this._vertexTangents);
-            if (this._uvsDirty)
-                this.updateUVs(this._uvs);
-            if (this._secondaryUVsDirty)
-                this.updateSecondaryUVs(this._secondaryUVs);
-            if (this._jointIndicesDirty)
-                this.updateJointIndices(this._jointIndices);
-            if (this._jointWeightsDirty)
-                this.updateJointWeights(this._jointWeights);
-            return this._pVertices;
+                this.notifyVerticesUpdate(this._tangents);
         },
         enumerable: true,
         configurable: true
@@ -3686,33 +3806,31 @@ var TriangleSubGeometry = (function (_super) {
          *
          */
         get: function () {
-            if (this._positionsDirty)
-                this.updatePositions(this._positions);
             return this._positions;
         },
         enumerable: true,
         configurable: true
     });
-    Object.defineProperty(TriangleSubGeometry.prototype, "vertexNormals", {
+    Object.defineProperty(TriangleSubGeometry.prototype, "normals", {
         /**
          *
          */
         get: function () {
-            if (this._vertexNormalsDirty)
-                this.updateVertexNormals(this._vertexNormals);
-            return this._vertexNormals;
+            if (!this._normals || this._verticesDirty[this._normals.id])
+                this.setNormals(this._normals);
+            return this._normals;
         },
         enumerable: true,
         configurable: true
     });
-    Object.defineProperty(TriangleSubGeometry.prototype, "vertexTangents", {
+    Object.defineProperty(TriangleSubGeometry.prototype, "tangents", {
         /**
          *
          */
         get: function () {
-            if (this._vertexTangentsDirty)
-                this.updateVertexTangents(this._vertexTangents);
-            return this._vertexTangents;
+            if (!this._tangents || this._verticesDirty[this._tangents.id])
+                this.setTangents(this._tangents);
+            return this._tangents;
         },
         enumerable: true,
         configurable: true
@@ -3746,8 +3864,8 @@ var TriangleSubGeometry = (function (_super) {
          *
          */
         get: function () {
-            if (this._uvsDirty)
-                this.updateUVs(this._uvs);
+            if (!this._uvs || this._verticesDirty[this._uvs.id])
+                this.setUVs(this._uvs);
             return this._uvs;
         },
         enumerable: true,
@@ -3758,8 +3876,6 @@ var TriangleSubGeometry = (function (_super) {
          *
          */
         get: function () {
-            if (this._secondaryUVsDirty)
-                this.updateSecondaryUVs(this._secondaryUVs);
             return this._secondaryUVs;
         },
         enumerable: true,
@@ -3770,10 +3886,6 @@ var TriangleSubGeometry = (function (_super) {
          *
          */
         get: function () {
-            if (this._jointIndicesDirty)
-                this.updateJointIndices(this._jointIndices);
-            if (this._useCondensedIndices)
-                return this._condensedJointIndices;
             return this._jointIndices;
         },
         enumerable: true,
@@ -3784,858 +3896,321 @@ var TriangleSubGeometry = (function (_super) {
          *
          */
         get: function () {
-            if (this._jointWeightsDirty)
-                this.updateJointWeights(this._jointWeights);
             return this._jointWeights;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(TriangleSubGeometry.prototype, "useFaceWeights", {
-        /**
-         * Indicates whether or not to take the size of faces into account when auto-deriving vertex normals and tangents.
-         */
-        get: function () {
-            return this._useFaceWeights;
-        },
-        set: function (value) {
-            if (this._useFaceWeights == value)
-                return;
-            this._useFaceWeights = value;
-            if (this._autoDeriveNormals)
-                this.notifyNormalsUpdate();
-            if (this._autoDeriveTangents)
-                this.notifyTangentsUpdate();
-            this._faceNormalsDirty = true;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(TriangleSubGeometry.prototype, "numCondensedJoints", {
-        get: function () {
-            if (this._jointIndicesDirty)
-                this.updateJointIndices(this._jointIndices);
-            return this._numCondensedJoints;
         },
         enumerable: true,
         configurable: true
     });
     Object.defineProperty(TriangleSubGeometry.prototype, "condensedIndexLookUp", {
         get: function () {
-            if (this._jointIndicesDirty)
-                this.updateJointIndices(this._jointIndices);
             return this._condensedIndexLookUp;
         },
         enumerable: true,
         configurable: true
     });
     TriangleSubGeometry.prototype.getBoundingPositions = function () {
-        if (this._positionsDirty)
-            this.updatePositions(this._positions);
-        return this._positions;
+        return this._positions.get(this._numVertices);
     };
-    /**
-     *
-     */
-    TriangleSubGeometry.prototype.updatePositions = function (values) {
-        var i;
-        var index;
-        var stride;
-        var positions;
-        this._positions = values;
-        if (this._positions == null)
-            this._positions = new Array();
-        this._pNumVertices = this._positions.length / 3;
-        if (this._concatenateArrays) {
-            var len = this._pNumVertices * this.getStride(TriangleSubGeometry.VERTEX_DATA);
-            if (this._pVertices == null)
-                this._pVertices = new Array(len);
-            else if (this._pVertices.length != len)
-                this._pVertices.length = len;
-            i = 0;
-            index = this.getOffset(TriangleSubGeometry.POSITION_DATA);
-            stride = this.getStride(TriangleSubGeometry.POSITION_DATA);
-            positions = this._pVertices;
-            while (i < values.length) {
-                positions[index] = values[i++];
-                positions[index + 1] = values[i++];
-                positions[index + 2] = values[i++];
-                index += stride;
-            }
+    TriangleSubGeometry.prototype.setPositions = function (values, offset) {
+        if (offset === void 0) { offset = 0; }
+        if (values == this._positions)
+            return;
+        if (values instanceof Float3Attributes) {
+            this.notifyVerticesDispose(this._positions);
+            this._positions = values;
         }
+        else if (values) {
+            this._positions.set(values, offset);
+        }
+        else {
+            this.notifyVerticesDispose(this._positions);
+            this._positions = new Float3Attributes(this._concatenatedBuffer);
+        }
+        this._numVertices = this._positions.count;
         if (this._autoDeriveNormals)
-            this.notifyNormalsUpdate();
+            this.notifyVerticesUpdate(this._normals);
         if (this._autoDeriveTangents)
-            this.notifyTangentsUpdate();
+            this.notifyVerticesUpdate(this._tangents);
         if (this._autoDeriveUVs)
-            this.notifyUVsUpdate();
+            this.notifyVerticesUpdate(this._uvs);
         this.pInvalidateBounds();
-        this.notifyPositionsUpdate();
-        this._positionsDirty = false;
+        this.notifyVerticesUpdate(this._positions);
+        this._verticesDirty[this._positions.id] = false;
     };
-    /**
-     * Updates the vertex normals based on the geometry.
-     */
-    TriangleSubGeometry.prototype.updateVertexNormals = function (values) {
-        var i;
-        var index;
-        var offset;
-        var stride;
-        var normals;
+    TriangleSubGeometry.prototype.setNormals = function (values, offset) {
+        if (offset === void 0) { offset = 0; }
         if (!this._autoDeriveNormals) {
-            if ((this._vertexNormals == null || values == null) && (this._vertexNormals != null || values != null)) {
-                if (this._concatenateArrays)
-                    this._pNotifyVerticesUpdate();
-                else
-                    this._pStrideOffsetDirty = true;
+            if (values == this._normals)
+                return;
+            if (values instanceof Float3Attributes) {
+                this.notifyVerticesDispose(this._normals);
+                this._normals = values;
             }
-            this._vertexNormals = values;
-            if (values != null && this._concatenateArrays) {
-                i = 0;
-                index = this.getOffset(TriangleSubGeometry.NORMAL_DATA);
-                stride = this.getStride(TriangleSubGeometry.NORMAL_DATA);
-                normals = this._pVertices;
-                while (i < values.length) {
-                    normals[index] = values[i++];
-                    normals[index + 1] = values[i++];
-                    normals[index + 2] = values[i++];
-                    index += stride;
-                }
+            else if (values) {
+                if (!this._normals)
+                    this._normals = new Float3Attributes(this._concatenatedBuffer);
+                this._normals.set(values, offset);
+            }
+            else if (this._normals) {
+                this.notifyVerticesDispose(this._normals);
+                this._normals = null;
+                return;
             }
         }
         else {
-            if (this._vertexNormals == null) {
-                this._vertexNormals = new Array(this._positions.length);
-                if (this._concatenateArrays)
-                    this._pNotifyVerticesUpdate();
-                else
-                    this._pStrideOffsetDirty = true;
-            }
             if (this._faceNormalsDirty)
                 this.updateFaceNormals();
-            offset = this.getOffset(TriangleSubGeometry.NORMAL_DATA);
-            stride = this.getStride(TriangleSubGeometry.NORMAL_DATA);
-            //autoderived normals
-            normals = this._concatenateArrays ? this._pVertices : this._vertexNormals;
-            var f1 = 0;
-            var f2 = 1;
-            var f3 = 2;
-            index = offset;
-            //clear normal values
-            var lenV = normals.length;
-            while (index < lenV) {
-                normals[index] = 0;
-                normals[index + 1] = 0;
-                normals[index + 2] = 0;
-                index += stride;
-            }
-            var k = 0;
-            var lenI = this._pIndices.length;
-            var weight;
-            i = 0;
-            while (i < lenI) {
-                weight = this._useFaceWeights ? this._faceWeights[k++] : 1;
-                index = offset + this._pIndices[i++] * stride;
-                normals[index] += this._faceNormals[f1] * weight;
-                normals[index + 1] += this._faceNormals[f2] * weight;
-                normals[index + 2] += this._faceNormals[f3] * weight;
-                index = offset + this._pIndices[i++] * stride;
-                normals[index] += this._faceNormals[f1] * weight;
-                normals[index + 1] += this._faceNormals[f2] * weight;
-                normals[index + 2] += this._faceNormals[f3] * weight;
-                index = offset + this._pIndices[i++] * stride;
-                normals[index] += this._faceNormals[f1] * weight;
-                normals[index + 1] += this._faceNormals[f2] * weight;
-                normals[index + 2] += this._faceNormals[f3] * weight;
-                f1 += 3;
-                f2 += 3;
-                f3 += 3;
-            }
-            i = 0;
-            index = offset;
-            while (index < lenV) {
-                var vx = normals[index];
-                var vy = normals[index + 1];
-                var vz = normals[index + 2];
-                var d = 1.0 / Math.sqrt(vx * vx + vy * vy + vz * vz);
-                if (this._concatenateArrays) {
-                    this._vertexNormals[i++] = normals[index] = vx * d;
-                    this._vertexNormals[i++] = normals[index + 1] = vy * d;
-                    this._vertexNormals[i++] = normals[index + 2] = vz * d;
-                }
-                else {
-                    normals[index] = vx * d;
-                    normals[index + 1] = vy * d;
-                    normals[index + 2] = vz * d;
-                }
-                index += stride;
-            }
+            this._normals = SubGeometryUtils.generateNormals(this._pIndices, this._faceNormals, this._normals, this._concatenatedBuffer);
         }
-        this.notifyNormalsUpdate();
-        this._vertexNormalsDirty = false;
+        this.notifyVerticesUpdate(this._normals);
+        this._verticesDirty[this._normals.id] = false;
     };
-    /**
-     * Updates the vertex tangents based on the geometry.
-     */
-    TriangleSubGeometry.prototype.updateVertexTangents = function (values) {
-        var i;
-        var index;
-        var offset;
-        var stride;
-        var tangents;
+    TriangleSubGeometry.prototype.setTangents = function (values, offset) {
+        if (offset === void 0) { offset = 0; }
         if (!this._autoDeriveTangents) {
-            if ((this._vertexTangents == null || values == null) && (this._vertexTangents != null || values != null)) {
-                if (this._concatenateArrays)
-                    this._pNotifyVerticesUpdate();
-                else
-                    this._pStrideOffsetDirty = true;
+            if (values == this._tangents)
+                return;
+            if (values instanceof Float3Attributes) {
+                this.notifyVerticesDispose(this._tangents);
+                this._tangents = values;
             }
-            this._vertexTangents = values;
-            if (values != null && this._concatenateArrays) {
-                i = 0;
-                index = this.getOffset(TriangleSubGeometry.TANGENT_DATA);
-                stride = this.getStride(TriangleSubGeometry.TANGENT_DATA);
-                tangents = this._pVertices;
-                while (i < values.length) {
-                    tangents[index] = values[i++];
-                    tangents[index + 1] = values[i++];
-                    tangents[index + 2] = values[i++];
-                    index += stride;
-                }
+            else if (values) {
+                if (!this._tangents)
+                    this._tangents = new Float3Attributes(this._concatenatedBuffer);
+                this._tangents.set(values, offset);
+            }
+            else if (this._tangents) {
+                this.notifyVerticesDispose(this._tangents);
+                this._tangents = null;
+                return;
             }
         }
         else {
-            if (this._vertexTangents == null) {
-                this._vertexTangents = new Array(this._positions.length);
-                if (this._concatenateArrays)
-                    this._pNotifyVerticesUpdate();
-                else
-                    this._pStrideOffsetDirty = true;
-            }
             if (this._faceTangentsDirty)
                 this.updateFaceTangents();
-            offset = this.getOffset(TriangleSubGeometry.TANGENT_DATA);
-            stride = this.getStride(TriangleSubGeometry.TANGENT_DATA);
-            //autoderived tangents
-            tangents = this._concatenateArrays ? this._pVertices : this._vertexTangents;
-            index = offset;
-            //clear tangent values
-            var lenV = tangents.length;
-            while (index < lenV) {
-                tangents[index] = 0;
-                tangents[index + 1] = 0;
-                tangents[index + 2] = 0;
-                index += stride;
-            }
-            var k = 0;
-            var weight;
-            var f1 = 0;
-            var f2 = 1;
-            var f3 = 2;
-            i = 0;
-            //collect face tangents
-            var lenI = this._pIndices.length;
-            while (i < lenI) {
-                weight = this._useFaceWeights ? this._faceWeights[k++] : 1;
-                index = offset + this._pIndices[i++] * stride;
-                tangents[index++] += this._faceTangents[f1] * weight;
-                tangents[index++] += this._faceTangents[f2] * weight;
-                tangents[index] += this._faceTangents[f3] * weight;
-                index = offset + this._pIndices[i++] * stride;
-                tangents[index++] += this._faceTangents[f1] * weight;
-                tangents[index++] += this._faceTangents[f2] * weight;
-                tangents[index] += this._faceTangents[f3] * weight;
-                index = offset + this._pIndices[i++] * stride;
-                tangents[index++] += this._faceTangents[f1] * weight;
-                tangents[index++] += this._faceTangents[f2] * weight;
-                tangents[index] += this._faceTangents[f3] * weight;
-                f1 += 3;
-                f2 += 3;
-                f3 += 3;
-            }
-            i = 0;
-            index = offset;
-            while (index < lenV) {
-                var vx = tangents[index];
-                var vy = tangents[index + 1];
-                var vz = tangents[index + 2];
-                var d = 1.0 / Math.sqrt(vx * vx + vy * vy + vz * vz);
-                if (this._concatenateArrays) {
-                    this._vertexTangents[i++] = tangents[index] = vx * d;
-                    this._vertexTangents[i++] = tangents[index + 1] = vy * d;
-                    this._vertexTangents[i++] = tangents[index + 2] = vz * d;
-                }
-                else {
-                    tangents[index] = vx * d;
-                    tangents[index + 1] = vy * d;
-                    tangents[index + 2] = vz * d;
-                }
-                index += stride;
-            }
+            if (this._faceNormalsDirty)
+                this.updateFaceNormals();
+            this._tangents = SubGeometryUtils.generateTangents(this._pIndices, this._faceTangents, this._faceNormals, this._tangents, this._concatenatedBuffer);
         }
-        this.notifyTangentsUpdate();
-        this._vertexTangentsDirty = false;
+        this.notifyVerticesUpdate(this._tangents);
+        this._verticesDirty[this._tangents.id] = false;
     };
-    /**
-     * Updates the uvs based on the geometry.
-     */
-    TriangleSubGeometry.prototype.updateUVs = function (values) {
-        var i;
-        var index;
-        var offset;
-        var stride;
-        var uvs;
+    TriangleSubGeometry.prototype.setUVs = function (values, offset) {
+        if (offset === void 0) { offset = 0; }
         if (!this._autoDeriveUVs) {
-            if ((this._uvs == null || values == null) && (this._uvs != null || values != null)) {
-                if (this._concatenateArrays)
-                    this._pNotifyVerticesUpdate();
-                else
-                    this._pStrideOffsetDirty = true;
+            if (values == this._uvs)
+                return;
+            if (values instanceof Float2Attributes) {
+                this.notifyVerticesDispose(this._uvs);
+                this._uvs = values;
             }
-            this._uvs = values;
-            if (values != null && this._concatenateArrays) {
-                i = 0;
-                index = this.getOffset(TriangleSubGeometry.UV_DATA);
-                stride = this.getStride(TriangleSubGeometry.UV_DATA);
-                uvs = this._pVertices;
-                while (i < values.length) {
-                    uvs[index] = values[i++];
-                    uvs[index + 1] = values[i++];
-                    index += stride;
-                }
+            else if (values) {
+                if (!this._uvs)
+                    this._uvs = new Float2Attributes(this._concatenatedBuffer);
+                this._uvs.set(values, offset);
+            }
+            else if (this._uvs) {
+                this.notifyVerticesDispose(this._uvs);
+                this._uvs = null;
+                return;
             }
         }
         else {
-            if (this._uvs == null) {
-                this._uvs = new Array(this._positions.length * 2 / 3);
-                if (this._concatenateArrays)
-                    this._pNotifyVerticesUpdate();
-                else
-                    this._pStrideOffsetDirty = true;
-            }
-            offset = this.getOffset(TriangleSubGeometry.UV_DATA);
-            stride = this.getStride(TriangleSubGeometry.UV_DATA);
-            //autoderived uvs
-            uvs = this._concatenateArrays ? this._pVertices : this._uvs;
-            i = 0;
-            index = offset;
-            var uvIdx = 0;
-            //clear uv values
-            var lenV = uvs.length;
-            while (index < lenV) {
-                if (this._concatenateArrays) {
-                    this._uvs[i++] = uvs[index] = uvIdx * .5;
-                    this._uvs[i++] = uvs[index + 1] = 1.0 - (uvIdx & 1);
-                }
-                else {
-                    uvs[index] = uvIdx * .5;
-                    uvs[index + 1] = 1.0 - (uvIdx & 1);
-                }
-                if (++uvIdx == 3)
-                    uvIdx = 0;
-                index += stride;
-            }
+            this._uvs = SubGeometryUtils.generateUVs(this._pIndices, this._uvs, this._concatenatedBuffer, this._numVertices);
         }
         if (this._autoDeriveTangents)
-            this.notifyTangentsUpdate();
-        this.notifyUVsUpdate();
-        this._uvsDirty = false;
+            this.notifyVerticesUpdate(this._tangents);
+        this.notifyVerticesUpdate(this._uvs);
+        this._verticesDirty[this._uvs.id] = false;
     };
-    /**
-     * Updates the secondary uvs based on the geometry.
-     */
-    TriangleSubGeometry.prototype.updateSecondaryUVs = function (values) {
-        var i;
-        var index;
-        var offset;
-        var stride;
-        var uvs;
-        if (this._concatenateArrays && (this._secondaryUVs == null || values == null) && (this._secondaryUVs != null || values != null))
-            this._pNotifyVerticesUpdate();
-        this._secondaryUVs = values;
-        if (values != null && this._concatenateArrays) {
-            offset = this.getOffset(TriangleSubGeometry.SECONDARY_UV_DATA);
-            stride = this.getStride(TriangleSubGeometry.SECONDARY_UV_DATA);
-            i = 0;
-            index = offset;
-            uvs = this._pVertices;
-            while (i < values.length) {
-                uvs[index] = values[i++];
-                uvs[index + 1] = values[i++];
-                index += stride;
-            }
+    TriangleSubGeometry.prototype.setSecondaryUVs = function (values, offset) {
+        if (offset === void 0) { offset = 0; }
+        if (values == this._secondaryUVs)
+            return;
+        if (values instanceof Float2Attributes) {
+            this.notifyVerticesDispose(this._secondaryUVs);
+            this._secondaryUVs = values;
         }
-        this.notifySecondaryUVsUpdate();
-        this._secondaryUVsDirty = false;
+        else if (values) {
+            if (!this._secondaryUVs)
+                this._secondaryUVs = new Float2Attributes(this._concatenatedBuffer);
+            this._secondaryUVs.set(values, offset);
+        }
+        else if (this._secondaryUVs) {
+            this.notifyVerticesDispose(this._secondaryUVs);
+            this._secondaryUVs = null;
+            return;
+        }
+        this.notifyVerticesUpdate(this._secondaryUVs);
+        this._verticesDirty[this._secondaryUVs.id] = false;
     };
-    /**
-     * Updates the joint indices
-     */
-    TriangleSubGeometry.prototype.updateJointIndices = function (values) {
-        var i;
-        var j;
-        var index;
-        var offset;
-        var stride;
-        var jointIndices;
-        if (this._concatenateArrays && (this._jointIndices == null || values == null) && (this._jointIndices != null || values != null))
-            this._pNotifyVerticesUpdate();
-        this._jointIndices = values;
-        if (values != null) {
-            offset = this.getOffset(TriangleSubGeometry.JOINT_INDEX_DATA);
-            stride = this.getStride(TriangleSubGeometry.JOINT_INDEX_DATA);
+    TriangleSubGeometry.prototype.setJointIndices = function (values, offset) {
+        if (offset === void 0) { offset = 0; }
+        if (values == this._jointIndices)
+            return;
+        if (values instanceof AttributesView) {
+            this.notifyVerticesDispose(this._jointIndices);
+            this._jointIndices = values;
+        }
+        else if (values) {
+            if (!this._jointIndices)
+                this._jointIndices = new AttributesView(Float32Array, this._jointsPerVertex, this._concatenatedBuffer);
             if (this._useCondensedIndices) {
-                i = 0;
-                j = 0;
-                index = offset;
-                jointIndices = this._concatenateArrays ? this._pVertices : this._condensedJointIndices;
+                var i = 0;
                 var oldIndex;
                 var newIndex = 0;
                 var dic = new Object();
-                if (!this._concatenateArrays)
-                    this._condensedJointIndices = new Array(values.length);
                 this._condensedIndexLookUp = new Array();
                 while (i < values.length) {
-                    for (j = 0; j < this._jointsPerVertex; j++) {
-                        oldIndex = values[i++];
-                        // if we encounter a new index, assign it a new condensed index
-                        if (dic[oldIndex] == undefined) {
-                            dic[oldIndex] = newIndex * 3; //3 required for the three vectors that store the matrix
-                            this._condensedIndexLookUp[newIndex++] = oldIndex;
-                        }
-                        jointIndices[index + j] = dic[oldIndex];
+                    oldIndex = values[i];
+                    // if we encounter a new index, assign it a new condensed index
+                    if (dic[oldIndex] == undefined) {
+                        dic[oldIndex] = newIndex;
+                        this._condensedIndexLookUp[newIndex++] = oldIndex;
                     }
-                    index += stride;
-                }
-                this._numCondensedJoints = newIndex;
-            }
-            else if (this._concatenateArrays) {
-                i = 0;
-                index = offset;
-                jointIndices = this._pVertices;
-                while (i < values.length) {
-                    j = 0;
-                    while (j < this._jointsPerVertex)
-                        jointIndices[index + j++] = values[i++];
-                    index += stride;
+                    //reset value to dictionary lookup
+                    values[i++] = dic[oldIndex];
                 }
             }
+            this._jointIndices.set(values, offset);
         }
-        this.notifyJointIndicesUpdate();
-        this._jointIndicesDirty = false;
+        else if (this._jointIndices) {
+            this.notifyVerticesDispose(this._jointIndices);
+            this._jointIndices = null;
+            return;
+        }
+        this.notifyVerticesUpdate(this._jointIndices);
+        this._verticesDirty[this._jointIndices.id] = false;
     };
-    /**
-     * Updates the joint weights.
-     */
-    TriangleSubGeometry.prototype.updateJointWeights = function (values) {
-        var i;
-        var j;
-        var index;
-        var offset;
-        var stride;
-        var jointWeights;
-        if (this._concatenateArrays && (this._jointWeights == null || values == null) && (this._jointWeights != null || values != null))
-            this._pNotifyVerticesUpdate();
-        this._jointWeights = values;
-        if (values != null && this._concatenateArrays) {
-            offset = this.getOffset(TriangleSubGeometry.JOINT_WEIGHT_DATA);
-            stride = this.getStride(TriangleSubGeometry.JOINT_WEIGHT_DATA);
-            i = 0;
-            index = offset;
-            jointWeights = this._pVertices;
-            while (i < values.length) {
-                j = 0;
-                while (j < this._jointsPerVertex)
-                    jointWeights[index + j++] = values[i++];
-                index += stride;
-            }
+    TriangleSubGeometry.prototype.setJointWeights = function (values, offset) {
+        if (offset === void 0) { offset = 0; }
+        if (values == this._jointWeights)
+            return;
+        if (values instanceof AttributesView) {
+            this.notifyVerticesDispose(this._jointWeights);
+            this._jointWeights = values;
         }
-        this.notifyJointWeightsUpdate();
-        this._jointWeightsDirty = false;
+        else if (values) {
+            if (!this._jointWeights)
+                this._jointWeights = new AttributesView(Float32Array, this._jointsPerVertex, this._concatenatedBuffer);
+            this._jointWeights.set(values, offset);
+        }
+        else if (this._jointWeights) {
+            this.notifyVerticesDispose(this._jointWeights);
+            this._jointWeights = null;
+            return;
+        }
+        this.notifyVerticesUpdate(this._jointWeights);
+        this._verticesDirty[this._jointWeights.id] = false;
     };
     /**
      *
      */
     TriangleSubGeometry.prototype.dispose = function () {
         _super.prototype.dispose.call(this);
+        this._positions.dispose();
         this._positions = null;
-        this._vertexNormals = null;
-        this._vertexTangents = null;
-        this._uvs = null;
-        this._secondaryUVs = null;
-        this._jointIndices = null;
-        this._jointWeights = null;
-        this._faceNormals = null;
-        this._faceWeights = null;
-        this._faceTangents = null;
+        if (this._normals) {
+            this._normals.dispose();
+            this._normals = null;
+        }
+        if (this._tangents) {
+            this._tangents.dispose();
+            this._tangents = null;
+        }
+        if (this._uvs) {
+            this._uvs.dispose();
+            this._uvs = null;
+        }
+        if (this._secondaryUVs) {
+            this._secondaryUVs.dispose();
+            this._secondaryUVs = null;
+        }
+        if (this._jointIndices) {
+            this._jointIndices.dispose();
+            this._jointIndices = null;
+        }
+        if (this._jointWeights) {
+            this._jointWeights.dispose();
+            this._jointWeights = null;
+        }
+        if (this._faceNormals) {
+            this._faceNormals.dispose();
+            this._faceNormals = null;
+        }
+        if (this._faceTangents) {
+            this._faceTangents.dispose();
+            this._faceTangents = null;
+        }
     };
-    /**
-     * Updates the face indices of the TriangleSubGeometry.
-     *
-     * @param indices The face indices to upload.
-     */
-    TriangleSubGeometry.prototype.updateIndices = function (indices) {
-        _super.prototype.updateIndices.call(this, indices);
+    TriangleSubGeometry.prototype.setIndices = function (values, offset) {
+        if (offset === void 0) { offset = 0; }
+        _super.prototype.setIndices.call(this, values, offset);
         this._faceNormalsDirty = true;
+        this._faceTangentsDirty = true;
         if (this._autoDeriveNormals)
-            this._vertexNormalsDirty = true;
+            this.notifyVerticesUpdate(this._normals);
         if (this._autoDeriveTangents)
-            this._vertexTangentsDirty = true;
+            this.notifyVerticesUpdate(this._tangents);
         if (this._autoDeriveUVs)
-            this._uvsDirty = true;
+            this.notifyVerticesUpdate(this._uvs);
     };
     /**
      * Clones the current object
      * @return An exact duplicate of the current object.
      */
     TriangleSubGeometry.prototype.clone = function () {
-        var clone = new TriangleSubGeometry(this._concatenateArrays);
-        clone.updateIndices(this._pIndices.concat());
-        clone.updatePositions(this._positions.concat());
-        if (this._vertexNormals && !this._autoDeriveNormals)
-            clone.updateVertexNormals(this._vertexNormals.concat());
-        else
-            clone.updateVertexNormals(null);
-        if (this._uvs && !this._autoDeriveUVs)
-            clone.updateUVs(this._uvs.concat());
-        else
-            clone.updateUVs(null);
-        if (this._vertexTangents && !this._autoDeriveTangents)
-            clone.updateVertexTangents(this._vertexTangents.concat());
-        else
-            clone.updateVertexTangents(null);
+        var clone = new TriangleSubGeometry(this._concatenatedBuffer ? this._concatenatedBuffer.clone() : null);
+        clone.setIndices(this._pIndices.clone());
+        clone.setPositions(this._positions.clone());
+        clone.setNormals((this._normals && !this._autoDeriveNormals) ? this._normals.clone() : null);
+        clone.setUVs((this._uvs && !this._autoDeriveUVs) ? this._uvs.clone() : null);
+        clone.setTangents((this._tangents && !this._autoDeriveTangents) ? this._tangents.clone() : null);
         if (this._secondaryUVs)
-            clone.updateSecondaryUVs(this._secondaryUVs.concat());
+            clone.setSecondaryUVs(this._secondaryUVs.clone());
         if (this._jointIndices) {
             clone.jointsPerVertex = this._jointsPerVertex;
-            clone.updateJointIndices(this._jointIndices.concat());
+            clone.setJointIndices(this._jointIndices.clone());
         }
         if (this._jointWeights)
-            clone.updateJointWeights(this._jointWeights.concat());
+            clone.setJointWeights(this._jointWeights.clone());
         return clone;
     };
     TriangleSubGeometry.prototype.scaleUV = function (scaleU, scaleV) {
         if (scaleU === void 0) { scaleU = 1; }
         if (scaleV === void 0) { scaleV = 1; }
-        var index;
-        var offset;
-        var stride;
-        var uvs;
-        uvs = this._uvs;
-        var ratioU = scaleU / this._scaleU;
-        var ratioV = scaleV / this._scaleV;
-        this._scaleU = scaleU;
-        this._scaleV = scaleV;
-        var len = uvs.length;
-        offset = 0;
-        stride = 2;
-        index = offset;
-        while (index < len) {
-            uvs[index] *= ratioU;
-            uvs[index + 1] *= ratioV;
-            index += stride;
-        }
-        this.notifyUVsUpdate();
+        SubGeometryUtils.scaleUVs(scaleU, scaleV, this.uvs, this.uvs.count);
     };
     /**
      * Scales the geometry.
      * @param scale The amount by which to scale.
      */
     TriangleSubGeometry.prototype.scale = function (scale) {
-        var i;
-        var index;
-        var offset;
-        var stride;
-        var positions;
-        positions = this._positions;
-        var len = positions.length;
-        offset = 0;
-        stride = 3;
-        i = 0;
-        index = offset;
-        while (i < len) {
-            positions[index] *= scale;
-            positions[index + 1] *= scale;
-            positions[index + 2] *= scale;
-            i += 3;
-            index += stride;
-        }
-        this.notifyPositionsUpdate();
+        SubGeometryUtils.scale(scale, this.positions, this._numVertices);
     };
     TriangleSubGeometry.prototype.applyTransformation = function (transform) {
-        var positions;
-        var normals;
-        var tangents;
-        if (this._concatenateArrays) {
-            positions = this._pVertices;
-            normals = this._pVertices;
-            tangents = this._pVertices;
-        }
-        else {
-            positions = this._positions;
-            normals = this._vertexNormals;
-            tangents = this._vertexTangents;
-        }
-        var len = this._positions.length / 3;
-        var i;
-        var i1;
-        var i2;
-        var vector = new Vector3D();
-        var bakeNormals = this._vertexNormals != null;
-        var bakeTangents = this._vertexTangents != null;
-        var invTranspose;
-        if (bakeNormals || bakeTangents) {
-            invTranspose = transform.clone();
-            invTranspose.invert();
-            invTranspose.transpose();
-        }
-        var vi0 = this.getOffset(TriangleSubGeometry.POSITION_DATA);
-        var ni0 = this.getOffset(TriangleSubGeometry.NORMAL_DATA);
-        var ti0 = this.getOffset(TriangleSubGeometry.TANGENT_DATA);
-        var vStride = this.getStride(TriangleSubGeometry.POSITION_DATA);
-        var nStride = this.getStride(TriangleSubGeometry.NORMAL_DATA);
-        var tStride = this.getStride(TriangleSubGeometry.TANGENT_DATA);
-        for (i = 0; i < len; ++i) {
-            i1 = vi0 + 1;
-            i2 = vi0 + 2;
-            // bake position
-            vector.x = positions[vi0];
-            vector.y = positions[i1];
-            vector.z = positions[i2];
-            vector = transform.transformVector(vector);
-            positions[vi0] = vector.x;
-            positions[i1] = vector.y;
-            positions[i2] = vector.z;
-            vi0 += vStride;
-            // bake normal
-            if (bakeNormals) {
-                i1 = ni0 + 1;
-                i2 = ni0 + 2;
-                vector.x = normals[ni0];
-                vector.y = normals[i1];
-                vector.z = normals[i2];
-                vector = invTranspose.deltaTransformVector(vector);
-                vector.normalize();
-                normals[ni0] = vector.x;
-                normals[i1] = vector.y;
-                normals[i2] = vector.z;
-                ni0 += nStride;
-            }
-            // bake tangent
-            if (bakeTangents) {
-                i1 = ti0 + 1;
-                i2 = ti0 + 2;
-                vector.x = tangents[ti0];
-                vector.y = tangents[i1];
-                vector.z = tangents[i2];
-                vector = invTranspose.deltaTransformVector(vector);
-                vector.normalize();
-                tangents[ti0] = vector.x;
-                tangents[i1] = vector.y;
-                tangents[i2] = vector.z;
-                ti0 += tStride;
-            }
-        }
-        this.notifyPositionsUpdate();
-        this.notifyNormalsUpdate();
-        this.notifyTangentsUpdate();
+        SubGeometryUtils.applyTransformation(transform, this.positions, this.normals, this.tangents, this._numVertices);
     };
     /**
      * Updates the tangents for each face.
      */
     TriangleSubGeometry.prototype.updateFaceTangents = function () {
-        var i = 0;
-        var index1;
-        var index2;
-        var index3;
-        var vi;
-        var v0;
-        var dv1;
-        var dv2;
-        var denom;
-        var x0, y0, z0;
-        var dx1, dy1, dz1;
-        var dx2, dy2, dz2;
-        var cx, cy, cz;
-        var positions = this._positions;
-        var uvs = this._uvs;
-        var len = this._pIndices.length;
-        if (this._faceTangents == null)
-            this._faceTangents = new Array(len);
-        while (i < len) {
-            index1 = this._pIndices[i];
-            index2 = this._pIndices[i + 1];
-            index3 = this._pIndices[i + 2];
-            v0 = uvs[index1 * 2 + 1];
-            dv1 = uvs[index2 * 2 + 1] - v0;
-            dv2 = uvs[index3 * 2 + 1] - v0;
-            vi = index1 * 3;
-            x0 = positions[vi];
-            y0 = positions[vi + 1];
-            z0 = positions[vi + 2];
-            vi = index2 * 3;
-            dx1 = positions[vi] - x0;
-            dy1 = positions[vi + 1] - y0;
-            dz1 = positions[vi + 2] - z0;
-            vi = index3 * 3;
-            dx2 = positions[vi] - x0;
-            dy2 = positions[vi + 1] - y0;
-            dz2 = positions[vi + 2] - z0;
-            cx = dv2 * dx1 - dv1 * dx2;
-            cy = dv2 * dy1 - dv1 * dy2;
-            cz = dv2 * dz1 - dv1 * dz2;
-            denom = 1 / Math.sqrt(cx * cx + cy * cy + cz * cz);
-            this._faceTangents[i++] = denom * cx;
-            this._faceTangents[i++] = denom * cy;
-            this._faceTangents[i++] = denom * cz;
-        }
+        this._faceTangents = SubGeometryUtils.generateFaceTangents(this._pIndices, this._positions, this.uvs, this._faceTangents, this._pIndices.count);
         this._faceTangentsDirty = false;
     };
     /**
      * Updates the normals for each face.
      */
     TriangleSubGeometry.prototype.updateFaceNormals = function () {
-        var i = 0;
-        var j = 0;
-        var k = 0;
-        var index;
-        var offset;
-        var stride;
-        var x1, x2, x3;
-        var y1, y2, y3;
-        var z1, z2, z3;
-        var dx1, dy1, dz1;
-        var dx2, dy2, dz2;
-        var cx, cy, cz;
-        var d;
-        var positions = this._positions;
-        var len = this._pIndices.length;
-        if (this._faceNormals == null)
-            this._faceNormals = new Array(len);
-        if (this._useFaceWeights && this._faceWeights == null)
-            this._faceWeights = new Array(len / 3);
-        while (i < len) {
-            index = this._pIndices[i++] * 3;
-            x1 = positions[index];
-            y1 = positions[index + 1];
-            z1 = positions[index + 2];
-            index = this._pIndices[i++] * 3;
-            x2 = positions[index];
-            y2 = positions[index + 1];
-            z2 = positions[index + 2];
-            index = this._pIndices[i++] * 3;
-            x3 = positions[index];
-            y3 = positions[index + 1];
-            z3 = positions[index + 2];
-            dx1 = x3 - x1;
-            dy1 = y3 - y1;
-            dz1 = z3 - z1;
-            dx2 = x2 - x1;
-            dy2 = y2 - y1;
-            dz2 = z2 - z1;
-            cx = dz1 * dy2 - dy1 * dz2;
-            cy = dx1 * dz2 - dz1 * dx2;
-            cz = dy1 * dx2 - dx1 * dy2;
-            d = Math.sqrt(cx * cx + cy * cy + cz * cz);
-            // length of cross product = 2*triangle area
-            if (this._useFaceWeights) {
-                var w = d * 10000;
-                if (w < 1)
-                    w = 1;
-                this._faceWeights[k++] = w;
-            }
-            d = 1 / d;
-            this._faceNormals[j++] = cx * d;
-            this._faceNormals[j++] = cy * d;
-            this._faceNormals[j++] = cz * d;
-        }
+        this._faceNormals = SubGeometryUtils.generateFaceNormals(this._pIndices, this._positions, this._faceNormals, this._pIndices.count);
         this._faceNormalsDirty = false;
     };
-    TriangleSubGeometry.prototype._pNotifyVerticesUpdate = function () {
-        this._pStrideOffsetDirty = true;
-        this.notifyPositionsUpdate();
-        this.notifyNormalsUpdate();
-        this.notifyTangentsUpdate();
-        this.notifyUVsUpdate();
-        this.notifySecondaryUVsUpdate();
-        this.notifyJointIndicesUpdate();
-        this.notifyJointWeightsUpdate();
-    };
-    TriangleSubGeometry.prototype.notifyPositionsUpdate = function () {
-        if (this._positionsDirty)
-            return;
-        this._positionsDirty = true;
-        if (!this._positionsUpdated)
-            this._positionsUpdated = new SubGeometryEvent(SubGeometryEvent.VERTICES_UPDATED, TriangleSubGeometry.POSITION_DATA);
-        this.dispatchEvent(this._positionsUpdated);
-    };
-    TriangleSubGeometry.prototype.notifyNormalsUpdate = function () {
-        if (this._vertexNormalsDirty)
-            return;
-        this._vertexNormalsDirty = true;
-        if (!this._normalsUpdated)
-            this._normalsUpdated = new SubGeometryEvent(SubGeometryEvent.VERTICES_UPDATED, TriangleSubGeometry.NORMAL_DATA);
-        this.dispatchEvent(this._normalsUpdated);
-    };
-    TriangleSubGeometry.prototype.notifyTangentsUpdate = function () {
-        if (this._vertexTangentsDirty)
-            return;
-        this._vertexTangentsDirty = true;
-        if (!this._tangentsUpdated)
-            this._tangentsUpdated = new SubGeometryEvent(SubGeometryEvent.VERTICES_UPDATED, TriangleSubGeometry.TANGENT_DATA);
-        this.dispatchEvent(this._tangentsUpdated);
-    };
-    TriangleSubGeometry.prototype.notifyUVsUpdate = function () {
-        if (this._uvsDirty)
-            return;
-        this._uvsDirty = true;
-        if (!this._uvsUpdated)
-            this._uvsUpdated = new SubGeometryEvent(SubGeometryEvent.VERTICES_UPDATED, TriangleSubGeometry.UV_DATA);
-        this.dispatchEvent(this._uvsUpdated);
-    };
-    TriangleSubGeometry.prototype.notifySecondaryUVsUpdate = function () {
-        if (this._secondaryUVsDirty)
-            return;
-        this._secondaryUVsDirty = true;
-        if (!this._secondaryUVsUpdated)
-            this._secondaryUVsUpdated = new SubGeometryEvent(SubGeometryEvent.VERTICES_UPDATED, TriangleSubGeometry.SECONDARY_UV_DATA);
-        this.dispatchEvent(this._secondaryUVsUpdated);
-    };
-    TriangleSubGeometry.prototype.notifyJointIndicesUpdate = function () {
-        if (this._jointIndicesDirty)
-            return;
-        this._jointIndicesDirty = true;
-        if (!this._jointIndicesUpdated)
-            this._jointIndicesUpdated = new SubGeometryEvent(SubGeometryEvent.VERTICES_UPDATED, TriangleSubGeometry.JOINT_INDEX_DATA);
-        this.dispatchEvent(this._jointIndicesUpdated);
-    };
-    TriangleSubGeometry.prototype.notifyJointWeightsUpdate = function () {
-        if (this._jointWeightsDirty)
-            return;
-        this._jointWeightsDirty = true;
-        if (!this._jointWeightsUpdated)
-            this._jointWeightsUpdated = new SubGeometryEvent(SubGeometryEvent.VERTICES_UPDATED, TriangleSubGeometry.JOINT_WEIGHT_DATA);
-        this.dispatchEvent(this._jointWeightsUpdated);
-    };
     TriangleSubGeometry.assetType = "[asset TriangleSubGeometry]";
-    TriangleSubGeometry.POSITION_DATA = "positions";
-    TriangleSubGeometry.NORMAL_DATA = "vertexNormals";
-    TriangleSubGeometry.TANGENT_DATA = "vertexTangents";
-    TriangleSubGeometry.UV_DATA = "uvs";
-    TriangleSubGeometry.SECONDARY_UV_DATA = "secondaryUVs";
-    TriangleSubGeometry.JOINT_INDEX_DATA = "jointIndices";
-    TriangleSubGeometry.JOINT_WEIGHT_DATA = "jointWeights";
-    //TODO - move these to StageGL
-    TriangleSubGeometry.POSITION_FORMAT = "float3";
-    TriangleSubGeometry.NORMAL_FORMAT = "float3";
-    TriangleSubGeometry.TANGENT_FORMAT = "float3";
-    TriangleSubGeometry.UV_FORMAT = "float2";
-    TriangleSubGeometry.SECONDARY_UV_FORMAT = "float2";
     return TriangleSubGeometry;
 })(SubGeometryBase);
 module.exports = TriangleSubGeometry;
 
-},{"awayjs-core/lib/data/SubGeometryBase":"awayjs-core/lib/data/SubGeometryBase","awayjs-core/lib/events/SubGeometryEvent":"awayjs-core/lib/events/SubGeometryEvent","awayjs-core/lib/geom/Vector3D":"awayjs-core/lib/geom/Vector3D"}],"awayjs-core/lib/data/WaveAudio":[function(require,module,exports){
+},{"awayjs-core/lib/attributes/AttributesView":"awayjs-core/lib/attributes/AttributesView","awayjs-core/lib/attributes/Float2Attributes":"awayjs-core/lib/attributes/Float2Attributes","awayjs-core/lib/attributes/Float3Attributes":"awayjs-core/lib/attributes/Float3Attributes","awayjs-core/lib/data/SubGeometryBase":"awayjs-core/lib/data/SubGeometryBase","awayjs-core/lib/utils/SubGeometryUtils":"awayjs-core/lib/utils/SubGeometryUtils"}],"awayjs-core/lib/data/WaveAudio":[function(require,module,exports){
 var __extends = this.__extends || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
@@ -5354,19 +4929,18 @@ var SubGeometryEvent = (function (_super) {
     /**
      * Create a new GeometryEvent
      * @param type The event type.
-     * @param dataType An optional data type of the vertex data being updated.
+     * @param attributesView An optional data type of the vertex data being updated.
      */
-    function SubGeometryEvent(type, dataType) {
-        if (dataType === void 0) { dataType = ""; }
+    function SubGeometryEvent(type, attributesView) {
         _super.call(this, type);
-        this._dataType = dataType;
+        this._attributesView = attributesView;
     }
-    Object.defineProperty(SubGeometryEvent.prototype, "dataType", {
+    Object.defineProperty(SubGeometryEvent.prototype, "attributesView", {
         /**
-         * The data type of the vertex data.
+         * The attributes view of the vertex data.
          */
         get: function () {
-            return this._dataType;
+            return this._attributesView;
         },
         enumerable: true,
         configurable: true
@@ -5377,16 +4951,24 @@ var SubGeometryEvent = (function (_super) {
      * @return An exact duplicate of the current object.
      */
     SubGeometryEvent.prototype.clone = function () {
-        return new SubGeometryEvent(this.type, this._dataType);
+        return new SubGeometryEvent(this.type, this._attributesView);
     };
     /**
-     * Dispatched when a TriangleSubGeometry's index data has been updated.
+     * Dispatched when a SubGeometry's index data has been updated.
      */
     SubGeometryEvent.INDICES_UPDATED = "indicesUpdated";
     /**
-     * Dispatched when a TriangleSubGeometry's vertex data has been updated.
+     * Dispatched when a SubGeometry's index data has been disposed.
+     */
+    SubGeometryEvent.INDICES_DISPOSED = "indicesDisposed";
+    /**
+     * Dispatched when a SubGeometry's vertex data has been updated.
      */
     SubGeometryEvent.VERTICES_UPDATED = "verticesUpdated";
+    /**
+     * Dispatched when a SubGeometry's vertex data has been disposed.
+     */
+    SubGeometryEvent.VERTICES_DISPOSED = "verticesDisposed";
     return SubGeometryEvent;
 })(Event);
 module.exports = SubGeometryEvent;
@@ -12757,10 +12339,9 @@ var ParserUtils = (function () {
     }
     ParserUtils.arrayBufferToBase64 = function (data, mimeType) {
         var byteStr = '';
-        var bytes = new Uint8Array(data);
-        var len = bytes.byteLength;
+        var len = data.byteLength;
         for (var i = 0; i < len; i++)
-            byteStr += String.fromCharCode(bytes[i]);
+            byteStr += String.fromCharCode(data[i]);
         var base64Image = window.btoa(byteStr);
         return 'data:' + mimeType + ';base64,' + base64Image;
     };
@@ -12793,13 +12374,13 @@ var ParserUtils = (function () {
      *
      */
     ParserUtils.byteArrayToImage = function (data) {
-        var str = ParserUtils.arrayBufferToBase64(data.arraybytes, 'image/png');
+        var str = ParserUtils.arrayBufferToBase64(data.arrayBufferView, 'image/png');
         var img = new Image();
         img.src = str;
         return img;
     };
     ParserUtils.byteArrayToAudio = function (data, filetype) {
-        var str = ParserUtils.arrayBufferToBase64(data.arraybytes, 'audio/' + filetype);
+        var str = ParserUtils.arrayBufferToBase64(data.arrayBufferView, 'audio/' + filetype);
         var audio = new Audio();
         audio.src = str;
         return audio;
@@ -15216,106 +14797,87 @@ var __extends = this.__extends || function (d, b) {
 var ByteArrayBase = require("awayjs-core/lib/utils/ByteArrayBase");
 var ByteArray = (function (_super) {
     __extends(ByteArray, _super);
-    function ByteArray() {
+    function ByteArray(length) {
+        if (length === void 0) { length = 8; }
         _super.call(this);
-        this.maxlength = 0;
+        this.length = length;
         this._mode = "Typed array";
-        this.maxlength = 4;
-        this.arraybytes = new ArrayBuffer(this.maxlength);
-        this.unalignedarraybytestemp = new ArrayBuffer(16);
+        this._maxLength = length;
+        this._arrayBuffer = new ArrayBuffer(this._maxLength);
+        this._swapBuffer = new ArrayBuffer(16);
+        this._uint8Swap = new Uint8Array(this._swapBuffer);
+        this._uint16Swap = new Uint16Array(this._swapBuffer);
+        this._int16Swap = new Int16Array(this._swapBuffer);
+        this._uint32Swap = new Uint32Array(this._swapBuffer);
+        this._int32Swap = new Int32Array(this._swapBuffer);
+        this._float32Swap = new Float32Array(this._swapBuffer);
+        this._float64Swap = new Float64Array(this._swapBuffer);
+        this._updateViews();
     }
-    ByteArray.prototype.ensureWriteableSpace = function (n) {
-        this.ensureSpace(n + this.position);
-    };
+    Object.defineProperty(ByteArray.prototype, "arrayBufferView", {
+        get: function () {
+            return this._uint8Array;
+        },
+        enumerable: true,
+        configurable: true
+    });
     ByteArray.prototype.setArrayBuffer = function (aBuffer) {
         this.ensureSpace(aBuffer.byteLength);
         this.length = aBuffer.byteLength;
-        var inInt8AView = new Int8Array(aBuffer);
-        var localInt8View = new Int8Array(this.arraybytes, 0, this.length);
-        localInt8View.set(inInt8AView);
+        this._uint8Array.set(new Uint8Array(aBuffer));
         this.position = 0;
     };
     ByteArray.prototype.getBytesAvailable = function () {
-        return (this.length) - (this.position);
+        return this.length - this.position;
     };
     ByteArray.prototype.ensureSpace = function (n) {
-        if (n > this.maxlength) {
-            var newmaxlength = (n + 255) & (~255);
-            var newarraybuffer = new ArrayBuffer(newmaxlength);
-            var view = new Uint8Array(this.arraybytes, 0, this.length);
-            var newview = new Uint8Array(newarraybuffer, 0, this.length);
-            newview.set(view); // memcpy
-            this.arraybytes = newarraybuffer;
-            this.maxlength = newmaxlength;
+        if (n > this._maxLength) {
+            var newMaxLength = (n + 255) & (~255); //rounds up to the nearest multiple of 255 (or 8 bytes)
+            var newArrayBuffer = new ArrayBuffer(newMaxLength);
+            var newView = new Uint8Array(newArrayBuffer, 0, newMaxLength);
+            newView.set(this._uint8Array); // memcpy
+            this._arrayBuffer = newArrayBuffer;
+            this._maxLength = newMaxLength;
+            this._updateViews();
         }
     };
     ByteArray.prototype.writeByte = function (b) {
-        this.ensureWriteableSpace(1);
-        var view = new Int8Array(this.arraybytes);
-        view[this.position++] = (~~b); // ~~ is cast to int in js...
-        if (this.position > this.length) {
+        this.ensureSpace(this.position + 1);
+        this._int8Array[this.position++] = (~~b); // ~~ is cast to int in js...
+        if (this.length < this.position)
             this.length = this.position;
-        }
     };
     ByteArray.prototype.readByte = function () {
-        if (this.position >= this.length) {
-            throw "ByteArray out of bounds read. Positon=" + this.position + ", Length=" + this.length;
-        }
-        var view = new Int8Array(this.arraybytes);
-        return view[this.position++];
+        if (this.position + 1 > this.length)
+            throw "ByteArray out of bounds read. Position=" + this.position + ", Length=" + this.length;
+        return this._int8Array[this.position++];
     };
     ByteArray.prototype.readBytes = function (bytes, offset, length) {
         if (offset === void 0) { offset = 0; }
         if (length === void 0) { length = 0; }
-        if (length == null) {
+        if (length == null)
             length = bytes.length;
-        }
-        bytes.ensureWriteableSpace(offset + length);
-        var byteView = new Int8Array(bytes.arraybytes);
-        var localByteView = new Int8Array(this.arraybytes);
-        byteView.set(localByteView.subarray(this.position, this.position + length), offset);
+        bytes.ensureSpace(this.position + offset + length);
+        bytes.arrayBufferView.set(this._uint8Array.subarray(this.position, this.position + length), offset);
         this.position += length;
-        if (length + offset > bytes.length) {
+        if (length + offset > bytes.length)
             bytes.length += (length + offset) - bytes.length;
-        }
     };
     ByteArray.prototype.writeUnsignedByte = function (b) {
-        this.ensureWriteableSpace(1);
-        var view = new Uint8Array(this.arraybytes);
-        view[this.position++] = (~~b) & 0xff; // ~~ is cast to int in js...
-        if (this.position > this.length) {
+        this.ensureSpace(this.position + 1);
+        this._uint8Array[this.position++] = (~~b) & 0xff; // ~~ is cast to int in js...
+        if (this.length < this.position)
             this.length = this.position;
-        }
     };
     ByteArray.prototype.readUnsignedByte = function () {
-        if (this.position >= this.length) {
-            throw "ByteArray out of bounds read. Positon=" + this.position + ", Length=" + this.length;
-        }
-        var view = new Uint8Array(this.arraybytes);
-        return view[this.position++];
-    };
-    ByteArray.prototype.writeUnsignedShort = function (b) {
-        this.ensureWriteableSpace(2);
-        if ((this.position & 1) == 0) {
-            var view = new Uint16Array(this.arraybytes);
-            view[this.position >> 1] = (~~b) & 0xffff; // ~~ is cast to int in js...
-        }
-        else {
-            var view = new Uint16Array(this.unalignedarraybytestemp, 0, 1);
-            view[0] = (~~b) & 0xffff;
-            var view2 = new Uint8Array(this.arraybytes, this.position, 2);
-            var view3 = new Uint8Array(this.unalignedarraybytestemp, 0, 2);
-            view2.set(view3);
-        }
-        this.position += 2;
-        if (this.position > this.length) {
-            this.length = this.position;
-        }
+        if (this.position + 1 > this.length)
+            throw "ByteArray out of bounds read. Position=" + this.position + ", Length=" + this.length;
+        return this._uint8Array[this.position++];
     };
     ByteArray.prototype.readUTFBytes = function (len) {
         var value = "";
         var max = this.position + len;
-        var data = new DataView(this.arraybytes);
+        var data = new DataView(this._arrayBuffer);
         while (this.position < max) {
             var c = data.getUint8(this.position++);
             if (c < 0x80) {
@@ -15338,116 +14900,233 @@ var ByteArray = (function (_super) {
         }
         return value;
     };
-    ByteArray.prototype.readInt = function () {
-        var data = new DataView(this.arraybytes);
-        var int = data.getInt32(this.position, true);
+    ByteArray.prototype.writeInt = function (b) {
+        this.ensureSpace(this.position + 4);
+        if ((this.position & 3) == 0) {
+            this._int32Array[this.position >> 2] = (~~b); // ~~ is cast to int in js...
+        }
+        else {
+            this._int32Swap[0] = (~~b);
+            this._uint8Array[this.position] = this._uint8Swap[0];
+            this._uint8Array[this.position + 1] = this._uint8Swap[1];
+            this._uint8Array[this.position + 2] = this._uint8Swap[2];
+            this._uint8Array[this.position + 3] = this._uint8Swap[3];
+        }
         this.position += 4;
-        return int;
+        if (this.length < this.position)
+            this.length = this.position;
+    };
+    ByteArray.prototype.readInt = function () {
+        if (this.position + 4 > this.length)
+            throw "ByteArray out of bounds read. Position=" + this.position + ", Length=" + this.length;
+        var view;
+        var pa;
+        if ((this.position & 3) == 0) {
+            view = this._int32Array;
+            pa = this.position >> 2;
+        }
+        else {
+            view = this._int32Swap;
+            this._uint8Swap[0] = this._uint8Array[this.position];
+            this._uint8Swap[1] = this._uint8Array[this.position + 1];
+            this._uint8Swap[2] = this._uint8Array[this.position + 2];
+            this._uint8Swap[3] = this._uint8Array[this.position + 3];
+            pa = 0;
+        }
+        this.position += 4;
+        return view[pa];
+    };
+    ByteArray.prototype.writeShort = function (b) {
+        this.ensureSpace(this.position + 2);
+        if ((this.position & 1) == 0) {
+            this._int16Array[this.position >> 1] = (~~b); // ~~ is cast to int in js...
+        }
+        else {
+            this._int16Swap[0] = (~~b);
+            this._uint8Array[this.position] = this._uint8Swap[0];
+            this._uint8Array[this.position + 1] = this._uint8Swap[1];
+        }
+        this.position += 2;
+        if (this.length < this.position)
+            this.length = this.position;
     };
     ByteArray.prototype.readShort = function () {
-        var data = new DataView(this.arraybytes);
-        var short = data.getInt16(this.position, true);
+        if (this.position + 2 > this.length)
+            throw "ByteArray out of bounds read. Position=" + this.position + ", Length=" + this.length;
+        var view;
+        var pa;
+        if ((this.position & 1) == 0) {
+            view = this._int16Array;
+            pa = this.position >> 1;
+        }
+        else {
+            view = this._int16Swap;
+            this._uint8Swap[0] = this._uint8Array[this.position];
+            this._uint8Swap[1] = this._uint8Array[this.position + 1];
+            pa = 0;
+        }
         this.position += 2;
-        return short;
+        return view[pa];
+    };
+    ByteArray.prototype.writeDouble = function (b) {
+        this.ensureSpace(this.position + 8);
+        if ((this.position & 7) == 0) {
+            this._float64Array[this.position >> 3] = b;
+        }
+        else {
+            this._float64Swap[0] = b;
+            this._uint8Array[this.position] = this._uint8Swap[0];
+            this._uint8Array[this.position + 1] = this._uint8Swap[1];
+            this._uint8Array[this.position + 2] = this._uint8Swap[2];
+            this._uint8Array[this.position + 3] = this._uint8Swap[3];
+            this._uint8Array[this.position + 4] = this._uint8Swap[4];
+            this._uint8Array[this.position + 5] = this._uint8Swap[5];
+            this._uint8Array[this.position + 6] = this._uint8Swap[6];
+            this._uint8Array[this.position + 7] = this._uint8Swap[7];
+        }
+        this.position += 8;
+        if (this.length < this.position)
+            this.length = this.position;
     };
     ByteArray.prototype.readDouble = function () {
-        var data = new DataView(this.arraybytes);
-        var double = data.getFloat64(this.position, true);
+        if (this.position + 8 > this.length)
+            throw "ByteArray out of bounds read. Position=" + this.position + ", Length=" + this.length;
+        var view;
+        var pa;
+        if ((this.position & 7) == 0) {
+            view = this._float64Array;
+            pa = this.position >> 3;
+        }
+        else {
+            view = this._float64Swap;
+            this._uint8Swap[0] = this._uint8Array[this.position];
+            this._uint8Swap[1] = this._uint8Array[this.position + 1];
+            this._uint8Swap[2] = this._uint8Array[this.position + 2];
+            this._uint8Swap[3] = this._uint8Array[this.position + 3];
+            this._uint8Swap[4] = this._uint8Array[this.position + 4];
+            this._uint8Swap[5] = this._uint8Array[this.position + 5];
+            this._uint8Swap[6] = this._uint8Array[this.position + 6];
+            this._uint8Swap[7] = this._uint8Array[this.position + 7];
+            pa = 0;
+        }
         this.position += 8;
-        return double;
+        return view[pa];
+    };
+    ByteArray.prototype.writeUnsignedShort = function (b) {
+        this.ensureSpace(this.position + 2);
+        if ((this.position & 1) == 0) {
+            this._uint16Array[this.position >> 1] = (~~b) & 0xffff; // ~~ is cast to int in js...
+        }
+        else {
+            this._uint16Swap[0] = (~~b) & 0xffff;
+            this._uint8Array[this.position] = this._uint8Swap[0];
+            this._uint8Array[this.position + 1] = this._uint8Swap[1];
+        }
+        this.position += 2;
+        if (this.length < this.position)
+            this.length = this.position;
     };
     ByteArray.prototype.readUnsignedShort = function () {
-        if (this.position > this.length + 2) {
+        if (this.position + 2 > this.length)
             throw "ByteArray out of bounds read. Position=" + this.position + ", Length=" + this.length;
-        }
+        var view;
+        var pa;
         if ((this.position & 1) == 0) {
-            var view = new Uint16Array(this.arraybytes);
-            var pa = this.position >> 1;
-            this.position += 2;
-            return view[pa];
+            view = this._uint16Array;
+            pa = this.position >> 1;
         }
         else {
-            var view = new Uint16Array(this.unalignedarraybytestemp, 0, 1);
-            var view2 = new Uint8Array(this.arraybytes, this.position, 2);
-            var view3 = new Uint8Array(this.unalignedarraybytestemp, 0, 2);
-            view3.set(view2);
-            this.position += 2;
-            return view[0];
+            view = this._uint16Swap;
+            this._uint8Swap[0] = this._uint8Array[this.position];
+            this._uint8Swap[1] = this._uint8Array[this.position + 1];
+            pa = 0;
         }
+        this.position += 2;
+        return view[pa];
     };
     ByteArray.prototype.writeUnsignedInt = function (b) {
-        this.ensureWriteableSpace(4);
+        this.ensureSpace(this.position + 4);
         if ((this.position & 3) == 0) {
-            var view = new Uint32Array(this.arraybytes);
-            view[this.position >> 2] = (~~b) & 0xffffffff; // ~~ is cast to int in js...
+            this._uint32Array[this.position >> 2] = (~~b) & 0xffffffff; // ~~ is cast to int in js...
         }
         else {
-            var view = new Uint32Array(this.unalignedarraybytestemp, 0, 1);
-            view[0] = (~~b) & 0xffffffff;
-            var view2 = new Uint8Array(this.arraybytes, this.position, 4);
-            var view3 = new Uint8Array(this.unalignedarraybytestemp, 0, 4);
-            view2.set(view3);
+            this._uint32Swap[0] = (~~b) & 0xffffffff;
+            this._uint8Array[this.position] = this._uint8Swap[0];
+            this._uint8Array[this.position + 1] = this._uint8Swap[1];
+            this._uint8Array[this.position + 2] = this._uint8Swap[2];
+            this._uint8Array[this.position + 3] = this._uint8Swap[3];
         }
         this.position += 4;
-        if (this.position > this.length) {
+        if (this.length < this.position)
             this.length = this.position;
-        }
     };
     ByteArray.prototype.readUnsignedInt = function () {
-        if (this.position > this.length + 4) {
+        if (this.position + 4 > this.length)
             throw "ByteArray out of bounds read. Position=" + this.position + ", Length=" + this.length;
-        }
+        var view;
+        var pa;
         if ((this.position & 3) == 0) {
-            var view = new Uint32Array(this.arraybytes);
-            var pa = this.position >> 2;
-            this.position += 4;
-            return view[pa];
+            view = this._uint32Array;
+            pa = this.position >> 2;
         }
         else {
-            var view = new Uint32Array(this.unalignedarraybytestemp, 0, 1);
-            var view2 = new Uint8Array(this.arraybytes, this.position, 4);
-            var view3 = new Uint8Array(this.unalignedarraybytestemp, 0, 4);
-            view3.set(view2);
-            this.position += 4;
-            return view[0];
+            view = this._uint32Swap;
+            this._uint8Swap[0] = this._uint8Array[this.position];
+            this._uint8Swap[1] = this._uint8Array[this.position + 1];
+            this._uint8Swap[2] = this._uint8Array[this.position + 2];
+            this._uint8Swap[3] = this._uint8Array[this.position + 3];
+            pa = 0;
         }
+        this.position += 4;
+        return view[pa];
     };
     ByteArray.prototype.writeFloat = function (b) {
-        this.ensureWriteableSpace(4);
+        this.ensureSpace(this.position + 4);
+        var view;
         if ((this.position & 3) == 0) {
-            var view = new Float32Array(this.arraybytes);
+            view = this._float32Array;
             view[this.position >> 2] = b;
         }
         else {
-            var view = new Float32Array(this.unalignedarraybytestemp, 0, 1);
-            view[0] = b;
-            var view2 = new Uint8Array(this.arraybytes, this.position, 4);
-            var view3 = new Uint8Array(this.unalignedarraybytestemp, 0, 4);
-            view2.set(view3);
+            this._float32Swap[0] = b;
+            this._uint8Array[this.position] = this._uint8Swap[0];
+            this._uint8Array[this.position + 1] = this._uint8Swap[1];
+            this._uint8Array[this.position + 2] = this._uint8Swap[2];
+            this._uint8Array[this.position + 3] = this._uint8Swap[3];
         }
         this.position += 4;
-        if (this.position > this.length) {
+        if (this.length < this.position)
             this.length = this.position;
-        }
     };
     ByteArray.prototype.readFloat = function () {
-        if (this.position > this.length + 4) {
-            throw "ByteArray out of bounds read. Positon=" + this.position + ", Length=" + this.length;
-        }
+        if (this.position + 4 > this.length)
+            throw "ByteArray out of bounds read. Position=" + this.position + ", Length=" + this.length;
+        var view;
+        var pa;
         if ((this.position & 3) == 0) {
-            var view = new Float32Array(this.arraybytes);
-            var pa = this.position >> 2;
-            this.position += 4;
-            return view[pa];
+            view = this._float32Array;
+            pa = this.position >> 2;
         }
         else {
-            var view = new Float32Array(this.unalignedarraybytestemp, 0, 1);
-            var view2 = new Uint8Array(this.arraybytes, this.position, 4);
-            var view3 = new Uint8Array(this.unalignedarraybytestemp, 0, 4);
-            view3.set(view2);
-            this.position += 4;
-            return view[0];
+            view = this._float32Swap;
+            this._uint8Swap[0] = this._uint8Array[this.position];
+            this._uint8Swap[1] = this._uint8Array[this.position + 1];
+            this._uint8Swap[2] = this._uint8Array[this.position + 2];
+            this._uint8Swap[3] = this._uint8Array[this.position + 3];
+            pa = 0;
         }
+        this.position += 4;
+        return view[pa];
+    };
+    ByteArray.prototype._updateViews = function () {
+        this._uint8Array = new Uint8Array(this._arrayBuffer);
+        this._int8Array = new Int8Array(this._arrayBuffer);
+        this._uint16Array = new Uint16Array(this._arrayBuffer);
+        this._int16Array = new Int16Array(this._arrayBuffer);
+        this._uint32Array = new Uint32Array(this._arrayBuffer);
+        this._int32Array = new Int32Array(this._arrayBuffer);
+        this._float32Array = new Float32Array(this._arrayBuffer);
+        this._float64Array = new Float64Array(this._arrayBuffer);
     };
     return ByteArray;
 })(ByteArrayBase);
@@ -15590,7 +15269,9 @@ var Debug = (function () {
 })();
 module.exports = Debug;
 
-},{"awayjs-core/lib/errors/PartialImplementationError":"awayjs-core/lib/errors/PartialImplementationError"}],"awayjs-core/lib/utils/ImageUtils":[function(require,module,exports){
+},{"awayjs-core/lib/errors/PartialImplementationError":"awayjs-core/lib/errors/PartialImplementationError"}],"awayjs-core/lib/utils/IArrayBufferViewClass":[function(require,module,exports){
+
+},{}],"awayjs-core/lib/utils/ImageUtils":[function(require,module,exports){
 var ImageUtils = (function () {
     function ImageUtils() {
     }
@@ -15766,7 +15447,468 @@ var RequestAnimationFrame = (function () {
 })();
 module.exports = RequestAnimationFrame;
 
-},{"awayjs-core/lib/utils/getTimer":"awayjs-core/lib/utils/getTimer"}],"awayjs-core/lib/utils/Timer":[function(require,module,exports){
+},{"awayjs-core/lib/utils/getTimer":"awayjs-core/lib/utils/getTimer"}],"awayjs-core/lib/utils/SubGeometryUtils":[function(require,module,exports){
+var AttributesBuffer = require("awayjs-core/lib/attributes/AttributesBuffer");
+var Float2Attributes = require("awayjs-core/lib/attributes/Float2Attributes");
+var Float3Attributes = require("awayjs-core/lib/attributes/Float3Attributes");
+var Float4Attributes = require("awayjs-core/lib/attributes/Float4Attributes");
+var Byte4Attributes = require("awayjs-core/lib/attributes/Byte4Attributes");
+var Vector3D = require("awayjs-core/lib/geom/Vector3D");
+var SubGeometryUtils = (function () {
+    function SubGeometryUtils() {
+    }
+    SubGeometryUtils.generateFaceNormals = function (indexAttributes, positionAttributes, output, count, offset) {
+        if (offset === void 0) { offset = 0; }
+        var indices = indexAttributes.get(count, offset);
+        var positions = positionAttributes.get(positionAttributes.count);
+        if (output == null)
+            output = new Float4Attributes(count + offset);
+        else if (output.count < count + offset)
+            output.count = count + offset;
+        var indexDim = indexAttributes.dimensions;
+        var positionDim = positionAttributes.dimensions;
+        var faceNormals = output.get(count, offset);
+        //multiply by dimension to get index length
+        count *= indexDim;
+        var i = 0;
+        var j = 0;
+        var index;
+        var x1, x2, x3;
+        var y1, y2, y3;
+        var z1, z2, z3;
+        var dx1, dy1, dz1;
+        var dx2, dy2, dz2;
+        var cx, cy, cz;
+        var d;
+        while (i < count) {
+            index = indices[i++] * positionDim;
+            x1 = positions[index];
+            y1 = positions[index + 1];
+            z1 = positions[index + 2];
+            index = indices[i++] * positionDim;
+            x2 = positions[index];
+            y2 = positions[index + 1];
+            z2 = positions[index + 2];
+            index = indices[i++] * positionDim;
+            x3 = positions[index];
+            y3 = positions[index + 1];
+            z3 = positions[index + 2];
+            dx1 = x3 - x1;
+            dy1 = y3 - y1;
+            dz1 = z3 - z1;
+            dx2 = x2 - x1;
+            dy2 = y2 - y1;
+            dz2 = z2 - z1;
+            cx = dz1 * dy2 - dy1 * dz2;
+            cy = dx1 * dz2 - dz1 * dx2;
+            cz = dy1 * dx2 - dx1 * dy2;
+            d = Math.sqrt(cx * cx + cy * cy + cz * cz);
+            // length of cross product = 2*triangle area
+            faceNormals[j++] = cx;
+            faceNormals[j++] = cy;
+            faceNormals[j++] = cz;
+            faceNormals[j++] = d;
+        }
+        output.set(faceNormals, offset);
+        return output;
+    };
+    SubGeometryUtils.generateNormals = function (indexAttributes, faceNormalAttributes, output, concatenatedBuffer) {
+        var indices = indexAttributes.get(indexAttributes.count);
+        var faceNormals = faceNormalAttributes.get(faceNormalAttributes.count);
+        if (output == null)
+            output = new Float3Attributes(concatenatedBuffer);
+        var indexDim = indexAttributes.dimensions;
+        var outputDim = output.dimensions;
+        var normals = output.get(output.count);
+        var i = 0;
+        var len = output.count * outputDim;
+        while (i < len) {
+            normals[i++] = 0;
+            normals[i++] = 0;
+            normals[i++] = 0;
+        }
+        i = 0;
+        len = indexAttributes.count * indexDim;
+        var index;
+        var f1 = 0;
+        var f2 = 1;
+        var f3 = 2;
+        while (i < len) {
+            index = indices[i++] * outputDim;
+            normals[index] += faceNormals[f1];
+            normals[index + 1] += faceNormals[f2];
+            normals[index + 2] += faceNormals[f3];
+            index = indices[i++] * outputDim;
+            normals[index] += faceNormals[f1];
+            normals[index + 1] += faceNormals[f2];
+            normals[index + 2] += faceNormals[f3];
+            index = indices[i++] * outputDim;
+            normals[index] += faceNormals[f1];
+            normals[index + 1] += faceNormals[f2];
+            normals[index + 2] += faceNormals[f3];
+            f1 += 4;
+            f2 += 4;
+            f3 += 4;
+        }
+        i = 0;
+        len = output.count * outputDim;
+        var vx;
+        var vy;
+        var vz;
+        var d;
+        while (i < len) {
+            vx = normals[i];
+            vy = normals[i + 1];
+            vz = normals[i + 2];
+            d = 1.0 / Math.sqrt(vx * vx + vy * vy + vz * vz);
+            normals[i++] = vx * d;
+            normals[i++] = vy * d;
+            normals[i++] = vz * d;
+        }
+        output.set(normals);
+        return output;
+    };
+    SubGeometryUtils.generateFaceTangents = function (indexAttributes, positionAttributes, uvAttributes, output, count, offset, useFaceWeights) {
+        if (offset === void 0) { offset = 0; }
+        if (useFaceWeights === void 0) { useFaceWeights = false; }
+        var indices = indexAttributes.get(count, offset);
+        var positions = positionAttributes.get(positionAttributes.count);
+        var uvs = uvAttributes.get(uvAttributes.count);
+        if (output == null)
+            output = new Float3Attributes(count + offset);
+        else if (output.count < count + offset)
+            output.count = count + offset;
+        var positionDim = positionAttributes.dimensions;
+        var uvDim = uvAttributes.dimensions;
+        var indexDim = indexAttributes.dimensions;
+        var faceTangents = output.get(count, offset);
+        var i = 0;
+        var index1;
+        var index2;
+        var index3;
+        var vi;
+        var v0;
+        var dv1;
+        var dv2;
+        var denom;
+        var x0, y0, z0;
+        var dx1, dy1, dz1;
+        var dx2, dy2, dz2;
+        var cx, cy, cz;
+        //multiply by dimension to get index length
+        count *= indexDim;
+        while (i < count) {
+            index1 = indices[i];
+            index2 = indices[i + 1];
+            index3 = indices[i + 2];
+            v0 = uvs[index1 * uvDim + 1];
+            dv1 = uvs[index2 * uvDim + 1] - v0;
+            dv2 = uvs[index3 * uvDim + 1] - v0;
+            vi = index1 * positionDim;
+            x0 = positions[vi];
+            y0 = positions[vi + 1];
+            z0 = positions[vi + 2];
+            vi = index2 * positionDim;
+            dx1 = positions[vi] - x0;
+            dy1 = positions[vi + 1] - y0;
+            dz1 = positions[vi + 2] - z0;
+            vi = index3 * positionDim;
+            dx2 = positions[vi] - x0;
+            dy2 = positions[vi + 1] - y0;
+            dz2 = positions[vi + 2] - z0;
+            cx = dv2 * dx1 - dv1 * dx2;
+            cy = dv2 * dy1 - dv1 * dy2;
+            cz = dv2 * dz1 - dv1 * dz2;
+            denom = 1 / Math.sqrt(cx * cx + cy * cy + cz * cz);
+            faceTangents[i++] = denom * cx;
+            faceTangents[i++] = denom * cy;
+            faceTangents[i++] = denom * cz;
+        }
+        output.set(faceTangents, offset);
+        return output;
+    };
+    SubGeometryUtils.generateTangents = function (indexAttributes, faceTangentAttributes, faceNormalAttributes, output, concatenatedBuffer) {
+        var indices = indexAttributes.get(indexAttributes.count);
+        var faceTangents = faceTangentAttributes.get(faceTangentAttributes.count);
+        var faceNormals = faceNormalAttributes.get(faceNormalAttributes.count);
+        if (output == null)
+            output = new Float3Attributes(concatenatedBuffer);
+        var indexDim = indexAttributes.dimensions;
+        var outputDim = output.dimensions;
+        var tangents = output.get(output.count);
+        var i = 0;
+        var len = output.count * outputDim;
+        while (i < len) {
+            tangents[i++] = 0;
+            tangents[i++] = 0;
+            tangents[i++] = 0;
+        }
+        var weight;
+        var index;
+        var f1 = 0;
+        var f2 = 1;
+        var f3 = 2;
+        var f4 = 3;
+        i = 0;
+        len = indexAttributes.count * indexDim;
+        while (i < len) {
+            weight = faceNormals[f4];
+            index = indices[i++] * outputDim;
+            tangents[index++] += faceTangents[f1] * weight;
+            tangents[index++] += faceTangents[f2] * weight;
+            tangents[index] += faceTangents[f3] * weight;
+            index = indices[i++] * outputDim;
+            tangents[index++] += faceTangents[f1] * weight;
+            tangents[index++] += faceTangents[f2] * weight;
+            tangents[index] += faceTangents[f3] * weight;
+            index = indices[i++] * outputDim;
+            tangents[index++] += faceTangents[f1] * weight;
+            tangents[index++] += faceTangents[f2] * weight;
+            tangents[index] += faceTangents[f3] * weight;
+            f1 += 4;
+            f2 += 4;
+            f3 += 4;
+            f4 += 4;
+        }
+        i = 0;
+        len = output.count * outputDim;
+        var vx;
+        var vy;
+        var vz;
+        var d;
+        while (i < len) {
+            vx = tangents[i];
+            vy = tangents[i + 1];
+            vz = tangents[i + 2];
+            d = 1.0 / Math.sqrt(vx * vx + vy * vy + vz * vz);
+            tangents[i++] = vx * d;
+            tangents[i++] = vy * d;
+            tangents[i++] = vz * d;
+        }
+        output.set(tangents);
+        return output;
+    };
+    SubGeometryUtils.generateUVs = function (indexAttributes, output, concatenatedBuffer, count, offset) {
+        if (offset === void 0) { offset = 0; }
+        if (output == null)
+            output = new Float2Attributes(concatenatedBuffer);
+        var outputDim = output.dimensions;
+        var uvs = output.get(count, offset);
+        var i = 0;
+        var j = 0;
+        var len = count * outputDim;
+        while (i < len) {
+            uvs[i++] = j * .5;
+            uvs[i++] = 1.0 - (j & 1);
+            if (++j == 3)
+                j = 0;
+        }
+        output.set(uvs, offset);
+        return output;
+    };
+    SubGeometryUtils.generateColors = function (indexAttributes, output, concatenatedBuffer, count, offset) {
+        if (offset === void 0) { offset = 0; }
+        if (output == null)
+            output = new Byte4Attributes(concatenatedBuffer);
+        var index = 0;
+        var colors = new Uint8Array(count * 4);
+        while (index < count * 4) {
+            if (index / 4 & 1) {
+                colors[index] = 0xFF;
+                colors[index + 1] = 0xFF;
+                colors[index + 2] = 0xFF;
+                colors[index + 3] = 0xFF;
+            }
+            else {
+                colors[index] = 0xFF;
+                colors[index + 1] = 0xFF;
+                colors[index + 2] = 0xFF;
+                colors[index + 3] = 0xFF;
+            }
+            index += 4;
+        }
+        output.set(colors, offset);
+        return output;
+    };
+    SubGeometryUtils.scaleUVs = function (scaleU, scaleV, output, count, offset) {
+        if (offset === void 0) { offset = 0; }
+        if (output.count < count + offset)
+            output.count = count + offset;
+        var outputDim = output.dimensions;
+        var uvs = output.get(count, offset);
+        var i = 0;
+        var j = 0;
+        var len = count * outputDim;
+        while (i < len) {
+            uvs[i++] *= scaleU;
+            uvs[i++] *= scaleV;
+        }
+        output.set(uvs, offset);
+    };
+    SubGeometryUtils.scale = function (scale, output, count, offset) {
+        if (offset === void 0) { offset = 0; }
+        if (output.count < count + offset)
+            output.count = count + offset;
+        var outputDim = output.dimensions;
+        var positions = output.get(count, offset);
+        var i = 0;
+        var j = 0;
+        var len = count * outputDim;
+        while (i < len) {
+            positions[i++] *= scale;
+            positions[i++] *= scale;
+            positions[i++] *= scale;
+        }
+        output.set(positions, offset);
+    };
+    SubGeometryUtils.applyTransformation = function (transform, positionAttributes, normalAttributes, tangentAttributes, count, offset) {
+        if (offset === void 0) { offset = 0; }
+        var positions = positionAttributes.get(count, offset);
+        var positionDim = positionAttributes.dimensions;
+        var normals;
+        var normalDim;
+        if (normalAttributes) {
+            normals = normalAttributes.get(count, offset);
+            normalDim = normalAttributes.dimensions;
+        }
+        var tangents;
+        var tangentDim;
+        if (tangentAttributes) {
+            tangents = tangentAttributes.get(count, offset);
+            tangentDim = tangentAttributes.dimensions;
+        }
+        var i;
+        var i1;
+        var i2;
+        var vector = new Vector3D();
+        var invTranspose;
+        if (normalAttributes || tangentAttributes) {
+            invTranspose = transform.clone();
+            invTranspose.invert();
+            invTranspose.transpose();
+        }
+        var vi0 = 0;
+        var ni0 = 0;
+        var ti0 = 0;
+        for (i = 0; i < count; ++i) {
+            // bake position
+            i1 = vi0 + 1;
+            i2 = vi0 + 2;
+            vector.x = positions[vi0];
+            vector.y = positions[i1];
+            vector.z = positions[i2];
+            vector = transform.transformVector(vector);
+            positions[vi0] = vector.x;
+            positions[i1] = vector.y;
+            positions[i2] = vector.z;
+            vi0 += positionDim;
+            if (normals) {
+                // bake normal
+                i1 = ni0 + 1;
+                i2 = ni0 + 2;
+                vector.x = normals[ni0];
+                vector.y = normals[i1];
+                vector.z = normals[i2];
+                vector = invTranspose.deltaTransformVector(vector);
+                vector.normalize();
+                normals[ni0] = vector.x;
+                normals[i1] = vector.y;
+                normals[i2] = vector.z;
+                ni0 += normalDim;
+            }
+            if (tangents) {
+                // bake tangent
+                i1 = ti0 + 1;
+                i2 = ti0 + 2;
+                vector.x = tangents[ti0];
+                vector.y = tangents[i1];
+                vector.z = tangents[i2];
+                vector = invTranspose.deltaTransformVector(vector);
+                vector.normalize();
+                tangents[ti0] = vector.x;
+                tangents[i1] = vector.y;
+                tangents[i2] = vector.z;
+                ti0 += tangentDim;
+            }
+        }
+        positionAttributes.set(positions, offset);
+        if (normalAttributes)
+            normalAttributes.set(normals, offset);
+        if (tangentAttributes)
+            tangentAttributes.set(tangents, offset);
+    };
+    SubGeometryUtils.getSubIndices = function (indexAttributes, numVertices, indexMappings, indexOffset) {
+        if (indexOffset === void 0) { indexOffset = 0; }
+        var buffer = indexAttributes.buffer;
+        var numIndices = indexAttributes.length;
+        //reset mappings
+        indexMappings.length = 0;
+        //shortcut for those buffers that fit into the maximum buffer sizes
+        if (numIndices < SubGeometryUtils.LIMIT_INDICES && numVertices < SubGeometryUtils.LIMIT_VERTS)
+            return buffer;
+        var i;
+        var indices = indexAttributes.get(indexAttributes.count, indexOffset);
+        var splitIndices = new Array();
+        var indexSwap = SubGeometryUtils._indexSwap;
+        indexSwap.length = numIndices;
+        for (i = 0; i < numIndices; i++)
+            indexSwap[i] = -1;
+        var originalIndex;
+        var splitIndex;
+        var index = 0;
+        var offsetLength = indexOffset * indexAttributes.dimensions;
+        // Loop over all triangles
+        i = 0;
+        while (i < numIndices + offsetLength && i + 1 < SubGeometryUtils.LIMIT_INDICES && index + 1 < SubGeometryUtils.LIMIT_VERTS) {
+            originalIndex = indices[i];
+            if (indexSwap[originalIndex] >= 0) {
+                splitIndex = indexSwap[originalIndex];
+            }
+            else {
+                // This vertex does not yet exist in the split list and
+                // needs to be copied from the long list.
+                splitIndex = index++;
+                indexSwap[originalIndex] = splitIndex;
+                indexMappings[splitIndex] = originalIndex;
+            }
+            // Store new index, which may have come from the swap look-up,
+            // or from copying a new set of vertex data from the original vector
+            splitIndices[i++] = splitIndex;
+        }
+        buffer = new AttributesBuffer(indexAttributes.size * indexAttributes.dimensions, splitIndices.length / indexAttributes.dimensions);
+        indexAttributes = indexAttributes.clone(buffer);
+        indexAttributes.set(splitIndices);
+        return buffer;
+    };
+    SubGeometryUtils.getSubVertices = function (vertexBuffer, indexMappings) {
+        if (!indexMappings.length)
+            return vertexBuffer;
+        var stride = vertexBuffer.stride;
+        var vertices = vertexBuffer.bufferView;
+        var splitVerts = new Uint8Array(indexMappings.length * stride);
+        var splitIndex;
+        var originalIndex;
+        var i = 0;
+        var j = 0;
+        var len = indexMappings.length;
+        for (i = 0; i < len; i++) {
+            splitIndex = i * stride;
+            originalIndex = indexMappings[i] * stride;
+            for (j = 0; j < stride; j++)
+                splitVerts[splitIndex + j] = vertices[originalIndex + j];
+        }
+        vertexBuffer = new AttributesBuffer(stride, len);
+        vertexBuffer.bufferView = splitVerts;
+        return vertexBuffer;
+    };
+    SubGeometryUtils.LIMIT_VERTS = 0xffff;
+    SubGeometryUtils.LIMIT_INDICES = 0xffffff;
+    SubGeometryUtils._indexSwap = new Array();
+    return SubGeometryUtils;
+})();
+module.exports = SubGeometryUtils;
+
+},{"awayjs-core/lib/attributes/AttributesBuffer":"awayjs-core/lib/attributes/AttributesBuffer","awayjs-core/lib/attributes/Byte4Attributes":"awayjs-core/lib/attributes/Byte4Attributes","awayjs-core/lib/attributes/Float2Attributes":"awayjs-core/lib/attributes/Float2Attributes","awayjs-core/lib/attributes/Float3Attributes":"awayjs-core/lib/attributes/Float3Attributes","awayjs-core/lib/attributes/Float4Attributes":"awayjs-core/lib/attributes/Float4Attributes","awayjs-core/lib/geom/Vector3D":"awayjs-core/lib/geom/Vector3D"}],"awayjs-core/lib/utils/Timer":[function(require,module,exports){
 var __extends = this.__extends || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
@@ -15947,6 +16089,12 @@ function getTimer() {
     return Date.now();
 }
 module.exports = getTimer;
+
+},{}],"awayjs-core/lib/vos/IAttributesBufferVO":[function(require,module,exports){
+
+},{}],"awayjs-core/lib/vos/IAttributesVO":[function(require,module,exports){
+
+},{}],"awayjs-core/lib/vos/ISubGeometryVO":[function(require,module,exports){
 
 },{}]},{},[])
 

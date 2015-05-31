@@ -1,3 +1,296 @@
+declare module "awayjs-core/lib/attributes/AttributesBuffer" {
+	import AttributesView = require("awayjs-core/lib/attributes/AttributesView");
+	import IAsset = require("awayjs-core/lib/library/IAsset");
+	import AssetBase = require("awayjs-core/lib/library/AssetBase");
+	import IAttributesBufferVO = require("awayjs-core/lib/vos/IAttributesBufferVO");
+	class AttributesBuffer extends AssetBase implements IAsset {
+	    static assetType: string;
+	    private _attributesBufferVO;
+	    private _count;
+	    private _stride;
+	    private _newStride;
+	    private _buffer;
+	    private _bufferView;
+	    private _contentDirty;
+	    private _lengthDirty;
+	    private _viewVOs;
+	    /**
+	     *
+	     * @returns {string}
+	     */
+	    assetType: string;
+	    stride: number;
+	    count: number;
+	    buffer: ArrayBuffer;
+	    bufferView: Uint8Array;
+	    length: number;
+	    /**
+	     *
+	     */
+	    constructor(stride?: number, count?: number);
+	    /**
+	     *
+	     */
+	    invalidateContent(): void;
+	    /**
+	     *
+	     * @private
+	     */
+	    invalidateLength(): void;
+	    clone(): AttributesBuffer;
+	    /**
+	     * @inheritDoc
+	     */
+	    dispose(): void;
+	    _setAttributes(viewIndex: number, arrayBufferView: ArrayBufferView, offset?: number): void;
+	    _getLocalArrayBuffer(viewIndex: number): ArrayBuffer;
+	    _iAddAttributesBufferVO(AttributesBufferVO: IAttributesBufferVO): IAttributesBufferVO;
+	    _iRemoveAttributesBufferVO(AttributesBufferVO: IAttributesBufferVO): IAttributesBufferVO;
+	    _addView(view: AttributesView): number;
+	    _removeView(viewIndex: number): void;
+	    _getOffset(viewIndex: number): number;
+	    _updateLength(): void;
+	}
+	export = AttributesBuffer;
+	
+}
+
+declare module "awayjs-core/lib/attributes/AttributesView" {
+	import AttributesBuffer = require("awayjs-core/lib/attributes/AttributesBuffer");
+	import IAsset = require("awayjs-core/lib/library/IAsset");
+	import AssetBase = require("awayjs-core/lib/library/AssetBase");
+	import IArrayBufferViewClass = require("awayjs-core/lib/utils/IArrayBufferViewClass");
+	class AttributesView extends AssetBase implements IAsset {
+	    static assetType: string;
+	    /**
+	     *
+	     * @returns {string}
+	     */
+	    assetType: string;
+	    _cloneCache: AttributesView;
+	    _attributesBuffer: AttributesBuffer;
+	    _bufferDirty: boolean;
+	    private _size;
+	    private _dimensions;
+	    _index: number;
+	    _arrayClass: IArrayBufferViewClass;
+	    _localArrayBuffer: ArrayBuffer;
+	    normalized: boolean;
+	    buffer: AttributesBuffer;
+	    /**
+	     *
+	     * @returns {number}
+	     */
+	    size: number;
+	    /**
+	     *
+	     * @returns {number}
+	     */
+	    dimensions: number;
+	    count: number;
+	    offset: number;
+	    length: number;
+	    /**
+	     *
+	     */
+	    constructor(arrayClass: IArrayBufferViewClass, dimensions: number, count?: number);
+	    constructor(arrayClass: IArrayBufferViewClass, dimensions: number, attributesBuffer?: AttributesBuffer);
+	    set(array: Array<number>, offset?: number): any;
+	    set(arrayBufferView: ArrayBufferView, offset?: number): any;
+	    get(count: number, offset?: number): ArrayBufferView;
+	    _internalClone(attributesBuffer: AttributesBuffer): AttributesView;
+	    clone(attributesBuffer?: AttributesBuffer): AttributesView;
+	    /**
+	     * @inheritDoc
+	     */
+	    dispose(): void;
+	}
+	export = AttributesView;
+	
+}
+
+declare module "awayjs-core/lib/attributes/Byte4Attributes" {
+	import AttributesBuffer = require("awayjs-core/lib/attributes/AttributesBuffer");
+	import AttributesView = require("awayjs-core/lib/attributes/AttributesView");
+	class Byte4Attributes extends AttributesView {
+	    static assetType: string;
+	    /**
+	     *
+	     * @returns {string}
+	     */
+	    assetType: string;
+	    /**
+	     *
+	     */
+	    constructor(length?: number, unsigned?: boolean);
+	    constructor(attributesBuffer?: AttributesBuffer, unsigned?: boolean);
+	    set(array: Array<number>, offset?: number): any;
+	    set(typedArray: Float32Array, offset?: number): any;
+	    set(typedArray: Uint8Array, offset?: number): any;
+	    set(typedArray: Int8Array, offset?: number): any;
+	    get(count: number, offset?: number): Uint8Array;
+	    get(count: number, offset?: number): Int8Array;
+	    _internalClone(attributesBuffer: AttributesBuffer): Byte4Attributes;
+	    clone(attributesBuffer?: AttributesBuffer): Byte4Attributes;
+	}
+	export = Byte4Attributes;
+	
+}
+
+declare module "awayjs-core/lib/attributes/Float1Attributes" {
+	import AttributesBuffer = require("awayjs-core/lib/attributes/AttributesBuffer");
+	import AttributesView = require("awayjs-core/lib/attributes/AttributesView");
+	class Float1Attributes extends AttributesView {
+	    static assetType: string;
+	    /**
+	     *
+	     * @returns {string}
+	     */
+	    assetType: string;
+	    /**
+	     *
+	     */
+	    constructor(length?: number);
+	    constructor(attributesBuffer?: AttributesBuffer);
+	    set(array: Array<number>, offset?: number): any;
+	    set(typedArray: Float32Array, offset?: number): any;
+	    get(count: number, offset?: number): Float32Array;
+	    _internalClone(attributesBuffer: AttributesBuffer): Float1Attributes;
+	    clone(attributesBuffer?: AttributesBuffer): Float1Attributes;
+	}
+	export = Float1Attributes;
+	
+}
+
+declare module "awayjs-core/lib/attributes/Float2Attributes" {
+	import AttributesBuffer = require("awayjs-core/lib/attributes/AttributesBuffer");
+	import AttributesView = require("awayjs-core/lib/attributes/AttributesView");
+	class Float2Attributes extends AttributesView {
+	    static assetType: string;
+	    /**
+	     *
+	     * @returns {string}
+	     */
+	    assetType: string;
+	    /**
+	     *
+	     */
+	    constructor(length?: number);
+	    constructor(attributesBuffer?: AttributesBuffer);
+	    set(array: Array<number>, offset?: number): any;
+	    set(typedArray: Float32Array, offset?: number): any;
+	    get(count: number, offset?: number): Float32Array;
+	    _internalClone(attributesBuffer: AttributesBuffer): Float2Attributes;
+	    clone(attributesBuffer?: AttributesBuffer): Float2Attributes;
+	}
+	export = Float2Attributes;
+	
+}
+
+declare module "awayjs-core/lib/attributes/Float3Attributes" {
+	import AttributesBuffer = require("awayjs-core/lib/attributes/AttributesBuffer");
+	import AttributesView = require("awayjs-core/lib/attributes/AttributesView");
+	class Float3Attributes extends AttributesView {
+	    static assetType: string;
+	    /**
+	     *
+	     * @returns {string}
+	     */
+	    assetType: string;
+	    /**
+	     *
+	     */
+	    constructor(length?: number);
+	    constructor(attributesBuffer?: AttributesBuffer);
+	    set(array: Array<number>, offset?: number): any;
+	    set(typedArray: Float32Array, offset?: number): any;
+	    get(count: number, offset?: number): Float32Array;
+	    _internalClone(attributesBuffer: AttributesBuffer): Float3Attributes;
+	    clone(attributesBuffer?: AttributesBuffer): Float3Attributes;
+	}
+	export = Float3Attributes;
+	
+}
+
+declare module "awayjs-core/lib/attributes/Float4Attributes" {
+	import AttributesBuffer = require("awayjs-core/lib/attributes/AttributesBuffer");
+	import AttributesView = require("awayjs-core/lib/attributes/AttributesView");
+	class Float4Attributes extends AttributesView {
+	    static assetType: string;
+	    /**
+	     *
+	     * @returns {string}
+	     */
+	    assetType: string;
+	    /**
+	     *
+	     */
+	    constructor(length?: number);
+	    constructor(attributesBuffer?: AttributesBuffer);
+	    set(array: Array<number>, offset?: number): any;
+	    set(typedArray: Float32Array, offset?: number): any;
+	    get(count: number, offset?: number): Float32Array;
+	    _internalClone(attributesBuffer: AttributesBuffer): Float4Attributes;
+	    clone(attributesBuffer?: AttributesBuffer): Float4Attributes;
+	}
+	export = Float4Attributes;
+	
+}
+
+declare module "awayjs-core/lib/attributes/Short2Attributes" {
+	import AttributesBuffer = require("awayjs-core/lib/attributes/AttributesBuffer");
+	import AttributesView = require("awayjs-core/lib/attributes/AttributesView");
+	class Short2Attributes extends AttributesView {
+	    static assetType: string;
+	    /**
+	     *
+	     * @returns {string}
+	     */
+	    assetType: string;
+	    /**
+	     *
+	     */
+	    constructor(length?: number, unsigned?: boolean);
+	    constructor(attributesBuffer?: AttributesBuffer, unsigned?: boolean);
+	    set(array: Array<number>, offset?: number): any;
+	    set(typedArray: Uint16Array, offset?: number): any;
+	    set(typedArray: Int16Array, offset?: number): any;
+	    get(count: number, offset?: number): Uint16Array;
+	    get(count: number, offset?: number): Int16Array;
+	    _internalClone(attributesBuffer: AttributesBuffer): Short2Attributes;
+	    clone(attributesBuffer?: AttributesBuffer): Short2Attributes;
+	}
+	export = Short2Attributes;
+	
+}
+
+declare module "awayjs-core/lib/attributes/Short3Attributes" {
+	import AttributesBuffer = require("awayjs-core/lib/attributes/AttributesBuffer");
+	import AttributesView = require("awayjs-core/lib/attributes/AttributesView");
+	class Short3Attributes extends AttributesView {
+	    static assetType: string;
+	    /**
+	     *
+	     * @returns {string}
+	     */
+	    assetType: string;
+	    /**
+	     *
+	     */
+	    constructor(length?: number, unsigned?: boolean);
+	    constructor(attributesBuffer?: AttributesBuffer, unsigned?: boolean);
+	    set(array: Array<number>, offset?: number): any;
+	    set(typedArray: Uint16Array, offset?: number): any;
+	    set(typedArray: Int16Array, offset?: number): any;
+	    get(count: number, offset?: number): Uint16Array;
+	    get(count: number, offset?: number): Int16Array;
+	    _internalClone(attributesBuffer: AttributesBuffer): Short3Attributes;
+	    clone(attributesBuffer?: AttributesBuffer): Short3Attributes;
+	}
+	export = Short3Attributes;
+	
+}
+
 declare module "awayjs-core/lib/data/BitmapImage2D" {
 	import Image2D = require("awayjs-core/lib/data/Image2D");
 	import BlendMode = require("awayjs-core/lib/data/BlendMode");
@@ -1189,6 +1482,9 @@ declare module "awayjs-core/lib/data/BlendMode" {
 }
 
 declare module "awayjs-core/lib/data/CurveSubGeometry" {
+	import AttributesBuffer = require("awayjs-core/lib/attributes/AttributesBuffer");
+	import Float3Attributes = require("awayjs-core/lib/attributes/Float3Attributes");
+	import Float2Attributes = require("awayjs-core/lib/attributes/Float2Attributes");
 	import SubGeometryBase = require("awayjs-core/lib/data/SubGeometryBase");
 	import Matrix3D = require("awayjs-core/lib/geom/Matrix3D");
 	/**
@@ -1196,39 +1492,22 @@ declare module "awayjs-core/lib/data/CurveSubGeometry" {
 	 */
 	class CurveSubGeometry extends SubGeometryBase {
 	    static assetType: string;
-	    static POSITION_DATA: string;
-	    static CURVE_DATA: string;
-	    static UV_DATA: string;
-	    static POSITION_FORMAT: string;
-	    static CURVE_FORMAT: string;
-	    static UV_FORMAT: string;
-	    private _positionsDirty;
-	    private _curvesDirty;
-	    private _faceNormalsDirty;
-	    private _vertexNormalsDirty;
+	    private _numVertices;
 	    private _uvsDirty;
-	    private _secondaryUVsDirty;
-	    private _jointIndicesDirty;
-	    private _jointWeightsDirty;
 	    private _positions;
 	    private _curves;
 	    private _uvs;
-	    private _useCondensedIndices;
-	    private _condensedJointIndices;
-	    private _condensedIndexLookUp;
-	    private _concatenateArrays;
-	    private _autoDeriveNormals;
-	    private _useFaceWeights;
 	    private _autoDeriveUVs;
-	    private _faceNormals;
-	    private _faceWeights;
 	    private _scaleU;
 	    private _scaleV;
-	    private _positionsUpdated;
-	    private _curvesUpdated;
-	    private _uvsUpdated;
-	    private _secondaryUVsUpdated;
 	    assetType: string;
+	    numVertices: number;
+	    /**
+	     * Defines whether a UV buffer should be automatically generated to contain dummy UV coordinates.
+	     * Set to true if a geometry lacks UV data but uses a material that requires it, or leave as false
+	     * in cases where UV data is explicitly defined or the material does not require UV data.
+	     */
+	    autoDeriveUVs: boolean;
 	    /**
 	     *
 	     */
@@ -1238,75 +1517,44 @@ declare module "awayjs-core/lib/data/CurveSubGeometry" {
 	     */
 	    scaleV: number;
 	    /**
-	     * Offers the option of enabling GPU accelerated animation on skeletons larger than 32 joints
-	     * by condensing the number of joint index values required per mesh. Only applicable to
-	     * skeleton animations that utilise more than one mesh object. Defaults to false.
+	     *
 	     */
-	    useCondensedIndices: boolean;
-	    _pUpdateStrideOffset(): void;
-	    /**
-	     * Defines whether a UV buffer should be automatically generated to contain dummy UV coordinates.
-	     * Set to true if a geometry lacks UV data but uses a material that requires it, or leave as false
-	     * in cases where UV data is explicitly defined or the material does not require UV data.
-	     */
-	    autoDeriveUVs: boolean;
-	    /**
-	     * True if the vertex normals should be derived from the geometry, false if the vertex normals are set
-	     * explicitly.
-	     */
-	    autoDeriveNormals: boolean;
+	    positions: Float3Attributes;
 	    /**
 	     *
 	     */
-	    vertices: Array<number>;
+	    curves: Float2Attributes;
 	    /**
 	     *
 	     */
-	    positions: Array<number>;
+	    uvs: Float2Attributes;
 	    /**
 	     *
 	     */
-	    curves: Array<number>;
-	    /**
-	     * The raw data of the face normals, in the same order as the faces are listed in the index list.
-	     */
-	    faceNormals: Array<number>;
+	    constructor(concatenatedBuffer?: AttributesBuffer);
+	    getBoundingPositions(): Float32Array;
 	    /**
 	     *
 	     */
-	    uvs: Array<number>;
-	    /**
-	     * Indicates whether or not to take the size of faces into account when auto-deriving vertex normals and tangents.
-	     */
-	    useFaceWeights: boolean;
-	    condensedIndexLookUp: Array<number>;
-	    /**
-	     *
-	     */
-	    constructor(concatenatedArrays: boolean);
-	    getBoundingPositions(): Array<number>;
-	    /**
-	     *
-	     */
-	    updatePositions(values: Array<number>): void;
+	    setPositions(array: Array<number>, offset?: number): any;
+	    setPositions(float32Array: Float32Array, offset?: number): any;
+	    setPositions(float3Attributes: Float3Attributes, offset?: number): any;
 	    /**
 	     * Updates the vertex normals based on the geometry.
 	     */
-	    updateCurves(values: Array<number>): void;
+	    setCurves(array: Array<number>, offset?: number): any;
+	    setCurves(float32Array: Float32Array, offset?: number): any;
+	    setCurves(float2Attributes: Float2Attributes, offset?: number): any;
 	    /**
 	     * Updates the uvs based on the geometry.
 	     */
-	    updateUVs(values: Array<number>): void;
+	    setUVs(array: Array<number>, offset?: number): any;
+	    setUVs(float32Array: Float32Array, offset?: number): any;
+	    setUVs(float2Attributes: Float2Attributes, offset?: number): any;
 	    /**
 	     *
 	     */
 	    dispose(): void;
-	    /**
-	     * Updates the face indices of the CurveSubGeometry.
-	     *
-	     * @param indices The face indices to upload.
-	     */
-	    updateIndices(indices: Array<number>): void;
 	    /**
 	     * Clones the current object
 	     * @return An exact duplicate of the current object.
@@ -1317,16 +1565,12 @@ declare module "awayjs-core/lib/data/CurveSubGeometry" {
 	     * Scales the geometry.
 	     * @param scale The amount by which to scale.
 	     */
+	    /**
+	     * Scales the geometry.
+	     * @param scale The amount by which to scale.
+	     */
 	    scale(scale: number): void;
 	    applyTransformation(transform: Matrix3D): void;
-	    /**
-	     * Updates the normals for each face.
-	     */
-	    private updateFaceNormals();
-	    _pNotifyVerticesUpdate(): void;
-	    private notifyPositionsUpdate();
-	    private notifyCurvesUpdate();
-	    private notifyUVsUpdate();
 	}
 	export = CurveSubGeometry;
 	
@@ -1512,109 +1756,74 @@ declare module "awayjs-core/lib/data/ImageCube" {
 }
 
 declare module "awayjs-core/lib/data/LineSubGeometry" {
-	import Geometry = require("awayjs-core/lib/data/Geometry");
+	import AttributesBuffer = require("awayjs-core/lib/attributes/AttributesBuffer");
+	import AttributesView = require("awayjs-core/lib/attributes/AttributesView");
+	import Byte4Attributes = require("awayjs-core/lib/attributes/Byte4Attributes");
+	import Float1Attributes = require("awayjs-core/lib/attributes/Float1Attributes");
 	import SubGeometryBase = require("awayjs-core/lib/data/SubGeometryBase");
 	/**
 	 * @class LineSubGeometry
 	 */
 	class LineSubGeometry extends SubGeometryBase {
 	    static assetType: string;
-	    static VERTEX_DATA: string;
-	    static START_POSITION_DATA: string;
-	    static END_POSITION_DATA: string;
-	    static THICKNESS_DATA: string;
-	    static COLOR_DATA: string;
-	    static POSITION_FORMAT: string;
-	    static COLOR_FORMAT: string;
-	    static THICKNESS_FORMAT: string;
-	    private _positionsDirty;
-	    private _boundingPositionDirty;
-	    private _thicknessDirty;
-	    private _colorsDirty;
-	    private _startPositions;
-	    private _endPositions;
-	    private _boundingPositions;
+	    private _numVertices;
+	    private _positions;
 	    private _thickness;
-	    private _startColors;
-	    private _endColors;
-	    private _numSegments;
-	    private _positionsUpdated;
-	    private _thicknessUpdated;
-	    private _colorUpdated;
+	    private _colors;
 	    /**
 	     *
 	     * @returns {string}
 	     */
 	    assetType: string;
-	    _pUpdateStrideOffset(): void;
 	    /**
 	     *
 	     */
-	    vertices: Array<number>;
+	    positions: AttributesView;
 	    /**
 	     *
 	     */
-	    startPositions: Array<number>;
+	    thickness: Float1Attributes;
 	    /**
 	     *
 	     */
-	    endPositions: Array<number>;
+	    colors: Byte4Attributes;
+	    /**
+	     * The total amount of vertices in the LineSubGeometry.
+	     */
+	    numVertices: number;
 	    /**
 	     *
 	     */
-	    thickness: Array<number>;
+	    constructor(concatenatedBuffer?: AttributesBuffer);
+	    getBoundingPositions(): Float32Array;
 	    /**
 	     *
 	     */
-	    startColors: Array<number>;
-	    /**
-	     *
-	     */
-	    endColors: Array<number>;
-	    /**
-	     * The total amount of segments in the TriangleSubGeometry.
-	     */
-	    numSegments: number;
-	    /**
-	     *
-	     */
-	    constructor();
-	    getBoundingPositions(): Array<number>;
-	    /**
-	     *
-	     */
-	    updatePositions(startValues: Array<number>, endValues: Array<number>): void;
+	    setPositions(array: Array<number>, offset?: number): any;
+	    setPositions(float32Array: Float32Array, offset?: number): any;
+	    setPositions(attributesView: AttributesView, offset?: number): any;
 	    /**
 	     * Updates the thickness.
 	     */
-	    updateThickness(values: Array<number>): void;
+	    setThickness(array: Array<number>, offset?: number): any;
+	    setThickness(float32Array: Float32Array, offset?: number): any;
+	    setThickness(float1Attributes: Float1Attributes, offset?: number): any;
 	    /**
 	     *
 	     */
-	    updateColors(startValues: Array<number>, endValues: Array<number>): void;
+	    setColors(array: Array<number>, offset?: number): any;
+	    setColors(float32Array: Float32Array, offset?: number): any;
+	    setColors(uint8Array: Uint8Array, offset?: number): any;
+	    setColors(byte4Attributes: Byte4Attributes, offset?: number): any;
 	    /**
 	     *
 	     */
 	    dispose(): void;
 	    /**
-	     * @protected
-	     */
-	    pInvalidateBounds(): void;
-	    /**
-	     * The Geometry object that 'owns' this TriangleSubGeometry object.
-	     *
-	     * @private
-	     */
-	    parentGeometry: Geometry;
-	    /**
 	     * Clones the current object
 	     * @return An exact duplicate of the current object.
 	     */
 	    clone(): LineSubGeometry;
-	    _pNotifyVerticesUpdate(): void;
-	    private notifyPositionsUpdate();
-	    private notifyThicknessUpdate();
-	    private notifyColorsUpdate();
 	}
 	export = LineSubGeometry;
 	
@@ -1878,55 +2087,42 @@ declare module "awayjs-core/lib/data/SpecularImage2D" {
 }
 
 declare module "awayjs-core/lib/data/SubGeometryBase" {
+	import AttributesBuffer = require("awayjs-core/lib/attributes/AttributesBuffer");
+	import AttributesView = require("awayjs-core/lib/attributes/AttributesView");
+	import Short3Attributes = require("awayjs-core/lib/attributes/Short3Attributes");
 	import Geometry = require("awayjs-core/lib/data/Geometry");
 	import Matrix3D = require("awayjs-core/lib/geom/Matrix3D");
 	import AssetBase = require("awayjs-core/lib/library/AssetBase");
+	import ISubGeometryVO = require("awayjs-core/lib/vos/ISubGeometryVO");
 	/**
 	 * @class away.base.TriangleSubGeometry
 	 */
 	class SubGeometryBase extends AssetBase {
-	    static VERTEX_DATA: string;
-	    _pStrideOffsetDirty: boolean;
-	    _pIndices: Array<number>;
-	    _pVertices: Array<number>;
-	    private _numIndices;
-	    private _numTriangles;
-	    _pNumVertices: number;
-	    _pConcatenateArrays: boolean;
+	    private _subGeometryVO;
+	    _pIndices: Short3Attributes;
+	    private _numElements;
+	    _concatenatedBuffer: AttributesBuffer;
 	    private _indicesUpdated;
-	    _pStride: Object;
-	    _pOffset: Object;
-	    _pUpdateStrideOffset(): void;
-	    /**
-	     *
-	     */
-	    concatenateArrays: boolean;
+	    _verticesDirty: Object;
+	    _verticesUpdated: Object;
+	    concatenatedBuffer: AttributesBuffer;
 	    /**
 	     * The raw index data that define the faces.
 	     */
-	    indices: Array<number>;
-	    /**
-	     *
-	     */
-	    vertices: Array<number>;
+	    indices: Short3Attributes;
 	    /**
 	     * The total amount of triangles in the TriangleSubGeometry.
 	     */
-	    numTriangles: number;
+	    numElements: number;
 	    numVertices: number;
 	    /**
 	     *
 	     */
-	    constructor(concatenatedArrays: boolean);
+	    constructor(concatenatedBuffer?: AttributesBuffer);
 	    /**
 	     *
 	     */
-	    getStride(dataType: string): any;
-	    /**
-	     *
-	     */
-	    getOffset(dataType: string): any;
-	    updateVertices(): void;
+	    invalidate(): void;
 	    /**
 	     *
 	     */
@@ -1936,7 +2132,9 @@ declare module "awayjs-core/lib/data/SubGeometryBase" {
 	     *
 	     * @param indices The face indices to upload.
 	     */
-	    updateIndices(indices: Array<number>): void;
+	    setIndices(array: Array<number>, offset?: number): any;
+	    setIndices(uint16Array: Uint16Array, offset?: number): any;
+	    setIndices(short3Attributes: Short3Attributes, offset?: number): any;
 	    /**
 	     * @protected
 	     */
@@ -1959,15 +2157,25 @@ declare module "awayjs-core/lib/data/SubGeometryBase" {
 	     */
 	    scale(scale: number): void;
 	    scaleUV(scaleU?: number, scaleV?: number): void;
-	    getBoundingPositions(): Array<number>;
+	    getBoundingPositions(): Float32Array;
 	    private notifyIndicesUpdate();
-	    _pNotifyVerticesUpdate(): void;
+	    private notifyIndicesDispose();
+	    notifyVerticesUpdate(attributesView: AttributesView): void;
+	    notifyVerticesDispose(attributesView: AttributesView): void;
+	    _iAddSubGeometryVO(subGeometryVO: ISubGeometryVO): ISubGeometryVO;
+	    _iRemoveSubGeometryVO(subGeometryVO: ISubGeometryVO): ISubGeometryVO;
 	}
 	export = SubGeometryBase;
 	
 }
 
 declare module "awayjs-core/lib/data/TriangleSubGeometry" {
+	import AttributesBuffer = require("awayjs-core/lib/attributes/AttributesBuffer");
+	import AttributesView = require("awayjs-core/lib/attributes/AttributesView");
+	import Float4Attributes = require("awayjs-core/lib/attributes/Float4Attributes");
+	import Float3Attributes = require("awayjs-core/lib/attributes/Float3Attributes");
+	import Float2Attributes = require("awayjs-core/lib/attributes/Float2Attributes");
+	import Short3Attributes = require("awayjs-core/lib/attributes/Short3Attributes");
 	import SubGeometryBase = require("awayjs-core/lib/data/SubGeometryBase");
 	import Matrix3D = require("awayjs-core/lib/geom/Matrix3D");
 	/**
@@ -1975,72 +2183,32 @@ declare module "awayjs-core/lib/data/TriangleSubGeometry" {
 	 */
 	class TriangleSubGeometry extends SubGeometryBase {
 	    static assetType: string;
-	    static POSITION_DATA: string;
-	    static NORMAL_DATA: string;
-	    static TANGENT_DATA: string;
-	    static UV_DATA: string;
-	    static SECONDARY_UV_DATA: string;
-	    static JOINT_INDEX_DATA: string;
-	    static JOINT_WEIGHT_DATA: string;
-	    static POSITION_FORMAT: string;
-	    static NORMAL_FORMAT: string;
-	    static TANGENT_FORMAT: string;
-	    static UV_FORMAT: string;
-	    static SECONDARY_UV_FORMAT: string;
-	    private _positionsDirty;
+	    private _numVertices;
 	    private _faceNormalsDirty;
 	    private _faceTangentsDirty;
-	    private _vertexNormalsDirty;
-	    private _vertexTangentsDirty;
-	    private _uvsDirty;
-	    private _secondaryUVsDirty;
-	    private _jointIndicesDirty;
-	    private _jointWeightsDirty;
 	    private _positions;
-	    private _vertexNormals;
-	    private _vertexTangents;
+	    private _normals;
+	    private _tangents;
 	    private _uvs;
 	    private _secondaryUVs;
 	    private _jointIndices;
 	    private _jointWeights;
 	    private _useCondensedIndices;
-	    private _condensedJointIndices;
 	    private _condensedIndexLookUp;
-	    private _numCondensedJoints;
 	    private _jointsPerVertex;
-	    private _concatenateArrays;
 	    private _autoDeriveNormals;
 	    private _autoDeriveTangents;
 	    private _autoDeriveUVs;
-	    private _useFaceWeights;
 	    private _faceNormals;
 	    private _faceTangents;
-	    private _faceWeights;
-	    private _scaleU;
-	    private _scaleV;
-	    private _positionsUpdated;
-	    private _normalsUpdated;
-	    private _tangentsUpdated;
-	    private _uvsUpdated;
-	    private _secondaryUVsUpdated;
-	    private _jointIndicesUpdated;
-	    private _jointWeightsUpdated;
 	    assetType: string;
-	    /**
-	     *
-	     */
-	    scaleU: number;
-	    /**
-	     *
-	     */
-	    scaleV: number;
+	    numVertices: number;
 	    /**
 	     * Offers the option of enabling GPU accelerated animation on skeletons larger than 32 joints
 	     * by condensing the number of joint index values required per mesh. Only applicable to
 	     * skeleton animations that utilise more than one mesh object. Defaults to false.
 	     */
 	    useCondensedIndices: boolean;
-	    _pUpdateStrideOffset(): void;
 	    /**
 	     *
 	     */
@@ -2064,82 +2232,87 @@ declare module "awayjs-core/lib/data/TriangleSubGeometry" {
 	    /**
 	     *
 	     */
-	    vertices: Array<number>;
+	    positions: Float3Attributes;
 	    /**
 	     *
 	     */
-	    positions: Array<number>;
+	    normals: Float3Attributes;
 	    /**
 	     *
 	     */
-	    vertexNormals: Array<number>;
-	    /**
-	     *
-	     */
-	    vertexTangents: Array<number>;
+	    tangents: Float3Attributes;
 	    /**
 	     * The raw data of the face normals, in the same order as the faces are listed in the index list.
 	     */
-	    faceNormals: Array<number>;
+	    faceNormals: Float4Attributes;
 	    /**
 	     * The raw data of the face tangets, in the same order as the faces are listed in the index list.
 	     */
-	    faceTangents: Array<number>;
+	    faceTangents: Float3Attributes;
 	    /**
 	     *
 	     */
-	    uvs: Array<number>;
+	    uvs: Float2Attributes;
 	    /**
 	     *
 	     */
-	    secondaryUVs: Array<number>;
+	    secondaryUVs: Float2Attributes;
 	    /**
 	     *
 	     */
-	    jointIndices: Array<number>;
+	    jointIndices: AttributesView;
 	    /**
 	     *
 	     */
-	    jointWeights: Array<number>;
-	    /**
-	     * Indicates whether or not to take the size of faces into account when auto-deriving vertex normals and tangents.
-	     */
-	    useFaceWeights: boolean;
-	    numCondensedJoints: number;
+	    jointWeights: AttributesView;
 	    condensedIndexLookUp: Array<number>;
 	    /**
 	     *
 	     */
-	    constructor(concatenatedArrays: boolean);
-	    getBoundingPositions(): Array<number>;
+	    constructor(concatenatedBuffer?: AttributesBuffer);
+	    getBoundingPositions(): Float32Array;
 	    /**
 	     *
 	     */
-	    updatePositions(values: Array<number>): void;
+	    setPositions(array: Array<number>, offset?: number): any;
+	    setPositions(float32Array: Float32Array, offset?: number): any;
+	    setPositions(float3Attributes: Float3Attributes, offset?: number): any;
 	    /**
 	     * Updates the vertex normals based on the geometry.
 	     */
-	    updateVertexNormals(values: Array<number>): void;
+	    setNormals(array: Array<number>, offset?: number): any;
+	    setNormals(float32Array: Float32Array, offset?: number): any;
+	    setNormals(float3Attributes: Float3Attributes, offset?: number): any;
 	    /**
 	     * Updates the vertex tangents based on the geometry.
 	     */
-	    updateVertexTangents(values: Array<number>): void;
+	    setTangents(array: Array<number>, offset?: number): any;
+	    setTangents(float32Array: Float32Array, offset?: number): any;
+	    setTangents(float3Attributes: Float3Attributes, offset?: number): any;
 	    /**
 	     * Updates the uvs based on the geometry.
 	     */
-	    updateUVs(values: Array<number>): void;
+	    setUVs(array: Array<number>, offset?: number): any;
+	    setUVs(float32Array: Float32Array, offset?: number): any;
+	    setUVs(float2Attributes: Float2Attributes, offset?: number): any;
 	    /**
 	     * Updates the secondary uvs based on the geometry.
 	     */
-	    updateSecondaryUVs(values: Array<number>): void;
+	    setSecondaryUVs(array: Array<number>, offset?: number): any;
+	    setSecondaryUVs(float32Array: Float32Array, offset?: number): any;
+	    setSecondaryUVs(float2Attributes: Float2Attributes, offset?: number): any;
 	    /**
 	     * Updates the joint indices
 	     */
-	    updateJointIndices(values: Array<number>): void;
+	    setJointIndices(array: Array<number>, offset?: number): any;
+	    setJointIndices(float32Array: Float32Array, offset?: number): any;
+	    setJointIndices(attributesView: AttributesView, offset?: number): any;
 	    /**
 	     * Updates the joint weights.
 	     */
-	    updateJointWeights(values: Array<number>): void;
+	    setJointWeights(array: Array<number>, offset?: number): any;
+	    setJointWeights(float32Array: Float32Array, offset?: number): any;
+	    setJointWeights(attributesView: AttributesView, offset?: number): any;
 	    /**
 	     *
 	     */
@@ -2149,7 +2322,9 @@ declare module "awayjs-core/lib/data/TriangleSubGeometry" {
 	     *
 	     * @param indices The face indices to upload.
 	     */
-	    updateIndices(indices: Array<number>): void;
+	    setIndices(array: Array<number>, offset?: number): any;
+	    setIndices(uint16Array: Uint16Array, offset?: number): any;
+	    setIndices(short3Attributes: Short3Attributes, offset?: number): any;
 	    /**
 	     * Clones the current object
 	     * @return An exact duplicate of the current object.
@@ -2170,14 +2345,6 @@ declare module "awayjs-core/lib/data/TriangleSubGeometry" {
 	     * Updates the normals for each face.
 	     */
 	    private updateFaceNormals();
-	    _pNotifyVerticesUpdate(): void;
-	    private notifyPositionsUpdate();
-	    private notifyNormalsUpdate();
-	    private notifyTangentsUpdate();
-	    private notifyUVsUpdate();
-	    private notifySecondaryUVsUpdate();
-	    private notifyJointIndicesUpdate();
-	    private notifyJointWeightsUpdate();
 	}
 	export = TriangleSubGeometry;
 	
@@ -2658,6 +2825,7 @@ declare module "awayjs-core/lib/events/ProjectionEvent" {
 }
 
 declare module "awayjs-core/lib/events/SubGeometryEvent" {
+	import AttributesView = require("awayjs-core/lib/attributes/AttributesView");
 	import Event = require("awayjs-core/lib/events/Event");
 	/**
 	 * Dispatched to notify changes in a sub geometry object's state.
@@ -2667,24 +2835,32 @@ declare module "awayjs-core/lib/events/SubGeometryEvent" {
 	 */
 	class SubGeometryEvent extends Event {
 	    /**
-	     * Dispatched when a TriangleSubGeometry's index data has been updated.
+	     * Dispatched when a SubGeometry's index data has been updated.
 	     */
 	    static INDICES_UPDATED: string;
 	    /**
-	     * Dispatched when a TriangleSubGeometry's vertex data has been updated.
+	     * Dispatched when a SubGeometry's index data has been disposed.
+	     */
+	    static INDICES_DISPOSED: string;
+	    /**
+	     * Dispatched when a SubGeometry's vertex data has been updated.
 	     */
 	    static VERTICES_UPDATED: string;
-	    private _dataType;
+	    /**
+	     * Dispatched when a SubGeometry's vertex data has been disposed.
+	     */
+	    static VERTICES_DISPOSED: string;
+	    private _attributesView;
 	    /**
 	     * Create a new GeometryEvent
 	     * @param type The event type.
-	     * @param dataType An optional data type of the vertex data being updated.
+	     * @param attributesView An optional data type of the vertex data being updated.
 	     */
-	    constructor(type: string, dataType?: string);
+	    constructor(type: string, attributesView: AttributesView);
 	    /**
-	     * The data type of the vertex data.
+	     * The attributes view of the vertex data.
 	     */
-	    dataType: string;
+	    attributesView: AttributesView;
 	    /**
 	     * Clones the event.
 	     *
@@ -6689,7 +6865,7 @@ declare module "awayjs-core/lib/parsers/ParserUtils" {
 	import ByteArray = require("awayjs-core/lib/utils/ByteArray");
 	class ParserUtils {
 	    private static arrayBufferToBase64(data, mimeType);
-	    static arrayBufferToAudio(data: ArrayBuffer, fileType: string): HTMLAudioElement;
+	    static arrayBufferToAudio(data: Uint8Array, fileType: string): HTMLAudioElement;
 	    /**
 	     * Converts an ArrayBuffer to a base64 string
 	     *
@@ -6698,7 +6874,7 @@ declare module "awayjs-core/lib/parsers/ParserUtils" {
 	     * @return HTMLImageElement
 	     *
 	     */
-	    static arrayBufferToImage(data: ArrayBuffer): HTMLImageElement;
+	    static arrayBufferToImage(data: Uint8Array): HTMLImageElement;
 	    /**
 	     * Converts an ByteArray to an Image - returns an HTMLImageElement
 	     *
@@ -7982,11 +8158,26 @@ declare module "awayjs-core/lib/utils/BitmapImageUtils" {
 declare module "awayjs-core/lib/utils/ByteArray" {
 	import ByteArrayBase = require("awayjs-core/lib/utils/ByteArrayBase");
 	class ByteArray extends ByteArrayBase {
-	    maxlength: number;
-	    arraybytes: any;
-	    unalignedarraybytestemp: any;
-	    constructor();
-	    ensureWriteableSpace(n: number): void;
+	    private _maxLength;
+	    private _arrayBuffer;
+	    private _swapBuffer;
+	    private _uint8Swap;
+	    private _uint16Swap;
+	    private _int16Swap;
+	    private _uint32Swap;
+	    private _int32Swap;
+	    private _float32Swap;
+	    private _float64Swap;
+	    private _uint8Array;
+	    private _int8Array;
+	    private _uint16Array;
+	    private _int16Array;
+	    private _uint32Array;
+	    private _int32Array;
+	    private _float32Array;
+	    private _float64Array;
+	    arrayBufferView: Uint8Array;
+	    constructor(length?: number);
 	    setArrayBuffer(aBuffer: ArrayBuffer): void;
 	    getBytesAvailable(): number;
 	    ensureSpace(n: number): void;
@@ -7995,16 +8186,20 @@ declare module "awayjs-core/lib/utils/ByteArray" {
 	    readBytes(bytes: ByteArray, offset?: number, length?: number): void;
 	    writeUnsignedByte(b: number): void;
 	    readUnsignedByte(): number;
-	    writeUnsignedShort(b: number): void;
 	    readUTFBytes(len: number): string;
+	    writeInt(b: number): void;
 	    readInt(): number;
+	    writeShort(b: number): void;
 	    readShort(): number;
+	    writeDouble(b: number): void;
 	    readDouble(): number;
+	    writeUnsignedShort(b: number): void;
 	    readUnsignedShort(): number;
 	    writeUnsignedInt(b: number): void;
 	    readUnsignedInt(): number;
 	    writeFloat(b: number): void;
 	    readFloat(): number;
+	    private _updateViews();
 	}
 	export = ByteArray;
 	
@@ -8112,6 +8307,18 @@ declare module "awayjs-core/lib/utils/Debug" {
 	
 }
 
+declare module "awayjs-core/lib/utils/IArrayBufferViewClass" {
+	interface IArrayBufferViewClass {
+	    BYTES_PER_ELEMENT: number;
+	    new (length: number): ArrayBufferView;
+	    new (array: ArrayBufferView): ArrayBufferView;
+	    new (array: number[]): ArrayBufferView;
+	    new (buffer: ArrayBuffer, byteOffset?: number, length?: number): ArrayBufferView;
+	}
+	export = IArrayBufferViewClass;
+	
+}
+
 declare module "awayjs-core/lib/utils/ImageUtils" {
 	import Image2D = require("awayjs-core/lib/data/Image2D");
 	class ImageUtils {
@@ -8191,6 +8398,36 @@ declare module "awayjs-core/lib/utils/RequestAnimationFrame" {
 	
 }
 
+declare module "awayjs-core/lib/utils/SubGeometryUtils" {
+	import AttributesBuffer = require("awayjs-core/lib/attributes/AttributesBuffer");
+	import Short2Attributes = require("awayjs-core/lib/attributes/Short2Attributes");
+	import Short3Attributes = require("awayjs-core/lib/attributes/Short3Attributes");
+	import Float2Attributes = require("awayjs-core/lib/attributes/Float2Attributes");
+	import Float3Attributes = require("awayjs-core/lib/attributes/Float3Attributes");
+	import Float4Attributes = require("awayjs-core/lib/attributes/Float4Attributes");
+	import Byte4Attributes = require("awayjs-core/lib/attributes/Byte4Attributes");
+	import Matrix3D = require("awayjs-core/lib/geom/Matrix3D");
+	class SubGeometryUtils {
+	    private static LIMIT_VERTS;
+	    private static LIMIT_INDICES;
+	    private static _indexSwap;
+	    static generateFaceNormals(indexAttributes: Short3Attributes, positionAttributes: Float3Attributes, output: Float4Attributes, count: number, offset?: number): Float4Attributes;
+	    static generateNormals(indexAttributes: Short3Attributes, faceNormalAttributes: Float4Attributes, output: Float3Attributes, concatenatedBuffer: AttributesBuffer): Float3Attributes;
+	    static generateFaceTangents(indexAttributes: Short3Attributes, positionAttributes: Float3Attributes, uvAttributes: Float2Attributes, output: Float4Attributes, count: number, offset?: number, useFaceWeights?: boolean): Float4Attributes;
+	    static generateTangents(indexAttributes: Short3Attributes, faceTangentAttributes: Float3Attributes, faceNormalAttributes: Float4Attributes, output: Float3Attributes, concatenatedBuffer: AttributesBuffer): Float3Attributes;
+	    static generateUVs(indexAttributes: Short3Attributes, output: Float2Attributes, concatenatedBuffer: AttributesBuffer, count: number, offset?: number): Float2Attributes;
+	    static generateColors(indexAttributes: Short3Attributes, output: Byte4Attributes, concatenatedBuffer: AttributesBuffer, count: number, offset?: number): Byte4Attributes;
+	    static scaleUVs(scaleU: number, scaleV: number, output: Float2Attributes, count: number, offset?: number): void;
+	    static scale(scale: number, output: Float3Attributes, count: number, offset?: number): void;
+	    static applyTransformation(transform: Matrix3D, positionAttributes: Float3Attributes, normalAttributes: Float3Attributes, tangentAttributes: Float3Attributes, count: number, offset?: number): void;
+	    static getSubIndices(indexAttributes: Short2Attributes, numVertices: number, indexMappings: Array<number>, indexOffset?: number): AttributesBuffer;
+	    static getSubIndices(indexAttributes: Short3Attributes, numVertices: number, indexMappings: Array<number>, indexOffset?: number): AttributesBuffer;
+	    static getSubVertices(vertexBuffer: AttributesBuffer, indexMappings: Array<number>): AttributesBuffer;
+	}
+	export = SubGeometryUtils;
+	
+}
+
 declare module "awayjs-core/lib/utils/Timer" {
 	import EventDispatcher = require("awayjs-core/lib/events/EventDispatcher");
 	class Timer extends EventDispatcher {
@@ -8235,6 +8472,69 @@ declare module "awayjs-core/lib/utils/getTimer" {
 	 */
 	function getTimer(): number;
 	export = getTimer;
+	
+}
+
+declare module "awayjs-core/lib/vos/IAttributesBufferVO" {
+	/**
+	 * IAttributesBufferVO is an interface for classes that are used in the rendering pipeline to render the
+	 * contents of a texture
+	 *
+	 * @class away.pool.IAttributesBufferVO
+	 */
+	interface IAttributesBufferVO {
+	    /**
+	     *
+	     */
+	    dispose(): any;
+	    /**
+	     *
+	     */
+	    invalidate(): any;
+	}
+	export = IAttributesBufferVO;
+	
+}
+
+declare module "awayjs-core/lib/vos/IAttributesVO" {
+	/**
+	 * IAttributesVO is an interface for classes that are used in the rendering pipeline to render the
+	 * contents of a texture
+	 *
+	 * @class away.pool.IAttributesVO
+	 */
+	interface IAttributesVO {
+	    /**
+	     *
+	     */
+	    dispose(): any;
+	    /**
+	     *
+	     */
+	    invalidate(): any;
+	}
+	export = IAttributesVO;
+	
+}
+
+declare module "awayjs-core/lib/vos/ISubGeometryVO" {
+	/**
+	 * ISubGeometryVO is an interface for classes that are used in the rendering pipeline to render the
+	 * contents of a texture
+	 *
+	 * @class away.pool.ISubGeometryVO
+	 */
+	interface ISubGeometryVO {
+	    /**
+	     *
+	     */
+	    dispose(): any;
+	    /**
+	     *
+	     */
+	    invalidate(): any;
+	}
+	export = ISubGeometryVO;
 	
 }
 

@@ -15,6 +15,7 @@ import ImageCubeParser			= require("awayjs-core/lib/parsers/ImageCubeParser");
 import TextureAtlasParser		= require("awayjs-core/lib/parsers/TextureAtlasParser");
 import ParserBase				= require("awayjs-core/lib/parsers/ParserBase");
 import ResourceDependency		= require("awayjs-core/lib/parsers/ResourceDependency");
+import WaveAudioParser			= require("awayjs-core/lib/parsers/WaveAudioParser");
 
 
 
@@ -101,7 +102,7 @@ class AssetLoader extends EventDispatcher
 	private _onAssetCompleteDelegate:(event:AssetEvent) => void;
 
 	// Image parser only parser that is added by default, to save file size.
-	private static _parsers:Array<any> = new Array<any>(Image2DParser, ImageCubeParser, TextureAtlasParser);
+	private static _parsers:Array<any> = new Array<any>(Image2DParser, ImageCubeParser, TextureAtlasParser, WaveAudioParser);
 
 	/**
 	 * Enables a specific parser.

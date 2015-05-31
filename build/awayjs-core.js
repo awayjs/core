@@ -4635,7 +4635,54 @@ var TriangleSubGeometry = (function (_super) {
 })(SubGeometryBase);
 module.exports = TriangleSubGeometry;
 
-},{"awayjs-core/lib/data/SubGeometryBase":"awayjs-core/lib/data/SubGeometryBase","awayjs-core/lib/events/SubGeometryEvent":"awayjs-core/lib/events/SubGeometryEvent","awayjs-core/lib/geom/Vector3D":"awayjs-core/lib/geom/Vector3D"}],"awayjs-core/lib/errors/AbstractMethodError":[function(require,module,exports){
+},{"awayjs-core/lib/data/SubGeometryBase":"awayjs-core/lib/data/SubGeometryBase","awayjs-core/lib/events/SubGeometryEvent":"awayjs-core/lib/events/SubGeometryEvent","awayjs-core/lib/geom/Vector3D":"awayjs-core/lib/geom/Vector3D"}],"awayjs-core/lib/data/WaveAudio":[function(require,module,exports){
+var __extends = this.__extends || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    __.prototype = b.prototype;
+    d.prototype = new __();
+};
+var AssetBase = require("awayjs-core/lib/library/AssetBase");
+// TODO: Audio should probably be an interface containing play/stop/seek functionality
+var WaveAudio = (function (_super) {
+    __extends(WaveAudio, _super);
+    /**
+     *
+     */
+    function WaveAudio(htmlAudioElement) {
+        _super.call(this);
+        this._htmlAudioElement = htmlAudioElement;
+    }
+    Object.defineProperty(WaveAudio.prototype, "assetType", {
+        /**
+         *
+         * @returns {string}
+         */
+        get: function () {
+            return WaveAudio.assetType;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(WaveAudio.prototype, "htmlAudioElement", {
+        get: function () {
+            return this._htmlAudioElement;
+        },
+        set: function (value) {
+            this._htmlAudioElement = value;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    WaveAudio.prototype.dispose = function () {
+        this._htmlAudioElement = null;
+    };
+    WaveAudio.assetType = "[asset WaveAudio]";
+    return WaveAudio;
+})(AssetBase);
+module.exports = WaveAudio;
+
+},{"awayjs-core/lib/library/AssetBase":"awayjs-core/lib/library/AssetBase"}],"awayjs-core/lib/errors/AbstractMethodError":[function(require,module,exports){
 var __extends = this.__extends || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
@@ -10778,6 +10825,7 @@ var Image2DParser = require("awayjs-core/lib/parsers/Image2DParser");
 var ImageCubeParser = require("awayjs-core/lib/parsers/ImageCubeParser");
 var TextureAtlasParser = require("awayjs-core/lib/parsers/TextureAtlasParser");
 var ResourceDependency = require("awayjs-core/lib/parsers/ResourceDependency");
+var WaveAudioParser = require("awayjs-core/lib/parsers/WaveAudioParser");
 /**
  * Dispatched when any asset finishes parsing. Also see specific events for each
  * individual asset type (meshes, materials et c.)
@@ -11305,12 +11353,12 @@ var AssetLoader = (function (_super) {
         return null;
     };
     // Image parser only parser that is added by default, to save file size.
-    AssetLoader._parsers = new Array(Image2DParser, ImageCubeParser, TextureAtlasParser);
+    AssetLoader._parsers = new Array(Image2DParser, ImageCubeParser, TextureAtlasParser, WaveAudioParser);
     return AssetLoader;
 })(EventDispatcher);
 module.exports = AssetLoader;
 
-},{"awayjs-core/lib/errors/Error":"awayjs-core/lib/errors/Error","awayjs-core/lib/events/AssetEvent":"awayjs-core/lib/events/AssetEvent","awayjs-core/lib/events/Event":"awayjs-core/lib/events/Event","awayjs-core/lib/events/EventDispatcher":"awayjs-core/lib/events/EventDispatcher","awayjs-core/lib/events/IOErrorEvent":"awayjs-core/lib/events/IOErrorEvent","awayjs-core/lib/events/LoaderEvent":"awayjs-core/lib/events/LoaderEvent","awayjs-core/lib/events/ParserEvent":"awayjs-core/lib/events/ParserEvent","awayjs-core/lib/library/AssetLoaderToken":"awayjs-core/lib/library/AssetLoaderToken","awayjs-core/lib/net/URLLoader":"awayjs-core/lib/net/URLLoader","awayjs-core/lib/net/URLLoaderDataFormat":"awayjs-core/lib/net/URLLoaderDataFormat","awayjs-core/lib/parsers/Image2DParser":"awayjs-core/lib/parsers/Image2DParser","awayjs-core/lib/parsers/ImageCubeParser":"awayjs-core/lib/parsers/ImageCubeParser","awayjs-core/lib/parsers/ResourceDependency":"awayjs-core/lib/parsers/ResourceDependency","awayjs-core/lib/parsers/TextureAtlasParser":"awayjs-core/lib/parsers/TextureAtlasParser"}],"awayjs-core/lib/library/ConflictPrecedence":[function(require,module,exports){
+},{"awayjs-core/lib/errors/Error":"awayjs-core/lib/errors/Error","awayjs-core/lib/events/AssetEvent":"awayjs-core/lib/events/AssetEvent","awayjs-core/lib/events/Event":"awayjs-core/lib/events/Event","awayjs-core/lib/events/EventDispatcher":"awayjs-core/lib/events/EventDispatcher","awayjs-core/lib/events/IOErrorEvent":"awayjs-core/lib/events/IOErrorEvent","awayjs-core/lib/events/LoaderEvent":"awayjs-core/lib/events/LoaderEvent","awayjs-core/lib/events/ParserEvent":"awayjs-core/lib/events/ParserEvent","awayjs-core/lib/library/AssetLoaderToken":"awayjs-core/lib/library/AssetLoaderToken","awayjs-core/lib/net/URLLoader":"awayjs-core/lib/net/URLLoader","awayjs-core/lib/net/URLLoaderDataFormat":"awayjs-core/lib/net/URLLoaderDataFormat","awayjs-core/lib/parsers/Image2DParser":"awayjs-core/lib/parsers/Image2DParser","awayjs-core/lib/parsers/ImageCubeParser":"awayjs-core/lib/parsers/ImageCubeParser","awayjs-core/lib/parsers/ResourceDependency":"awayjs-core/lib/parsers/ResourceDependency","awayjs-core/lib/parsers/TextureAtlasParser":"awayjs-core/lib/parsers/TextureAtlasParser","awayjs-core/lib/parsers/WaveAudioParser":"awayjs-core/lib/parsers/WaveAudioParser"}],"awayjs-core/lib/library/ConflictPrecedence":[function(require,module,exports){
 /**
  * Enumaration class for precedence when resolving naming conflicts in the library.
  *
@@ -12702,10 +12750,26 @@ module.exports = ParserDataFormat;
 
 },{}],"awayjs-core/lib/parsers/ParserUtils":[function(require,module,exports){
 var BitmapImage2D = require("awayjs-core/lib/data/BitmapImage2D");
+var WaveAudio = require("awayjs-core/lib/data/WaveAudio");
 var ByteArray = require("awayjs-core/lib/utils/ByteArray");
 var ParserUtils = (function () {
     function ParserUtils() {
     }
+    ParserUtils.arrayBufferToBase64 = function (data, mimeType) {
+        var byteStr = '';
+        var bytes = new Uint8Array(data);
+        var len = bytes.byteLength;
+        for (var i = 0; i < len; i++)
+            byteStr += String.fromCharCode(bytes[i]);
+        var base64Image = window.btoa(byteStr);
+        return 'data:' + mimeType + ';base64,' + base64Image;
+    };
+    ParserUtils.arrayBufferToAudio = function (data, fileType) {
+        var str = ParserUtils.arrayBufferToBase64(data, 'audio/' + fileType);
+        var audio = new Audio();
+        audio.src = str;
+        return audio;
+    };
     /**
      * Converts an ArrayBuffer to a base64 string
      *
@@ -12715,13 +12779,7 @@ var ParserUtils = (function () {
      *
      */
     ParserUtils.arrayBufferToImage = function (data) {
-        var byteStr = '';
-        var bytes = new Uint8Array(data);
-        var len = bytes.byteLength;
-        for (var i = 0; i < len; i++)
-            byteStr += String.fromCharCode(bytes[i]);
-        var base64Image = window.btoa(byteStr);
-        var str = 'data:image/png;base64,' + base64Image;
+        var str = ParserUtils.arrayBufferToBase64(data, 'image/png');
         var img = new Image();
         img.src = str;
         return img;
@@ -12735,16 +12793,16 @@ var ParserUtils = (function () {
      *
      */
     ParserUtils.byteArrayToImage = function (data) {
-        var byteStr = '';
-        var bytes = new Uint8Array(data.arraybytes);
-        var len = bytes.byteLength;
-        for (var i = 0; i < len; i++)
-            byteStr += String.fromCharCode(bytes[i]);
-        var base64Image = window.btoa(byteStr);
-        var str = 'data:image/png;base64,' + base64Image;
+        var str = ParserUtils.arrayBufferToBase64(data.arraybytes, 'image/png');
         var img = new Image();
         img.src = str;
         return img;
+    };
+    ParserUtils.byteArrayToAudio = function (data, filetype) {
+        var str = ParserUtils.arrayBufferToBase64(data.arraybytes, 'audio/' + filetype);
+        var audio = new Audio();
+        audio.src = str;
+        return audio;
     };
     /**
      * Converts an Blob to an Image - returns an HTMLImageElement
@@ -12758,6 +12816,21 @@ var ParserUtils = (function () {
         var URLObj = window['URL'] || window['webkitURL'];
         var src = URLObj.createObjectURL(data);
         var img = new Image();
+        img.src = src;
+        return img;
+    };
+    /**
+     * Converts an Blob to audio - returns an HTMLAudioElement
+     *
+     * @param audio data as a Blob
+     *
+     * @return HTMLAudioElement
+     *
+     */
+    ParserUtils.blobToAudio = function (data) {
+        var URLObj = window['URL'] || window['webkitURL'];
+        var src = URLObj.createObjectURL(data);
+        var img = new Audio();
         img.src = src;
         return img;
     };
@@ -12822,11 +12895,14 @@ var ParserUtils = (function () {
 
          */
     };
+    ParserUtils.audioToWaveAudio = function (htmlAudioElement) {
+        return new WaveAudio(htmlAudioElement);
+    };
     return ParserUtils;
 })();
 module.exports = ParserUtils;
 
-},{"awayjs-core/lib/data/BitmapImage2D":"awayjs-core/lib/data/BitmapImage2D","awayjs-core/lib/utils/ByteArray":"awayjs-core/lib/utils/ByteArray"}],"awayjs-core/lib/parsers/ResourceDependency":[function(require,module,exports){
+},{"awayjs-core/lib/data/BitmapImage2D":"awayjs-core/lib/data/BitmapImage2D","awayjs-core/lib/data/WaveAudio":"awayjs-core/lib/data/WaveAudio","awayjs-core/lib/utils/ByteArray":"awayjs-core/lib/utils/ByteArray"}],"awayjs-core/lib/parsers/ResourceDependency":[function(require,module,exports){
 /**
  * ResourceDependency represents the data required to load, parse and resolve additional files ("dependencies")
  * required by a parser, used by ResourceLoadSession.
@@ -13134,7 +13210,96 @@ var TextureAtlasParserState = (function () {
 })();
 module.exports = TextureAtlasParser;
 
-},{"awayjs-core/lib/data/Sampler2D":"awayjs-core/lib/data/Sampler2D","awayjs-core/lib/geom/Rectangle":"awayjs-core/lib/geom/Rectangle","awayjs-core/lib/net/URLLoaderDataFormat":"awayjs-core/lib/net/URLLoaderDataFormat","awayjs-core/lib/net/URLRequest":"awayjs-core/lib/net/URLRequest","awayjs-core/lib/parsers/ParserBase":"awayjs-core/lib/parsers/ParserBase","awayjs-core/lib/parsers/ParserUtils":"awayjs-core/lib/parsers/ParserUtils","awayjs-core/lib/utils/XmlUtils":"awayjs-core/lib/utils/XmlUtils"}],"awayjs-core/lib/pool/IImageObject":[function(require,module,exports){
+},{"awayjs-core/lib/data/Sampler2D":"awayjs-core/lib/data/Sampler2D","awayjs-core/lib/geom/Rectangle":"awayjs-core/lib/geom/Rectangle","awayjs-core/lib/net/URLLoaderDataFormat":"awayjs-core/lib/net/URLLoaderDataFormat","awayjs-core/lib/net/URLRequest":"awayjs-core/lib/net/URLRequest","awayjs-core/lib/parsers/ParserBase":"awayjs-core/lib/parsers/ParserBase","awayjs-core/lib/parsers/ParserUtils":"awayjs-core/lib/parsers/ParserUtils","awayjs-core/lib/utils/XmlUtils":"awayjs-core/lib/utils/XmlUtils"}],"awayjs-core/lib/parsers/WaveAudioParser":[function(require,module,exports){
+var __extends = this.__extends || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    __.prototype = b.prototype;
+    d.prototype = new __();
+};
+var URLLoaderDataFormat = require("awayjs-core/lib/net/URLLoaderDataFormat");
+var ParserBase = require("awayjs-core/lib/parsers/ParserBase");
+var ParserUtils = require("awayjs-core/lib/parsers/ParserUtils");
+var ByteArray = require("awayjs-core/lib/utils/ByteArray");
+var WaveAudioParser = (function (_super) {
+    __extends(WaveAudioParser, _super);
+    function WaveAudioParser() {
+        _super.call(this, URLLoaderDataFormat.BLOB);
+    }
+    WaveAudioParser.supportsType = function (extension) {
+        extension = extension.toLowerCase();
+        return extension == "wav" || extension == "mp3" || extension == "ogg"; //|| extension == "bmp";//|| extension == "atf";
+    };
+    WaveAudioParser.supportsData = function (data) {
+        if (data instanceof HTMLAudioElement)
+            return true;
+        if (!(data instanceof ByteArray))
+            return false;
+        var ba = data;
+        var filetype = WaveAudioParser.parseFileType(ba);
+        return filetype ? true : false;
+    };
+    WaveAudioParser.prototype._pProceedParsing = function () {
+        var _this = this;
+        var asset;
+        if (this._loadingImage) {
+            return ParserBase.MORE_TO_PARSE;
+        }
+        else if (this._htmlAudioElement) {
+            asset = ParserUtils.audioToWaveAudio(this._htmlAudioElement);
+            this._pFinalizeAsset(asset, this._iFileName);
+        }
+        else if (this.data instanceof HTMLAudioElement) {
+            var htmlAudioElement = this.data;
+            asset = ParserUtils.audioToWaveAudio(htmlAudioElement);
+            this._pFinalizeAsset(asset, this._iFileName);
+        }
+        else if (this.data instanceof ByteArray) {
+            var ba = this.data;
+            var filetype = WaveAudioParser.parseFileType(ba);
+            var htmlAudioElement = ParserUtils.byteArrayToAudio(ba, filetype);
+            asset = ParserUtils.audioToWaveAudio(htmlAudioElement);
+            this._pFinalizeAsset(asset, this._iFileName);
+        }
+        else if (this.data instanceof ArrayBuffer) {
+            var filetype = WaveAudioParser.parseFileType(this.data.arraybytes);
+            this._htmlAudioElement = ParserUtils.arrayBufferToAudio(this.data, filetype);
+            asset = ParserUtils.audioToWaveAudio(this._htmlAudioElement);
+            this._pFinalizeAsset(asset, this._iFileName);
+        }
+        else if (this.data instanceof Blob) {
+            this._htmlAudioElement = ParserUtils.blobToAudio(this.data);
+            this._htmlAudioElement.onload = function (event) { return _this.onLoadComplete(event); };
+            this._loadingImage = true;
+            return ParserBase.MORE_TO_PARSE;
+        }
+        this._pContent = asset;
+        return ParserBase.PARSING_DONE;
+    };
+    WaveAudioParser.prototype.onLoadComplete = function (event) {
+        this._loadingImage = false;
+    };
+    WaveAudioParser.parseFileType = function (ba) {
+        ba.position = 0;
+        console.log("WaveAudio: ");
+        ba.position = 0;
+        if (ba.readUnsignedShort() & 0xFFE0) {
+            return 'mp3'; // test for MP3 syncword
+        }
+        ba.position = 0;
+        if (ba.readUTFBytes(4) == 'RIFF')
+            return 'wav';
+        ba.position = 0;
+        if (ba.readUTFBytes(4) == 'OggS')
+            return 'ogg';
+        ba.position = 0;
+        return null;
+    };
+    return WaveAudioParser;
+})(ParserBase);
+module.exports = WaveAudioParser;
+
+},{"awayjs-core/lib/net/URLLoaderDataFormat":"awayjs-core/lib/net/URLLoaderDataFormat","awayjs-core/lib/parsers/ParserBase":"awayjs-core/lib/parsers/ParserBase","awayjs-core/lib/parsers/ParserUtils":"awayjs-core/lib/parsers/ParserUtils","awayjs-core/lib/utils/ByteArray":"awayjs-core/lib/utils/ByteArray"}],"awayjs-core/lib/pool/IImageObject":[function(require,module,exports){
 
 },{}],"awayjs-core/lib/projections/CoordinateSystem":[function(require,module,exports){
 /**

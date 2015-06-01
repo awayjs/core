@@ -46,8 +46,8 @@ declare module "awayjs-core/lib/attributes/AttributesBuffer" {
 	    _getLocalArrayBuffer(viewIndex: number): ArrayBuffer;
 	    _iAddAttributesBufferVO(AttributesBufferVO: IAttributesBufferVO): IAttributesBufferVO;
 	    _iRemoveAttributesBufferVO(AttributesBufferVO: IAttributesBufferVO): IAttributesBufferVO;
-	    _addView(view: AttributesView): number;
-	    _removeView(viewIndex: number): void;
+	    _addView(view: AttributesView): void;
+	    _removeView(view: AttributesView): void;
 	    _getOffset(viewIndex: number): number;
 	    _updateLength(): void;
 	}
@@ -6865,7 +6865,7 @@ declare module "awayjs-core/lib/parsers/ParserUtils" {
 	import ByteArray = require("awayjs-core/lib/utils/ByteArray");
 	class ParserUtils {
 	    private static arrayBufferToBase64(data, mimeType);
-	    static arrayBufferToAudio(data: Uint8Array, fileType: string): HTMLAudioElement;
+	    static arrayBufferToAudio(data: ArrayBuffer, fileType: string): HTMLAudioElement;
 	    /**
 	     * Converts an ArrayBuffer to a base64 string
 	     *
@@ -6874,7 +6874,7 @@ declare module "awayjs-core/lib/parsers/ParserUtils" {
 	     * @return HTMLImageElement
 	     *
 	     */
-	    static arrayBufferToImage(data: Uint8Array): HTMLImageElement;
+	    static arrayBufferToImage(data: ArrayBuffer): HTMLImageElement;
 	    /**
 	     * Converts an ByteArray to an Image - returns an HTMLImageElement
 	     *
@@ -8158,26 +8158,11 @@ declare module "awayjs-core/lib/utils/BitmapImageUtils" {
 declare module "awayjs-core/lib/utils/ByteArray" {
 	import ByteArrayBase = require("awayjs-core/lib/utils/ByteArrayBase");
 	class ByteArray extends ByteArrayBase {
-	    private _maxLength;
-	    private _arrayBuffer;
-	    private _swapBuffer;
-	    private _uint8Swap;
-	    private _uint16Swap;
-	    private _int16Swap;
-	    private _uint32Swap;
-	    private _int32Swap;
-	    private _float32Swap;
-	    private _float64Swap;
-	    private _uint8Array;
-	    private _int8Array;
-	    private _uint16Array;
-	    private _int16Array;
-	    private _uint32Array;
-	    private _int32Array;
-	    private _float32Array;
-	    private _float64Array;
-	    arrayBufferView: Uint8Array;
-	    constructor(length?: number);
+	    maxlength: number;
+	    arraybytes: any;
+	    unalignedarraybytestemp: any;
+	    constructor();
+	    ensureWriteableSpace(n: number): void;
 	    setArrayBuffer(aBuffer: ArrayBuffer): void;
 	    getBytesAvailable(): number;
 	    ensureSpace(n: number): void;
@@ -8186,20 +8171,16 @@ declare module "awayjs-core/lib/utils/ByteArray" {
 	    readBytes(bytes: ByteArray, offset?: number, length?: number): void;
 	    writeUnsignedByte(b: number): void;
 	    readUnsignedByte(): number;
-	    readUTFBytes(len: number): string;
-	    writeInt(b: number): void;
-	    readInt(): number;
-	    writeShort(b: number): void;
-	    readShort(): number;
-	    writeDouble(b: number): void;
-	    readDouble(): number;
 	    writeUnsignedShort(b: number): void;
+	    readUTFBytes(len: number): string;
+	    readInt(): number;
+	    readShort(): number;
+	    readDouble(): number;
 	    readUnsignedShort(): number;
 	    writeUnsignedInt(b: number): void;
 	    readUnsignedInt(): number;
 	    writeFloat(b: number): void;
 	    readFloat(): number;
-	    private _updateViews();
 	}
 	export = ByteArray;
 	

@@ -20,8 +20,10 @@ var AttributesBuffer = (function (_super) {
         this._stride = 0;
         this._newStride = 0;
         this._viewVOs = new Array();
-        this.stride = stride;
-        this.count = count;
+        this._stride = this._newStride = stride;
+        this._count = count;
+        this._buffer = new ArrayBuffer(this._stride * this._count);
+        this._bufferView = new Uint8Array(this._buffer, 0, this._buffer.byteLength);
     }
     Object.defineProperty(AttributesBuffer.prototype, "assetType", {
         /**
@@ -87,7 +89,7 @@ var AttributesBuffer = (function (_super) {
     });
     Object.defineProperty(AttributesBuffer.prototype, "length", {
         get: function () {
-            return this._count * this._stride;
+            return this._count * this.stride;
         },
         enumerable: true,
         configurable: true
@@ -183,15 +185,17 @@ var AttributesBuffer = (function (_super) {
             this._newStride = viewVO.offset + viewVO.length;
             this.invalidateLength();
         }
-        return len;
+        view._index = len;
     };
-    AttributesBuffer.prototype._removeView = function (viewIndex) {
+    AttributesBuffer.prototype._removeView = function (view) {
+        var viewIndex = view._index;
         var viewVO = this._viewVOs.splice(viewIndex, 1)[0];
         var len = this._viewVOs.length;
         viewVO.dispose();
         for (var i = viewIndex; i < len; i++) {
             viewVO = this._viewVOs[i];
             viewVO.offset = i ? this._viewVOs[i - 1].offset + this._viewVOs[i - 1].length : 0;
+            viewVO.view._index = i;
         }
         this._newStride = viewVO.offset + viewVO.length;
         this.invalidateLength();
@@ -226,7 +230,7 @@ var AttributesBuffer = (function (_super) {
                 this._stride = this._newStride;
             }
             else {
-                newView.set(new Uint8Array(this._buffer, 0, this._buffer.byteLength));
+                newView.set(new Uint8Array(this._buffer, 0, Math.min(newLength, this._buffer.byteLength))); //TODO: bypass quantisation of bytearray on instantiation
             }
             this._buffer = newBuffer;
             this._bufferView = newView;
@@ -268,7 +272,7 @@ var AttributesView = (function (_super) {
         this._size = arrayClass.BYTES_PER_ELEMENT;
         this._dimensions = dimensions;
         this._attributesBuffer = (attributesBufferCount instanceof AttributesBuffer) ? attributesBufferCount : new AttributesBuffer(this._dimensions * this._size, attributesBufferCount);
-        this._index = this._attributesBuffer._addView(this);
+        this._attributesBuffer._addView(this);
     }
     Object.defineProperty(AttributesView.prototype, "assetType", {
         /**
@@ -300,8 +304,8 @@ var AttributesView = (function (_super) {
             if (this._size == value)
                 return;
             this._size = value;
-            this._attributesBuffer._removeView(this._index);
-            this._index = this._attributesBuffer._addView(this);
+            this._attributesBuffer._removeView(this);
+            this._attributesBuffer._addView(this);
         },
         enumerable: true,
         configurable: true
@@ -319,8 +323,8 @@ var AttributesView = (function (_super) {
                 return;
             this._dimensions = value;
             //reset view
-            this._attributesBuffer._removeView(this._index);
-            this._index = this._attributesBuffer._addView(this);
+            this._attributesBuffer._removeView(this);
+            this._attributesBuffer._addView(this);
         },
         enumerable: true,
         configurable: true
@@ -378,7 +382,7 @@ var AttributesView = (function (_super) {
      * @inheritDoc
      */
     AttributesView.prototype.dispose = function () {
-        this._attributesBuffer._removeView(this._index);
+        this._attributesBuffer._removeView(this);
         this._attributesBuffer = null;
     };
     AttributesView.assetType = "[attributes AttributesView]";
@@ -12339,9 +12343,10 @@ var ParserUtils = (function () {
     }
     ParserUtils.arrayBufferToBase64 = function (data, mimeType) {
         var byteStr = '';
-        var len = data.byteLength;
+        var bytes = new Uint8Array(data);
+        var len = bytes.byteLength;
         for (var i = 0; i < len; i++)
-            byteStr += String.fromCharCode(data[i]);
+            byteStr += String.fromCharCode(bytes[i]);
         var base64Image = window.btoa(byteStr);
         return 'data:' + mimeType + ';base64,' + base64Image;
     };
@@ -12374,13 +12379,13 @@ var ParserUtils = (function () {
      *
      */
     ParserUtils.byteArrayToImage = function (data) {
-        var str = ParserUtils.arrayBufferToBase64(data.arrayBufferView, 'image/png');
+        var str = ParserUtils.arrayBufferToBase64(data.arraybytes, 'image/png');
         var img = new Image();
         img.src = str;
         return img;
     };
     ParserUtils.byteArrayToAudio = function (data, filetype) {
-        var str = ParserUtils.arrayBufferToBase64(data.arrayBufferView, 'audio/' + filetype);
+        var str = ParserUtils.arrayBufferToBase64(data.arraybytes, 'audio/' + filetype);
         var audio = new Audio();
         audio.src = str;
         return audio;
@@ -14797,87 +14802,106 @@ var __extends = this.__extends || function (d, b) {
 var ByteArrayBase = require("awayjs-core/lib/utils/ByteArrayBase");
 var ByteArray = (function (_super) {
     __extends(ByteArray, _super);
-    function ByteArray(length) {
-        if (length === void 0) { length = 8; }
+    function ByteArray() {
         _super.call(this);
-        this.length = length;
+        this.maxlength = 0;
         this._mode = "Typed array";
-        this._maxLength = length;
-        this._arrayBuffer = new ArrayBuffer(this._maxLength);
-        this._swapBuffer = new ArrayBuffer(16);
-        this._uint8Swap = new Uint8Array(this._swapBuffer);
-        this._uint16Swap = new Uint16Array(this._swapBuffer);
-        this._int16Swap = new Int16Array(this._swapBuffer);
-        this._uint32Swap = new Uint32Array(this._swapBuffer);
-        this._int32Swap = new Int32Array(this._swapBuffer);
-        this._float32Swap = new Float32Array(this._swapBuffer);
-        this._float64Swap = new Float64Array(this._swapBuffer);
-        this._updateViews();
+        this.maxlength = 4;
+        this.arraybytes = new ArrayBuffer(this.maxlength);
+        this.unalignedarraybytestemp = new ArrayBuffer(16);
     }
-    Object.defineProperty(ByteArray.prototype, "arrayBufferView", {
-        get: function () {
-            return this._uint8Array;
-        },
-        enumerable: true,
-        configurable: true
-    });
+    ByteArray.prototype.ensureWriteableSpace = function (n) {
+        this.ensureSpace(n + this.position);
+    };
     ByteArray.prototype.setArrayBuffer = function (aBuffer) {
         this.ensureSpace(aBuffer.byteLength);
         this.length = aBuffer.byteLength;
-        this._uint8Array.set(new Uint8Array(aBuffer));
+        var inInt8AView = new Int8Array(aBuffer);
+        var localInt8View = new Int8Array(this.arraybytes, 0, this.length);
+        localInt8View.set(inInt8AView);
         this.position = 0;
     };
     ByteArray.prototype.getBytesAvailable = function () {
-        return this.length - this.position;
+        return (this.length) - (this.position);
     };
     ByteArray.prototype.ensureSpace = function (n) {
-        if (n > this._maxLength) {
-            var newMaxLength = (n + 255) & (~255); //rounds up to the nearest multiple of 255 (or 8 bytes)
-            var newArrayBuffer = new ArrayBuffer(newMaxLength);
-            var newView = new Uint8Array(newArrayBuffer, 0, newMaxLength);
-            newView.set(this._uint8Array); // memcpy
-            this._arrayBuffer = newArrayBuffer;
-            this._maxLength = newMaxLength;
-            this._updateViews();
+        if (n > this.maxlength) {
+            var newmaxlength = (n + 255) & (~255);
+            var newarraybuffer = new ArrayBuffer(newmaxlength);
+            var view = new Uint8Array(this.arraybytes, 0, this.length);
+            var newview = new Uint8Array(newarraybuffer, 0, this.length);
+            newview.set(view); // memcpy
+            this.arraybytes = newarraybuffer;
+            this.maxlength = newmaxlength;
         }
     };
     ByteArray.prototype.writeByte = function (b) {
-        this.ensureSpace(this.position + 1);
-        this._int8Array[this.position++] = (~~b); // ~~ is cast to int in js...
-        if (this.length < this.position)
+        this.ensureWriteableSpace(1);
+        var view = new Int8Array(this.arraybytes);
+        view[this.position++] = (~~b); // ~~ is cast to int in js...
+        if (this.position > this.length) {
             this.length = this.position;
+        }
     };
     ByteArray.prototype.readByte = function () {
-        if (this.position + 1 > this.length)
-            throw "ByteArray out of bounds read. Position=" + this.position + ", Length=" + this.length;
-        return this._int8Array[this.position++];
+        if (this.position >= this.length) {
+            throw "ByteArray out of bounds read. Positon=" + this.position + ", Length=" + this.length;
+        }
+        var view = new Int8Array(this.arraybytes);
+        return view[this.position++];
     };
     ByteArray.prototype.readBytes = function (bytes, offset, length) {
         if (offset === void 0) { offset = 0; }
         if (length === void 0) { length = 0; }
-        if (length == null)
+        if (length == null) {
             length = bytes.length;
-        bytes.ensureSpace(this.position + offset + length);
-        bytes.arrayBufferView.set(this._uint8Array.subarray(this.position, this.position + length), offset);
+        }
+        bytes.ensureWriteableSpace(offset + length);
+        var byteView = new Int8Array(bytes.arraybytes);
+        var localByteView = new Int8Array(this.arraybytes);
+        byteView.set(localByteView.subarray(this.position, this.position + length), offset);
         this.position += length;
-        if (length + offset > bytes.length)
+        if (length + offset > bytes.length) {
             bytes.length += (length + offset) - bytes.length;
+        }
     };
     ByteArray.prototype.writeUnsignedByte = function (b) {
-        this.ensureSpace(this.position + 1);
-        this._uint8Array[this.position++] = (~~b) & 0xff; // ~~ is cast to int in js...
-        if (this.length < this.position)
+        this.ensureWriteableSpace(1);
+        var view = new Uint8Array(this.arraybytes);
+        view[this.position++] = (~~b) & 0xff; // ~~ is cast to int in js...
+        if (this.position > this.length) {
             this.length = this.position;
+        }
     };
     ByteArray.prototype.readUnsignedByte = function () {
-        if (this.position + 1 > this.length)
-            throw "ByteArray out of bounds read. Position=" + this.position + ", Length=" + this.length;
-        return this._uint8Array[this.position++];
+        if (this.position >= this.length) {
+            throw "ByteArray out of bounds read. Positon=" + this.position + ", Length=" + this.length;
+        }
+        var view = new Uint8Array(this.arraybytes);
+        return view[this.position++];
+    };
+    ByteArray.prototype.writeUnsignedShort = function (b) {
+        this.ensureWriteableSpace(2);
+        if ((this.position & 1) == 0) {
+            var view = new Uint16Array(this.arraybytes);
+            view[this.position >> 1] = (~~b) & 0xffff; // ~~ is cast to int in js...
+        }
+        else {
+            var view = new Uint16Array(this.unalignedarraybytestemp, 0, 1);
+            view[0] = (~~b) & 0xffff;
+            var view2 = new Uint8Array(this.arraybytes, this.position, 2);
+            var view3 = new Uint8Array(this.unalignedarraybytestemp, 0, 2);
+            view2.set(view3);
+        }
+        this.position += 2;
+        if (this.position > this.length) {
+            this.length = this.position;
+        }
     };
     ByteArray.prototype.readUTFBytes = function (len) {
         var value = "";
         var max = this.position + len;
-        var data = new DataView(this._arrayBuffer);
+        var data = new DataView(this.arraybytes);
         while (this.position < max) {
             var c = data.getUint8(this.position++);
             if (c < 0x80) {
@@ -14900,233 +14924,116 @@ var ByteArray = (function (_super) {
         }
         return value;
     };
-    ByteArray.prototype.writeInt = function (b) {
-        this.ensureSpace(this.position + 4);
-        if ((this.position & 3) == 0) {
-            this._int32Array[this.position >> 2] = (~~b); // ~~ is cast to int in js...
-        }
-        else {
-            this._int32Swap[0] = (~~b);
-            this._uint8Array[this.position] = this._uint8Swap[0];
-            this._uint8Array[this.position + 1] = this._uint8Swap[1];
-            this._uint8Array[this.position + 2] = this._uint8Swap[2];
-            this._uint8Array[this.position + 3] = this._uint8Swap[3];
-        }
-        this.position += 4;
-        if (this.length < this.position)
-            this.length = this.position;
-    };
     ByteArray.prototype.readInt = function () {
-        if (this.position + 4 > this.length)
-            throw "ByteArray out of bounds read. Position=" + this.position + ", Length=" + this.length;
-        var view;
-        var pa;
-        if ((this.position & 3) == 0) {
-            view = this._int32Array;
-            pa = this.position >> 2;
-        }
-        else {
-            view = this._int32Swap;
-            this._uint8Swap[0] = this._uint8Array[this.position];
-            this._uint8Swap[1] = this._uint8Array[this.position + 1];
-            this._uint8Swap[2] = this._uint8Array[this.position + 2];
-            this._uint8Swap[3] = this._uint8Array[this.position + 3];
-            pa = 0;
-        }
+        var data = new DataView(this.arraybytes);
+        var int = data.getInt32(this.position, true);
         this.position += 4;
-        return view[pa];
-    };
-    ByteArray.prototype.writeShort = function (b) {
-        this.ensureSpace(this.position + 2);
-        if ((this.position & 1) == 0) {
-            this._int16Array[this.position >> 1] = (~~b); // ~~ is cast to int in js...
-        }
-        else {
-            this._int16Swap[0] = (~~b);
-            this._uint8Array[this.position] = this._uint8Swap[0];
-            this._uint8Array[this.position + 1] = this._uint8Swap[1];
-        }
-        this.position += 2;
-        if (this.length < this.position)
-            this.length = this.position;
+        return int;
     };
     ByteArray.prototype.readShort = function () {
-        if (this.position + 2 > this.length)
-            throw "ByteArray out of bounds read. Position=" + this.position + ", Length=" + this.length;
-        var view;
-        var pa;
-        if ((this.position & 1) == 0) {
-            view = this._int16Array;
-            pa = this.position >> 1;
-        }
-        else {
-            view = this._int16Swap;
-            this._uint8Swap[0] = this._uint8Array[this.position];
-            this._uint8Swap[1] = this._uint8Array[this.position + 1];
-            pa = 0;
-        }
+        var data = new DataView(this.arraybytes);
+        var short = data.getInt16(this.position, true);
         this.position += 2;
-        return view[pa];
-    };
-    ByteArray.prototype.writeDouble = function (b) {
-        this.ensureSpace(this.position + 8);
-        if ((this.position & 7) == 0) {
-            this._float64Array[this.position >> 3] = b;
-        }
-        else {
-            this._float64Swap[0] = b;
-            this._uint8Array[this.position] = this._uint8Swap[0];
-            this._uint8Array[this.position + 1] = this._uint8Swap[1];
-            this._uint8Array[this.position + 2] = this._uint8Swap[2];
-            this._uint8Array[this.position + 3] = this._uint8Swap[3];
-            this._uint8Array[this.position + 4] = this._uint8Swap[4];
-            this._uint8Array[this.position + 5] = this._uint8Swap[5];
-            this._uint8Array[this.position + 6] = this._uint8Swap[6];
-            this._uint8Array[this.position + 7] = this._uint8Swap[7];
-        }
-        this.position += 8;
-        if (this.length < this.position)
-            this.length = this.position;
+        return short;
     };
     ByteArray.prototype.readDouble = function () {
-        if (this.position + 8 > this.length)
-            throw "ByteArray out of bounds read. Position=" + this.position + ", Length=" + this.length;
-        var view;
-        var pa;
-        if ((this.position & 7) == 0) {
-            view = this._float64Array;
-            pa = this.position >> 3;
-        }
-        else {
-            view = this._float64Swap;
-            this._uint8Swap[0] = this._uint8Array[this.position];
-            this._uint8Swap[1] = this._uint8Array[this.position + 1];
-            this._uint8Swap[2] = this._uint8Array[this.position + 2];
-            this._uint8Swap[3] = this._uint8Array[this.position + 3];
-            this._uint8Swap[4] = this._uint8Array[this.position + 4];
-            this._uint8Swap[5] = this._uint8Array[this.position + 5];
-            this._uint8Swap[6] = this._uint8Array[this.position + 6];
-            this._uint8Swap[7] = this._uint8Array[this.position + 7];
-            pa = 0;
-        }
+        var data = new DataView(this.arraybytes);
+        var double = data.getFloat64(this.position, true);
         this.position += 8;
-        return view[pa];
-    };
-    ByteArray.prototype.writeUnsignedShort = function (b) {
-        this.ensureSpace(this.position + 2);
-        if ((this.position & 1) == 0) {
-            this._uint16Array[this.position >> 1] = (~~b) & 0xffff; // ~~ is cast to int in js...
-        }
-        else {
-            this._uint16Swap[0] = (~~b) & 0xffff;
-            this._uint8Array[this.position] = this._uint8Swap[0];
-            this._uint8Array[this.position + 1] = this._uint8Swap[1];
-        }
-        this.position += 2;
-        if (this.length < this.position)
-            this.length = this.position;
+        return double;
     };
     ByteArray.prototype.readUnsignedShort = function () {
-        if (this.position + 2 > this.length)
+        if (this.position > this.length + 2) {
             throw "ByteArray out of bounds read. Position=" + this.position + ", Length=" + this.length;
-        var view;
-        var pa;
+        }
         if ((this.position & 1) == 0) {
-            view = this._uint16Array;
-            pa = this.position >> 1;
+            var view = new Uint16Array(this.arraybytes);
+            var pa = this.position >> 1;
+            this.position += 2;
+            return view[pa];
         }
         else {
-            view = this._uint16Swap;
-            this._uint8Swap[0] = this._uint8Array[this.position];
-            this._uint8Swap[1] = this._uint8Array[this.position + 1];
-            pa = 0;
+            var view = new Uint16Array(this.unalignedarraybytestemp, 0, 1);
+            var view2 = new Uint8Array(this.arraybytes, this.position, 2);
+            var view3 = new Uint8Array(this.unalignedarraybytestemp, 0, 2);
+            view3.set(view2);
+            this.position += 2;
+            return view[0];
         }
-        this.position += 2;
-        return view[pa];
     };
     ByteArray.prototype.writeUnsignedInt = function (b) {
-        this.ensureSpace(this.position + 4);
+        this.ensureWriteableSpace(4);
         if ((this.position & 3) == 0) {
-            this._uint32Array[this.position >> 2] = (~~b) & 0xffffffff; // ~~ is cast to int in js...
+            var view = new Uint32Array(this.arraybytes);
+            view[this.position >> 2] = (~~b) & 0xffffffff; // ~~ is cast to int in js...
         }
         else {
-            this._uint32Swap[0] = (~~b) & 0xffffffff;
-            this._uint8Array[this.position] = this._uint8Swap[0];
-            this._uint8Array[this.position + 1] = this._uint8Swap[1];
-            this._uint8Array[this.position + 2] = this._uint8Swap[2];
-            this._uint8Array[this.position + 3] = this._uint8Swap[3];
+            var view = new Uint32Array(this.unalignedarraybytestemp, 0, 1);
+            view[0] = (~~b) & 0xffffffff;
+            var view2 = new Uint8Array(this.arraybytes, this.position, 4);
+            var view3 = new Uint8Array(this.unalignedarraybytestemp, 0, 4);
+            view2.set(view3);
         }
         this.position += 4;
-        if (this.length < this.position)
+        if (this.position > this.length) {
             this.length = this.position;
+        }
     };
     ByteArray.prototype.readUnsignedInt = function () {
-        if (this.position + 4 > this.length)
+        if (this.position > this.length + 4) {
             throw "ByteArray out of bounds read. Position=" + this.position + ", Length=" + this.length;
-        var view;
-        var pa;
+        }
         if ((this.position & 3) == 0) {
-            view = this._uint32Array;
-            pa = this.position >> 2;
+            var view = new Uint32Array(this.arraybytes);
+            var pa = this.position >> 2;
+            this.position += 4;
+            return view[pa];
         }
         else {
-            view = this._uint32Swap;
-            this._uint8Swap[0] = this._uint8Array[this.position];
-            this._uint8Swap[1] = this._uint8Array[this.position + 1];
-            this._uint8Swap[2] = this._uint8Array[this.position + 2];
-            this._uint8Swap[3] = this._uint8Array[this.position + 3];
-            pa = 0;
+            var view = new Uint32Array(this.unalignedarraybytestemp, 0, 1);
+            var view2 = new Uint8Array(this.arraybytes, this.position, 4);
+            var view3 = new Uint8Array(this.unalignedarraybytestemp, 0, 4);
+            view3.set(view2);
+            this.position += 4;
+            return view[0];
         }
-        this.position += 4;
-        return view[pa];
     };
     ByteArray.prototype.writeFloat = function (b) {
-        this.ensureSpace(this.position + 4);
-        var view;
+        this.ensureWriteableSpace(4);
         if ((this.position & 3) == 0) {
-            view = this._float32Array;
+            var view = new Float32Array(this.arraybytes);
             view[this.position >> 2] = b;
         }
         else {
-            this._float32Swap[0] = b;
-            this._uint8Array[this.position] = this._uint8Swap[0];
-            this._uint8Array[this.position + 1] = this._uint8Swap[1];
-            this._uint8Array[this.position + 2] = this._uint8Swap[2];
-            this._uint8Array[this.position + 3] = this._uint8Swap[3];
+            var view = new Float32Array(this.unalignedarraybytestemp, 0, 1);
+            view[0] = b;
+            var view2 = new Uint8Array(this.arraybytes, this.position, 4);
+            var view3 = new Uint8Array(this.unalignedarraybytestemp, 0, 4);
+            view2.set(view3);
         }
         this.position += 4;
-        if (this.length < this.position)
+        if (this.position > this.length) {
             this.length = this.position;
+        }
     };
     ByteArray.prototype.readFloat = function () {
-        if (this.position + 4 > this.length)
-            throw "ByteArray out of bounds read. Position=" + this.position + ", Length=" + this.length;
-        var view;
-        var pa;
+        if (this.position > this.length + 4) {
+            throw "ByteArray out of bounds read. Positon=" + this.position + ", Length=" + this.length;
+        }
         if ((this.position & 3) == 0) {
-            view = this._float32Array;
-            pa = this.position >> 2;
+            var view = new Float32Array(this.arraybytes);
+            var pa = this.position >> 2;
+            this.position += 4;
+            return view[pa];
         }
         else {
-            view = this._float32Swap;
-            this._uint8Swap[0] = this._uint8Array[this.position];
-            this._uint8Swap[1] = this._uint8Array[this.position + 1];
-            this._uint8Swap[2] = this._uint8Array[this.position + 2];
-            this._uint8Swap[3] = this._uint8Array[this.position + 3];
-            pa = 0;
+            var view = new Float32Array(this.unalignedarraybytestemp, 0, 1);
+            var view2 = new Uint8Array(this.arraybytes, this.position, 4);
+            var view3 = new Uint8Array(this.unalignedarraybytestemp, 0, 4);
+            view3.set(view2);
+            this.position += 4;
+            return view[0];
         }
-        this.position += 4;
-        return view[pa];
-    };
-    ByteArray.prototype._updateViews = function () {
-        this._uint8Array = new Uint8Array(this._arrayBuffer);
-        this._int8Array = new Int8Array(this._arrayBuffer);
-        this._uint16Array = new Uint16Array(this._arrayBuffer);
-        this._int16Array = new Int16Array(this._arrayBuffer);
-        this._uint32Array = new Uint32Array(this._arrayBuffer);
-        this._int32Array = new Int32Array(this._arrayBuffer);
-        this._float32Array = new Float32Array(this._arrayBuffer);
-        this._float64Array = new Float64Array(this._arrayBuffer);
     };
     return ByteArray;
 })(ByteArrayBase);

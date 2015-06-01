@@ -67,6 +67,8 @@ class AttributesBuffer extends AssetBase implements IAsset
 		if (this._lengthDirty)
 			this._updateLength();
 
+		this._contentDirty = false;
+
 		return this._buffer;
 	}
 

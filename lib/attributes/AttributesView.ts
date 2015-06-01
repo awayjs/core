@@ -50,8 +50,8 @@ class AttributesView extends AssetBase implements IAsset
 
 		this._size = value;
 
-		this._attributesBuffer._removeView(this._index);
-		this._index = this._attributesBuffer._addView(this);
+		this._attributesBuffer._removeView(this);
+		this._attributesBuffer._addView(this);
 	}
 
 	/**
@@ -71,8 +71,8 @@ class AttributesView extends AssetBase implements IAsset
 		this._dimensions = value;
 
 		//reset view
-		this._attributesBuffer._removeView(this._index);
-		this._index = this._attributesBuffer._addView(this);
+		this._attributesBuffer._removeView(this);
+		this._attributesBuffer._addView(this);
 	}
 
 	public get count():number
@@ -109,7 +109,7 @@ class AttributesView extends AssetBase implements IAsset
 		this._dimensions = dimensions;
 		this._attributesBuffer = (attributesBufferCount instanceof AttributesBuffer)? <AttributesBuffer> attributesBufferCount : new AttributesBuffer(this._dimensions*this._size, attributesBufferCount);
 
-		this._index = this._attributesBuffer._addView(this);
+		this._attributesBuffer._addView(this);
 	}
 
 	public set(array:Array<number>, offset?:number);
@@ -154,7 +154,7 @@ class AttributesView extends AssetBase implements IAsset
 	 */
 	public dispose()
 	{
-		this._attributesBuffer._removeView(this._index);
+		this._attributesBuffer._removeView(this);
 		this._attributesBuffer = null;
 	}
 }

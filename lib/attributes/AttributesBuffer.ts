@@ -89,7 +89,7 @@ class AttributesBuffer extends AssetBase implements IAsset
 
 	public get length()
 	{
-		return this._count*this._stride;
+		return this._count*this.stride;
 	}
 	
 	/**
@@ -98,9 +98,12 @@ class AttributesBuffer extends AssetBase implements IAsset
 	constructor(stride:number = 0, count:number = 0)
 	{
 		super();
-		
-		this.stride = stride;
-		this.count = count;
+
+		this._stride = this._newStride = stride;
+		this._count = count;
+
+		this._buffer = new ArrayBuffer(this._stride*this._count);
+		this._bufferView = new Uint8Array(this._buffer, 0, this._buffer.byteLength);
 	}
 
 	/**
@@ -217,7 +220,7 @@ class AttributesBuffer extends AssetBase implements IAsset
 		return AttributesBufferVO;
 	}
 
-	public _addView(view:AttributesView):number
+	public _addView(view:AttributesView)
 	{
 		var viewVO:ViewVO = new ViewVO(view);
 		var len:number = this._viewVOs.length;
@@ -231,12 +234,12 @@ class AttributesBuffer extends AssetBase implements IAsset
 			this.invalidateLength();
 		}
 
-		
-		return len;
+		view._index = len;
 	}
 
-	public _removeView(viewIndex:number)
+	public _removeView(view:AttributesView)
 	{
+		var viewIndex:number = view._index;
 		var viewVO:ViewVO = this._viewVOs.splice(viewIndex, 1)[0];
 		var len:number = this._viewVOs.length;
 
@@ -245,6 +248,7 @@ class AttributesBuffer extends AssetBase implements IAsset
 		for (var i:number = viewIndex; i < len; i++) {
 			viewVO = this._viewVOs[i];
 			viewVO.offset = i? this._viewVOs[i - 1].offset + this._viewVOs[i - 1].length : 0;
+			viewVO.view._index = i;
 		}
 
 		this._newStride = viewVO.offset + viewVO.length;
@@ -290,7 +294,7 @@ class AttributesBuffer extends AssetBase implements IAsset
 
 				this._stride = this._newStride;
 			} else {
-				newView.set(new Uint8Array(this._buffer, 0, this._buffer.byteLength));
+				newView.set(new Uint8Array(this._buffer, 0, Math.min(newLength, this._buffer.byteLength))); //TODO: bypass quantisation of bytearray on instantiation
 			}
 
 			this._buffer = newBuffer;

@@ -4,19 +4,20 @@ import ByteArray				= require("awayjs-core/lib/utils/ByteArray");
 
 class ParserUtils
 {
-	private static arrayBufferToBase64(data:Uint8Array, mimeType:string)
+	private static arrayBufferToBase64(data:ArrayBuffer, mimeType:string)
 	{
 		var byteStr:string = '';
-		var len:number = data.byteLength;
+		var bytes:Uint8Array = new Uint8Array(data);
+		var len:number = bytes.byteLength;
 
 		for (var i = 0; i < len; i++)
-			byteStr += String.fromCharCode(data[i])
+			byteStr += String.fromCharCode(bytes[ i ])
 
 		var base64Image:string = window.btoa(byteStr);
 		return 'data:' + mimeType + ';base64,' + base64Image;
 	}
 
-	public static arrayBufferToAudio(data:Uint8Array, fileType:string):HTMLAudioElement
+	public static arrayBufferToAudio(data:ArrayBuffer, fileType:string):HTMLAudioElement
 	{
 		var str:string = ParserUtils.arrayBufferToBase64(data, 'audio/' + fileType);
 		var audio:HTMLAudioElement = <HTMLAudioElement> new Audio();
@@ -32,7 +33,7 @@ class ParserUtils
 	 * @return HTMLImageElement
 	 *
 	 */
-	public static arrayBufferToImage(data:Uint8Array):HTMLImageElement
+	public static arrayBufferToImage(data:ArrayBuffer):HTMLImageElement
 	{
 		var str:string = ParserUtils.arrayBufferToBase64(data, 'image/png');
 		var img:HTMLImageElement = <HTMLImageElement> new Image();
@@ -50,7 +51,7 @@ class ParserUtils
 	 */
 	public static byteArrayToImage(data:ByteArray):HTMLImageElement
 	{
-		var str:string = ParserUtils.arrayBufferToBase64(data.arrayBufferView, 'image/png');
+		var str:string = ParserUtils.arrayBufferToBase64(data.arraybytes, 'image/png');
 		var img:HTMLImageElement = <HTMLImageElement> new Image();
 		img.src = str;
 		return img;
@@ -58,7 +59,7 @@ class ParserUtils
 
 	public static byteArrayToAudio(data:ByteArray, filetype:string):HTMLAudioElement
 	{
-		var str:string = ParserUtils.arrayBufferToBase64(data.arrayBufferView, 'audio/' + filetype);
+		var str:string = ParserUtils.arrayBufferToBase64(data.arraybytes, 'audio/' + filetype);
 		var audio:HTMLAudioElement = <HTMLAudioElement> new Audio();
 		audio.src = str;
 		return audio;

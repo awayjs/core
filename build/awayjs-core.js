@@ -9350,8 +9350,7 @@ var AssetLoader = (function (_super) {
                     handled = this._parseErrorHandlers[i](event);
         }
         if (handled) {
-            this.dispose();
-            return;
+            this.retrieveNext();
         }
         else {
             throw new Error(event.message);
@@ -9487,11 +9486,27 @@ var AssetLoader = (function (_super) {
             parser.parseAsync(dependency.data);
         }
         else {
+            var handled;
             var message = "No parser defined. To enable all parsers for auto-detection, use Parsers.enableAllBundled()";
-            if (this.hasEventListener(ParserEvent.PARSE_ERROR))
-                this.dispatchEvent(new ParserEvent(ParserEvent.PARSE_ERROR, message));
-            else
+            var event = new ParserEvent(ParserEvent.PARSE_ERROR, message);
+            if (this.hasEventListener(ParserEvent.PARSE_ERROR)) {
+                this.dispatchEvent(event);
+                handled = true;
+            }
+            else {
+                // TODO: Consider not doing this even when AssetLoader does
+                // have it's own LOAD_ERROR listener
+                var i, len = this._parseErrorHandlers.length;
+                for (i = 0; i < len; i++)
+                    if (!handled)
+                        handled = this._parseErrorHandlers[i](event);
+            }
+            if (handled) {
+                this.retrieveNext();
+            }
+            else {
                 throw new Error(message);
+            }
         }
     };
     /**

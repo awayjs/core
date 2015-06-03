@@ -489,8 +489,7 @@ class AssetLoader extends EventDispatcher
 		}
 
 		if (handled) {
-			this.dispose();
-			return;
+			this.retrieveNext();
 		} else {
 			// Error event was not handled by listeners directly on AssetLoader or
 			// on any of the subscribed loaders (in the list of error handlers.)
@@ -675,11 +674,29 @@ class AssetLoader extends EventDispatcher
 			parser.parseAsync(dependency.data);
 
 		} else {
-			var message:string = "No parser defined. To enable all parsers for auto-detection, use Parsers.enableAllBundled()"
-			if(this.hasEventListener(ParserEvent.PARSE_ERROR))
-				this.dispatchEvent(new ParserEvent(ParserEvent.PARSE_ERROR, message));
-			else
+			var handled:boolean;
+			var message:string = "No parser defined. To enable all parsers for auto-detection, use Parsers.enableAllBundled()";
+			var event:ParserEvent = new ParserEvent(ParserEvent.PARSE_ERROR, message);
+			if (this.hasEventListener(ParserEvent.PARSE_ERROR)) {
+				this.dispatchEvent(event);
+				handled = true;
+			} else {
+				// TODO: Consider not doing this even when AssetLoader does
+				// have it's own LOAD_ERROR listener
+				var i:number, len:number = this._parseErrorHandlers.length;
+
+				for (i = 0; i < len; i++)
+					if (!handled)
+						handled = <boolean> this._parseErrorHandlers[i](event);
+			}
+
+			if (handled) {
+				this.retrieveNext();
+			} else {
+				// Error event was not handled by listeners directly on AssetLoader or
+				// on any of the subscribed loaders (in the list of error handlers.)
 				throw new Error(message);
+			}
 		}
 	}
 

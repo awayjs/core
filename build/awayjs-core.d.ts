@@ -55,34 +55,6 @@ declare module "awayjs-core/lib/attributes/AttributesBuffer" {
 	
 }
 
-declare module "awayjs-core/lib/attributes/Byte4Attributes" {
-	import AttributesBuffer = require("awayjs-core/lib/attributes/AttributesBuffer");
-	import AttributesView = require("awayjs-core/lib/attributes/AttributesView");
-	class Byte4Attributes extends AttributesView {
-	    static assetType: string;
-	    /**
-	     *
-	     * @returns {string}
-	     */
-	    assetType: string;
-	    /**
-	     *
-	     */
-	    constructor(length?: number, unsigned?: boolean);
-	    constructor(attributesBuffer?: AttributesBuffer, unsigned?: boolean);
-	    set(array: Array<number>, offset?: number): any;
-	    set(typedArray: Float32Array, offset?: number): any;
-	    set(typedArray: Uint8Array, offset?: number): any;
-	    set(typedArray: Int8Array, offset?: number): any;
-	    get(count: number, offset?: number): Uint8Array;
-	    get(count: number, offset?: number): Int8Array;
-	    _internalClone(attributesBuffer: AttributesBuffer): Byte4Attributes;
-	    clone(attributesBuffer?: AttributesBuffer): Byte4Attributes;
-	}
-	export = Byte4Attributes;
-	
-}
-
 declare module "awayjs-core/lib/attributes/AttributesView" {
 	import AttributesBuffer = require("awayjs-core/lib/attributes/AttributesBuffer");
 	import IAsset = require("awayjs-core/lib/library/IAsset");
@@ -134,6 +106,34 @@ declare module "awayjs-core/lib/attributes/AttributesView" {
 	    dispose(): void;
 	}
 	export = AttributesView;
+	
+}
+
+declare module "awayjs-core/lib/attributes/Byte4Attributes" {
+	import AttributesBuffer = require("awayjs-core/lib/attributes/AttributesBuffer");
+	import AttributesView = require("awayjs-core/lib/attributes/AttributesView");
+	class Byte4Attributes extends AttributesView {
+	    static assetType: string;
+	    /**
+	     *
+	     * @returns {string}
+	     */
+	    assetType: string;
+	    /**
+	     *
+	     */
+	    constructor(length?: number, unsigned?: boolean);
+	    constructor(attributesBuffer?: AttributesBuffer, unsigned?: boolean);
+	    set(array: Array<number>, offset?: number): any;
+	    set(typedArray: Float32Array, offset?: number): any;
+	    set(typedArray: Uint8Array, offset?: number): any;
+	    set(typedArray: Int8Array, offset?: number): any;
+	    get(count: number, offset?: number): Uint8Array;
+	    get(count: number, offset?: number): Int8Array;
+	    _internalClone(attributesBuffer: AttributesBuffer): Byte4Attributes;
+	    clone(attributesBuffer?: AttributesBuffer): Byte4Attributes;
+	}
+	export = Byte4Attributes;
 	
 }
 
@@ -3168,6 +3168,7 @@ declare module "awayjs-core/lib/geom/Matrix" {
 }
 
 declare module "awayjs-core/lib/geom/Matrix3D" {
+	import Box = require("awayjs-core/lib/geom/Box");
 	import Vector3D = require("awayjs-core/lib/geom/Vector3D");
 	class Matrix3D {
 	    /**
@@ -3273,6 +3274,7 @@ declare module "awayjs-core/lib/geom/Matrix3D" {
 	     */
 	    recompose(components: Vector3D[]): boolean;
 	    transformVector(v: Vector3D): Vector3D;
+	    transformBox(b: Box): Box;
 	    /**
 	     * Uses the transformation matrix to transform a Vector of Numbers from one coordinate space to another.
 	     */

@@ -4795,6 +4795,7 @@ var Matrix3DUtils = (function () {
 module.exports = Matrix3DUtils;
 
 },{"awayjs-core/lib/geom/Matrix3D":"awayjs-core/lib/geom/Matrix3D","awayjs-core/lib/geom/Vector3D":"awayjs-core/lib/geom/Vector3D"}],"awayjs-core/lib/geom/Matrix3D":[function(require,module,exports){
+var Box = require("awayjs-core/lib/geom/Box");
 var Orientation3D = require("awayjs-core/lib/geom/Orientation3D");
 var Vector3D = require("awayjs-core/lib/geom/Vector3D");
 var ArgumentError = require("awayjs-core/lib/errors/ArgumentError");
@@ -5271,6 +5272,21 @@ var Matrix3D = (function () {
         var z = v.z;
         return new Vector3D((x * this.rawData[0] + y * this.rawData[4] + z * this.rawData[8] + this.rawData[12]), (x * this.rawData[1] + y * this.rawData[5] + z * this.rawData[9] + this.rawData[13]), (x * this.rawData[2] + y * this.rawData[6] + z * this.rawData[10] + this.rawData[14]), (x * this.rawData[3] + y * this.rawData[7] + z * this.rawData[11] + this.rawData[15]));
     };
+    Matrix3D.prototype.transformBox = function (b) {
+        if (b == null)
+            return new Box();
+        var minX, minY, minZ;
+        var maxX, maxY, maxZ;
+        maxX = b.width + (minX = b.x);
+        maxY = b.height + (minY = b.y);
+        maxZ = b.depth + (minZ = b.z);
+        var box = new Box();
+        //TODO: take account of shear
+        box.width = maxX * this.rawData[0] + maxY * this.rawData[4] + maxZ * this.rawData[8] + this.rawData[12] - (box.x = minX * this.rawData[0] + minY * this.rawData[4] + minZ * this.rawData[8] + this.rawData[12]);
+        box.height = maxX * this.rawData[1] + maxY * this.rawData[5] + maxZ * this.rawData[9] + this.rawData[13] - (box.y = minX * this.rawData[1] + minY * this.rawData[5] + minZ * this.rawData[9] + this.rawData[13]);
+        box.depth = maxX * this.rawData[2] + maxY * this.rawData[6] + maxZ * this.rawData[10] + this.rawData[14] - (box.z = minX * this.rawData[2] + minY * this.rawData[6] + minZ * this.rawData[10] + this.rawData[14]);
+        return box;
+    };
     /**
      * Uses the transformation matrix to transform a Vector of Numbers from one coordinate space to another.
      */
@@ -5369,7 +5385,7 @@ var Matrix3D = (function () {
 })();
 module.exports = Matrix3D;
 
-},{"awayjs-core/lib/errors/ArgumentError":"awayjs-core/lib/errors/ArgumentError","awayjs-core/lib/geom/Orientation3D":"awayjs-core/lib/geom/Orientation3D","awayjs-core/lib/geom/Vector3D":"awayjs-core/lib/geom/Vector3D"}],"awayjs-core/lib/geom/Matrix":[function(require,module,exports){
+},{"awayjs-core/lib/errors/ArgumentError":"awayjs-core/lib/errors/ArgumentError","awayjs-core/lib/geom/Box":"awayjs-core/lib/geom/Box","awayjs-core/lib/geom/Orientation3D":"awayjs-core/lib/geom/Orientation3D","awayjs-core/lib/geom/Vector3D":"awayjs-core/lib/geom/Vector3D"}],"awayjs-core/lib/geom/Matrix":[function(require,module,exports){
 var Point = require("awayjs-core/lib/geom/Point");
 var ArgumentError = require("awayjs-core/lib/errors/ArgumentError");
 /**

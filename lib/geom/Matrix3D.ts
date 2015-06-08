@@ -1,3 +1,4 @@
+import Box						= require("awayjs-core/lib/geom/Box");
 import Orientation3D			= require("awayjs-core/lib/geom/Orientation3D");
 import Quaternion				= require("awayjs-core/lib/geom/Quaternion");
 import Vector3D					= require("awayjs-core/lib/geom/Vector3D");
@@ -582,6 +583,28 @@ class Matrix3D
 		var z:number = v.z;
 
 		return new Vector3D((x*this.rawData[0] + y*this.rawData[4] + z*this.rawData[8] + this.rawData[12]), (x*this.rawData[1] + y*this.rawData[5] + z*this.rawData[9] + this.rawData[13]), (x*this.rawData[2] + y*this.rawData[6] + z*this.rawData[10] + this.rawData[14]), (x*this.rawData[3] + y*this.rawData[7] + z*this.rawData[11] + this.rawData[15]));
+	}
+
+	public transformBox(b:Box):Box
+	{
+		if (b == null)
+			return new Box();
+
+		var minX:number, minY:number, minZ:number;
+		var maxX:number, maxY:number, maxZ:number;
+
+		maxX = b.width + (minX = b.x);
+		maxY = b.height + (minY = b.y);
+		maxZ = b.depth + (minZ = b.z);
+
+		var box:Box = new Box();
+
+		//TODO: take account of shear
+		box.width = maxX*this.rawData[0] + maxY*this.rawData[4] + maxZ*this.rawData[8] + this.rawData[12] - (box.x = minX*this.rawData[0] + minY*this.rawData[4] + minZ*this.rawData[8] + this.rawData[12]);
+		box.height = maxX*this.rawData[1] + maxY*this.rawData[5] + maxZ*this.rawData[9] + this.rawData[13] - (box.y = minX*this.rawData[1] + minY*this.rawData[5] + minZ*this.rawData[9] + this.rawData[13]);
+		box.depth = maxX*this.rawData[2] + maxY*this.rawData[6] + maxZ*this.rawData[10] + this.rawData[14] - (box.z = minX*this.rawData[2] + minY*this.rawData[6] + minZ*this.rawData[10] + this.rawData[14]);
+
+		return box;
 	}
 
 	/**

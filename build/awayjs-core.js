@@ -11470,7 +11470,6 @@ var WaveAudioParser = (function (_super) {
     };
     WaveAudioParser.parseFileType = function (ba) {
         ba.position = 0;
-        console.log("WaveAudio: ");
         ba.position = 0;
         if (ba.readUnsignedShort() & 0xFFE0) {
             return 'mp3'; // test for MP3 syncword

@@ -94,7 +94,6 @@ class WaveAudioParser extends ParserBase
 	private static parseFileType(ba:ByteArray):string
 	{
 		ba.position = 0;
-		console.log("WaveAudio: ");
 
 		ba.position = 0;
 		if (ba.readUnsignedShort() & 0xFFE0) {

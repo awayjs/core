@@ -7571,7 +7571,7 @@ declare module "awayjs-core/lib/utils/ByteArray" {
 	    maxlength: number;
 	    arraybytes: any;
 	    unalignedarraybytestemp: any;
-	    constructor();
+	    constructor(maxlength?: number);
 	    ensureWriteableSpace(n: number): void;
 	    setArrayBuffer(aBuffer: ArrayBuffer): void;
 	    getBytesAvailable(): number;

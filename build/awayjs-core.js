@@ -13404,11 +13404,11 @@ var __extends = this.__extends || function (d, b) {
 var ByteArrayBase = require("awayjs-core/lib/utils/ByteArrayBase");
 var ByteArray = (function (_super) {
     __extends(ByteArray, _super);
-    function ByteArray() {
+    function ByteArray(maxlength) {
+        if (maxlength === void 0) { maxlength = 4; }
         _super.call(this);
-        this.maxlength = 0;
         this._mode = "Typed array";
-        this.maxlength = 4;
+        this.maxlength = Math.max((maxlength + 255) & (~255), 4);
         this.arraybytes = new ArrayBuffer(this.maxlength);
         this.unalignedarraybytestemp = new ArrayBuffer(16);
     }
@@ -13446,39 +13446,34 @@ var ByteArray = (function (_super) {
         }
     };
     ByteArray.prototype.readByte = function () {
-        if (this.position >= this.length) {
+        if (this.position >= this.length)
             throw "ByteArray out of bounds read. Positon=" + this.position + ", Length=" + this.length;
-        }
         var view = new Int8Array(this.arraybytes);
         return view[this.position++];
     };
     ByteArray.prototype.readBytes = function (bytes, offset, length) {
         if (offset === void 0) { offset = 0; }
         if (length === void 0) { length = 0; }
-        if (length == null) {
+        if (length == null)
             length = bytes.length;
-        }
         bytes.ensureWriteableSpace(offset + length);
         var byteView = new Int8Array(bytes.arraybytes);
         var localByteView = new Int8Array(this.arraybytes);
         byteView.set(localByteView.subarray(this.position, this.position + length), offset);
         this.position += length;
-        if (length + offset > bytes.length) {
+        if (length + offset > bytes.length)
             bytes.length += (length + offset) - bytes.length;
-        }
     };
     ByteArray.prototype.writeUnsignedByte = function (b) {
         this.ensureWriteableSpace(1);
         var view = new Uint8Array(this.arraybytes);
         view[this.position++] = (~~b) & 0xff; // ~~ is cast to int in js...
-        if (this.position > this.length) {
+        if (this.position > this.length)
             this.length = this.position;
-        }
     };
     ByteArray.prototype.readUnsignedByte = function () {
-        if (this.position >= this.length) {
+        if (this.position >= this.length)
             throw "ByteArray out of bounds read. Positon=" + this.position + ", Length=" + this.length;
-        }
         var view = new Uint8Array(this.arraybytes);
         return view[this.position++];
     };
@@ -13496,9 +13491,8 @@ var ByteArray = (function (_super) {
             view2.set(view3);
         }
         this.position += 2;
-        if (this.position > this.length) {
+        if (this.position > this.length)
             this.length = this.position;
-        }
     };
     ByteArray.prototype.readUTFBytes = function (len) {
         var value = "";
@@ -13545,9 +13539,8 @@ var ByteArray = (function (_super) {
         return double;
     };
     ByteArray.prototype.readUnsignedShort = function () {
-        if (this.position > this.length + 2) {
+        if (this.position > this.length + 2)
             throw "ByteArray out of bounds read. Position=" + this.position + ", Length=" + this.length;
-        }
         if ((this.position & 1) == 0) {
             var view = new Uint16Array(this.arraybytes);
             var pa = this.position >> 1;
@@ -13577,14 +13570,12 @@ var ByteArray = (function (_super) {
             view2.set(view3);
         }
         this.position += 4;
-        if (this.position > this.length) {
+        if (this.position > this.length)
             this.length = this.position;
-        }
     };
     ByteArray.prototype.readUnsignedInt = function () {
-        if (this.position > this.length + 4) {
+        if (this.position > this.length + 4)
             throw "ByteArray out of bounds read. Position=" + this.position + ", Length=" + this.length;
-        }
         if ((this.position & 3) == 0) {
             var view = new Uint32Array(this.arraybytes);
             var pa = this.position >> 2;
@@ -13614,14 +13605,12 @@ var ByteArray = (function (_super) {
             view2.set(view3);
         }
         this.position += 4;
-        if (this.position > this.length) {
+        if (this.position > this.length)
             this.length = this.position;
-        }
     };
     ByteArray.prototype.readFloat = function () {
-        if (this.position > this.length + 4) {
+        if (this.position > this.length + 4)
             throw "ByteArray out of bounds read. Positon=" + this.position + ", Length=" + this.length;
-        }
         if ((this.position & 3) == 0) {
             var view = new Float32Array(this.arraybytes);
             var pa = this.position >> 2;

@@ -19,7 +19,7 @@ class WaveAudioParser extends ParserBase
 	{
 
 		extension = extension.toLowerCase();
-		return extension == "wav" || extension == "mp3" || extension == "ogg";//|| extension == "bmp";//|| extension == "atf";
+		return extension == "wav" || extension == "mp3" || extension == "ogg";
 
 	}
 
@@ -74,7 +74,8 @@ class WaveAudioParser extends ParserBase
 
 			this._htmlAudioElement = ParserUtils.blobToAudio(this.data);
 
-			this._htmlAudioElement.onload = (event) => this.onLoadComplete(event);
+			this._htmlAudioElement.onloadeddata = (event) => this.onLoadComplete(event);
+			this._htmlAudioElement.onerror = (event) => this.onError(event);
 			this._loadingImage = true;
 
 			return ParserBase.MORE_TO_PARSE;
@@ -88,6 +89,12 @@ class WaveAudioParser extends ParserBase
 
 	public onLoadComplete(event)
 	{
+		this._loadingImage = false;
+	}
+
+	public onError(event)
+	{
+		console.log(event.target.error);
 		this._loadingImage = false;
 	}
 

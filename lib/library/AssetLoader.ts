@@ -323,13 +323,16 @@ class AssetLoader extends EventDispatcher
 
 	private joinUrl(base:string, end:string):string
 	{
-		if (end.charAt(0) == '/')
+		if (end.charAt(0) == '/' || end.charAt(0) == '\\')
 			end = end.substr(1);
+
+		if (end.charAt(0) == '.')
+			end = end.substr(2);
 
 		if (base.length == 0)
 			return end;
 
-		if (base.charAt(base.length - 1) == '/')
+		if (base.charAt(base.length - 1) == '/' || base.charAt(base.length - 1) == '\\')
 			base = base.substr(0, base.length - 1);
 
 		return base.concat('/', end);

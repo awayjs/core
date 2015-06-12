@@ -9236,11 +9236,13 @@ var AssetLoader = (function (_super) {
         }
     };
     AssetLoader.prototype.joinUrl = function (base, end) {
-        if (end.charAt(0) == '/')
+        if (end.charAt(0) == '/' || end.charAt(0) == '\\')
             end = end.substr(1);
+        if (end.charAt(0) == '.')
+            end = end.substr(2);
         if (base.length == 0)
             return end;
-        if (base.charAt(base.length - 1) == '/')
+        if (base.charAt(base.length - 1) == '/' || base.charAt(base.length - 1) == '\\')
             base = base.substr(0, base.length - 1);
         return base.concat('/', end);
     };
@@ -11417,7 +11419,7 @@ var WaveAudioParser = (function (_super) {
     }
     WaveAudioParser.supportsType = function (extension) {
         extension = extension.toLowerCase();
-        return extension == "wav" || extension == "mp3" || extension == "ogg"; //|| extension == "bmp";//|| extension == "atf";
+        return extension == "wav" || extension == "mp3" || extension == "ogg";
     };
     WaveAudioParser.supportsData = function (data) {
         if (data instanceof HTMLAudioElement)
@@ -11458,7 +11460,8 @@ var WaveAudioParser = (function (_super) {
         }
         else if (this.data instanceof Blob) {
             this._htmlAudioElement = ParserUtils.blobToAudio(this.data);
-            this._htmlAudioElement.onload = function (event) { return _this.onLoadComplete(event); };
+            this._htmlAudioElement.onloadeddata = function (event) { return _this.onLoadComplete(event); };
+            this._htmlAudioElement.onerror = function (event) { return _this.onError(event); };
             this._loadingImage = true;
             return ParserBase.MORE_TO_PARSE;
         }
@@ -11466,6 +11469,10 @@ var WaveAudioParser = (function (_super) {
         return ParserBase.PARSING_DONE;
     };
     WaveAudioParser.prototype.onLoadComplete = function (event) {
+        this._loadingImage = false;
+    };
+    WaveAudioParser.prototype.onError = function (event) {
+        console.log(event.target.error);
         this._loadingImage = false;
     };
     WaveAudioParser.parseFileType = function (ba) {

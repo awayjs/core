@@ -6491,6 +6491,7 @@ declare module "awayjs-core/lib/parsers/WaveAudioParser" {
 	    static supportsData(data: any): boolean;
 	    _pProceedParsing(): boolean;
 	    onLoadComplete(event: any): void;
+	    onError(event: any): void;
 	    private static parseFileType(ba);
 	}
 	export = WaveAudioParser;

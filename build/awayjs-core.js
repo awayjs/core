@@ -2916,15 +2916,26 @@ var __extends = this.__extends || function (d, b) {
     d.prototype = new __();
 };
 var AssetBase = require("awayjs-core/lib/library/AssetBase");
+var Event = require("awayjs-core/lib/events/Event");
 // TODO: Audio should probably be an interface containing play/stop/seek functionality
 var WaveAudio = (function (_super) {
     __extends(WaveAudio, _super);
     /**
      *
      */
-    function WaveAudio(htmlAudioElement) {
+    function WaveAudio(buffer, audioCtx) {
+        var _this = this;
         _super.call(this);
-        this._htmlAudioElement = htmlAudioElement;
+        this._volume = 1;
+        this._startTime = 0;
+        this._currentTime = 0;
+        this._duration = 0;
+        this._buffer = buffer;
+        this._audioCtx = audioCtx;
+        this._gainNode = this._audioCtx.createGain();
+        this._gainNode.gain.value = this._volume;
+        this._gainNode.connect(this._audioCtx.destination);
+        this._onEndedDelegate = function (event) { return _this.onEnded(event); };
     }
     Object.defineProperty(WaveAudio.prototype, "assetType", {
         /**
@@ -2937,25 +2948,123 @@ var WaveAudio = (function (_super) {
         enumerable: true,
         configurable: true
     });
-    Object.defineProperty(WaveAudio.prototype, "htmlAudioElement", {
+    Object.defineProperty(WaveAudio.prototype, "loop", {
         get: function () {
-            return this._htmlAudioElement;
+            return this._source.loop;
         },
         set: function (value) {
-            this._htmlAudioElement = value;
+            if (this._loop == value)
+                return;
+            this._loop = value;
+            if (this._source)
+                this._source.loop = this._loop;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(WaveAudio.prototype, "volume", {
+        get: function () {
+            return this._volume;
+        },
+        set: function (value) {
+            if (this._volume == value)
+                return;
+            this._volume = value;
+            this._gainNode.gain.value = this._volume;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(WaveAudio.prototype, "currentTime", {
+        get: function () {
+            if (!this._isPlaying)
+                return this._currentTime;
+            return this._audioCtx.currentTime - this._startTime;
+        },
+        set: function (value) {
+            this._currentTime = value;
+            if (this._isPlaying) {
+                //swap for new source
+                var source = this._audioCtx.createBufferSource();
+                source.buffer = this._source.buffer;
+                //dispose of old source
+                this._source.disconnect();
+                delete this._source;
+                //attach new source
+                this._source = source;
+                this._source.loop = this._loop;
+                this._source.connect(this._gainNode);
+                this._startTime = this._audioCtx.currentTime - this._currentTime;
+                this._source.start(this._audioCtx.currentTime, this._currentTime);
+            }
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(WaveAudio.prototype, "duration", {
+        get: function () {
+            return this._duration; //TODO: extract this data independently
         },
         enumerable: true,
         configurable: true
     });
     WaveAudio.prototype.dispose = function () {
-        this._htmlAudioElement = null;
+        this.stop();
+        delete this._audioCtx;
+        this._audioCtx = null;
+        delete this._buffer;
+        this._buffer = null;
+    };
+    WaveAudio.prototype.play = function () {
+        if (this._isPlaying)
+            return;
+        this._createSource();
+    };
+    WaveAudio.prototype.stop = function () {
+        if (!this._isPlaying)
+            return;
+        this._isPlaying = false;
+        this._currentTime = this._audioCtx.currentTime - this._startTime;
+        this._source.stop(this._audioCtx.currentTime);
+        this._disposeSource();
+    };
+    WaveAudio.prototype.clone = function () {
+        return new WaveAudio(this._buffer, this._audioCtx);
+    };
+    WaveAudio.prototype.onLoadComplete = function (buffer) {
+        this._source.buffer = buffer;
+        this._duration = buffer.duration;
+        this._isPlaying = true;
+        this._startTime = this._audioCtx.currentTime - this._currentTime;
+        this._source.onended = this._onEndedDelegate;
+        this._source.start(this._audioCtx.currentTime, this._currentTime);
+    };
+    WaveAudio.prototype.onError = function (event) {
+    };
+    WaveAudio.prototype._createSource = function () {
+        var _this = this;
+        //create the source for this WaveAudio object
+        this._source = this._audioCtx.createBufferSource();
+        this._source.loop = this._loop;
+        this._source.connect(this._gainNode);
+        this._audioCtx.decodeAudioData(this._buffer, function (buffer) { return _this.onLoadComplete(buffer); }, function (event) { return _this.onError(event); });
+    };
+    WaveAudio.prototype._disposeSource = function () {
+        //clear up
+        this._source.disconnect();
+        delete this._source;
+        this._source = null;
+    };
+    WaveAudio.prototype.onEnded = function (event) {
+        this.stop();
+        this.dispatchEvent(new Event('ended'));
     };
     WaveAudio.assetType = "[asset WaveAudio]";
     return WaveAudio;
 })(AssetBase);
 module.exports = WaveAudio;
 
-},{"awayjs-core/lib/library/AssetBase":"awayjs-core/lib/library/AssetBase"}],"awayjs-core/lib/errors/AbstractMethodError":[function(require,module,exports){
+},{"awayjs-core/lib/events/Event":"awayjs-core/lib/events/Event","awayjs-core/lib/library/AssetBase":"awayjs-core/lib/library/AssetBase"}],"awayjs-core/lib/errors/AbstractMethodError":[function(require,module,exports){
 var __extends = this.__extends || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
@@ -9168,7 +9277,7 @@ var AssetLoader = (function (_super) {
             this.retrieveDependency(next);
         }
         else if (this._currentDependency.parser && this._currentDependency.parser.parsingPaused) {
-            this._currentDependency.parser._iResumeParsingAfterDependencies();
+            this._currentDependency.parser._iResumeParsing();
             this._stack.pop();
         }
         else if (this._stack.length) {
@@ -9387,7 +9496,7 @@ var AssetLoader = (function (_super) {
     AssetLoader.prototype.onReadyForDependencies = function (event) {
         var parser = event.target;
         if (this._context && !this._context.includeDependencies)
-            parser._iResumeParsingAfterDependencies();
+            parser._iResumeParsing();
         else
             this.retrieveParserDependencies();
     };
@@ -10800,10 +10909,13 @@ var ParserBase = (function (_super) {
     ParserBase.prototype._iResolveDependencyName = function (resourceDependency, asset) {
         return asset.name;
     };
-    ParserBase.prototype._iResumeParsingAfterDependencies = function () {
+    ParserBase.prototype._iResumeParsing = function () {
         this._parsingPaused = false;
         if (this._timer)
             this._timer.start();
+        //get started!
+        if (!this._isParsing)
+            this._pOnInterval();
     };
     ParserBase.prototype._pFinalizeAsset = function (asset, name) {
         if (name === void 0) { name = null; }
@@ -10844,10 +10956,13 @@ var ParserBase = (function (_super) {
         return dependency;
     };
     ParserBase.prototype._pPauseAndRetrieveDependencies = function () {
+        this._pPauseParsing();
+        this.dispatchEvent(new ParserEvent(ParserEvent.READY_FOR_DEPENDENCIES));
+    };
+    ParserBase.prototype._pPauseParsing = function () {
         if (this._timer)
             this._timer.stop();
         this._parsingPaused = true;
-        this.dispatchEvent(new ParserEvent(ParserEvent.READY_FOR_DEPENDENCIES));
     };
     /**
      * Tests whether or not there is still time left for parsing within the maximum allowed time frame per session.
@@ -10862,8 +10977,10 @@ var ParserBase = (function (_super) {
     ParserBase.prototype._pOnInterval = function (event) {
         if (event === void 0) { event = null; }
         this._lastFrameTime = getTimer();
+        this._isParsing = true;
         if (this._pProceedParsing() && !this._parsingFailure)
             this._pFinishParsing();
+        this._isParsing = false;
     };
     /**
      * Initializes the parsing of data.
@@ -10874,6 +10991,8 @@ var ParserBase = (function (_super) {
         this._timer = new Timer(this._frameLimit, 0);
         this._timer.addEventListener(TimerEvent.TIMER, this._pOnIntervalDelegate);
         this._timer.start();
+        //get started!
+        this._pOnInterval();
     };
     /**
      * Finish parsing the data.
@@ -10885,6 +11004,7 @@ var ParserBase = (function (_super) {
         }
         this._timer = null;
         this._parsingComplete = true;
+        this._isParsing = false;
         this.dispatchEvent(new ParserEvent(ParserEvent.PARSE_COMPLETE));
     };
     /**
@@ -10941,7 +11061,6 @@ module.exports = ParserDataFormat;
 
 },{}],"awayjs-core/lib/parsers/ParserUtils":[function(require,module,exports){
 var BitmapImage2D = require("awayjs-core/lib/data/BitmapImage2D");
-var WaveAudio = require("awayjs-core/lib/data/WaveAudio");
 var ByteArray = require("awayjs-core/lib/utils/ByteArray");
 var ParserUtils = (function () {
     function ParserUtils() {
@@ -11086,14 +11205,11 @@ var ParserUtils = (function () {
 
          */
     };
-    ParserUtils.audioToWaveAudio = function (htmlAudioElement) {
-        return new WaveAudio(htmlAudioElement);
-    };
     return ParserUtils;
 })();
 module.exports = ParserUtils;
 
-},{"awayjs-core/lib/data/BitmapImage2D":"awayjs-core/lib/data/BitmapImage2D","awayjs-core/lib/data/WaveAudio":"awayjs-core/lib/data/WaveAudio","awayjs-core/lib/utils/ByteArray":"awayjs-core/lib/utils/ByteArray"}],"awayjs-core/lib/parsers/ResourceDependency":[function(require,module,exports){
+},{"awayjs-core/lib/data/BitmapImage2D":"awayjs-core/lib/data/BitmapImage2D","awayjs-core/lib/utils/ByteArray":"awayjs-core/lib/utils/ByteArray"}],"awayjs-core/lib/parsers/ResourceDependency":[function(require,module,exports){
 /**
  * ResourceDependency represents the data required to load, parse and resolve additional files ("dependencies")
  * required by a parser, used by ResourceLoadSession.
@@ -11408,73 +11524,151 @@ var __extends = this.__extends || function (d, b) {
     __.prototype = b.prototype;
     d.prototype = new __();
 };
+var WaveAudio = require("awayjs-core/lib/data/WaveAudio");
 var URLLoaderDataFormat = require("awayjs-core/lib/net/URLLoaderDataFormat");
 var ParserBase = require("awayjs-core/lib/parsers/ParserBase");
-var ParserUtils = require("awayjs-core/lib/parsers/ParserUtils");
 var ByteArray = require("awayjs-core/lib/utils/ByteArray");
 var WaveAudioParser = (function (_super) {
     __extends(WaveAudioParser, _super);
     function WaveAudioParser() {
         _super.call(this, URLLoaderDataFormat.BLOB);
     }
+    WaveAudioParser.getAudioContext = function () {
+        var audioCtx = this._audioCtx || (this._audioCtx = new (window["AudioContext"] || window["webkitAudioContext"])());
+        audioCtx.sampleRate = 22050;
+        return audioCtx;
+    };
     WaveAudioParser.supportsType = function (extension) {
         extension = extension.toLowerCase();
         return extension == "wav" || extension == "mp3" || extension == "ogg";
     };
     WaveAudioParser.supportsData = function (data) {
-        if (data instanceof HTMLAudioElement)
-            return true;
         if (!(data instanceof ByteArray))
             return false;
         var ba = data;
         var filetype = WaveAudioParser.parseFileType(ba);
         return filetype ? true : false;
     };
+    WaveAudioParser.prototype._pStartParsing = function (frameLimit) {
+        //clear content
+        delete this._pContent;
+        this._pContent = null;
+        this._noAudio = false;
+        _super.prototype._pStartParsing.call(this, frameLimit);
+    };
     WaveAudioParser.prototype._pProceedParsing = function () {
-        var _this = this;
-        var asset;
-        if (this._loadingImage) {
-            return ParserBase.MORE_TO_PARSE;
-        }
-        else if (this._htmlAudioElement) {
-            asset = ParserUtils.audioToWaveAudio(this._htmlAudioElement);
-            this._pFinalizeAsset(asset, this._iFileName);
-        }
-        else if (this.data instanceof HTMLAudioElement) {
-            var htmlAudioElement = this.data;
-            asset = ParserUtils.audioToWaveAudio(htmlAudioElement);
-            this._pFinalizeAsset(asset, this._iFileName);
+        if (this._noAudio || this._pContent) {
+            return ParserBase.PARSING_DONE;
         }
         else if (this.data instanceof ByteArray) {
-            var ba = this.data;
-            var filetype = WaveAudioParser.parseFileType(ba);
-            var htmlAudioElement = ParserUtils.byteArrayToAudio(ba, filetype);
-            asset = ParserUtils.audioToWaveAudio(htmlAudioElement);
-            this._pFinalizeAsset(asset, this._iFileName);
+            this._pContent = new WaveAudio(this.data.arraybytes, WaveAudioParser.getAudioContext());
+            this._pFinalizeAsset(this._pContent, this._iFileName);
         }
         else if (this.data instanceof ArrayBuffer) {
-            var filetype = WaveAudioParser.parseFileType(this.data.arraybytes);
-            this._htmlAudioElement = ParserUtils.arrayBufferToAudio(this.data, filetype);
-            asset = ParserUtils.audioToWaveAudio(this._htmlAudioElement);
-            this._pFinalizeAsset(asset, this._iFileName);
+            this._pContent = new WaveAudio(this.data, WaveAudioParser.getAudioContext());
+            this._pFinalizeAsset(this._pContent, this._iFileName);
         }
-        else if (this.data instanceof Blob) {
-            this._htmlAudioElement = ParserUtils.blobToAudio(this.data);
-            this._htmlAudioElement.onloadeddata = function (event) { return _this.onLoadComplete(event); };
-            this._htmlAudioElement.onerror = function (event) { return _this.onError(event); };
-            this._loadingImage = true;
-            return ParserBase.MORE_TO_PARSE;
-        }
-        this._pContent = asset;
         return ParserBase.PARSING_DONE;
     };
-    WaveAudioParser.prototype.onLoadComplete = function (event) {
-        this._loadingImage = false;
+    WaveAudioParser.prototype.onLoadComplete = function (buffer) {
+        this._pContent = new WaveAudio(buffer, WaveAudioParser.getAudioContext());
+        this._pFinalizeAsset(this._pContent, this._iFileName);
+        this._iResumeParsing();
     };
     WaveAudioParser.prototype.onError = function (event) {
-        console.log(event.target.error);
-        this._loadingImage = false;
+        this._noAudio = true;
+        this._iResumeParsing();
     };
+    //
+    //private _decodeData()
+    //{
+    //	WaveAudioParser.getAudioContext().decodeAudioData(this._buffer, (buffer) => this.onLoadComplete(buffer), (event) => this.onError(event));
+    //
+    //}
+    //
+    //private _syncStream():boolean
+    //{
+    //	var b = new Uint8Array(this._buffer);
+    //	b["indexOf"] = Array.prototype.indexOf;
+    //
+    //	var i:number = 1;
+    //	while(1) {
+    //		i = b["indexOf"](0xFF, i);
+    //
+    //		if (i == -1 || (b[i+1] & 0xE0) == 0xE0)
+    //			break;
+    //
+    //		i++;
+    //	}
+    //
+    //	if (i != -1) {
+    //		var temp = this._buffer.slice(i);
+    //		delete(this._buffer);
+    //		this._buffer = temp;
+    //		return true;
+    //	}
+    //
+    //	return false;
+    //}
+    //public _pProceedParsing():boolean
+    //{
+    //
+    //	var asset:WaveAudio;
+    //
+    //	if (this._loadingImage) {
+    //		return ParserBase.MORE_TO_PARSE;
+    //	}
+    //	else if (this._htmlAudioElement) {
+    //		asset = ParserUtils.audioToWaveAudio(this._htmlAudioElement);
+    //		this._pFinalizeAsset(<IAsset> asset, this._iFileName);
+    //	}
+    //	else if (this.data instanceof HTMLAudioElement) {// Parse HTMLImageElement
+    //		var htmlAudioElement:HTMLAudioElement = <HTMLAudioElement> this.data;
+    //		asset = ParserUtils.audioToWaveAudio(htmlAudioElement);
+    //		this._pFinalizeAsset(<IAsset> asset, this._iFileName);
+    //	}
+    //	else if (this.data instanceof ByteArray) { // Parse a ByteArray
+    //		var ba:ByteArray = this.data;
+    //		var filetype = WaveAudioParser.parseFileType(ba);
+    //		var htmlAudioElement:HTMLAudioElement = ParserUtils.byteArrayToAudio(ba, filetype);
+    //		asset = ParserUtils.audioToWaveAudio(htmlAudioElement);
+    //		this._pFinalizeAsset(<IAsset> asset, this._iFileName);
+    //	}
+    //	else if (this.data instanceof ArrayBuffer) {// Parse an ArrayBuffer
+    //		var filetype = WaveAudioParser.parseFileType(this.data.arraybytes);
+    //		this._htmlAudioElement = ParserUtils.arrayBufferToAudio(this.data, filetype);
+    //
+    //		asset = ParserUtils.audioToWaveAudio(this._htmlAudioElement);
+    //		this._pFinalizeAsset(<IAsset> asset, this._iFileName);
+    //
+    //	}
+    //	else if (this.data instanceof Blob) { // Parse a Blob
+    //
+    //		this._htmlAudioElement = ParserUtils.blobToAudio(this.data);
+    //
+    //		this._htmlAudioElement.onloadeddata = (event) => this.onLoadComplete(event);
+    //		this._htmlAudioElement.onerror = (event) => this.onError(event);
+    //		this._loadingImage = true;
+    //
+    //		return ParserBase.MORE_TO_PARSE;
+    //	}
+    //
+    //	this._pContent = asset;
+    //
+    //	return ParserBase.PARSING_DONE;
+    //
+    //}
+    //
+    //public onLoadComplete(event)
+    //{
+    //	this._loadingImage = false;
+    //}
+    //
+    //public onError(event)
+    //{
+    //	console.log(event.target.error);
+    //	this._loadingImage = false;
+    //}
     WaveAudioParser.parseFileType = function (ba) {
         ba.position = 0;
         ba.position = 0;
@@ -11494,7 +11688,7 @@ var WaveAudioParser = (function (_super) {
 })(ParserBase);
 module.exports = WaveAudioParser;
 
-},{"awayjs-core/lib/net/URLLoaderDataFormat":"awayjs-core/lib/net/URLLoaderDataFormat","awayjs-core/lib/parsers/ParserBase":"awayjs-core/lib/parsers/ParserBase","awayjs-core/lib/parsers/ParserUtils":"awayjs-core/lib/parsers/ParserUtils","awayjs-core/lib/utils/ByteArray":"awayjs-core/lib/utils/ByteArray"}],"awayjs-core/lib/pool/IImageObject":[function(require,module,exports){
+},{"awayjs-core/lib/data/WaveAudio":"awayjs-core/lib/data/WaveAudio","awayjs-core/lib/net/URLLoaderDataFormat":"awayjs-core/lib/net/URLLoaderDataFormat","awayjs-core/lib/parsers/ParserBase":"awayjs-core/lib/parsers/ParserBase","awayjs-core/lib/utils/ByteArray":"awayjs-core/lib/utils/ByteArray"}],"awayjs-core/lib/pool/IImageObject":[function(require,module,exports){
 
 },{}],"awayjs-core/lib/projections/CoordinateSystem":[function(require,module,exports){
 /**

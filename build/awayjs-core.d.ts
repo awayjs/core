@@ -1854,18 +1854,39 @@ declare module "awayjs-core/lib/data/WaveAudio" {
 	import AssetBase = require("awayjs-core/lib/library/AssetBase");
 	class WaveAudio extends AssetBase implements IAsset {
 	    static assetType: string;
-	    private _htmlAudioElement;
-	    /**
-	     *
-	     */
-	    constructor(htmlAudioElement: HTMLAudioElement);
+	    private _audioCtx;
+	    private _buffer;
+	    private _loop;
+	    private _source;
+	    private _volume;
+	    private _gainNode;
+	    private _startTime;
+	    private _currentTime;
+	    private _isPlaying;
+	    private _duration;
+	    private _onEndedDelegate;
 	    /**
 	     *
 	     * @returns {string}
 	     */
 	    assetType: string;
-	    htmlAudioElement: HTMLAudioElement;
+	    loop: boolean;
+	    volume: number;
+	    currentTime: number;
+	    duration: number;
+	    /**
+	     *
+	     */
+	    constructor(buffer: any, audioCtx: any);
 	    dispose(): void;
+	    play(): void;
+	    stop(): void;
+	    clone(): WaveAudio;
+	    onLoadComplete(buffer: any): void;
+	    onError(event: any): void;
+	    private _createSource();
+	    private _disposeSource();
+	    private onEnded(event);
 	}
 	export = WaveAudio;
 	
@@ -6123,6 +6144,7 @@ declare module "awayjs-core/lib/parsers/ParserBase" {
 	 * @see AssetLoader
 	 */
 	class ParserBase extends EventDispatcher {
+	    _isParsing: boolean;
 	    _iFileName: string;
 	    private _dataFormat;
 	    private _data;
@@ -6201,7 +6223,7 @@ declare module "awayjs-core/lib/parsers/ParserBase" {
 	     * @param resourceDependency The dependency to be resolved.
 	     */
 	    _iResolveDependencyName(resourceDependency: ResourceDependency, asset: IAsset): string;
-	    _iResumeParsingAfterDependencies(): void;
+	    _iResumeParsing(): void;
 	    _pFinalizeAsset(asset: IAsset, name?: string): void;
 	    /**
 	     * Parse the next block of data.
@@ -6212,6 +6234,7 @@ declare module "awayjs-core/lib/parsers/ParserBase" {
 	    _pDieWithError(message?: string): void;
 	    _pAddDependency(id: string, req: URLRequest, retrieveAsRawData?: boolean, data?: any, suppressErrorEvents?: boolean, sub_id?: number): ResourceDependency;
 	    _pPauseAndRetrieveDependencies(): void;
+	    _pPauseParsing(): void;
 	    /**
 	     * Tests whether or not there is still time left for parsing within the maximum allowed time frame per session.
 	     * @return True if there is still time left, false if the maximum allotted time was exceeded and parsing should be interrupted.
@@ -6271,7 +6294,6 @@ declare module "awayjs-core/lib/parsers/ParserDataFormat" {
 
 declare module "awayjs-core/lib/parsers/ParserUtils" {
 	import BitmapImage2D = require("awayjs-core/lib/data/BitmapImage2D");
-	import WaveAudio = require("awayjs-core/lib/data/WaveAudio");
 	import ByteArray = require("awayjs-core/lib/utils/ByteArray");
 	class ParserUtils {
 	    private static arrayBufferToBase64(data, mimeType);
@@ -6336,7 +6358,6 @@ declare module "awayjs-core/lib/parsers/ParserUtils" {
 	     *
 	     */
 	    static toString(data: any, length?: number): string;
-	    static audioToWaveAudio(htmlAudioElement: HTMLAudioElement): WaveAudio;
 	}
 	export = ParserUtils;
 	
@@ -6484,13 +6505,15 @@ declare module "awayjs-core/lib/parsers/TextureAtlasParser" {
 declare module "awayjs-core/lib/parsers/WaveAudioParser" {
 	import ParserBase = require("awayjs-core/lib/parsers/ParserBase");
 	class WaveAudioParser extends ParserBase {
-	    private _loadingImage;
-	    private _htmlAudioElement;
+	    private _noAudio;
+	    private static _audioCtx;
 	    constructor();
+	    static getAudioContext(): any;
 	    static supportsType(extension: string): boolean;
 	    static supportsData(data: any): boolean;
+	    _pStartParsing(frameLimit: number): void;
 	    _pProceedParsing(): boolean;
-	    onLoadComplete(event: any): void;
+	    onLoadComplete(buffer: any): void;
 	    onError(event: any): void;
 	    private static parseFileType(ba);
 	}

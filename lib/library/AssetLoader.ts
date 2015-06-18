@@ -235,7 +235,7 @@ class AssetLoader extends EventDispatcher
 
 		} else if (this._currentDependency.parser && this._currentDependency.parser.parsingPaused) {
 
-			this._currentDependency.parser._iResumeParsingAfterDependencies();
+			this._currentDependency.parser._iResumeParsing();
 			this._stack.pop();
 
 		} else if (this._stack.length) {
@@ -390,7 +390,7 @@ class AssetLoader extends EventDispatcher
 		if (!this._currentDependency)
 			return;
 
-		var parserDependancies = this._currentDependency.parser.dependencies
+		var parserDependancies = this._currentDependency.parser.dependencies;
 		var i:number, len:number = parserDependancies.length;
 
 		for (i = 0; i < len; i++)
@@ -519,7 +519,7 @@ class AssetLoader extends EventDispatcher
 		var parser:ParserBase = <ParserBase> event.target;
 
 		if (this._context && !this._context.includeDependencies)
-			parser._iResumeParsingAfterDependencies();
+			parser._iResumeParsing();
 		else
 			this.retrieveParserDependencies();
 	}

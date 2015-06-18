@@ -34,6 +34,7 @@ import getTimer					= require("awayjs-core/lib/utils/getTimer");
  */
 class ParserBase extends EventDispatcher
 {
+	public _isParsing:boolean;
 	public _iFileName:string;
 	private _dataFormat:string;
 	private _data:any;
@@ -212,12 +213,16 @@ class ParserBase extends EventDispatcher
 		return asset.name;
 	}
 
-	public _iResumeParsingAfterDependencies()
+	public _iResumeParsing()
 	{
 		this._parsingPaused = false;
 
 		if (this._timer)
 			this._timer.start();
+
+		//get started!
+		if (!this._isParsing)
+			this._pOnInterval();
 	}
 
 	public _pFinalizeAsset(asset:IAsset, name:string = null)
@@ -267,11 +272,17 @@ class ParserBase extends EventDispatcher
 
 	public _pPauseAndRetrieveDependencies()
 	{
+		this._pPauseParsing();
+
+		this.dispatchEvent(new ParserEvent(ParserEvent.READY_FOR_DEPENDENCIES));
+	}
+
+	public _pPauseParsing()
+	{
 		if (this._timer)
 			this._timer.stop();
 
 		this._parsingPaused = true;
-		this.dispatchEvent(new ParserEvent(ParserEvent.READY_FOR_DEPENDENCIES));
 	}
 
 	/**
@@ -289,9 +300,12 @@ class ParserBase extends EventDispatcher
 	public _pOnInterval(event:TimerEvent = null)
 	{
 		this._lastFrameTime = getTimer();
+		this._isParsing = true;
 
 		if (this._pProceedParsing() && !this._parsingFailure)
 			this._pFinishParsing();
+
+		this._isParsing = false;
 	}
 
 	/**
@@ -304,6 +318,9 @@ class ParserBase extends EventDispatcher
 		this._timer = new Timer(this._frameLimit, 0);
 		this._timer.addEventListener(TimerEvent.TIMER, this._pOnIntervalDelegate);
 		this._timer.start();
+
+		//get started!
+		this._pOnInterval();
 	}
 
 	/**
@@ -318,6 +335,7 @@ class ParserBase extends EventDispatcher
 
 		this._timer = null;
 		this._parsingComplete = true;
+		this._isParsing = false;
 
 		this.dispatchEvent(new ParserEvent(ParserEvent.PARSE_COMPLETE));
 	}

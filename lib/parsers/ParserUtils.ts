@@ -171,11 +171,6 @@ class ParserUtils
 		 */
 
 	}
-
-	public static audioToWaveAudio(htmlAudioElement:HTMLAudioElement):WaveAudio
-	{
-		return new WaveAudio(htmlAudioElement);
-	}
 }
 
 export = ParserUtils;

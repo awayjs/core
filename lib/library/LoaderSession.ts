@@ -1,5 +1,4 @@
-import AssetLoaderContext		= require("awayjs-core/lib/library/AssetLoaderContext");
-import AssetLoaderToken			= require("awayjs-core/lib/library/AssetLoaderToken");
+import LoaderContext			= require("awayjs-core/lib/library/LoaderContext");
 import URLLoader				= require("awayjs-core/lib/net/URLLoader");
 import URLLoaderDataFormat		= require("awayjs-core/lib/net/URLLoaderDataFormat");
 import URLRequest				= require("awayjs-core/lib/net/URLRequest");
@@ -68,20 +67,19 @@ import WaveAudioParser			= require("awayjs-core/lib/parsers/WaveAudioParser");
 //[Event(name="textureSizeError", type="away3d.events.AssetEvent")]
 
 /**
- * AssetLoader can load any file format that away.supports (or for which a third-party parser
+ * LoaderSession can load any file format that away.supports (or for which a third-party parser
  * has been plugged in) and it's dependencies. Events are dispatched when assets are encountered
  * and for when the resource (or it's dependencies) have been loaded.
  *
- * The AssetLoader will not make assets available in any other way than through the dispatched
+ * The LoaderSession will not make assets available in any other way than through the dispatched
  * events. To store assets and make them available at any point from any module in an application,
  * use the AssetLibrary to load and manage assets.
  *
  * @see away.library.AssetLibrary
  */
-class AssetLoader extends EventDispatcher
+class LoaderSession extends EventDispatcher
 {
-	private _context:AssetLoaderContext;
-	private _token:AssetLoaderToken;
+	private _context:LoaderContext;
 	private _uri:string;
 	private _materialMode:number;
 
@@ -116,14 +114,14 @@ class AssetLoader extends EventDispatcher
 	 */
 	public static enableParser(parser)
 	{
-		if (AssetLoader._parsers.indexOf(parser) < 0)
-			AssetLoader._parsers.push(parser);
+		if (LoaderSession._parsers.indexOf(parser) < 0)
+			LoaderSession._parsers.push(parser);
 	}
 
 	/**
 	 * Enables a list of parsers.
 	 * When no specific parser is set for a loading/parsing opperation,
-	 * AssetLoader can autoselect the correct parser to use.
+	 * LoaderSession can autoselect the correct parser to use.
 	 * A parser must have been enabled, to be considered when autoselecting the parser.
 	 *
 	 * @param parsers A Vector of parser classes to enable.
@@ -132,7 +130,7 @@ class AssetLoader extends EventDispatcher
 	public static enableParsers(parsers:Array<Object>)
 	{
 		for (var c:number = 0; c < parsers.length; c++)
-			AssetLoader.enableParser(parsers[ c ]);
+			LoaderSession.enableParser(parsers[ c ]);
 	}
 
 	/**
@@ -171,25 +169,16 @@ class AssetLoader extends EventDispatcher
 	 * @param req The URLRequest object containing the URL of the file to be loaded.
 	 * @param context An optional context object providing additional parameters for loading
 	 * @param ns An optional namespace string under which the file is to be loaded, allowing the differentiation of two resources with identical assets
-	 * @param parser An optional parser object for translating the loaded data into a usable resource. If not provided, AssetLoader will attempt to auto-detect the file type.
+	 * @param parser An optional parser object for translating the loaded data into a usable resource. If not provided, LoaderSession will attempt to auto-detect the file type.
 	 */
-	public load(req:URLRequest, context:AssetLoaderContext = null, ns:string = null, parser:ParserBase = null):AssetLoaderToken
+	public load(req:URLRequest, context:LoaderContext = null, ns:string = null, parser:ParserBase = null)
 	{
-		if (!this._token) {
-			this._token = new AssetLoaderToken(this);
+		this._uri = req.url = req.url.replace(/\\/g, "/");
+		this._context = context;
+		this._namespace = ns;
 
-			this._uri = req.url = req.url.replace(/\\/g, "/");
-			this._context = context;
-			this._namespace = ns;
-
-			this._baseDependency = new ResourceDependency('', req, null, parser, null);
-			this.retrieveDependency(this._baseDependency);
-
-			return this._token;
-		}
-
-		// TODO: Throw error (already loading)
-		return null;
+		this._baseDependency = new ResourceDependency('', req, null, parser, null);
+		this.retrieveDependency(this._baseDependency);
 	}
 
 	/**
@@ -198,25 +187,16 @@ class AssetLoader extends EventDispatcher
 	 * @param data The data object containing all resource information.
 	 * @param context An optional context object providing additional parameters for loading
 	 * @param ns An optional namespace string under which the file is to be loaded, allowing the differentiation of two resources with identical assets
-	 * @param parser An optional parser object for translating the loaded data into a usable resource. If not provided, AssetLoader will attempt to auto-detect the file type.
+	 * @param parser An optional parser object for translating the loaded data into a usable resource. If not provided, LoaderSession will attempt to auto-detect the file type.
 	 */
-	public loadData(data:any, id:string, context:AssetLoaderContext = null, ns:string = null, parser:ParserBase = null):AssetLoaderToken
+	public loadData(data:any, id:string, context:LoaderContext = null, ns:string = null, parser:ParserBase = null)
 	{
-		if (!this._token) {
-			this._token = new AssetLoaderToken(this);
+		this._uri = id;
+		this._context = context;
+		this._namespace = ns;
 
-			this._uri = id;
-			this._context = context;
-			this._namespace = ns;
-
-			this._baseDependency = new ResourceDependency(id, null, data, parser, null);
-			this.retrieveDependency(this._baseDependency);
-
-			return this._token;
-		}
-
-		// TODO: Throw error (already loading)
-		return null;
+		this._baseDependency = new ResourceDependency(id, null, data, parser, null);
+		this.retrieveDependency(this._baseDependency);
 	}
 
 	/**
@@ -396,7 +376,6 @@ class AssetLoader extends EventDispatcher
 		for (i = 0; i < len; i++)
 			this._currentDependency.dependencies[i] = parserDependancies[i];
 
-
 		// Since more dependencies might be added eventually, empty this
 		// list so that the same dependency isn't retrieved more than once.
 		parserDependancies.length = 0;
@@ -434,7 +413,7 @@ class AssetLoader extends EventDispatcher
 			this.dispatchEvent(event);
 			handled = true;
 		} else {
-			// TODO: Consider not doing this even when AssetLoader does have it's own LOAD_ERROR listener
+			// TODO: Consider not doing this even when LoaderSession does have it's own LOAD_ERROR listener
 			var i:number, len:number = this._errorHandlers.length;
 			for (i = 0; i < len; i++)
 				if (!handled)
@@ -458,7 +437,7 @@ class AssetLoader extends EventDispatcher
 			}
 		} else {
 
-			// Error event was not handled by listeners directly on AssetLoader or
+			// Error event was not handled by listeners directly on LoaderSession or
 			// on any of the subscribed loaders (in the list of error handlers.)
 			throw new Error();
 		}
@@ -482,7 +461,7 @@ class AssetLoader extends EventDispatcher
 			this.dispatchEvent(event);
 			handled = true;
 		} else {
-			// TODO: Consider not doing this even when AssetLoader does
+			// TODO: Consider not doing this even when LoaderSession does
 			// have it's own LOAD_ERROR listener
 			var i:number, len:number = this._parseErrorHandlers.length;
 
@@ -494,7 +473,7 @@ class AssetLoader extends EventDispatcher
 		if (handled) {
 			this.retrieveNext();
 		} else {
-			// Error event was not handled by listeners directly on AssetLoader or
+			// Error event was not handled by listeners directly on LoaderSession or
 			// on any of the subscribed loaders (in the list of error handlers.)
 			throw new Error(event.message);
 		}
@@ -594,7 +573,6 @@ class AssetLoader extends EventDispatcher
 		this._errorHandlers = null;
 		this._parseErrorHandlers = null;
 		this._context = null;
-		this._token = null;
 		this._stack = null;
 
 		if (this._currentDependency && this._currentDependency._iLoader)
@@ -607,13 +585,13 @@ class AssetLoader extends EventDispatcher
 	/**
 	 * @private
 	 * This method is used by other loader classes (e.g. Loader3D and AssetLibraryBundle) to
-	 * add error event listeners to the AssetLoader instance. This system is used instead of
+	 * add error event listeners to the LoaderSession instance. This system is used instead of
 	 * the regular EventDispatcher system so that the AssetLibrary error handler can be sure
 	 * that if hasEventListener() returns true, it's client code that's listening for the
 	 * event. Secondly, functions added as error handler through this custom method are
 	 * expected to return a boolean value indicating whether the event was handled (i.e.
 	 * whether they in turn had any client code listening for the event.) If no handlers
-	 * return true, the AssetLoader knows that the event wasn't handled and will throw an RTE.
+	 * return true, the LoaderSession knows that the event wasn't handled and will throw an RTE.
 	 */
 
 	public _iAddParseErrorHandler(handler)
@@ -637,12 +615,12 @@ class AssetLoader extends EventDispatcher
 	 */
 	private getParserFromData(data:any):ParserBase
 	{
-		var len:number = AssetLoader._parsers.length;
+		var len:number = LoaderSession._parsers.length;
 
 		// go in reverse order to allow application override of default parser added in away.proper
 		for (var i:number = len - 1; i >= 0; i--)
-			if (AssetLoader._parsers[i].supportsData(data))
-				return new AssetLoader._parsers[i]();
+			if (LoaderSession._parsers[i].supportsData(data))
+				return new LoaderSession._parsers[i]();
 
 		return null;
 	}
@@ -684,7 +662,7 @@ class AssetLoader extends EventDispatcher
 				this.dispatchEvent(event);
 				handled = true;
 			} else {
-				// TODO: Consider not doing this even when AssetLoader does
+				// TODO: Consider not doing this even when LoaderSession does
 				// have it's own LOAD_ERROR listener
 				var i:number, len:number = this._parseErrorHandlers.length;
 
@@ -696,7 +674,7 @@ class AssetLoader extends EventDispatcher
 			if (handled) {
 				this.retrieveNext();
 			} else {
-				// Error event was not handled by listeners directly on AssetLoader or
+				// Error event was not handled by listeners directly on LoaderSession or
 				// on any of the subscribed loaders (in the list of error handlers.)
 				throw new Error(message);
 			}
@@ -713,11 +691,11 @@ class AssetLoader extends EventDispatcher
 		var base:string = (url.indexOf('?') > 0)? url.split('?')[0] : url;
 		var fileExtension:string = base.substr(base.lastIndexOf('.') + 1).toLowerCase();
 
-		var len:number = AssetLoader._parsers.length;
+		var len:number = LoaderSession._parsers.length;
 
 		// go in reverse order to allow application override of default parser added in away.proper
 		for (var i:number = len - 1; i >= 0; i--) {
-			var parserClass:any = AssetLoader._parsers[i];
+			var parserClass:any = LoaderSession._parsers[i];
 			if (parserClass.supportsType(fileExtension))
 				return new parserClass();
 		}
@@ -726,4 +704,4 @@ class AssetLoader extends EventDispatcher
 	}
 }
 
-export = AssetLoader;
+export = LoaderSession;

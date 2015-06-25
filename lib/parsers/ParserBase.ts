@@ -17,7 +17,7 @@ import getTimer					= require("awayjs-core/lib/utils/getTimer");
  * <code>ParserBase</code> provides an abstract base class for objects that convert blocks of data to data structures
  * supported by away.
  *
- * If used by <code>AssetLoader</code> to automatically determine the parser type, two public static methods should
+ * If used by <code>LoaderSession</code> to automatically determine the parser type, two public static methods should
  * be implemented, with the following signatures:
  *
  * <code>public static supportsType(extension : string) : boolean</code>
@@ -30,7 +30,7 @@ import getTimer					= require("awayjs-core/lib/utils/getTimer");
  * create the object that will contain the parsed data. This allows <code>ResourceManager</code> to return an object
  * handle regardless of whether the object was loaded or not.
  *
- * @see AssetLoader
+ * @see LoaderSession
  */
 class ParserBase extends EventDispatcher
 {

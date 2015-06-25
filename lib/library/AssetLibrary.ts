@@ -1,9 +1,8 @@
 import URLRequest				= require("awayjs-core/lib/net/URLRequest");
 import AssetLibraryBundle		= require("awayjs-core/lib/library/AssetLibraryBundle");
 import AssetLibraryIterator		= require("awayjs-core/lib/library/AssetLibraryIterator");
-import AssetLoader				= require("awayjs-core/lib/library/AssetLoader");
-import AssetLoaderContext		= require("awayjs-core/lib/library/AssetLoaderContext");
-import AssetLoaderToken			= require("awayjs-core/lib/library/AssetLoaderToken");
+import LoaderSession			= require("awayjs-core/lib/library/LoaderSession");
+import LoaderContext			= require("awayjs-core/lib/library/LoaderContext");
 import ConflictStrategyBase		= require("awayjs-core/lib/library/ConflictStrategyBase");
 import IAsset					= require("awayjs-core/lib/library/IAsset");
 import ParserBase				= require("awayjs-core/lib/parsers/ParserBase");
@@ -43,7 +42,7 @@ class AssetLibrary
 	 */
 	public static enableParser(parserClass)
 	{
-		AssetLoader.enableParser(parserClass);
+		LoaderSession.enableParser(parserClass);
 	}
 
 	/**
@@ -51,7 +50,7 @@ class AssetLibrary
 	 */
 	public static enableParsers(parserClasses:Array<Object>)
 	{
-		AssetLoader.enableParsers(parserClasses);
+		LoaderSession.enableParsers(parserClasses);
 	}
 
 	/**
@@ -99,9 +98,9 @@ class AssetLibrary
 	 *
 	 * @see AssetLibraryBundle.load()
 	 */
-	public static load(req:URLRequest, context:AssetLoaderContext = null, ns:string = null, parser:ParserBase = null):AssetLoaderToken
+	public static load(req:URLRequest, context:LoaderContext = null, ns:string = null, parser:ParserBase = null)
 	{
-		return AssetLibrary.getBundle().load(req, context, ns, parser);
+		AssetLibrary.getBundle().load(req, context, ns, parser);
 	}
 
 	/**
@@ -109,14 +108,19 @@ class AssetLibrary
 	 *
 	 * @see AssetLibraryBundle.loadData()
 	 */
-	public static loadData(data:any, context:AssetLoaderContext = null, ns:string = null, parser:ParserBase = null):AssetLoaderToken
+	public static loadData(data:any, context:LoaderContext = null, ns:string = null, parser:ParserBase = null)
 	{
-		return AssetLibrary.getBundle().loadData(data, context, ns, parser);
+		AssetLibrary.getBundle().loadData(data, context, ns, parser);
 	}
 
 	public static stopLoad()
 	{
-		AssetLibrary.getBundle().stopAllLoadingSessions();
+		AssetLibrary.getBundle().stopAllLoaderSessions();
+	}
+
+	public static getLoaderSession():LoaderSession
+	{
+		return AssetLibrary.getBundle().getLoaderSession();
 	}
 
 	/**

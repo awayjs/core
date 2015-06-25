@@ -1,4 +1,4 @@
-class AssetLoaderContext
+class LoaderContext
 {
 	public static UNDEFINED:number = 0;
 	public static SINGLEPASS_MATERIALS:number = 1;
@@ -14,11 +14,11 @@ class AssetLoaderContext
 	private _overrideFullUrls:boolean;
 
 	/**
-	 * AssetLoaderContext provides configuration for the AssetLoader load() and parse() operations.
+	 * LoaderContext provides configuration for the LoaderSession load() and parse() operations.
 	 * Use it to configure how (and if) dependencies are loaded, or to map dependency URLs to
 	 * embedded data.
 	 *
-	 * @see away.loading.AssetLoader
+	 * @see away.loading.LoaderSession
 	 */
 	constructor(includeDependencies:boolean = true, dependencyBaseUrl:string = null)
 	{
@@ -26,7 +26,7 @@ class AssetLoaderContext
 		this._dependencyBaseUrl = dependencyBaseUrl || '';
 		this._embeddedDataByUrl = {};
 		this._remappedUrls = {};
-		this._materialMode = AssetLoaderContext.UNDEFINED;
+		this._materialMode = LoaderContext.UNDEFINED;
 	}
 
 	/**
@@ -169,4 +169,4 @@ class AssetLoaderContext
 	}
 }
 
-export = AssetLoaderContext;
+export = LoaderContext;

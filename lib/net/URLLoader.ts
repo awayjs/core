@@ -12,10 +12,10 @@ import AwayProgressEvent			= require("awayjs-core/lib/events/ProgressEvent");
  * The URLLoader is used to load a single file, as part of a resource.
  *
  * While URLLoader can be used directly, e.g. to create a third-party asset
- * management system, it's recommended to use any of the classes Loader3D, AssetLoader
+ * management system, it's recommended to use any of the classes Loader3D, LoaderSession
  * and AssetLibrary instead in most cases.
  *
- * @see AssetLoader
+ * @see LoaderSession
  * @see away.library.AssetLibrary
  */
 class URLLoader extends EventDispatcher

@@ -1,9 +1,8 @@
 import URLRequest				= require("awayjs-core/lib/net/URLRequest");
 import AssetLibrary				= require("awayjs-core/lib/library/AssetLibrary");
 import AssetLibraryIterator		= require("awayjs-core/lib/library/AssetLibraryIterator");
-import AssetLoader				= require("awayjs-core/lib/library/AssetLoader");
-import AssetLoaderToken			= require("awayjs-core/lib/library/AssetLoaderToken");
-import AssetLoaderContext		= require("awayjs-core/lib/library/AssetLoaderContext");
+import LoaderSession			= require("awayjs-core/lib/library/LoaderSession");
+import LoaderContext			= require("awayjs-core/lib/library/LoaderContext");
 import ConflictPrecedence		= require("awayjs-core/lib/library/ConflictPrecedence");
 import ConflictStrategy			= require("awayjs-core/lib/library/ConflictStrategy");
 import ConflictStrategyBase		= require("awayjs-core/lib/library/ConflictStrategyBase");
@@ -26,13 +25,13 @@ class AssetLibraryBundle extends EventDispatcher
 {
 	public static _iInstances:Object = new Object();
 
-	private _loadingSessions:Array<AssetLoader>;
+	private _loaderSessions:Array<LoaderSession>;
 	private _strategy:ConflictStrategyBase;
 	private _strategyPreference:string;
 	private _assets:Array<IAsset>;
 	private _assetDictionary:Object;
 	private _assetDictDirty:boolean;
-	private _loadingSessionsGarbage:Array<AssetLoader> = new Array<AssetLoader>();
+	private _loaderSessionsGarbage:Array<LoaderSession> = new Array<LoaderSession>();
 	private _gcTimeoutIID:number;
 
 	private _onAssetRenameDelegate:(event:AssetEvent) => void;
@@ -54,7 +53,7 @@ class AssetLibraryBundle extends EventDispatcher
 
 		this._assets = new Array<IAsset>();//new Vector.<IAsset>;
 		this._assetDictionary = new Object();
-		this._loadingSessions = new Array<AssetLoader>();
+		this._loaderSessions = new Array<LoaderSession>();
 
 		this.conflictStrategy = ConflictStrategy.IGNORE.create();
 		this.conflictPrecedence = ConflictPrecedence.FAVOR_NEW;
@@ -94,7 +93,7 @@ class AssetLibraryBundle extends EventDispatcher
 	 */
 	public enableParser(parserClass:Object)
 	{
-		AssetLoader.enableParser(parserClass);
+		LoaderSession.enableParser(parserClass);
 	}
 
 	/**
@@ -102,7 +101,7 @@ class AssetLibraryBundle extends EventDispatcher
 	 */
 	public enableParsers(parserClasses:Object[])
 	{
-		AssetLoader.enableParsers(parserClasses);
+		LoaderSession.enableParsers(parserClasses);
 	}
 
 	/**
@@ -177,27 +176,12 @@ class AssetLibraryBundle extends EventDispatcher
 	 * @param req The URLRequest object containing the URL of the file to be loaded.
 	 * @param context An optional context object providing additional parameters for loading
 	 * @param ns An optional namespace string under which the file is to be loaded, allowing the differentiation of two resources with identical assets
-	 * @param parser An optional parser object for translating the loaded data into a usable resource. If not provided, AssetLoader will attempt to auto-detect the file type.
+	 * @param parser An optional parser object for translating the loaded data into a usable resource. If not provided, LoaderSession will attempt to auto-detect the file type.
 	 * @return A handle to the retrieved resource.
 	 */
-	public load(req:URLRequest, context:AssetLoaderContext = null, ns:string = null, parser:ParserBase = null):AssetLoaderToken
+	public load(req:URLRequest, context:LoaderContext = null, ns:string = null, parser:ParserBase = null)
 	{
-		var loader:AssetLoader = new AssetLoader();
-
-		if (!this._loadingSessions)
-			this._loadingSessions = new Array<AssetLoader>();
-
-		this._loadingSessions.push(loader);
-
-		loader.addEventListener(LoaderEvent.RESOURCE_COMPLETE, this._onResourceCompleteDelegate);
-		loader.addEventListener(AssetEvent.TEXTURE_SIZE_ERROR, this._onTextureSizeErrorDelegate);
-		loader.addEventListener(AssetEvent.ASSET_COMPLETE, this._onAssetCompleteDelegate);
-
-		// Error are handled separately (see documentation for addErrorHandler)
-		loader._iAddErrorHandler(this._onLoadErrorDelegate);
-		loader._iAddParseErrorHandler(this._onParseErrorDelegate);
-
-		return loader.load(req, context, ns, parser);
+		this.getLoaderSession().load(req, context, ns, parser);
 	}
 
 	/**
@@ -206,17 +190,19 @@ class AssetLibraryBundle extends EventDispatcher
 	 * @param data The data object containing all resource information.
 	 * @param context An optional context object providing additional parameters for loading
 	 * @param ns An optional namespace string under which the file is to be loaded, allowing the differentiation of two resources with identical assets
-	 * @param parser An optional parser object for translating the loaded data into a usable resource. If not provided, AssetLoader will attempt to auto-detect the file type.
+	 * @param parser An optional parser object for translating the loaded data into a usable resource. If not provided, LoaderSession will attempt to auto-detect the file type.
 	 * @return A handle to the retrieved resource.
 	 */
-	public loadData(data:any, context:AssetLoaderContext = null, ns:string = null, parser:ParserBase = null):AssetLoaderToken
+	public loadData(data:any, context:LoaderContext = null, ns:string = null, parser:ParserBase = null)
 	{
-		var loader:AssetLoader = new AssetLoader();
+		this.getLoaderSession().loadData(data, '', context, ns, parser);
+	}
 
-		if (!this._loadingSessions)
-			this._loadingSessions = new Array<AssetLoader>();
+	public getLoaderSession():LoaderSession
+	{
+		var loader:LoaderSession = new LoaderSession();
 
-		this._loadingSessions.push(loader);
+		this._loaderSessions.push(loader);
 
 		loader.addEventListener(LoaderEvent.RESOURCE_COMPLETE, this._onResourceCompleteDelegate);
 		loader.addEventListener(AssetEvent.TEXTURE_SIZE_ERROR, this._onTextureSizeErrorDelegate);
@@ -226,7 +212,17 @@ class AssetLibraryBundle extends EventDispatcher
 		loader._iAddErrorHandler(this._onLoadErrorDelegate);
 		loader._iAddParseErrorHandler(this._onParseErrorDelegate);
 
-		return loader.loadData(data, '', context, ns, parser);
+		return loader;
+	}
+	
+	public disposeLoaderSession(loader:LoaderSession)
+	{
+		var index:number = this._loaderSessions.indexOf(loader);
+		this._loaderSessions.splice(index, 1);
+
+		// Add loader to a garbage array - for a collection sweep and kill
+		this._loaderSessionsGarbage.push(loader);
+		this._gcTimeoutIID = setTimeout(() => {this.loaderSessionGC()}, 100);
 	}
 
 	/**
@@ -234,8 +230,6 @@ class AssetLibraryBundle extends EventDispatcher
 	 */
 	public getAsset(name:string, ns:string = null):IAsset
 	{
-		//var asset : IAsset;
-
 		if (this._assetDictDirty)
 			this.rehashAssetDict();
 
@@ -321,7 +315,6 @@ class AssetLibraryBundle extends EventDispatcher
 	 */
 	public removeAssetByName(name:string, ns:string = null, dispose:boolean = true):IAsset
 	{
-
 		var asset:IAsset = this.getAsset(name, ns);
 
 		if (asset)
@@ -340,15 +333,11 @@ class AssetLibraryBundle extends EventDispatcher
 	{
 		if (dispose) {
 			var asset:IAsset;
-
-			for (var c:number = 0; c < this._assets.length; c++) {
-				asset = this._assets[ c ];
+			var len:number = this._assets.length;
+			for (var c:number = 0; c < len; c++) {
+				asset = this._assets[c];
 				asset.dispose();
 			}
-			/*
-			 for each (asset in _assets)
-			 asset.dispose();
-			 */
 		}
 
 		this._assets.length = 0;
@@ -379,7 +368,8 @@ class AssetLibraryBundle extends EventDispatcher
 		if (ns == null)
 			ns = AssetBase.DEFAULT_NAMESPACE;
 
-		for (var d:number = 0; d < old_assets.length; d++) {
+		var len:number = old_assets.length;
+		for (var d:number = 0; d < len; d++) {
 			asset = old_assets[d];
 
 			// Remove from dict if in the supplied namespace. If not,
@@ -447,19 +437,13 @@ class AssetLibraryBundle extends EventDispatcher
 		}
 	}
 
-	public stopAllLoadingSessions()
+	public stopAllLoaderSessions()
 	{
-		var i:number;
+		var len:number = this._loaderSessions.length;
+		for (var i:number = 0; i < len; i++)
+			this.killloaderSession(this._loaderSessions[i]);
 
-		if (!this._loadingSessions)
-			this._loadingSessions = new Array<AssetLoader>();
-
-		var length:number = this._loadingSessions.length;
-
-		for (i = 0; i < length; i++)
-			this.killLoadingSession(this._loadingSessions[i]);
-
-		this._loadingSessions = null;
+		this._loaderSessions = new Array<LoaderSession>();
 	}
 
 	private rehashAssetDict()
@@ -468,9 +452,8 @@ class AssetLibraryBundle extends EventDispatcher
 
 		this._assetDictionary = {};
 
-		var l:number = this._assets.length;
-
-		for (var c:number = 0; c < l; c++) {
+		var len:number = this._assets.length;
+		for (var c:number = 0; c < len; c++) {
 			asset = this._assets[c];
 
 			if (!this._assetDictionary.hasOwnProperty(asset.assetNamespace))
@@ -530,33 +513,27 @@ class AssetLibraryBundle extends EventDispatcher
 	 */
 	private onResourceComplete(event:LoaderEvent)
 	{
-		var loader:AssetLoader = <AssetLoader> event.target;
+		var loader:LoaderSession = <LoaderSession> event.target;
 
 		this.dispatchEvent(event);
 
-		var index:number = this._loadingSessions.indexOf(loader);
-		this._loadingSessions.splice(index, 1);
-
-		// Add loader to a garbage array - for a collection sweep and kill
-		this._loadingSessionsGarbage.push(loader);
-		this._gcTimeoutIID = setTimeout(() => {this.loadingSessionGC()}, 100);
+		this.disposeLoaderSession(loader);
 	}
 
-	private loadingSessionGC():void
+	private loaderSessionGC():void
 	{
-		var loader:AssetLoader;
+		var loader:LoaderSession;
 
-		while (this._loadingSessionsGarbage.length > 0) {
-			loader = this._loadingSessionsGarbage.pop();
-			this.killLoadingSession(loader);
+		while (this._loaderSessionsGarbage.length > 0) {
+			loader = this._loaderSessionsGarbage.pop();
+			this.killloaderSession(loader);
 		}
 
 		clearTimeout(this._gcTimeoutIID);
 		this._gcTimeoutIID = null;
-
 	}
 
-	private killLoadingSession(loader:AssetLoader)
+	private killloaderSession(loader:LoaderSession)
 	{
 		loader.removeEventListener(LoaderEvent.RESOURCE_COMPLETE, this._onResourceCompleteDelegate);
 		loader.removeEventListener(AssetEvent.TEXTURE_SIZE_ERROR, this._onTextureSizeErrorDelegate);

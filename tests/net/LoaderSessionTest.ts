@@ -2,84 +2,73 @@ import BitmapImage2D		= require("awayjs-core/lib/data/BitmapImage2D");
 import AssetEvent			= require("awayjs-core/lib/events/AssetEvent");
 import LoaderEvent			= require("awayjs-core/lib/events/LoaderEvent");
 import ParserEvent			= require("awayjs-core/lib/events/ParserEvent");
-import AssetLoader			= require("awayjs-core/lib/library/AssetLoader");
-import AssetLoaderToken		= require("awayjs-core/lib/library/AssetLoaderToken");
+import LoaderSession		= require("awayjs-core/lib/library/LoaderSession");
 import IAsset				= require("awayjs-core/lib/library/IAsset");
 import URLRequest			= require("awayjs-core/lib/net/URLRequest");
 import ParserBase			= require("awayjs-core/lib/parsers/ParserBase");
 import ParserDataFormat		= require("awayjs-core/lib/parsers/ParserDataFormat");
 import ResourceDependency	= require("awayjs-core/lib/parsers/ResourceDependency");
 
-class AssetLoaderTest
+class LoaderSessionTest
 {
-	private alJson:AssetLoader;
-	private alImage:AssetLoader;
-	private alErrorImage:AssetLoader;
+	private alJson:LoaderSession;
+	private alImage:LoaderSession;
+	private alErrorImage:LoaderSession;
 
 	constructor()
 	{
 		//---------------------------------------------------------------------------------------------------------------------
 		// Enable Custom Parser ( JSON file format with multiple texture dependencies )
-		AssetLoader.enableParser(JSONTextureParser);
-
-		var token:AssetLoaderToken;
-		var urlRq:URLRequest;
+		LoaderSession.enableParser(JSONTextureParser);
 
 		//---------------------------------------------------------------------------------------------------------------------
 		// LOAD A SINGLE IMAGE
 
-		this.alImage  = new AssetLoader();
-		urlRq = new URLRequest('assets/1024x1024.png');
-		token = this.alImage.load(urlRq);
-
-		token.addEventListener(AssetEvent.ASSET_COMPLETE, (event:AssetEvent) => this.onAssetComplete(event));
-		token.addEventListener(AssetEvent.TEXTURE_SIZE_ERROR, (event:AssetEvent) => this.onTextureSizeError(event));
+		this.alImage  = new LoaderSession();
+		this.alImage.addEventListener(AssetEvent.ASSET_COMPLETE, (event:AssetEvent) => this.onAssetComplete(event));
+		this.alImage.addEventListener(AssetEvent.TEXTURE_SIZE_ERROR, (event:AssetEvent) => this.onTextureSizeError(event));
+		this.alImage.load(new URLRequest('assets/1024x1024.png'));
 
 		//---------------------------------------------------------------------------------------------------------------------
 		// LOAD A SINGLE IMAGE - With wrong dimensions
 
-		this.alErrorImage = new AssetLoader();
-		urlRq = new URLRequest('assets/2.png');
-		token = this.alErrorImage.load(urlRq);
-
-		token.addEventListener(AssetEvent.ASSET_COMPLETE, (event:AssetEvent) => this.onAssetComplete(event));
-		token.addEventListener(AssetEvent.TEXTURE_SIZE_ERROR, (event:AssetEvent) => this.onTextureSizeError(event));
+		this.alErrorImage = new LoaderSession();
+		this.alErrorImage.addEventListener(AssetEvent.ASSET_COMPLETE, (event:AssetEvent) => this.onAssetComplete(event));
+		this.alErrorImage.addEventListener(AssetEvent.TEXTURE_SIZE_ERROR, (event:AssetEvent) => this.onTextureSizeError(event));
+		this.alErrorImage.load(new URLRequest('assets/2.png'));
 
 		//---------------------------------------------------------------------------------------------------------------------
 		// LOAD WITH A JSON PARSER
 
-		this.alJson    = new AssetLoader();
-		urlRq          = new URLRequest('assets/JSNParserTest.json');
-		token          = this.alJson.load( urlRq );
-
-		token.addEventListener( AssetEvent.ASSET_COMPLETE, (event:AssetEvent) => this.onAssetComplete(event));
-		token.addEventListener( AssetEvent.TEXTURE_SIZE_ERROR, (event:AssetEvent) => this.onTextureSizeError(event));
-		token.addEventListener( ParserEvent.PARSE_COMPLETE, (event:ParserEvent) => this.onParseComplete(event));
-
+		this.alJson = new LoaderSession();
+		this.alJson.addEventListener( AssetEvent.ASSET_COMPLETE, (event:AssetEvent) => this.onAssetComplete(event));
+		this.alJson.addEventListener( AssetEvent.TEXTURE_SIZE_ERROR, (event:AssetEvent) => this.onTextureSizeError(event));
+		this.alJson.addEventListener( ParserEvent.PARSE_COMPLETE, (event:ParserEvent) => this.onParseComplete(event));
+		this.alJson.load(new URLRequest('assets/JSNParserTest.json'));
 	}
 
 	public onParseComplete(event:ParserEvent):void
 	{
 		console.log( '--------------------------------------------------------------------------------');
-		console.log( 'AssetLoaderTest.onParseComplete' , event );
+		console.log( 'LoaderSessionTest.onParseComplete' , event );
 		console.log( '--------------------------------------------------------------------------------');
 	}
 
 	public onTextureSizeError(event:AssetEvent):void
 	{
-		var assetLoader:AssetLoader = <AssetLoader> event.target;
+		var assetLoader:LoaderSession = <LoaderSession> event.target;
 
 		console.log( '--------------------------------------------------------------------------------');
-		console.log( 'AssetLoaderTest.onTextureSizeError' , assetLoader.baseDependency._iLoader.url , event );
+		console.log( 'LoaderSessionTest.onTextureSizeError' , assetLoader.baseDependency._iLoader.url , event );
 		console.log( '--------------------------------------------------------------------------------');
 	}
 
 	public onAssetComplete(event:AssetEvent):void
 	{
-		var assetLoader:AssetLoader = <AssetLoader> event.target;
+		var assetLoader:LoaderSession = <LoaderSession> event.target;
 
 		console.log( '--------------------------------------------------------------------------------');
-		console.log( 'AssetLoaderTest.onAssetComplete', assetLoader.baseDependency._iLoader.url , event );
+		console.log( 'LoaderSessionTest.onAssetComplete', assetLoader.baseDependency._iLoader.url , event );
 		console.log( '--------------------------------------------------------------------------------');
 	}
 }

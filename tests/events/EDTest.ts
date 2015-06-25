@@ -7,10 +7,12 @@ class EDTest extends EventDispatcher
 	{
 		super();
 
+		var onCompleteDelegate:(event:Event) => void = (event:Event) => this.onComplete(event);
+
 		console.log('Before addEventListener: ', this.hasEventListener(Event.COMPLETE));
-		this.addEventListener(Event.COMPLETE, (event:Event) => this.onComplete(event));
+		this.addEventListener(Event.COMPLETE, onCompleteDelegate);
 		console.log('After addEventListener: ', this.hasEventListener(Event.COMPLETE));
-		this.removeEventListener(Event.COMPLETE, (event:Event) => this.onComplete(event));
+		this.removeEventListener(Event.COMPLETE, onCompleteDelegate);
 		console.log('After removeEventListener: ', this.hasEventListener(Event.COMPLETE));
 	}
 

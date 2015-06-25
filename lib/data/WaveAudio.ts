@@ -173,6 +173,10 @@ class WaveAudio extends AssetBase implements IAsset
 
 	private _createSource()
 	{
+		//safeguard against multiple calls to play method
+		if (this._source)
+			return;
+
 		//create the source for this WaveAudio object
 		this._source = this._audioCtx.createBufferSource();
 

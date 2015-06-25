@@ -4706,8 +4706,8 @@ declare module "awayjs-core/lib/library/AssetLibrary" {
 	import URLRequest = require("awayjs-core/lib/net/URLRequest");
 	import AssetLibraryBundle = require("awayjs-core/lib/library/AssetLibraryBundle");
 	import AssetLibraryIterator = require("awayjs-core/lib/library/AssetLibraryIterator");
-	import AssetLoaderContext = require("awayjs-core/lib/library/AssetLoaderContext");
-	import AssetLoaderToken = require("awayjs-core/lib/library/AssetLoaderToken");
+	import LoaderSession = require("awayjs-core/lib/library/LoaderSession");
+	import LoaderContext = require("awayjs-core/lib/library/LoaderContext");
 	import ConflictStrategyBase = require("awayjs-core/lib/library/ConflictStrategyBase");
 	import IAsset = require("awayjs-core/lib/library/IAsset");
 	import ParserBase = require("awayjs-core/lib/parsers/ParserBase");
@@ -4763,14 +4763,15 @@ declare module "awayjs-core/lib/library/AssetLibrary" {
 	     *
 	     * @see AssetLibraryBundle.load()
 	     */
-	    static load(req: URLRequest, context?: AssetLoaderContext, ns?: string, parser?: ParserBase): AssetLoaderToken;
+	    static load(req: URLRequest, context?: LoaderContext, ns?: string, parser?: ParserBase): void;
 	    /**
 	     * Short-hand for loadData() method on default asset library bundle.
 	     *
 	     * @see AssetLibraryBundle.loadData()
 	     */
-	    static loadData(data: any, context?: AssetLoaderContext, ns?: string, parser?: ParserBase): AssetLoaderToken;
+	    static loadData(data: any, context?: LoaderContext, ns?: string, parser?: ParserBase): void;
 	    static stopLoad(): void;
+	    static getLoaderSession(): LoaderSession;
 	    /**
 	     * Short-hand for getAsset() method on default asset library bundle.
 	     *
@@ -4845,8 +4846,8 @@ declare module "awayjs-core/lib/library/AssetLibrary" {
 declare module "awayjs-core/lib/library/AssetLibraryBundle" {
 	import URLRequest = require("awayjs-core/lib/net/URLRequest");
 	import AssetLibraryIterator = require("awayjs-core/lib/library/AssetLibraryIterator");
-	import AssetLoaderToken = require("awayjs-core/lib/library/AssetLoaderToken");
-	import AssetLoaderContext = require("awayjs-core/lib/library/AssetLoaderContext");
+	import LoaderSession = require("awayjs-core/lib/library/LoaderSession");
+	import LoaderContext = require("awayjs-core/lib/library/LoaderContext");
 	import ConflictStrategyBase = require("awayjs-core/lib/library/ConflictStrategyBase");
 	import IAsset = require("awayjs-core/lib/library/IAsset");
 	import EventDispatcher = require("awayjs-core/lib/events/EventDispatcher");
@@ -4858,13 +4859,13 @@ declare module "awayjs-core/lib/library/AssetLibraryBundle" {
 	 */
 	class AssetLibraryBundle extends EventDispatcher {
 	    static _iInstances: Object;
-	    private _loadingSessions;
+	    private _loaderSessions;
 	    private _strategy;
 	    private _strategyPreference;
 	    private _assets;
 	    private _assetDictionary;
 	    private _assetDictDirty;
-	    private _loadingSessionsGarbage;
+	    private _loaderSessionsGarbage;
 	    private _gcTimeoutIID;
 	    private _onAssetRenameDelegate;
 	    private _onAssetConflictResolvedDelegate;
@@ -4942,20 +4943,22 @@ declare module "awayjs-core/lib/library/AssetLibraryBundle" {
 	     * @param req The URLRequest object containing the URL of the file to be loaded.
 	     * @param context An optional context object providing additional parameters for loading
 	     * @param ns An optional namespace string under which the file is to be loaded, allowing the differentiation of two resources with identical assets
-	     * @param parser An optional parser object for translating the loaded data into a usable resource. If not provided, AssetLoader will attempt to auto-detect the file type.
+	     * @param parser An optional parser object for translating the loaded data into a usable resource. If not provided, LoaderSession will attempt to auto-detect the file type.
 	     * @return A handle to the retrieved resource.
 	     */
-	    load(req: URLRequest, context?: AssetLoaderContext, ns?: string, parser?: ParserBase): AssetLoaderToken;
+	    load(req: URLRequest, context?: LoaderContext, ns?: string, parser?: ParserBase): void;
 	    /**
 	     * Loads a resource from existing data in memory.
 	     *
 	     * @param data The data object containing all resource information.
 	     * @param context An optional context object providing additional parameters for loading
 	     * @param ns An optional namespace string under which the file is to be loaded, allowing the differentiation of two resources with identical assets
-	     * @param parser An optional parser object for translating the loaded data into a usable resource. If not provided, AssetLoader will attempt to auto-detect the file type.
+	     * @param parser An optional parser object for translating the loaded data into a usable resource. If not provided, LoaderSession will attempt to auto-detect the file type.
 	     * @return A handle to the retrieved resource.
 	     */
-	    loadData(data: any, context?: AssetLoaderContext, ns?: string, parser?: ParserBase): AssetLoaderToken;
+	    loadData(data: any, context?: LoaderContext, ns?: string, parser?: ParserBase): void;
+	    getLoaderSession(): LoaderSession;
+	    disposeLoaderSession(loader: LoaderSession): void;
 	    /**
 	     *
 	     */
@@ -5004,7 +5007,7 @@ declare module "awayjs-core/lib/library/AssetLibraryBundle" {
 	     */
 	    removeNamespaceAssets(ns?: string, dispose?: boolean): void;
 	    private removeAssetFromDict(asset, autoRemoveEmptyNamespace?);
-	    stopAllLoadingSessions(): void;
+	    stopAllLoaderSessions(): void;
 	    private rehashAssetDict();
 	    /**
 	     * Called when a an error occurs during loading.
@@ -5020,8 +5023,8 @@ declare module "awayjs-core/lib/library/AssetLibraryBundle" {
 	     * Called when the resource and all of its dependencies was retrieved.
 	     */
 	    private onResourceComplete(event);
-	    private loadingSessionGC();
-	    private killLoadingSession(loader);
+	    private loaderSessionGC();
+	    private killloaderSession(loader);
 	    /**
 	     * Called when unespected error occurs
 	     */
@@ -5047,447 +5050,6 @@ declare module "awayjs-core/lib/library/AssetLibraryIterator" {
 	    private filter(assetTypeFilter, namespaceFilter, filterFunc);
 	}
 	export = AssetLibraryIterator;
-	
-}
-
-declare module "awayjs-core/lib/library/AssetLoader" {
-	import AssetLoaderContext = require("awayjs-core/lib/library/AssetLoaderContext");
-	import AssetLoaderToken = require("awayjs-core/lib/library/AssetLoaderToken");
-	import URLRequest = require("awayjs-core/lib/net/URLRequest");
-	import EventDispatcher = require("awayjs-core/lib/events/EventDispatcher");
-	import ParserBase = require("awayjs-core/lib/parsers/ParserBase");
-	import ResourceDependency = require("awayjs-core/lib/parsers/ResourceDependency");
-	/**
-	 * Dispatched when any asset finishes parsing. Also see specific events for each
-	 * individual asset type (meshes, materials et c.)
-	 *
-	 * @eventType away.events.AssetEvent
-	 */
-	/**
-	 * Dispatched when a full resource (including dependencies) finishes loading.
-	 *
-	 * @eventType away.events.LoaderEvent
-	 */
-	/**
-	 * Dispatched when a single dependency (which may be the main file of a resource)
-	 * finishes loading.
-	 *
-	 * @eventType away.events.LoaderEvent
-	 */
-	/**
-	 * Dispatched when an error occurs during loading. I
-	 *
-	 * @eventType away.events.LoaderEvent
-	 */
-	/**
-	 * Dispatched when an error occurs during parsing.
-	 *
-	 * @eventType away.events.ParserEvent
-	 */
-	/**
-	 * Dispatched when an image asset dimensions are not a power of 2
-	 *
-	 * @eventType away.events.AssetEvent
-	 */
-	/**
-	 * AssetLoader can load any file format that away.supports (or for which a third-party parser
-	 * has been plugged in) and it's dependencies. Events are dispatched when assets are encountered
-	 * and for when the resource (or it's dependencies) have been loaded.
-	 *
-	 * The AssetLoader will not make assets available in any other way than through the dispatched
-	 * events. To store assets and make them available at any point from any module in an application,
-	 * use the AssetLibrary to load and manage assets.
-	 *
-	 * @see away.library.AssetLibrary
-	 */
-	class AssetLoader extends EventDispatcher {
-	    private _context;
-	    private _token;
-	    private _uri;
-	    private _materialMode;
-	    private _errorHandlers;
-	    private _parseErrorHandlers;
-	    private _stack;
-	    private _baseDependency;
-	    private _currentDependency;
-	    private _namespace;
-	    private _onReadyForDependenciesDelegate;
-	    private _onParseCompleteDelegate;
-	    private _onParseErrorDelegate;
-	    private _onLoadCompleteDelegate;
-	    private _onLoadErrorDelegate;
-	    private _onTextureSizeErrorDelegate;
-	    private _onAssetCompleteDelegate;
-	    private static _parsers;
-	    /**
-	     * Enables a specific parser.
-	     * When no specific parser is set for a loading/parsing opperation,
-	     * loader3d can autoselect the correct parser to use.
-	     * A parser must have been enabled, to be considered when autoselecting the parser.
-	     *
-	     * @param parser The parser class to enable.
-	     *
-	     * @see away.parsers.Parsers
-	     */
-	    static enableParser(parser: any): void;
-	    /**
-	     * Enables a list of parsers.
-	     * When no specific parser is set for a loading/parsing opperation,
-	     * AssetLoader can autoselect the correct parser to use.
-	     * A parser must have been enabled, to be considered when autoselecting the parser.
-	     *
-	     * @param parsers A Vector of parser classes to enable.
-	     * @see away.parsers.Parsers
-	     */
-	    static enableParsers(parsers: Array<Object>): void;
-	    /**
-	     * Returns the base dependency of the loader
-	     */
-	    baseDependency: ResourceDependency;
-	    /**
-	     * Create a new ResourceLoadSession object.
-	     */
-	    constructor(materialMode?: number);
-	    /**
-	     * Loads a file and (optionally) all of its dependencies.
-	     *
-	     * @param req The URLRequest object containing the URL of the file to be loaded.
-	     * @param context An optional context object providing additional parameters for loading
-	     * @param ns An optional namespace string under which the file is to be loaded, allowing the differentiation of two resources with identical assets
-	     * @param parser An optional parser object for translating the loaded data into a usable resource. If not provided, AssetLoader will attempt to auto-detect the file type.
-	     */
-	    load(req: URLRequest, context?: AssetLoaderContext, ns?: string, parser?: ParserBase): AssetLoaderToken;
-	    /**
-	     * Loads a resource from already loaded data.
-	     *
-	     * @param data The data object containing all resource information.
-	     * @param context An optional context object providing additional parameters for loading
-	     * @param ns An optional namespace string under which the file is to be loaded, allowing the differentiation of two resources with identical assets
-	     * @param parser An optional parser object for translating the loaded data into a usable resource. If not provided, AssetLoader will attempt to auto-detect the file type.
-	     */
-	    loadData(data: any, id: string, context?: AssetLoaderContext, ns?: string, parser?: ParserBase): AssetLoaderToken;
-	    /**
-	     * Recursively retrieves the next to-be-loaded and parsed dependency on the stack, or pops the list off the
-	     * stack when complete and continues on the top set.
-	     * @param parser The parser that will translate the data into a usable resource.
-	     */
-	    private retrieveNext(parser?);
-	    /**
-	     * Retrieves a single dependency.
-	     * @param parser The parser that will translate the data into a usable resource.
-	     */
-	    private retrieveDependency(dependency);
-	    private joinUrl(base, end);
-	    private resolveDependencyUrl(dependency);
-	    private retrieveParserDependencies();
-	    private resolveParserDependencies();
-	    /**
-	     * Called when a single dependency loading failed, and pushes further dependencies onto the stack.
-	     * @param event
-	     */
-	    private onLoadError(event);
-	    /**
-	     * Called when a dependency parsing failed, and dispatches a <code>ParserEvent.PARSE_ERROR</code>
-	     * @param event
-	     */
-	    private onParseError(event);
-	    private onAssetComplete(event);
-	    private onReadyForDependencies(event);
-	    /**
-	     * Called when a single dependency was parsed, and pushes further dependencies onto the stack.
-	     * @param event
-	     */
-	    private onLoadComplete(event);
-	    /**
-	     * Called when parsing is complete.
-	     */
-	    private onParseComplete(event);
-	    /**
-	     * Called when an image is too large or it's dimensions are not a power of 2
-	     * @param event
-	     */
-	    private onTextureSizeError(event);
-	    private addEventListeners(loader);
-	    private removeEventListeners(loader);
-	    stop(): void;
-	    private dispose();
-	    /**
-	     * @private
-	     * This method is used by other loader classes (e.g. Loader3D and AssetLibraryBundle) to
-	     * add error event listeners to the AssetLoader instance. This system is used instead of
-	     * the regular EventDispatcher system so that the AssetLibrary error handler can be sure
-	     * that if hasEventListener() returns true, it's client code that's listening for the
-	     * event. Secondly, functions added as error handler through this custom method are
-	     * expected to return a boolean value indicating whether the event was handled (i.e.
-	     * whether they in turn had any client code listening for the event.) If no handlers
-	     * return true, the AssetLoader knows that the event wasn't handled and will throw an RTE.
-	     */
-	    _iAddParseErrorHandler(handler: any): void;
-	    _iAddErrorHandler(handler: any): void;
-	    /**
-	     * Guesses the parser to be used based on the file contents.
-	     * @param data The data to be parsed.
-	     * @param uri The url or id of the object to be parsed.
-	     * @return An instance of the guessed parser.
-	     */
-	    private getParserFromData(data);
-	    /**
-	     * Initiates parsing of the loaded dependency.
-	     *
-	     * @param The dependency to be parsed.
-	     */
-	    private parseDependency(dependency);
-	    /**
-	     * Guesses the parser to be used based on the file extension.
-	     * @return An instance of the guessed parser.
-	     */
-	    private getParserFromSuffix(url);
-	}
-	export = AssetLoader;
-	
-}
-
-declare module "awayjs-core/lib/library/AssetLoaderContext" {
-	class AssetLoaderContext {
-	    static UNDEFINED: number;
-	    static SINGLEPASS_MATERIALS: number;
-	    static MULTIPASS_MATERIALS: number;
-	    private _includeDependencies;
-	    private _dependencyBaseUrl;
-	    private _embeddedDataByUrl;
-	    private _remappedUrls;
-	    private _materialMode;
-	    private _overrideAbsPath;
-	    private _overrideFullUrls;
-	    /**
-	     * AssetLoaderContext provides configuration for the AssetLoader load() and parse() operations.
-	     * Use it to configure how (and if) dependencies are loaded, or to map dependency URLs to
-	     * embedded data.
-	     *
-	     * @see away.loading.AssetLoader
-	     */
-	    constructor(includeDependencies?: boolean, dependencyBaseUrl?: string);
-	    /**
-	     * Defines whether dependencies (all files except the one at the URL given to the load() or
-	     * parseData() operations) should be automatically loaded. Defaults to true.
-	     */
-	    includeDependencies: boolean;
-	    /**
-	     * MaterialMode defines, if the Parser should create SinglePass or MultiPass Materials
-	     * Options:
-	     * 0 (Default / undefined) - All Parsers will create SinglePassMaterials, but the AWD2.1parser will create Materials as they are defined in the file
-	     * 1 (Force SinglePass) - All Parsers create SinglePassMaterials
-	     * 2 (Force MultiPass) - All Parsers will create MultiPassMaterials
-	     *
-	     */
-	    materialMode: number;
-	    /**
-	     * A base URL that will be prepended to all relative dependency URLs found in a loaded resource.
-	     * Absolute paths will not be affected by the value of this property.
-	     */
-	    dependencyBaseUrl: string;
-	    /**
-	     * Defines whether absolute paths (defined as paths that begin with a "/") should be overridden
-	     * with the dependencyBaseUrl defined in this context. If this is true, and the base path is
-	     * "base", /path/to/asset.jpg will be resolved as base/path/to/asset.jpg.
-	     */
-	    overrideAbsolutePaths: boolean;
-	    /**
-	     * Defines whether "full" URLs (defined as a URL that includes a scheme, e.g. http://) should be
-	     * overridden with the dependencyBaseUrl defined in this context. If this is true, and the base
-	     * path is "base", http://example.com/path/to/asset.jpg will be resolved as base/path/to/asset.jpg.
-	     */
-	    overrideFullURLs: boolean;
-	    /**
-	     * Map a URL to another URL, so that files that are referred to by the original URL will instead
-	     * be loaded from the new URL. Use this when your file structure does not match the one that is
-	     * expected by the loaded file.
-	     *
-	     * @param originalUrl The original URL which is referenced in the loaded resource.
-	     * @param newUrl The URL from which away.should load the resource instead.
-	     *
-	     * @see mapUrlToData()
-	     */
-	    mapUrl(originalUrl: string, newUrl: string): void;
-	    /**
-	     * Map a URL to embedded data, so that instead of trying to load a dependency from the URL at
-	     * which it's referenced, the dependency data will be retrieved straight from the memory instead.
-	     *
-	     * @param originalUrl The original URL which is referenced in the loaded resource.
-	     * @param data The embedded data. Can be ByteArray or a class which can be used to create a bytearray.
-	     */
-	    mapUrlToData(originalUrl: string, data: any): void;
-	    /**
-	     * @private
-	     * Defines whether embedded data has been mapped to a particular URL.
-	     */
-	    _iHasDataForUrl(url: string): boolean;
-	    /**
-	     * @private
-	     * Returns embedded data for a particular URL.
-	     */
-	    _iGetDataForUrl(url: string): any;
-	    /**
-	     * @private
-	     * Defines whether a replacement URL has been mapped to a particular URL.
-	     */
-	    _iHasMappingForUrl(url: string): boolean;
-	    /**
-	     * @private
-	     * Returns new (replacement) URL for a particular original URL.
-	     */
-	    _iGetRemappedUrl(originalUrl: string): string;
-	}
-	export = AssetLoaderContext;
-	
-}
-
-declare module "awayjs-core/lib/library/AssetLoaderToken" {
-	import AssetLoader = require("awayjs-core/lib/library/AssetLoader");
-	import EventDispatcher = require("awayjs-core/lib/events/EventDispatcher");
-	/**
-	 * Dispatched when any asset finishes parsing. Also see specific events for each
-	 * individual asset type (meshes, materials et c.)
-	 *
-	 * @eventType away.events.AssetEvent
-	 */
-	/**
-	 * Dispatched when a full resource (including dependencies) finishes loading.
-	 *
-	 * @eventType away.events.LoaderEvent
-	 */
-	/**
-	 * Dispatched when a single dependency (which may be the main file of a resource)
-	 * finishes loading.
-	 *
-	 * @eventType away.events.LoaderEvent
-	 */
-	/**
-	 * Dispatched when an error occurs during loading. I
-	 *
-	 * @eventType away.events.LoaderEvent
-	 */
-	/**
-	 * Dispatched when an error occurs during parsing.
-	 *
-	 * @eventType away.events.ParserEvent
-	 */
-	/**
-	 * Dispatched when a skybox asset has been costructed from a ressource.
-	 *
-	 * @eventType away.events.AssetEvent
-	 */
-	/**
-	 * Dispatched when a camera3d asset has been costructed from a ressource.
-	 *
-	 * @eventType away.events.AssetEvent
-	 */
-	/**
-	 * Dispatched when a mesh asset has been costructed from a ressource.
-	 *
-	 * @eventType away.events.AssetEvent
-	 */
-	/**
-	 * Dispatched when a geometry asset has been constructed from a resource.
-	 *
-	 * @eventType away.events.AssetEvent
-	 */
-	/**
-	 * Dispatched when a skeleton asset has been constructed from a resource.
-	 *
-	 * @eventType away.events.AssetEvent
-	 */
-	/**
-	 * Dispatched when a skeleton pose asset has been constructed from a resource.
-	 *
-	 * @eventType away.events.AssetEvent
-	 */
-	/**
-	 * Dispatched when a container asset has been constructed from a resource.
-	 *
-	 * @eventType away.events.AssetEvent
-	 */
-	/**
-	 * Dispatched when a texture asset has been constructed from a resource.
-	 *
-	 * @eventType away.events.AssetEvent
-	 */
-	/**
-	 * Dispatched when a texture projector asset has been constructed from a resource.
-	 *
-	 * @eventType away.events.AssetEvent
-	 */
-	/**
-	 * Dispatched when a material asset has been constructed from a resource.
-	 *
-	 * @eventType away.events.AssetEvent
-	 */
-	/**
-	 * Dispatched when a animator asset has been constructed from a resource.
-	 *
-	 * @eventType away.events.AssetEvent
-	 */
-	/**
-	 * Dispatched when an animation set has been constructed from a group of animation state resources.
-	 *
-	 * @eventType away.events.AssetEvent
-	 */
-	/**
-	 * Dispatched when an animation state has been constructed from a group of animation node resources.
-	 *
-	 * @eventType away.events.AssetEvent
-	 */
-	/**
-	 * Dispatched when an animation node has been constructed from a resource.
-	 *
-	 * @eventType away.events.AssetEvent
-	 */
-	/**
-	 * Dispatched when an animation state transition has been constructed from a group of animation node resources.
-	 *
-	 * @eventType away.events.AssetEvent
-	 */
-	/**
-	 * Dispatched when an light asset has been constructed from a resources.
-	 *
-	 * @eventType away.events.AssetEvent
-	 */
-	/**
-	 * Dispatched when an light picker asset has been constructed from a resources.
-	 *
-	 * @eventType away.events.AssetEvent
-	 */
-	/**
-	 * Dispatched when an effect method asset has been constructed from a resources.
-	 *
-	 * @eventType away.events.AssetEvent
-	 */
-	/**
-	 * Dispatched when an shadow map method asset has been constructed from a resources.
-	 *
-	 * @eventType away.events.AssetEvent
-	 */
-	/**
-	 * Instances of this class are returned as tokens by loading operations
-	 * to provide an object on which events can be listened for in cases where
-	 * the actual asset loader is not directly available (e.g. when using the
-	 * AssetLibrary to perform the load.)
-	 *
-	 * By listening for events on this class instead of directly on the
-	 * AssetLibrary, one can distinguish different loads from each other.
-	 *
-	 * The token will dispatch all events that the original AssetLoader dispatches,
-	 * while not providing an interface to obstruct the load and is as such a
-	 * safer return value for loader wrappers than the loader itself.
-	 */
-	class AssetLoaderToken extends EventDispatcher {
-	    _iLoader: AssetLoader;
-	    constructor(loader: AssetLoader);
-	    addEventListener(type: string, listener: Function): void;
-	    removeEventListener(type: string, listener: Function): void;
-	    hasEventListener(type: string, listener?: Function): boolean;
-	}
-	export = AssetLoaderToken;
 	
 }
 
@@ -5718,6 +5280,296 @@ declare module "awayjs-core/lib/library/IgnoreConflictStrategy" {
 	
 }
 
+declare module "awayjs-core/lib/library/LoaderContext" {
+	class LoaderContext {
+	    static UNDEFINED: number;
+	    static SINGLEPASS_MATERIALS: number;
+	    static MULTIPASS_MATERIALS: number;
+	    private _includeDependencies;
+	    private _dependencyBaseUrl;
+	    private _embeddedDataByUrl;
+	    private _remappedUrls;
+	    private _materialMode;
+	    private _overrideAbsPath;
+	    private _overrideFullUrls;
+	    /**
+	     * LoaderContext provides configuration for the LoaderSession load() and parse() operations.
+	     * Use it to configure how (and if) dependencies are loaded, or to map dependency URLs to
+	     * embedded data.
+	     *
+	     * @see away.loading.LoaderSession
+	     */
+	    constructor(includeDependencies?: boolean, dependencyBaseUrl?: string);
+	    /**
+	     * Defines whether dependencies (all files except the one at the URL given to the load() or
+	     * parseData() operations) should be automatically loaded. Defaults to true.
+	     */
+	    includeDependencies: boolean;
+	    /**
+	     * MaterialMode defines, if the Parser should create SinglePass or MultiPass Materials
+	     * Options:
+	     * 0 (Default / undefined) - All Parsers will create SinglePassMaterials, but the AWD2.1parser will create Materials as they are defined in the file
+	     * 1 (Force SinglePass) - All Parsers create SinglePassMaterials
+	     * 2 (Force MultiPass) - All Parsers will create MultiPassMaterials
+	     *
+	     */
+	    materialMode: number;
+	    /**
+	     * A base URL that will be prepended to all relative dependency URLs found in a loaded resource.
+	     * Absolute paths will not be affected by the value of this property.
+	     */
+	    dependencyBaseUrl: string;
+	    /**
+	     * Defines whether absolute paths (defined as paths that begin with a "/") should be overridden
+	     * with the dependencyBaseUrl defined in this context. If this is true, and the base path is
+	     * "base", /path/to/asset.jpg will be resolved as base/path/to/asset.jpg.
+	     */
+	    overrideAbsolutePaths: boolean;
+	    /**
+	     * Defines whether "full" URLs (defined as a URL that includes a scheme, e.g. http://) should be
+	     * overridden with the dependencyBaseUrl defined in this context. If this is true, and the base
+	     * path is "base", http://example.com/path/to/asset.jpg will be resolved as base/path/to/asset.jpg.
+	     */
+	    overrideFullURLs: boolean;
+	    /**
+	     * Map a URL to another URL, so that files that are referred to by the original URL will instead
+	     * be loaded from the new URL. Use this when your file structure does not match the one that is
+	     * expected by the loaded file.
+	     *
+	     * @param originalUrl The original URL which is referenced in the loaded resource.
+	     * @param newUrl The URL from which away.should load the resource instead.
+	     *
+	     * @see mapUrlToData()
+	     */
+	    mapUrl(originalUrl: string, newUrl: string): void;
+	    /**
+	     * Map a URL to embedded data, so that instead of trying to load a dependency from the URL at
+	     * which it's referenced, the dependency data will be retrieved straight from the memory instead.
+	     *
+	     * @param originalUrl The original URL which is referenced in the loaded resource.
+	     * @param data The embedded data. Can be ByteArray or a class which can be used to create a bytearray.
+	     */
+	    mapUrlToData(originalUrl: string, data: any): void;
+	    /**
+	     * @private
+	     * Defines whether embedded data has been mapped to a particular URL.
+	     */
+	    _iHasDataForUrl(url: string): boolean;
+	    /**
+	     * @private
+	     * Returns embedded data for a particular URL.
+	     */
+	    _iGetDataForUrl(url: string): any;
+	    /**
+	     * @private
+	     * Defines whether a replacement URL has been mapped to a particular URL.
+	     */
+	    _iHasMappingForUrl(url: string): boolean;
+	    /**
+	     * @private
+	     * Returns new (replacement) URL for a particular original URL.
+	     */
+	    _iGetRemappedUrl(originalUrl: string): string;
+	}
+	export = LoaderContext;
+	
+}
+
+declare module "awayjs-core/lib/library/LoaderSession" {
+	import LoaderContext = require("awayjs-core/lib/library/LoaderContext");
+	import URLRequest = require("awayjs-core/lib/net/URLRequest");
+	import EventDispatcher = require("awayjs-core/lib/events/EventDispatcher");
+	import ParserBase = require("awayjs-core/lib/parsers/ParserBase");
+	import ResourceDependency = require("awayjs-core/lib/parsers/ResourceDependency");
+	/**
+	 * Dispatched when any asset finishes parsing. Also see specific events for each
+	 * individual asset type (meshes, materials et c.)
+	 *
+	 * @eventType away.events.AssetEvent
+	 */
+	/**
+	 * Dispatched when a full resource (including dependencies) finishes loading.
+	 *
+	 * @eventType away.events.LoaderEvent
+	 */
+	/**
+	 * Dispatched when a single dependency (which may be the main file of a resource)
+	 * finishes loading.
+	 *
+	 * @eventType away.events.LoaderEvent
+	 */
+	/**
+	 * Dispatched when an error occurs during loading. I
+	 *
+	 * @eventType away.events.LoaderEvent
+	 */
+	/**
+	 * Dispatched when an error occurs during parsing.
+	 *
+	 * @eventType away.events.ParserEvent
+	 */
+	/**
+	 * Dispatched when an image asset dimensions are not a power of 2
+	 *
+	 * @eventType away.events.AssetEvent
+	 */
+	/**
+	 * LoaderSession can load any file format that away.supports (or for which a third-party parser
+	 * has been plugged in) and it's dependencies. Events are dispatched when assets are encountered
+	 * and for when the resource (or it's dependencies) have been loaded.
+	 *
+	 * The LoaderSession will not make assets available in any other way than through the dispatched
+	 * events. To store assets and make them available at any point from any module in an application,
+	 * use the AssetLibrary to load and manage assets.
+	 *
+	 * @see away.library.AssetLibrary
+	 */
+	class LoaderSession extends EventDispatcher {
+	    private _context;
+	    private _uri;
+	    private _materialMode;
+	    private _errorHandlers;
+	    private _parseErrorHandlers;
+	    private _stack;
+	    private _baseDependency;
+	    private _currentDependency;
+	    private _namespace;
+	    private _onReadyForDependenciesDelegate;
+	    private _onParseCompleteDelegate;
+	    private _onParseErrorDelegate;
+	    private _onLoadCompleteDelegate;
+	    private _onLoadErrorDelegate;
+	    private _onTextureSizeErrorDelegate;
+	    private _onAssetCompleteDelegate;
+	    private static _parsers;
+	    /**
+	     * Enables a specific parser.
+	     * When no specific parser is set for a loading/parsing opperation,
+	     * loader3d can autoselect the correct parser to use.
+	     * A parser must have been enabled, to be considered when autoselecting the parser.
+	     *
+	     * @param parser The parser class to enable.
+	     *
+	     * @see away.parsers.Parsers
+	     */
+	    static enableParser(parser: any): void;
+	    /**
+	     * Enables a list of parsers.
+	     * When no specific parser is set for a loading/parsing opperation,
+	     * LoaderSession can autoselect the correct parser to use.
+	     * A parser must have been enabled, to be considered when autoselecting the parser.
+	     *
+	     * @param parsers A Vector of parser classes to enable.
+	     * @see away.parsers.Parsers
+	     */
+	    static enableParsers(parsers: Array<Object>): void;
+	    /**
+	     * Returns the base dependency of the loader
+	     */
+	    baseDependency: ResourceDependency;
+	    /**
+	     * Create a new ResourceLoadSession object.
+	     */
+	    constructor(materialMode?: number);
+	    /**
+	     * Loads a file and (optionally) all of its dependencies.
+	     *
+	     * @param req The URLRequest object containing the URL of the file to be loaded.
+	     * @param context An optional context object providing additional parameters for loading
+	     * @param ns An optional namespace string under which the file is to be loaded, allowing the differentiation of two resources with identical assets
+	     * @param parser An optional parser object for translating the loaded data into a usable resource. If not provided, LoaderSession will attempt to auto-detect the file type.
+	     */
+	    load(req: URLRequest, context?: LoaderContext, ns?: string, parser?: ParserBase): void;
+	    /**
+	     * Loads a resource from already loaded data.
+	     *
+	     * @param data The data object containing all resource information.
+	     * @param context An optional context object providing additional parameters for loading
+	     * @param ns An optional namespace string under which the file is to be loaded, allowing the differentiation of two resources with identical assets
+	     * @param parser An optional parser object for translating the loaded data into a usable resource. If not provided, LoaderSession will attempt to auto-detect the file type.
+	     */
+	    loadData(data: any, id: string, context?: LoaderContext, ns?: string, parser?: ParserBase): void;
+	    /**
+	     * Recursively retrieves the next to-be-loaded and parsed dependency on the stack, or pops the list off the
+	     * stack when complete and continues on the top set.
+	     * @param parser The parser that will translate the data into a usable resource.
+	     */
+	    private retrieveNext(parser?);
+	    /**
+	     * Retrieves a single dependency.
+	     * @param parser The parser that will translate the data into a usable resource.
+	     */
+	    private retrieveDependency(dependency);
+	    private joinUrl(base, end);
+	    private resolveDependencyUrl(dependency);
+	    private retrieveParserDependencies();
+	    private resolveParserDependencies();
+	    /**
+	     * Called when a single dependency loading failed, and pushes further dependencies onto the stack.
+	     * @param event
+	     */
+	    private onLoadError(event);
+	    /**
+	     * Called when a dependency parsing failed, and dispatches a <code>ParserEvent.PARSE_ERROR</code>
+	     * @param event
+	     */
+	    private onParseError(event);
+	    private onAssetComplete(event);
+	    private onReadyForDependencies(event);
+	    /**
+	     * Called when a single dependency was parsed, and pushes further dependencies onto the stack.
+	     * @param event
+	     */
+	    private onLoadComplete(event);
+	    /**
+	     * Called when parsing is complete.
+	     */
+	    private onParseComplete(event);
+	    /**
+	     * Called when an image is too large or it's dimensions are not a power of 2
+	     * @param event
+	     */
+	    private onTextureSizeError(event);
+	    private addEventListeners(loader);
+	    private removeEventListeners(loader);
+	    stop(): void;
+	    private dispose();
+	    /**
+	     * @private
+	     * This method is used by other loader classes (e.g. Loader3D and AssetLibraryBundle) to
+	     * add error event listeners to the LoaderSession instance. This system is used instead of
+	     * the regular EventDispatcher system so that the AssetLibrary error handler can be sure
+	     * that if hasEventListener() returns true, it's client code that's listening for the
+	     * event. Secondly, functions added as error handler through this custom method are
+	     * expected to return a boolean value indicating whether the event was handled (i.e.
+	     * whether they in turn had any client code listening for the event.) If no handlers
+	     * return true, the LoaderSession knows that the event wasn't handled and will throw an RTE.
+	     */
+	    _iAddParseErrorHandler(handler: any): void;
+	    _iAddErrorHandler(handler: any): void;
+	    /**
+	     * Guesses the parser to be used based on the file contents.
+	     * @param data The data to be parsed.
+	     * @param uri The url or id of the object to be parsed.
+	     * @return An instance of the guessed parser.
+	     */
+	    private getParserFromData(data);
+	    /**
+	     * Initiates parsing of the loaded dependency.
+	     *
+	     * @param The dependency to be parsed.
+	     */
+	    private parseDependency(dependency);
+	    /**
+	     * Guesses the parser to be used based on the file extension.
+	     * @return An instance of the guessed parser.
+	     */
+	    private getParserFromSuffix(url);
+	}
+	export = LoaderSession;
+	
+}
+
 declare module "awayjs-core/lib/library/NumSuffixConflictStrategy" {
 	import ConflictStrategyBase = require("awayjs-core/lib/library/ConflictStrategyBase");
 	import IAsset = require("awayjs-core/lib/library/IAsset");
@@ -5748,10 +5600,10 @@ declare module "awayjs-core/lib/net/URLLoader" {
 	 * The URLLoader is used to load a single file, as part of a resource.
 	 *
 	 * While URLLoader can be used directly, e.g. to create a third-party asset
-	 * management system, it's recommended to use any of the classes Loader3D, AssetLoader
+	 * management system, it's recommended to use any of the classes Loader3D, LoaderSession
 	 * and AssetLibrary instead in most cases.
 	 *
-	 * @see AssetLoader
+	 * @see LoaderSession
 	 * @see away.library.AssetLibrary
 	 */
 	class URLLoader extends EventDispatcher {
@@ -6128,7 +5980,7 @@ declare module "awayjs-core/lib/parsers/ParserBase" {
 	 * <code>ParserBase</code> provides an abstract base class for objects that convert blocks of data to data structures
 	 * supported by away.
 	 *
-	 * If used by <code>AssetLoader</code> to automatically determine the parser type, two public static methods should
+	 * If used by <code>LoaderSession</code> to automatically determine the parser type, two public static methods should
 	 * be implemented, with the following signatures:
 	 *
 	 * <code>public static supportsType(extension : string) : boolean</code>
@@ -6141,7 +5993,7 @@ declare module "awayjs-core/lib/parsers/ParserBase" {
 	 * create the object that will contain the parsed data. This allows <code>ResourceManager</code> to return an object
 	 * handle regardless of whether the object was loaded or not.
 	 *
-	 * @see AssetLoader
+	 * @see LoaderSession
 	 */
 	class ParserBase extends EventDispatcher {
 	    _isParsing: boolean;

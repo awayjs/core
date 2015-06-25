@@ -3043,6 +3043,9 @@ var WaveAudio = (function (_super) {
     };
     WaveAudio.prototype._createSource = function () {
         var _this = this;
+        //safeguard against multiple calls to play method
+        if (this._source)
+            return;
         //create the source for this WaveAudio object
         this._source = this._audioCtx.createBufferSource();
         this._source.loop = this._loop;
@@ -8008,7 +8011,7 @@ var __extends = this.__extends || function (d, b) {
     d.prototype = new __();
 };
 var AssetLibraryIterator = require("awayjs-core/lib/library/AssetLibraryIterator");
-var AssetLoader = require("awayjs-core/lib/library/AssetLoader");
+var LoaderSession = require("awayjs-core/lib/library/LoaderSession");
 var ConflictPrecedence = require("awayjs-core/lib/library/ConflictPrecedence");
 var ConflictStrategy = require("awayjs-core/lib/library/ConflictStrategy");
 var AssetBase = require("awayjs-core/lib/library/AssetBase");
@@ -8033,10 +8036,10 @@ var AssetLibraryBundle = (function (_super) {
     function AssetLibraryBundle() {
         var _this = this;
         _super.call(this);
-        this._loadingSessionsGarbage = new Array();
+        this._loaderSessionsGarbage = new Array();
         this._assets = new Array(); //new Vector.<IAsset>;
         this._assetDictionary = new Object();
-        this._loadingSessions = new Array();
+        this._loaderSessions = new Array();
         this.conflictStrategy = ConflictStrategy.IGNORE.create();
         this.conflictPrecedence = ConflictPrecedence.FAVOR_NEW;
         this._onAssetRenameDelegate = function (event) { return _this.onAssetRename(event); };
@@ -8068,13 +8071,13 @@ var AssetLibraryBundle = (function (_super) {
      *
      */
     AssetLibraryBundle.prototype.enableParser = function (parserClass) {
-        AssetLoader.enableParser(parserClass);
+        LoaderSession.enableParser(parserClass);
     };
     /**
      *
      */
     AssetLibraryBundle.prototype.enableParsers = function (parserClasses) {
-        AssetLoader.enableParsers(parserClasses);
+        LoaderSession.enableParsers(parserClasses);
     };
     Object.defineProperty(AssetLibraryBundle.prototype, "conflictStrategy", {
         /**
@@ -8146,24 +8149,14 @@ var AssetLibraryBundle = (function (_super) {
      * @param req The URLRequest object containing the URL of the file to be loaded.
      * @param context An optional context object providing additional parameters for loading
      * @param ns An optional namespace string under which the file is to be loaded, allowing the differentiation of two resources with identical assets
-     * @param parser An optional parser object for translating the loaded data into a usable resource. If not provided, AssetLoader will attempt to auto-detect the file type.
+     * @param parser An optional parser object for translating the loaded data into a usable resource. If not provided, LoaderSession will attempt to auto-detect the file type.
      * @return A handle to the retrieved resource.
      */
     AssetLibraryBundle.prototype.load = function (req, context, ns, parser) {
         if (context === void 0) { context = null; }
         if (ns === void 0) { ns = null; }
         if (parser === void 0) { parser = null; }
-        var loader = new AssetLoader();
-        if (!this._loadingSessions)
-            this._loadingSessions = new Array();
-        this._loadingSessions.push(loader);
-        loader.addEventListener(LoaderEvent.RESOURCE_COMPLETE, this._onResourceCompleteDelegate);
-        loader.addEventListener(AssetEvent.TEXTURE_SIZE_ERROR, this._onTextureSizeErrorDelegate);
-        loader.addEventListener(AssetEvent.ASSET_COMPLETE, this._onAssetCompleteDelegate);
-        // Error are handled separately (see documentation for addErrorHandler)
-        loader._iAddErrorHandler(this._onLoadErrorDelegate);
-        loader._iAddParseErrorHandler(this._onParseErrorDelegate);
-        return loader.load(req, context, ns, parser);
+        this.getLoaderSession().load(req, context, ns, parser);
     };
     /**
      * Loads a resource from existing data in memory.
@@ -8171,30 +8164,40 @@ var AssetLibraryBundle = (function (_super) {
      * @param data The data object containing all resource information.
      * @param context An optional context object providing additional parameters for loading
      * @param ns An optional namespace string under which the file is to be loaded, allowing the differentiation of two resources with identical assets
-     * @param parser An optional parser object for translating the loaded data into a usable resource. If not provided, AssetLoader will attempt to auto-detect the file type.
+     * @param parser An optional parser object for translating the loaded data into a usable resource. If not provided, LoaderSession will attempt to auto-detect the file type.
      * @return A handle to the retrieved resource.
      */
     AssetLibraryBundle.prototype.loadData = function (data, context, ns, parser) {
         if (context === void 0) { context = null; }
         if (ns === void 0) { ns = null; }
         if (parser === void 0) { parser = null; }
-        var loader = new AssetLoader();
-        if (!this._loadingSessions)
-            this._loadingSessions = new Array();
-        this._loadingSessions.push(loader);
+        this.getLoaderSession().loadData(data, '', context, ns, parser);
+    };
+    AssetLibraryBundle.prototype.getLoaderSession = function () {
+        var loader = new LoaderSession();
+        this._loaderSessions.push(loader);
         loader.addEventListener(LoaderEvent.RESOURCE_COMPLETE, this._onResourceCompleteDelegate);
         loader.addEventListener(AssetEvent.TEXTURE_SIZE_ERROR, this._onTextureSizeErrorDelegate);
         loader.addEventListener(AssetEvent.ASSET_COMPLETE, this._onAssetCompleteDelegate);
         // Error are handled separately (see documentation for addErrorHandler)
         loader._iAddErrorHandler(this._onLoadErrorDelegate);
         loader._iAddParseErrorHandler(this._onParseErrorDelegate);
-        return loader.loadData(data, '', context, ns, parser);
+        return loader;
+    };
+    AssetLibraryBundle.prototype.disposeLoaderSession = function (loader) {
+        var _this = this;
+        var index = this._loaderSessions.indexOf(loader);
+        this._loaderSessions.splice(index, 1);
+        // Add loader to a garbage array - for a collection sweep and kill
+        this._loaderSessionsGarbage.push(loader);
+        this._gcTimeoutIID = setTimeout(function () {
+            _this.loaderSessionGC();
+        }, 100);
     };
     /**
      *
      */
     AssetLibraryBundle.prototype.getAsset = function (name, ns) {
-        //var asset : IAsset;
         if (ns === void 0) { ns = null; }
         if (this._assetDictDirty)
             this.rehashAssetDict();
@@ -8276,7 +8279,8 @@ var AssetLibraryBundle = (function (_super) {
         if (dispose === void 0) { dispose = true; }
         if (dispose) {
             var asset;
-            for (var c = 0; c < this._assets.length; c++) {
+            var len = this._assets.length;
+            for (var c = 0; c < len; c++) {
                 asset = this._assets[c];
                 asset.dispose();
             }
@@ -8306,7 +8310,8 @@ var AssetLibraryBundle = (function (_super) {
         this._assets.length = 0;
         if (ns == null)
             ns = AssetBase.DEFAULT_NAMESPACE;
-        for (var d = 0; d < old_assets.length; d++) {
+        var len = old_assets.length;
+        for (var d = 0; d < len; d++) {
             asset = old_assets[d];
             // Remove from dict if in the supplied namespace. If not,
             // transfer over to the new vector.
@@ -8364,20 +8369,17 @@ var AssetLibraryBundle = (function (_super) {
             }
         }
     };
-    AssetLibraryBundle.prototype.stopAllLoadingSessions = function () {
-        var i;
-        if (!this._loadingSessions)
-            this._loadingSessions = new Array();
-        var length = this._loadingSessions.length;
-        for (i = 0; i < length; i++)
-            this.killLoadingSession(this._loadingSessions[i]);
-        this._loadingSessions = null;
+    AssetLibraryBundle.prototype.stopAllLoaderSessions = function () {
+        var len = this._loaderSessions.length;
+        for (var i = 0; i < len; i++)
+            this.killloaderSession(this._loaderSessions[i]);
+        this._loaderSessions = new Array();
     };
     AssetLibraryBundle.prototype.rehashAssetDict = function () {
         var asset;
         this._assetDictionary = {};
-        var l = this._assets.length;
-        for (var c = 0; c < l; c++) {
+        var len = this._assets.length;
+        for (var c = 0; c < len; c++) {
             asset = this._assets[c];
             if (!this._assetDictionary.hasOwnProperty(asset.assetNamespace))
                 this._assetDictionary[asset.assetNamespace] = {};
@@ -8422,27 +8424,20 @@ var AssetLibraryBundle = (function (_super) {
      * Called when the resource and all of its dependencies was retrieved.
      */
     AssetLibraryBundle.prototype.onResourceComplete = function (event) {
-        var _this = this;
         var loader = event.target;
         this.dispatchEvent(event);
-        var index = this._loadingSessions.indexOf(loader);
-        this._loadingSessions.splice(index, 1);
-        // Add loader to a garbage array - for a collection sweep and kill
-        this._loadingSessionsGarbage.push(loader);
-        this._gcTimeoutIID = setTimeout(function () {
-            _this.loadingSessionGC();
-        }, 100);
+        this.disposeLoaderSession(loader);
     };
-    AssetLibraryBundle.prototype.loadingSessionGC = function () {
+    AssetLibraryBundle.prototype.loaderSessionGC = function () {
         var loader;
-        while (this._loadingSessionsGarbage.length > 0) {
-            loader = this._loadingSessionsGarbage.pop();
-            this.killLoadingSession(loader);
+        while (this._loaderSessionsGarbage.length > 0) {
+            loader = this._loaderSessionsGarbage.pop();
+            this.killloaderSession(loader);
         }
         clearTimeout(this._gcTimeoutIID);
         this._gcTimeoutIID = null;
     };
-    AssetLibraryBundle.prototype.killLoadingSession = function (loader) {
+    AssetLibraryBundle.prototype.killloaderSession = function (loader) {
         loader.removeEventListener(LoaderEvent.RESOURCE_COMPLETE, this._onResourceCompleteDelegate);
         loader.removeEventListener(AssetEvent.TEXTURE_SIZE_ERROR, this._onTextureSizeErrorDelegate);
         loader.removeEventListener(AssetEvent.ASSET_COMPLETE, this._onAssetCompleteDelegate);
@@ -8485,7 +8480,7 @@ var AssetLibraryBundle = (function (_super) {
 })(EventDispatcher);
 module.exports = AssetLibraryBundle;
 
-},{"awayjs-core/lib/errors/Error":"awayjs-core/lib/errors/Error","awayjs-core/lib/events/AssetEvent":"awayjs-core/lib/events/AssetEvent","awayjs-core/lib/events/EventDispatcher":"awayjs-core/lib/events/EventDispatcher","awayjs-core/lib/events/IOErrorEvent":"awayjs-core/lib/events/IOErrorEvent","awayjs-core/lib/events/LoaderEvent":"awayjs-core/lib/events/LoaderEvent","awayjs-core/lib/events/ParserEvent":"awayjs-core/lib/events/ParserEvent","awayjs-core/lib/library/AssetBase":"awayjs-core/lib/library/AssetBase","awayjs-core/lib/library/AssetLibraryIterator":"awayjs-core/lib/library/AssetLibraryIterator","awayjs-core/lib/library/AssetLoader":"awayjs-core/lib/library/AssetLoader","awayjs-core/lib/library/ConflictPrecedence":"awayjs-core/lib/library/ConflictPrecedence","awayjs-core/lib/library/ConflictStrategy":"awayjs-core/lib/library/ConflictStrategy"}],"awayjs-core/lib/library/AssetLibraryIterator":[function(require,module,exports){
+},{"awayjs-core/lib/errors/Error":"awayjs-core/lib/errors/Error","awayjs-core/lib/events/AssetEvent":"awayjs-core/lib/events/AssetEvent","awayjs-core/lib/events/EventDispatcher":"awayjs-core/lib/events/EventDispatcher","awayjs-core/lib/events/IOErrorEvent":"awayjs-core/lib/events/IOErrorEvent","awayjs-core/lib/events/LoaderEvent":"awayjs-core/lib/events/LoaderEvent","awayjs-core/lib/events/ParserEvent":"awayjs-core/lib/events/ParserEvent","awayjs-core/lib/library/AssetBase":"awayjs-core/lib/library/AssetBase","awayjs-core/lib/library/AssetLibraryIterator":"awayjs-core/lib/library/AssetLibraryIterator","awayjs-core/lib/library/ConflictPrecedence":"awayjs-core/lib/library/ConflictPrecedence","awayjs-core/lib/library/ConflictStrategy":"awayjs-core/lib/library/ConflictStrategy","awayjs-core/lib/library/LoaderSession":"awayjs-core/lib/library/LoaderSession"}],"awayjs-core/lib/library/AssetLibraryIterator":[function(require,module,exports){
 var AssetLibraryIterator = (function () {
     function AssetLibraryIterator(assets, assetTypeFilter, namespaceFilter, filterFunc) {
         this._assets = assets;
@@ -8550,7 +8545,7 @@ module.exports = AssetLibraryIterator;
 
 },{}],"awayjs-core/lib/library/AssetLibrary":[function(require,module,exports){
 var AssetLibraryBundle = require("awayjs-core/lib/library/AssetLibraryBundle");
-var AssetLoader = require("awayjs-core/lib/library/AssetLoader");
+var LoaderSession = require("awayjs-core/lib/library/LoaderSession");
 /**
  * AssetLibrary enforces a singleton pattern and is not intended to be instanced.
  * It's purpose is to allow access to the default library bundle through a set of static shortcut methods.
@@ -8581,13 +8576,13 @@ var AssetLibrary = (function () {
      *
      */
     AssetLibrary.enableParser = function (parserClass) {
-        AssetLoader.enableParser(parserClass);
+        LoaderSession.enableParser(parserClass);
     };
     /**
      *
      */
     AssetLibrary.enableParsers = function (parserClasses) {
-        AssetLoader.enableParsers(parserClasses);
+        LoaderSession.enableParsers(parserClasses);
     };
     Object.defineProperty(AssetLibrary, "conflictStrategy", {
         /**
@@ -8639,7 +8634,7 @@ var AssetLibrary = (function () {
         if (context === void 0) { context = null; }
         if (ns === void 0) { ns = null; }
         if (parser === void 0) { parser = null; }
-        return AssetLibrary.getBundle().load(req, context, ns, parser);
+        AssetLibrary.getBundle().load(req, context, ns, parser);
     };
     /**
      * Short-hand for loadData() method on default asset library bundle.
@@ -8650,10 +8645,13 @@ var AssetLibrary = (function () {
         if (context === void 0) { context = null; }
         if (ns === void 0) { ns = null; }
         if (parser === void 0) { parser = null; }
-        return AssetLibrary.getBundle().loadData(data, context, ns, parser);
+        AssetLibrary.getBundle().loadData(data, context, ns, parser);
     };
     AssetLibrary.stopLoad = function () {
-        AssetLibrary.getBundle().stopAllLoadingSessions();
+        AssetLibrary.getBundle().stopAllLoaderSessions();
+    };
+    AssetLibrary.getLoaderSession = function () {
+        return AssetLibrary.getBundle().getLoaderSession();
     };
     /**
      * Short-hand for getAsset() method on default asset library bundle.
@@ -8748,917 +8746,7 @@ var AssetLibrary = (function () {
 })();
 module.exports = AssetLibrary;
 
-},{"awayjs-core/lib/library/AssetLibraryBundle":"awayjs-core/lib/library/AssetLibraryBundle","awayjs-core/lib/library/AssetLoader":"awayjs-core/lib/library/AssetLoader"}],"awayjs-core/lib/library/AssetLoaderContext":[function(require,module,exports){
-var AssetLoaderContext = (function () {
-    /**
-     * AssetLoaderContext provides configuration for the AssetLoader load() and parse() operations.
-     * Use it to configure how (and if) dependencies are loaded, or to map dependency URLs to
-     * embedded data.
-     *
-     * @see away.loading.AssetLoader
-     */
-    function AssetLoaderContext(includeDependencies, dependencyBaseUrl) {
-        if (includeDependencies === void 0) { includeDependencies = true; }
-        if (dependencyBaseUrl === void 0) { dependencyBaseUrl = null; }
-        this._includeDependencies = includeDependencies;
-        this._dependencyBaseUrl = dependencyBaseUrl || '';
-        this._embeddedDataByUrl = {};
-        this._remappedUrls = {};
-        this._materialMode = AssetLoaderContext.UNDEFINED;
-    }
-    Object.defineProperty(AssetLoaderContext.prototype, "includeDependencies", {
-        /**
-         * Defines whether dependencies (all files except the one at the URL given to the load() or
-         * parseData() operations) should be automatically loaded. Defaults to true.
-         */
-        get: function () {
-            return this._includeDependencies;
-        },
-        set: function (val) {
-            this._includeDependencies = val;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(AssetLoaderContext.prototype, "materialMode", {
-        /**
-         * MaterialMode defines, if the Parser should create SinglePass or MultiPass Materials
-         * Options:
-         * 0 (Default / undefined) - All Parsers will create SinglePassMaterials, but the AWD2.1parser will create Materials as they are defined in the file
-         * 1 (Force SinglePass) - All Parsers create SinglePassMaterials
-         * 2 (Force MultiPass) - All Parsers will create MultiPassMaterials
-         *
-         */
-        get: function () {
-            return this._materialMode;
-        },
-        set: function (materialMode) {
-            this._materialMode = materialMode;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(AssetLoaderContext.prototype, "dependencyBaseUrl", {
-        /**
-         * A base URL that will be prepended to all relative dependency URLs found in a loaded resource.
-         * Absolute paths will not be affected by the value of this property.
-         */
-        get: function () {
-            return this._dependencyBaseUrl;
-        },
-        set: function (val) {
-            this._dependencyBaseUrl = val;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(AssetLoaderContext.prototype, "overrideAbsolutePaths", {
-        /**
-         * Defines whether absolute paths (defined as paths that begin with a "/") should be overridden
-         * with the dependencyBaseUrl defined in this context. If this is true, and the base path is
-         * "base", /path/to/asset.jpg will be resolved as base/path/to/asset.jpg.
-         */
-        get: function () {
-            return this._overrideAbsPath;
-        },
-        set: function (val) {
-            this._overrideAbsPath = val;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(AssetLoaderContext.prototype, "overrideFullURLs", {
-        /**
-         * Defines whether "full" URLs (defined as a URL that includes a scheme, e.g. http://) should be
-         * overridden with the dependencyBaseUrl defined in this context. If this is true, and the base
-         * path is "base", http://example.com/path/to/asset.jpg will be resolved as base/path/to/asset.jpg.
-         */
-        get: function () {
-            return this._overrideFullUrls;
-        },
-        set: function (val) {
-            this._overrideFullUrls = val;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    /**
-     * Map a URL to another URL, so that files that are referred to by the original URL will instead
-     * be loaded from the new URL. Use this when your file structure does not match the one that is
-     * expected by the loaded file.
-     *
-     * @param originalUrl The original URL which is referenced in the loaded resource.
-     * @param newUrl The URL from which away.should load the resource instead.
-     *
-     * @see mapUrlToData()
-     */
-    AssetLoaderContext.prototype.mapUrl = function (originalUrl, newUrl) {
-        this._remappedUrls[originalUrl] = newUrl;
-    };
-    /**
-     * Map a URL to embedded data, so that instead of trying to load a dependency from the URL at
-     * which it's referenced, the dependency data will be retrieved straight from the memory instead.
-     *
-     * @param originalUrl The original URL which is referenced in the loaded resource.
-     * @param data The embedded data. Can be ByteArray or a class which can be used to create a bytearray.
-     */
-    AssetLoaderContext.prototype.mapUrlToData = function (originalUrl, data) {
-        this._embeddedDataByUrl[originalUrl] = data;
-    };
-    /**
-     * @private
-     * Defines whether embedded data has been mapped to a particular URL.
-     */
-    AssetLoaderContext.prototype._iHasDataForUrl = function (url) {
-        return this._embeddedDataByUrl.hasOwnProperty(url);
-    };
-    /**
-     * @private
-     * Returns embedded data for a particular URL.
-     */
-    AssetLoaderContext.prototype._iGetDataForUrl = function (url) {
-        return this._embeddedDataByUrl[url];
-    };
-    /**
-     * @private
-     * Defines whether a replacement URL has been mapped to a particular URL.
-     */
-    AssetLoaderContext.prototype._iHasMappingForUrl = function (url) {
-        return this._remappedUrls.hasOwnProperty(url);
-    };
-    /**
-     * @private
-     * Returns new (replacement) URL for a particular original URL.
-     */
-    AssetLoaderContext.prototype._iGetRemappedUrl = function (originalUrl) {
-        return this._remappedUrls[originalUrl];
-    };
-    AssetLoaderContext.UNDEFINED = 0;
-    AssetLoaderContext.SINGLEPASS_MATERIALS = 1;
-    AssetLoaderContext.MULTIPASS_MATERIALS = 2;
-    return AssetLoaderContext;
-})();
-module.exports = AssetLoaderContext;
-
-},{}],"awayjs-core/lib/library/AssetLoaderToken":[function(require,module,exports){
-var __extends = this.__extends || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    __.prototype = b.prototype;
-    d.prototype = new __();
-};
-var EventDispatcher = require("awayjs-core/lib/events/EventDispatcher");
-/**
- * Dispatched when any asset finishes parsing. Also see specific events for each
- * individual asset type (meshes, materials et c.)
- *
- * @eventType away.events.AssetEvent
- */
-//[Event(name="assetComplete", type="away3d.events.AssetEvent")]
-/**
- * Dispatched when a full resource (including dependencies) finishes loading.
- *
- * @eventType away.events.LoaderEvent
- */
-//[Event(name="resourceComplete", type="away3d.events.LoaderEvent")]
-/**
- * Dispatched when a single dependency (which may be the main file of a resource)
- * finishes loading.
- *
- * @eventType away.events.LoaderEvent
- */
-//[Event(name="dependencyComplete", type="away3d.events.LoaderEvent")]
-/**
- * Dispatched when an error occurs during loading. I
- *
- * @eventType away.events.LoaderEvent
- */
-//[Event(name="loadError", type="away3d.events.LoaderEvent")]
-/**
- * Dispatched when an error occurs during parsing.
- *
- * @eventType away.events.ParserEvent
- */
-//[Event(name="parseError", type="away3d.events.ParserEvent")]
-/**
- * Dispatched when a skybox asset has been costructed from a ressource.
- *
- * @eventType away.events.AssetEvent
- */
-//[Event(name="skyboxComplete", type="away3d.events.AssetEvent")]
-/**
- * Dispatched when a camera3d asset has been costructed from a ressource.
- *
- * @eventType away.events.AssetEvent
- */
-//[Event(name="cameraComplete", type="away3d.events.AssetEvent")]
-/**
- * Dispatched when a mesh asset has been costructed from a ressource.
- *
- * @eventType away.events.AssetEvent
- */
-//[Event(name="meshComplete", type="away3d.events.AssetEvent")]
-/**
- * Dispatched when a geometry asset has been constructed from a resource.
- *
- * @eventType away.events.AssetEvent
- */
-//[Event(name="geometryComplete", type="away3d.events.AssetEvent")]
-/**
- * Dispatched when a skeleton asset has been constructed from a resource.
- *
- * @eventType away.events.AssetEvent
- */
-//[Event(name="skeletonComplete", type="away3d.events.AssetEvent")]
-/**
- * Dispatched when a skeleton pose asset has been constructed from a resource.
- *
- * @eventType away.events.AssetEvent
- */
-//[Event(name="skeletonPoseComplete", type="away3d.events.AssetEvent")]
-/**
- * Dispatched when a container asset has been constructed from a resource.
- *
- * @eventType away.events.AssetEvent
- */
-//[Event(name="containerComplete", type="away3d.events.AssetEvent")]
-/**
- * Dispatched when a texture asset has been constructed from a resource.
- *
- * @eventType away.events.AssetEvent
- */
-//[Event(name="textureComplete", type="away3d.events.AssetEvent")]
-/**
- * Dispatched when a texture projector asset has been constructed from a resource.
- *
- * @eventType away.events.AssetEvent
- */
-//[Event(name="textureProjectorComplete", type="away3d.events.AssetEvent")]
-/**
- * Dispatched when a material asset has been constructed from a resource.
- *
- * @eventType away.events.AssetEvent
- */
-//[Event(name="materialComplete", type="away3d.events.AssetEvent")]
-/**
- * Dispatched when a animator asset has been constructed from a resource.
- *
- * @eventType away.events.AssetEvent
- */
-//[Event(name="animatorComplete", type="away3d.events.AssetEvent")]
-/**
- * Dispatched when an animation set has been constructed from a group of animation state resources.
- *
- * @eventType away.events.AssetEvent
- */
-//[Event(name="animationSetComplete", type="away3d.events.AssetEvent")]
-/**
- * Dispatched when an animation state has been constructed from a group of animation node resources.
- *
- * @eventType away.events.AssetEvent
- */
-//[Event(name="animationStateComplete", type="away3d.events.AssetEvent")]
-/**
- * Dispatched when an animation node has been constructed from a resource.
- *
- * @eventType away.events.AssetEvent
- */
-//[Event(name="animationNodeComplete", type="away3d.events.AssetEvent")]
-/**
- * Dispatched when an animation state transition has been constructed from a group of animation node resources.
- *
- * @eventType away.events.AssetEvent
- */
-//[Event(name="stateTransitionComplete", type="away3d.events.AssetEvent")]
-/**
- * Dispatched when an light asset has been constructed from a resources.
- *
- * @eventType away.events.AssetEvent
- */
-//[Event(name="lightComplete", type="away3d.events.AssetEvent")]
-/**
- * Dispatched when an light picker asset has been constructed from a resources.
- *
- * @eventType away.events.AssetEvent
- */
-//[Event(name="lightPickerComplete", type="away3d.events.AssetEvent")]
-/**
- * Dispatched when an effect method asset has been constructed from a resources.
- *
- * @eventType away.events.AssetEvent
- */
-//[Event(name="effectMethodComplete", type="away3d.events.AssetEvent")]
-/**
- * Dispatched when an shadow map method asset has been constructed from a resources.
- *
- * @eventType away.events.AssetEvent
- */
-//[Event(name="shadowMapMethodComplete", type="away3d.events.AssetEvent")]
-/**
- * Instances of this class are returned as tokens by loading operations
- * to provide an object on which events can be listened for in cases where
- * the actual asset loader is not directly available (e.g. when using the
- * AssetLibrary to perform the load.)
- *
- * By listening for events on this class instead of directly on the
- * AssetLibrary, one can distinguish different loads from each other.
- *
- * The token will dispatch all events that the original AssetLoader dispatches,
- * while not providing an interface to obstruct the load and is as such a
- * safer return value for loader wrappers than the loader itself.
- */
-var AssetLoaderToken = (function (_super) {
-    __extends(AssetLoaderToken, _super);
-    function AssetLoaderToken(loader) {
-        _super.call(this);
-        this._iLoader = loader;
-    }
-    AssetLoaderToken.prototype.addEventListener = function (type, listener) {
-        this._iLoader.addEventListener(type, listener);
-    };
-    AssetLoaderToken.prototype.removeEventListener = function (type, listener) {
-        this._iLoader.removeEventListener(type, listener);
-    };
-    AssetLoaderToken.prototype.hasEventListener = function (type, listener) {
-        if (listener === void 0) { listener = null; }
-        return this._iLoader.hasEventListener(type, listener);
-    };
-    return AssetLoaderToken;
-})(EventDispatcher);
-module.exports = AssetLoaderToken;
-
-},{"awayjs-core/lib/events/EventDispatcher":"awayjs-core/lib/events/EventDispatcher"}],"awayjs-core/lib/library/AssetLoader":[function(require,module,exports){
-var __extends = this.__extends || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    __.prototype = b.prototype;
-    d.prototype = new __();
-};
-var AssetLoaderToken = require("awayjs-core/lib/library/AssetLoaderToken");
-var URLLoader = require("awayjs-core/lib/net/URLLoader");
-var URLLoaderDataFormat = require("awayjs-core/lib/net/URLLoaderDataFormat");
-var Error = require("awayjs-core/lib/errors/Error");
-var AssetEvent = require("awayjs-core/lib/events/AssetEvent");
-var Event = require("awayjs-core/lib/events/Event");
-var EventDispatcher = require("awayjs-core/lib/events/EventDispatcher");
-var IOErrorEvent = require("awayjs-core/lib/events/IOErrorEvent");
-var LoaderEvent = require("awayjs-core/lib/events/LoaderEvent");
-var ParserEvent = require("awayjs-core/lib/events/ParserEvent");
-var Image2DParser = require("awayjs-core/lib/parsers/Image2DParser");
-var ImageCubeParser = require("awayjs-core/lib/parsers/ImageCubeParser");
-var TextureAtlasParser = require("awayjs-core/lib/parsers/TextureAtlasParser");
-var ResourceDependency = require("awayjs-core/lib/parsers/ResourceDependency");
-var WaveAudioParser = require("awayjs-core/lib/parsers/WaveAudioParser");
-/**
- * Dispatched when any asset finishes parsing. Also see specific events for each
- * individual asset type (meshes, materials et c.)
- *
- * @eventType away.events.AssetEvent
- */
-//[Event(name="assetComplete", type="away3d.events.AssetEvent")]
-/**
- * Dispatched when a full resource (including dependencies) finishes loading.
- *
- * @eventType away.events.LoaderEvent
- */
-//[Event(name="resourceComplete", type="away3d.events.LoaderEvent")]
-/**
- * Dispatched when a single dependency (which may be the main file of a resource)
- * finishes loading.
- *
- * @eventType away.events.LoaderEvent
- */
-//[Event(name="dependencyComplete", type="away3d.events.LoaderEvent")]
-/**
- * Dispatched when an error occurs during loading. I
- *
- * @eventType away.events.LoaderEvent
- */
-//[Event(name="loadError", type="away3d.events.LoaderEvent")]
-/**
- * Dispatched when an error occurs during parsing.
- *
- * @eventType away.events.ParserEvent
- */
-//[Event(name="parseError", type="away3d.events.ParserEvent")]
-/**
- * Dispatched when an image asset dimensions are not a power of 2
- *
- * @eventType away.events.AssetEvent
- */
-//[Event(name="textureSizeError", type="away3d.events.AssetEvent")]
-/**
- * AssetLoader can load any file format that away.supports (or for which a third-party parser
- * has been plugged in) and it's dependencies. Events are dispatched when assets are encountered
- * and for when the resource (or it's dependencies) have been loaded.
- *
- * The AssetLoader will not make assets available in any other way than through the dispatched
- * events. To store assets and make them available at any point from any module in an application,
- * use the AssetLibrary to load and manage assets.
- *
- * @see away.library.AssetLibrary
- */
-var AssetLoader = (function (_super) {
-    __extends(AssetLoader, _super);
-    /**
-     * Create a new ResourceLoadSession object.
-     */
-    function AssetLoader(materialMode) {
-        var _this = this;
-        if (materialMode === void 0) { materialMode = 0; }
-        _super.call(this);
-        this._materialMode = materialMode;
-        this._stack = new Array();
-        this._errorHandlers = new Array();
-        this._parseErrorHandlers = new Array();
-        this._onReadyForDependenciesDelegate = function (event) { return _this.onReadyForDependencies(event); };
-        this._onParseCompleteDelegate = function (event) { return _this.onParseComplete(event); };
-        this._onParseErrorDelegate = function (event) { return _this.onParseError(event); };
-        this._onLoadCompleteDelegate = function (event) { return _this.onLoadComplete(event); };
-        this._onLoadErrorDelegate = function (event) { return _this.onLoadError(event); };
-        this._onTextureSizeErrorDelegate = function (event) { return _this.onTextureSizeError(event); };
-        this._onAssetCompleteDelegate = function (event) { return _this.onAssetComplete(event); };
-    }
-    /**
-     * Enables a specific parser.
-     * When no specific parser is set for a loading/parsing opperation,
-     * loader3d can autoselect the correct parser to use.
-     * A parser must have been enabled, to be considered when autoselecting the parser.
-     *
-     * @param parser The parser class to enable.
-     *
-     * @see away.parsers.Parsers
-     */
-    AssetLoader.enableParser = function (parser) {
-        if (AssetLoader._parsers.indexOf(parser) < 0)
-            AssetLoader._parsers.push(parser);
-    };
-    /**
-     * Enables a list of parsers.
-     * When no specific parser is set for a loading/parsing opperation,
-     * AssetLoader can autoselect the correct parser to use.
-     * A parser must have been enabled, to be considered when autoselecting the parser.
-     *
-     * @param parsers A Vector of parser classes to enable.
-     * @see away.parsers.Parsers
-     */
-    AssetLoader.enableParsers = function (parsers) {
-        for (var c = 0; c < parsers.length; c++)
-            AssetLoader.enableParser(parsers[c]);
-    };
-    Object.defineProperty(AssetLoader.prototype, "baseDependency", {
-        /**
-         * Returns the base dependency of the loader
-         */
-        get: function () {
-            return this._baseDependency;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    /**
-     * Loads a file and (optionally) all of its dependencies.
-     *
-     * @param req The URLRequest object containing the URL of the file to be loaded.
-     * @param context An optional context object providing additional parameters for loading
-     * @param ns An optional namespace string under which the file is to be loaded, allowing the differentiation of two resources with identical assets
-     * @param parser An optional parser object for translating the loaded data into a usable resource. If not provided, AssetLoader will attempt to auto-detect the file type.
-     */
-    AssetLoader.prototype.load = function (req, context, ns, parser) {
-        if (context === void 0) { context = null; }
-        if (ns === void 0) { ns = null; }
-        if (parser === void 0) { parser = null; }
-        if (!this._token) {
-            this._token = new AssetLoaderToken(this);
-            this._uri = req.url = req.url.replace(/\\/g, "/");
-            this._context = context;
-            this._namespace = ns;
-            this._baseDependency = new ResourceDependency('', req, null, parser, null);
-            this.retrieveDependency(this._baseDependency);
-            return this._token;
-        }
-        // TODO: Throw error (already loading)
-        return null;
-    };
-    /**
-     * Loads a resource from already loaded data.
-     *
-     * @param data The data object containing all resource information.
-     * @param context An optional context object providing additional parameters for loading
-     * @param ns An optional namespace string under which the file is to be loaded, allowing the differentiation of two resources with identical assets
-     * @param parser An optional parser object for translating the loaded data into a usable resource. If not provided, AssetLoader will attempt to auto-detect the file type.
-     */
-    AssetLoader.prototype.loadData = function (data, id, context, ns, parser) {
-        if (context === void 0) { context = null; }
-        if (ns === void 0) { ns = null; }
-        if (parser === void 0) { parser = null; }
-        if (!this._token) {
-            this._token = new AssetLoaderToken(this);
-            this._uri = id;
-            this._context = context;
-            this._namespace = ns;
-            this._baseDependency = new ResourceDependency(id, null, data, parser, null);
-            this.retrieveDependency(this._baseDependency);
-            return this._token;
-        }
-        // TODO: Throw error (already loading)
-        return null;
-    };
-    /**
-     * Recursively retrieves the next to-be-loaded and parsed dependency on the stack, or pops the list off the
-     * stack when complete and continues on the top set.
-     * @param parser The parser that will translate the data into a usable resource.
-     */
-    AssetLoader.prototype.retrieveNext = function (parser) {
-        if (parser === void 0) { parser = null; }
-        if (this._currentDependency.dependencies.length) {
-            var next = this._currentDependency.dependencies.pop();
-            this._stack.push(this._currentDependency);
-            this.retrieveDependency(next);
-        }
-        else if (this._currentDependency.parser && this._currentDependency.parser.parsingPaused) {
-            this._currentDependency.parser._iResumeParsing();
-            this._stack.pop();
-        }
-        else if (this._stack.length) {
-            var prev = this._currentDependency;
-            this._currentDependency = this._stack.pop();
-            if (prev._iSuccess)
-                prev.resolve();
-            this.retrieveNext(parser);
-        }
-        else {
-            this.dispatchEvent(new LoaderEvent(LoaderEvent.RESOURCE_COMPLETE, this._uri, this._baseDependency.parser.content, this._baseDependency.assets));
-        }
-    };
-    /**
-     * Retrieves a single dependency.
-     * @param parser The parser that will translate the data into a usable resource.
-     */
-    AssetLoader.prototype.retrieveDependency = function (dependency) {
-        var data;
-        if (this._context && this._context.materialMode != 0)
-            this._materialMode = this._context.materialMode;
-        this._currentDependency = dependency;
-        dependency._iLoader = new URLLoader();
-        this.addEventListeners(dependency._iLoader);
-        // Get already loaded (or mapped) data if available
-        data = dependency.data;
-        if (this._context && dependency.request && this._context._iHasDataForUrl(dependency.request.url))
-            data = this._context._iGetDataForUrl(dependency.request.url);
-        if (data) {
-            if (data.constructor === Function)
-                data = new data();
-            dependency._iSetData(data);
-            if (dependency.retrieveAsRawData) {
-                // No need to parse. The parent parser is expecting this
-                // to be raw data so it can be passed directly.
-                dependency.resolve();
-                // Move on to next dependency
-                this.retrieveNext();
-            }
-            else {
-                this.parseDependency(dependency);
-            }
-        }
-        else {
-            // Resolve URL and start loading
-            dependency.request.url = this.resolveDependencyUrl(dependency);
-            if (dependency.retrieveAsRawData) {
-                // Always use binary for raw data loading
-                dependency._iLoader.dataFormat = URLLoaderDataFormat.BINARY;
-            }
-            else {
-                if (!dependency.parser)
-                    dependency._iSetParser(this.getParserFromSuffix(dependency.request.url));
-                if (dependency.parser) {
-                    dependency._iLoader.dataFormat = dependency.parser.dataFormat;
-                }
-                else {
-                    // Always use BINARY for unknown file formats. The thorough
-                    // file type check will determine format after load, and if
-                    // binary, a text load will have broken the file data.
-                    dependency._iLoader.dataFormat = URLLoaderDataFormat.BINARY;
-                }
-            }
-            dependency._iLoader.load(dependency.request);
-        }
-    };
-    AssetLoader.prototype.joinUrl = function (base, end) {
-        if (end.charAt(0) == '/' || end.charAt(0) == '\\')
-            end = end.substr(1);
-        if (end.charAt(0) == '.')
-            end = end.substr(2);
-        if (base.length == 0)
-            return end;
-        if (base.charAt(base.length - 1) == '/' || base.charAt(base.length - 1) == '\\')
-            base = base.substr(0, base.length - 1);
-        return base.concat('/', end);
-    };
-    AssetLoader.prototype.resolveDependencyUrl = function (dependency) {
-        var scheme_re;
-        var base;
-        var url = dependency.request.url;
-        // Has the user re-mapped this URL?
-        if (this._context && this._context._iHasMappingForUrl(url))
-            return this._context._iGetRemappedUrl(url);
-        // This is the "base" dependency, i.e. the actual requested asset.
-        // We will not try to resolve this since the user can probably be
-        // thrusted to know this URL better than our automatic resolver. :)
-        if (url == this._uri)
-            return url;
-        // Absolute URL? Check if starts with slash or a URL
-        // scheme definition (e.g. ftp://, http://, file://)
-        scheme_re = new RegExp('/^[a-zA-Z]{3,4}:\/\//');
-        if (url.charAt(0) == '/') {
-            if (this._context && this._context.overrideAbsolutePaths)
-                return this.joinUrl(this._context.dependencyBaseUrl, url);
-            else
-                return url;
-        }
-        else if (scheme_re.test(url)) {
-            // If overriding full URLs, get rid of scheme (e.g. "http://")
-            // and replace with the dependencyBaseUrl defined by user.
-            if (this._context && this._context.overrideFullURLs) {
-                var noscheme_url = url.replace(scheme_re, ''); //url['replace'](scheme_re);
-                return this.joinUrl(this._context.dependencyBaseUrl, noscheme_url);
-            }
-        }
-        // Since not absolute, just get rid of base file name to find it's
-        // folder and then concatenate dynamic URL
-        if (this._context && this._context.dependencyBaseUrl) {
-            base = this._context.dependencyBaseUrl;
-            return this.joinUrl(base, url);
-        }
-        else {
-            base = this._uri.substring(0, this._uri.lastIndexOf('/') + 1);
-            return this.joinUrl(base, url);
-        }
-    };
-    AssetLoader.prototype.retrieveParserDependencies = function () {
-        if (!this._currentDependency)
-            return;
-        var parserDependancies = this._currentDependency.parser.dependencies;
-        var i, len = parserDependancies.length;
-        for (i = 0; i < len; i++)
-            this._currentDependency.dependencies[i] = parserDependancies[i];
-        // Since more dependencies might be added eventually, empty this
-        // list so that the same dependency isn't retrieved more than once.
-        parserDependancies.length = 0;
-        this._stack.push(this._currentDependency);
-        this.retrieveNext();
-    };
-    AssetLoader.prototype.resolveParserDependencies = function () {
-        this._currentDependency._iSuccess = true;
-        // Retrieve any last dependencies remaining on this parser, or
-        // if none exists, just move on.
-        if (this._currentDependency.parser && this._currentDependency.parser.dependencies.length && (!this._context || this._context.includeDependencies))
-            this.retrieveParserDependencies();
-        else
-            this.retrieveNext();
-    };
-    /**
-     * Called when a single dependency loading failed, and pushes further dependencies onto the stack.
-     * @param event
-     */
-    AssetLoader.prototype.onLoadError = function (event) {
-        var handled;
-        var isDependency = (this._currentDependency != this._baseDependency);
-        var loader = event.target; //TODO: keep on eye on this one
-        this.removeEventListeners(loader);
-        if (this.hasEventListener(IOErrorEvent.IO_ERROR)) {
-            this.dispatchEvent(event);
-            handled = true;
-        }
-        else {
-            // TODO: Consider not doing this even when AssetLoader does have it's own LOAD_ERROR listener
-            var i, len = this._errorHandlers.length;
-            for (i = 0; i < len; i++)
-                if (!handled)
-                    handled = this._errorHandlers[i](event);
-        }
-        if (handled) {
-            //if (isDependency && ! event.isDefaultPrevented()) {
-            if (isDependency) {
-                this._currentDependency.resolveFailure();
-                this.retrieveNext();
-            }
-            else {
-                // Either this was the base file (last left in the stack) or
-                // default behavior was prevented by the handlers, and hence
-                // there is nothing more to do than clean up and bail.
-                this.dispose();
-                return;
-            }
-        }
-        else {
-            throw new Error();
-        }
-    };
-    /**
-     * Called when a dependency parsing failed, and dispatches a <code>ParserEvent.PARSE_ERROR</code>
-     * @param event
-     */
-    AssetLoader.prototype.onParseError = function (event) {
-        var handled;
-        var isDependency = (this._currentDependency != this._baseDependency);
-        var loader = event.target;
-        this.removeEventListeners(loader);
-        if (this.hasEventListener(ParserEvent.PARSE_ERROR)) {
-            this.dispatchEvent(event);
-            handled = true;
-        }
-        else {
-            // TODO: Consider not doing this even when AssetLoader does
-            // have it's own LOAD_ERROR listener
-            var i, len = this._parseErrorHandlers.length;
-            for (i = 0; i < len; i++)
-                if (!handled)
-                    handled = this._parseErrorHandlers[i](event);
-        }
-        if (handled) {
-            this.retrieveNext();
-        }
-        else {
-            throw new Error(event.message);
-        }
-    };
-    AssetLoader.prototype.onAssetComplete = function (event) {
-        // Add loaded asset to list of assets retrieved as part
-        // of the current dependency. This list will be inspected
-        // by the parent parser when dependency is resolved
-        if (this._currentDependency)
-            this._currentDependency.assets.push(event.asset);
-        event.asset.resetAssetPath(event.asset.name, this._namespace);
-        if (!this._currentDependency.suppresAssetEvents)
-            this.dispatchEvent(event);
-    };
-    AssetLoader.prototype.onReadyForDependencies = function (event) {
-        var parser = event.target;
-        if (this._context && !this._context.includeDependencies)
-            parser._iResumeParsing();
-        else
-            this.retrieveParserDependencies();
-    };
-    /**
-     * Called when a single dependency was parsed, and pushes further dependencies onto the stack.
-     * @param event
-     */
-    AssetLoader.prototype.onLoadComplete = function (event) {
-        var loader = event.target;
-        this.removeEventListeners(loader);
-        // Resolve this dependency
-        this._currentDependency._iSetData(loader.data);
-        if (this._currentDependency.retrieveAsRawData) {
-            // No need to parse this data, which should be returned as is
-            this.resolveParserDependencies();
-        }
-        else {
-            this.parseDependency(this._currentDependency);
-        }
-    };
-    /**
-     * Called when parsing is complete.
-     */
-    AssetLoader.prototype.onParseComplete = function (event) {
-        var parser = event.target;
-        this.resolveParserDependencies(); //resolve in front of removing listeners to allow any remaining asset events to propagate
-        parser.removeEventListener(ParserEvent.READY_FOR_DEPENDENCIES, this._onReadyForDependenciesDelegate);
-        parser.removeEventListener(ParserEvent.PARSE_COMPLETE, this._onParseCompleteDelegate);
-        parser.removeEventListener(ParserEvent.PARSE_ERROR, this._onParseErrorDelegate);
-        parser.removeEventListener(AssetEvent.TEXTURE_SIZE_ERROR, this._onTextureSizeErrorDelegate);
-        parser.removeEventListener(AssetEvent.ASSET_COMPLETE, this._onAssetCompleteDelegate);
-    };
-    /**
-     * Called when an image is too large or it's dimensions are not a power of 2
-     * @param event
-     */
-    AssetLoader.prototype.onTextureSizeError = function (event) {
-        event.asset.name = this._currentDependency.resolveName(event.asset);
-        this.dispatchEvent(event);
-    };
-    AssetLoader.prototype.addEventListeners = function (loader) {
-        loader.addEventListener(Event.COMPLETE, this._onLoadCompleteDelegate);
-        loader.addEventListener(IOErrorEvent.IO_ERROR, this._onLoadErrorDelegate);
-    };
-    AssetLoader.prototype.removeEventListeners = function (loader) {
-        loader.removeEventListener(Event.COMPLETE, this._onLoadCompleteDelegate);
-        loader.removeEventListener(IOErrorEvent.IO_ERROR, this._onLoadErrorDelegate);
-    };
-    AssetLoader.prototype.stop = function () {
-        this.dispose();
-    };
-    AssetLoader.prototype.dispose = function () {
-        this._errorHandlers = null;
-        this._parseErrorHandlers = null;
-        this._context = null;
-        this._token = null;
-        this._stack = null;
-        if (this._currentDependency && this._currentDependency._iLoader)
-            this.removeEventListeners(this._currentDependency._iLoader);
-        this._currentDependency = null;
-    };
-    /**
-     * @private
-     * This method is used by other loader classes (e.g. Loader3D and AssetLibraryBundle) to
-     * add error event listeners to the AssetLoader instance. This system is used instead of
-     * the regular EventDispatcher system so that the AssetLibrary error handler can be sure
-     * that if hasEventListener() returns true, it's client code that's listening for the
-     * event. Secondly, functions added as error handler through this custom method are
-     * expected to return a boolean value indicating whether the event was handled (i.e.
-     * whether they in turn had any client code listening for the event.) If no handlers
-     * return true, the AssetLoader knows that the event wasn't handled and will throw an RTE.
-     */
-    AssetLoader.prototype._iAddParseErrorHandler = function (handler) {
-        if (this._parseErrorHandlers.indexOf(handler) < 0)
-            this._parseErrorHandlers.push(handler);
-    };
-    AssetLoader.prototype._iAddErrorHandler = function (handler) {
-        if (this._errorHandlers.indexOf(handler) < 0)
-            this._errorHandlers.push(handler);
-    };
-    /**
-     * Guesses the parser to be used based on the file contents.
-     * @param data The data to be parsed.
-     * @param uri The url or id of the object to be parsed.
-     * @return An instance of the guessed parser.
-     */
-    AssetLoader.prototype.getParserFromData = function (data) {
-        var len = AssetLoader._parsers.length;
-        for (var i = len - 1; i >= 0; i--)
-            if (AssetLoader._parsers[i].supportsData(data))
-                return new AssetLoader._parsers[i]();
-        return null;
-    };
-    /**
-     * Initiates parsing of the loaded dependency.
-     *
-     * @param The dependency to be parsed.
-     */
-    AssetLoader.prototype.parseDependency = function (dependency) {
-        var parser = dependency.parser;
-        // If no parser has been defined, try to find one by letting
-        // all plugged in parsers inspect the actual data.
-        if (!parser)
-            dependency._iSetParser(parser = this.getParserFromData(dependency.data));
-        if (parser) {
-            parser.addEventListener(ParserEvent.READY_FOR_DEPENDENCIES, this._onReadyForDependenciesDelegate);
-            parser.addEventListener(ParserEvent.PARSE_COMPLETE, this._onParseCompleteDelegate);
-            parser.addEventListener(ParserEvent.PARSE_ERROR, this._onParseErrorDelegate);
-            parser.addEventListener(AssetEvent.TEXTURE_SIZE_ERROR, this._onTextureSizeErrorDelegate);
-            parser.addEventListener(AssetEvent.ASSET_COMPLETE, this._onAssetCompleteDelegate);
-            if (dependency.request && dependency.request.url)
-                parser._iFileName = dependency.request.url;
-            parser.materialMode = this._materialMode;
-            parser.parseAsync(dependency.data);
-        }
-        else {
-            var handled;
-            var message = "No parser defined. To enable all parsers for auto-detection, use Parsers.enableAllBundled()";
-            var event = new ParserEvent(ParserEvent.PARSE_ERROR, message);
-            if (this.hasEventListener(ParserEvent.PARSE_ERROR)) {
-                this.dispatchEvent(event);
-                handled = true;
-            }
-            else {
-                // TODO: Consider not doing this even when AssetLoader does
-                // have it's own LOAD_ERROR listener
-                var i, len = this._parseErrorHandlers.length;
-                for (i = 0; i < len; i++)
-                    if (!handled)
-                        handled = this._parseErrorHandlers[i](event);
-            }
-            if (handled) {
-                this.retrieveNext();
-            }
-            else {
-                throw new Error(message);
-            }
-        }
-    };
-    /**
-     * Guesses the parser to be used based on the file extension.
-     * @return An instance of the guessed parser.
-     */
-    AssetLoader.prototype.getParserFromSuffix = function (url) {
-        // Get rid of query string if any and extract extension
-        var base = (url.indexOf('?') > 0) ? url.split('?')[0] : url;
-        var fileExtension = base.substr(base.lastIndexOf('.') + 1).toLowerCase();
-        var len = AssetLoader._parsers.length;
-        for (var i = len - 1; i >= 0; i--) {
-            var parserClass = AssetLoader._parsers[i];
-            if (parserClass.supportsType(fileExtension))
-                return new parserClass();
-        }
-        return null;
-    };
-    // Image parser only parser that is added by default, to save file size.
-    AssetLoader._parsers = new Array(Image2DParser, ImageCubeParser, TextureAtlasParser, WaveAudioParser);
-    return AssetLoader;
-})(EventDispatcher);
-module.exports = AssetLoader;
-
-},{"awayjs-core/lib/errors/Error":"awayjs-core/lib/errors/Error","awayjs-core/lib/events/AssetEvent":"awayjs-core/lib/events/AssetEvent","awayjs-core/lib/events/Event":"awayjs-core/lib/events/Event","awayjs-core/lib/events/EventDispatcher":"awayjs-core/lib/events/EventDispatcher","awayjs-core/lib/events/IOErrorEvent":"awayjs-core/lib/events/IOErrorEvent","awayjs-core/lib/events/LoaderEvent":"awayjs-core/lib/events/LoaderEvent","awayjs-core/lib/events/ParserEvent":"awayjs-core/lib/events/ParserEvent","awayjs-core/lib/library/AssetLoaderToken":"awayjs-core/lib/library/AssetLoaderToken","awayjs-core/lib/net/URLLoader":"awayjs-core/lib/net/URLLoader","awayjs-core/lib/net/URLLoaderDataFormat":"awayjs-core/lib/net/URLLoaderDataFormat","awayjs-core/lib/parsers/Image2DParser":"awayjs-core/lib/parsers/Image2DParser","awayjs-core/lib/parsers/ImageCubeParser":"awayjs-core/lib/parsers/ImageCubeParser","awayjs-core/lib/parsers/ResourceDependency":"awayjs-core/lib/parsers/ResourceDependency","awayjs-core/lib/parsers/TextureAtlasParser":"awayjs-core/lib/parsers/TextureAtlasParser","awayjs-core/lib/parsers/WaveAudioParser":"awayjs-core/lib/parsers/WaveAudioParser"}],"awayjs-core/lib/library/ConflictPrecedence":[function(require,module,exports){
+},{"awayjs-core/lib/library/AssetLibraryBundle":"awayjs-core/lib/library/AssetLibraryBundle","awayjs-core/lib/library/LoaderSession":"awayjs-core/lib/library/LoaderSession"}],"awayjs-core/lib/library/ConflictPrecedence":[function(require,module,exports){
 /**
  * Enumaration class for precedence when resolving naming conflicts in the library.
  *
@@ -9897,7 +8985,716 @@ var IgnoreConflictStrategy = (function (_super) {
 })(ConflictStrategyBase);
 module.exports = IgnoreConflictStrategy;
 
-},{"awayjs-core/lib/library/ConflictStrategyBase":"awayjs-core/lib/library/ConflictStrategyBase"}],"awayjs-core/lib/library/NumSuffixConflictStrategy":[function(require,module,exports){
+},{"awayjs-core/lib/library/ConflictStrategyBase":"awayjs-core/lib/library/ConflictStrategyBase"}],"awayjs-core/lib/library/LoaderContext":[function(require,module,exports){
+var LoaderContext = (function () {
+    /**
+     * LoaderContext provides configuration for the LoaderSession load() and parse() operations.
+     * Use it to configure how (and if) dependencies are loaded, or to map dependency URLs to
+     * embedded data.
+     *
+     * @see away.loading.LoaderSession
+     */
+    function LoaderContext(includeDependencies, dependencyBaseUrl) {
+        if (includeDependencies === void 0) { includeDependencies = true; }
+        if (dependencyBaseUrl === void 0) { dependencyBaseUrl = null; }
+        this._includeDependencies = includeDependencies;
+        this._dependencyBaseUrl = dependencyBaseUrl || '';
+        this._embeddedDataByUrl = {};
+        this._remappedUrls = {};
+        this._materialMode = LoaderContext.UNDEFINED;
+    }
+    Object.defineProperty(LoaderContext.prototype, "includeDependencies", {
+        /**
+         * Defines whether dependencies (all files except the one at the URL given to the load() or
+         * parseData() operations) should be automatically loaded. Defaults to true.
+         */
+        get: function () {
+            return this._includeDependencies;
+        },
+        set: function (val) {
+            this._includeDependencies = val;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(LoaderContext.prototype, "materialMode", {
+        /**
+         * MaterialMode defines, if the Parser should create SinglePass or MultiPass Materials
+         * Options:
+         * 0 (Default / undefined) - All Parsers will create SinglePassMaterials, but the AWD2.1parser will create Materials as they are defined in the file
+         * 1 (Force SinglePass) - All Parsers create SinglePassMaterials
+         * 2 (Force MultiPass) - All Parsers will create MultiPassMaterials
+         *
+         */
+        get: function () {
+            return this._materialMode;
+        },
+        set: function (materialMode) {
+            this._materialMode = materialMode;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(LoaderContext.prototype, "dependencyBaseUrl", {
+        /**
+         * A base URL that will be prepended to all relative dependency URLs found in a loaded resource.
+         * Absolute paths will not be affected by the value of this property.
+         */
+        get: function () {
+            return this._dependencyBaseUrl;
+        },
+        set: function (val) {
+            this._dependencyBaseUrl = val;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(LoaderContext.prototype, "overrideAbsolutePaths", {
+        /**
+         * Defines whether absolute paths (defined as paths that begin with a "/") should be overridden
+         * with the dependencyBaseUrl defined in this context. If this is true, and the base path is
+         * "base", /path/to/asset.jpg will be resolved as base/path/to/asset.jpg.
+         */
+        get: function () {
+            return this._overrideAbsPath;
+        },
+        set: function (val) {
+            this._overrideAbsPath = val;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(LoaderContext.prototype, "overrideFullURLs", {
+        /**
+         * Defines whether "full" URLs (defined as a URL that includes a scheme, e.g. http://) should be
+         * overridden with the dependencyBaseUrl defined in this context. If this is true, and the base
+         * path is "base", http://example.com/path/to/asset.jpg will be resolved as base/path/to/asset.jpg.
+         */
+        get: function () {
+            return this._overrideFullUrls;
+        },
+        set: function (val) {
+            this._overrideFullUrls = val;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    /**
+     * Map a URL to another URL, so that files that are referred to by the original URL will instead
+     * be loaded from the new URL. Use this when your file structure does not match the one that is
+     * expected by the loaded file.
+     *
+     * @param originalUrl The original URL which is referenced in the loaded resource.
+     * @param newUrl The URL from which away.should load the resource instead.
+     *
+     * @see mapUrlToData()
+     */
+    LoaderContext.prototype.mapUrl = function (originalUrl, newUrl) {
+        this._remappedUrls[originalUrl] = newUrl;
+    };
+    /**
+     * Map a URL to embedded data, so that instead of trying to load a dependency from the URL at
+     * which it's referenced, the dependency data will be retrieved straight from the memory instead.
+     *
+     * @param originalUrl The original URL which is referenced in the loaded resource.
+     * @param data The embedded data. Can be ByteArray or a class which can be used to create a bytearray.
+     */
+    LoaderContext.prototype.mapUrlToData = function (originalUrl, data) {
+        this._embeddedDataByUrl[originalUrl] = data;
+    };
+    /**
+     * @private
+     * Defines whether embedded data has been mapped to a particular URL.
+     */
+    LoaderContext.prototype._iHasDataForUrl = function (url) {
+        return this._embeddedDataByUrl.hasOwnProperty(url);
+    };
+    /**
+     * @private
+     * Returns embedded data for a particular URL.
+     */
+    LoaderContext.prototype._iGetDataForUrl = function (url) {
+        return this._embeddedDataByUrl[url];
+    };
+    /**
+     * @private
+     * Defines whether a replacement URL has been mapped to a particular URL.
+     */
+    LoaderContext.prototype._iHasMappingForUrl = function (url) {
+        return this._remappedUrls.hasOwnProperty(url);
+    };
+    /**
+     * @private
+     * Returns new (replacement) URL for a particular original URL.
+     */
+    LoaderContext.prototype._iGetRemappedUrl = function (originalUrl) {
+        return this._remappedUrls[originalUrl];
+    };
+    LoaderContext.UNDEFINED = 0;
+    LoaderContext.SINGLEPASS_MATERIALS = 1;
+    LoaderContext.MULTIPASS_MATERIALS = 2;
+    return LoaderContext;
+})();
+module.exports = LoaderContext;
+
+},{}],"awayjs-core/lib/library/LoaderSession":[function(require,module,exports){
+var __extends = this.__extends || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    __.prototype = b.prototype;
+    d.prototype = new __();
+};
+var URLLoader = require("awayjs-core/lib/net/URLLoader");
+var URLLoaderDataFormat = require("awayjs-core/lib/net/URLLoaderDataFormat");
+var Error = require("awayjs-core/lib/errors/Error");
+var AssetEvent = require("awayjs-core/lib/events/AssetEvent");
+var Event = require("awayjs-core/lib/events/Event");
+var EventDispatcher = require("awayjs-core/lib/events/EventDispatcher");
+var IOErrorEvent = require("awayjs-core/lib/events/IOErrorEvent");
+var LoaderEvent = require("awayjs-core/lib/events/LoaderEvent");
+var ParserEvent = require("awayjs-core/lib/events/ParserEvent");
+var Image2DParser = require("awayjs-core/lib/parsers/Image2DParser");
+var ImageCubeParser = require("awayjs-core/lib/parsers/ImageCubeParser");
+var TextureAtlasParser = require("awayjs-core/lib/parsers/TextureAtlasParser");
+var ResourceDependency = require("awayjs-core/lib/parsers/ResourceDependency");
+var WaveAudioParser = require("awayjs-core/lib/parsers/WaveAudioParser");
+/**
+ * Dispatched when any asset finishes parsing. Also see specific events for each
+ * individual asset type (meshes, materials et c.)
+ *
+ * @eventType away.events.AssetEvent
+ */
+//[Event(name="assetComplete", type="away3d.events.AssetEvent")]
+/**
+ * Dispatched when a full resource (including dependencies) finishes loading.
+ *
+ * @eventType away.events.LoaderEvent
+ */
+//[Event(name="resourceComplete", type="away3d.events.LoaderEvent")]
+/**
+ * Dispatched when a single dependency (which may be the main file of a resource)
+ * finishes loading.
+ *
+ * @eventType away.events.LoaderEvent
+ */
+//[Event(name="dependencyComplete", type="away3d.events.LoaderEvent")]
+/**
+ * Dispatched when an error occurs during loading. I
+ *
+ * @eventType away.events.LoaderEvent
+ */
+//[Event(name="loadError", type="away3d.events.LoaderEvent")]
+/**
+ * Dispatched when an error occurs during parsing.
+ *
+ * @eventType away.events.ParserEvent
+ */
+//[Event(name="parseError", type="away3d.events.ParserEvent")]
+/**
+ * Dispatched when an image asset dimensions are not a power of 2
+ *
+ * @eventType away.events.AssetEvent
+ */
+//[Event(name="textureSizeError", type="away3d.events.AssetEvent")]
+/**
+ * LoaderSession can load any file format that away.supports (or for which a third-party parser
+ * has been plugged in) and it's dependencies. Events are dispatched when assets are encountered
+ * and for when the resource (or it's dependencies) have been loaded.
+ *
+ * The LoaderSession will not make assets available in any other way than through the dispatched
+ * events. To store assets and make them available at any point from any module in an application,
+ * use the AssetLibrary to load and manage assets.
+ *
+ * @see away.library.AssetLibrary
+ */
+var LoaderSession = (function (_super) {
+    __extends(LoaderSession, _super);
+    /**
+     * Create a new ResourceLoadSession object.
+     */
+    function LoaderSession(materialMode) {
+        var _this = this;
+        if (materialMode === void 0) { materialMode = 0; }
+        _super.call(this);
+        this._materialMode = materialMode;
+        this._stack = new Array();
+        this._errorHandlers = new Array();
+        this._parseErrorHandlers = new Array();
+        this._onReadyForDependenciesDelegate = function (event) { return _this.onReadyForDependencies(event); };
+        this._onParseCompleteDelegate = function (event) { return _this.onParseComplete(event); };
+        this._onParseErrorDelegate = function (event) { return _this.onParseError(event); };
+        this._onLoadCompleteDelegate = function (event) { return _this.onLoadComplete(event); };
+        this._onLoadErrorDelegate = function (event) { return _this.onLoadError(event); };
+        this._onTextureSizeErrorDelegate = function (event) { return _this.onTextureSizeError(event); };
+        this._onAssetCompleteDelegate = function (event) { return _this.onAssetComplete(event); };
+    }
+    /**
+     * Enables a specific parser.
+     * When no specific parser is set for a loading/parsing opperation,
+     * loader3d can autoselect the correct parser to use.
+     * A parser must have been enabled, to be considered when autoselecting the parser.
+     *
+     * @param parser The parser class to enable.
+     *
+     * @see away.parsers.Parsers
+     */
+    LoaderSession.enableParser = function (parser) {
+        if (LoaderSession._parsers.indexOf(parser) < 0)
+            LoaderSession._parsers.push(parser);
+    };
+    /**
+     * Enables a list of parsers.
+     * When no specific parser is set for a loading/parsing opperation,
+     * LoaderSession can autoselect the correct parser to use.
+     * A parser must have been enabled, to be considered when autoselecting the parser.
+     *
+     * @param parsers A Vector of parser classes to enable.
+     * @see away.parsers.Parsers
+     */
+    LoaderSession.enableParsers = function (parsers) {
+        for (var c = 0; c < parsers.length; c++)
+            LoaderSession.enableParser(parsers[c]);
+    };
+    Object.defineProperty(LoaderSession.prototype, "baseDependency", {
+        /**
+         * Returns the base dependency of the loader
+         */
+        get: function () {
+            return this._baseDependency;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    /**
+     * Loads a file and (optionally) all of its dependencies.
+     *
+     * @param req The URLRequest object containing the URL of the file to be loaded.
+     * @param context An optional context object providing additional parameters for loading
+     * @param ns An optional namespace string under which the file is to be loaded, allowing the differentiation of two resources with identical assets
+     * @param parser An optional parser object for translating the loaded data into a usable resource. If not provided, LoaderSession will attempt to auto-detect the file type.
+     */
+    LoaderSession.prototype.load = function (req, context, ns, parser) {
+        if (context === void 0) { context = null; }
+        if (ns === void 0) { ns = null; }
+        if (parser === void 0) { parser = null; }
+        this._uri = req.url = req.url.replace(/\\/g, "/");
+        this._context = context;
+        this._namespace = ns;
+        this._baseDependency = new ResourceDependency('', req, null, parser, null);
+        this.retrieveDependency(this._baseDependency);
+    };
+    /**
+     * Loads a resource from already loaded data.
+     *
+     * @param data The data object containing all resource information.
+     * @param context An optional context object providing additional parameters for loading
+     * @param ns An optional namespace string under which the file is to be loaded, allowing the differentiation of two resources with identical assets
+     * @param parser An optional parser object for translating the loaded data into a usable resource. If not provided, LoaderSession will attempt to auto-detect the file type.
+     */
+    LoaderSession.prototype.loadData = function (data, id, context, ns, parser) {
+        if (context === void 0) { context = null; }
+        if (ns === void 0) { ns = null; }
+        if (parser === void 0) { parser = null; }
+        this._uri = id;
+        this._context = context;
+        this._namespace = ns;
+        this._baseDependency = new ResourceDependency(id, null, data, parser, null);
+        this.retrieveDependency(this._baseDependency);
+    };
+    /**
+     * Recursively retrieves the next to-be-loaded and parsed dependency on the stack, or pops the list off the
+     * stack when complete and continues on the top set.
+     * @param parser The parser that will translate the data into a usable resource.
+     */
+    LoaderSession.prototype.retrieveNext = function (parser) {
+        if (parser === void 0) { parser = null; }
+        if (this._currentDependency.dependencies.length) {
+            var next = this._currentDependency.dependencies.pop();
+            this._stack.push(this._currentDependency);
+            this.retrieveDependency(next);
+        }
+        else if (this._currentDependency.parser && this._currentDependency.parser.parsingPaused) {
+            this._currentDependency.parser._iResumeParsing();
+            this._stack.pop();
+        }
+        else if (this._stack.length) {
+            var prev = this._currentDependency;
+            this._currentDependency = this._stack.pop();
+            if (prev._iSuccess)
+                prev.resolve();
+            this.retrieveNext(parser);
+        }
+        else {
+            this.dispatchEvent(new LoaderEvent(LoaderEvent.RESOURCE_COMPLETE, this._uri, this._baseDependency.parser.content, this._baseDependency.assets));
+        }
+    };
+    /**
+     * Retrieves a single dependency.
+     * @param parser The parser that will translate the data into a usable resource.
+     */
+    LoaderSession.prototype.retrieveDependency = function (dependency) {
+        var data;
+        if (this._context && this._context.materialMode != 0)
+            this._materialMode = this._context.materialMode;
+        this._currentDependency = dependency;
+        dependency._iLoader = new URLLoader();
+        this.addEventListeners(dependency._iLoader);
+        // Get already loaded (or mapped) data if available
+        data = dependency.data;
+        if (this._context && dependency.request && this._context._iHasDataForUrl(dependency.request.url))
+            data = this._context._iGetDataForUrl(dependency.request.url);
+        if (data) {
+            if (data.constructor === Function)
+                data = new data();
+            dependency._iSetData(data);
+            if (dependency.retrieveAsRawData) {
+                // No need to parse. The parent parser is expecting this
+                // to be raw data so it can be passed directly.
+                dependency.resolve();
+                // Move on to next dependency
+                this.retrieveNext();
+            }
+            else {
+                this.parseDependency(dependency);
+            }
+        }
+        else {
+            // Resolve URL and start loading
+            dependency.request.url = this.resolveDependencyUrl(dependency);
+            if (dependency.retrieveAsRawData) {
+                // Always use binary for raw data loading
+                dependency._iLoader.dataFormat = URLLoaderDataFormat.BINARY;
+            }
+            else {
+                if (!dependency.parser)
+                    dependency._iSetParser(this.getParserFromSuffix(dependency.request.url));
+                if (dependency.parser) {
+                    dependency._iLoader.dataFormat = dependency.parser.dataFormat;
+                }
+                else {
+                    // Always use BINARY for unknown file formats. The thorough
+                    // file type check will determine format after load, and if
+                    // binary, a text load will have broken the file data.
+                    dependency._iLoader.dataFormat = URLLoaderDataFormat.BINARY;
+                }
+            }
+            dependency._iLoader.load(dependency.request);
+        }
+    };
+    LoaderSession.prototype.joinUrl = function (base, end) {
+        if (end.charAt(0) == '/' || end.charAt(0) == '\\')
+            end = end.substr(1);
+        if (end.charAt(0) == '.')
+            end = end.substr(2);
+        if (base.length == 0)
+            return end;
+        if (base.charAt(base.length - 1) == '/' || base.charAt(base.length - 1) == '\\')
+            base = base.substr(0, base.length - 1);
+        return base.concat('/', end);
+    };
+    LoaderSession.prototype.resolveDependencyUrl = function (dependency) {
+        var scheme_re;
+        var base;
+        var url = dependency.request.url;
+        // Has the user re-mapped this URL?
+        if (this._context && this._context._iHasMappingForUrl(url))
+            return this._context._iGetRemappedUrl(url);
+        // This is the "base" dependency, i.e. the actual requested asset.
+        // We will not try to resolve this since the user can probably be
+        // thrusted to know this URL better than our automatic resolver. :)
+        if (url == this._uri)
+            return url;
+        // Absolute URL? Check if starts with slash or a URL
+        // scheme definition (e.g. ftp://, http://, file://)
+        scheme_re = new RegExp('/^[a-zA-Z]{3,4}:\/\//');
+        if (url.charAt(0) == '/') {
+            if (this._context && this._context.overrideAbsolutePaths)
+                return this.joinUrl(this._context.dependencyBaseUrl, url);
+            else
+                return url;
+        }
+        else if (scheme_re.test(url)) {
+            // If overriding full URLs, get rid of scheme (e.g. "http://")
+            // and replace with the dependencyBaseUrl defined by user.
+            if (this._context && this._context.overrideFullURLs) {
+                var noscheme_url = url.replace(scheme_re, ''); //url['replace'](scheme_re);
+                return this.joinUrl(this._context.dependencyBaseUrl, noscheme_url);
+            }
+        }
+        // Since not absolute, just get rid of base file name to find it's
+        // folder and then concatenate dynamic URL
+        if (this._context && this._context.dependencyBaseUrl) {
+            base = this._context.dependencyBaseUrl;
+            return this.joinUrl(base, url);
+        }
+        else {
+            base = this._uri.substring(0, this._uri.lastIndexOf('/') + 1);
+            return this.joinUrl(base, url);
+        }
+    };
+    LoaderSession.prototype.retrieveParserDependencies = function () {
+        if (!this._currentDependency)
+            return;
+        var parserDependancies = this._currentDependency.parser.dependencies;
+        var i, len = parserDependancies.length;
+        for (i = 0; i < len; i++)
+            this._currentDependency.dependencies[i] = parserDependancies[i];
+        // Since more dependencies might be added eventually, empty this
+        // list so that the same dependency isn't retrieved more than once.
+        parserDependancies.length = 0;
+        this._stack.push(this._currentDependency);
+        this.retrieveNext();
+    };
+    LoaderSession.prototype.resolveParserDependencies = function () {
+        this._currentDependency._iSuccess = true;
+        // Retrieve any last dependencies remaining on this parser, or
+        // if none exists, just move on.
+        if (this._currentDependency.parser && this._currentDependency.parser.dependencies.length && (!this._context || this._context.includeDependencies))
+            this.retrieveParserDependencies();
+        else
+            this.retrieveNext();
+    };
+    /**
+     * Called when a single dependency loading failed, and pushes further dependencies onto the stack.
+     * @param event
+     */
+    LoaderSession.prototype.onLoadError = function (event) {
+        var handled;
+        var isDependency = (this._currentDependency != this._baseDependency);
+        var loader = event.target; //TODO: keep on eye on this one
+        this.removeEventListeners(loader);
+        if (this.hasEventListener(IOErrorEvent.IO_ERROR)) {
+            this.dispatchEvent(event);
+            handled = true;
+        }
+        else {
+            // TODO: Consider not doing this even when LoaderSession does have it's own LOAD_ERROR listener
+            var i, len = this._errorHandlers.length;
+            for (i = 0; i < len; i++)
+                if (!handled)
+                    handled = this._errorHandlers[i](event);
+        }
+        if (handled) {
+            //if (isDependency && ! event.isDefaultPrevented()) {
+            if (isDependency) {
+                this._currentDependency.resolveFailure();
+                this.retrieveNext();
+            }
+            else {
+                // Either this was the base file (last left in the stack) or
+                // default behavior was prevented by the handlers, and hence
+                // there is nothing more to do than clean up and bail.
+                this.dispose();
+                return;
+            }
+        }
+        else {
+            throw new Error();
+        }
+    };
+    /**
+     * Called when a dependency parsing failed, and dispatches a <code>ParserEvent.PARSE_ERROR</code>
+     * @param event
+     */
+    LoaderSession.prototype.onParseError = function (event) {
+        var handled;
+        var isDependency = (this._currentDependency != this._baseDependency);
+        var loader = event.target;
+        this.removeEventListeners(loader);
+        if (this.hasEventListener(ParserEvent.PARSE_ERROR)) {
+            this.dispatchEvent(event);
+            handled = true;
+        }
+        else {
+            // TODO: Consider not doing this even when LoaderSession does
+            // have it's own LOAD_ERROR listener
+            var i, len = this._parseErrorHandlers.length;
+            for (i = 0; i < len; i++)
+                if (!handled)
+                    handled = this._parseErrorHandlers[i](event);
+        }
+        if (handled) {
+            this.retrieveNext();
+        }
+        else {
+            throw new Error(event.message);
+        }
+    };
+    LoaderSession.prototype.onAssetComplete = function (event) {
+        // Add loaded asset to list of assets retrieved as part
+        // of the current dependency. This list will be inspected
+        // by the parent parser when dependency is resolved
+        if (this._currentDependency)
+            this._currentDependency.assets.push(event.asset);
+        event.asset.resetAssetPath(event.asset.name, this._namespace);
+        if (!this._currentDependency.suppresAssetEvents)
+            this.dispatchEvent(event);
+    };
+    LoaderSession.prototype.onReadyForDependencies = function (event) {
+        var parser = event.target;
+        if (this._context && !this._context.includeDependencies)
+            parser._iResumeParsing();
+        else
+            this.retrieveParserDependencies();
+    };
+    /**
+     * Called when a single dependency was parsed, and pushes further dependencies onto the stack.
+     * @param event
+     */
+    LoaderSession.prototype.onLoadComplete = function (event) {
+        var loader = event.target;
+        this.removeEventListeners(loader);
+        // Resolve this dependency
+        this._currentDependency._iSetData(loader.data);
+        if (this._currentDependency.retrieveAsRawData) {
+            // No need to parse this data, which should be returned as is
+            this.resolveParserDependencies();
+        }
+        else {
+            this.parseDependency(this._currentDependency);
+        }
+    };
+    /**
+     * Called when parsing is complete.
+     */
+    LoaderSession.prototype.onParseComplete = function (event) {
+        var parser = event.target;
+        this.resolveParserDependencies(); //resolve in front of removing listeners to allow any remaining asset events to propagate
+        parser.removeEventListener(ParserEvent.READY_FOR_DEPENDENCIES, this._onReadyForDependenciesDelegate);
+        parser.removeEventListener(ParserEvent.PARSE_COMPLETE, this._onParseCompleteDelegate);
+        parser.removeEventListener(ParserEvent.PARSE_ERROR, this._onParseErrorDelegate);
+        parser.removeEventListener(AssetEvent.TEXTURE_SIZE_ERROR, this._onTextureSizeErrorDelegate);
+        parser.removeEventListener(AssetEvent.ASSET_COMPLETE, this._onAssetCompleteDelegate);
+    };
+    /**
+     * Called when an image is too large or it's dimensions are not a power of 2
+     * @param event
+     */
+    LoaderSession.prototype.onTextureSizeError = function (event) {
+        event.asset.name = this._currentDependency.resolveName(event.asset);
+        this.dispatchEvent(event);
+    };
+    LoaderSession.prototype.addEventListeners = function (loader) {
+        loader.addEventListener(Event.COMPLETE, this._onLoadCompleteDelegate);
+        loader.addEventListener(IOErrorEvent.IO_ERROR, this._onLoadErrorDelegate);
+    };
+    LoaderSession.prototype.removeEventListeners = function (loader) {
+        loader.removeEventListener(Event.COMPLETE, this._onLoadCompleteDelegate);
+        loader.removeEventListener(IOErrorEvent.IO_ERROR, this._onLoadErrorDelegate);
+    };
+    LoaderSession.prototype.stop = function () {
+        this.dispose();
+    };
+    LoaderSession.prototype.dispose = function () {
+        this._errorHandlers = null;
+        this._parseErrorHandlers = null;
+        this._context = null;
+        this._stack = null;
+        if (this._currentDependency && this._currentDependency._iLoader)
+            this.removeEventListeners(this._currentDependency._iLoader);
+        this._currentDependency = null;
+    };
+    /**
+     * @private
+     * This method is used by other loader classes (e.g. Loader3D and AssetLibraryBundle) to
+     * add error event listeners to the LoaderSession instance. This system is used instead of
+     * the regular EventDispatcher system so that the AssetLibrary error handler can be sure
+     * that if hasEventListener() returns true, it's client code that's listening for the
+     * event. Secondly, functions added as error handler through this custom method are
+     * expected to return a boolean value indicating whether the event was handled (i.e.
+     * whether they in turn had any client code listening for the event.) If no handlers
+     * return true, the LoaderSession knows that the event wasn't handled and will throw an RTE.
+     */
+    LoaderSession.prototype._iAddParseErrorHandler = function (handler) {
+        if (this._parseErrorHandlers.indexOf(handler) < 0)
+            this._parseErrorHandlers.push(handler);
+    };
+    LoaderSession.prototype._iAddErrorHandler = function (handler) {
+        if (this._errorHandlers.indexOf(handler) < 0)
+            this._errorHandlers.push(handler);
+    };
+    /**
+     * Guesses the parser to be used based on the file contents.
+     * @param data The data to be parsed.
+     * @param uri The url or id of the object to be parsed.
+     * @return An instance of the guessed parser.
+     */
+    LoaderSession.prototype.getParserFromData = function (data) {
+        var len = LoaderSession._parsers.length;
+        for (var i = len - 1; i >= 0; i--)
+            if (LoaderSession._parsers[i].supportsData(data))
+                return new LoaderSession._parsers[i]();
+        return null;
+    };
+    /**
+     * Initiates parsing of the loaded dependency.
+     *
+     * @param The dependency to be parsed.
+     */
+    LoaderSession.prototype.parseDependency = function (dependency) {
+        var parser = dependency.parser;
+        // If no parser has been defined, try to find one by letting
+        // all plugged in parsers inspect the actual data.
+        if (!parser)
+            dependency._iSetParser(parser = this.getParserFromData(dependency.data));
+        if (parser) {
+            parser.addEventListener(ParserEvent.READY_FOR_DEPENDENCIES, this._onReadyForDependenciesDelegate);
+            parser.addEventListener(ParserEvent.PARSE_COMPLETE, this._onParseCompleteDelegate);
+            parser.addEventListener(ParserEvent.PARSE_ERROR, this._onParseErrorDelegate);
+            parser.addEventListener(AssetEvent.TEXTURE_SIZE_ERROR, this._onTextureSizeErrorDelegate);
+            parser.addEventListener(AssetEvent.ASSET_COMPLETE, this._onAssetCompleteDelegate);
+            if (dependency.request && dependency.request.url)
+                parser._iFileName = dependency.request.url;
+            parser.materialMode = this._materialMode;
+            parser.parseAsync(dependency.data);
+        }
+        else {
+            var handled;
+            var message = "No parser defined. To enable all parsers for auto-detection, use Parsers.enableAllBundled()";
+            var event = new ParserEvent(ParserEvent.PARSE_ERROR, message);
+            if (this.hasEventListener(ParserEvent.PARSE_ERROR)) {
+                this.dispatchEvent(event);
+                handled = true;
+            }
+            else {
+                // TODO: Consider not doing this even when LoaderSession does
+                // have it's own LOAD_ERROR listener
+                var i, len = this._parseErrorHandlers.length;
+                for (i = 0; i < len; i++)
+                    if (!handled)
+                        handled = this._parseErrorHandlers[i](event);
+            }
+            if (handled) {
+                this.retrieveNext();
+            }
+            else {
+                throw new Error(message);
+            }
+        }
+    };
+    /**
+     * Guesses the parser to be used based on the file extension.
+     * @return An instance of the guessed parser.
+     */
+    LoaderSession.prototype.getParserFromSuffix = function (url) {
+        // Get rid of query string if any and extract extension
+        var base = (url.indexOf('?') > 0) ? url.split('?')[0] : url;
+        var fileExtension = base.substr(base.lastIndexOf('.') + 1).toLowerCase();
+        var len = LoaderSession._parsers.length;
+        for (var i = len - 1; i >= 0; i--) {
+            var parserClass = LoaderSession._parsers[i];
+            if (parserClass.supportsType(fileExtension))
+                return new parserClass();
+        }
+        return null;
+    };
+    // Image parser only parser that is added by default, to save file size.
+    LoaderSession._parsers = new Array(Image2DParser, ImageCubeParser, TextureAtlasParser, WaveAudioParser);
+    return LoaderSession;
+})(EventDispatcher);
+module.exports = LoaderSession;
+
+},{"awayjs-core/lib/errors/Error":"awayjs-core/lib/errors/Error","awayjs-core/lib/events/AssetEvent":"awayjs-core/lib/events/AssetEvent","awayjs-core/lib/events/Event":"awayjs-core/lib/events/Event","awayjs-core/lib/events/EventDispatcher":"awayjs-core/lib/events/EventDispatcher","awayjs-core/lib/events/IOErrorEvent":"awayjs-core/lib/events/IOErrorEvent","awayjs-core/lib/events/LoaderEvent":"awayjs-core/lib/events/LoaderEvent","awayjs-core/lib/events/ParserEvent":"awayjs-core/lib/events/ParserEvent","awayjs-core/lib/net/URLLoader":"awayjs-core/lib/net/URLLoader","awayjs-core/lib/net/URLLoaderDataFormat":"awayjs-core/lib/net/URLLoaderDataFormat","awayjs-core/lib/parsers/Image2DParser":"awayjs-core/lib/parsers/Image2DParser","awayjs-core/lib/parsers/ImageCubeParser":"awayjs-core/lib/parsers/ImageCubeParser","awayjs-core/lib/parsers/ResourceDependency":"awayjs-core/lib/parsers/ResourceDependency","awayjs-core/lib/parsers/TextureAtlasParser":"awayjs-core/lib/parsers/TextureAtlasParser","awayjs-core/lib/parsers/WaveAudioParser":"awayjs-core/lib/parsers/WaveAudioParser"}],"awayjs-core/lib/library/NumSuffixConflictStrategy":[function(require,module,exports){
 var __extends = this.__extends || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
@@ -10013,10 +9810,10 @@ var AwayProgressEvent = require("awayjs-core/lib/events/ProgressEvent");
  * The URLLoader is used to load a single file, as part of a resource.
  *
  * While URLLoader can be used directly, e.g. to create a third-party asset
- * management system, it's recommended to use any of the classes Loader3D, AssetLoader
+ * management system, it's recommended to use any of the classes Loader3D, LoaderSession
  * and AssetLibrary instead in most cases.
  *
- * @see AssetLoader
+ * @see LoaderSession
  * @see away.library.AssetLibrary
  */
 var URLLoader = (function (_super) {
@@ -10748,7 +10545,7 @@ var getTimer = require("awayjs-core/lib/utils/getTimer");
  * <code>ParserBase</code> provides an abstract base class for objects that convert blocks of data to data structures
  * supported by away.
  *
- * If used by <code>AssetLoader</code> to automatically determine the parser type, two public static methods should
+ * If used by <code>LoaderSession</code> to automatically determine the parser type, two public static methods should
  * be implemented, with the following signatures:
  *
  * <code>public static supportsType(extension : string) : boolean</code>
@@ -10761,7 +10558,7 @@ var getTimer = require("awayjs-core/lib/utils/getTimer");
  * create the object that will contain the parsed data. This allows <code>ResourceManager</code> to return an object
  * handle regardless of whether the object was loaded or not.
  *
- * @see AssetLoader
+ * @see LoaderSession
  */
 var ParserBase = (function (_super) {
     __extends(ParserBase, _super);

@@ -38,6 +38,7 @@ declare module "awayjs-core/lib/attributes/AttributesBuffer" {
 	     */
 	    invalidateLength(): void;
 	    clone(): AttributesBuffer;
+	    getView(index: number): AttributesView;
 	    /**
 	     * @inheritDoc
 	     */

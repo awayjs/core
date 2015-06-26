@@ -125,6 +125,11 @@ var AttributesBuffer = (function (_super) {
             this._viewVOs[i].view._internalClone(attributesBuffer);
         return attributesBuffer;
     };
+    AttributesBuffer.prototype.getView = function (index) {
+        if (index < this._viewVOs.length)
+            return this._viewVOs[index].view;
+        return null;
+    };
     /**
      * @inheritDoc
      */

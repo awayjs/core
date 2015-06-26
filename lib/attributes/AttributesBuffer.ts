@@ -150,6 +150,14 @@ class AttributesBuffer extends AssetBase implements IAsset
 		return attributesBuffer;
 	}
 
+	public getView(index:number):AttributesView
+	{
+		if (index < this._viewVOs.length)
+			return this._viewVOs[index].view;
+
+		return null;
+	}
+
 	/**
 	 * @inheritDoc
 	 */

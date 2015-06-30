@@ -179,6 +179,11 @@ class Vector3D
 		return new Vector3D(this.x, this.y, this.z, this.w);
 	}
 
+	public static combine(a:Vector3D, b:Vector3D, ascl:number, bscl:number):Vector3D
+	{
+		return new Vector3D(a.x*ascl + b.x*bscl, a.y*ascl + b.y*bscl, a.z*ascl + b.z*bscl);
+	}
+
 	/**
 	 * Copies all of vector data from the source Vector3D object into the
 	 * calling Vector3D object.

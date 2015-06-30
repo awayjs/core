@@ -4953,8 +4953,13 @@ var Matrix3D = (function () {
      * Appends an incremental rotation to a Matrix3D object.
      */
     Matrix3D.prototype.appendRotation = function (degrees, axis) {
-        var m = Matrix3D.getAxisRotation(axis.x, axis.y, axis.z, degrees);
-        this.append(m);
+        this.append(Matrix3D.getAxisRotation(axis.x, axis.y, axis.z, degrees));
+    };
+    /**
+     * Appends an incremental skew change along the x, y, and z axes to a Matrix3D object.
+     */
+    Matrix3D.prototype.appendSkew = function (xSkew, ySkew, zSkew) {
+        this.append(new Matrix3D([1.0, 0.0, 0.0, 0.0, xSkew, 1.0, 0.0, 0.0, ySkew, zSkew, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0]));
     };
     /**
      * Appends an incremental scale change along the x, y, and z axes to a Matrix3D object.
@@ -5152,78 +5157,92 @@ var Matrix3D = (function () {
         var q;
         // Initial Tests - Not OK
         var vec = [];
-        var m = this.clone();
-        var mr = m.rawData;
-        var pos = new Vector3D(mr[12], mr[13], mr[14]);
-        mr[12] = 0;
-        mr[13] = 0;
-        mr[14] = 0;
+        var colX = new Vector3D(this.rawData[0], this.rawData[1], this.rawData[2]);
+        var colY = new Vector3D(this.rawData[4], this.rawData[5], this.rawData[6]);
+        var colZ = new Vector3D(this.rawData[8], this.rawData[9], this.rawData[10]);
+        var pos = new Vector3D(this.rawData[12], this.rawData[13], this.rawData[14]);
         var scale = new Vector3D();
-        scale.x = Math.sqrt(mr[0] * mr[0] + mr[1] * mr[1] + mr[2] * mr[2]);
-        scale.y = Math.sqrt(mr[4] * mr[4] + mr[5] * mr[5] + mr[6] * mr[6]);
-        scale.z = Math.sqrt(mr[8] * mr[8] + mr[9] * mr[9] + mr[10] * mr[10]);
-        if (mr[0] * (mr[5] * mr[10] - mr[6] * mr[9]) - mr[1] * (mr[4] * mr[10] - mr[6] * mr[8]) + mr[2] * (mr[4] * mr[9] - mr[5] * mr[8]) < 0)
+        var skew = new Vector3D();
+        //compute X scale factor and normalise colX
+        scale.x = colX.length;
+        colX.scaleBy(1 / scale.x);
+        //compute XY shear factor and make colY orthogonal to colX
+        skew.x = colX.dotProduct(colY);
+        colY = Vector3D.combine(colY, colX, 1, -skew.x);
+        //compute Y scale factor and normalise colY
+        scale.y = colY.length;
+        colY.scaleBy(1 / scale.y);
+        skew.x /= scale.y;
+        //compute XZ and YZ shears and make colZ orthogonal to colX and colY
+        skew.y = colX.dotProduct(colZ);
+        colZ = Vector3D.combine(colZ, colX, 1, -skew.y);
+        skew.z = colY.dotProduct(colZ);
+        colZ = Vector3D.combine(colZ, colY, 1, -skew.z);
+        //compute Z scale and normalise colZ
+        scale.z = colZ.length;
+        colZ.scaleBy(1 / scale.z);
+        skew.y /= scale.z;
+        skew.z /= scale.z;
+        //at this point, the matrix (in cols) is orthonormal
+        //check for a coordinate system flip. If the determinant is -1, negate the z scaling factor
+        if (colX.dotProduct(colY.crossProduct(colZ)) < 0) {
             scale.z = -scale.z;
-        mr[0] /= scale.x;
-        mr[1] /= scale.x;
-        mr[2] /= scale.x;
-        mr[4] /= scale.y;
-        mr[5] /= scale.y;
-        mr[6] /= scale.y;
-        mr[8] /= scale.z;
-        mr[9] /= scale.z;
-        mr[10] /= scale.z;
+            colZ.x = -colZ.x;
+            colZ.y = -colZ.y;
+            colZ.z = -colZ.z;
+        }
         var rot = new Vector3D();
         switch (orientationStyle) {
             case Orientation3D.AXIS_ANGLE:
-                rot.w = Math.acos((mr[0] + mr[5] + mr[10] - 1) / 2);
-                var len = Math.sqrt((mr[6] - mr[9]) * (mr[6] - mr[9]) + (mr[8] - mr[2]) * (mr[8] - mr[2]) + (mr[1] - mr[4]) * (mr[1] - mr[4]));
-                rot.x = (mr[6] - mr[9]) / len;
-                rot.y = (mr[8] - mr[2]) / len;
-                rot.z = (mr[1] - mr[4]) / len;
+                rot.w = Math.acos((colX.x + colY.y + colZ.z - 1) / 2);
+                var len = Math.sqrt((colY.z - colZ.y) * (colY.z - colZ.y) + (colZ.x - colX.z) * (colZ.x - colX.z) + (colX.y - colY.x) * (colX.y - colY.x));
+                rot.x = (colY.z - colZ.y) / len;
+                rot.y = (colZ.x - colX.z) / len;
+                rot.z = (colX.y - colY.x) / len;
                 break;
             case Orientation3D.QUATERNION:
-                var tr = mr[0] + mr[5] + mr[10];
+                var tr = colX.x + colY.y + colZ.z;
                 if (tr > 0) {
                     rot.w = Math.sqrt(1 + tr) / 2;
-                    rot.x = (mr[6] - mr[9]) / (4 * rot.w);
-                    rot.y = (mr[8] - mr[2]) / (4 * rot.w);
-                    rot.z = (mr[1] - mr[4]) / (4 * rot.w);
+                    rot.x = (colY.z - colZ.y) / (4 * rot.w);
+                    rot.y = (colZ.x - colX.z) / (4 * rot.w);
+                    rot.z = (colX.y - colY.x) / (4 * rot.w);
                 }
-                else if ((mr[0] > mr[5]) && (mr[0] > mr[10])) {
-                    rot.x = Math.sqrt(1 + mr[0] - mr[5] - mr[10]) / 2;
-                    rot.w = (mr[6] - mr[9]) / (4 * rot.x);
-                    rot.y = (mr[1] + mr[4]) / (4 * rot.x);
-                    rot.z = (mr[8] + mr[2]) / (4 * rot.x);
+                else if ((colX.x > colY.y) && (colX.x > colZ.z)) {
+                    rot.x = Math.sqrt(1 + colX.x - colY.y - colZ.z) / 2;
+                    rot.w = (colY.z - colZ.y) / (4 * rot.x);
+                    rot.y = (colX.y + colY.x) / (4 * rot.x);
+                    rot.z = (colZ.x + colX.z) / (4 * rot.x);
                 }
-                else if (mr[5] > mr[10]) {
-                    rot.y = Math.sqrt(1 + mr[5] - mr[0] - mr[10]) / 2;
-                    rot.x = (mr[1] + mr[4]) / (4 * rot.y);
-                    rot.w = (mr[8] - mr[2]) / (4 * rot.y);
-                    rot.z = (mr[6] + mr[9]) / (4 * rot.y);
+                else if (colY.y > colZ.z) {
+                    rot.y = Math.sqrt(1 + colY.y - colX.x - colZ.z) / 2;
+                    rot.x = (colX.y + colY.x) / (4 * rot.y);
+                    rot.w = (colZ.x - colX.z) / (4 * rot.y);
+                    rot.z = (colY.z + colZ.y) / (4 * rot.y);
                 }
                 else {
-                    rot.z = Math.sqrt(1 + mr[10] - mr[0] - mr[5]) / 2;
-                    rot.x = (mr[8] + mr[2]) / (4 * rot.z);
-                    rot.y = (mr[6] + mr[9]) / (4 * rot.z);
-                    rot.w = (mr[1] - mr[4]) / (4 * rot.z);
+                    rot.z = Math.sqrt(1 + colZ.z - colX.x - colY.y) / 2;
+                    rot.x = (colZ.x + colX.z) / (4 * rot.z);
+                    rot.y = (colY.z + colZ.y) / (4 * rot.z);
+                    rot.w = (colX.y - colY.x) / (4 * rot.z);
                 }
                 break;
             case Orientation3D.EULER_ANGLES:
-                rot.y = Math.asin(-mr[2]);
+                rot.y = Math.asin(-colX.z);
                 //var cos:number = Math.cos(rot.y);
-                if (mr[2] != 1 && mr[2] != -1) {
-                    rot.x = Math.atan2(mr[6], mr[10]);
-                    rot.z = Math.atan2(mr[1], mr[0]);
+                if (colX.z != 1 && colX.z != -1) {
+                    rot.x = Math.atan2(colY.z, colZ.z);
+                    rot.z = Math.atan2(colX.y, colX.x);
                 }
                 else {
                     rot.z = 0;
-                    rot.x = Math.atan2(mr[4], mr[5]);
+                    rot.x = Math.atan2(colY.x, colY.y);
                 }
                 break;
         }
         vec.push(pos);
         vec.push(rot);
+        vec.push(skew);
         vec.push(scale);
         return vec;
     };
@@ -5364,12 +5383,11 @@ var Matrix3D = (function () {
      * Sets the transformation matrix's translation, rotation, and scale settings.
      */
     Matrix3D.prototype.recompose = function (components) {
-        // Initial Tests - OK
         if (components.length < 3)
             return false;
-        //components[2].x == 0 || components[2].y == 0 || components[2].z == 0) return false;
         this.identity();
-        this.appendScale(components[2].x, components[2].y, components[2].z);
+        this.appendScale(components[3].x, components[3].y, components[3].z);
+        this.appendSkew(components[2].x, components[2].y, components[2].z);
         var angle;
         angle = -components[1].x;
         this.append(new Matrix3D([1, 0, 0, 0, 0, Math.cos(angle), -Math.sin(angle), 0, 0, Math.sin(angle), Math.cos(angle), 0, 0, 0, 0, 0]));
@@ -7608,6 +7626,9 @@ var Vector3D = (function () {
      */
     Vector3D.prototype.clone = function () {
         return new Vector3D(this.x, this.y, this.z, this.w);
+    };
+    Vector3D.combine = function (a, b, ascl, bscl) {
+        return new Vector3D(a.x * ascl + b.x * bscl, a.y * ascl + b.y * bscl, a.z * ascl + b.z * bscl);
     };
     /**
      * Copies all of vector data from the source Vector3D object into the

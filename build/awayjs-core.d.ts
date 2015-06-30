@@ -2089,113 +2089,6 @@ declare module "awayjs-core/lib/events/Event" {
 	
 }
 
-declare module "awayjs-core/lib/events/EventDispatcher" {
-	import Event = require("awayjs-core/lib/events/Event");
-	/**
-	 * Base class for dispatching events
-	*
-	* @class away.events.EventDispatcher
-	*
-	*/
-	class EventDispatcher {
-	    private listeners;
-	    private target;
-	    constructor(target?: any);
-	    /**
-	     * Add an event listener
-	     * @method addEventListener
-	     * @param {String} Name of event to add a listener for
-	     * @param {Function} Callback function
-	     */
-	    addEventListener(type: string, listener: Function): void;
-	    /**
-	     * Remove an event listener
-	     * @method removeEventListener
-	     * @param {String} Name of event to remove a listener for
-	     * @param {Function} Callback function
-	     */
-	    removeEventListener(type: string, listener: Function): void;
-	    /**
-	     * Dispatch an event
-	     * @method dispatchEvent
-	     * @param {Event} Event to dispatch
-	     */
-	    dispatchEvent(event: Event): void;
-	    /**
-	     * get Event Listener Index in array. Returns -1 if no listener is added
-	     * @method getEventListenerIndex
-	     * @param {String} Name of event to remove a listener for
-	     * @param {Function} Callback function
-	     */
-	    private getEventListenerIndex(type, listener);
-	    /**
-	     * check if an object has an event listener assigned to it
-	     * @method hasListener
-	     * @param {String} Name of event to remove a listener for
-	     * @param {Function} Callback function
-	     */
-	    hasEventListener(type: string, listener?: Function): boolean;
-	}
-	export = EventDispatcher;
-	
-}
-
-declare module "awayjs-core/lib/events/HTTPStatusEvent" {
-	import Event = require("awayjs-core/lib/events/Event");
-	/**
-	 * @class away.events.HTTPStatusEvent
-	 */
-	class HTTPStatusEvent extends Event {
-	    static HTTP_STATUS: string;
-	    status: number;
-	    constructor(type: string, status?: number);
-	}
-	export = HTTPStatusEvent;
-	
-}
-
-declare module "awayjs-core/lib/events/IEventDispatcher" {
-	import Event = require("awayjs-core/lib/events/Event");
-	/**
-	 * Base interface for dispatching events
-	 *
-	 * @interface away.events.IEventDispatcher
-	 *
-	 */
-	interface IEventDispatcher {
-	    /**
-	     * Add an event listener
-	     * @method addEventListener
-	     * @param {String} Name of event to add a listener for
-	     * @param {Function} Callback function
-	     */
-	    addEventListener(type: string, listener: Function): any;
-	    /**
-	     * Remove an event listener
-	     * @method removeEventListener
-	     * @param {String} Name of event to remove a listener for
-	     * @param {Function} Callback function
-	     */
-	    removeEventListener(type: string, listener: Function): any;
-	    /**
-	     * Dispatch an event
-	     * @method dispatchEvent
-	     * @param {Event} Event to dispatch
-	     */
-	    dispatchEvent(event: Event): any;
-	    /**
-	     * check if an object has an event listener assigned to it
-	     * @method hasListener
-	     * @param {String} Name of event to remove a listener for
-	     * @param {Function} Callback function
-	     * @param {Object} Target object listener is added to
-	     */
-	    hasEventListener(type: string, listener?: Function): boolean;
-	}
-	export = IEventDispatcher;
-	
-}
-
 declare module "awayjs-core/lib/events/IOErrorEvent" {
 	import Event = require("awayjs-core/lib/events/Event");
 	class IOErrorEvent extends Event {
@@ -2274,6 +2167,113 @@ declare module "awayjs-core/lib/events/ParserEvent" {
 	    clone(): Event;
 	}
 	export = ParserEvent;
+	
+}
+
+declare module "awayjs-core/lib/events/IEventDispatcher" {
+	import Event = require("awayjs-core/lib/events/Event");
+	/**
+	 * Base interface for dispatching events
+	 *
+	 * @interface away.events.IEventDispatcher
+	 *
+	 */
+	interface IEventDispatcher {
+	    /**
+	     * Add an event listener
+	     * @method addEventListener
+	     * @param {String} Name of event to add a listener for
+	     * @param {Function} Callback function
+	     */
+	    addEventListener(type: string, listener: Function): any;
+	    /**
+	     * Remove an event listener
+	     * @method removeEventListener
+	     * @param {String} Name of event to remove a listener for
+	     * @param {Function} Callback function
+	     */
+	    removeEventListener(type: string, listener: Function): any;
+	    /**
+	     * Dispatch an event
+	     * @method dispatchEvent
+	     * @param {Event} Event to dispatch
+	     */
+	    dispatchEvent(event: Event): any;
+	    /**
+	     * check if an object has an event listener assigned to it
+	     * @method hasListener
+	     * @param {String} Name of event to remove a listener for
+	     * @param {Function} Callback function
+	     * @param {Object} Target object listener is added to
+	     */
+	    hasEventListener(type: string, listener?: Function): boolean;
+	}
+	export = IEventDispatcher;
+	
+}
+
+declare module "awayjs-core/lib/events/HTTPStatusEvent" {
+	import Event = require("awayjs-core/lib/events/Event");
+	/**
+	 * @class away.events.HTTPStatusEvent
+	 */
+	class HTTPStatusEvent extends Event {
+	    static HTTP_STATUS: string;
+	    status: number;
+	    constructor(type: string, status?: number);
+	}
+	export = HTTPStatusEvent;
+	
+}
+
+declare module "awayjs-core/lib/events/EventDispatcher" {
+	import Event = require("awayjs-core/lib/events/Event");
+	/**
+	 * Base class for dispatching events
+	*
+	* @class away.events.EventDispatcher
+	*
+	*/
+	class EventDispatcher {
+	    private listeners;
+	    private target;
+	    constructor(target?: any);
+	    /**
+	     * Add an event listener
+	     * @method addEventListener
+	     * @param {String} Name of event to add a listener for
+	     * @param {Function} Callback function
+	     */
+	    addEventListener(type: string, listener: Function): void;
+	    /**
+	     * Remove an event listener
+	     * @method removeEventListener
+	     * @param {String} Name of event to remove a listener for
+	     * @param {Function} Callback function
+	     */
+	    removeEventListener(type: string, listener: Function): void;
+	    /**
+	     * Dispatch an event
+	     * @method dispatchEvent
+	     * @param {Event} Event to dispatch
+	     */
+	    dispatchEvent(event: Event): void;
+	    /**
+	     * get Event Listener Index in array. Returns -1 if no listener is added
+	     * @method getEventListenerIndex
+	     * @param {String} Name of event to remove a listener for
+	     * @param {Function} Callback function
+	     */
+	    private getEventListenerIndex(type, listener);
+	    /**
+	     * check if an object has an event listener assigned to it
+	     * @method hasListener
+	     * @param {String} Name of event to remove a listener for
+	     * @param {Function} Callback function
+	     */
+	    hasEventListener(type: string, listener?: Function): boolean;
+	}
+	export = EventDispatcher;
 	
 }
 
@@ -3212,6 +3212,10 @@ declare module "awayjs-core/lib/geom/Matrix3D" {
 	     * Appends an incremental rotation to a Matrix3D object.
 	     */
 	    appendRotation(degrees: number, axis: Vector3D): void;
+	    /**
+	     * Appends an incremental skew change along the x, y, and z axes to a Matrix3D object.
+	     */
+	    appendSkew(xSkew: number, ySkew: number, zSkew: number): void;
 	    /**
 	     * Appends an incremental scale change along the x, y, and z axes to a Matrix3D object.
 	     */
@@ -4445,6 +4449,7 @@ declare module "awayjs-core/lib/geom/Vector3D" {
 	     * Vector3D object.
 	     */
 	    clone(): Vector3D;
+	    static combine(a: Vector3D, b: Vector3D, ascl: number, bscl: number): Vector3D;
 	    /**
 	     * Copies all of vector data from the source Vector3D object into the
 	     * calling Vector3D object.

@@ -406,7 +406,7 @@ declare module "awayjs-core/lib/data/BitmapImage2D" {
 	     *                    bitmap image area. The default value is
 	     *                    0xFFFFFFFF(solid white).
 	     */
-	    constructor(width: number, height: number, transparent?: boolean, fillColor?: number);
+	    constructor(width: number, height: number, transparent?: boolean, fillColor?: number, powerOfTwo?: boolean);
 	    /**
 	     * Returns a new BitmapImage2D object that is a clone of the original instance
 	     * with an exact copy of the contained bitmap.
@@ -1488,6 +1488,7 @@ declare module "awayjs-core/lib/data/Image2D" {
 	class Image2D extends ImageBase {
 	    static assetType: string;
 	    _rect: Rectangle;
+	    private _powerOfTwo;
 	    /**
 	     *
 	     * @returns {string}
@@ -1510,7 +1511,7 @@ declare module "awayjs-core/lib/data/Image2D" {
 	    /**
 	     *
 	     */
-	    constructor(width: number, height: number);
+	    constructor(width: number, height: number, powerOfTwo?: boolean);
 	    /**
 	     *
 	     * @param width
@@ -1523,6 +1524,11 @@ declare module "awayjs-core/lib/data/Image2D" {
 	     * @private
 	     */
 	    private _testDimensions();
+	    /**
+	     * Enable POT texture size validation
+	     * @returns {boolean}
+	     */
+	    powerOfTwo: boolean;
 	}
 	export = Image2D;
 	
@@ -2089,6 +2095,113 @@ declare module "awayjs-core/lib/events/Event" {
 	
 }
 
+declare module "awayjs-core/lib/events/EventDispatcher" {
+	import Event = require("awayjs-core/lib/events/Event");
+	/**
+	 * Base class for dispatching events
+	*
+	* @class away.events.EventDispatcher
+	*
+	*/
+	class EventDispatcher {
+	    private listeners;
+	    private target;
+	    constructor(target?: any);
+	    /**
+	     * Add an event listener
+	     * @method addEventListener
+	     * @param {String} Name of event to add a listener for
+	     * @param {Function} Callback function
+	     */
+	    addEventListener(type: string, listener: Function): void;
+	    /**
+	     * Remove an event listener
+	     * @method removeEventListener
+	     * @param {String} Name of event to remove a listener for
+	     * @param {Function} Callback function
+	     */
+	    removeEventListener(type: string, listener: Function): void;
+	    /**
+	     * Dispatch an event
+	     * @method dispatchEvent
+	     * @param {Event} Event to dispatch
+	     */
+	    dispatchEvent(event: Event): void;
+	    /**
+	     * get Event Listener Index in array. Returns -1 if no listener is added
+	     * @method getEventListenerIndex
+	     * @param {String} Name of event to remove a listener for
+	     * @param {Function} Callback function
+	     */
+	    private getEventListenerIndex(type, listener);
+	    /**
+	     * check if an object has an event listener assigned to it
+	     * @method hasListener
+	     * @param {String} Name of event to remove a listener for
+	     * @param {Function} Callback function
+	     */
+	    hasEventListener(type: string, listener?: Function): boolean;
+	}
+	export = EventDispatcher;
+	
+}
+
+declare module "awayjs-core/lib/events/HTTPStatusEvent" {
+	import Event = require("awayjs-core/lib/events/Event");
+	/**
+	 * @class away.events.HTTPStatusEvent
+	 */
+	class HTTPStatusEvent extends Event {
+	    static HTTP_STATUS: string;
+	    status: number;
+	    constructor(type: string, status?: number);
+	}
+	export = HTTPStatusEvent;
+	
+}
+
+declare module "awayjs-core/lib/events/IEventDispatcher" {
+	import Event = require("awayjs-core/lib/events/Event");
+	/**
+	 * Base interface for dispatching events
+	 *
+	 * @interface away.events.IEventDispatcher
+	 *
+	 */
+	interface IEventDispatcher {
+	    /**
+	     * Add an event listener
+	     * @method addEventListener
+	     * @param {String} Name of event to add a listener for
+	     * @param {Function} Callback function
+	     */
+	    addEventListener(type: string, listener: Function): any;
+	    /**
+	     * Remove an event listener
+	     * @method removeEventListener
+	     * @param {String} Name of event to remove a listener for
+	     * @param {Function} Callback function
+	     */
+	    removeEventListener(type: string, listener: Function): any;
+	    /**
+	     * Dispatch an event
+	     * @method dispatchEvent
+	     * @param {Event} Event to dispatch
+	     */
+	    dispatchEvent(event: Event): any;
+	    /**
+	     * check if an object has an event listener assigned to it
+	     * @method hasListener
+	     * @param {String} Name of event to remove a listener for
+	     * @param {Function} Callback function
+	     * @param {Object} Target object listener is added to
+	     */
+	    hasEventListener(type: string, listener?: Function): boolean;
+	}
+	export = IEventDispatcher;
+	
+}
+
 declare module "awayjs-core/lib/events/IOErrorEvent" {
 	import Event = require("awayjs-core/lib/events/Event");
 	class IOErrorEvent extends Event {
@@ -2167,113 +2280,6 @@ declare module "awayjs-core/lib/events/ParserEvent" {
 	    clone(): Event;
 	}
 	export = ParserEvent;
-	
-}
-
-declare module "awayjs-core/lib/events/IEventDispatcher" {
-	import Event = require("awayjs-core/lib/events/Event");
-	/**
-	 * Base interface for dispatching events
-	 *
-	 * @interface away.events.IEventDispatcher
-	 *
-	 */
-	interface IEventDispatcher {
-	    /**
-	     * Add an event listener
-	     * @method addEventListener
-	     * @param {String} Name of event to add a listener for
-	     * @param {Function} Callback function
-	     */
-	    addEventListener(type: string, listener: Function): any;
-	    /**
-	     * Remove an event listener
-	     * @method removeEventListener
-	     * @param {String} Name of event to remove a listener for
-	     * @param {Function} Callback function
-	     */
-	    removeEventListener(type: string, listener: Function): any;
-	    /**
-	     * Dispatch an event
-	     * @method dispatchEvent
-	     * @param {Event} Event to dispatch
-	     */
-	    dispatchEvent(event: Event): any;
-	    /**
-	     * check if an object has an event listener assigned to it
-	     * @method hasListener
-	     * @param {String} Name of event to remove a listener for
-	     * @param {Function} Callback function
-	     * @param {Object} Target object listener is added to
-	     */
-	    hasEventListener(type: string, listener?: Function): boolean;
-	}
-	export = IEventDispatcher;
-	
-}
-
-declare module "awayjs-core/lib/events/HTTPStatusEvent" {
-	import Event = require("awayjs-core/lib/events/Event");
-	/**
-	 * @class away.events.HTTPStatusEvent
-	 */
-	class HTTPStatusEvent extends Event {
-	    static HTTP_STATUS: string;
-	    status: number;
-	    constructor(type: string, status?: number);
-	}
-	export = HTTPStatusEvent;
-	
-}
-
-declare module "awayjs-core/lib/events/EventDispatcher" {
-	import Event = require("awayjs-core/lib/events/Event");
-	/**
-	 * Base class for dispatching events
-	*
-	* @class away.events.EventDispatcher
-	*
-	*/
-	class EventDispatcher {
-	    private listeners;
-	    private target;
-	    constructor(target?: any);
-	    /**
-	     * Add an event listener
-	     * @method addEventListener
-	     * @param {String} Name of event to add a listener for
-	     * @param {Function} Callback function
-	     */
-	    addEventListener(type: string, listener: Function): void;
-	    /**
-	     * Remove an event listener
-	     * @method removeEventListener
-	     * @param {String} Name of event to remove a listener for
-	     * @param {Function} Callback function
-	     */
-	    removeEventListener(type: string, listener: Function): void;
-	    /**
-	     * Dispatch an event
-	     * @method dispatchEvent
-	     * @param {Event} Event to dispatch
-	     */
-	    dispatchEvent(event: Event): void;
-	    /**
-	     * get Event Listener Index in array. Returns -1 if no listener is added
-	     * @method getEventListenerIndex
-	     * @param {String} Name of event to remove a listener for
-	     * @param {Function} Callback function
-	     */
-	    private getEventListenerIndex(type, listener);
-	    /**
-	     * check if an object has an event listener assigned to it
-	     * @method hasListener
-	     * @param {String} Name of event to remove a listener for
-	     * @param {Function} Callback function
-	     */
-	    hasEventListener(type: string, listener?: Function): boolean;
-	}
-	export = EventDispatcher;
 	
 }
 
@@ -5265,15 +5271,6 @@ declare module "awayjs-core/lib/library/IDUtil" {
 	
 }
 
-declare module "awayjs-core/lib/library/IWrapperClass" {
-	import IAssetClass = require("awayjs-core/lib/library/IAssetClass");
-	interface IWrapperClass {
-	    assetClass: IAssetClass;
-	}
-	export = IWrapperClass;
-	
-}
-
 declare module "awayjs-core/lib/library/IgnoreConflictStrategy" {
 	import ConflictStrategyBase = require("awayjs-core/lib/library/ConflictStrategyBase");
 	import IAsset = require("awayjs-core/lib/library/IAsset");
@@ -5283,6 +5280,15 @@ declare module "awayjs-core/lib/library/IgnoreConflictStrategy" {
 	    create(): ConflictStrategyBase;
 	}
 	export = IgnoreConflictStrategy;
+	
+}
+
+declare module "awayjs-core/lib/library/IWrapperClass" {
+	import IAssetClass = require("awayjs-core/lib/library/IAssetClass");
+	interface IWrapperClass {
+	    assetClass: IAssetClass;
+	}
+	export = IWrapperClass;
 	
 }
 
@@ -7531,6 +7537,21 @@ declare module "awayjs-core/lib/utils/ByteArrayBuffer" {
 	
 }
 
+declare module "awayjs-core/lib/utils/ColorUtils" {
+	/**
+	 *
+	 */
+	class ColorUtils {
+	    static float32ColorToARGB(float32Color: number): number[];
+	    static ARGBtoFloat32(a: number, r: number, g: number, b: number): number;
+	    private static componentToHex(c);
+	    static RGBToHexString(argb: number[]): string;
+	    static ARGBToHexString(argb: number[]): string;
+	}
+	export = ColorUtils;
+	
+}
+
 declare module "awayjs-core/lib/utils/CSS" {
 	class CSS {
 	    static setElementSize(element: HTMLElement, width: number, height: number): void;
@@ -7544,20 +7565,6 @@ declare module "awayjs-core/lib/utils/CSS" {
 	    static setElementPosition(element: HTMLElement, x: number, y: number, absolute?: boolean): void;
 	}
 	export = CSS;
-	
-}
-
-declare module "awayjs-core/lib/utils/ColorUtils" {
-	/**
-	 *
-	 */
-	class ColorUtils {
-	    static float32ColorToARGB(float32Color: number): number[];
-	    private static componentToHex(c);
-	    static RGBToHexString(argb: number[]): string;
-	    static ARGBToHexString(argb: number[]): string;
-	}
-	export = ColorUtils;
 	
 }
 
@@ -7577,6 +7584,17 @@ declare module "awayjs-core/lib/utils/Debug" {
 	    static log(...args: any[]): void;
 	}
 	export = Debug;
+	
+}
+
+declare module "awayjs-core/lib/utils/getTimer" {
+	/**
+	 *
+	 *
+	 * @returns {number}
+	 */
+	function getTimer(): number;
+	export = getTimer;
 	
 }
 
@@ -7704,17 +7722,6 @@ declare module "awayjs-core/lib/utils/XmlUtils" {
 	    static hasAttribute(node: Node, attrName: string): boolean;
 	}
 	export = XmlUtils;
-	
-}
-
-declare module "awayjs-core/lib/utils/getTimer" {
-	/**
-	 *
-	 *
-	 * @returns {number}
-	 */
-	function getTimer(): number;
-	export = getTimer;
 	
 }
 

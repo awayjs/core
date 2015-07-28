@@ -4596,6 +4596,9 @@ var ColorTransform = (function (_super) {
         this._blueOffset = 0;
         this._alphaOffset = 0;
     };
+    ColorTransform.prototype.clone = function () {
+        return new ColorTransform(this._redMultiplier, this._greenMultiplier, this._blueMultiplier, this._alphaMultiplier, this._redOffset, this._greenOffset, this._blueOffset, this._alphaOffset);
+    };
     ColorTransform.prototype.copyFrom = function (source) {
         this._redMultiplier = source.redMultiplier;
         this._greenMultiplier = source.greenMultiplier;
@@ -4605,6 +4608,9 @@ var ColorTransform = (function (_super) {
         this._greenOffset = source.greenOffset;
         this._blueOffset = source.blueOffset;
         this._alphaOffset = source.alphaOffset;
+    };
+    ColorTransform.prototype.copyTo = function (destination) {
+        destination.copyFrom(this);
     };
     ColorTransform.prototype._invalidate = function () {
         this.dispatchEvent(this._changeEvent);

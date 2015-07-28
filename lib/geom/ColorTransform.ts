@@ -246,6 +246,7 @@ class ColorTransform extends EventDispatcher
 	constructor(redMultiplier:number = 1, greenMultiplier:number = 1, blueMultiplier:number = 1, alphaMultiplier:number = 1, redOffset:number = 0, greenOffset:number = 0, blueOffset:number = 0, alphaOffset:number = 0)
 	{
         super();
+
 		this._redMultiplier = redMultiplier;
 		this._greenMultiplier = greenMultiplier;
 		this._blueMultiplier = blueMultiplier;
@@ -268,6 +269,11 @@ class ColorTransform extends EventDispatcher
         this._alphaOffset = 0;
     }
 
+    public clone():ColorTransform
+    {
+        return new ColorTransform(this._redMultiplier, this._greenMultiplier, this._blueMultiplier, this._alphaMultiplier, this._redOffset, this._greenOffset, this._blueOffset, this._alphaOffset);
+    }
+
     public copyFrom(source:ColorTransform)
     {
         this._redMultiplier = source.redMultiplier;
@@ -278,6 +284,11 @@ class ColorTransform extends EventDispatcher
         this._greenOffset = source.greenOffset;
         this._blueOffset = source.blueOffset;
         this._alphaOffset = source.alphaOffset;
+    }
+
+    public copyTo(destination:ColorTransform)
+    {
+        destination.copyFrom(this);
     }
 
     private _invalidate()

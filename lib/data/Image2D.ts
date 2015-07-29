@@ -8,6 +8,8 @@ class Image2D extends ImageBase
 
 	public _rect:Rectangle;
 
+	private _powerOfTwo:boolean = true;
+
 	/**
 	 *
 	 * @returns {string}
@@ -62,12 +64,12 @@ class Image2D extends ImageBase
 	/**
 	 *
 	 */
-	constructor(width:number, height:number)
+	constructor(width:number, height:number, powerOfTwo:boolean = true)
 	{
 		super();
 
 		this._rect = new Rectangle(0, 0, width, height);
-
+		this._powerOfTwo = powerOfTwo;
 		this._testDimensions();
 	}
 
@@ -94,8 +96,22 @@ class Image2D extends ImageBase
 	 */
 	private _testDimensions()
 	{
-		if (!ImageUtils.isDimensionValid(this._rect.width) || !ImageUtils.isDimensionValid(this._rect.height))
+		if (this._powerOfTwo && (!ImageUtils.isDimensionValid(this._rect.width) || !ImageUtils.isDimensionValid(this._rect.height)))
 			throw new Error("Invalid dimension: Width and height must be power of 2 and cannot exceed 2048");
+	}
+
+	/**
+	 * Enable POT texture size validation
+	 * @returns {boolean}
+	 */
+	public get powerOfTwo():boolean {
+		return this._powerOfTwo;
+	}
+
+	public set powerOfTwo(value:boolean) {
+		if(this._powerOfTwo == value) return;
+		this._powerOfTwo = value;
+		this._testDimensions();
 	}
 }
 

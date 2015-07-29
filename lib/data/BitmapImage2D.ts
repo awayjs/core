@@ -131,9 +131,9 @@ class BitmapImage2D extends Image2D
 	 *                    bitmap image area. The default value is
 	 *                    0xFFFFFFFF(solid white).
 	 */
-	constructor(width:number, height:number, transparent:boolean = true, fillColor:number = null)
+	constructor(width:number, height:number, transparent:boolean = true, fillColor:number = null, powerOfTwo:boolean = true)
 	{
-		super(width, height);
+		super(width, height, powerOfTwo);
 
 		this._transparent = transparent;
 		this._imageCanvas = <HTMLCanvasElement> document.createElement("canvas");

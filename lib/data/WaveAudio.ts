@@ -104,7 +104,7 @@ class WaveAudio extends AssetBase implements IAsset
 	/**
 	 *
 	 */
-	constructor(buffer, audioCtx)
+	constructor(buffer:ArrayBuffer, audioCtx)
 	{
 		super();
 

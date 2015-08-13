@@ -1884,7 +1884,7 @@ declare module "awayjs-core/lib/data/WaveAudio" {
 	    /**
 	     *
 	     */
-	    constructor(buffer: any, audioCtx: any);
+	    constructor(buffer: ArrayBuffer, audioCtx: any);
 	    dispose(): void;
 	    play(): void;
 	    stop(): void;

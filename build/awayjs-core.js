@@ -6448,6 +6448,8 @@ var Point = (function () {
         this.y += dy;
     };
     Point.prototype.setTo = function (xa, ya) {
+        this.x = xa;
+        this.y = ya;
     };
     /**
      * Subtracts the coordinates of another point from the coordinates of this

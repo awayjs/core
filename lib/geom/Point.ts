@@ -130,7 +130,8 @@ class Point
 
 	public setTo(xa:number, ya:number)
 	{
-
+		this.x = xa;
+		this.y = ya;
 	}
 
 	/**

@@ -14,6 +14,8 @@ class Matrix3D
 	 */
 	public rawData:number[];
 
+	private static tempRawData:number[] = [ 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1 ];
+	private static tempMatrix:Matrix3D = new Matrix3D(Matrix3D.tempRawData);
 	/**
 	 * Creates a Matrix3D object.
 	 */
@@ -66,7 +68,35 @@ class Matrix3D
 	 */
 	public appendSkew(xSkew:number, ySkew:number, zSkew:number)
 	{
-		this.append(new Matrix3D([ 1.0, 0.0, 0.0, 0.0, xSkew, 1.0, 0.0, 0.0, ySkew, zSkew, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0 ]));
+		if(xSkew == 0 && ySkew == 0 && zSkew == 0) return;
+		var raw:number[] = Matrix3D.tempRawData;
+		raw[0] = 1;
+		raw[1] = 0;
+		raw[2] = 0;
+		raw[3] = 0;
+
+		raw[4] = xSkew;
+		raw[5] = 1;
+		raw[6] = 0;
+		raw[7] = 0;
+
+		raw[8] = ySkew;
+		raw[9] = zSkew;
+		raw[10] = 1;
+		raw[11] = 0;
+
+		raw[8] = 0;
+		raw[9] = 0;
+		raw[10] = 0;
+		raw[11] = 0;
+
+		raw[12] = 0;
+		raw[13] = 0;
+		raw[14] = 0;
+		raw[15] = 1;
+
+		this.append(Matrix3D.tempMatrix);
+		//this.append(new Matrix3D([ 1.0, 0.0, 0.0, 0.0, xSkew, 1.0, 0.0, 0.0, ySkew, zSkew, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0 ]));
 	}
 
 	/**
@@ -74,7 +104,35 @@ class Matrix3D
 	 */
 	public appendScale(xScale:number, yScale:number, zScale:number)
 	{
-		this.append(new Matrix3D([ xScale, 0.0, 0.0, 0.0, 0.0, yScale, 0.0, 0.0, 0.0, 0.0, zScale, 0.0, 0.0, 0.0, 0.0, 1.0 ]));
+		if(xScale == 1 && yScale == 1 && zScale == 1) return;
+		var raw:number[] = Matrix3D.tempRawData;
+		raw[0] = xScale;
+		raw[1] = 0;
+		raw[2] = 0;
+		raw[3] = 0;
+
+		raw[4] = 0;
+		raw[5] = yScale;
+		raw[6] = 0;
+		raw[7] = 0;
+
+		raw[8] = 0;
+		raw[9] = 0;
+		raw[10] = zScale;
+		raw[11] = 0;
+
+		raw[8] = 0;
+		raw[9] = 0;
+		raw[10] = zScale;
+		raw[11] = 0;
+
+		raw[12] = 0;
+		raw[13] = 0;
+		raw[14] = 0;
+		raw[15] = 1;
+
+		//this.append(new Matrix3D([ xScale, 0.0, 0.0, 0.0, 0.0, yScale, 0.0, 0.0, 0.0, 0.0, zScale, 0.0, 0.0, 0.0, 0.0, 1.0 ]));
+		this.append(Matrix3D.tempMatrix);
 	}
 
 	/**
@@ -170,9 +228,10 @@ class Matrix3D
 	 */
 	public copyFrom(sourceMatrix3D:Matrix3D)
 	{
-		var len:number = sourceMatrix3D.rawData.length;
+		var sourceRaw:number[] = sourceMatrix3D.rawData;
+		var len:number = sourceRaw.length;
 		for (var c:number = 0; c < len; c++)
-			this.rawData[c] = sourceMatrix3D.rawData[c];
+			this.rawData[c] = sourceRaw[c];
 	}
 
 	public copyRawDataFrom(vector:number[], index:number = 0, transpose:boolean = false):void
@@ -449,7 +508,7 @@ class Matrix3D
 	public invert():boolean
 	{
 		var d = this.determinant;
-		var invertable = Math.abs(d) > 0.00000000001;
+		var invertable:boolean = Math.abs(d) > 0.00000000001;
 
 		if (invertable) {
 			d = 1/d;
@@ -575,17 +634,96 @@ class Matrix3D
 			return false;
 
 		this.identity();
-		this.appendScale(components[3].x, components[3].y, components[3].z);
+		var scale:Vector3D = components[3];
+		if(scale.x !=1 || scale.y != 1 || scale.z != 1) this.appendScale(scale.x, scale.y, scale.z);
 
-		this.appendSkew(components[2].x, components[2].y, components[2].z);
+		var skew:Vector3D = components[2];
+		if(skew.x !=0 || skew.y != 0 || skew.z != 0)	this.appendSkew(skew.x, skew.y, skew.z);
 
 		var angle:number;
-		angle = -components[1].x;
-		this.append(new Matrix3D([1, 0, 0, 0, 0, Math.cos(angle), -Math.sin(angle), 0, 0, Math.sin(angle), Math.cos(angle), 0, 0, 0, 0 , 0]));
-		angle = -components[1].y;
-		this.append(new Matrix3D([Math.cos(angle), 0, Math.sin(angle), 0, 0, 1, 0, 0, -Math.sin(angle), 0, Math.cos(angle), 0, 0, 0, 0, 0]));
-		angle = -components[1].z;
-		this.append(new Matrix3D([Math.cos(angle), -Math.sin(angle), 0, 0, Math.sin(angle), Math.cos(angle), 0, 0, 0, 0, 1, 0, 0, 0, 0, 0]));
+		var rotation:Vector3D = components[1];
+		angle = -rotation.x;
+		if(angle != 0){
+			var sin:number = Math.sin(angle);
+			var cos:number = Math.cos(angle);
+			var raw:number[] = Matrix3D.tempRawData;
+			raw[0] = 1;
+			raw[1] = 0;
+			raw[2] = 0;
+			raw[3] = 0;
+
+			raw[4] = 0;
+			raw[5] = cos;
+			raw[6] = -sin;
+			raw[7] = 0;
+
+			raw[8] = 0;
+			raw[9] = sin;
+			raw[10] = cos;
+			raw[11] = 0;
+
+			raw[12] = 0;
+			raw[13] = 0;
+			raw[14] = 0;
+			raw[15] = 0;
+			//this.append(new Matrix3D([1, 0, 0, 0, 0, cos, -sin, 0, 0, sin, cos, 0, 0, 0, 0 , 0]));
+			this.append(Matrix3D.tempMatrix);
+		}
+		angle = -rotation.y;
+		if(angle != 0){
+			sin = Math.sin(angle);
+			cos = Math.cos(angle);
+			var raw:number[] = Matrix3D.tempRawData;
+			raw[0] = cos;
+			raw[1] = 0;
+			raw[2] = sin;
+			raw[3] = 0;
+
+			raw[4] = 0;
+			raw[5] = 1;
+			raw[6] = 0;
+			raw[7] = 0;
+
+			raw[8] = -sin;
+			raw[9] = 0;
+			raw[10] = cos;
+			raw[11] = 0;
+
+			raw[12] = 0;
+			raw[13] = 0;
+			raw[14] = 0;
+			raw[15] = 0;
+			this.append(Matrix3D.tempMatrix);
+			//this.append(new Matrix3D([cos, 0, sin, 0, 0, 1, 0, 0, -sin, 0, cos, 0, 0, 0, 0, 0]));
+		}
+		angle = -rotation.z;
+		if(angle != 0){
+			sin = Math.sin(angle);
+			cos = Math.cos(angle);
+
+			var raw:number[] = Matrix3D.tempRawData;
+			raw[0] = cos;
+			raw[1] = -sin;
+			raw[2] = 0;
+			raw[3] = 0;
+
+			raw[4] = sin;
+			raw[5] = cos;
+			raw[6] = 0;
+			raw[7] = 0;
+
+			raw[8] = 0;
+			raw[9] = 0;
+			raw[10] = 1;
+			raw[11] = 0;
+
+			raw[12] = 0;
+			raw[13] = 0;
+			raw[14] = 0;
+			raw[15] = 0;
+			this.append(Matrix3D.tempMatrix);
+			//this.append(new Matrix3D([cos, -sin, 0, 0, sin, cos, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0]));
+		}
 
 		this.position = components[0];
 		this.rawData[15] = 1;

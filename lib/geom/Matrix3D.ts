@@ -14,8 +14,9 @@ class Matrix3D
 	 */
 	public rawData:number[];
 
-	private static tempRawData:number[] = [ 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1 ];
-	private static tempMatrix:Matrix3D = new Matrix3D(Matrix3D.tempRawData);
+	private static tempMatrix:Matrix3D = new Matrix3D();
+	private static tempRawData:number[] = Matrix3D.tempMatrix.rawData;
+
 	/**
 	 * Creates a Matrix3D object.
 	 */
@@ -115,11 +116,6 @@ class Matrix3D
 		raw[5] = yScale;
 		raw[6] = 0;
 		raw[7] = 0;
-
-		raw[8] = 0;
-		raw[9] = 0;
-		raw[10] = zScale;
-		raw[11] = 0;
 
 		raw[8] = 0;
 		raw[9] = 0;

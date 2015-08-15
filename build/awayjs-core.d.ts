@@ -56,6 +56,34 @@ declare module "awayjs-core/lib/attributes/AttributesBuffer" {
 	
 }
 
+declare module "awayjs-core/lib/attributes/Byte4Attributes" {
+	import AttributesBuffer = require("awayjs-core/lib/attributes/AttributesBuffer");
+	import AttributesView = require("awayjs-core/lib/attributes/AttributesView");
+	class Byte4Attributes extends AttributesView {
+	    static assetType: string;
+	    /**
+	     *
+	     * @returns {string}
+	     */
+	    assetType: string;
+	    /**
+	     *
+	     */
+	    constructor(length?: number, unsigned?: boolean);
+	    constructor(attributesBuffer?: AttributesBuffer, unsigned?: boolean);
+	    set(array: Array<number>, offset?: number): any;
+	    set(typedArray: Float32Array, offset?: number): any;
+	    set(typedArray: Uint8Array, offset?: number): any;
+	    set(typedArray: Int8Array, offset?: number): any;
+	    get(count: number, offset?: number): Uint8Array;
+	    get(count: number, offset?: number): Int8Array;
+	    _internalClone(attributesBuffer: AttributesBuffer): Byte4Attributes;
+	    clone(attributesBuffer?: AttributesBuffer): Byte4Attributes;
+	}
+	export = Byte4Attributes;
+	
+}
+
 declare module "awayjs-core/lib/attributes/AttributesView" {
 	import AttributesBuffer = require("awayjs-core/lib/attributes/AttributesBuffer");
 	import IAsset = require("awayjs-core/lib/library/IAsset");
@@ -107,34 +135,6 @@ declare module "awayjs-core/lib/attributes/AttributesView" {
 	    dispose(): void;
 	}
 	export = AttributesView;
-	
-}
-
-declare module "awayjs-core/lib/attributes/Byte4Attributes" {
-	import AttributesBuffer = require("awayjs-core/lib/attributes/AttributesBuffer");
-	import AttributesView = require("awayjs-core/lib/attributes/AttributesView");
-	class Byte4Attributes extends AttributesView {
-	    static assetType: string;
-	    /**
-	     *
-	     * @returns {string}
-	     */
-	    assetType: string;
-	    /**
-	     *
-	     */
-	    constructor(length?: number, unsigned?: boolean);
-	    constructor(attributesBuffer?: AttributesBuffer, unsigned?: boolean);
-	    set(array: Array<number>, offset?: number): any;
-	    set(typedArray: Float32Array, offset?: number): any;
-	    set(typedArray: Uint8Array, offset?: number): any;
-	    set(typedArray: Int8Array, offset?: number): any;
-	    get(count: number, offset?: number): Uint8Array;
-	    get(count: number, offset?: number): Int8Array;
-	    _internalClone(attributesBuffer: AttributesBuffer): Byte4Attributes;
-	    clone(attributesBuffer?: AttributesBuffer): Byte4Attributes;
-	}
-	export = Byte4Attributes;
 	
 }
 
@@ -289,17 +289,6 @@ declare module "awayjs-core/lib/attributes/Short3Attributes" {
 	    clone(attributesBuffer?: AttributesBuffer): Short3Attributes;
 	}
 	export = Short3Attributes;
-	
-}
-
-declare module "awayjs-core/lib/data/BitmapImageChannel" {
-	class BitmapImageChannel {
-	    static ALPHA: number;
-	    static BLUE: number;
-	    static GREEN: number;
-	    static RED: number;
-	}
-	export = BitmapImageChannel;
 	
 }
 
@@ -797,6 +786,17 @@ declare module "awayjs-core/lib/data/BitmapImage2D" {
 	    _setSize(width: number, height: number): void;
 	}
 	export = BitmapImage2D;
+	
+}
+
+declare module "awayjs-core/lib/data/BitmapImageChannel" {
+	class BitmapImageChannel {
+	    static ALPHA: number;
+	    static BLUE: number;
+	    static GREEN: number;
+	    static RED: number;
+	}
+	export = BitmapImageChannel;
 	
 }
 
@@ -1304,58 +1304,6 @@ declare module "awayjs-core/lib/data/BitmapImageCube" {
 	
 }
 
-declare module "awayjs-core/lib/data/Image2D" {
-	import ImageBase = require("awayjs-core/lib/data/ImageBase");
-	import Rectangle = require("awayjs-core/lib/geom/Rectangle");
-	class Image2D extends ImageBase {
-	    static assetType: string;
-	    _rect: Rectangle;
-	    private _powerOfTwo;
-	    /**
-	     *
-	     * @returns {string}
-	     */
-	    assetType: string;
-	    /**
-	     * The height of the image in pixels.
-	     */
-	    height: number;
-	    /**
-	     * The rectangle that defines the size and location of the bitmap image. The
-	     * top and left of the rectangle are 0; the width and height are equal to the
-	     * width and height in pixels of the BitmapData object.
-	     */
-	    rect: Rectangle;
-	    /**
-	     * The width of the bitmap image in pixels.
-	     */
-	    width: number;
-	    /**
-	     *
-	     */
-	    constructor(width: number, height: number, powerOfTwo?: boolean);
-	    /**
-	     *
-	     * @param width
-	     * @param height
-	     * @private
-	     */
-	    _setSize(width: number, height: number): void;
-	    /**
-	     *
-	     * @private
-	     */
-	    private _testDimensions();
-	    /**
-	     * Enable POT texture size validation
-	     * @returns {boolean}
-	     */
-	    powerOfTwo: boolean;
-	}
-	export = Image2D;
-	
-}
-
 declare module "awayjs-core/lib/data/BlendMode" {
 	/**
 	 * A class that provides constant values for visual blend mode effects. These
@@ -1531,6 +1479,58 @@ declare module "awayjs-core/lib/data/BlendMode" {
 	    static SUBTRACT: string;
 	}
 	export = BlendMode;
+	
+}
+
+declare module "awayjs-core/lib/data/Image2D" {
+	import ImageBase = require("awayjs-core/lib/data/ImageBase");
+	import Rectangle = require("awayjs-core/lib/geom/Rectangle");
+	class Image2D extends ImageBase {
+	    static assetType: string;
+	    _rect: Rectangle;
+	    private _powerOfTwo;
+	    /**
+	     *
+	     * @returns {string}
+	     */
+	    assetType: string;
+	    /**
+	     * The height of the image in pixels.
+	     */
+	    height: number;
+	    /**
+	     * The rectangle that defines the size and location of the bitmap image. The
+	     * top and left of the rectangle are 0; the width and height are equal to the
+	     * width and height in pixels of the BitmapData object.
+	     */
+	    rect: Rectangle;
+	    /**
+	     * The width of the bitmap image in pixels.
+	     */
+	    width: number;
+	    /**
+	     *
+	     */
+	    constructor(width: number, height: number, powerOfTwo?: boolean);
+	    /**
+	     *
+	     * @param width
+	     * @param height
+	     * @private
+	     */
+	    _setSize(width: number, height: number): void;
+	    /**
+	     *
+	     * @private
+	     */
+	    private _testDimensions();
+	    /**
+	     * Enable POT texture size validation
+	     * @returns {boolean}
+	     */
+	    powerOfTwo: boolean;
+	}
+	export = Image2D;
 	
 }
 
@@ -1739,6 +1739,51 @@ declare module "awayjs-core/lib/data/SamplerBase" {
 	
 }
 
+declare module "awayjs-core/lib/data/SamplerCube" {
+	import SamplerBase = require("awayjs-core/lib/data/SamplerBase");
+	import ImageCube = require("awayjs-core/lib/data/ImageCube");
+	/**
+	 * The Bitmap class represents display objects that represent bitmap images.
+	 * These can be images that you load with the <code>flash.Assets</code> or
+	 * <code>flash.display.Loader</code> classes, or they can be images that you
+	 * create with the <code>Bitmap()</code> constructor.
+	 *
+	 * <p>The <code>Bitmap()</code> constructor allows you to create a Bitmap
+	 * object that contains a reference to a BitmapData object. After you create a
+	 * Bitmap object, use the <code>addChild()</code> or <code>addChildAt()</code>
+	 * method of the parent DisplayObjectContainer instance to place the bitmap on
+	 * the display list.</p>
+	 *
+	 * <p>A Bitmap object can share its BitmapData reference among several Bitmap
+	 * objects, independent of translation or rotation properties. Because you can
+	 * create multiple Bitmap objects that reference the same BitmapData object,
+	 * multiple texture objects can use the same complex BitmapData object without
+	 * incurring the memory overhead of a BitmapData object for each texture
+	 * object instance.</p>
+	
+	 */
+	class SamplerCube extends SamplerBase {
+	    static assetType: string;
+	    /**
+	     *
+	     * @returns {string}
+	     */
+	    assetType: string;
+	    /**
+	     * The ImageCube object being referenced.
+	     */
+	    imageCube: ImageCube;
+	    /**
+	     *
+	     * @param bitmapData
+	     * @param smoothing
+	     */
+	    constructor(imageCube?: ImageCube);
+	}
+	export = SamplerCube;
+	
+}
+
 declare module "awayjs-core/lib/data/SpecularImage2D" {
 	import BitmapImage2D = require("awayjs-core/lib/data/BitmapImage2D");
 	import Image2D = require("awayjs-core/lib/data/Image2D");
@@ -1808,51 +1853,6 @@ declare module "awayjs-core/lib/data/SpecularImage2D" {
 	    private _testSize();
 	}
 	export = SpecularImage2D;
-	
-}
-
-declare module "awayjs-core/lib/data/SamplerCube" {
-	import SamplerBase = require("awayjs-core/lib/data/SamplerBase");
-	import ImageCube = require("awayjs-core/lib/data/ImageCube");
-	/**
-	 * The Bitmap class represents display objects that represent bitmap images.
-	 * These can be images that you load with the <code>flash.Assets</code> or
-	 * <code>flash.display.Loader</code> classes, or they can be images that you
-	 * create with the <code>Bitmap()</code> constructor.
-	 *
-	 * <p>The <code>Bitmap()</code> constructor allows you to create a Bitmap
-	 * object that contains a reference to a BitmapData object. After you create a
-	 * Bitmap object, use the <code>addChild()</code> or <code>addChildAt()</code>
-	 * method of the parent DisplayObjectContainer instance to place the bitmap on
-	 * the display list.</p>
-	 *
-	 * <p>A Bitmap object can share its BitmapData reference among several Bitmap
-	 * objects, independent of translation or rotation properties. Because you can
-	 * create multiple Bitmap objects that reference the same BitmapData object,
-	 * multiple texture objects can use the same complex BitmapData object without
-	 * incurring the memory overhead of a BitmapData object for each texture
-	 * object instance.</p>
-	
-	 */
-	class SamplerCube extends SamplerBase {
-	    static assetType: string;
-	    /**
-	     *
-	     * @returns {string}
-	     */
-	    assetType: string;
-	    /**
-	     * The ImageCube object being referenced.
-	     */
-	    imageCube: ImageCube;
-	    /**
-	     *
-	     * @param bitmapData
-	     * @param smoothing
-	     */
-	    constructor(imageCube?: ImageCube);
-	}
-	export = SamplerCube;
 	
 }
 
@@ -3208,8 +3208,8 @@ declare module "awayjs-core/lib/geom/Matrix3D" {
 	     * object must be invertible. If a non-invertible matrix is needed, create a subclass of the Matrix3D object.</p>
 	     */
 	    rawData: number[];
-	    private static tempRawData;
 	    private static tempMatrix;
+	    private static tempRawData;
 	    /**
 	     * Creates a Matrix3D object.
 	     */
@@ -6471,6 +6471,28 @@ declare module "awayjs-core/lib/projections/IProjection" {
 	
 }
 
+declare module "awayjs-core/lib/projections/ObliqueNearPlaneProjection" {
+	import Plane3D = require("awayjs-core/lib/geom/Plane3D");
+	import IProjection = require("awayjs-core/lib/projections/IProjection");
+	import ProjectionBase = require("awayjs-core/lib/projections/ProjectionBase");
+	class ObliqueNearPlaneProjection extends ProjectionBase {
+	    private _baseProjection;
+	    private _plane;
+	    private _onProjectionMatrixChangedDelegate;
+	    constructor(baseProjection: IProjection, plane: Plane3D);
+	    frustumCorners: number[];
+	    near: number;
+	    far: number;
+	    iAspectRatio: number;
+	    plane: Plane3D;
+	    baseProjection: IProjection;
+	    private onProjectionMatrixChanged(event);
+	    pUpdateMatrix(): void;
+	}
+	export = ObliqueNearPlaneProjection;
+	
+}
+
 declare module "awayjs-core/lib/projections/OrthographicOffCenterProjection" {
 	import Vector3D = require("awayjs-core/lib/geom/Vector3D");
 	import ProjectionBase = require("awayjs-core/lib/projections/ProjectionBase");
@@ -6492,25 +6514,20 @@ declare module "awayjs-core/lib/projections/OrthographicOffCenterProjection" {
 	
 }
 
-declare module "awayjs-core/lib/projections/ObliqueNearPlaneProjection" {
-	import Plane3D = require("awayjs-core/lib/geom/Plane3D");
-	import IProjection = require("awayjs-core/lib/projections/IProjection");
+declare module "awayjs-core/lib/projections/OrthographicProjection" {
+	import Vector3D = require("awayjs-core/lib/geom/Vector3D");
 	import ProjectionBase = require("awayjs-core/lib/projections/ProjectionBase");
-	class ObliqueNearPlaneProjection extends ProjectionBase {
-	    private _baseProjection;
-	    private _plane;
-	    private _onProjectionMatrixChangedDelegate;
-	    constructor(baseProjection: IProjection, plane: Plane3D);
-	    frustumCorners: number[];
-	    near: number;
-	    far: number;
-	    iAspectRatio: number;
-	    plane: Plane3D;
-	    baseProjection: IProjection;
-	    private onProjectionMatrixChanged(event);
+	class OrthographicProjection extends ProjectionBase {
+	    private _projectionHeight;
+	    private _xMax;
+	    private _yMax;
+	    constructor(projectionHeight?: number);
+	    projectionHeight: number;
+	    unproject(nX: number, nY: number, sZ: number): Vector3D;
+	    clone(): ProjectionBase;
 	    pUpdateMatrix(): void;
 	}
-	export = ObliqueNearPlaneProjection;
+	export = OrthographicProjection;
 	
 }
 
@@ -6554,23 +6571,6 @@ declare module "awayjs-core/lib/projections/PerspectiveProjection" {
 	    pUpdateMatrix(): void;
 	}
 	export = PerspectiveProjection;
-	
-}
-
-declare module "awayjs-core/lib/projections/OrthographicProjection" {
-	import Vector3D = require("awayjs-core/lib/geom/Vector3D");
-	import ProjectionBase = require("awayjs-core/lib/projections/ProjectionBase");
-	class OrthographicProjection extends ProjectionBase {
-	    private _projectionHeight;
-	    private _xMax;
-	    private _yMax;
-	    constructor(projectionHeight?: number);
-	    projectionHeight: number;
-	    unproject(nX: number, nY: number, sZ: number): Vector3D;
-	    clone(): ProjectionBase;
-	    pUpdateMatrix(): void;
-	}
-	export = OrthographicProjection;
 	
 }
 

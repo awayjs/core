@@ -5031,10 +5031,6 @@ var Matrix3D = (function () {
         raw[9] = 0;
         raw[10] = zScale;
         raw[11] = 0;
-        raw[8] = 0;
-        raw[9] = 0;
-        raw[10] = zScale;
-        raw[11] = 0;
         raw[12] = 0;
         raw[13] = 0;
         raw[14] = 0;
@@ -5661,8 +5657,8 @@ var Matrix3D = (function () {
     Matrix3D.prototype.toString = function () {
         return "matrix3d(" + Math.round(this.rawData[0] * 1000) / 1000 + "," + Math.round(this.rawData[1] * 1000) / 1000 + "," + Math.round(this.rawData[2] * 1000) / 1000 + "," + Math.round(this.rawData[3] * 1000) / 1000 + "," + Math.round(this.rawData[4] * 1000) / 1000 + "," + Math.round(this.rawData[5] * 1000) / 1000 + "," + Math.round(this.rawData[6] * 1000) / 1000 + "," + Math.round(this.rawData[7] * 1000) / 1000 + "," + Math.round(this.rawData[8] * 1000) / 1000 + "," + Math.round(this.rawData[9] * 1000) / 1000 + "," + Math.round(this.rawData[10] * 1000) / 1000 + "," + Math.round(this.rawData[11] * 1000) / 1000 + "," + Math.round(this.rawData[12] * 1000) / 1000 + "," + Math.round(this.rawData[13] * 1000) / 1000 + "," + Math.round(this.rawData[14] * 1000) / 1000 + "," + Math.round(this.rawData[15] * 1000) / 1000 + ")";
     };
-    Matrix3D.tempRawData = [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1];
-    Matrix3D.tempMatrix = new Matrix3D(Matrix3D.tempRawData);
+    Matrix3D.tempMatrix = new Matrix3D();
+    Matrix3D.tempRawData = Matrix3D.tempMatrix.rawData;
     return Matrix3D;
 })();
 module.exports = Matrix3D;

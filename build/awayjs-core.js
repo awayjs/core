@@ -4986,13 +4986,61 @@ var Matrix3D = (function () {
      * Appends an incremental skew change along the x, y, and z axes to a Matrix3D object.
      */
     Matrix3D.prototype.appendSkew = function (xSkew, ySkew, zSkew) {
-        this.append(new Matrix3D([1.0, 0.0, 0.0, 0.0, xSkew, 1.0, 0.0, 0.0, ySkew, zSkew, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0]));
+        if (xSkew == 0 && ySkew == 0 && zSkew == 0)
+            return;
+        var raw = Matrix3D.tempRawData;
+        raw[0] = 1;
+        raw[1] = 0;
+        raw[2] = 0;
+        raw[3] = 0;
+        raw[4] = xSkew;
+        raw[5] = 1;
+        raw[6] = 0;
+        raw[7] = 0;
+        raw[8] = ySkew;
+        raw[9] = zSkew;
+        raw[10] = 1;
+        raw[11] = 0;
+        raw[8] = 0;
+        raw[9] = 0;
+        raw[10] = 0;
+        raw[11] = 0;
+        raw[12] = 0;
+        raw[13] = 0;
+        raw[14] = 0;
+        raw[15] = 1;
+        this.append(Matrix3D.tempMatrix);
+        //this.append(new Matrix3D([ 1.0, 0.0, 0.0, 0.0, xSkew, 1.0, 0.0, 0.0, ySkew, zSkew, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0 ]));
     };
     /**
      * Appends an incremental scale change along the x, y, and z axes to a Matrix3D object.
      */
     Matrix3D.prototype.appendScale = function (xScale, yScale, zScale) {
-        this.append(new Matrix3D([xScale, 0.0, 0.0, 0.0, 0.0, yScale, 0.0, 0.0, 0.0, 0.0, zScale, 0.0, 0.0, 0.0, 0.0, 1.0]));
+        if (xScale == 1 && yScale == 1 && zScale == 1)
+            return;
+        var raw = Matrix3D.tempRawData;
+        raw[0] = xScale;
+        raw[1] = 0;
+        raw[2] = 0;
+        raw[3] = 0;
+        raw[4] = 0;
+        raw[5] = yScale;
+        raw[6] = 0;
+        raw[7] = 0;
+        raw[8] = 0;
+        raw[9] = 0;
+        raw[10] = zScale;
+        raw[11] = 0;
+        raw[8] = 0;
+        raw[9] = 0;
+        raw[10] = zScale;
+        raw[11] = 0;
+        raw[12] = 0;
+        raw[13] = 0;
+        raw[14] = 0;
+        raw[15] = 1;
+        //this.append(new Matrix3D([ xScale, 0.0, 0.0, 0.0, 0.0, yScale, 0.0, 0.0, 0.0, 0.0, zScale, 0.0, 0.0, 0.0, 0.0, 1.0 ]));
+        this.append(Matrix3D.tempMatrix);
     };
     /**
      * Appends an incremental translation, a repositioning along the x, y, and z axes, to a Matrix3D object.
@@ -5078,9 +5126,10 @@ var Matrix3D = (function () {
      * Copies all of the matrix data from the source Matrix3D object into the calling Matrix3D object.
      */
     Matrix3D.prototype.copyFrom = function (sourceMatrix3D) {
-        var len = sourceMatrix3D.rawData.length;
+        var sourceRaw = sourceMatrix3D.rawData;
+        var len = sourceRaw.length;
         for (var c = 0; c < len; c++)
-            this.rawData[c] = sourceMatrix3D.rawData[c];
+            this.rawData[c] = sourceRaw[c];
     };
     Matrix3D.prototype.copyRawDataFrom = function (vector, index, transpose) {
         if (index === void 0) { index = 0; }
@@ -5413,15 +5462,84 @@ var Matrix3D = (function () {
         if (components.length < 3)
             return false;
         this.identity();
-        this.appendScale(components[3].x, components[3].y, components[3].z);
-        this.appendSkew(components[2].x, components[2].y, components[2].z);
+        var scale = components[3];
+        if (scale.x != 1 || scale.y != 1 || scale.z != 1)
+            this.appendScale(scale.x, scale.y, scale.z);
+        var skew = components[2];
+        if (skew.x != 0 || skew.y != 0 || skew.z != 0)
+            this.appendSkew(skew.x, skew.y, skew.z);
         var angle;
-        angle = -components[1].x;
-        this.append(new Matrix3D([1, 0, 0, 0, 0, Math.cos(angle), -Math.sin(angle), 0, 0, Math.sin(angle), Math.cos(angle), 0, 0, 0, 0, 0]));
-        angle = -components[1].y;
-        this.append(new Matrix3D([Math.cos(angle), 0, Math.sin(angle), 0, 0, 1, 0, 0, -Math.sin(angle), 0, Math.cos(angle), 0, 0, 0, 0, 0]));
-        angle = -components[1].z;
-        this.append(new Matrix3D([Math.cos(angle), -Math.sin(angle), 0, 0, Math.sin(angle), Math.cos(angle), 0, 0, 0, 0, 1, 0, 0, 0, 0, 0]));
+        var rotation = components[1];
+        angle = -rotation.x;
+        if (angle != 0) {
+            var sin = Math.sin(angle);
+            var cos = Math.cos(angle);
+            var raw = Matrix3D.tempRawData;
+            raw[0] = 1;
+            raw[1] = 0;
+            raw[2] = 0;
+            raw[3] = 0;
+            raw[4] = 0;
+            raw[5] = cos;
+            raw[6] = -sin;
+            raw[7] = 0;
+            raw[8] = 0;
+            raw[9] = sin;
+            raw[10] = cos;
+            raw[11] = 0;
+            raw[12] = 0;
+            raw[13] = 0;
+            raw[14] = 0;
+            raw[15] = 0;
+            //this.append(new Matrix3D([1, 0, 0, 0, 0, cos, -sin, 0, 0, sin, cos, 0, 0, 0, 0 , 0]));
+            this.append(Matrix3D.tempMatrix);
+        }
+        angle = -rotation.y;
+        if (angle != 0) {
+            sin = Math.sin(angle);
+            cos = Math.cos(angle);
+            var raw = Matrix3D.tempRawData;
+            raw[0] = cos;
+            raw[1] = 0;
+            raw[2] = sin;
+            raw[3] = 0;
+            raw[4] = 0;
+            raw[5] = 1;
+            raw[6] = 0;
+            raw[7] = 0;
+            raw[8] = -sin;
+            raw[9] = 0;
+            raw[10] = cos;
+            raw[11] = 0;
+            raw[12] = 0;
+            raw[13] = 0;
+            raw[14] = 0;
+            raw[15] = 0;
+            this.append(Matrix3D.tempMatrix);
+        }
+        angle = -rotation.z;
+        if (angle != 0) {
+            sin = Math.sin(angle);
+            cos = Math.cos(angle);
+            var raw = Matrix3D.tempRawData;
+            raw[0] = cos;
+            raw[1] = -sin;
+            raw[2] = 0;
+            raw[3] = 0;
+            raw[4] = sin;
+            raw[5] = cos;
+            raw[6] = 0;
+            raw[7] = 0;
+            raw[8] = 0;
+            raw[9] = 0;
+            raw[10] = 1;
+            raw[11] = 0;
+            raw[12] = 0;
+            raw[13] = 0;
+            raw[14] = 0;
+            raw[15] = 0;
+            this.append(Matrix3D.tempMatrix);
+        }
         this.position = components[0];
         this.rawData[15] = 1;
         return true;
@@ -5543,6 +5661,8 @@ var Matrix3D = (function () {
     Matrix3D.prototype.toString = function () {
         return "matrix3d(" + Math.round(this.rawData[0] * 1000) / 1000 + "," + Math.round(this.rawData[1] * 1000) / 1000 + "," + Math.round(this.rawData[2] * 1000) / 1000 + "," + Math.round(this.rawData[3] * 1000) / 1000 + "," + Math.round(this.rawData[4] * 1000) / 1000 + "," + Math.round(this.rawData[5] * 1000) / 1000 + "," + Math.round(this.rawData[6] * 1000) / 1000 + "," + Math.round(this.rawData[7] * 1000) / 1000 + "," + Math.round(this.rawData[8] * 1000) / 1000 + "," + Math.round(this.rawData[9] * 1000) / 1000 + "," + Math.round(this.rawData[10] * 1000) / 1000 + "," + Math.round(this.rawData[11] * 1000) / 1000 + "," + Math.round(this.rawData[12] * 1000) / 1000 + "," + Math.round(this.rawData[13] * 1000) / 1000 + "," + Math.round(this.rawData[14] * 1000) / 1000 + "," + Math.round(this.rawData[15] * 1000) / 1000 + ")";
     };
+    Matrix3D.tempRawData = [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1];
+    Matrix3D.tempMatrix = new Matrix3D(Matrix3D.tempRawData);
     return Matrix3D;
 })();
 module.exports = Matrix3D;

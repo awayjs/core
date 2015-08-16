@@ -33,7 +33,40 @@ class Matrix3D
 	 */
 	public append(lhs:Matrix3D)
 	{
-		var m111:number = this.rawData[0], m121:number = this.rawData[4], m131:number = this.rawData[8], m141:number = this.rawData[12], m112:number = this.rawData[1], m122:number = this.rawData[5], m132:number = this.rawData[9], m142:number = this.rawData[13], m113:number = this.rawData[2], m123:number = this.rawData[6], m133:number = this.rawData[10], m143:number = this.rawData[14], m114:number = this.rawData[3], m124:number = this.rawData[7], m134:number = this.rawData[11], m144:number = this.rawData[15], m211:number = lhs.rawData[0], m221:number = lhs.rawData[4], m231:number = lhs.rawData[8], m241:number = lhs.rawData[12], m212:number = lhs.rawData[1], m222:number = lhs.rawData[5], m232:number = lhs.rawData[9], m242:number = lhs.rawData[13], m213:number = lhs.rawData[2], m223:number = lhs.rawData[6], m233:number = lhs.rawData[10], m243:number = lhs.rawData[14], m214:number = lhs.rawData[3], m224:number = lhs.rawData[7], m234:number = lhs.rawData[11], m244:number = lhs.rawData[15];
+		var lrd:number[] = lhs.rawData;
+
+		var m111:number = this.rawData[0];
+		var m112:number = this.rawData[1];
+		var m113:number = this.rawData[2];
+		var m114:number = this.rawData[3];
+		var m121:number = this.rawData[4];
+		var m122:number = this.rawData[5];
+		var m123:number = this.rawData[6];
+		var m124:number = this.rawData[7];
+		var m131:number = this.rawData[8];
+		var m132:number = this.rawData[9];
+		var m133:number = this.rawData[10];
+		var m134:number = this.rawData[11];
+		var m141:number = this.rawData[12];
+		var m142:number = this.rawData[13];
+		var m143:number = this.rawData[14];
+		var m144:number = this.rawData[15];
+		var m211:number = lrd[0];
+		var m212:number = lrd[1];
+		var m213:number = lrd[2];
+		var m214:number = lrd[3];
+		var m221:number = lrd[4];
+		var m222:number = lrd[5];
+		var m223:number = lrd[6];
+		var m224:number = lrd[7];
+		var m231:number = lrd[8];
+		var m232:number = lrd[9];
+		var m233:number = lrd[10];
+		var m234:number = lrd[11];
+		var m241:number = lrd[12];
+		var m242:number = lrd[13];
+		var m243:number = lrd[14];
+		var m244:number = lrd[15];
 
 		this.rawData[0] = m111*m211 + m112*m221 + m113*m231 + m114*m241;
 		this.rawData[1] = m111*m212 + m112*m222 + m113*m232 + m114*m242;

@@ -12,20 +12,22 @@ class Matrix3D
 	 * <p>An exception is thrown if the rawData property is set to a matrix that is not invertible. The Matrix3D
 	 * object must be invertible. If a non-invertible matrix is needed, create a subclass of the Matrix3D object.</p>
 	 */
-	public rawData:number[];
+	public rawData:Float32Array;
 
 	private static tempMatrix:Matrix3D = new Matrix3D();
-	private static tempRawData:number[] = Matrix3D.tempMatrix.rawData;
+	private static tempRawData:Float32Array = Matrix3D.tempMatrix.rawData;
 
 	/**
 	 * Creates a Matrix3D object.
 	 */
-	constructor(v:number[] = null)
+	constructor(v:Float32Array = null)
 	{
-		if (v != null && v.length == 16)
-			this.rawData = v.concat();
-		else
-			this.rawData = [ 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1 ];
+		if (v != null && v.length == 16) {
+			this.copyRawDataFrom(v);
+		} else {
+			this.rawData = new Float32Array(16);
+			this.identity();
+		}
 	}
 
 	/**
@@ -33,7 +35,7 @@ class Matrix3D
 	 */
 	public append(lhs:Matrix3D)
 	{
-		var lrd:number[] = lhs.rawData;
+		var lrd:Float32Array = lhs.rawData;
 
 		var m111:number = this.rawData[0];
 		var m112:number = this.rawData[1];
@@ -103,7 +105,7 @@ class Matrix3D
 	public appendSkew(xSkew:number, ySkew:number, zSkew:number)
 	{
 		if(xSkew == 0 && ySkew == 0 && zSkew == 0) return;
-		var raw:number[] = Matrix3D.tempRawData;
+		var raw:Float32Array = Matrix3D.tempRawData;
 		raw[0] = 1;
 		raw[1] = 0;
 		raw[2] = 0;
@@ -138,8 +140,11 @@ class Matrix3D
 	 */
 	public appendScale(xScale:number, yScale:number, zScale:number)
 	{
-		if(xScale == 1 && yScale == 1 && zScale == 1) return;
-		var raw:number[] = Matrix3D.tempRawData;
+		if(xScale == 1 && yScale == 1 && zScale == 1)
+			return;
+
+		var raw:Float32Array = Matrix3D.tempRawData;
+
 		raw[0] = xScale;
 		raw[1] = 0;
 		raw[2] = 0;
@@ -179,7 +184,7 @@ class Matrix3D
 	 */
 	public clone():Matrix3D
 	{
-		return new Matrix3D(this.rawData.slice(0));
+		return new Matrix3D(this.rawData);
 	}
 
 	/**
@@ -257,13 +262,13 @@ class Matrix3D
 	 */
 	public copyFrom(sourceMatrix3D:Matrix3D)
 	{
-		var sourceRaw:number[] = sourceMatrix3D.rawData;
+		var sourceRaw:Float32Array = sourceMatrix3D.rawData;
 		var len:number = sourceRaw.length;
 		for (var c:number = 0; c < len; c++)
 			this.rawData[c] = sourceRaw[c];
 	}
 
-	public copyRawDataFrom(vector:number[], index:number = 0, transpose:boolean = false):void
+	public copyRawDataFrom(vector:Float32Array, index:number = 0, transpose:boolean = false):void
 	{
 		if (transpose)
 			this.transpose();
@@ -276,12 +281,12 @@ class Matrix3D
 			this.transpose();
 	}
 
-	public copyRawDataTo(vector:number[], index:number = 0, transpose:boolean = false)
+	public copyRawDataTo(vector:Float32Array, index:number = 0, transpose:boolean = false)
 	{
 		if (transpose)
 			this.transpose();
 
-		var len:number = this.rawData.length
+		var len:number = this.rawData.length;
 		for (var c:number = 0; c < len; c++)
 			vector[c + index ] = this.rawData[c];
 
@@ -364,7 +369,7 @@ class Matrix3D
 	 */
 	public copyToMatrix3D(dest:Matrix3D)
 	{
-		dest.rawData = this.rawData.slice(0);
+		this.copyRawDataTo(dest.rawData);
 	}
 
 	/**
@@ -507,7 +512,22 @@ class Matrix3D
 	 */
 	public identity()
 	{
-		this.rawData = [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1 ];
+		this.rawData[0] = 1;
+		this.rawData[1] = 0;
+		this.rawData[2] = 0;
+		this.rawData[3] = 0;
+		this.rawData[4] = 0;
+		this.rawData[5] = 1;
+		this.rawData[6] = 0;
+		this.rawData[7] = 0;
+		this.rawData[8] = 0;
+		this.rawData[9] = 0;
+		this.rawData[10] = 1;
+		this.rawData[11] = 0;
+		this.rawData[12] = 0;
+		this.rawData[13] = 0;
+		this.rawData[14] = 0;
+		this.rawData[15] = 1;
 	}
 
 	/**
@@ -542,20 +562,20 @@ class Matrix3D
 		if (invertable) {
 			d = 1/d;
 			var m11:number = this.rawData[0];
-			var m21:number = this.rawData[4];
-			var m31:number = this.rawData[8];
-			var m41:number = this.rawData[12];
 			var m12:number = this.rawData[1];
-			var m22:number = this.rawData[5];
-			var m32:number = this.rawData[9];
-			var m42:number = this.rawData[13];
 			var m13:number = this.rawData[2];
-			var m23:number = this.rawData[6];
-			var m33:number = this.rawData[10];
-			var m43:number = this.rawData[14];
 			var m14:number = this.rawData[3];
+			var m21:number = this.rawData[4];
+			var m22:number = this.rawData[5];
+			var m23:number = this.rawData[6];
 			var m24:number = this.rawData[7];
+			var m31:number = this.rawData[8];
+			var m32:number = this.rawData[9];
+			var m33:number = this.rawData[10];
 			var m34:number = this.rawData[11];
+			var m41:number = this.rawData[12];
+			var m42:number = this.rawData[13];
+			var m43:number = this.rawData[14];
 			var m44:number = this.rawData[15];
 
 			this.rawData[0] = d*(m22*(m33*m44 - m43*m34) - m32*(m23*m44 - m43*m24) + m42*(m23*m34 - m33*m24));
@@ -589,7 +609,39 @@ class Matrix3D
 	 */
 	public prepend(rhs:Matrix3D)
 	{
-		var m111:number = rhs.rawData[0], m121:number = rhs.rawData[4], m131:number = rhs.rawData[8], m141:number = rhs.rawData[12], m112:number = rhs.rawData[1], m122:number = rhs.rawData[5], m132:number = rhs.rawData[9], m142:number = rhs.rawData[13], m113:number = rhs.rawData[2], m123:number = rhs.rawData[6], m133:number = rhs.rawData[10], m143:number = rhs.rawData[14], m114:number = rhs.rawData[3], m124:number = rhs.rawData[7], m134:number = rhs.rawData[11], m144:number = rhs.rawData[15], m211:number = this.rawData[0], m221:number = this.rawData[4], m231:number = this.rawData[8], m241:number = this.rawData[12], m212:number = this.rawData[1], m222:number = this.rawData[5], m232:number = this.rawData[9], m242:number = this.rawData[13], m213:number = this.rawData[2], m223:number = this.rawData[6], m233:number = this.rawData[10], m243:number = this.rawData[14], m214:number = this.rawData[3], m224:number = this.rawData[7], m234:number = this.rawData[11], m244:number = this.rawData[15];
+		var m111:number = rhs.rawData[0];
+		var m112:number = rhs.rawData[1];
+		var m113:number = rhs.rawData[2];
+		var m114:number = rhs.rawData[3];
+		var m121:number = rhs.rawData[4];
+		var m122:number = rhs.rawData[5];
+		var m123:number = rhs.rawData[6];
+		var m124:number = rhs.rawData[7];
+		var m131:number = rhs.rawData[8];
+		var m132:number = rhs.rawData[9];
+		var m133:number = rhs.rawData[10];
+		var m134:number = rhs.rawData[11];
+		var m141:number = rhs.rawData[12];
+		var m142:number = rhs.rawData[13];
+		var m143:number = rhs.rawData[14];
+		var m144:number = rhs.rawData[15];
+
+		var m211:number = this.rawData[0];
+		var m212:number = this.rawData[1];
+		var m213:number = this.rawData[2];
+		var m214:number = this.rawData[3];
+		var m221:number = this.rawData[4];
+		var m222:number = this.rawData[5];
+		var m223:number = this.rawData[6];
+		var m224:number = this.rawData[7];
+		var m231:number = this.rawData[8];
+		var m232:number = this.rawData[9];
+		var m233:number = this.rawData[10];
+		var m234:number = this.rawData[11];
+		var m241:number = this.rawData[12];
+		var m242:number = this.rawData[13];
+		var m243:number = this.rawData[14];
+		var m244:number = this.rawData[15];
 
 		this.rawData[0] = m111*m211 + m112*m221 + m113*m231 + m114*m241;
 		this.rawData[1] = m111*m212 + m112*m222 + m113*m232 + m114*m242;
@@ -634,10 +686,32 @@ class Matrix3D
 	 */
 	public prependScale(xScale:number, yScale:number, zScale:number)
 	{
+		if(xScale == 1 && yScale == 1 && zScale == 1)
+			return;
 
-		// Initial Tests - OK
+		var raw:Float32Array = Matrix3D.tempRawData;
 
-		this.prepend(new Matrix3D([ xScale, 0, 0, 0, 0, yScale, 0, 0, 0, 0, zScale, 0, 0, 0, 0, 1 ]));
+		raw[0] = xScale;
+		raw[1] = 0;
+		raw[2] = 0;
+		raw[3] = 0;
+
+		raw[4] = 0;
+		raw[5] = yScale;
+		raw[6] = 0;
+		raw[7] = 0;
+
+		raw[8] = 0;
+		raw[9] = 0;
+		raw[10] = zScale;
+		raw[11] = 0;
+
+		raw[12] = 0;
+		raw[13] = 0;
+		raw[14] = 0;
+		raw[15] = 1;
+
+		this.prepend(Matrix3D.tempMatrix);
 	}
 
 	/**
@@ -645,9 +719,6 @@ class Matrix3D
 	 */
 	public prependTranslation(x:number, y:number, z:number)
 	{
-
-		// Initial Tests - OK
-
 		var m = new Matrix3D();
 		m.position = new Vector3D(x, y, z);
 		this.prepend(m);
@@ -675,7 +746,7 @@ class Matrix3D
 		if(angle != 0){
 			var sin:number = Math.sin(angle);
 			var cos:number = Math.cos(angle);
-			var raw:number[] = Matrix3D.tempRawData;
+			var raw:Float32Array = Matrix3D.tempRawData;
 			raw[0] = 1;
 			raw[1] = 0;
 			raw[2] = 0;
@@ -702,7 +773,7 @@ class Matrix3D
 		if(angle != 0){
 			sin = Math.sin(angle);
 			cos = Math.cos(angle);
-			var raw:number[] = Matrix3D.tempRawData;
+			var raw:Float32Array = Matrix3D.tempRawData;
 			raw[0] = cos;
 			raw[1] = 0;
 			raw[2] = sin;
@@ -730,7 +801,7 @@ class Matrix3D
 			sin = Math.sin(angle);
 			cos = Math.cos(angle);
 
-			var raw:number[] = Matrix3D.tempRawData;
+			var raw:Float32Array = Matrix3D.tempRawData;
 			raw[0] = cos;
 			raw[1] = -sin;
 			raw[2] = 0;
@@ -799,9 +870,6 @@ class Matrix3D
 	 */
 	public transformVectors(vin:number[], vout:number[])
 	{
-
-		// Initial Tests - OK
-
 		var i:number = 0;
 		var x:number = 0, y:number = 0, z:number = 0;
 
@@ -821,23 +889,21 @@ class Matrix3D
 	 */
 	public transpose()
 	{
+		var raw:Float32Array = Matrix3D.tempRawData;
+		this.copyRawDataTo(raw);
 
-		// Initial Tests - OK
-
-		var oRawData:number[] = this.rawData.slice(0);
-
-		this.rawData[1] = oRawData[4];
-		this.rawData[2] = oRawData[8];
-		this.rawData[3] = oRawData[12];
-		this.rawData[4] = oRawData[1];
-		this.rawData[6] = oRawData[9];
-		this.rawData[7] = oRawData[13];
-		this.rawData[8] = oRawData[2];
-		this.rawData[9] = oRawData[6];
-		this.rawData[11] = oRawData[14];
-		this.rawData[12] = oRawData[3];
-		this.rawData[13] = oRawData[7];
-		this.rawData[14] = oRawData[11];
+		this.rawData[1] = raw[4];
+		this.rawData[2] = raw[8];
+		this.rawData[3] = raw[12];
+		this.rawData[4] = raw[1];
+		this.rawData[6] = raw[9];
+		this.rawData[7] = raw[13];
+		this.rawData[8] = raw[2];
+		this.rawData[9] = raw[6];
+		this.rawData[11] = raw[14];
+		this.rawData[12] = raw[3];
+		this.rawData[13] = raw[7];
+		this.rawData[14] = raw[11];
 	}
 
 	static getAxisRotation(x:number, y:number, z:number, degrees:number):Matrix3D
@@ -878,7 +944,7 @@ class Matrix3D
 	 */
 	public get determinant():number
 	{
-		return    ((this.rawData[0]*this.rawData[5] - this.rawData[4]*this.rawData[1])*(this.rawData[10]*this.rawData[15] - this.rawData[14]*this.rawData[11]) - (this.rawData[0]*this.rawData[9] - this.rawData[8]*this.rawData[1])*(this.rawData[6]*this.rawData[15] - this.rawData[14]*this.rawData[7]) + (this.rawData[0]*this.rawData[13] - this.rawData[12]*this.rawData[1])*(this.rawData[6]*this.rawData[11] - this.rawData[10]*this.rawData[7]) + (this.rawData[4]*this.rawData[9] - this.rawData[8]*this.rawData[5])*(this.rawData[2]*this.rawData[15] - this.rawData[14]*this.rawData[3]) - (this.rawData[4]*this.rawData[13] - this.rawData[12]*this.rawData[5])*(this.rawData[2]*this.rawData[11] - this.rawData[10]*this.rawData[3]) + (this.rawData[8]*this.rawData[13] - this.rawData[12]*this.rawData[9])*(this.rawData[2]*this.rawData[7] - this.rawData[6]*this.rawData[3]));
+		return ((this.rawData[0]*this.rawData[5] - this.rawData[4]*this.rawData[1])*(this.rawData[10]*this.rawData[15] - this.rawData[14]*this.rawData[11]) - (this.rawData[0]*this.rawData[9] - this.rawData[8]*this.rawData[1])*(this.rawData[6]*this.rawData[15] - this.rawData[14]*this.rawData[7]) + (this.rawData[0]*this.rawData[13] - this.rawData[12]*this.rawData[1])*(this.rawData[6]*this.rawData[11] - this.rawData[10]*this.rawData[7]) + (this.rawData[4]*this.rawData[9] - this.rawData[8]*this.rawData[5])*(this.rawData[2]*this.rawData[15] - this.rawData[14]*this.rawData[3]) - (this.rawData[4]*this.rawData[13] - this.rawData[12]*this.rawData[5])*(this.rawData[2]*this.rawData[11] - this.rawData[10]*this.rawData[3]) + (this.rawData[8]*this.rawData[13] - this.rawData[12]*this.rawData[9])*(this.rawData[2]*this.rawData[7] - this.rawData[6]*this.rawData[3]));
 	}
 
 	/**

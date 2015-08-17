@@ -1,3 +1,4 @@
+import Matrix3DUtils			= require("awayjs-core/lib/geom/Matrix3DUtils");
 import Vector3D					= require("awayjs-core/lib/geom/Vector3D");
 import ProjectionBase			= require("awayjs-core/lib/projections/ProjectionBase");
 
@@ -86,7 +87,7 @@ class OrthographicOffCenterProjection extends ProjectionBase
 	//@override
 	public pUpdateMatrix()
 	{
-		var raw:number[] = [];
+		var raw:Float32Array = Matrix3DUtils.RAW_DATA_CONTAINER;
 		var w:number = 1/(this._maxX - this._minX);
 		var h:number = 1/(this._maxY - this._minY);
 		var d:number = 1/(this._pFar - this._pNear);

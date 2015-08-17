@@ -1,3 +1,4 @@
+import Matrix3DUtils			= require("awayjs-core/lib/geom/Matrix3DUtils");
 import Vector3D					= require("awayjs-core/lib/geom/Vector3D");
 import CoordinateSystem			= require("awayjs-core/lib/projections/CoordinateSystem");
 import ProjectionBase			= require("awayjs-core/lib/projections/ProjectionBase");
@@ -159,7 +160,7 @@ class PerspectiveProjection extends ProjectionBase
 	//@override
 	public pUpdateMatrix()
 	{
-		var raw:number[] = [];
+		var raw:Float32Array = Matrix3DUtils.RAW_DATA_CONTAINER;
 
 		if (this._preserveFocalLength) {
 			if (this._preserveAspectRatio)

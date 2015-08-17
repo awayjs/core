@@ -3207,13 +3207,13 @@ declare module "awayjs-core/lib/geom/Matrix3D" {
 	     * <p>An exception is thrown if the rawData property is set to a matrix that is not invertible. The Matrix3D
 	     * object must be invertible. If a non-invertible matrix is needed, create a subclass of the Matrix3D object.</p>
 	     */
-	    rawData: number[];
+	    rawData: Float32Array;
 	    private static tempMatrix;
 	    private static tempRawData;
 	    /**
 	     * Creates a Matrix3D object.
 	     */
-	    constructor(v?: number[]);
+	    constructor(v?: Float32Array);
 	    /**
 	     * Appends the matrix by multiplying another Matrix3D object by the current Matrix3D object.
 	     */
@@ -3250,8 +3250,8 @@ declare module "awayjs-core/lib/geom/Matrix3D" {
 	     * Copies all of the matrix data from the source Matrix3D object into the calling Matrix3D object.
 	     */
 	    copyFrom(sourceMatrix3D: Matrix3D): void;
-	    copyRawDataFrom(vector: number[], index?: number, transpose?: boolean): void;
-	    copyRawDataTo(vector: number[], index?: number, transpose?: boolean): void;
+	    copyRawDataFrom(vector: Float32Array, index?: number, transpose?: boolean): void;
+	    copyRawDataTo(vector: Float32Array, index?: number, transpose?: boolean): void;
 	    /**
 	     * Copies a Vector3D object into specific row of the calling Matrix3D object.
 	     */
@@ -3348,7 +3348,7 @@ declare module "awayjs-core/lib/geom/Matrix3DUtils" {
 	    /**
 	     * A reference to a Vector to be used as a temporary raw data container, to prevent object creation.
 	     */
-	    static RAW_DATA_CONTAINER: number[];
+	    static RAW_DATA_CONTAINER: Float32Array;
 	    static CALCULATION_MATRIX: Matrix3D;
 	    /**
 	     * Fills the 3d matrix object with values representing the transformation made by the given quaternion.

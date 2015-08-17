@@ -4931,7 +4931,7 @@ var Matrix3DUtils = (function () {
     /**
      * A reference to a Vector to be used as a temporary raw data container, to prevent object creation.
      */
-    Matrix3DUtils.RAW_DATA_CONTAINER = new Array(16);
+    Matrix3DUtils.RAW_DATA_CONTAINER = new Float32Array(16);
     //public static RAW_DATA_CONTAINER:number[] = new Array<number>(16);
     Matrix3DUtils.CALCULATION_MATRIX = new Matrix3D();
     return Matrix3DUtils;
@@ -4949,10 +4949,13 @@ var Matrix3D = (function () {
      */
     function Matrix3D(v) {
         if (v === void 0) { v = null; }
-        if (v != null && v.length == 16)
-            this.rawData = v.concat();
-        else
-            this.rawData = [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1];
+        if (v != null && v.length == 16) {
+            this.copyRawDataFrom(v);
+        }
+        else {
+            this.rawData = new Float32Array(16);
+            this.identity();
+        }
     }
     /**
      * Appends the matrix by multiplying another Matrix3D object by the current Matrix3D object.
@@ -5082,7 +5085,7 @@ var Matrix3D = (function () {
      * Returns a new Matrix3D object that is an exact copy of the current Matrix3D object.
      */
     Matrix3D.prototype.clone = function () {
-        return new Matrix3D(this.rawData.slice(0));
+        return new Matrix3D(this.rawData);
     };
     /**
      * Copies a Vector3D object into specific column of the calling Matrix3D object.
@@ -5251,7 +5254,7 @@ var Matrix3D = (function () {
      * Copies this Matrix3D object into a destination Matrix3D object.
      */
     Matrix3D.prototype.copyToMatrix3D = function (dest) {
-        dest.rawData = this.rawData.slice(0);
+        this.copyRawDataTo(dest.rawData);
     };
     /**
      * Returns the transformation matrix's translation, rotation, and scale settings as a Vector of three Vector3D objects.
@@ -5364,7 +5367,22 @@ var Matrix3D = (function () {
      * Converts the current matrix to an identity or unit matrix.
      */
     Matrix3D.prototype.identity = function () {
-        this.rawData = [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1];
+        this.rawData[0] = 1;
+        this.rawData[1] = 0;
+        this.rawData[2] = 0;
+        this.rawData[3] = 0;
+        this.rawData[4] = 0;
+        this.rawData[5] = 1;
+        this.rawData[6] = 0;
+        this.rawData[7] = 0;
+        this.rawData[8] = 0;
+        this.rawData[9] = 0;
+        this.rawData[10] = 1;
+        this.rawData[11] = 0;
+        this.rawData[12] = 0;
+        this.rawData[13] = 0;
+        this.rawData[14] = 0;
+        this.rawData[15] = 1;
     };
     /**
      * [static] Interpolates the translation, rotation, and scale transformation of one matrix toward those of the target matrix.
@@ -5391,20 +5409,20 @@ var Matrix3D = (function () {
         if (invertable) {
             d = 1 / d;
             var m11 = this.rawData[0];
-            var m21 = this.rawData[4];
-            var m31 = this.rawData[8];
-            var m41 = this.rawData[12];
             var m12 = this.rawData[1];
-            var m22 = this.rawData[5];
-            var m32 = this.rawData[9];
-            var m42 = this.rawData[13];
             var m13 = this.rawData[2];
-            var m23 = this.rawData[6];
-            var m33 = this.rawData[10];
-            var m43 = this.rawData[14];
             var m14 = this.rawData[3];
+            var m21 = this.rawData[4];
+            var m22 = this.rawData[5];
+            var m23 = this.rawData[6];
             var m24 = this.rawData[7];
+            var m31 = this.rawData[8];
+            var m32 = this.rawData[9];
+            var m33 = this.rawData[10];
             var m34 = this.rawData[11];
+            var m41 = this.rawData[12];
+            var m42 = this.rawData[13];
+            var m43 = this.rawData[14];
             var m44 = this.rawData[15];
             this.rawData[0] = d * (m22 * (m33 * m44 - m43 * m34) - m32 * (m23 * m44 - m43 * m24) + m42 * (m23 * m34 - m33 * m24));
             this.rawData[1] = -d * (m12 * (m33 * m44 - m43 * m34) - m32 * (m13 * m44 - m43 * m14) + m42 * (m13 * m34 - m33 * m14));
@@ -5434,7 +5452,38 @@ var Matrix3D = (function () {
      * Prepends a matrix by multiplying the current Matrix3D object by another Matrix3D object.
      */
     Matrix3D.prototype.prepend = function (rhs) {
-        var m111 = rhs.rawData[0], m121 = rhs.rawData[4], m131 = rhs.rawData[8], m141 = rhs.rawData[12], m112 = rhs.rawData[1], m122 = rhs.rawData[5], m132 = rhs.rawData[9], m142 = rhs.rawData[13], m113 = rhs.rawData[2], m123 = rhs.rawData[6], m133 = rhs.rawData[10], m143 = rhs.rawData[14], m114 = rhs.rawData[3], m124 = rhs.rawData[7], m134 = rhs.rawData[11], m144 = rhs.rawData[15], m211 = this.rawData[0], m221 = this.rawData[4], m231 = this.rawData[8], m241 = this.rawData[12], m212 = this.rawData[1], m222 = this.rawData[5], m232 = this.rawData[9], m242 = this.rawData[13], m213 = this.rawData[2], m223 = this.rawData[6], m233 = this.rawData[10], m243 = this.rawData[14], m214 = this.rawData[3], m224 = this.rawData[7], m234 = this.rawData[11], m244 = this.rawData[15];
+        var m111 = rhs.rawData[0];
+        var m112 = rhs.rawData[1];
+        var m113 = rhs.rawData[2];
+        var m114 = rhs.rawData[3];
+        var m121 = rhs.rawData[4];
+        var m122 = rhs.rawData[5];
+        var m123 = rhs.rawData[6];
+        var m124 = rhs.rawData[7];
+        var m131 = rhs.rawData[8];
+        var m132 = rhs.rawData[9];
+        var m133 = rhs.rawData[10];
+        var m134 = rhs.rawData[11];
+        var m141 = rhs.rawData[12];
+        var m142 = rhs.rawData[13];
+        var m143 = rhs.rawData[14];
+        var m144 = rhs.rawData[15];
+        var m211 = this.rawData[0];
+        var m212 = this.rawData[1];
+        var m213 = this.rawData[2];
+        var m214 = this.rawData[3];
+        var m221 = this.rawData[4];
+        var m222 = this.rawData[5];
+        var m223 = this.rawData[6];
+        var m224 = this.rawData[7];
+        var m231 = this.rawData[8];
+        var m232 = this.rawData[9];
+        var m233 = this.rawData[10];
+        var m234 = this.rawData[11];
+        var m241 = this.rawData[12];
+        var m242 = this.rawData[13];
+        var m243 = this.rawData[14];
+        var m244 = this.rawData[15];
         this.rawData[0] = m111 * m211 + m112 * m221 + m113 * m231 + m114 * m241;
         this.rawData[1] = m111 * m212 + m112 * m222 + m113 * m232 + m114 * m242;
         this.rawData[2] = m111 * m213 + m112 * m223 + m113 * m233 + m114 * m243;
@@ -5470,14 +5519,31 @@ var Matrix3D = (function () {
      * Prepends an incremental scale change along the x, y, and z axes to a Matrix3D object.
      */
     Matrix3D.prototype.prependScale = function (xScale, yScale, zScale) {
-        // Initial Tests - OK
-        this.prepend(new Matrix3D([xScale, 0, 0, 0, 0, yScale, 0, 0, 0, 0, zScale, 0, 0, 0, 0, 1]));
+        if (xScale == 1 && yScale == 1 && zScale == 1)
+            return;
+        var raw = Matrix3D.tempRawData;
+        raw[0] = xScale;
+        raw[1] = 0;
+        raw[2] = 0;
+        raw[3] = 0;
+        raw[4] = 0;
+        raw[5] = yScale;
+        raw[6] = 0;
+        raw[7] = 0;
+        raw[8] = 0;
+        raw[9] = 0;
+        raw[10] = zScale;
+        raw[11] = 0;
+        raw[12] = 0;
+        raw[13] = 0;
+        raw[14] = 0;
+        raw[15] = 1;
+        this.prepend(Matrix3D.tempMatrix);
     };
     /**
      * Prepends an incremental translation, a repositioning along the x, y, and z axes, to a Matrix3D object.
      */
     Matrix3D.prototype.prependTranslation = function (x, y, z) {
-        // Initial Tests - OK
         var m = new Matrix3D();
         m.position = new Vector3D(x, y, z);
         this.prepend(m);
@@ -5599,7 +5665,6 @@ var Matrix3D = (function () {
      * Uses the transformation matrix to transform a Vector of Numbers from one coordinate space to another.
      */
     Matrix3D.prototype.transformVectors = function (vin, vout) {
-        // Initial Tests - OK
         var i = 0;
         var x = 0, y = 0, z = 0;
         while (i + 3 <= vin.length) {
@@ -5616,20 +5681,20 @@ var Matrix3D = (function () {
      * Converts the current Matrix3D object to a matrix where the rows and columns are swapped.
      */
     Matrix3D.prototype.transpose = function () {
-        // Initial Tests - OK
-        var oRawData = this.rawData.slice(0);
-        this.rawData[1] = oRawData[4];
-        this.rawData[2] = oRawData[8];
-        this.rawData[3] = oRawData[12];
-        this.rawData[4] = oRawData[1];
-        this.rawData[6] = oRawData[9];
-        this.rawData[7] = oRawData[13];
-        this.rawData[8] = oRawData[2];
-        this.rawData[9] = oRawData[6];
-        this.rawData[11] = oRawData[14];
-        this.rawData[12] = oRawData[3];
-        this.rawData[13] = oRawData[7];
-        this.rawData[14] = oRawData[11];
+        var raw = Matrix3D.tempRawData;
+        this.copyRawDataTo(raw);
+        this.rawData[1] = raw[4];
+        this.rawData[2] = raw[8];
+        this.rawData[3] = raw[12];
+        this.rawData[4] = raw[1];
+        this.rawData[6] = raw[9];
+        this.rawData[7] = raw[13];
+        this.rawData[8] = raw[2];
+        this.rawData[9] = raw[6];
+        this.rawData[11] = raw[14];
+        this.rawData[12] = raw[3];
+        this.rawData[13] = raw[7];
+        this.rawData[14] = raw[11];
     };
     Matrix3D.getAxisRotation = function (x, y, z, degrees) {
         // internal class use by rotations which have been tested
@@ -6965,7 +7030,8 @@ var Quaternion = (function () {
         rawData[15] = 1;
         if (!target)
             return new Matrix3D(rawData);
-        target.copyRawDataFrom(rawData);
+        else
+            target.copyRawDataFrom(rawData);
         return target;
     };
     /**
@@ -11889,6 +11955,7 @@ var __extends = this.__extends || function (d, b) {
     __.prototype = b.prototype;
     d.prototype = new __();
 };
+var Matrix3DUtils = require("awayjs-core/lib/geom/Matrix3DUtils");
 var Vector3D = require("awayjs-core/lib/geom/Vector3D");
 var ProjectionBase = require("awayjs-core/lib/projections/ProjectionBase");
 var OrthographicOffCenterProjection = (function (_super) {
@@ -11962,7 +12029,7 @@ var OrthographicOffCenterProjection = (function (_super) {
     };
     //@override
     OrthographicOffCenterProjection.prototype.pUpdateMatrix = function () {
-        var raw = [];
+        var raw = Matrix3DUtils.RAW_DATA_CONTAINER;
         var w = 1 / (this._maxX - this._minX);
         var h = 1 / (this._maxY - this._minY);
         var d = 1 / (this._pFar - this._pNear);
@@ -11987,13 +12054,14 @@ var OrthographicOffCenterProjection = (function (_super) {
 })(ProjectionBase);
 module.exports = OrthographicOffCenterProjection;
 
-},{"awayjs-core/lib/geom/Vector3D":"awayjs-core/lib/geom/Vector3D","awayjs-core/lib/projections/ProjectionBase":"awayjs-core/lib/projections/ProjectionBase"}],"awayjs-core/lib/projections/OrthographicProjection":[function(require,module,exports){
+},{"awayjs-core/lib/geom/Matrix3DUtils":"awayjs-core/lib/geom/Matrix3DUtils","awayjs-core/lib/geom/Vector3D":"awayjs-core/lib/geom/Vector3D","awayjs-core/lib/projections/ProjectionBase":"awayjs-core/lib/projections/ProjectionBase"}],"awayjs-core/lib/projections/OrthographicProjection":[function(require,module,exports){
 var __extends = this.__extends || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
     __.prototype = b.prototype;
     d.prototype = new __();
 };
+var Matrix3DUtils = require("awayjs-core/lib/geom/Matrix3DUtils");
 var Vector3D = require("awayjs-core/lib/geom/Vector3D");
 var ProjectionBase = require("awayjs-core/lib/projections/ProjectionBase");
 var OrthographicProjection = (function (_super) {
@@ -12036,7 +12104,7 @@ var OrthographicProjection = (function (_super) {
     };
     //@override
     OrthographicProjection.prototype.pUpdateMatrix = function () {
-        var raw = [];
+        var raw = Matrix3DUtils.RAW_DATA_CONTAINER;
         this._yMax = this._projectionHeight * .5;
         this._xMax = this._yMax * this._pAspectRatio;
         var left;
@@ -12087,13 +12155,14 @@ var OrthographicProjection = (function (_super) {
 })(ProjectionBase);
 module.exports = OrthographicProjection;
 
-},{"awayjs-core/lib/geom/Vector3D":"awayjs-core/lib/geom/Vector3D","awayjs-core/lib/projections/ProjectionBase":"awayjs-core/lib/projections/ProjectionBase"}],"awayjs-core/lib/projections/PerspectiveProjection":[function(require,module,exports){
+},{"awayjs-core/lib/geom/Matrix3DUtils":"awayjs-core/lib/geom/Matrix3DUtils","awayjs-core/lib/geom/Vector3D":"awayjs-core/lib/geom/Vector3D","awayjs-core/lib/projections/ProjectionBase":"awayjs-core/lib/projections/ProjectionBase"}],"awayjs-core/lib/projections/PerspectiveProjection":[function(require,module,exports){
 var __extends = this.__extends || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
     __.prototype = b.prototype;
     d.prototype = new __();
 };
+var Matrix3DUtils = require("awayjs-core/lib/geom/Matrix3DUtils");
 var Vector3D = require("awayjs-core/lib/geom/Vector3D");
 var CoordinateSystem = require("awayjs-core/lib/projections/CoordinateSystem");
 var ProjectionBase = require("awayjs-core/lib/projections/ProjectionBase");
@@ -12230,7 +12299,7 @@ var PerspectiveProjection = (function (_super) {
     };
     //@override
     PerspectiveProjection.prototype.pUpdateMatrix = function () {
-        var raw = [];
+        var raw = Matrix3DUtils.RAW_DATA_CONTAINER;
         if (this._preserveFocalLength) {
             if (this._preserveAspectRatio)
                 this._hFocalLength = this._focalLength;
@@ -12286,7 +12355,7 @@ var PerspectiveProjection = (function (_super) {
 })(ProjectionBase);
 module.exports = PerspectiveProjection;
 
-},{"awayjs-core/lib/geom/Vector3D":"awayjs-core/lib/geom/Vector3D","awayjs-core/lib/projections/CoordinateSystem":"awayjs-core/lib/projections/CoordinateSystem","awayjs-core/lib/projections/ProjectionBase":"awayjs-core/lib/projections/ProjectionBase"}],"awayjs-core/lib/projections/ProjectionBase":[function(require,module,exports){
+},{"awayjs-core/lib/geom/Matrix3DUtils":"awayjs-core/lib/geom/Matrix3DUtils","awayjs-core/lib/geom/Vector3D":"awayjs-core/lib/geom/Vector3D","awayjs-core/lib/projections/CoordinateSystem":"awayjs-core/lib/projections/CoordinateSystem","awayjs-core/lib/projections/ProjectionBase":"awayjs-core/lib/projections/ProjectionBase"}],"awayjs-core/lib/projections/ProjectionBase":[function(require,module,exports){
 var __extends = this.__extends || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }

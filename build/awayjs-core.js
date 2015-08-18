@@ -4845,11 +4845,17 @@ var Matrix3D = (function () {
      */
     function Matrix3D(v) {
         if (v === void 0) { v = null; }
+        /**
+         * A Vector of 16 Numbers, where every four elements is a column of a 4x4 matrix.
+         *
+         * <p>An exception is thrown if the rawData property is set to a matrix that is not invertible. The Matrix3D
+         * object must be invertible. If a non-invertible matrix is needed, create a subclass of the Matrix3D object.</p>
+         */
+        this.rawData = new Float32Array(16);
         if (v != null && v.length == 16) {
             this.copyRawDataFrom(v);
         }
         else {
-            this.rawData = new Float32Array(16);
             this.identity();
         }
     }

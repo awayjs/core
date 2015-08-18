@@ -4476,7 +4476,6 @@ var ColorTransform = (function (_super) {
         if (blueOffset === void 0) { blueOffset = 0; }
         if (alphaOffset === void 0) { alphaOffset = 0; }
         _super.call(this);
-        this._changeEvent = new Event(Event.CHANGE);
         this._redMultiplier = redMultiplier;
         this._greenMultiplier = greenMultiplier;
         this._blueMultiplier = blueMultiplier;
@@ -4634,7 +4633,8 @@ var ColorTransform = (function (_super) {
         destination.copyFrom(this);
     };
     ColorTransform.prototype._invalidate = function () {
-        this.dispatchEvent(this._changeEvent);
+        if (this.hasEventListener(Event.CHANGE))
+            this.dispatchEvent(this._changeEvent || (this._changeEvent = new Event(Event.CHANGE)));
     };
     ColorTransform.prototype.prepend = function (ct) {
         this._redOffset += ct.redOffset * this._redMultiplier;

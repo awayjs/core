@@ -831,16 +831,24 @@ class Matrix3D
 		return true;
 	}
 
-	public transformVector(v:Vector3D):Vector3D
+	public transformVector(v:Vector3D, t:Vector3D = null):Vector3D
 	{
 		if (v == null)
-			return new Vector3D();
+			return t || new Vector3D();
 
 		var x:number = v.x;
 		var y:number = v.y;
 		var z:number = v.z;
 
-		return new Vector3D((x*this.rawData[0] + y*this.rawData[4] + z*this.rawData[8] + this.rawData[12]), (x*this.rawData[1] + y*this.rawData[5] + z*this.rawData[9] + this.rawData[13]), (x*this.rawData[2] + y*this.rawData[6] + z*this.rawData[10] + this.rawData[14]), (x*this.rawData[3] + y*this.rawData[7] + z*this.rawData[11] + this.rawData[15]));
+		if (!t)
+			t = new Vector3D();
+
+		t.x = x*this.rawData[0] + y*this.rawData[4] + z*this.rawData[8] + this.rawData[12];
+		t.y = x*this.rawData[1] + y*this.rawData[5] + z*this.rawData[9] + this.rawData[13];
+		t.z = x*this.rawData[2] + y*this.rawData[6] + z*this.rawData[10] + this.rawData[14];
+		t.w = x*this.rawData[3] + y*this.rawData[7] + z*this.rawData[11] + this.rawData[15];
+
+		return t;
 	}
 
 	public transformBox(b:Box):Box

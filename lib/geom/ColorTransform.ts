@@ -96,7 +96,7 @@ class ColorTransform extends EventDispatcher
     private _redOffset:number;
 
 
-    private _changeEvent:Event = new Event(Event.CHANGE);
+    private _changeEvent:Event;
 
     public get alphaMultiplier():number
     {
@@ -293,7 +293,8 @@ class ColorTransform extends EventDispatcher
 
     private _invalidate()
     {
-        this.dispatchEvent(this._changeEvent);
+        if (this.hasEventListener(Event.CHANGE))
+            this.dispatchEvent(this._changeEvent || (this._changeEvent = new Event(Event.CHANGE)));
     }
 
     public prepend(ct:ColorTransform)

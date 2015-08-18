@@ -150,8 +150,6 @@ class ColorTransform
 	 */
 	constructor(redMultiplier:number = 1, greenMultiplier:number = 1, blueMultiplier:number = 1, alphaMultiplier:number = 1, redOffset:number = 0, greenOffset:number = 0, blueOffset:number = 0, alphaOffset:number = 0)
 	{
-        super();
-
 		this.redMultiplier = redMultiplier;
 		this.greenMultiplier = greenMultiplier;
 		this.blueMultiplier = blueMultiplier;

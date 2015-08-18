@@ -3298,7 +3298,7 @@ declare module "awayjs-core/lib/geom/Matrix3D" {
 	     * Sets the transformation matrix's translation, rotation, and scale settings.
 	     */
 	    recompose(components: Vector3D[]): boolean;
-	    transformVector(v: Vector3D): Vector3D;
+	    transformVector(v: Vector3D, t?: Vector3D): Vector3D;
 	    transformBox(b: Box): Box;
 	    /**
 	     * Uses the transformation matrix to transform a Vector of Numbers from one coordinate space to another.

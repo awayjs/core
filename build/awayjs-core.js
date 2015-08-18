@@ -5534,13 +5534,20 @@ var Matrix3D = (function () {
         this.rawData[15] = 1;
         return true;
     };
-    Matrix3D.prototype.transformVector = function (v) {
+    Matrix3D.prototype.transformVector = function (v, t) {
+        if (t === void 0) { t = null; }
         if (v == null)
-            return new Vector3D();
+            return t || new Vector3D();
         var x = v.x;
         var y = v.y;
         var z = v.z;
-        return new Vector3D((x * this.rawData[0] + y * this.rawData[4] + z * this.rawData[8] + this.rawData[12]), (x * this.rawData[1] + y * this.rawData[5] + z * this.rawData[9] + this.rawData[13]), (x * this.rawData[2] + y * this.rawData[6] + z * this.rawData[10] + this.rawData[14]), (x * this.rawData[3] + y * this.rawData[7] + z * this.rawData[11] + this.rawData[15]));
+        if (!t)
+            t = new Vector3D();
+        t.x = x * this.rawData[0] + y * this.rawData[4] + z * this.rawData[8] + this.rawData[12];
+        t.y = x * this.rawData[1] + y * this.rawData[5] + z * this.rawData[9] + this.rawData[13];
+        t.z = x * this.rawData[2] + y * this.rawData[6] + z * this.rawData[10] + this.rawData[14];
+        t.w = x * this.rawData[3] + y * this.rawData[7] + z * this.rawData[11] + this.rawData[15];
+        return t;
     };
     Matrix3D.prototype.transformBox = function (b) {
         if (b == null)

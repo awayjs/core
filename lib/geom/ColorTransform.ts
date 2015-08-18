@@ -1,6 +1,4 @@
 import ColorUtils			= require("awayjs-core/lib/utils/ColorUtils");
-import EventDispatcher		= require("awayjs-core/lib/events/EventDispatcher");
-import Event				= require("awayjs-core/lib/events/Event");
 
 /**
  * The ColorTransform class lets you adjust the color values in a display
@@ -42,7 +40,7 @@ import Event				= require("awayjs-core/lib/events/Event");
  * clip(such as a loaded SWF object). They apply only to graphics and symbols
  * that are attached to the movie clip.</p>
  */
-class ColorTransform extends EventDispatcher
+class ColorTransform
 {
 	/**
 	 * A decimal value that is multiplied with the alpha transparency channel
@@ -53,138 +51,47 @@ class ColorTransform extends EventDispatcher
 	 * affects the value of the <code>alphaMultiplier</code> property of that
 	 * display object's <code>transform.colorTransform</code> property.</p>
 	 */
-	private _alphaMultiplier:number;
+	public alphaMultiplier:number;
 
 	/**
 	 * A number from -255 to 255 that is added to the alpha transparency channel
 	 * value after it has been multiplied by the <code>alphaMultiplier</code>
 	 * value.
 	 */
-    private _alphaOffset:number;
+    public alphaOffset:number;
 
 	/**
 	 * A decimal value that is multiplied with the blue channel value.
 	 */
-    private _blueMultiplier:number;
+    public blueMultiplier:number;
 
 	/**
 	 * A number from -255 to 255 that is added to the blue channel value after it
 	 * has been multiplied by the <code>blueMultiplier</code> value.
 	 */
-    private _blueOffset:number;
+    public blueOffset:number;
 
 	/**
 	 * A decimal value that is multiplied with the green channel value.
 	 */
-    private _greenMultiplier:number;
+    public greenMultiplier:number;
 
 	/**
 	 * A number from -255 to 255 that is added to the green channel value after
 	 * it has been multiplied by the <code>greenMultiplier</code> value.
 	 */
-    private _greenOffset:number;
+    public greenOffset:number;
 
 	/**
 	 * A decimal value that is multiplied with the red channel value.
 	 */
-    private _redMultiplier:number;
+    public redMultiplier:number;
 
 	/**
 	 * A number from -255 to 255 that is added to the red channel value after it
 	 * has been multiplied by the <code>redMultiplier</code> value.
 	 */
-    private _redOffset:number;
-
-
-    private _changeEvent:Event;
-
-    public get alphaMultiplier():number
-    {
-        return this._alphaMultiplier;
-    }
-
-    public set alphaMultiplier(value:number)
-    {
-        this._alphaMultiplier = value;
-        this._invalidate();
-    }
-
-    public get alphaOffset():number
-    {
-        return this._alphaOffset;
-    }
-
-    public set alphaOffset(value:number)
-    {
-        this._alphaOffset = value;
-        this._invalidate();
-    }
-
-    public get redMultiplier():number
-    {
-        return this._redMultiplier;
-    }
-
-    public set redMultiplier(value:number)
-    {
-        this._redMultiplier = value;
-        this._invalidate();
-    }
-
-    public get redOffset():number
-    {
-        return this._redOffset;
-    }
-
-    public set redOffset(value:number)
-    {
-        this._redOffset = value;
-        this._invalidate();
-    }
-
-    public get greenMultiplier():number
-    {
-        return this._greenMultiplier;
-    }
-
-    public set greenMultiplier(value:number)
-    {
-        this._greenMultiplier = value;
-        this._invalidate();
-    }
-
-    public get greenOffset():number
-    {
-        return this._greenOffset;
-    }
-
-    public set greenOffset(value:number)
-    {
-        this._greenOffset = value;
-        this._invalidate();
-    }
-
-    public get blueMultiplier():number
-    {
-        return this._blueMultiplier;
-    }
-
-    public set blueMultiplier(value:number)
-    {
-        this._blueMultiplier = value;
-        this._invalidate();
-    }
-
-    public get blueOffset():number
-    {
-        return this._blueOffset;
-    }
-
-    public set blueOffset(value:number)
-    {
-        this._blueOffset = value;
-        this._invalidate();
-    }
+    public redOffset:number;
 
 	/**
 	 * The RGB color value for a ColorTransform object.
@@ -204,22 +111,20 @@ class ColorTransform extends EventDispatcher
 	 */
 	public get color():number
 	{
-		return((this._redOffset << 16) | ( this._greenOffset << 8) | this._blueOffset);
+		return((this.redOffset << 16) | ( this.greenOffset << 8) | this.blueOffset);
 	}
 
 	public set color(value:number)
 	{
 		var argb:number[] = ColorUtils.float32ColorToARGB(value);
 
-		this._redOffset = argb[1];  //(value >> 16) & 0xFF;
-		this._greenOffset = argb[2];  //(value >> 8) & 0xFF;
-		this._blueOffset = argb[3];  //value & 0xFF;
+		this.redOffset = argb[1];  //(value >> 16) & 0xFF;
+		this.greenOffset = argb[2];  //(value >> 8) & 0xFF;
+		this.blueOffset = argb[3];  //value & 0xFF;
 
-		this._redMultiplier = 0;
-		this._greenMultiplier = 0;
-		this._blueMultiplier = 0;
-
-        this._invalidate();
+		this.redMultiplier = 0;
+		this.greenMultiplier = 0;
+		this.blueMultiplier = 0;
 	}
 
 	/**
@@ -247,43 +152,43 @@ class ColorTransform extends EventDispatcher
 	{
         super();
 
-		this._redMultiplier = redMultiplier;
-		this._greenMultiplier = greenMultiplier;
-		this._blueMultiplier = blueMultiplier;
-		this._alphaMultiplier = alphaMultiplier;
-		this._redOffset = redOffset;
-		this._greenOffset = greenOffset;
-		this._blueOffset = blueOffset;
-		this._alphaOffset = alphaOffset;
+		this.redMultiplier = redMultiplier;
+		this.greenMultiplier = greenMultiplier;
+		this.blueMultiplier = blueMultiplier;
+		this.alphaMultiplier = alphaMultiplier;
+		this.redOffset = redOffset;
+		this.greenOffset = greenOffset;
+		this.blueOffset = blueOffset;
+		this.alphaOffset = alphaOffset;
 	}
 
     public clear()
     {
-        this._redMultiplier = 1;
-        this._greenMultiplier = 1;
-        this._blueMultiplier = 1;
-        this._alphaMultiplier = 1;
-        this._redOffset = 0;
-        this._greenOffset = 0;
-        this._blueOffset = 0;
-        this._alphaOffset = 0;
+        this.redMultiplier = 1;
+        this.greenMultiplier = 1;
+        this.blueMultiplier = 1;
+        this.alphaMultiplier = 1;
+        this.redOffset = 0;
+        this.greenOffset = 0;
+        this.blueOffset = 0;
+        this.alphaOffset = 0;
     }
 
     public clone():ColorTransform
     {
-        return new ColorTransform(this._redMultiplier, this._greenMultiplier, this._blueMultiplier, this._alphaMultiplier, this._redOffset, this._greenOffset, this._blueOffset, this._alphaOffset);
+        return new ColorTransform(this.redMultiplier, this.greenMultiplier, this.blueMultiplier, this.alphaMultiplier, this.redOffset, this.greenOffset, this.blueOffset, this.alphaOffset);
     }
 
     public copyFrom(source:ColorTransform)
     {
-        this._redMultiplier = source.redMultiplier;
-        this._greenMultiplier = source.greenMultiplier;
-        this._blueMultiplier = source.blueMultiplier;
-        this._alphaMultiplier = source.alphaMultiplier;
-        this._redOffset = source.redOffset;
-        this._greenOffset = source.greenOffset;
-        this._blueOffset = source.blueOffset;
-        this._alphaOffset = source.alphaOffset;
+        this.redMultiplier = source.redMultiplier;
+        this.greenMultiplier = source.greenMultiplier;
+        this.blueMultiplier = source.blueMultiplier;
+        this.alphaMultiplier = source.alphaMultiplier;
+        this.redOffset = source.redOffset;
+        this.greenOffset = source.greenOffset;
+        this.blueOffset = source.blueOffset;
+        this.alphaOffset = source.alphaOffset;
     }
 
     public copyTo(destination:ColorTransform)
@@ -291,25 +196,17 @@ class ColorTransform extends EventDispatcher
         destination.copyFrom(this);
     }
 
-    private _invalidate()
-    {
-        if (this.hasEventListener(Event.CHANGE))
-            this.dispatchEvent(this._changeEvent || (this._changeEvent = new Event(Event.CHANGE)));
-    }
-
     public prepend(ct:ColorTransform)
     {
-        this._redOffset += ct.redOffset * this._redMultiplier;
-        this._greenOffset += ct.greenOffset * this._greenMultiplier;
-        this._blueOffset += ct.blueOffset * this._blueMultiplier;
-        this._alphaOffset += ct.alphaOffset * this._alphaMultiplier;
+        this.redOffset += ct.redOffset * this.redMultiplier;
+        this.greenOffset += ct.greenOffset * this.greenMultiplier;
+        this.blueOffset += ct.blueOffset * this.blueMultiplier;
+        this.alphaOffset += ct.alphaOffset * this.alphaMultiplier;
 
-        this._redMultiplier *= ct.redMultiplier;
-        this._greenMultiplier *= ct.greenMultiplier;
-        this._blueMultiplier *= ct.blueMultiplier;
-        this._alphaMultiplier *= ct.alphaMultiplier;
-
-        this._invalidate();
+        this.redMultiplier *= ct.redMultiplier;
+        this.greenMultiplier *= ct.greenMultiplier;
+        this.blueMultiplier *= ct.blueMultiplier;
+        this.alphaMultiplier *= ct.alphaMultiplier;
     }
 }
 

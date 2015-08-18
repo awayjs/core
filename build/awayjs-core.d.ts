@@ -2692,7 +2692,6 @@ declare module "awayjs-core/lib/geom/Box" {
 }
 
 declare module "awayjs-core/lib/geom/ColorTransform" {
-	import EventDispatcher = require("awayjs-core/lib/events/EventDispatcher");
 	/**
 	 * The ColorTransform class lets you adjust the color values in a display
 	 * object. The color adjustment or <i>color transformation</i> can be applied
@@ -2733,7 +2732,7 @@ declare module "awayjs-core/lib/geom/ColorTransform" {
 	 * clip(such as a loaded SWF object). They apply only to graphics and symbols
 	 * that are attached to the movie clip.</p>
 	 */
-	class ColorTransform extends EventDispatcher {
+	class ColorTransform {
 	    /**
 	     * A decimal value that is multiplied with the alpha transparency channel
 	     * value.
@@ -2743,49 +2742,40 @@ declare module "awayjs-core/lib/geom/ColorTransform" {
 	     * affects the value of the <code>alphaMultiplier</code> property of that
 	     * display object's <code>transform.colorTransform</code> property.</p>
 	     */
-	    private _alphaMultiplier;
+	    alphaMultiplier: number;
 	    /**
 	     * A number from -255 to 255 that is added to the alpha transparency channel
 	     * value after it has been multiplied by the <code>alphaMultiplier</code>
 	     * value.
 	     */
-	    private _alphaOffset;
+	    alphaOffset: number;
 	    /**
 	     * A decimal value that is multiplied with the blue channel value.
 	     */
-	    private _blueMultiplier;
+	    blueMultiplier: number;
 	    /**
 	     * A number from -255 to 255 that is added to the blue channel value after it
 	     * has been multiplied by the <code>blueMultiplier</code> value.
 	     */
-	    private _blueOffset;
+	    blueOffset: number;
 	    /**
 	     * A decimal value that is multiplied with the green channel value.
 	     */
-	    private _greenMultiplier;
+	    greenMultiplier: number;
 	    /**
 	     * A number from -255 to 255 that is added to the green channel value after
 	     * it has been multiplied by the <code>greenMultiplier</code> value.
 	     */
-	    private _greenOffset;
+	    greenOffset: number;
 	    /**
 	     * A decimal value that is multiplied with the red channel value.
 	     */
-	    private _redMultiplier;
+	    redMultiplier: number;
 	    /**
 	     * A number from -255 to 255 that is added to the red channel value after it
 	     * has been multiplied by the <code>redMultiplier</code> value.
 	     */
-	    private _redOffset;
-	    private _changeEvent;
-	    alphaMultiplier: number;
-	    alphaOffset: number;
-	    redMultiplier: number;
 	    redOffset: number;
-	    greenMultiplier: number;
-	    greenOffset: number;
-	    blueMultiplier: number;
-	    blueOffset: number;
 	    /**
 	     * The RGB color value for a ColorTransform object.
 	     *
@@ -2829,7 +2819,6 @@ declare module "awayjs-core/lib/geom/ColorTransform" {
 	    clone(): ColorTransform;
 	    copyFrom(source: ColorTransform): void;
 	    copyTo(destination: ColorTransform): void;
-	    private _invalidate();
 	    prepend(ct: ColorTransform): void;
 	}
 	export = ColorTransform;

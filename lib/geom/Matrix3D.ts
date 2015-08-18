@@ -12,7 +12,7 @@ class Matrix3D
 	 * <p>An exception is thrown if the rawData property is set to a matrix that is not invertible. The Matrix3D
 	 * object must be invertible. If a non-invertible matrix is needed, create a subclass of the Matrix3D object.</p>
 	 */
-	public rawData:Float32Array;
+	public rawData:Float32Array = new Float32Array(16);
 
 	private static tempMatrix:Matrix3D = new Matrix3D();
 	private static tempRawData:Float32Array = Matrix3D.tempMatrix.rawData;
@@ -25,7 +25,6 @@ class Matrix3D
 		if (v != null && v.length == 16) {
 			this.copyRawDataFrom(v);
 		} else {
-			this.rawData = new Float32Array(16);
 			this.identity();
 		}
 	}

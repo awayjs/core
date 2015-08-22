@@ -242,7 +242,10 @@ class AssetLibraryBundle extends EventDispatcher
 		return this._assetDictionary[ns][name];
 
 	}
-
+	public getAllAssets():Array<IAsset>
+	{
+		return this._assets;
+	}
 	/**
 	 * Adds an asset to the asset library, first making sure that it's name is unique
 	 * using the method defined by the <code>conflictStrategy</code> and

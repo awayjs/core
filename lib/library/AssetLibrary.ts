@@ -134,6 +134,16 @@ class AssetLibrary
 	}
 
 	/**
+	 * Short-hand for getAsset() method on default asset library bundle.
+	 *
+	 * @see AssetLibraryBundle.getAsset()
+	 */
+	public static getAllAssets():Array<IAsset>
+	{
+		return AssetLibrary.getBundle().getAllAssets();
+	}
+
+	/**
 	 * Short-hand for addEventListener() method on default asset library bundle.
 	 */
 	public static addEventListener(type:string, listener:Function)

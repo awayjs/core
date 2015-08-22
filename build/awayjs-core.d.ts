@@ -1936,16 +1936,6 @@ declare module "awayjs-core/lib/errors/ArgumentError" {
 	
 }
 
-declare module "awayjs-core/lib/errors/DocumentError" {
-	import Error = require("awayjs-core/lib/errors/Error");
-	class DocumentError extends Error {
-	    static DOCUMENT_DOES_NOT_EXIST: string;
-	    constructor(message?: string, id?: number);
-	}
-	export = DocumentError;
-	
-}
-
 declare module "awayjs-core/lib/errors/Error" {
 	class Error {
 	    private _errorID;
@@ -1980,6 +1970,16 @@ declare module "awayjs-core/lib/errors/Error" {
 	
 }
 
+declare module "awayjs-core/lib/errors/DocumentError" {
+	import Error = require("awayjs-core/lib/errors/Error");
+	class DocumentError extends Error {
+	    static DOCUMENT_DOES_NOT_EXIST: string;
+	    constructor(message?: string, id?: number);
+	}
+	export = DocumentError;
+	
+}
+
 declare module "awayjs-core/lib/errors/PartialImplementationError" {
 	import Error = require("awayjs-core/lib/errors/Error");
 	/**
@@ -1995,25 +1995,6 @@ declare module "awayjs-core/lib/errors/PartialImplementationError" {
 	    constructor(dependency?: string, id?: number);
 	}
 	export = PartialImplementationError;
-	
-}
-
-declare module "awayjs-core/lib/errors/RangeError" {
-	import Error = require("awayjs-core/lib/errors/Error");
-	/**
-	 * RangeError is thrown when an index is accessed out of range of the number of
-	 * available indices on an Array.
-	 */
-	class RangeError extends Error {
-	    /**
-	     * Create a new RangeError.
-	     *
-	     * @param message An optional message to override the default error message.
-	     * @param id The id of the error.
-	     */
-	    constructor(message?: string, id?: number);
-	}
-	export = RangeError;
 	
 }
 
@@ -2063,6 +2044,25 @@ declare module "awayjs-core/lib/events/AssetEvent" {
 	
 }
 
+declare module "awayjs-core/lib/errors/RangeError" {
+	import Error = require("awayjs-core/lib/errors/Error");
+	/**
+	 * RangeError is thrown when an index is accessed out of range of the number of
+	 * available indices on an Array.
+	 */
+	class RangeError extends Error {
+	    /**
+	     * Create a new RangeError.
+	     *
+	     * @param message An optional message to override the default error message.
+	     * @param id The id of the error.
+	     */
+	    constructor(message?: string, id?: number);
+	}
+	export = RangeError;
+	
+}
+
 declare module "awayjs-core/lib/events/Event" {
 	class Event {
 	    static COMPLETE: string;
@@ -2092,6 +2092,20 @@ declare module "awayjs-core/lib/events/Event" {
 	    clone(): Event;
 	}
 	export = Event;
+	
+}
+
+declare module "awayjs-core/lib/events/HTTPStatusEvent" {
+	import Event = require("awayjs-core/lib/events/Event");
+	/**
+	 * @class away.events.HTTPStatusEvent
+	 */
+	class HTTPStatusEvent extends Event {
+	    static HTTP_STATUS: string;
+	    status: number;
+	    constructor(type: string, status?: number);
+	}
+	export = HTTPStatusEvent;
 	
 }
 
@@ -2143,20 +2157,6 @@ declare module "awayjs-core/lib/events/EventDispatcher" {
 	    hasEventListener(type: string, listener?: Function): boolean;
 	}
 	export = EventDispatcher;
-	
-}
-
-declare module "awayjs-core/lib/events/HTTPStatusEvent" {
-	import Event = require("awayjs-core/lib/events/Event");
-	/**
-	 * @class away.events.HTTPStatusEvent
-	 */
-	class HTTPStatusEvent extends Event {
-	    static HTTP_STATUS: string;
-	    status: number;
-	    constructor(type: string, status?: number);
-	}
-	export = HTTPStatusEvent;
 	
 }
 
@@ -4784,6 +4784,12 @@ declare module "awayjs-core/lib/library/AssetLibrary" {
 	     */
 	    static getAsset(name: string, ns?: string): IAsset;
 	    /**
+	     * Short-hand for getAsset() method on default asset library bundle.
+	     *
+	     * @see AssetLibraryBundle.getAsset()
+	     */
+	    static getAllAssets(): Array<IAsset>;
+	    /**
 	     * Short-hand for addEventListener() method on default asset library bundle.
 	     */
 	    static addEventListener(type: string, listener: Function): void;
@@ -4968,6 +4974,7 @@ declare module "awayjs-core/lib/library/AssetLibraryBundle" {
 	     *
 	     */
 	    getAsset(name: string, ns?: string): IAsset;
+	    getAllAssets(): Array<IAsset>;
 	    /**
 	     * Adds an asset to the asset library, first making sure that it's name is unique
 	     * using the method defined by the <code>conflictStrategy</code> and

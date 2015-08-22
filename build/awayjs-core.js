@@ -8385,6 +8385,9 @@ var AssetLibraryBundle = (function (_super) {
             return null;
         return this._assetDictionary[ns][name];
     };
+    AssetLibraryBundle.prototype.getAllAssets = function () {
+        return this._assets;
+    };
     /**
      * Adds an asset to the asset library, first making sure that it's name is unique
      * using the method defined by the <code>conflictStrategy</code> and
@@ -8839,6 +8842,14 @@ var AssetLibrary = (function () {
     AssetLibrary.getAsset = function (name, ns) {
         if (ns === void 0) { ns = null; }
         return AssetLibrary.getBundle().getAsset(name, ns);
+    };
+    /**
+     * Short-hand for getAsset() method on default asset library bundle.
+     *
+     * @see AssetLibraryBundle.getAsset()
+     */
+    AssetLibrary.getAllAssets = function () {
+        return AssetLibrary.getBundle().getAllAssets();
     };
     /**
      * Short-hand for addEventListener() method on default asset library bundle.

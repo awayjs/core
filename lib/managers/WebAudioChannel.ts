@@ -15,8 +15,7 @@ class WebAudioChannel
 	
 	private _isPlaying:boolean = false;
 	private _isLooping:boolean = false;
-
-	private _isDecoded:boolean = false;
+	private _isDecoding:boolean = false;
 	private _currentTime:number;
 	private _id:number;
 	private _volume:number = 1;
@@ -64,6 +63,11 @@ class WebAudioChannel
 		return this._isLooping;
 	}
 
+	public isDecoding():boolean
+	{
+		return this._isDecoding;
+	}
+
 	constructor()
 	{
 		this._audioCtx = WebAudioChannel._audioCtx || (WebAudioChannel._audioCtx = new (window["AudioContext"] || window["webkitAudioContext"])());
@@ -85,8 +89,9 @@ class WebAudioChannel
 
 		this._id = id;
 
-		this._isDecoded = false;
+		this._isDecoding = true;
 
+		//fast path for short sounds
 		if (WebAudioChannel._decodeCache[id])
 			this._onDecodeComplete(WebAudioChannel._decodeCache[id]);
 		else
@@ -99,8 +104,9 @@ class WebAudioChannel
 			return;
 
 		this._isPlaying = false;
+		this._isLooping = false;
 
-		if (this._isDecoded) {
+		if (!this._isDecoding) {
 			this._currentTime = this._audioCtx.currentTime - this._startTime;
 			this._source.stop(this._audioCtx.currentTime);
 		}
@@ -114,7 +120,7 @@ class WebAudioChannel
 		if (!this._isPlaying)
 			return;
 
-		this._isDecoded = true;
+		this._isDecoding = false;
 
 		if (buffer.duration < 2)
 			WebAudioChannel._decodeCache[this._id] = buffer;
@@ -131,12 +137,14 @@ class WebAudioChannel
 		this._duration = buffer.duration;
 
 		this._startTime = this._audioCtx.currentTime - this._currentTime;
-		this._source.addEventListener("ended", this._onEndedDelegate);
+		this._source.onended = this._onEndedDelegate;
 		this._source.start(this._audioCtx.currentTime, this._currentTime);
 	}
 
 	public _onError(event)
 	{
+		console.log("Error with decoding audio data");
+		this.stop();
 	}
 
 	private _onEnded(event):void
@@ -147,7 +155,7 @@ class WebAudioChannel
 	private _disposeSource()
 	{
 		//clean up
-		this._source.removeEventListener("ended", this._onEndedDelegate);
+		this._source.onended = null;
 		this._source.disconnect();
 		delete this._source.buffer;
 		delete this._source;

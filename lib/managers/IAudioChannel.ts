@@ -12,6 +12,8 @@ interface IAudioChannel
 
 	isLooping():boolean;
 
+	isDecoding():boolean;
+
 	play(buffer:ArrayBuffer, offset?:number, loop?:boolean, id?:number);
 
 	stop();

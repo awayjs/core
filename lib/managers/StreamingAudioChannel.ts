@@ -60,6 +60,11 @@ class StreamingAudioChannel
 		return this._isLooping;
 	}
 
+	public isDecoding():boolean
+	{
+		return false;
+	}
+
 	constructor()
 	{
 		this._sourceOpenDelegate = (event) => this._sourceOpen(event);
@@ -95,11 +100,18 @@ class StreamingAudioChannel
 	{
 		this._audio.pause();
 		this._isPlaying = false;
+		this._isLooping = false;
 	}
 	
 	private _sourceOpen(event)
 	{
 		this._isOpening = false;
+
+		//TODO: find out how in the name of all that is holy how this can be executed more than once on a MediaSource object
+		if (this._mediaSource.activeSourceBuffers.length) {
+			console.log("ERR: double sourceopen event called")
+			return;
+		}
 
 		this._sourceBuffer = this._mediaSource.addSourceBuffer('audio/mpeg');
 		this._sourceBuffer.addEventListener("updateend", this._updateEndDelegate);

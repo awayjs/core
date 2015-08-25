@@ -16,17 +16,19 @@ class AudioManager
 
 		if (i == channelClass.maxChannels) {
 			//pick the oldest channel to reuse, ignoring looping channels
+			var channel:IAudioChannel;
 			var len:number = channelClass._channels.length;
 			for (var j:number = 0; j < len; j++) {
-				if (!channelClass._channels[j].isLooping()) {
+				channel = channelClass._channels[j];
+				if (!channel.isLooping() && !channel.isDecoding()) {
 					channelClass._channels.push(channelClass._channels.splice(j, 1)[0]);
-					break;
+					channel.stop();
+					return channel;
 				}
 			}
 
-			var channel:IAudioChannel = channelClass._channels[channelClass.maxChannels - 1];
-			channel.stop();
-			return channel;
+			//do not return channel until one is freed up
+			return null;
 		}
 
 		return channelClass._channels[i] || (channelClass._channels[i] = new channelClass());

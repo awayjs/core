@@ -1,9 +1,11 @@
 
 class WebAudioChannel
 {
-	public static maxChannels:number = 32;
+	public static maxChannels:number = 64;
 
 	public static _channels:Array<WebAudioChannel> = new Array<WebAudioChannel>();
+
+	public static _decodeCache:Object = new Object();
 
 	private static _audioCtx;
 	private _audioCtx;
@@ -16,6 +18,7 @@ class WebAudioChannel
 
 	private _isDecoded:boolean = false;
 	private _currentTime:number;
+	private _id:number;
 	private _volume:number = 1;
 	private _startTime:number = 0;
 	private _duration:number;
@@ -73,16 +76,21 @@ class WebAudioChannel
 		this._onEndedDelegate = (event) => this._onEnded(event);
 	}
 	
-	public play(buffer:ArrayBuffer, offset:number = 0, loop:boolean = false)
+	public play(buffer:ArrayBuffer, offset:number = 0, loop:boolean = false, id:number = 0)
 	{
 		this._isPlaying = true;
 		this._isLooping = loop;
 
 		this._currentTime = offset;
 
+		this._id = id;
+
 		this._isDecoded = false;
 
-		this._audioCtx.decodeAudioData(buffer, (buffer) => this._onDecodeComplete(buffer), (event) => this._onError(event));
+		if (WebAudioChannel._decodeCache[id])
+			this._onDecodeComplete(WebAudioChannel._decodeCache[id]);
+		else
+			this._audioCtx.decodeAudioData(buffer, (buffer) => this._onDecodeComplete(buffer), (event) => this._onError(event));
 	}
 
 	public stop()
@@ -107,6 +115,9 @@ class WebAudioChannel
 			return;
 
 		this._isDecoded = true;
+
+		if (buffer.duration < 2)
+			WebAudioChannel._decodeCache[this._id] = buffer;
 
 		if (this._source)
 			this._disposeSource();

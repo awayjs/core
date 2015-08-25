@@ -79,7 +79,7 @@ class WaveAudio extends AssetBase implements IAsset
 	{
 		this._audioChannel = AudioManager.getChannel(this._buffer.byteLength);
 		this._audioChannel.volume = this._volume;
-		this._audioChannel.play(this._buffer, offset, loop);
+		this._audioChannel.play(this._buffer, offset, loop, this.id);
 	}
 
 	public stop()

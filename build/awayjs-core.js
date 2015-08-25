@@ -3003,8 +3003,10 @@ var WaveAudio = (function (_super) {
     WaveAudio.prototype.play = function (offset, loop) {
         if (loop === void 0) { loop = false; }
         this._audioChannel = AudioManager.getChannel(this._buffer.byteLength);
-        this._audioChannel.volume = this._volume;
-        this._audioChannel.play(this._buffer, offset, loop, this.id);
+        if (this._audioChannel) {
+            this._audioChannel.volume = this._volume;
+            this._audioChannel.play(this._buffer, offset, loop, this.id);
+        }
     };
     WaveAudio.prototype.stop = function () {
         if (this._audioChannel)
@@ -9905,16 +9907,18 @@ var AudioManager = (function () {
             i++;
         if (i == channelClass.maxChannels) {
             //pick the oldest channel to reuse, ignoring looping channels
+            var channel;
             var len = channelClass._channels.length;
             for (var j = 0; j < len; j++) {
-                if (!channelClass._channels[j].isLooping()) {
+                channel = channelClass._channels[j];
+                if (!channel.isLooping() && !channel.isDecoding()) {
                     channelClass._channels.push(channelClass._channels.splice(j, 1)[0]);
-                    break;
+                    channel.stop();
+                    return channel;
                 }
             }
-            var channel = channelClass._channels[channelClass.maxChannels - 1];
-            channel.stop();
-            return channel;
+            //do not return channel until one is freed up
+            return null;
         }
         return channelClass._channels[i] || (channelClass._channels[i] = new channelClass());
     };
@@ -9972,6 +9976,9 @@ var StreamingAudioChannel = (function () {
     StreamingAudioChannel.prototype.isLooping = function () {
         return this._isLooping;
     };
+    StreamingAudioChannel.prototype.isDecoding = function () {
+        return false;
+    };
     StreamingAudioChannel.prototype.play = function (buffer, offset, loop) {
         if (offset === void 0) { offset = 0; }
         if (loop === void 0) { loop = false; }
@@ -9990,9 +9997,15 @@ var StreamingAudioChannel = (function () {
     StreamingAudioChannel.prototype.stop = function () {
         this._audio.pause();
         this._isPlaying = false;
+        this._isLooping = false;
     };
     StreamingAudioChannel.prototype._sourceOpen = function (event) {
         this._isOpening = false;
+        //TODO: find out how in the name of all that is holy how this can be executed more than once on a MediaSource object
+        if (this._mediaSource.activeSourceBuffers.length) {
+            console.log("ERR: double sourceopen event called");
+            return;
+        }
         this._sourceBuffer = this._mediaSource.addSourceBuffer('audio/mpeg');
         this._sourceBuffer.addEventListener("updateend", this._updateEndDelegate);
         if (this._isPlaying)
@@ -10055,7 +10068,7 @@ var WebAudioChannel = (function () {
         var _this = this;
         this._isPlaying = false;
         this._isLooping = false;
-        this._isDecoded = false;
+        this._isDecoding = false;
         this._volume = 1;
         this._startTime = 0;
         this._audioCtx = WebAudioChannel._audioCtx || (WebAudioChannel._audioCtx = new (window["AudioContext"] || window["webkitAudioContext"])());
@@ -10099,6 +10112,9 @@ var WebAudioChannel = (function () {
     WebAudioChannel.prototype.isLooping = function () {
         return this._isLooping;
     };
+    WebAudioChannel.prototype.isDecoding = function () {
+        return this._isDecoding;
+    };
     WebAudioChannel.prototype.play = function (buffer, offset, loop, id) {
         var _this = this;
         if (offset === void 0) { offset = 0; }
@@ -10108,7 +10124,8 @@ var WebAudioChannel = (function () {
         this._isLooping = loop;
         this._currentTime = offset;
         this._id = id;
-        this._isDecoded = false;
+        this._isDecoding = true;
+        //fast path for short sounds
         if (WebAudioChannel._decodeCache[id])
             this._onDecodeComplete(WebAudioChannel._decodeCache[id]);
         else
@@ -10118,7 +10135,8 @@ var WebAudioChannel = (function () {
         if (!this._isPlaying)
             return;
         this._isPlaying = false;
-        if (this._isDecoded) {
+        this._isLooping = false;
+        if (!this._isDecoding) {
             this._currentTime = this._audioCtx.currentTime - this._startTime;
             this._source.stop(this._audioCtx.currentTime);
         }
@@ -10128,7 +10146,7 @@ var WebAudioChannel = (function () {
     WebAudioChannel.prototype._onDecodeComplete = function (buffer) {
         if (!this._isPlaying)
             return;
-        this._isDecoded = true;
+        this._isDecoding = false;
         if (buffer.duration < 2)
             WebAudioChannel._decodeCache[this._id] = buffer;
         if (this._source)
@@ -10139,17 +10157,19 @@ var WebAudioChannel = (function () {
         this._source.buffer = buffer;
         this._duration = buffer.duration;
         this._startTime = this._audioCtx.currentTime - this._currentTime;
-        this._source.addEventListener("ended", this._onEndedDelegate);
+        this._source.onended = this._onEndedDelegate;
         this._source.start(this._audioCtx.currentTime, this._currentTime);
     };
     WebAudioChannel.prototype._onError = function (event) {
+        console.log("Error with decoding audio data");
+        this.stop();
     };
     WebAudioChannel.prototype._onEnded = function (event) {
         this.stop();
     };
     WebAudioChannel.prototype._disposeSource = function () {
         //clean up
-        this._source.removeEventListener("ended", this._onEndedDelegate);
+        this._source.onended = null;
         this._source.disconnect();
         delete this._source.buffer;
         delete this._source;

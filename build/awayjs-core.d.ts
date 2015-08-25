@@ -5600,6 +5600,7 @@ declare module "awayjs-core/lib/managers/IAudioChannel" {
 	    volume: number;
 	    isPlaying(): boolean;
 	    isLooping(): boolean;
+	    isDecoding(): boolean;
 	    play(buffer: ArrayBuffer, offset?: number, loop?: boolean, id?: number): any;
 	    stop(): any;
 	}
@@ -5646,6 +5647,7 @@ declare module "awayjs-core/lib/managers/StreamingAudioChannel" {
 	    volume: number;
 	    isPlaying(): boolean;
 	    isLooping(): boolean;
+	    isDecoding(): boolean;
 	    constructor();
 	    play(buffer: ArrayBuffer, offset?: number, loop?: boolean): void;
 	    stop(): void;
@@ -5671,7 +5673,7 @@ declare module "awayjs-core/lib/managers/WebAudioChannel" {
 	    private _source;
 	    private _isPlaying;
 	    private _isLooping;
-	    private _isDecoded;
+	    private _isDecoding;
 	    private _currentTime;
 	    private _id;
 	    private _volume;
@@ -5683,6 +5685,7 @@ declare module "awayjs-core/lib/managers/WebAudioChannel" {
 	    volume: number;
 	    isPlaying(): boolean;
 	    isLooping(): boolean;
+	    isDecoding(): boolean;
 	    constructor();
 	    play(buffer: ArrayBuffer, offset?: number, loop?: boolean, id?: number): void;
 	    stop(): void;

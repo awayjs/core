@@ -1861,39 +1861,25 @@ declare module "awayjs-core/lib/data/WaveAudio" {
 	import AssetBase = require("awayjs-core/lib/library/AssetBase");
 	class WaveAudio extends AssetBase implements IAsset {
 	    static assetType: string;
-	    private _audioCtx;
-	    private _buffer;
-	    private _loop;
-	    private _source;
+	    private _audioChannel;
 	    private _volume;
-	    private _gainNode;
-	    private _startTime;
-	    private _currentTime;
-	    private _isPlaying;
-	    private _duration;
-	    private _onEndedDelegate;
+	    private _buffer;
 	    /**
 	     *
 	     * @returns {string}
 	     */
 	    assetType: string;
-	    loop: boolean;
 	    volume: number;
 	    currentTime: number;
 	    duration: number;
 	    /**
 	     *
 	     */
-	    constructor(buffer: ArrayBuffer, audioCtx: any);
+	    constructor(buffer: ArrayBuffer);
 	    dispose(): void;
-	    play(): void;
+	    play(offset: number, loop?: boolean): void;
 	    stop(): void;
 	    clone(): WaveAudio;
-	    onLoadComplete(buffer: any): void;
-	    onError(event: any): void;
-	    private _createSource();
-	    private _disposeSource();
-	    private onEnded(event);
 	}
 	export = WaveAudio;
 	
@@ -1936,6 +1922,16 @@ declare module "awayjs-core/lib/errors/ArgumentError" {
 	
 }
 
+declare module "awayjs-core/lib/errors/DocumentError" {
+	import Error = require("awayjs-core/lib/errors/Error");
+	class DocumentError extends Error {
+	    static DOCUMENT_DOES_NOT_EXIST: string;
+	    constructor(message?: string, id?: number);
+	}
+	export = DocumentError;
+	
+}
+
 declare module "awayjs-core/lib/errors/Error" {
 	class Error {
 	    private _errorID;
@@ -1970,16 +1966,6 @@ declare module "awayjs-core/lib/errors/Error" {
 	
 }
 
-declare module "awayjs-core/lib/errors/DocumentError" {
-	import Error = require("awayjs-core/lib/errors/Error");
-	class DocumentError extends Error {
-	    static DOCUMENT_DOES_NOT_EXIST: string;
-	    constructor(message?: string, id?: number);
-	}
-	export = DocumentError;
-	
-}
-
 declare module "awayjs-core/lib/errors/PartialImplementationError" {
 	import Error = require("awayjs-core/lib/errors/Error");
 	/**
@@ -1995,6 +1981,25 @@ declare module "awayjs-core/lib/errors/PartialImplementationError" {
 	    constructor(dependency?: string, id?: number);
 	}
 	export = PartialImplementationError;
+	
+}
+
+declare module "awayjs-core/lib/errors/RangeError" {
+	import Error = require("awayjs-core/lib/errors/Error");
+	/**
+	 * RangeError is thrown when an index is accessed out of range of the number of
+	 * available indices on an Array.
+	 */
+	class RangeError extends Error {
+	    /**
+	     * Create a new RangeError.
+	     *
+	     * @param message An optional message to override the default error message.
+	     * @param id The id of the error.
+	     */
+	    constructor(message?: string, id?: number);
+	}
+	export = RangeError;
 	
 }
 
@@ -2044,25 +2049,6 @@ declare module "awayjs-core/lib/events/AssetEvent" {
 	
 }
 
-declare module "awayjs-core/lib/errors/RangeError" {
-	import Error = require("awayjs-core/lib/errors/Error");
-	/**
-	 * RangeError is thrown when an index is accessed out of range of the number of
-	 * available indices on an Array.
-	 */
-	class RangeError extends Error {
-	    /**
-	     * Create a new RangeError.
-	     *
-	     * @param message An optional message to override the default error message.
-	     * @param id The id of the error.
-	     */
-	    constructor(message?: string, id?: number);
-	}
-	export = RangeError;
-	
-}
-
 declare module "awayjs-core/lib/events/Event" {
 	class Event {
 	    static COMPLETE: string;
@@ -2092,20 +2078,6 @@ declare module "awayjs-core/lib/events/Event" {
 	    clone(): Event;
 	}
 	export = Event;
-	
-}
-
-declare module "awayjs-core/lib/events/HTTPStatusEvent" {
-	import Event = require("awayjs-core/lib/events/Event");
-	/**
-	 * @class away.events.HTTPStatusEvent
-	 */
-	class HTTPStatusEvent extends Event {
-	    static HTTP_STATUS: string;
-	    status: number;
-	    constructor(type: string, status?: number);
-	}
-	export = HTTPStatusEvent;
 	
 }
 
@@ -2157,6 +2129,20 @@ declare module "awayjs-core/lib/events/EventDispatcher" {
 	    hasEventListener(type: string, listener?: Function): boolean;
 	}
 	export = EventDispatcher;
+	
+}
+
+declare module "awayjs-core/lib/events/HTTPStatusEvent" {
+	import Event = require("awayjs-core/lib/events/Event");
+	/**
+	 * @class away.events.HTTPStatusEvent
+	 */
+	class HTTPStatusEvent extends Event {
+	    static HTTP_STATUS: string;
+	    status: number;
+	    constructor(type: string, status?: number);
+	}
+	export = HTTPStatusEvent;
 	
 }
 
@@ -3199,6 +3185,8 @@ declare module "awayjs-core/lib/geom/Matrix3D" {
 	    rawData: Float32Array;
 	    private static tempMatrix;
 	    private static tempRawData;
+	    private _position;
+	    private _components;
 	    /**
 	     * Creates a Matrix3D object.
 	     */
@@ -3261,7 +3249,7 @@ declare module "awayjs-core/lib/geom/Matrix3D" {
 	     * Uses the transformation matrix without its translation elements to transform a Vector3D object from one space
 	     * coordinate to another.
 	     */
-	    deltaTransformVector(v: Vector3D): Vector3D;
+	    deltaTransformVector(v: Vector3D, t?: Vector3D): Vector3D;
 	    /**
 	     * Converts the current matrix to an identity or unit matrix.
 	     */
@@ -3299,7 +3287,7 @@ declare module "awayjs-core/lib/geom/Matrix3D" {
 	     */
 	    recompose(components: Vector3D[]): boolean;
 	    transformVector(v: Vector3D, t?: Vector3D): Vector3D;
-	    transformBox(b: Box): Box;
+	    transformBox(b: Box, t?: Box): Box;
 	    /**
 	     * Uses the transformation matrix to transform a Vector of Numbers from one coordinate space to another.
 	     */
@@ -5596,6 +5584,115 @@ declare module "awayjs-core/lib/library/NumSuffixConflictStrategy" {
 	
 }
 
+declare module "awayjs-core/lib/managers/AudioManager" {
+	import IAudioChannel = require("awayjs-core/lib/managers/IAudioChannel");
+	class AudioManager {
+	    static getChannel(byteLength: number): IAudioChannel;
+	}
+	export = AudioManager;
+	
+}
+
+declare module "awayjs-core/lib/managers/IAudioChannel" {
+	interface IAudioChannel {
+	    duration: number;
+	    currentTime: number;
+	    volume: number;
+	    isPlaying(): boolean;
+	    isLooping(): boolean;
+	    play(buffer: ArrayBuffer, offset?: number, loop?: boolean): any;
+	    stop(): any;
+	}
+	export = IAudioChannel;
+	
+}
+
+declare module "awayjs-core/lib/managers/IAudioChannelClass" {
+	import IAudioChannel = require("awayjs-core/lib/managers/IAudioChannel");
+	interface IAudioChannelClass {
+	    maxChannels: number;
+	    _channels: Array<IAudioChannel>;
+	    /**
+	     *
+	     */
+	    new (): IAudioChannel;
+	}
+	export = IAudioChannelClass;
+	
+}
+
+declare module "awayjs-core/lib/managers/StreamingAudioChannel" {
+	class StreamingAudioChannel {
+	    static maxChannels: number;
+	    static _channels: Array<StreamingAudioChannel>;
+	    private _sourceOpenDelegate;
+	    private _updateEndDelegate;
+	    private _sourceBuffer;
+	    private _sourceDirty;
+	    private _isPlaying;
+	    private _isLooping;
+	    private _isQueuing;
+	    private _isOpening;
+	    private _buffer;
+	    private _offset;
+	    private _volume;
+	    private _startTime;
+	    private _duration;
+	    private _audio;
+	    private _mediaSource;
+	    private _urlString;
+	    duration: number;
+	    currentTime: number;
+	    volume: number;
+	    isPlaying(): boolean;
+	    isLooping(): boolean;
+	    constructor();
+	    play(buffer: ArrayBuffer, offset?: number, loop?: boolean): void;
+	    stop(): void;
+	    private _sourceOpen(event);
+	    private _queueBuffer();
+	    private _updateEnd(event);
+	    private _onTimeUpdate(event);
+	    private _updateSource();
+	    private _disposeSource();
+	}
+	export = StreamingAudioChannel;
+	
+}
+
+declare module "awayjs-core/lib/managers/WebAudioChannel" {
+	class WebAudioChannel {
+	    static maxChannels: number;
+	    static _channels: Array<WebAudioChannel>;
+	    private static _audioCtx;
+	    private _audioCtx;
+	    private _gainNode;
+	    private _source;
+	    private _isPlaying;
+	    private _isLooping;
+	    private _isDecoded;
+	    private _currentTime;
+	    private _volume;
+	    private _startTime;
+	    private _duration;
+	    private _onEndedDelegate;
+	    duration: number;
+	    currentTime: number;
+	    volume: number;
+	    isPlaying(): boolean;
+	    isLooping(): boolean;
+	    constructor();
+	    play(buffer: ArrayBuffer, offset?: number, loop?: boolean): void;
+	    stop(): void;
+	    _onDecodeComplete(buffer: any): void;
+	    _onError(event: any): void;
+	    private _onEnded(event);
+	    private _disposeSource();
+	}
+	export = WebAudioChannel;
+	
+}
+
 declare module "awayjs-core/lib/net/CrossDomainPolicy" {
 	class CrossDomainPolicy {
 	    static ANONYMOUS: string;
@@ -6369,16 +6466,11 @@ declare module "awayjs-core/lib/parsers/TextureAtlasParser" {
 declare module "awayjs-core/lib/parsers/WaveAudioParser" {
 	import ParserBase = require("awayjs-core/lib/parsers/ParserBase");
 	class WaveAudioParser extends ParserBase {
-	    private _noAudio;
-	    private static _audioCtx;
 	    constructor();
-	    static getAudioContext(): any;
 	    static supportsType(extension: string): boolean;
 	    static supportsData(data: any): boolean;
 	    _pStartParsing(frameLimit: number): void;
 	    _pProceedParsing(): boolean;
-	    onLoadComplete(buffer: any): void;
-	    onError(event: any): void;
 	    private static parseFileType(ba);
 	}
 	export = WaveAudioParser;

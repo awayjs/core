@@ -2941,27 +2941,18 @@ var __extends = this.__extends || function (d, b) {
     __.prototype = b.prototype;
     d.prototype = new __();
 };
+var AudioManager = require("awayjs-core/lib/managers/AudioManager");
 var AssetBase = require("awayjs-core/lib/library/AssetBase");
-var Event = require("awayjs-core/lib/events/Event");
 // TODO: Audio should probably be an interface containing play/stop/seek functionality
 var WaveAudio = (function (_super) {
     __extends(WaveAudio, _super);
     /**
      *
      */
-    function WaveAudio(buffer, audioCtx) {
-        var _this = this;
+    function WaveAudio(buffer) {
         _super.call(this);
         this._volume = 1;
-        this._startTime = 0;
-        this._currentTime = 0;
-        this._duration = 0;
         this._buffer = buffer;
-        this._audioCtx = audioCtx;
-        this._gainNode = this._audioCtx.createGain();
-        this._gainNode.gain.value = this._volume;
-        this._gainNode.connect(this._audioCtx.destination);
-        this._onEndedDelegate = function (event) { return _this.onEnded(event); };
     }
     Object.defineProperty(WaveAudio.prototype, "assetType", {
         /**
@@ -2974,20 +2965,6 @@ var WaveAudio = (function (_super) {
         enumerable: true,
         configurable: true
     });
-    Object.defineProperty(WaveAudio.prototype, "loop", {
-        get: function () {
-            return this._source.loop;
-        },
-        set: function (value) {
-            if (this._loop == value)
-                return;
-            this._loop = value;
-            if (this._source)
-                this._source.loop = this._loop;
-        },
-        enumerable: true,
-        configurable: true
-    });
     Object.defineProperty(WaveAudio.prototype, "volume", {
         get: function () {
             return this._volume;
@@ -2996,104 +2973,56 @@ var WaveAudio = (function (_super) {
             if (this._volume == value)
                 return;
             this._volume = value;
-            this._gainNode.gain.value = this._volume;
+            if (this._audioChannel)
+                this._audioChannel.volume = this._volume;
         },
         enumerable: true,
         configurable: true
     });
     Object.defineProperty(WaveAudio.prototype, "currentTime", {
         get: function () {
-            if (!this._isPlaying)
-                return this._currentTime;
-            return this._audioCtx.currentTime - this._startTime;
-        },
-        set: function (value) {
-            this._currentTime = value;
-            if (this._isPlaying) {
-                //swap for new source
-                var source = this._audioCtx.createBufferSource();
-                source.buffer = this._source.buffer;
-                //dispose of old source
-                this._source.disconnect();
-                delete this._source;
-                //attach new source
-                this._source = source;
-                this._source.loop = this._loop;
-                this._source.connect(this._gainNode);
-                this._startTime = this._audioCtx.currentTime - this._currentTime;
-                this._source.start(this._audioCtx.currentTime, this._currentTime);
-            }
+            if (this._audioChannel)
+                return this._audioChannel.currentTime;
+            return 0;
         },
         enumerable: true,
         configurable: true
     });
     Object.defineProperty(WaveAudio.prototype, "duration", {
         get: function () {
-            return this._duration; //TODO: extract this data independently
+            if (this._audioChannel)
+                return this._audioChannel.duration;
+            return 0;
         },
         enumerable: true,
         configurable: true
     });
     WaveAudio.prototype.dispose = function () {
         this.stop();
-        delete this._audioCtx;
-        this._audioCtx = null;
-        delete this._buffer;
-        this._buffer = null;
     };
-    WaveAudio.prototype.play = function () {
-        if (this._isPlaying)
-            return;
-        this._createSource();
+    WaveAudio.prototype.play = function (offset, loop) {
+        if (loop === void 0) { loop = false; }
+        this._audioChannel = AudioManager.getChannel(this._buffer.byteLength);
+        this._audioChannel.volume = this._volume;
+        this._audioChannel.play(this._buffer, offset, loop);
     };
     WaveAudio.prototype.stop = function () {
-        if (!this._isPlaying)
-            return;
-        this._isPlaying = false;
-        this._currentTime = this._audioCtx.currentTime - this._startTime;
-        this._source.stop(this._audioCtx.currentTime);
-        this._disposeSource();
+        if (this._audioChannel)
+            this._audioChannel.stop();
+        delete this._audioChannel;
+        this._audioChannel = null;
     };
     WaveAudio.prototype.clone = function () {
-        return new WaveAudio(this._buffer, this._audioCtx);
-    };
-    WaveAudio.prototype.onLoadComplete = function (buffer) {
-        this._source.buffer = buffer;
-        this._duration = buffer.duration;
-        this._isPlaying = true;
-        this._startTime = this._audioCtx.currentTime - this._currentTime;
-        this._source.onended = this._onEndedDelegate;
-        this._source.start(this._audioCtx.currentTime, this._currentTime);
-    };
-    WaveAudio.prototype.onError = function (event) {
-    };
-    WaveAudio.prototype._createSource = function () {
-        var _this = this;
-        //safeguard against multiple calls to play method
-        if (this._source)
-            return;
-        //create the source for this WaveAudio object
-        this._source = this._audioCtx.createBufferSource();
-        this._source.loop = this._loop;
-        this._source.connect(this._gainNode);
-        this._audioCtx.decodeAudioData(this._buffer, function (buffer) { return _this.onLoadComplete(buffer); }, function (event) { return _this.onError(event); });
-    };
-    WaveAudio.prototype._disposeSource = function () {
-        //clear up
-        this._source.disconnect();
-        delete this._source;
-        this._source = null;
-    };
-    WaveAudio.prototype.onEnded = function (event) {
-        this.stop();
-        this.dispatchEvent(new Event('ended'));
+        var newInstance = new WaveAudio(this._buffer);
+        newInstance.name = this.name;
+        return newInstance;
     };
     WaveAudio.assetType = "[asset WaveAudio]";
     return WaveAudio;
 })(AssetBase);
 module.exports = WaveAudio;
 
-},{"awayjs-core/lib/events/Event":"awayjs-core/lib/events/Event","awayjs-core/lib/library/AssetBase":"awayjs-core/lib/library/AssetBase"}],"awayjs-core/lib/errors/AbstractMethodError":[function(require,module,exports){
+},{"awayjs-core/lib/library/AssetBase":"awayjs-core/lib/library/AssetBase","awayjs-core/lib/managers/AudioManager":"awayjs-core/lib/managers/AudioManager"}],"awayjs-core/lib/errors/AbstractMethodError":[function(require,module,exports){
 var __extends = this.__extends || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
@@ -4947,7 +4876,6 @@ var Matrix3D = (function () {
         raw[14] = 0;
         raw[15] = 1;
         this.append(Matrix3D.tempMatrix);
-        //this.append(new Matrix3D([ 1.0, 0.0, 0.0, 0.0, xSkew, 1.0, 0.0, 0.0, ySkew, zSkew, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0 ]));
     };
     /**
      * Appends an incremental scale change along the x, y, and z axes to a Matrix3D object.
@@ -4972,7 +4900,6 @@ var Matrix3D = (function () {
         raw[13] = 0;
         raw[14] = 0;
         raw[15] = 1;
-        //this.append(new Matrix3D([ xScale, 0.0, 0.0, 0.0, 0.0, yScale, 0.0, 0.0, 0.0, 0.0, zScale, 0.0, 0.0, 0.0, 0.0, 1.0 ]));
         this.append(Matrix3D.tempMatrix);
     };
     /**
@@ -5164,14 +5091,17 @@ var Matrix3D = (function () {
     Matrix3D.prototype.decompose = function (orientationStyle) {
         if (orientationStyle === void 0) { orientationStyle = "eulerAngles"; }
         var q;
-        // Initial Tests - Not OK
-        var vec = [];
+        if (this._components == null)
+            this._components = [new Vector3D(), new Vector3D(), new Vector3D(), new Vector3D()];
         var colX = new Vector3D(this.rawData[0], this.rawData[1], this.rawData[2]);
         var colY = new Vector3D(this.rawData[4], this.rawData[5], this.rawData[6]);
         var colZ = new Vector3D(this.rawData[8], this.rawData[9], this.rawData[10]);
-        var pos = new Vector3D(this.rawData[12], this.rawData[13], this.rawData[14]);
-        var scale = new Vector3D();
-        var skew = new Vector3D();
+        var pos = this._components[0];
+        pos.x = this.rawData[12];
+        pos.y = this.rawData[13];
+        pos.z = this.rawData[14];
+        var scale = this._components[3];
+        var skew = this._components[2];
         //compute X scale factor and normalise colX
         scale.x = colX.length;
         colX.scaleBy(1 / scale.x);
@@ -5200,7 +5130,7 @@ var Matrix3D = (function () {
             colZ.y = -colZ.y;
             colZ.z = -colZ.z;
         }
-        var rot = new Vector3D();
+        var rot = this._components[1];
         switch (orientationStyle) {
             case Orientation3D.AXIS_ANGLE:
                 rot.w = Math.acos((colX.x + colY.y + colZ.z - 1) / 2);
@@ -5249,21 +5179,24 @@ var Matrix3D = (function () {
                 }
                 break;
         }
-        vec.push(pos);
-        vec.push(rot);
-        vec.push(skew);
-        vec.push(scale);
-        return vec;
+        return this._components;
     };
     /**
      * Uses the transformation matrix without its translation elements to transform a Vector3D object from one space
      * coordinate to another.
      */
-    Matrix3D.prototype.deltaTransformVector = function (v) {
+    Matrix3D.prototype.deltaTransformVector = function (v, t) {
+        if (t === void 0) { t = null; }
         var x = v.x;
         var y = v.y;
         var z = v.z;
-        return new Vector3D((x * this.rawData[0] + y * this.rawData[4] + z * this.rawData[8]), (x * this.rawData[1] + y * this.rawData[5] + z * this.rawData[9]), (x * this.rawData[2] + y * this.rawData[6] + z * this.rawData[10]), (x * this.rawData[3] + y * this.rawData[7] + z * this.rawData[11]));
+        if (!t)
+            t = new Vector3D();
+        t.x = x * this.rawData[0] + y * this.rawData[4] + z * this.rawData[8];
+        t.y = x * this.rawData[1] + y * this.rawData[5] + z * this.rawData[9];
+        t.z = x * this.rawData[2] + y * this.rawData[6] + z * this.rawData[10];
+        t.w = x * this.rawData[3] + y * this.rawData[7] + z * this.rawData[11];
+        return t;
     };
     /**
      * Converts the current matrix to an identity or unit matrix.
@@ -5446,9 +5379,24 @@ var Matrix3D = (function () {
      * Prepends an incremental translation, a repositioning along the x, y, and z axes, to a Matrix3D object.
      */
     Matrix3D.prototype.prependTranslation = function (x, y, z) {
-        var m = new Matrix3D();
-        m.position = new Vector3D(x, y, z);
-        this.prepend(m);
+        var raw = Matrix3D.tempRawData;
+        raw[0] = 1;
+        raw[1] = 0;
+        raw[2] = 0;
+        raw[3] = 0;
+        raw[4] = 0;
+        raw[5] = 1;
+        raw[6] = 0;
+        raw[7] = 0;
+        raw[8] = 0;
+        raw[9] = 0;
+        raw[10] = 1;
+        raw[11] = 0;
+        raw[12] = x;
+        raw[13] = y;
+        raw[14] = z;
+        raw[15] = 1;
+        this.prepend(Matrix3D.tempMatrix);
     };
     // TODO orientationStyle
     /**
@@ -5487,7 +5435,6 @@ var Matrix3D = (function () {
             raw[13] = 0;
             raw[14] = 0;
             raw[15] = 0;
-            //this.append(new Matrix3D([1, 0, 0, 0, 0, cos, -sin, 0, 0, sin, cos, 0, 0, 0, 0 , 0]));
             this.append(Matrix3D.tempMatrix);
         }
         angle = -rotation.y;
@@ -5555,20 +5502,22 @@ var Matrix3D = (function () {
         t.w = x * this.rawData[3] + y * this.rawData[7] + z * this.rawData[11] + this.rawData[15];
         return t;
     };
-    Matrix3D.prototype.transformBox = function (b) {
+    Matrix3D.prototype.transformBox = function (b, t) {
+        if (t === void 0) { t = null; }
         if (b == null)
-            return new Box();
+            return t || new Box();
         var minX, minY, minZ;
         var maxX, maxY, maxZ;
         maxX = b.width + (minX = b.x);
         maxY = b.height + (minY = b.y);
         maxZ = b.depth + (minZ = b.z);
-        var box = new Box();
+        if (!t)
+            t = new Box();
         //TODO: take account of shear
-        box.width = maxX * this.rawData[0] + maxY * this.rawData[4] + maxZ * this.rawData[8] + this.rawData[12] - (box.x = minX * this.rawData[0] + minY * this.rawData[4] + minZ * this.rawData[8] + this.rawData[12]);
-        box.height = maxX * this.rawData[1] + maxY * this.rawData[5] + maxZ * this.rawData[9] + this.rawData[13] - (box.y = minX * this.rawData[1] + minY * this.rawData[5] + minZ * this.rawData[9] + this.rawData[13]);
-        box.depth = maxX * this.rawData[2] + maxY * this.rawData[6] + maxZ * this.rawData[10] + this.rawData[14] - (box.z = minX * this.rawData[2] + minY * this.rawData[6] + minZ * this.rawData[10] + this.rawData[14]);
-        return box;
+        t.width = maxX * this.rawData[0] + maxY * this.rawData[4] + maxZ * this.rawData[8] + this.rawData[12] - (t.x = minX * this.rawData[0] + minY * this.rawData[4] + minZ * this.rawData[8] + this.rawData[12]);
+        t.height = maxX * this.rawData[1] + maxY * this.rawData[5] + maxZ * this.rawData[9] + this.rawData[13] - (t.y = minX * this.rawData[1] + minY * this.rawData[5] + minZ * this.rawData[9] + this.rawData[13]);
+        t.depth = maxX * this.rawData[2] + maxY * this.rawData[6] + maxZ * this.rawData[10] + this.rawData[14] - (t.z = minX * this.rawData[2] + minY * this.rawData[6] + minZ * this.rawData[10] + this.rawData[14]);
+        return t;
     };
     /**
      * Uses the transformation matrix to transform a Vector of Numbers from one coordinate space to another.
@@ -5646,7 +5595,12 @@ var Matrix3D = (function () {
          * transformation's frame of reference.
          */
         get: function () {
-            return new Vector3D(this.rawData[12], this.rawData[13], this.rawData[14]);
+            if (this._position == null)
+                this._position = new Vector3D();
+            this._position.x = this.rawData[12];
+            this._position.y = this.rawData[13];
+            this._position.z = this.rawData[14];
+            return this._position;
         },
         set: function (value) {
             this.rawData[12] = value.x;
@@ -9937,7 +9891,270 @@ var NumSuffixConflictStrategy = (function (_super) {
 })(ConflictStrategyBase);
 module.exports = NumSuffixConflictStrategy;
 
-},{"awayjs-core/lib/library/ConflictStrategyBase":"awayjs-core/lib/library/ConflictStrategyBase"}],"awayjs-core/lib/net/CrossDomainPolicy":[function(require,module,exports){
+},{"awayjs-core/lib/library/ConflictStrategyBase":"awayjs-core/lib/library/ConflictStrategyBase"}],"awayjs-core/lib/managers/AudioManager":[function(require,module,exports){
+var StreamingAudioChannel = require("awayjs-core/lib/managers/StreamingAudioChannel");
+var WebAudioChannel = require("awayjs-core/lib/managers/WebAudioChannel");
+var AudioManager = (function () {
+    function AudioManager() {
+    }
+    AudioManager.getChannel = function (byteLength) {
+        //choose best audio channel by bytelength
+        var channelClass = (byteLength > 50000) ? StreamingAudioChannel : WebAudioChannel;
+        var i = 0;
+        while (channelClass._channels[i] && channelClass._channels[i].isPlaying())
+            i++;
+        if (i == channelClass.maxChannels) {
+            //pick the oldest channel to reuse, ignoring looping channels
+            var len = channelClass._channels.length;
+            for (var j = 0; j < len; j++) {
+                if (!channelClass._channels[j].isLooping()) {
+                    channelClass._channels.push(channelClass._channels.splice(j, 1)[0]);
+                    break;
+                }
+            }
+            var channel = channelClass._channels[channelClass.maxChannels - 1];
+            channel.stop();
+            return channel;
+        }
+        return channelClass._channels[i] || (channelClass._channels[i] = new channelClass());
+    };
+    return AudioManager;
+})();
+module.exports = AudioManager;
+
+},{"awayjs-core/lib/managers/StreamingAudioChannel":"awayjs-core/lib/managers/StreamingAudioChannel","awayjs-core/lib/managers/WebAudioChannel":"awayjs-core/lib/managers/WebAudioChannel"}],"awayjs-core/lib/managers/IAudioChannelClass":[function(require,module,exports){
+
+},{}],"awayjs-core/lib/managers/IAudioChannel":[function(require,module,exports){
+
+},{}],"awayjs-core/lib/managers/StreamingAudioChannel":[function(require,module,exports){
+var StreamingAudioChannel = (function () {
+    function StreamingAudioChannel() {
+        var _this = this;
+        this._isPlaying = false;
+        this._isLooping = false;
+        this._startTime = 0;
+        this._sourceOpenDelegate = function (event) { return _this._sourceOpen(event); };
+        this._updateEndDelegate = function (event) { return _this._updateEnd(event); };
+        this._audio = new Audio();
+        this._audio.ontimeupdate = function (event) { return _this._onTimeUpdate(event); };
+        this._updateSource();
+    }
+    Object.defineProperty(StreamingAudioChannel.prototype, "duration", {
+        get: function () {
+            return this._duration;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(StreamingAudioChannel.prototype, "currentTime", {
+        get: function () {
+            return this._audio.currentTime - this._startTime;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(StreamingAudioChannel.prototype, "volume", {
+        get: function () {
+            return this._volume;
+        },
+        set: function (value) {
+            if (this._volume == value)
+                return;
+            this._volume = value;
+            this._audio.volume = this._volume;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    StreamingAudioChannel.prototype.isPlaying = function () {
+        return this._isPlaying;
+    };
+    StreamingAudioChannel.prototype.isLooping = function () {
+        return this._isLooping;
+    };
+    StreamingAudioChannel.prototype.play = function (buffer, offset, loop) {
+        if (offset === void 0) { offset = 0; }
+        if (loop === void 0) { loop = false; }
+        this._isPlaying = true;
+        if (this._isLooping || this._isLooping != loop) {
+            this._isLooping = loop;
+            this._sourceDirty = true;
+        }
+        if (this._sourceDirty)
+            this._updateSource();
+        this._buffer = buffer;
+        this._offset = offset;
+        if (!this._isQueuing && !this._isOpening)
+            this._queueBuffer();
+    };
+    StreamingAudioChannel.prototype.stop = function () {
+        this._audio.pause();
+        this._isPlaying = false;
+    };
+    StreamingAudioChannel.prototype._sourceOpen = function (event) {
+        this._isOpening = false;
+        this._sourceBuffer = this._mediaSource.addSourceBuffer('audio/mpeg');
+        this._sourceBuffer.addEventListener("updateend", this._updateEndDelegate);
+        if (this._isPlaying)
+            this._queueBuffer();
+    };
+    StreamingAudioChannel.prototype._queueBuffer = function () {
+        this._isQueuing = true;
+        this._startTime = this._sourceBuffer.timestampOffset;
+        this._sourceBuffer.appendBuffer(this._buffer);
+    };
+    StreamingAudioChannel.prototype._updateEnd = function (event) {
+        this._isQueuing = false;
+        if (this._isLooping)
+            this._mediaSource.endOfStream();
+        this._duration = this._sourceBuffer.timestampOffset - this._startTime;
+        this._audio.currentTime = this._startTime + this._offset;
+        this._audio.play();
+    };
+    StreamingAudioChannel.prototype._onTimeUpdate = function (event) {
+        //TODO: more accurate end detection
+        if (this._duration < this._audio.currentTime - this._startTime + 0.1) {
+            this.stop();
+        }
+    };
+    StreamingAudioChannel.prototype._updateSource = function () {
+        if (this._mediaSource)
+            this._disposeSource();
+        this._isQueuing = false;
+        this._isOpening = true;
+        this._mediaSource = new MediaSource();
+        this._mediaSource.addEventListener("sourceopen", this._sourceOpenDelegate);
+        this._urlString = URL.createObjectURL(this._mediaSource);
+        this._audio.src = this._urlString;
+        this._audio.loop = this._isLooping;
+        this._sourceDirty = false;
+    };
+    StreamingAudioChannel.prototype._disposeSource = function () {
+        if (!this._isOpening) {
+            if (this._sourceBuffer.timestampOffset)
+                this._sourceBuffer.remove(0, this._sourceBuffer.timestampOffset);
+            this._sourceBuffer.removeEventListener("updateend", this._updateEndDelegate);
+            this._mediaSource.removeSourceBuffer(this._sourceBuffer);
+            delete this._sourceBuffer;
+            this._sourceBuffer = null;
+        }
+        this._mediaSource.removeEventListener("sourceopen", this._sourceOpenDelegate);
+        URL.revokeObjectURL(this._urlString);
+        delete this._mediaSource;
+        this._mediaSource = null;
+    };
+    StreamingAudioChannel.maxChannels = 4;
+    StreamingAudioChannel._channels = new Array();
+    return StreamingAudioChannel;
+})();
+module.exports = StreamingAudioChannel;
+
+},{}],"awayjs-core/lib/managers/WebAudioChannel":[function(require,module,exports){
+var WebAudioChannel = (function () {
+    function WebAudioChannel() {
+        var _this = this;
+        this._isPlaying = false;
+        this._isLooping = false;
+        this._isDecoded = false;
+        this._volume = 1;
+        this._startTime = 0;
+        this._audioCtx = WebAudioChannel._audioCtx || (WebAudioChannel._audioCtx = new (window["AudioContext"] || window["webkitAudioContext"])());
+        this._gainNode = this._audioCtx.createGain();
+        this._gainNode.gain.value = this._volume;
+        this._gainNode.connect(this._audioCtx.destination);
+        this._onEndedDelegate = function (event) { return _this._onEnded(event); };
+    }
+    Object.defineProperty(WebAudioChannel.prototype, "duration", {
+        get: function () {
+            return this._duration;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(WebAudioChannel.prototype, "currentTime", {
+        get: function () {
+            if (!this._isPlaying)
+                return this._currentTime;
+            return this._audioCtx.currentTime - this._startTime;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(WebAudioChannel.prototype, "volume", {
+        get: function () {
+            return this._volume;
+        },
+        set: function (value) {
+            if (this._volume == value)
+                return;
+            this._volume = value;
+            this._gainNode.gain.value = this._volume;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    WebAudioChannel.prototype.isPlaying = function () {
+        return this._isPlaying;
+    };
+    WebAudioChannel.prototype.isLooping = function () {
+        return this._isLooping;
+    };
+    WebAudioChannel.prototype.play = function (buffer, offset, loop) {
+        var _this = this;
+        if (offset === void 0) { offset = 0; }
+        if (loop === void 0) { loop = false; }
+        this._isPlaying = true;
+        this._isLooping = loop;
+        this._currentTime = offset;
+        this._isDecoded = false;
+        this._audioCtx.decodeAudioData(buffer, function (buffer) { return _this._onDecodeComplete(buffer); }, function (event) { return _this._onError(event); });
+    };
+    WebAudioChannel.prototype.stop = function () {
+        if (!this._isPlaying)
+            return;
+        this._isPlaying = false;
+        if (this._isDecoded) {
+            this._currentTime = this._audioCtx.currentTime - this._startTime;
+            this._source.stop(this._audioCtx.currentTime);
+        }
+        if (this._source)
+            this._disposeSource();
+    };
+    WebAudioChannel.prototype._onDecodeComplete = function (buffer) {
+        if (!this._isPlaying)
+            return;
+        this._isDecoded = true;
+        if (this._source)
+            this._disposeSource();
+        this._source = this._audioCtx.createBufferSource();
+        this._source.loop = this._isLooping;
+        this._source.connect(this._gainNode);
+        this._source.buffer = buffer;
+        this._duration = buffer.duration;
+        this._startTime = this._audioCtx.currentTime - this._currentTime;
+        this._source.addEventListener("ended", this._onEndedDelegate);
+        this._source.start(this._audioCtx.currentTime, this._currentTime);
+    };
+    WebAudioChannel.prototype._onError = function (event) {
+    };
+    WebAudioChannel.prototype._onEnded = function (event) {
+        this.stop();
+    };
+    WebAudioChannel.prototype._disposeSource = function () {
+        //clean up
+        this._source.removeEventListener("ended", this._onEndedDelegate);
+        this._source.disconnect();
+        delete this._source.buffer;
+        delete this._source;
+        this._source = null;
+    };
+    WebAudioChannel.maxChannels = 32;
+    WebAudioChannel._channels = new Array();
+    return WebAudioChannel;
+})();
+module.exports = WebAudioChannel;
+
+},{}],"awayjs-core/lib/net/CrossDomainPolicy":[function(require,module,exports){
 var CrossDomainPolicy = (function () {
     function CrossDomainPolicy() {
     }
@@ -11519,11 +11736,6 @@ var WaveAudioParser = (function (_super) {
     function WaveAudioParser() {
         _super.call(this, URLLoaderDataFormat.BLOB);
     }
-    WaveAudioParser.getAudioContext = function () {
-        var audioCtx = this._audioCtx || (this._audioCtx = new (window["AudioContext"] || window["webkitAudioContext"])());
-        audioCtx.sampleRate = 22050;
-        return audioCtx;
-    };
     WaveAudioParser.supportsType = function (extension) {
         extension = extension.toLowerCase();
         return extension == "wav" || extension == "mp3" || extension == "ogg";
@@ -11539,122 +11751,19 @@ var WaveAudioParser = (function (_super) {
         //clear content
         delete this._pContent;
         this._pContent = null;
-        this._noAudio = false;
         _super.prototype._pStartParsing.call(this, frameLimit);
     };
     WaveAudioParser.prototype._pProceedParsing = function () {
-        if (this._noAudio || this._pContent) {
-            return ParserBase.PARSING_DONE;
-        }
-        else if (this.data instanceof ByteArray) {
-            this._pContent = new WaveAudio(this.data.arraybytes, WaveAudioParser.getAudioContext());
+        if (this.data instanceof ByteArray) {
+            this._pContent = new WaveAudio(this.data.arraybytes);
             this._pFinalizeAsset(this._pContent, this._iFileName);
         }
         else if (this.data instanceof ArrayBuffer) {
-            this._pContent = new WaveAudio(this.data, WaveAudioParser.getAudioContext());
+            this._pContent = new WaveAudio(this.data);
             this._pFinalizeAsset(this._pContent, this._iFileName);
         }
         return ParserBase.PARSING_DONE;
     };
-    WaveAudioParser.prototype.onLoadComplete = function (buffer) {
-        this._pContent = new WaveAudio(buffer, WaveAudioParser.getAudioContext());
-        this._pFinalizeAsset(this._pContent, this._iFileName);
-        this._iResumeParsing();
-    };
-    WaveAudioParser.prototype.onError = function (event) {
-        this._noAudio = true;
-        this._iResumeParsing();
-    };
-    //
-    //private _decodeData()
-    //{
-    //	WaveAudioParser.getAudioContext().decodeAudioData(this._buffer, (buffer) => this.onLoadComplete(buffer), (event) => this.onError(event));
-    //
-    //}
-    //
-    //private _syncStream():boolean
-    //{
-    //	var b = new Uint8Array(this._buffer);
-    //	b["indexOf"] = Array.prototype.indexOf;
-    //
-    //	var i:number = 1;
-    //	while(1) {
-    //		i = b["indexOf"](0xFF, i);
-    //
-    //		if (i == -1 || (b[i+1] & 0xE0) == 0xE0)
-    //			break;
-    //
-    //		i++;
-    //	}
-    //
-    //	if (i != -1) {
-    //		var temp = this._buffer.slice(i);
-    //		delete(this._buffer);
-    //		this._buffer = temp;
-    //		return true;
-    //	}
-    //
-    //	return false;
-    //}
-    //public _pProceedParsing():boolean
-    //{
-    //
-    //	var asset:WaveAudio;
-    //
-    //	if (this._loadingImage) {
-    //		return ParserBase.MORE_TO_PARSE;
-    //	}
-    //	else if (this._htmlAudioElement) {
-    //		asset = ParserUtils.audioToWaveAudio(this._htmlAudioElement);
-    //		this._pFinalizeAsset(<IAsset> asset, this._iFileName);
-    //	}
-    //	else if (this.data instanceof HTMLAudioElement) {// Parse HTMLImageElement
-    //		var htmlAudioElement:HTMLAudioElement = <HTMLAudioElement> this.data;
-    //		asset = ParserUtils.audioToWaveAudio(htmlAudioElement);
-    //		this._pFinalizeAsset(<IAsset> asset, this._iFileName);
-    //	}
-    //	else if (this.data instanceof ByteArray) { // Parse a ByteArray
-    //		var ba:ByteArray = this.data;
-    //		var filetype = WaveAudioParser.parseFileType(ba);
-    //		var htmlAudioElement:HTMLAudioElement = ParserUtils.byteArrayToAudio(ba, filetype);
-    //		asset = ParserUtils.audioToWaveAudio(htmlAudioElement);
-    //		this._pFinalizeAsset(<IAsset> asset, this._iFileName);
-    //	}
-    //	else if (this.data instanceof ArrayBuffer) {// Parse an ArrayBuffer
-    //		var filetype = WaveAudioParser.parseFileType(this.data.arraybytes);
-    //		this._htmlAudioElement = ParserUtils.arrayBufferToAudio(this.data, filetype);
-    //
-    //		asset = ParserUtils.audioToWaveAudio(this._htmlAudioElement);
-    //		this._pFinalizeAsset(<IAsset> asset, this._iFileName);
-    //
-    //	}
-    //	else if (this.data instanceof Blob) { // Parse a Blob
-    //
-    //		this._htmlAudioElement = ParserUtils.blobToAudio(this.data);
-    //
-    //		this._htmlAudioElement.onloadeddata = (event) => this.onLoadComplete(event);
-    //		this._htmlAudioElement.onerror = (event) => this.onError(event);
-    //		this._loadingImage = true;
-    //
-    //		return ParserBase.MORE_TO_PARSE;
-    //	}
-    //
-    //	this._pContent = asset;
-    //
-    //	return ParserBase.PARSING_DONE;
-    //
-    //}
-    //
-    //public onLoadComplete(event)
-    //{
-    //	this._loadingImage = false;
-    //}
-    //
-    //public onError(event)
-    //{
-    //	console.log(event.target.error);
-    //	this._loadingImage = false;
-    //}
     WaveAudioParser.parseFileType = function (ba) {
         ba.position = 0;
         ba.position = 0;

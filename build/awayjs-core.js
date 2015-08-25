@@ -10026,9 +10026,8 @@ var StreamingAudioChannel = (function () {
     };
     StreamingAudioChannel.prototype._onTimeUpdate = function (event) {
         //TODO: more accurate end detection
-        if (this._duration < this._audio.currentTime - this._startTime + 0.1) {
+        if (!this._isLooping && this._duration < this._audio.currentTime - this._startTime + 0.1)
             this.stop();
-        }
     };
     StreamingAudioChannel.prototype._updateSource = function () {
         if (this._mediaSource)

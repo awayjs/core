@@ -3004,7 +3004,7 @@ var WaveAudio = (function (_super) {
         if (loop === void 0) { loop = false; }
         this._audioChannel = AudioManager.getChannel(this._buffer.byteLength);
         this._audioChannel.volume = this._volume;
-        this._audioChannel.play(this._buffer, offset, loop);
+        this._audioChannel.play(this._buffer, offset, loop, this.id);
     };
     WaveAudio.prototype.stop = function () {
         if (this._audioChannel)
@@ -10099,15 +10099,20 @@ var WebAudioChannel = (function () {
     WebAudioChannel.prototype.isLooping = function () {
         return this._isLooping;
     };
-    WebAudioChannel.prototype.play = function (buffer, offset, loop) {
+    WebAudioChannel.prototype.play = function (buffer, offset, loop, id) {
         var _this = this;
         if (offset === void 0) { offset = 0; }
         if (loop === void 0) { loop = false; }
+        if (id === void 0) { id = 0; }
         this._isPlaying = true;
         this._isLooping = loop;
         this._currentTime = offset;
+        this._id = id;
         this._isDecoded = false;
-        this._audioCtx.decodeAudioData(buffer, function (buffer) { return _this._onDecodeComplete(buffer); }, function (event) { return _this._onError(event); });
+        if (WebAudioChannel._decodeCache[id])
+            this._onDecodeComplete(WebAudioChannel._decodeCache[id]);
+        else
+            this._audioCtx.decodeAudioData(buffer, function (buffer) { return _this._onDecodeComplete(buffer); }, function (event) { return _this._onError(event); });
     };
     WebAudioChannel.prototype.stop = function () {
         if (!this._isPlaying)
@@ -10124,6 +10129,8 @@ var WebAudioChannel = (function () {
         if (!this._isPlaying)
             return;
         this._isDecoded = true;
+        if (buffer.duration < 2)
+            WebAudioChannel._decodeCache[this._id] = buffer;
         if (this._source)
             this._disposeSource();
         this._source = this._audioCtx.createBufferSource();
@@ -10148,8 +10155,9 @@ var WebAudioChannel = (function () {
         delete this._source;
         this._source = null;
     };
-    WebAudioChannel.maxChannels = 32;
+    WebAudioChannel.maxChannels = 64;
     WebAudioChannel._channels = new Array();
+    WebAudioChannel._decodeCache = new Object();
     return WebAudioChannel;
 })();
 module.exports = WebAudioChannel;

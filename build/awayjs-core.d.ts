@@ -5600,7 +5600,7 @@ declare module "awayjs-core/lib/managers/IAudioChannel" {
 	    volume: number;
 	    isPlaying(): boolean;
 	    isLooping(): boolean;
-	    play(buffer: ArrayBuffer, offset?: number, loop?: boolean): any;
+	    play(buffer: ArrayBuffer, offset?: number, loop?: boolean, id?: number): any;
 	    stop(): any;
 	}
 	export = IAudioChannel;
@@ -5664,6 +5664,7 @@ declare module "awayjs-core/lib/managers/WebAudioChannel" {
 	class WebAudioChannel {
 	    static maxChannels: number;
 	    static _channels: Array<WebAudioChannel>;
+	    static _decodeCache: Object;
 	    private static _audioCtx;
 	    private _audioCtx;
 	    private _gainNode;
@@ -5672,6 +5673,7 @@ declare module "awayjs-core/lib/managers/WebAudioChannel" {
 	    private _isLooping;
 	    private _isDecoded;
 	    private _currentTime;
+	    private _id;
 	    private _volume;
 	    private _startTime;
 	    private _duration;
@@ -5682,7 +5684,7 @@ declare module "awayjs-core/lib/managers/WebAudioChannel" {
 	    isPlaying(): boolean;
 	    isLooping(): boolean;
 	    constructor();
-	    play(buffer: ArrayBuffer, offset?: number, loop?: boolean): void;
+	    play(buffer: ArrayBuffer, offset?: number, loop?: boolean, id?: number): void;
 	    stop(): void;
 	    _onDecodeComplete(buffer: any): void;
 	    _onError(event: any): void;

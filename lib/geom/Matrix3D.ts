@@ -17,6 +17,10 @@ class Matrix3D
 	private static tempMatrix:Matrix3D = new Matrix3D();
 	private static tempRawData:Float32Array = Matrix3D.tempMatrix.rawData;
 
+	private _position:Vector3D;
+
+	private _components:Array<Vector3D>;
+
 	/**
 	 * Creates a Matrix3D object.
 	 */
@@ -131,7 +135,6 @@ class Matrix3D
 		raw[15] = 1;
 
 		this.append(Matrix3D.tempMatrix);
-		//this.append(new Matrix3D([ 1.0, 0.0, 0.0, 0.0, xSkew, 1.0, 0.0, 0.0, ySkew, zSkew, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0 ]));
 	}
 
 	/**
@@ -164,7 +167,6 @@ class Matrix3D
 		raw[14] = 0;
 		raw[15] = 1;
 
-		//this.append(new Matrix3D([ xScale, 0.0, 0.0, 0.0, 0.0, yScale, 0.0, 0.0, 0.0, 0.0, zScale, 0.0, 0.0, 0.0, 0.0, 1.0 ]));
 		this.append(Matrix3D.tempMatrix);
 	}
 
@@ -378,17 +380,20 @@ class Matrix3D
 	{
 		var q:Quaternion;
 
-		// Initial Tests - Not OK
-
-		var vec:Vector3D[] = [];
+		if (this._components == null)
+			this._components = [new Vector3D(), new Vector3D(), new Vector3D(), new Vector3D()];
 
 		var colX:Vector3D = new Vector3D(this.rawData[0], this.rawData[1], this.rawData[2]);
 		var colY:Vector3D = new Vector3D(this.rawData[4], this.rawData[5], this.rawData[6]);
 		var colZ:Vector3D = new Vector3D(this.rawData[8], this.rawData[9], this.rawData[10]);
 
-		var pos:Vector3D = new Vector3D(this.rawData[12], this.rawData[13], this.rawData[14]);
-		var scale:Vector3D = new Vector3D();
-		var skew:Vector3D = new Vector3D();
+		var pos:Vector3D = this._components[0];
+		pos.x = this.rawData[12];
+		pos.y = this.rawData[13];
+		pos.z = this.rawData[14];
+
+		var scale:Vector3D = this._components[3];
+		var skew:Vector3D = this._components[2];
 
 		//compute X scale factor and normalise colX
 		scale.x = colX.length;
@@ -424,7 +429,7 @@ class Matrix3D
 			colZ.z = -colZ.z;
 		}
 
-		var rot = new Vector3D();
+		var rot = this._components[1];
 
 		switch (orientationStyle) {
 			case Orientation3D.AXIS_ANGLE:
@@ -485,25 +490,28 @@ class Matrix3D
 				break;
 		}
 
-		vec.push(pos);
-		vec.push(rot);
-		vec.push(skew);
-		vec.push(scale);
-
-		return vec;
+		return this._components;
 	}
 
 	/**
 	 * Uses the transformation matrix without its translation elements to transform a Vector3D object from one space
 	 * coordinate to another.
 	 */
-	public deltaTransformVector(v:Vector3D):Vector3D
+	public deltaTransformVector(v:Vector3D, t:Vector3D = null):Vector3D
 	{
 		var x:number = v.x;
 		var y:number = v.y;
 		var z:number = v.z;
 
-		return new Vector3D((x*this.rawData[0] + y*this.rawData[4] + z*this.rawData[8]), (x*this.rawData[1] + y*this.rawData[5] + z*this.rawData[9]), (x*this.rawData[2] + y*this.rawData[6] + z*this.rawData[10]), (x*this.rawData[3] + y*this.rawData[7] + z*this.rawData[11]));
+		if (!t)
+			t = new Vector3D();
+
+		t.x = x*this.rawData[0] + y*this.rawData[4] + z*this.rawData[8];
+		t.y = x*this.rawData[1] + y*this.rawData[5] + z*this.rawData[9];
+		t.z = x*this.rawData[2] + y*this.rawData[6] + z*this.rawData[10];
+		t.w = x*this.rawData[3] + y*this.rawData[7] + z*this.rawData[11];
+
+		return t;
 	}
 
 	/**
@@ -718,9 +726,29 @@ class Matrix3D
 	 */
 	public prependTranslation(x:number, y:number, z:number)
 	{
-		var m = new Matrix3D();
-		m.position = new Vector3D(x, y, z);
-		this.prepend(m);
+		var raw:Float32Array = Matrix3D.tempRawData;
+
+		raw[0] = 1;
+		raw[1] = 0;
+		raw[2] = 0;
+		raw[3] = 0;
+
+		raw[4] = 0;
+		raw[5] = 1;
+		raw[6] = 0;
+		raw[7] = 0;
+
+		raw[8] = 0;
+		raw[9] = 0;
+		raw[10] = 1;
+		raw[11] = 0;
+
+		raw[12] = x;
+		raw[13] = y;
+		raw[14] = z;
+		raw[15] = 1;
+
+		this.prepend(Matrix3D.tempMatrix);
 	}
 
 	// TODO orientationStyle
@@ -765,7 +793,6 @@ class Matrix3D
 			raw[13] = 0;
 			raw[14] = 0;
 			raw[15] = 0;
-			//this.append(new Matrix3D([1, 0, 0, 0, 0, cos, -sin, 0, 0, sin, cos, 0, 0, 0, 0 , 0]));
 			this.append(Matrix3D.tempMatrix);
 		}
 		angle = -rotation.y;
@@ -793,7 +820,6 @@ class Matrix3D
 			raw[14] = 0;
 			raw[15] = 0;
 			this.append(Matrix3D.tempMatrix);
-			//this.append(new Matrix3D([cos, 0, sin, 0, 0, 1, 0, 0, -sin, 0, cos, 0, 0, 0, 0, 0]));
 		}
 		angle = -rotation.z;
 		if(angle != 0){
@@ -821,7 +847,6 @@ class Matrix3D
 			raw[14] = 0;
 			raw[15] = 0;
 			this.append(Matrix3D.tempMatrix);
-			//this.append(new Matrix3D([cos, -sin, 0, 0, sin, cos, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0]));
 		}
 
 		this.position = components[0];
@@ -850,10 +875,10 @@ class Matrix3D
 		return t;
 	}
 
-	public transformBox(b:Box):Box
+	public transformBox(b:Box, t:Box = null):Box
 	{
 		if (b == null)
-			return new Box();
+			return t || new Box();
 
 		var minX:number, minY:number, minZ:number;
 		var maxX:number, maxY:number, maxZ:number;
@@ -862,14 +887,15 @@ class Matrix3D
 		maxY = b.height + (minY = b.y);
 		maxZ = b.depth + (minZ = b.z);
 
-		var box:Box = new Box();
+		if (!t)
+			t = new Box();
 
 		//TODO: take account of shear
-		box.width = maxX*this.rawData[0] + maxY*this.rawData[4] + maxZ*this.rawData[8] + this.rawData[12] - (box.x = minX*this.rawData[0] + minY*this.rawData[4] + minZ*this.rawData[8] + this.rawData[12]);
-		box.height = maxX*this.rawData[1] + maxY*this.rawData[5] + maxZ*this.rawData[9] + this.rawData[13] - (box.y = minX*this.rawData[1] + minY*this.rawData[5] + minZ*this.rawData[9] + this.rawData[13]);
-		box.depth = maxX*this.rawData[2] + maxY*this.rawData[6] + maxZ*this.rawData[10] + this.rawData[14] - (box.z = minX*this.rawData[2] + minY*this.rawData[6] + minZ*this.rawData[10] + this.rawData[14]);
+		t.width = maxX*this.rawData[0] + maxY*this.rawData[4] + maxZ*this.rawData[8] + this.rawData[12] - (t.x = minX*this.rawData[0] + minY*this.rawData[4] + minZ*this.rawData[8] + this.rawData[12]);
+		t.height = maxX*this.rawData[1] + maxY*this.rawData[5] + maxZ*this.rawData[9] + this.rawData[13] - (t.y = minX*this.rawData[1] + minY*this.rawData[5] + minZ*this.rawData[9] + this.rawData[13]);
+		t.depth = maxX*this.rawData[2] + maxY*this.rawData[6] + maxZ*this.rawData[10] + this.rawData[14] - (t.z = minX*this.rawData[2] + minY*this.rawData[6] + minZ*this.rawData[10] + this.rawData[14]);
 
-		return box;
+		return t;
 	}
 
 	/**
@@ -960,7 +986,14 @@ class Matrix3D
 	 */
 	public get position():Vector3D
 	{
-		return new Vector3D(this.rawData[12], this.rawData[13], this.rawData[14]);
+		if (this._position == null)
+			this._position = new Vector3D();
+
+		this._position.x = this.rawData[12];
+		this._position.y = this.rawData[13];
+		this._position.z = this.rawData[14];
+
+		return this._position;
 	}
 
 	public set position(value:Vector3D)

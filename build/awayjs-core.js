@@ -10146,8 +10146,8 @@ var WebAudioChannel = (function () {
         if (!this._isPlaying)
             return;
         this._isDecoding = false;
-        if (buffer.duration < 2)
-            WebAudioChannel._decodeCache[this._id] = buffer;
+        //if (buffer.duration < 2) //cache all buffers?
+        WebAudioChannel._decodeCache[this._id] = buffer;
         if (this._source)
             this._disposeSource();
         this._source = this._audioCtx.createBufferSource();
@@ -10157,7 +10157,13 @@ var WebAudioChannel = (function () {
         this._duration = buffer.duration;
         this._startTime = this._audioCtx.currentTime - this._currentTime;
         this._source.onended = this._onEndedDelegate;
-        this._source.start(this._audioCtx.currentTime, this._currentTime);
+        try {
+            this._source.start(this._audioCtx.currentTime, this._currentTime);
+        }
+        catch (error) {
+            console.log("Error starting audio: " + error);
+            this._disposeSource();
+        }
     };
     WebAudioChannel.prototype._onError = function (event) {
         console.log("Error with decoding audio data");

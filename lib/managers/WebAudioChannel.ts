@@ -122,8 +122,8 @@ class WebAudioChannel
 
 		this._isDecoding = false;
 
-		if (buffer.duration < 2)
-			WebAudioChannel._decodeCache[this._id] = buffer;
+		//if (buffer.duration < 2) //cache all buffers?
+		WebAudioChannel._decodeCache[this._id] = buffer;
 
 		if (this._source)
 			this._disposeSource();
@@ -138,7 +138,12 @@ class WebAudioChannel
 
 		this._startTime = this._audioCtx.currentTime - this._currentTime;
 		this._source.onended = this._onEndedDelegate;
-		this._source.start(this._audioCtx.currentTime, this._currentTime);
+		try {
+			this._source.start(this._audioCtx.currentTime, this._currentTime);
+		} catch (error) {
+			console.log("Error starting audio: " + error);
+			this._disposeSource();
+		}
 	}
 
 	public _onError(event)

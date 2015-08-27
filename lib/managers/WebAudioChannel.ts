@@ -6,13 +6,14 @@ class WebAudioChannel
 	public static _channels:Array<WebAudioChannel> = new Array<WebAudioChannel>();
 
 	public static _decodeCache:Object = new Object();
+	public static _errorCache:Object = new Object();
 
 	private static _audioCtx;
 	private _audioCtx;
 
 	private _gainNode;
 	private _source;
-	
+
 	private _isPlaying:boolean = false;
 	private _isLooping:boolean = false;
 	private _isDecoding:boolean = false;
@@ -71,7 +72,7 @@ class WebAudioChannel
 	constructor()
 	{
 		this._audioCtx = WebAudioChannel._audioCtx || (WebAudioChannel._audioCtx = new (window["AudioContext"] || window["webkitAudioContext"])());
-		
+
 		this._gainNode = this._audioCtx.createGain();
 		this._gainNode.gain.value = this._volume;
 
@@ -79,7 +80,7 @@ class WebAudioChannel
 
 		this._onEndedDelegate = (event) => this._onEnded(event);
 	}
-	
+
 	public play(buffer:ArrayBuffer, offset:number = 0, loop:boolean = false, id:number = 0)
 	{
 		this._isPlaying = true;
@@ -94,8 +95,10 @@ class WebAudioChannel
 		//fast path for short sounds
 		if (WebAudioChannel._decodeCache[id])
 			this._onDecodeComplete(WebAudioChannel._decodeCache[id]);
-		else
+		else if (!WebAudioChannel._errorCache[id])
 			this._audioCtx.decodeAudioData(buffer, (buffer) => this._onDecodeComplete(buffer), (event) => this._onError(event));
+		else
+			this.stop();
 	}
 
 	public stop()
@@ -149,6 +152,7 @@ class WebAudioChannel
 	public _onError(event)
 	{
 		console.log("Error with decoding audio data");
+		WebAudioChannel._errorCache[this._id] = true;
 		this.stop();
 	}
 

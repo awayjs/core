@@ -5584,12 +5584,62 @@ declare module "awayjs-core/lib/library/NumSuffixConflictStrategy" {
 	
 }
 
+declare module "awayjs-core/lib/managers/AudioChannel" {
+	class AudioChannel {
+	    static maxChannels: number;
+	    static _channels: Array<AudioChannel>;
+	    private _isPlaying;
+	    private _isLooping;
+	    private static _audioCtx;
+	    private _audioCtx;
+	    private _gainNode;
+	    private _audio;
+	    currentTime: number;
+	    volume: number;
+	    isPlaying(): boolean;
+	    isLooping(): boolean;
+	    isDecoding(): boolean;
+	    constructor();
+	    play(url: string, offset?: number, loop?: boolean): void;
+	    stop(): void;
+	    private _onEnded(event);
+	}
+	export = AudioChannel;
+	
+}
+
 declare module "awayjs-core/lib/managers/AudioManager" {
 	import IAudioChannel = require("awayjs-core/lib/managers/IAudioChannel");
 	class AudioManager {
 	    static getChannel(byteLength: number): IAudioChannel;
 	}
 	export = AudioManager;
+	
+}
+
+declare module "awayjs-core/lib/managers/EventAudioChannel" {
+	class EventAudioChannel {
+	    static maxChannels: number;
+	    static _channels: Array<EventAudioChannel>;
+	    static _base64Cache: Object;
+	    private _isPlaying;
+	    private _isLooping;
+	    private _volume;
+	    private _startTime;
+	    private _duration;
+	    private _audio;
+	    duration: number;
+	    currentTime: number;
+	    volume: number;
+	    isPlaying(): boolean;
+	    isLooping(): boolean;
+	    isDecoding(): boolean;
+	    constructor();
+	    play(buffer: ArrayBuffer, offset?: number, loop?: boolean, id?: number): void;
+	    stop(): void;
+	    private _onTimeUpdate(event);
+	}
+	export = EventAudioChannel;
 	
 }
 
@@ -5667,6 +5717,7 @@ declare module "awayjs-core/lib/managers/WebAudioChannel" {
 	    static maxChannels: number;
 	    static _channels: Array<WebAudioChannel>;
 	    static _decodeCache: Object;
+	    static _errorCache: Object;
 	    private static _audioCtx;
 	    private _audioCtx;
 	    private _gainNode;
@@ -6262,7 +6313,7 @@ declare module "awayjs-core/lib/parsers/ParserUtils" {
 	import BitmapImage2D = require("awayjs-core/lib/data/BitmapImage2D");
 	import ByteArray = require("awayjs-core/lib/utils/ByteArray");
 	class ParserUtils {
-	    private static arrayBufferToBase64(data, mimeType);
+	    static arrayBufferToBase64(data: ArrayBuffer, mimeType: string): string;
 	    static arrayBufferToAudio(data: ArrayBuffer, fileType: string): HTMLAudioElement;
 	    /**
 	     * Converts an ArrayBuffer to a base64 string
@@ -7734,6 +7785,28 @@ declare module "awayjs-core/lib/utils/MipmapGenerator" {
 	
 }
 
+declare module "awayjs-core/lib/utils/Timer" {
+	import EventDispatcher = require("awayjs-core/lib/events/EventDispatcher");
+	class Timer extends EventDispatcher {
+	    private _delay;
+	    private _repeatCount;
+	    private _currentCount;
+	    private _iid;
+	    private _running;
+	    constructor(delay: number, repeatCount?: number);
+	    currentCount: number;
+	    delay: number;
+	    repeatCount: number;
+	    reset(): void;
+	    running: boolean;
+	    start(): void;
+	    stop(): void;
+	    private tick();
+	}
+	export = Timer;
+	
+}
+
 declare module "awayjs-core/lib/utils/RequestAnimationFrame" {
 	class RequestAnimationFrame {
 	    private _callback;
@@ -7775,28 +7848,6 @@ declare module "awayjs-core/lib/utils/RequestAnimationFrame" {
 	
 }
 
-declare module "awayjs-core/lib/utils/Timer" {
-	import EventDispatcher = require("awayjs-core/lib/events/EventDispatcher");
-	class Timer extends EventDispatcher {
-	    private _delay;
-	    private _repeatCount;
-	    private _currentCount;
-	    private _iid;
-	    private _running;
-	    constructor(delay: number, repeatCount?: number);
-	    currentCount: number;
-	    delay: number;
-	    repeatCount: number;
-	    reset(): void;
-	    running: boolean;
-	    start(): void;
-	    stop(): void;
-	    private tick();
-	}
-	export = Timer;
-	
-}
-
 declare module "awayjs-core/lib/utils/XmlUtils" {
 	class XmlUtils {
 	    static getChildrenWithTag(node: Node, tag: string): NodeList;
@@ -7808,17 +7859,6 @@ declare module "awayjs-core/lib/utils/XmlUtils" {
 	    static hasAttribute(node: Node, attrName: string): boolean;
 	}
 	export = XmlUtils;
-	
-}
-
-declare module "awayjs-core/lib/utils/getTimer" {
-	/**
-	 *
-	 *
-	 * @returns {number}
-	 */
-	function getTimer(): number;
-	export = getTimer;
 	
 }
 
@@ -7840,6 +7880,17 @@ declare module "awayjs-core/lib/vos/IAttributesBufferVO" {
 	    invalidate(): any;
 	}
 	export = IAttributesBufferVO;
+	
+}
+
+declare module "awayjs-core/lib/utils/getTimer" {
+	/**
+	 *
+	 *
+	 * @returns {number}
+	 */
+	function getTimer(): number;
+	export = getTimer;
 	
 }
 

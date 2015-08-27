@@ -9893,7 +9893,73 @@ var NumSuffixConflictStrategy = (function (_super) {
 })(ConflictStrategyBase);
 module.exports = NumSuffixConflictStrategy;
 
-},{"awayjs-core/lib/library/ConflictStrategyBase":"awayjs-core/lib/library/ConflictStrategyBase"}],"awayjs-core/lib/managers/AudioManager":[function(require,module,exports){
+},{"awayjs-core/lib/library/ConflictStrategyBase":"awayjs-core/lib/library/ConflictStrategyBase"}],"awayjs-core/lib/managers/AudioChannel":[function(require,module,exports){
+var AudioChannel = (function () {
+    function AudioChannel() {
+        var _this = this;
+        this._isPlaying = false;
+        this._isLooping = false;
+        this._audioCtx = AudioChannel._audioCtx || (AudioChannel._audioCtx = new (window["AudioContext"] || window["webkitAudioContext"])());
+        this._gainNode = this._audioCtx.createGain();
+        this._gainNode = this._audioCtx.createGain();
+        this._gainNode.connect(this._audioCtx.destination);
+        this._audio = new Audio();
+        this._audio.onended = function (event) { return _this._onEnded(event); };
+        this._audio["crossOrigin"] = "anonymous";
+        var source = this._audioCtx.createMediaElementSource(this._audio);
+        source.connect(this._gainNode);
+    }
+    Object.defineProperty(AudioChannel.prototype, "currentTime", {
+        get: function () {
+            return this._audio.currentTime;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(AudioChannel.prototype, "volume", {
+        get: function () {
+            return this._gainNode.gain.value;
+        },
+        set: function (value) {
+            this._gainNode.gain.value = value;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    AudioChannel.prototype.isPlaying = function () {
+        return this._isPlaying;
+    };
+    AudioChannel.prototype.isLooping = function () {
+        return this._isLooping;
+    };
+    AudioChannel.prototype.isDecoding = function () {
+        return false;
+    };
+    AudioChannel.prototype.play = function (url, offset, loop) {
+        if (offset === void 0) { offset = 0; }
+        if (loop === void 0) { loop = false; }
+        this._isPlaying = true;
+        this._isLooping = loop;
+        this._audio.src = url;
+        this._audio.loop = loop;
+        this._audio.currentTime = offset;
+        this._audio.play();
+    };
+    AudioChannel.prototype.stop = function () {
+        this._audio.pause();
+        this._isPlaying = false;
+        this._isLooping = false;
+    };
+    AudioChannel.prototype._onEnded = function (event) {
+        this.stop();
+    };
+    AudioChannel.maxChannels = 16;
+    AudioChannel._channels = new Array();
+    return AudioChannel;
+})();
+module.exports = AudioChannel;
+
+},{}],"awayjs-core/lib/managers/AudioManager":[function(require,module,exports){
 var StreamingAudioChannel = require("awayjs-core/lib/managers/StreamingAudioChannel");
 var WebAudioChannel = require("awayjs-core/lib/managers/WebAudioChannel");
 var AudioManager = (function () {
@@ -9926,7 +9992,82 @@ var AudioManager = (function () {
 })();
 module.exports = AudioManager;
 
-},{"awayjs-core/lib/managers/StreamingAudioChannel":"awayjs-core/lib/managers/StreamingAudioChannel","awayjs-core/lib/managers/WebAudioChannel":"awayjs-core/lib/managers/WebAudioChannel"}],"awayjs-core/lib/managers/IAudioChannelClass":[function(require,module,exports){
+},{"awayjs-core/lib/managers/StreamingAudioChannel":"awayjs-core/lib/managers/StreamingAudioChannel","awayjs-core/lib/managers/WebAudioChannel":"awayjs-core/lib/managers/WebAudioChannel"}],"awayjs-core/lib/managers/EventAudioChannel":[function(require,module,exports){
+var ParserUtils = require("awayjs-core/lib/parsers/ParserUtils");
+var EventAudioChannel = (function () {
+    function EventAudioChannel() {
+        var _this = this;
+        this._isPlaying = false;
+        this._isLooping = false;
+        this._startTime = 0;
+        this._audio = new Audio();
+        this._audio.ontimeupdate = function (event) { return _this._onTimeUpdate(event); };
+    }
+    Object.defineProperty(EventAudioChannel.prototype, "duration", {
+        get: function () {
+            return this._duration;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(EventAudioChannel.prototype, "currentTime", {
+        get: function () {
+            return this._audio.currentTime - this._startTime;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(EventAudioChannel.prototype, "volume", {
+        get: function () {
+            return this._volume;
+        },
+        set: function (value) {
+            if (this._volume == value)
+                return;
+            this._volume = value;
+            this._audio.volume = this._volume;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    EventAudioChannel.prototype.isPlaying = function () {
+        return this._isPlaying;
+    };
+    EventAudioChannel.prototype.isLooping = function () {
+        return this._isLooping;
+    };
+    EventAudioChannel.prototype.isDecoding = function () {
+        return false;
+    };
+    EventAudioChannel.prototype.play = function (buffer, offset, loop, id) {
+        if (offset === void 0) { offset = 0; }
+        if (loop === void 0) { loop = false; }
+        if (id === void 0) { id = 0; }
+        this._isPlaying = true;
+        this._isLooping = loop;
+        this._audio.src = EventAudioChannel._base64Cache[id] || (EventAudioChannel._base64Cache[id] = ParserUtils.arrayBufferToBase64(buffer, "audio/mp3"));
+        this._audio.loop = this._isLooping;
+        this._audio.currentTime = offset;
+        this._audio.play();
+    };
+    EventAudioChannel.prototype.stop = function () {
+        this._audio.pause();
+        this._isPlaying = false;
+        this._isLooping = false;
+    };
+    EventAudioChannel.prototype._onTimeUpdate = function (event) {
+        //TODO: more accurate end detection
+        if (!this._isLooping && this._duration < this._audio.currentTime - this._startTime + 0.1)
+            this.stop();
+    };
+    EventAudioChannel.maxChannels = 4;
+    EventAudioChannel._channels = new Array();
+    EventAudioChannel._base64Cache = new Object();
+    return EventAudioChannel;
+})();
+module.exports = EventAudioChannel;
+
+},{"awayjs-core/lib/parsers/ParserUtils":"awayjs-core/lib/parsers/ParserUtils"}],"awayjs-core/lib/managers/IAudioChannelClass":[function(require,module,exports){
 
 },{}],"awayjs-core/lib/managers/IAudioChannel":[function(require,module,exports){
 
@@ -10127,8 +10268,10 @@ var WebAudioChannel = (function () {
         //fast path for short sounds
         if (WebAudioChannel._decodeCache[id])
             this._onDecodeComplete(WebAudioChannel._decodeCache[id]);
-        else
+        else if (!WebAudioChannel._errorCache[id])
             this._audioCtx.decodeAudioData(buffer, function (buffer) { return _this._onDecodeComplete(buffer); }, function (event) { return _this._onError(event); });
+        else
+            this.stop();
     };
     WebAudioChannel.prototype.stop = function () {
         if (!this._isPlaying)
@@ -10167,6 +10310,7 @@ var WebAudioChannel = (function () {
     };
     WebAudioChannel.prototype._onError = function (event) {
         console.log("Error with decoding audio data");
+        WebAudioChannel._errorCache[this._id] = true;
         this.stop();
     };
     WebAudioChannel.prototype._onEnded = function (event) {
@@ -10183,6 +10327,7 @@ var WebAudioChannel = (function () {
     WebAudioChannel.maxChannels = 64;
     WebAudioChannel._channels = new Array();
     WebAudioChannel._decodeCache = new Object();
+    WebAudioChannel._errorCache = new Object();
     return WebAudioChannel;
 })();
 module.exports = WebAudioChannel;

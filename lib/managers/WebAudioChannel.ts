@@ -32,9 +32,6 @@ class WebAudioChannel
 
 	public get currentTime():number
 	{
-		if (!this._isPlaying)
-			return this._currentTime;
-
 		return this._audioCtx.currentTime - this._startTime;
 	}
 
@@ -108,11 +105,7 @@ class WebAudioChannel
 
 		this._isPlaying = false;
 		this._isLooping = false;
-
-		if (!this._isDecoding) {
-			this._currentTime = this._audioCtx.currentTime - this._startTime;
-			this._source.stop(this._audioCtx.currentTime);
-		}
+		this._isDecoding = false;
 
 		if (this._source)
 			this._disposeSource();
@@ -164,6 +157,7 @@ class WebAudioChannel
 	private _disposeSource()
 	{
 		//clean up
+		this._source.stop(this._audioCtx.currentTime);
 		this._source.onended = null;
 		this._source.disconnect();
 		delete this._source.buffer;

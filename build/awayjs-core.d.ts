@@ -7785,28 +7785,6 @@ declare module "awayjs-core/lib/utils/MipmapGenerator" {
 	
 }
 
-declare module "awayjs-core/lib/utils/Timer" {
-	import EventDispatcher = require("awayjs-core/lib/events/EventDispatcher");
-	class Timer extends EventDispatcher {
-	    private _delay;
-	    private _repeatCount;
-	    private _currentCount;
-	    private _iid;
-	    private _running;
-	    constructor(delay: number, repeatCount?: number);
-	    currentCount: number;
-	    delay: number;
-	    repeatCount: number;
-	    reset(): void;
-	    running: boolean;
-	    start(): void;
-	    stop(): void;
-	    private tick();
-	}
-	export = Timer;
-	
-}
-
 declare module "awayjs-core/lib/utils/RequestAnimationFrame" {
 	class RequestAnimationFrame {
 	    private _callback;
@@ -7848,6 +7826,28 @@ declare module "awayjs-core/lib/utils/RequestAnimationFrame" {
 	
 }
 
+declare module "awayjs-core/lib/utils/Timer" {
+	import EventDispatcher = require("awayjs-core/lib/events/EventDispatcher");
+	class Timer extends EventDispatcher {
+	    private _delay;
+	    private _repeatCount;
+	    private _currentCount;
+	    private _iid;
+	    private _running;
+	    constructor(delay: number, repeatCount?: number);
+	    currentCount: number;
+	    delay: number;
+	    repeatCount: number;
+	    reset(): void;
+	    running: boolean;
+	    start(): void;
+	    stop(): void;
+	    private tick();
+	}
+	export = Timer;
+	
+}
+
 declare module "awayjs-core/lib/utils/XmlUtils" {
 	class XmlUtils {
 	    static getChildrenWithTag(node: Node, tag: string): NodeList;
@@ -7859,6 +7859,17 @@ declare module "awayjs-core/lib/utils/XmlUtils" {
 	    static hasAttribute(node: Node, attrName: string): boolean;
 	}
 	export = XmlUtils;
+	
+}
+
+declare module "awayjs-core/lib/utils/getTimer" {
+	/**
+	 *
+	 *
+	 * @returns {number}
+	 */
+	function getTimer(): number;
+	export = getTimer;
 	
 }
 
@@ -7880,17 +7891,6 @@ declare module "awayjs-core/lib/vos/IAttributesBufferVO" {
 	    invalidate(): any;
 	}
 	export = IAttributesBufferVO;
-	
-}
-
-declare module "awayjs-core/lib/utils/getTimer" {
-	/**
-	 *
-	 *
-	 * @returns {number}
-	 */
-	function getTimer(): number;
-	export = getTimer;
 	
 }
 

@@ -10226,8 +10226,6 @@ var WebAudioChannel = (function () {
     });
     Object.defineProperty(WebAudioChannel.prototype, "currentTime", {
         get: function () {
-            if (!this._isPlaying)
-                return this._currentTime;
             return this._audioCtx.currentTime - this._startTime;
         },
         enumerable: true,
@@ -10278,10 +10276,7 @@ var WebAudioChannel = (function () {
             return;
         this._isPlaying = false;
         this._isLooping = false;
-        if (!this._isDecoding) {
-            this._currentTime = this._audioCtx.currentTime - this._startTime;
-            this._source.stop(this._audioCtx.currentTime);
-        }
+        this._isDecoding = false;
         if (this._source)
             this._disposeSource();
     };
@@ -10318,6 +10313,7 @@ var WebAudioChannel = (function () {
     };
     WebAudioChannel.prototype._disposeSource = function () {
         //clean up
+        this._source.stop(this._audioCtx.currentTime);
         this._source.onended = null;
         this._source.disconnect();
         delete this._source.buffer;

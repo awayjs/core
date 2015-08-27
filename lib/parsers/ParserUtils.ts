@@ -4,7 +4,7 @@ import ByteArray				= require("awayjs-core/lib/utils/ByteArray");
 
 class ParserUtils
 {
-	private static arrayBufferToBase64(data:ArrayBuffer, mimeType:string)
+	public static arrayBufferToBase64(data:ArrayBuffer, mimeType:string)
 	{
 		var byteStr:string = '';
 		var bytes:Uint8Array = new Uint8Array(data);

@@ -84,6 +84,11 @@ class AssetBase extends EventDispatcher
 		throw new AbstractMethodError();
 	}
 
+	public _clearInterfaces()
+	{
+		throw new AbstractMethodError();
+	}
+
 	public get assetNamespace():string
 	{
 		return this._namespace;

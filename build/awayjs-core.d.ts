@@ -4684,6 +4684,7 @@ declare module "awayjs-core/lib/library/AssetBase" {
 	    id: number;
 	    name: string;
 	    dispose(): void;
+	    _clearInterfaces(): void;
 	    assetNamespace: string;
 	    assetFullPath: Array<string>;
 	    assetPathEquals(name: string, ns: string): boolean;
@@ -5215,6 +5216,7 @@ declare module "awayjs-core/lib/library/IAsset" {
 	     * @param overrideOriginal
 	     */
 	    resetAssetPath(name: string, ns: string, overrideOriginal?: boolean): void;
+	    _clearInterfaces(): any;
 	}
 	export = IAsset;
 	

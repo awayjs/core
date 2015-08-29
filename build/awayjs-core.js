@@ -8099,6 +8099,9 @@ var AssetBase = (function (_super) {
     AssetBase.prototype.dispose = function () {
         throw new AbstractMethodError();
     };
+    AssetBase.prototype._clearInterfaces = function () {
+        throw new AbstractMethodError();
+    };
     Object.defineProperty(AssetBase.prototype, "assetNamespace", {
         get: function () {
             return this._namespace;

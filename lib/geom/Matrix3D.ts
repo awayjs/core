@@ -4,6 +4,8 @@ import Quaternion				= require("awayjs-core/lib/geom/Quaternion");
 import Vector3D					= require("awayjs-core/lib/geom/Vector3D");
 import ArgumentError			= require("awayjs-core/lib/errors/ArgumentError");
 
+declare var SIMD:any;
+
 class Matrix3D
 {
 	/**
@@ -40,58 +42,90 @@ class Matrix3D
 	{
 		var lrd:Float32Array = lhs.rawData;
 
-		var m111:number = this.rawData[0];
-		var m112:number = this.rawData[1];
-		var m113:number = this.rawData[2];
-		var m114:number = this.rawData[3];
-		var m121:number = this.rawData[4];
-		var m122:number = this.rawData[5];
-		var m123:number = this.rawData[6];
-		var m124:number = this.rawData[7];
-		var m131:number = this.rawData[8];
-		var m132:number = this.rawData[9];
-		var m133:number = this.rawData[10];
-		var m134:number = this.rawData[11];
-		var m141:number = this.rawData[12];
-		var m142:number = this.rawData[13];
-		var m143:number = this.rawData[14];
-		var m144:number = this.rawData[15];
-		var m211:number = lrd[0];
-		var m212:number = lrd[1];
-		var m213:number = lrd[2];
-		var m214:number = lrd[3];
-		var m221:number = lrd[4];
-		var m222:number = lrd[5];
-		var m223:number = lrd[6];
-		var m224:number = lrd[7];
-		var m231:number = lrd[8];
-		var m232:number = lrd[9];
-		var m233:number = lrd[10];
-		var m234:number = lrd[11];
-		var m241:number = lrd[12];
-		var m242:number = lrd[13];
-		var m243:number = lrd[14];
-		var m244:number = lrd[15];
+		//use SIMD where available
+		if (SIMD) {
+			var F32x4 = SIMD.Float32x4;
+			var s111 = F32x4.splat(this.rawData[0]);
+			var s112 = F32x4.splat(this.rawData[1]);
+			var s113 = F32x4.splat(this.rawData[2]);
+			var s114 = F32x4.splat(this.rawData[3]);
+			var s121 = F32x4.splat(this.rawData[4]);
+			var s122 = F32x4.splat(this.rawData[5]);
+			var s123 = F32x4.splat(this.rawData[6]);
+			var s124 = F32x4.splat(this.rawData[7]);
+			var s131 = F32x4.splat(this.rawData[8]);
+			var s132 = F32x4.splat(this.rawData[9]);
+			var s133 = F32x4.splat(this.rawData[10]);
+			var s134 = F32x4.splat(this.rawData[11]);
+			var s141 = F32x4.splat(this.rawData[12]);
+			var s142 = F32x4.splat(this.rawData[13]);
+			var s143 = F32x4.splat(this.rawData[14]);
+			var s144 = F32x4.splat(this.rawData[15]);
 
-		this.rawData[0] = m111*m211 + m112*m221 + m113*m231 + m114*m241;
-		this.rawData[1] = m111*m212 + m112*m222 + m113*m232 + m114*m242;
-		this.rawData[2] = m111*m213 + m112*m223 + m113*m233 + m114*m243;
-		this.rawData[3] = m111*m214 + m112*m224 + m113*m234 + m114*m244;
+			var m21 = F32x4.load(lrd, 0);
+			var m22 = F32x4.load(lrd, 4);
+			var m23 = F32x4.load(lrd, 8);
+			var m24 = F32x4.load(lrd, 12);
 
-		this.rawData[4] = m121*m211 + m122*m221 + m123*m231 + m124*m241;
-		this.rawData[5] = m121*m212 + m122*m222 + m123*m232 + m124*m242;
-		this.rawData[6] = m121*m213 + m122*m223 + m123*m233 + m124*m243;
-		this.rawData[7] = m121*m214 + m122*m224 + m123*m234 + m124*m244;
+			F32x4.store(this.rawData, 0, F32x4.add(F32x4.add(F32x4.add(F32x4.mul(s111, m21), F32x4.mul(s112, m22)), F32x4.mul(s113, m23)), F32x4.mul(s114, m24)));
+			F32x4.store(this.rawData, 4, F32x4.add(F32x4.add(F32x4.add(F32x4.mul(s121, m21), F32x4.mul(s122, m22)), F32x4.mul(s123, m23)), F32x4.mul(s124, m24)));
+			F32x4.store(this.rawData, 8, F32x4.add(F32x4.add(F32x4.add(F32x4.mul(s131, m21), F32x4.mul(s132, m22)), F32x4.mul(s133, m23)), F32x4.mul(s134, m24)));
+			F32x4.store(this.rawData, 12, F32x4.add(F32x4.add(F32x4.add(F32x4.mul(s141, m21), F32x4.mul(s142, m22)), F32x4.mul(s143, m23)), F32x4.mul(s144, m24)));
+		} else {
+			var m111:number = this.rawData[0];
+			var m112:number = this.rawData[1];
+			var m113:number = this.rawData[2];
+			var m114:number = this.rawData[3];
+			var m121:number = this.rawData[4];
+			var m122:number = this.rawData[5];
+			var m123:number = this.rawData[6];
+			var m124:number = this.rawData[7];
+			var m131:number = this.rawData[8];
+			var m132:number = this.rawData[9];
+			var m133:number = this.rawData[10];
+			var m134:number = this.rawData[11];
+			var m141:number = this.rawData[12];
+			var m142:number = this.rawData[13];
+			var m143:number = this.rawData[14];
+			var m144:number = this.rawData[15];
+			var m211:number = lrd[0];
+			var m212:number = lrd[1];
+			var m213:number = lrd[2];
+			var m214:number = lrd[3];
+			var m221:number = lrd[4];
+			var m222:number = lrd[5];
+			var m223:number = lrd[6];
+			var m224:number = lrd[7];
+			var m231:number = lrd[8];
+			var m232:number = lrd[9];
+			var m233:number = lrd[10];
+			var m234:number = lrd[11];
+			var m241:number = lrd[12];
+			var m242:number = lrd[13];
+			var m243:number = lrd[14];
+			var m244:number = lrd[15];
 
-		this.rawData[8] = m131*m211 + m132*m221 + m133*m231 + m134*m241;
-		this.rawData[9] = m131*m212 + m132*m222 + m133*m232 + m134*m242;
-		this.rawData[10] = m131*m213 + m132*m223 + m133*m233 + m134*m243;
-		this.rawData[11] = m131*m214 + m132*m224 + m133*m234 + m134*m244;
+			this.rawData[0] = m111*m211 + m112*m221 + m113*m231 + m114*m241;
+			this.rawData[1] = m111*m212 + m112*m222 + m113*m232 + m114*m242;
+			this.rawData[2] = m111*m213 + m112*m223 + m113*m233 + m114*m243;
+			this.rawData[3] = m111*m214 + m112*m224 + m113*m234 + m114*m244;
 
-		this.rawData[12] = m141*m211 + m142*m221 + m143*m231 + m144*m241;
-		this.rawData[13] = m141*m212 + m142*m222 + m143*m232 + m144*m242;
-		this.rawData[14] = m141*m213 + m142*m223 + m143*m233 + m144*m243;
-		this.rawData[15] = m141*m214 + m142*m224 + m143*m234 + m144*m244;
+			this.rawData[4] = m121*m211 + m122*m221 + m123*m231 + m124*m241;
+			this.rawData[5] = m121*m212 + m122*m222 + m123*m232 + m124*m242;
+			this.rawData[6] = m121*m213 + m122*m223 + m123*m233 + m124*m243;
+			this.rawData[7] = m121*m214 + m122*m224 + m123*m234 + m124*m244;
+
+			this.rawData[8] = m131*m211 + m132*m221 + m133*m231 + m134*m241;
+			this.rawData[9] = m131*m212 + m132*m222 + m133*m232 + m134*m242;
+			this.rawData[10] = m131*m213 + m132*m223 + m133*m233 + m134*m243;
+			this.rawData[11] = m131*m214 + m132*m224 + m133*m234 + m134*m244;
+
+			this.rawData[12] = m141*m211 + m142*m221 + m143*m231 + m144*m241;
+			this.rawData[13] = m141*m212 + m142*m222 + m143*m232 + m144*m242;
+			this.rawData[14] = m141*m213 + m142*m223 + m143*m233 + m144*m243;
+			this.rawData[15] = m141*m214 + m142*m224 + m143*m234 + m144*m244;
+		}
+
 	}
 
 	/**
@@ -506,10 +540,28 @@ class Matrix3D
 		if (!t)
 			t = new Vector3D();
 
-		t.x = x*this.rawData[0] + y*this.rawData[4] + z*this.rawData[8];
-		t.y = x*this.rawData[1] + y*this.rawData[5] + z*this.rawData[9];
-		t.z = x*this.rawData[2] + y*this.rawData[6] + z*this.rawData[10];
-		t.w = x*this.rawData[3] + y*this.rawData[7] + z*this.rawData[11];
+		//use SIMD where available
+		if (SIMD) {
+			var F32x4 = SIMD.Float32x4;
+			var m1 = F32x4.load(this.rawData, 0);
+			var m2 = F32x4.load(this.rawData, 4);
+			var m3 = F32x4.load(this.rawData, 8);
+			var vx = F32x4.splat(v.x);
+			var vy = F32x4.splat(v.y);
+			var vz = F32x4.splat(v.z);
+
+			var s = F32x4.add(F32x4.add(F32x4.mul(vx, m1), F32x4.mul(vy, m2)), F32x4.mul(vz, m3));
+
+			t.x = F32x4.extractLane(s, 0);
+			t.y = F32x4.extractLane(s, 1);
+			t.z = F32x4.extractLane(s, 2);
+			t.w = F32x4.extractLane(s, 3);
+		} else {
+			t.x = x*this.rawData[0] + y*this.rawData[4] + z*this.rawData[8];
+			t.y = x*this.rawData[1] + y*this.rawData[5] + z*this.rawData[9];
+			t.z = x*this.rawData[2] + y*this.rawData[6] + z*this.rawData[10];
+			t.w = x*this.rawData[3] + y*this.rawData[7] + z*this.rawData[11];
+		}
 
 		return t;
 	}
@@ -616,59 +668,92 @@ class Matrix3D
 	 */
 	public prepend(rhs:Matrix3D)
 	{
-		var m111:number = rhs.rawData[0];
-		var m112:number = rhs.rawData[1];
-		var m113:number = rhs.rawData[2];
-		var m114:number = rhs.rawData[3];
-		var m121:number = rhs.rawData[4];
-		var m122:number = rhs.rawData[5];
-		var m123:number = rhs.rawData[6];
-		var m124:number = rhs.rawData[7];
-		var m131:number = rhs.rawData[8];
-		var m132:number = rhs.rawData[9];
-		var m133:number = rhs.rawData[10];
-		var m134:number = rhs.rawData[11];
-		var m141:number = rhs.rawData[12];
-		var m142:number = rhs.rawData[13];
-		var m143:number = rhs.rawData[14];
-		var m144:number = rhs.rawData[15];
+		var rrd:Float32Array = rhs.rawData;
 
-		var m211:number = this.rawData[0];
-		var m212:number = this.rawData[1];
-		var m213:number = this.rawData[2];
-		var m214:number = this.rawData[3];
-		var m221:number = this.rawData[4];
-		var m222:number = this.rawData[5];
-		var m223:number = this.rawData[6];
-		var m224:number = this.rawData[7];
-		var m231:number = this.rawData[8];
-		var m232:number = this.rawData[9];
-		var m233:number = this.rawData[10];
-		var m234:number = this.rawData[11];
-		var m241:number = this.rawData[12];
-		var m242:number = this.rawData[13];
-		var m243:number = this.rawData[14];
-		var m244:number = this.rawData[15];
+		//use SIMD where available
+		if (SIMD) {
+			var F32x4 = SIMD.Float32x4;
+			var s111 = F32x4.splat(rrd[0]);
+			var s112 = F32x4.splat(rrd[1]);
+			var s113 = F32x4.splat(rrd[2]);
+			var s114 = F32x4.splat(rrd[3]);
+			var s121 = F32x4.splat(rrd[4]);
+			var s122 = F32x4.splat(rrd[5]);
+			var s123 = F32x4.splat(rrd[6]);
+			var s124 = F32x4.splat(rrd[7]);
+			var s131 = F32x4.splat(rrd[8]);
+			var s132 = F32x4.splat(rrd[9]);
+			var s133 = F32x4.splat(rrd[10]);
+			var s134 = F32x4.splat(rrd[11]);
+			var s141 = F32x4.splat(rrd[12]);
+			var s142 = F32x4.splat(rrd[13]);
+			var s143 = F32x4.splat(rrd[14]);
+			var s144 = F32x4.splat(rrd[15]);
 
-		this.rawData[0] = m111*m211 + m112*m221 + m113*m231 + m114*m241;
-		this.rawData[1] = m111*m212 + m112*m222 + m113*m232 + m114*m242;
-		this.rawData[2] = m111*m213 + m112*m223 + m113*m233 + m114*m243;
-		this.rawData[3] = m111*m214 + m112*m224 + m113*m234 + m114*m244;
+			var m21 = F32x4.load(this.rawData, 0);
+			var m22 = F32x4.load(this.rawData, 4);
+			var m23 = F32x4.load(this.rawData, 8);
+			var m24 = F32x4.load(this.rawData, 12);
 
-		this.rawData[4] = m121*m211 + m122*m221 + m123*m231 + m124*m241;
-		this.rawData[5] = m121*m212 + m122*m222 + m123*m232 + m124*m242;
-		this.rawData[6] = m121*m213 + m122*m223 + m123*m233 + m124*m243;
-		this.rawData[7] = m121*m214 + m122*m224 + m123*m234 + m124*m244;
+			F32x4.store(this.rawData, 0, F32x4.add(F32x4.add(F32x4.add(F32x4.mul(s111, m21), F32x4.mul(s112, m22)), F32x4.mul(s113, m23)), F32x4.mul(s114, m24)));
+			F32x4.store(this.rawData, 4, F32x4.add(F32x4.add(F32x4.add(F32x4.mul(s121, m21), F32x4.mul(s122, m22)), F32x4.mul(s123, m23)), F32x4.mul(s124, m24)));
+			F32x4.store(this.rawData, 8, F32x4.add(F32x4.add(F32x4.add(F32x4.mul(s131, m21), F32x4.mul(s132, m22)), F32x4.mul(s133, m23)), F32x4.mul(s134, m24)));
+			F32x4.store(this.rawData, 12, F32x4.add(F32x4.add(F32x4.add(F32x4.mul(s141, m21), F32x4.mul(s142, m22)), F32x4.mul(s143, m23)), F32x4.mul(s144, m24)));
+		} else {
+			var m111:number = rrd[0];
+			var m112:number = rrd[1];
+			var m113:number = rrd[2];
+			var m114:number = rrd[3];
+			var m121:number = rrd[4];
+			var m122:number = rrd[5];
+			var m123:number = rrd[6];
+			var m124:number = rrd[7];
+			var m131:number = rrd[8];
+			var m132:number = rrd[9];
+			var m133:number = rrd[10];
+			var m134:number = rrd[11];
+			var m141:number = rrd[12];
+			var m142:number = rrd[13];
+			var m143:number = rrd[14];
+			var m144:number = rrd[15];
 
-		this.rawData[8] = m131*m211 + m132*m221 + m133*m231 + m134*m241;
-		this.rawData[9] = m131*m212 + m132*m222 + m133*m232 + m134*m242;
-		this.rawData[10] = m131*m213 + m132*m223 + m133*m233 + m134*m243;
-		this.rawData[11] = m131*m214 + m132*m224 + m133*m234 + m134*m244;
+			var m211:number = this.rawData[0];
+			var m212:number = this.rawData[1];
+			var m213:number = this.rawData[2];
+			var m214:number = this.rawData[3];
+			var m221:number = this.rawData[4];
+			var m222:number = this.rawData[5];
+			var m223:number = this.rawData[6];
+			var m224:number = this.rawData[7];
+			var m231:number = this.rawData[8];
+			var m232:number = this.rawData[9];
+			var m233:number = this.rawData[10];
+			var m234:number = this.rawData[11];
+			var m241:number = this.rawData[12];
+			var m242:number = this.rawData[13];
+			var m243:number = this.rawData[14];
+			var m244:number = this.rawData[15];
 
-		this.rawData[12] = m141*m211 + m142*m221 + m143*m231 + m144*m241;
-		this.rawData[13] = m141*m212 + m142*m222 + m143*m232 + m144*m242;
-		this.rawData[14] = m141*m213 + m142*m223 + m143*m233 + m144*m243;
-		this.rawData[15] = m141*m214 + m142*m224 + m143*m234 + m144*m244;
+			this.rawData[0] = m111*m211 + m112*m221 + m113*m231 + m114*m241;
+			this.rawData[1] = m111*m212 + m112*m222 + m113*m232 + m114*m242;
+			this.rawData[2] = m111*m213 + m112*m223 + m113*m233 + m114*m243;
+			this.rawData[3] = m111*m214 + m112*m224 + m113*m234 + m114*m244;
+
+			this.rawData[4] = m121*m211 + m122*m221 + m123*m231 + m124*m241;
+			this.rawData[5] = m121*m212 + m122*m222 + m123*m232 + m124*m242;
+			this.rawData[6] = m121*m213 + m122*m223 + m123*m233 + m124*m243;
+			this.rawData[7] = m121*m214 + m122*m224 + m123*m234 + m124*m244;
+
+			this.rawData[8] = m131*m211 + m132*m221 + m133*m231 + m134*m241;
+			this.rawData[9] = m131*m212 + m132*m222 + m133*m232 + m134*m242;
+			this.rawData[10] = m131*m213 + m132*m223 + m133*m233 + m134*m243;
+			this.rawData[11] = m131*m214 + m132*m224 + m133*m234 + m134*m244;
+
+			this.rawData[12] = m141*m211 + m142*m221 + m143*m231 + m144*m241;
+			this.rawData[13] = m141*m212 + m142*m222 + m143*m232 + m144*m242;
+			this.rawData[14] = m141*m213 + m142*m223 + m143*m233 + m144*m243;
+			this.rawData[15] = m141*m214 + m142*m224 + m143*m234 + m144*m244;
+		}
 	}
 
 	/**
@@ -860,17 +945,37 @@ class Matrix3D
 		if (v == null)
 			return t || new Vector3D();
 
-		var x:number = v.x;
-		var y:number = v.y;
-		var z:number = v.z;
-
 		if (!t)
 			t = new Vector3D();
 
-		t.x = x*this.rawData[0] + y*this.rawData[4] + z*this.rawData[8] + this.rawData[12];
-		t.y = x*this.rawData[1] + y*this.rawData[5] + z*this.rawData[9] + this.rawData[13];
-		t.z = x*this.rawData[2] + y*this.rawData[6] + z*this.rawData[10] + this.rawData[14];
-		t.w = x*this.rawData[3] + y*this.rawData[7] + z*this.rawData[11] + this.rawData[15];
+		//use SIMD where available
+		if (SIMD) {
+			var F32x4 = SIMD.Float32x4;
+			var m1 = F32x4.load(this.rawData, 0);
+			var m2 = F32x4.load(this.rawData, 4);
+			var m3 = F32x4.load(this.rawData, 8);
+			var m4 = F32x4.load(this.rawData, 12);
+			var vx = F32x4.splat(v.x);
+			var vy = F32x4.splat(v.y);
+			var vz = F32x4.splat(v.z);
+			var vw = F32x4.splat(v.w);
+
+			var s = F32x4.add(F32x4.add(F32x4.add(F32x4.mul(vx, m1), F32x4.mul(vy, m2)), F32x4.mul(vz, m3)), F32x4.mul(vw, m4));
+
+			t.x = F32x4.extractLane(s, 0);
+			t.y = F32x4.extractLane(s, 1);
+			t.z = F32x4.extractLane(s, 2);
+			t.w = F32x4.extractLane(s, 3);
+		} else {
+			var x:number = v.x;
+			var y:number = v.y;
+			var z:number = v.z;
+
+			t.x = x*this.rawData[0] + y*this.rawData[4] + z*this.rawData[8] + this.rawData[12];
+			t.y = x*this.rawData[1] + y*this.rawData[5] + z*this.rawData[9] + this.rawData[13];
+			t.z = x*this.rawData[2] + y*this.rawData[6] + z*this.rawData[10] + this.rawData[14];
+			t.w = x*this.rawData[3] + y*this.rawData[7] + z*this.rawData[11] + this.rawData[15];
+		}
 
 		return t;
 	}

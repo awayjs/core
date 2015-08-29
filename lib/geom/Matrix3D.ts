@@ -533,10 +533,6 @@ class Matrix3D
 	 */
 	public deltaTransformVector(v:Vector3D, t:Vector3D = null):Vector3D
 	{
-		var x:number = v.x;
-		var y:number = v.y;
-		var z:number = v.z;
-
 		if (!t)
 			t = new Vector3D();
 
@@ -557,6 +553,10 @@ class Matrix3D
 			t.z = F32x4.extractLane(s, 2);
 			t.w = F32x4.extractLane(s, 3);
 		} else {
+			var x:number = v.x;
+			var y:number = v.y;
+			var z:number = v.z;
+
 			t.x = x*this.rawData[0] + y*this.rawData[4] + z*this.rawData[8];
 			t.y = x*this.rawData[1] + y*this.rawData[5] + z*this.rawData[9];
 			t.z = x*this.rawData[2] + y*this.rawData[6] + z*this.rawData[10];
@@ -958,9 +958,8 @@ class Matrix3D
 			var vx = F32x4.splat(v.x);
 			var vy = F32x4.splat(v.y);
 			var vz = F32x4.splat(v.z);
-			var vw = F32x4.splat(v.w);
 
-			var s = F32x4.add(F32x4.add(F32x4.add(F32x4.mul(vx, m1), F32x4.mul(vy, m2)), F32x4.mul(vz, m3)), F32x4.mul(vw, m4));
+			var s = F32x4.add(F32x4.add(F32x4.add(F32x4.mul(vx, m1), F32x4.mul(vy, m2)), F32x4.mul(vz, m3)), m4);
 
 			t.x = F32x4.extractLane(s, 0);
 			t.y = F32x4.extractLane(s, 1);

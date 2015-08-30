@@ -3,6 +3,7 @@ import Orientation3D			= require("awayjs-core/lib/geom/Orientation3D");
 import Quaternion				= require("awayjs-core/lib/geom/Quaternion");
 import Vector3D					= require("awayjs-core/lib/geom/Vector3D");
 import ArgumentError			= require("awayjs-core/lib/errors/ArgumentError");
+import Extensions				= require("awayjs-core/lib/utils/Extensions");
 
 declare var SIMD:any;
 
@@ -43,7 +44,7 @@ class Matrix3D
 		var lrd:Float32Array = lhs.rawData;
 
 		//use SIMD where available
-		if (SIMD) {
+		if (Extensions.SIMD) {
 			var F32x4 = SIMD.Float32x4;
 			var s111 = F32x4.splat(this.rawData[0]);
 			var s112 = F32x4.splat(this.rawData[1]);
@@ -537,7 +538,7 @@ class Matrix3D
 			t = new Vector3D();
 
 		//use SIMD where available
-		if (SIMD) {
+		if (Extensions.SIMD) {
 			var F32x4 = SIMD.Float32x4;
 			var m1 = F32x4.load(this.rawData, 0);
 			var m2 = F32x4.load(this.rawData, 4);
@@ -671,7 +672,7 @@ class Matrix3D
 		var rrd:Float32Array = rhs.rawData;
 
 		//use SIMD where available
-		if (SIMD) {
+		if (Extensions.SIMD) {
 			var F32x4 = SIMD.Float32x4;
 			var s111 = F32x4.splat(rrd[0]);
 			var s112 = F32x4.splat(rrd[1]);
@@ -949,7 +950,7 @@ class Matrix3D
 			t = new Vector3D();
 
 		//use SIMD where available
-		if (SIMD) {
+		if (Extensions.SIMD) {
 			var F32x4 = SIMD.Float32x4;
 			var m1 = F32x4.load(this.rawData, 0);
 			var m2 = F32x4.load(this.rawData, 4);

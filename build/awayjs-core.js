@@ -4770,6 +4770,7 @@ var Box = require("awayjs-core/lib/geom/Box");
 var Orientation3D = require("awayjs-core/lib/geom/Orientation3D");
 var Vector3D = require("awayjs-core/lib/geom/Vector3D");
 var ArgumentError = require("awayjs-core/lib/errors/ArgumentError");
+var Extensions = require("awayjs-core/lib/utils/Extensions");
 var Matrix3D = (function () {
     /**
      * Creates a Matrix3D object.
@@ -4796,7 +4797,7 @@ var Matrix3D = (function () {
     Matrix3D.prototype.append = function (lhs) {
         var lrd = lhs.rawData;
         //use SIMD where available
-        if (SIMD) {
+        if (Extensions.SIMD) {
             var F32x4 = SIMD.Float32x4;
             var s111 = F32x4.splat(this.rawData[0]);
             var s112 = F32x4.splat(this.rawData[1]);
@@ -5222,7 +5223,7 @@ var Matrix3D = (function () {
         if (!t)
             t = new Vector3D();
         //use SIMD where available
-        if (SIMD) {
+        if (Extensions.SIMD) {
             var F32x4 = SIMD.Float32x4;
             var m1 = F32x4.load(this.rawData, 0);
             var m2 = F32x4.load(this.rawData, 4);
@@ -5338,7 +5339,7 @@ var Matrix3D = (function () {
     Matrix3D.prototype.prepend = function (rhs) {
         var rrd = rhs.rawData;
         //use SIMD where available
-        if (SIMD) {
+        if (Extensions.SIMD) {
             var F32x4 = SIMD.Float32x4;
             var s111 = F32x4.splat(rrd[0]);
             var s112 = F32x4.splat(rrd[1]);
@@ -5574,7 +5575,7 @@ var Matrix3D = (function () {
         if (!t)
             t = new Vector3D();
         //use SIMD where available
-        if (SIMD) {
+        if (Extensions.SIMD) {
             var F32x4 = SIMD.Float32x4;
             var m1 = F32x4.load(this.rawData, 0);
             var m2 = F32x4.load(this.rawData, 4);
@@ -5721,7 +5722,7 @@ var Matrix3D = (function () {
 })();
 module.exports = Matrix3D;
 
-},{"awayjs-core/lib/errors/ArgumentError":"awayjs-core/lib/errors/ArgumentError","awayjs-core/lib/geom/Box":"awayjs-core/lib/geom/Box","awayjs-core/lib/geom/Orientation3D":"awayjs-core/lib/geom/Orientation3D","awayjs-core/lib/geom/Vector3D":"awayjs-core/lib/geom/Vector3D"}],"awayjs-core/lib/geom/Matrix":[function(require,module,exports){
+},{"awayjs-core/lib/errors/ArgumentError":"awayjs-core/lib/errors/ArgumentError","awayjs-core/lib/geom/Box":"awayjs-core/lib/geom/Box","awayjs-core/lib/geom/Orientation3D":"awayjs-core/lib/geom/Orientation3D","awayjs-core/lib/geom/Vector3D":"awayjs-core/lib/geom/Vector3D","awayjs-core/lib/utils/Extensions":"awayjs-core/lib/utils/Extensions"}],"awayjs-core/lib/geom/Matrix":[function(require,module,exports){
 var Point = require("awayjs-core/lib/geom/Point");
 var ArgumentError = require("awayjs-core/lib/errors/ArgumentError");
 /**
@@ -14342,7 +14343,19 @@ var Debug = (function () {
 })();
 module.exports = Debug;
 
-},{"awayjs-core/lib/errors/PartialImplementationError":"awayjs-core/lib/errors/PartialImplementationError"}],"awayjs-core/lib/utils/IArrayBufferViewClass":[function(require,module,exports){
+},{"awayjs-core/lib/errors/PartialImplementationError":"awayjs-core/lib/errors/PartialImplementationError"}],"awayjs-core/lib/utils/Extensions":[function(require,module,exports){
+/**
+ *
+ */
+var Extensions = (function () {
+    function Extensions() {
+    }
+    Extensions.SIMD = Boolean(typeof (SIMD) !== "undefined");
+    return Extensions;
+})();
+module.exports = Extensions;
+
+},{}],"awayjs-core/lib/utils/IArrayBufferViewClass":[function(require,module,exports){
 
 },{}],"awayjs-core/lib/utils/ImageUtils":[function(require,module,exports){
 var ImageUtils = (function () {

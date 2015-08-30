@@ -7737,6 +7737,17 @@ declare module "awayjs-core/lib/utils/Debug" {
 	
 }
 
+declare module "awayjs-core/lib/utils/Extensions" {
+	/**
+	 *
+	 */
+	class Extensions {
+	    static SIMD: boolean;
+	}
+	export = Extensions;
+	
+}
+
 declare module "awayjs-core/lib/utils/IArrayBufferViewClass" {
 	interface IArrayBufferViewClass {
 	    BYTES_PER_ELEMENT: number;

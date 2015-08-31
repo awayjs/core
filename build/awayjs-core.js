@@ -4873,7 +4873,6 @@ var Box = require("awayjs-core/lib/geom/Box");
 var Orientation3D = require("awayjs-core/lib/geom/Orientation3D");
 var Vector3D = require("awayjs-core/lib/geom/Vector3D");
 var ArgumentError = require("awayjs-core/lib/errors/ArgumentError");
-var Extensions = require("awayjs-core/lib/utils/Extensions");
 var Matrix3D = (function () {
     /**
      * Creates a Matrix3D object.
@@ -4900,7 +4899,7 @@ var Matrix3D = (function () {
     Matrix3D.prototype.append = function (lhs) {
         var lrd = lhs.rawData;
         //use SIMD where available
-        if (Extensions.SIMD) {
+        if (false) {
             var f32x4 = SIMD.float32x4 || SIMD.Float32x4;
             var s111 = f32x4.splat(this.rawData[0]);
             var s112 = f32x4.splat(this.rawData[1]);
@@ -5425,7 +5424,7 @@ var Matrix3D = (function () {
     Matrix3D.prototype.prepend = function (rhs) {
         var rrd = rhs.rawData;
         //use SIMD where available
-        if (Extensions.SIMD) {
+        if (false) {
             var f32x4 = SIMD.float32x4 || SIMD.Float32x4;
             var s111 = f32x4.splat(rrd[0]);
             var s112 = f32x4.splat(rrd[1]);
@@ -5790,7 +5789,7 @@ var Matrix3D = (function () {
 })();
 module.exports = Matrix3D;
 
-},{"awayjs-core/lib/errors/ArgumentError":"awayjs-core/lib/errors/ArgumentError","awayjs-core/lib/geom/Box":"awayjs-core/lib/geom/Box","awayjs-core/lib/geom/Orientation3D":"awayjs-core/lib/geom/Orientation3D","awayjs-core/lib/geom/Vector3D":"awayjs-core/lib/geom/Vector3D","awayjs-core/lib/utils/Extensions":"awayjs-core/lib/utils/Extensions"}],"awayjs-core/lib/geom/Matrix":[function(require,module,exports){
+},{"awayjs-core/lib/errors/ArgumentError":"awayjs-core/lib/errors/ArgumentError","awayjs-core/lib/geom/Box":"awayjs-core/lib/geom/Box","awayjs-core/lib/geom/Orientation3D":"awayjs-core/lib/geom/Orientation3D","awayjs-core/lib/geom/Vector3D":"awayjs-core/lib/geom/Vector3D"}],"awayjs-core/lib/geom/Matrix":[function(require,module,exports){
 var Point = require("awayjs-core/lib/geom/Point");
 var ArgumentError = require("awayjs-core/lib/errors/ArgumentError");
 /**

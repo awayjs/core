@@ -537,32 +537,14 @@ class Matrix3D
 		if (!t)
 			t = new Vector3D();
 
-		//use SIMD where available
-		if (Extensions.SIMD) {
-			var f32x4 = SIMD.float32x4 || SIMD.Float32x4;
-			var m1 = f32x4.load(this.rawData, 0);
-			var m2 = f32x4.load(this.rawData, 4);
-			var m3 = f32x4.load(this.rawData, 8);
-			var vx = f32x4.splat(v.x);
-			var vy = f32x4.splat(v.y);
-			var vz = f32x4.splat(v.z);
+		var x:number = v.x;
+		var y:number = v.y;
+		var z:number = v.z;
 
-			var s = f32x4.add(f32x4.add(f32x4.mul(vx, m1), f32x4.mul(vy, m2)), f32x4.mul(vz, m3));
-
-			t.x = f32x4.extractLane(s, 0);
-			t.y = f32x4.extractLane(s, 1);
-			t.z = f32x4.extractLane(s, 2);
-			t.w = f32x4.extractLane(s, 3);
-		} else {
-			var x:number = v.x;
-			var y:number = v.y;
-			var z:number = v.z;
-
-			t.x = x*this.rawData[0] + y*this.rawData[4] + z*this.rawData[8];
-			t.y = x*this.rawData[1] + y*this.rawData[5] + z*this.rawData[9];
-			t.z = x*this.rawData[2] + y*this.rawData[6] + z*this.rawData[10];
-			t.w = x*this.rawData[3] + y*this.rawData[7] + z*this.rawData[11];
-		}
+		t.x = x*this.rawData[0] + y*this.rawData[4] + z*this.rawData[8];
+		t.y = x*this.rawData[1] + y*this.rawData[5] + z*this.rawData[9];
+		t.z = x*this.rawData[2] + y*this.rawData[6] + z*this.rawData[10];
+		t.w = x*this.rawData[3] + y*this.rawData[7] + z*this.rawData[11];
 
 		return t;
 	}
@@ -949,33 +931,14 @@ class Matrix3D
 		if (!t)
 			t = new Vector3D();
 
-		//use SIMD where available
-		if (Extensions.SIMD) {
-			var f32x4 = SIMD.float32x4 || SIMD.Float32x4;
-			var m1 = f32x4.load(this.rawData, 0);
-			var m2 = f32x4.load(this.rawData, 4);
-			var m3 = f32x4.load(this.rawData, 8);
-			var m4 = f32x4.load(this.rawData, 12);
-			var vx = f32x4.splat(v.x);
-			var vy = f32x4.splat(v.y);
-			var vz = f32x4.splat(v.z);
+		var x:number = v.x;
+		var y:number = v.y;
+		var z:number = v.z;
 
-			var s = f32x4.add(f32x4.add(f32x4.add(f32x4.mul(vx, m1), f32x4.mul(vy, m2)), f32x4.mul(vz, m3)), m4);
-
-			t.x = f32x4.extractLane(s, 0);
-			t.y = f32x4.extractLane(s, 1);
-			t.z = f32x4.extractLane(s, 2);
-			t.w = f32x4.extractLane(s, 3);
-		} else {
-			var x:number = v.x;
-			var y:number = v.y;
-			var z:number = v.z;
-
-			t.x = x*this.rawData[0] + y*this.rawData[4] + z*this.rawData[8] + this.rawData[12];
-			t.y = x*this.rawData[1] + y*this.rawData[5] + z*this.rawData[9] + this.rawData[13];
-			t.z = x*this.rawData[2] + y*this.rawData[6] + z*this.rawData[10] + this.rawData[14];
-			t.w = x*this.rawData[3] + y*this.rawData[7] + z*this.rawData[11] + this.rawData[15];
-		}
+		t.x = x*this.rawData[0] + y*this.rawData[4] + z*this.rawData[8] + this.rawData[12];
+		t.y = x*this.rawData[1] + y*this.rawData[5] + z*this.rawData[9] + this.rawData[13];
+		t.z = x*this.rawData[2] + y*this.rawData[6] + z*this.rawData[10] + this.rawData[14];
+		t.w = x*this.rawData[3] + y*this.rawData[7] + z*this.rawData[11] + this.rawData[15];
 
 		return t;
 	}

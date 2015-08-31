@@ -45,33 +45,33 @@ class Matrix3D
 
 		//use SIMD where available
 		if (Extensions.SIMD) {
-			var F32x4 = SIMD.Float32x4;
-			var s111 = F32x4.splat(this.rawData[0]);
-			var s112 = F32x4.splat(this.rawData[1]);
-			var s113 = F32x4.splat(this.rawData[2]);
-			var s114 = F32x4.splat(this.rawData[3]);
-			var s121 = F32x4.splat(this.rawData[4]);
-			var s122 = F32x4.splat(this.rawData[5]);
-			var s123 = F32x4.splat(this.rawData[6]);
-			var s124 = F32x4.splat(this.rawData[7]);
-			var s131 = F32x4.splat(this.rawData[8]);
-			var s132 = F32x4.splat(this.rawData[9]);
-			var s133 = F32x4.splat(this.rawData[10]);
-			var s134 = F32x4.splat(this.rawData[11]);
-			var s141 = F32x4.splat(this.rawData[12]);
-			var s142 = F32x4.splat(this.rawData[13]);
-			var s143 = F32x4.splat(this.rawData[14]);
-			var s144 = F32x4.splat(this.rawData[15]);
+			var f32x4 = SIMD.float32x4 || SIMD.Float32x4;
+			var s111 = f32x4.splat(this.rawData[0]);
+			var s112 = f32x4.splat(this.rawData[1]);
+			var s113 = f32x4.splat(this.rawData[2]);
+			var s114 = f32x4.splat(this.rawData[3]);
+			var s121 = f32x4.splat(this.rawData[4]);
+			var s122 = f32x4.splat(this.rawData[5]);
+			var s123 = f32x4.splat(this.rawData[6]);
+			var s124 = f32x4.splat(this.rawData[7]);
+			var s131 = f32x4.splat(this.rawData[8]);
+			var s132 = f32x4.splat(this.rawData[9]);
+			var s133 = f32x4.splat(this.rawData[10]);
+			var s134 = f32x4.splat(this.rawData[11]);
+			var s141 = f32x4.splat(this.rawData[12]);
+			var s142 = f32x4.splat(this.rawData[13]);
+			var s143 = f32x4.splat(this.rawData[14]);
+			var s144 = f32x4.splat(this.rawData[15]);
 
-			var m21 = F32x4.load(lrd, 0);
-			var m22 = F32x4.load(lrd, 4);
-			var m23 = F32x4.load(lrd, 8);
-			var m24 = F32x4.load(lrd, 12);
+			var m21 = f32x4.load(lrd, 0);
+			var m22 = f32x4.load(lrd, 4);
+			var m23 = f32x4.load(lrd, 8);
+			var m24 = f32x4.load(lrd, 12);
 
-			F32x4.store(this.rawData, 0, F32x4.add(F32x4.add(F32x4.add(F32x4.mul(s111, m21), F32x4.mul(s112, m22)), F32x4.mul(s113, m23)), F32x4.mul(s114, m24)));
-			F32x4.store(this.rawData, 4, F32x4.add(F32x4.add(F32x4.add(F32x4.mul(s121, m21), F32x4.mul(s122, m22)), F32x4.mul(s123, m23)), F32x4.mul(s124, m24)));
-			F32x4.store(this.rawData, 8, F32x4.add(F32x4.add(F32x4.add(F32x4.mul(s131, m21), F32x4.mul(s132, m22)), F32x4.mul(s133, m23)), F32x4.mul(s134, m24)));
-			F32x4.store(this.rawData, 12, F32x4.add(F32x4.add(F32x4.add(F32x4.mul(s141, m21), F32x4.mul(s142, m22)), F32x4.mul(s143, m23)), F32x4.mul(s144, m24)));
+			f32x4.store(this.rawData, 0, f32x4.add(f32x4.add(f32x4.add(f32x4.mul(s111, m21), f32x4.mul(s112, m22)), f32x4.mul(s113, m23)), f32x4.mul(s114, m24)));
+			f32x4.store(this.rawData, 4, f32x4.add(f32x4.add(f32x4.add(f32x4.mul(s121, m21), f32x4.mul(s122, m22)), f32x4.mul(s123, m23)), f32x4.mul(s124, m24)));
+			f32x4.store(this.rawData, 8, f32x4.add(f32x4.add(f32x4.add(f32x4.mul(s131, m21), f32x4.mul(s132, m22)), f32x4.mul(s133, m23)), f32x4.mul(s134, m24)));
+			f32x4.store(this.rawData, 12, f32x4.add(f32x4.add(f32x4.add(f32x4.mul(s141, m21), f32x4.mul(s142, m22)), f32x4.mul(s143, m23)), f32x4.mul(s144, m24)));
 		} else {
 			var m111:number = this.rawData[0];
 			var m112:number = this.rawData[1];
@@ -539,20 +539,20 @@ class Matrix3D
 
 		//use SIMD where available
 		if (Extensions.SIMD) {
-			var F32x4 = SIMD.Float32x4;
-			var m1 = F32x4.load(this.rawData, 0);
-			var m2 = F32x4.load(this.rawData, 4);
-			var m3 = F32x4.load(this.rawData, 8);
-			var vx = F32x4.splat(v.x);
-			var vy = F32x4.splat(v.y);
-			var vz = F32x4.splat(v.z);
+			var f32x4 = SIMD.float32x4 || SIMD.Float32x4;
+			var m1 = f32x4.load(this.rawData, 0);
+			var m2 = f32x4.load(this.rawData, 4);
+			var m3 = f32x4.load(this.rawData, 8);
+			var vx = f32x4.splat(v.x);
+			var vy = f32x4.splat(v.y);
+			var vz = f32x4.splat(v.z);
 
-			var s = F32x4.add(F32x4.add(F32x4.mul(vx, m1), F32x4.mul(vy, m2)), F32x4.mul(vz, m3));
+			var s = f32x4.add(f32x4.add(f32x4.mul(vx, m1), f32x4.mul(vy, m2)), f32x4.mul(vz, m3));
 
-			t.x = F32x4.extractLane(s, 0);
-			t.y = F32x4.extractLane(s, 1);
-			t.z = F32x4.extractLane(s, 2);
-			t.w = F32x4.extractLane(s, 3);
+			t.x = f32x4.extractLane(s, 0);
+			t.y = f32x4.extractLane(s, 1);
+			t.z = f32x4.extractLane(s, 2);
+			t.w = f32x4.extractLane(s, 3);
 		} else {
 			var x:number = v.x;
 			var y:number = v.y;
@@ -673,33 +673,33 @@ class Matrix3D
 
 		//use SIMD where available
 		if (Extensions.SIMD) {
-			var F32x4 = SIMD.Float32x4;
-			var s111 = F32x4.splat(rrd[0]);
-			var s112 = F32x4.splat(rrd[1]);
-			var s113 = F32x4.splat(rrd[2]);
-			var s114 = F32x4.splat(rrd[3]);
-			var s121 = F32x4.splat(rrd[4]);
-			var s122 = F32x4.splat(rrd[5]);
-			var s123 = F32x4.splat(rrd[6]);
-			var s124 = F32x4.splat(rrd[7]);
-			var s131 = F32x4.splat(rrd[8]);
-			var s132 = F32x4.splat(rrd[9]);
-			var s133 = F32x4.splat(rrd[10]);
-			var s134 = F32x4.splat(rrd[11]);
-			var s141 = F32x4.splat(rrd[12]);
-			var s142 = F32x4.splat(rrd[13]);
-			var s143 = F32x4.splat(rrd[14]);
-			var s144 = F32x4.splat(rrd[15]);
+			var f32x4 = SIMD.float32x4 || SIMD.Float32x4;
+			var s111 = f32x4.splat(rrd[0]);
+			var s112 = f32x4.splat(rrd[1]);
+			var s113 = f32x4.splat(rrd[2]);
+			var s114 = f32x4.splat(rrd[3]);
+			var s121 = f32x4.splat(rrd[4]);
+			var s122 = f32x4.splat(rrd[5]);
+			var s123 = f32x4.splat(rrd[6]);
+			var s124 = f32x4.splat(rrd[7]);
+			var s131 = f32x4.splat(rrd[8]);
+			var s132 = f32x4.splat(rrd[9]);
+			var s133 = f32x4.splat(rrd[10]);
+			var s134 = f32x4.splat(rrd[11]);
+			var s141 = f32x4.splat(rrd[12]);
+			var s142 = f32x4.splat(rrd[13]);
+			var s143 = f32x4.splat(rrd[14]);
+			var s144 = f32x4.splat(rrd[15]);
 
-			var m21 = F32x4.load(this.rawData, 0);
-			var m22 = F32x4.load(this.rawData, 4);
-			var m23 = F32x4.load(this.rawData, 8);
-			var m24 = F32x4.load(this.rawData, 12);
+			var m21 = f32x4.load(this.rawData, 0);
+			var m22 = f32x4.load(this.rawData, 4);
+			var m23 = f32x4.load(this.rawData, 8);
+			var m24 = f32x4.load(this.rawData, 12);
 
-			F32x4.store(this.rawData, 0, F32x4.add(F32x4.add(F32x4.add(F32x4.mul(s111, m21), F32x4.mul(s112, m22)), F32x4.mul(s113, m23)), F32x4.mul(s114, m24)));
-			F32x4.store(this.rawData, 4, F32x4.add(F32x4.add(F32x4.add(F32x4.mul(s121, m21), F32x4.mul(s122, m22)), F32x4.mul(s123, m23)), F32x4.mul(s124, m24)));
-			F32x4.store(this.rawData, 8, F32x4.add(F32x4.add(F32x4.add(F32x4.mul(s131, m21), F32x4.mul(s132, m22)), F32x4.mul(s133, m23)), F32x4.mul(s134, m24)));
-			F32x4.store(this.rawData, 12, F32x4.add(F32x4.add(F32x4.add(F32x4.mul(s141, m21), F32x4.mul(s142, m22)), F32x4.mul(s143, m23)), F32x4.mul(s144, m24)));
+			f32x4.store(this.rawData, 0, f32x4.add(f32x4.add(f32x4.add(f32x4.mul(s111, m21), f32x4.mul(s112, m22)), f32x4.mul(s113, m23)), f32x4.mul(s114, m24)));
+			f32x4.store(this.rawData, 4, f32x4.add(f32x4.add(f32x4.add(f32x4.mul(s121, m21), f32x4.mul(s122, m22)), f32x4.mul(s123, m23)), f32x4.mul(s124, m24)));
+			f32x4.store(this.rawData, 8, f32x4.add(f32x4.add(f32x4.add(f32x4.mul(s131, m21), f32x4.mul(s132, m22)), f32x4.mul(s133, m23)), f32x4.mul(s134, m24)));
+			f32x4.store(this.rawData, 12, f32x4.add(f32x4.add(f32x4.add(f32x4.mul(s141, m21), f32x4.mul(s142, m22)), f32x4.mul(s143, m23)), f32x4.mul(s144, m24)));
 		} else {
 			var m111:number = rrd[0];
 			var m112:number = rrd[1];
@@ -951,21 +951,21 @@ class Matrix3D
 
 		//use SIMD where available
 		if (Extensions.SIMD) {
-			var F32x4 = SIMD.Float32x4;
-			var m1 = F32x4.load(this.rawData, 0);
-			var m2 = F32x4.load(this.rawData, 4);
-			var m3 = F32x4.load(this.rawData, 8);
-			var m4 = F32x4.load(this.rawData, 12);
-			var vx = F32x4.splat(v.x);
-			var vy = F32x4.splat(v.y);
-			var vz = F32x4.splat(v.z);
+			var f32x4 = SIMD.float32x4 || SIMD.Float32x4;
+			var m1 = f32x4.load(this.rawData, 0);
+			var m2 = f32x4.load(this.rawData, 4);
+			var m3 = f32x4.load(this.rawData, 8);
+			var m4 = f32x4.load(this.rawData, 12);
+			var vx = f32x4.splat(v.x);
+			var vy = f32x4.splat(v.y);
+			var vz = f32x4.splat(v.z);
 
-			var s = F32x4.add(F32x4.add(F32x4.add(F32x4.mul(vx, m1), F32x4.mul(vy, m2)), F32x4.mul(vz, m3)), m4);
+			var s = f32x4.add(f32x4.add(f32x4.add(f32x4.mul(vx, m1), f32x4.mul(vy, m2)), f32x4.mul(vz, m3)), m4);
 
-			t.x = F32x4.extractLane(s, 0);
-			t.y = F32x4.extractLane(s, 1);
-			t.z = F32x4.extractLane(s, 2);
-			t.w = F32x4.extractLane(s, 3);
+			t.x = f32x4.extractLane(s, 0);
+			t.y = f32x4.extractLane(s, 1);
+			t.z = f32x4.extractLane(s, 2);
+			t.w = f32x4.extractLane(s, 3);
 		} else {
 			var x:number = v.x;
 			var y:number = v.y;

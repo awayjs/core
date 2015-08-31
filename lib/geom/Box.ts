@@ -30,6 +30,8 @@ import Vector3D					= require("awayjs-core/lib/geom/Vector3D");
  */
 class Box
 {
+	public rawData:Float32Array = new Float32Array(6);
+	
 	private _size:Vector3D;
 	private _bottomRightBack:Vector3D;
 	private _topLeftFront:Vector3D;
@@ -39,21 +41,45 @@ class Box
 	 * of a Box object has no effect on the <code>x</code>, <code>y</code>,
 	 * <code>z</code>, <code>depth</code> and <code>width</code> properties.
 	 */
-	public height:number;
+	public get height():number
+	{
+		return this.rawData[4];
+	}
+	
+	public set height(value:number)
+	{
+		this.rawData[4] = value;
+	}
 
 	/**
 	 * The width of the box, in pixels. Changing the <code>width</code> value
 	 * of a Box object has no effect on the <code>x</code>, <code>y</code>,
 	 * <code>z</code>, <code>depth</code> and <code>height</code> properties.
 	 */
-	public width:number;
+	public get width():number
+	{
+		return this.rawData[3];
+	}
+	
+	public set width(value:number)
+	{
+		this.rawData[3] = value;
+	}
 
 	/**
 	 * The deoth of the box, in pixels. Changing the <code>depth</code> value
 	 * of a Box object has no effect on the <code>x</code>, <code>y</code>,
 	 * <code>z</code>, <code>width</code> and <code>height</code> properties.
 	 */
-	public depth:number;
+	public get depth():number
+	{
+		return this.rawData[5];
+	}
+	
+	public set depth(value:number)
+	{
+		this.rawData[5] = value;
+	}
 
 	/**
 	 * The <i>x</i> coordinate of the top-left-front corner of the box.
@@ -64,7 +90,15 @@ class Box
 	 * <p>The value of the <code>x</code> property is equal to the value of the
 	 * <code>left</code> property.</p>
 	 */
-	public x:number;
+	public get x():number
+	{
+		return this.rawData[0];
+	}
+	
+	public set x(value:number)
+	{
+		this.rawData[0] = value;
+	}
 
 	/**
 	 * The <i>y</i> coordinate of the top-left-front corner of the box.
@@ -75,7 +109,15 @@ class Box
 	 * <p>The value of the <code>y</code> property is equal to the value of the
 	 * <code>top</code> property.</p>
 	 */
-	public y:number;
+	public get y():number
+	{
+		return this.rawData[1];
+	}
+	
+	public set y(value:number)
+	{
+		this.rawData[1] = value;
+	}
 
 	/**
 	 * The <i>y</i> coordinate of the top-left-front corner of the box.
@@ -86,19 +128,27 @@ class Box
 	 * <p>The value of the <code>z</code> property is equal to the value of the
 	 * <code>front</code> property.</p>
 	 */
-	public z:number
+	public get z():number
+	{
+		return this.rawData[2];
+	}
+	
+	public set z(value:number)
+	{
+		this.rawData[2] = value;
+	}
 
 	/**
 	 * The sum of the <code>z</code> and <code>height</code> properties.
 	 */
 	public get back():number
 	{
-		return this.z + this.depth;
+		return this.rawData[2] + this.rawData[5];
 	}
 
 	public set back(val:number)
 	{
-		this.depth = val - this.z;
+		this.rawData[5] = val - this.rawData[2];
 	}
 
 	/**
@@ -106,12 +156,12 @@ class Box
 	 */
 	public get bottom():number
 	{
-		return this.y + this.height;
+		return this.rawData[1] + this.rawData[4];
 	}
 
 	public set bottom(val:number)
 	{
-		this.height = val - this.y;
+		this.rawData[4] = val - this.rawData[1];
 	}
 
 	/**
@@ -123,9 +173,9 @@ class Box
 		if (this._bottomRightBack == null)
 			this._bottomRightBack = new Vector3D();
 
-		this._bottomRightBack.x = this.x + this.width;
-		this._bottomRightBack.y = this.y + this.height;
-		this._bottomRightBack.z = this.z + this.depth;
+		this._bottomRightBack.x = this.rawData[0] + this.rawData[3];
+		this._bottomRightBack.y = this.rawData[1] + this.rawData[4];
+		this._bottomRightBack.z = this.rawData[2] + this.rawData[5];
 
 		return this._bottomRightBack;
 	}
@@ -143,13 +193,13 @@ class Box
 	 */
 	public get front():number
 	{
-		return this.z;
+		return this.rawData[2];
 	}
 
 	public set front(val:number)
 	{
-		this.depth += this.z - val;
-		this.z = val;
+		this.rawData[5] += this.rawData[2] - val;
+		this.rawData[2] = val;
 	}
 
 	/**
@@ -164,13 +214,13 @@ class Box
 	 */
 	public get left():number
 	{
-		return this.x;
+		return this.rawData[0];
 	}
 
 	public set left(val:number)
 	{
-		this.width += this.x - val;
-		this.x = val;
+		this.rawData[3] += this.rawData[0] - val;
+		this.rawData[0] = val;
 	}
 
 	/**
@@ -178,12 +228,12 @@ class Box
 	 */
 	public get right():number
 	{
-		return this.x + this.width;
+		return this.rawData[0] + this.rawData[3];
 	}
 
 	public set right(val:number)
 	{
-		this.width = val - this.x;
+		this.rawData[3] = val - this.rawData[0];
 	}
 
 	/**
@@ -196,9 +246,9 @@ class Box
 		if (this._size == null)
 			this._size = new Vector3D();
 
-		this._size.x = this.width;
-		this._size.y = this.height;
-		this._size.z = this.depth;
+		this._size.x = this.rawData[3];
+		this._size.y = this.rawData[4];
+		this._size.z = this.rawData[5];
 
 		return this._size;
 	}
@@ -215,13 +265,13 @@ class Box
 	 */
 	public get top():number
 	{
-		return this.y;
+		return this.rawData[1];
 	}
 
 	public set top(val:number)
 	{
-		this.height += (this.y - val);
-		this.y = val;
+		this.rawData[4] += (this.rawData[1] - val);
+		this.rawData[1] = val;
 	}
 
 	/**
@@ -233,9 +283,9 @@ class Box
 		if (this._topLeftFront == null)
 			this._topLeftFront = new Vector3D();
 
-		this._topLeftFront.x = this.x;
-		this._topLeftFront.y = this.y;
-		this._topLeftFront.z = this.z;
+		this._topLeftFront.x = this.rawData[0];
+		this._topLeftFront.y = this.rawData[1];
+		this._topLeftFront.z = this.rawData[2];
 
 		return this._topLeftFront;
 	}
@@ -260,12 +310,12 @@ class Box
 	 */
 	constructor(x:number = 0, y:number = 0, z:number = 0, width:number = 0, height:number = 0, depth:number = 0)
 	{
-		this.x = x;
-		this.y = y;
-		this.z = z;
-		this.width = width;
-		this.height = height;
-		this.depth = depth;
+		this.rawData[0] = x;
+		this.rawData[1] = y;
+		this.rawData[2] = z;
+		this.rawData[3] = width;
+		this.rawData[4] = height;
+		this.rawData[5] = depth;
 	}
 
 	/**
@@ -280,7 +330,7 @@ class Box
 	 */
 	public clone():Box
 	{
-		return new Box(this.x, this.y, this.z, this.width, this.height, this.depth);
+		return new Box(this.rawData[0], this.rawData[1], this.rawData[2], this.rawData[3], this.rawData[4], this.rawData[5]);
 	}
 
 	/**
@@ -295,7 +345,7 @@ class Box
 	 */
 	public contains(x:number, y:number, z:number):boolean
 	{
-		return (this.x <= x && this.x + this.width >= x && this.y <= y && this.y + this.height >= y && this.z <= z && this.z + this.depth >= z);
+		return (this.rawData[0] <= x && this.rawData[0] + this.rawData[3] >= x && this.rawData[1] <= y && this.rawData[1] + this.rawData[4] >= y && this.rawData[2] <= z && this.rawData[2] + this.rawData[5] >= z);
 	}
 
 	/**
@@ -311,7 +361,7 @@ class Box
 	 */
 	public containsPoint(position:Vector3D):boolean
 	{
-		return (this.x <= position.x && this.x + this.width >= position.x && this.y <= position.y && this.y + this.height >= position.y && this.z <= position.z && this.z + this.depth >= position.z);
+		return (this.rawData[0] <= position.x && this.rawData[0] + this.rawData[3] >= position.x && this.rawData[1] <= position.y && this.rawData[1] + this.rawData[4] >= position.y && this.rawData[2] <= position.z && this.rawData[2] + this.rawData[5] >= position.z);
 	}
 
 	/**
@@ -326,7 +376,7 @@ class Box
 	 */
 	public containsBox(box:Box):boolean
 	{
-		return (this.x <= box.x && this.x + this.width >= box.x + box.width && this.y <= box.y && this.y + this.height >= box.y + box.height && this.z <= box.z && this.z + this.depth >= box.z + box.depth)
+		return (this.rawData[0] <= box.rawData[0] && this.rawData[0] + this.rawData[3] >= box.rawData[0] + box.rawData[3] && this.rawData[1] <= box.rawData[1] && this.rawData[1] + this.rawData[4] >= box.rawData[1] + box.rawData[4] && this.rawData[2] <= box.rawData[2] && this.rawData[2] + this.rawData[5] >= box.rawData[2] + box.rawData[5])
 	}
 
 	/**
@@ -337,12 +387,12 @@ class Box
 	 */
 	public copyFrom(sourceBox:Box)
 	{
-		this.x = sourceBox.x;
-		this.y = sourceBox.y;
-		this.z = sourceBox.z;
-		this.width = sourceBox.width;
-		this.height = sourceBox.height;
-		this.depth = sourceBox.depth;
+		this.rawData[0] = sourceBox.rawData[0];
+		this.rawData[1] = sourceBox.rawData[1];
+		this.rawData[2] = sourceBox.rawData[2];
+		this.rawData[3] = sourceBox.rawData[3];
+		this.rawData[4] = sourceBox.rawData[4];
+		this.rawData[5] = sourceBox.rawData[5];
 	}
 
 	/**
@@ -360,7 +410,7 @@ class Box
 	 */
 	public equals(toCompare:Box):boolean
 	{
-		return (this.x == toCompare.x && this.y == toCompare.y && this.z == toCompare.z && this.width == toCompare.width && this.height == toCompare.height && this.depth == toCompare.depth)
+		return (this.rawData[0] == toCompare.rawData[0] && this.rawData[1] == toCompare.rawData[1] && this.rawData[2] == toCompare.rawData[2] && this.rawData[3] == toCompare.rawData[3] && this.rawData[4] == toCompare.rawData[4] && this.rawData[5] == toCompare.rawData[5])
 	}
 
 	/**
@@ -382,12 +432,12 @@ class Box
 	 */
 	public inflate(dx:number, dy:number, dz:number)
 	{
-		this.x -= dx/2;
-		this.y -= dy/2;
-		this.z -= dz/2;
-		this.width += dx/2;
-		this.height += dy/2;
-		this.depth += dz/2;
+		this.rawData[0] -= dx/2;
+		this.rawData[1] -= dy/2;
+		this.rawData[2] -= dz/2;
+		this.rawData[3] += dx/2;
+		this.rawData[4] += dy/2;
+		this.rawData[5] += dz/2;
 	}
 
 	/**
@@ -406,12 +456,12 @@ class Box
 	 */
 	public inflatePoint(delta:Vector3D)
 	{
-		this.x -= delta.x/2;
-		this.y -= delta.y/2;
-		this.z -= delta.z/2;
-		this.width += delta.x/2;
-		this.height += delta.y/2;
-		this.depth += delta.z/2;
+		this.rawData[0] -= delta.x/2;
+		this.rawData[1] -= delta.y/2;
+		this.rawData[2] -= delta.z/2;
+		this.rawData[3] += delta.x/2;
+		this.rawData[4] += delta.y/2;
+		this.rawData[5] += delta.z/2;
 	}
 
 	/**
@@ -433,47 +483,47 @@ class Box
 		if (this.intersects(toIntersect)) {
 			var i:Box = new Box();
 
-			if (this.x > toIntersect.x) {
-				i.x = this.x;
-				i.width = toIntersect.x - this.x + toIntersect.width;
+			if (this.rawData[0] > toIntersect.rawData[0]) {
+				i.rawData[0] = this.rawData[0];
+				i.rawData[3] = toIntersect.rawData[0] - this.rawData[0] + toIntersect.rawData[3];
 
-				if (i.width > this.width)
-					i.width = this.width;
+				if (i.rawData[3] > this.rawData[3])
+					i.rawData[3] = this.rawData[3];
 			} else {
-				i.x = toIntersect.x;
-				i.width = this.x - toIntersect.x + this.width;
+				i.rawData[0] = toIntersect.rawData[0];
+				i.rawData[3] = this.rawData[0] - toIntersect.rawData[0] + this.rawData[3];
 
-				if (i.width > toIntersect.width)
-					i.width = toIntersect.width;
+				if (i.rawData[3] > toIntersect.rawData[3])
+					i.rawData[3] = toIntersect.rawData[3];
 			}
 
-			if (this.y > toIntersect.y) {
-				i.y = this.y;
-				i.height = toIntersect.y - this.y + toIntersect.height;
+			if (this.rawData[1] > toIntersect.rawData[1]) {
+				i.rawData[1] = this.rawData[1];
+				i.rawData[4] = toIntersect.rawData[1] - this.rawData[1] + toIntersect.rawData[4];
 
-				if (i.height > this.height)
-					i.height = this.height;
+				if (i.rawData[4] > this.rawData[4])
+					i.rawData[4] = this.rawData[4];
 			} else {
-				i.y = toIntersect.y;
-				i.height = this.y - toIntersect.y + this.height;
+				i.rawData[1] = toIntersect.rawData[1];
+				i.rawData[4] = this.rawData[1] - toIntersect.rawData[1] + this.rawData[4];
 
-				if (i.height > toIntersect.height)
-					i.height = toIntersect.height;
+				if (i.rawData[4] > toIntersect.rawData[4])
+					i.rawData[4] = toIntersect.rawData[4];
 			}
 
 
-			if (this.z > toIntersect.z) {
-				i.z = this.z;
-				i.depth = toIntersect.z - this.z + toIntersect.depth;
+			if (this.rawData[2] > toIntersect.rawData[2]) {
+				i.rawData[2] = this.rawData[2];
+				i.rawData[5] = toIntersect.rawData[2] - this.rawData[2] + toIntersect.rawData[5];
 
-				if (i.depth > this.depth)
-					i.depth = this.depth;
+				if (i.rawData[5] > this.rawData[5])
+					i.rawData[5] = this.rawData[5];
 			} else {
-				i.z = toIntersect.z;
-				i.depth = this.z - toIntersect.z + this.depth;
+				i.rawData[2] = toIntersect.rawData[2];
+				i.rawData[5] = this.rawData[2] - toIntersect.rawData[2] + this.rawData[5];
 
-				if (i.depth > toIntersect.depth)
-					i.depth = toIntersect.depth;
+				if (i.rawData[5] > toIntersect.rawData[5])
+					i.rawData[5] = toIntersect.rawData[5];
 			}
 
 			return i;
@@ -495,7 +545,7 @@ class Box
 	 */
 	public intersects(toIntersect:Box):boolean
 	{
-		return (this.x + this.width > toIntersect.x && this.x < toIntersect.x + toIntersect.width && this.y + this.height > toIntersect.y && this.y < toIntersect.y + toIntersect.height && this.z + this.depth > toIntersect.z && this.z < toIntersect.z + toIntersect.depth);
+		return (this.rawData[0] + this.rawData[3] > toIntersect.rawData[0] && this.rawData[0] < toIntersect.rawData[0] + toIntersect.rawData[3] && this.rawData[1] + this.rawData[4] > toIntersect.rawData[1] && this.rawData[1] < toIntersect.rawData[1] + toIntersect.rawData[4] && this.rawData[2] + this.rawData[5] > toIntersect.rawData[2] && this.rawData[2] < toIntersect.rawData[2] + toIntersect.rawData[5]);
 	}
 
 	public rayIntersection(position:Vector3D, direction:Vector3D, targetNormal:Vector3D):number
@@ -503,13 +553,13 @@ class Box
 		if (this.containsPoint(position))
 			return 0;
 
-		var halfExtentsX:number = this.width/2;
-		var halfExtentsY:number = this.height/2;
-		var halfExtentsZ:number = this.depth/2;
+		var halfExtentsX:number = this.rawData[3]/2;
+		var halfExtentsY:number = this.rawData[4]/2;
+		var halfExtentsZ:number = this.rawData[5]/2;
 
-		var centerX:number = this.x + halfExtentsX;
-		var centerY:number = this.y + halfExtentsY;
-		var centerZ:number = this.z + halfExtentsZ;
+		var centerX:number = this.rawData[0] + halfExtentsX;
+		var centerY:number = this.rawData[1] + halfExtentsY;
+		var centerZ:number = this.rawData[2] + halfExtentsZ;
 
 		var px:number = position.x - centerX;
 		var py:number = position.y - centerY;
@@ -624,24 +674,24 @@ class Box
 			target = new Vector3D();
 
 		p = point.x;
-		if (p < this.x)
-			p = this.x;
-		if (p > this.x + this.width)
-			p = this.x + this.width;
+		if (p < this.rawData[0])
+			p = this.rawData[0];
+		if (p > this.rawData[0] + this.rawData[3])
+			p = this.rawData[0] + this.rawData[3];
 		target.x = p;
 
 		p = point.y;
-		if (p < this.y + this.height)
-			p = this.y + this.height;
-		if (p > this.y)
-			p = this.y;
+		if (p < this.rawData[1] + this.rawData[4])
+			p = this.rawData[1] + this.rawData[4];
+		if (p > this.rawData[1])
+			p = this.rawData[1];
 		target.y = p;
 
 		p = point.z;
-		if (p < this.z)
-			p = this.z;
-		if (p > this.z + this.depth)
-			p = this.z + this.depth;
+		if (p < this.rawData[2])
+			p = this.rawData[2];
+		if (p > this.rawData[2] + this.rawData[5])
+			p = this.rawData[2] + this.rawData[5];
 		target.z = p;
 
 		return target;
@@ -655,7 +705,7 @@ class Box
 	 */
 	public isEmpty():boolean
 	{
-		return (this.x == 0 && this.y == 0 && this.z == 0 && this.width == 0 && this.height == 0 && this.depth == 0);
+		return (this.rawData[0] == 0 && this.rawData[1] == 0 && this.rawData[2] == 0 && this.rawData[3] == 0 && this.rawData[4] == 0 && this.rawData[5] == 0);
 	}
 
 	/**
@@ -668,9 +718,9 @@ class Box
 	 */
 	public offset(dx:number, dy:number, dz:number)
 	{
-		this.x += dx;
-		this.y += dy;
-		this.z += dz;
+		this.rawData[0] += dx;
+		this.rawData[1] += dy;
+		this.rawData[2] += dz;
 	}
 
 	/**
@@ -682,9 +732,9 @@ class Box
 	 */
 	public offsetPosition(position:Vector3D)
 	{
-		this.x += position.x;
-		this.y += position.y;
-		this.z += position.z;
+		this.rawData[0] += position.x;
+		this.rawData[1] += position.y;
+		this.rawData[2] += position.z;
 	}
 
 	/**
@@ -698,12 +748,12 @@ class Box
 	 */
 	public setEmpty()
 	{
-		this.x = 0;
-		this.y = 0;
-		this.z = 0;
-		this.width = 0;
-		this.height = 0;
-		this.depth = 0;
+		this.rawData[0] = 0;
+		this.rawData[1] = 0;
+		this.rawData[2] = 0;
+		this.rawData[3] = 0;
+		this.rawData[4] = 0;
+		this.rawData[5] = 0;
 	}
 
 	/**
@@ -721,12 +771,12 @@ class Box
 	 */
 	public setTo(xa:number, ya:number, za:number, widtha:number, heighta:number, deptha:number)
 	{
-		this.x = xa;
-		this.y = ya;
-		this.z = za;
-		this.width = widtha;
-		this.height = heighta;
-		this.depth = deptha;
+		this.rawData[0] = xa;
+		this.rawData[1] = ya;
+		this.rawData[2] = za;
+		this.rawData[3] = widtha;
+		this.rawData[4] = heighta;
+		this.rawData[5] = deptha;
 	}
 
 	/**
@@ -739,7 +789,7 @@ class Box
 	 */
 	public toString():string
 	{
-		return "[Box] (x=" + this.x + ", y=" + this.y + ", z=" + this.z + ", width=" + this.width + ", height=" + this.height + ", depth=" + this.depth + ")";
+		return "[Box] (x=" + this.rawData[0] + ", y=" + this.rawData[1] + ", z=" + this.rawData[2] + ", width=" + this.rawData[3] + ", height=" + this.rawData[4] + ", depth=" + this.rawData[5] + ")";
 	}
 
 	/**
@@ -757,46 +807,46 @@ class Box
 	{
 		var u:Box = new Box();
 
-		if (this.x < toUnion.x) {
-			u.x = this.x;
-			u.width = toUnion.x - this.x + toUnion.width;
+		if (this.rawData[0] < toUnion.rawData[0]) {
+			u.rawData[0] = this.rawData[0];
+			u.rawData[3] = toUnion.rawData[0] - this.rawData[0] + toUnion.rawData[3];
 
-			if (u.width < this.width)
-				u.width = this.width;
+			if (u.rawData[3] < this.rawData[3])
+				u.rawData[3] = this.rawData[3];
 		} else {
-			u.x = toUnion.x;
-			u.width = this.x - toUnion.x + this.width;
+			u.rawData[0] = toUnion.rawData[0];
+			u.rawData[3] = this.rawData[0] - toUnion.rawData[0] + this.rawData[3];
 
-			if (u.width < toUnion.width)
-				u.width = toUnion.width;
+			if (u.rawData[3] < toUnion.rawData[3])
+				u.rawData[3] = toUnion.rawData[3];
 		}
 
-		if (this.y < toUnion.y) {
-			u.y = this.y;
-			u.height = toUnion.y - this.y + toUnion.height;
+		if (this.rawData[1] < toUnion.rawData[1]) {
+			u.rawData[1] = this.rawData[1];
+			u.rawData[4] = toUnion.rawData[1] - this.rawData[1] + toUnion.rawData[4];
 
-			if (u.height < this.height)
-				u.height = this.height;
+			if (u.rawData[4] < this.rawData[4])
+				u.rawData[4] = this.rawData[4];
 		} else {
-			u.y = toUnion.y;
-			u.height = this.y - toUnion.y + this.height;
+			u.rawData[1] = toUnion.rawData[1];
+			u.rawData[4] = this.rawData[1] - toUnion.rawData[1] + this.rawData[4];
 
-			if (u.height < toUnion.height)
-				u.height = toUnion.height;
+			if (u.rawData[4] < toUnion.rawData[4])
+				u.rawData[4] = toUnion.rawData[4];
 		}
 
-		if (this.z < toUnion.z) {
-			u.z = this.z;
-			u.depth = toUnion.z - this.z + toUnion.depth;
+		if (this.rawData[2] < toUnion.rawData[2]) {
+			u.rawData[2] = this.rawData[2];
+			u.rawData[5] = toUnion.rawData[2] - this.rawData[2] + toUnion.rawData[5];
 
-			if (u.depth < this.depth)
-				u.depth = this.depth;
+			if (u.rawData[5] < this.rawData[5])
+				u.rawData[5] = this.rawData[5];
 		} else {
-			u.z = toUnion.z;
-			u.depth = this.z - toUnion.z + this.depth;
+			u.rawData[2] = toUnion.rawData[2];
+			u.rawData[5] = this.rawData[2] - toUnion.rawData[2] + this.rawData[5];
 
-			if (u.depth < toUnion.depth)
-				u.depth = toUnion.depth;
+			if (u.rawData[5] < toUnion.rawData[5])
+				u.rawData[5] = toUnion.rawData[5];
 		}
 
 		return u;

@@ -44,7 +44,7 @@ class Matrix3D
 		var lrd:Float32Array = lhs.rawData;
 
 		//use SIMD where available
-		if (Extensions.SIMD) {
+		if (false) {
 			var f32x4 = SIMD.float32x4 || SIMD.Float32x4;
 			var s111 = f32x4.splat(this.rawData[0]);
 			var s112 = f32x4.splat(this.rawData[1]);
@@ -654,7 +654,7 @@ class Matrix3D
 		var rrd:Float32Array = rhs.rawData;
 
 		//use SIMD where available
-		if (Extensions.SIMD) {
+		if (false) {
 			var f32x4 = SIMD.float32x4 || SIMD.Float32x4;
 			var s111 = f32x4.splat(rrd[0]);
 			var s112 = f32x4.splat(rrd[1]);

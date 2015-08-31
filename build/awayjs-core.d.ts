@@ -2336,6 +2336,7 @@ declare module "awayjs-core/lib/geom/Box" {
 	 * display object.
 	 */
 	class Box {
+	    rawData: Float32Array;
 	    private _size;
 	    private _bottomRightBack;
 	    private _topLeftFront;

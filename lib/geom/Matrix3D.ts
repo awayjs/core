@@ -44,34 +44,23 @@ class Matrix3D
 		var lrd:Float32Array = lhs.rawData;
 
 		//use SIMD where available
-		if (false) {
+		if (Extensions.SIMD) {
 			var f32x4 = SIMD.float32x4 || SIMD.Float32x4;
-			var s111 = f32x4.splat(this.rawData[0]);
-			var s112 = f32x4.splat(this.rawData[1]);
-			var s113 = f32x4.splat(this.rawData[2]);
-			var s114 = f32x4.splat(this.rawData[3]);
-			var s121 = f32x4.splat(this.rawData[4]);
-			var s122 = f32x4.splat(this.rawData[5]);
-			var s123 = f32x4.splat(this.rawData[6]);
-			var s124 = f32x4.splat(this.rawData[7]);
-			var s131 = f32x4.splat(this.rawData[8]);
-			var s132 = f32x4.splat(this.rawData[9]);
-			var s133 = f32x4.splat(this.rawData[10]);
-			var s134 = f32x4.splat(this.rawData[11]);
-			var s141 = f32x4.splat(this.rawData[12]);
-			var s142 = f32x4.splat(this.rawData[13]);
-			var s143 = f32x4.splat(this.rawData[14]);
-			var s144 = f32x4.splat(this.rawData[15]);
+
+			var m11 = f32x4.load(this.rawData, 0);
+			var m12 = f32x4.load(this.rawData, 4);
+			var m13 = f32x4.load(this.rawData, 8);
+			var m14 = f32x4.load(this.rawData, 12);
 
 			var m21 = f32x4.load(lrd, 0);
 			var m22 = f32x4.load(lrd, 4);
 			var m23 = f32x4.load(lrd, 8);
 			var m24 = f32x4.load(lrd, 12);
 
-			f32x4.store(this.rawData, 0, f32x4.add(f32x4.add(f32x4.add(f32x4.mul(s111, m21), f32x4.mul(s112, m22)), f32x4.mul(s113, m23)), f32x4.mul(s114, m24)));
-			f32x4.store(this.rawData, 4, f32x4.add(f32x4.add(f32x4.add(f32x4.mul(s121, m21), f32x4.mul(s122, m22)), f32x4.mul(s123, m23)), f32x4.mul(s124, m24)));
-			f32x4.store(this.rawData, 8, f32x4.add(f32x4.add(f32x4.add(f32x4.mul(s131, m21), f32x4.mul(s132, m22)), f32x4.mul(s133, m23)), f32x4.mul(s134, m24)));
-			f32x4.store(this.rawData, 12, f32x4.add(f32x4.add(f32x4.add(f32x4.mul(s141, m21), f32x4.mul(s142, m22)), f32x4.mul(s143, m23)), f32x4.mul(s144, m24)));
+			f32x4.store(this.rawData, 0, f32x4.add(f32x4.add(f32x4.add(f32x4.mul(f32x4.swizzle(m11, 0, 0, 0, 0), m21), f32x4.mul(f32x4.swizzle(m11, 1, 1, 1, 1), m22)), f32x4.mul(f32x4.swizzle(m11, 2, 2, 2, 2), m23)), f32x4.mul(f32x4.swizzle(m11, 3, 3, 3, 3), m24)));
+			f32x4.store(this.rawData, 4, f32x4.add(f32x4.add(f32x4.add(f32x4.mul(f32x4.swizzle(m12, 0, 0, 0, 0), m21), f32x4.mul(f32x4.swizzle(m12, 1, 1, 1, 1), m22)), f32x4.mul(f32x4.swizzle(m12, 2, 2, 2, 2), m23)), f32x4.mul(f32x4.swizzle(m12, 3, 3, 3, 3), m24)));
+			f32x4.store(this.rawData, 8, f32x4.add(f32x4.add(f32x4.add(f32x4.mul(f32x4.swizzle(m13, 0, 0, 0, 0), m21), f32x4.mul(f32x4.swizzle(m13, 1, 1, 1, 1), m22)), f32x4.mul(f32x4.swizzle(m13, 2, 2, 2, 2), m23)), f32x4.mul(f32x4.swizzle(m13, 3, 3, 3, 3), m24)));
+			f32x4.store(this.rawData, 12, f32x4.add(f32x4.add(f32x4.add(f32x4.mul(f32x4.swizzle(m14, 0, 0, 0, 0), m21), f32x4.mul(f32x4.swizzle(m14, 1, 1, 1, 1), m22)), f32x4.mul(f32x4.swizzle(m14, 2, 2, 2, 2), m23)), f32x4.mul(f32x4.swizzle(m14, 3, 3, 3, 3), m24)));
 		} else {
 			var m111:number = this.rawData[0];
 			var m112:number = this.rawData[1];
@@ -654,34 +643,23 @@ class Matrix3D
 		var rrd:Float32Array = rhs.rawData;
 
 		//use SIMD where available
-		if (false) {
+		if (Extensions.SIMD) {
 			var f32x4 = SIMD.float32x4 || SIMD.Float32x4;
-			var s111 = f32x4.splat(rrd[0]);
-			var s112 = f32x4.splat(rrd[1]);
-			var s113 = f32x4.splat(rrd[2]);
-			var s114 = f32x4.splat(rrd[3]);
-			var s121 = f32x4.splat(rrd[4]);
-			var s122 = f32x4.splat(rrd[5]);
-			var s123 = f32x4.splat(rrd[6]);
-			var s124 = f32x4.splat(rrd[7]);
-			var s131 = f32x4.splat(rrd[8]);
-			var s132 = f32x4.splat(rrd[9]);
-			var s133 = f32x4.splat(rrd[10]);
-			var s134 = f32x4.splat(rrd[11]);
-			var s141 = f32x4.splat(rrd[12]);
-			var s142 = f32x4.splat(rrd[13]);
-			var s143 = f32x4.splat(rrd[14]);
-			var s144 = f32x4.splat(rrd[15]);
+
+			var m11 = f32x4.load(rrd, 0);
+			var m12 = f32x4.load(rrd, 4);
+			var m13 = f32x4.load(rrd, 8);
+			var m14 = f32x4.load(rrd, 12);
 
 			var m21 = f32x4.load(this.rawData, 0);
 			var m22 = f32x4.load(this.rawData, 4);
 			var m23 = f32x4.load(this.rawData, 8);
 			var m24 = f32x4.load(this.rawData, 12);
 
-			f32x4.store(this.rawData, 0, f32x4.add(f32x4.add(f32x4.add(f32x4.mul(s111, m21), f32x4.mul(s112, m22)), f32x4.mul(s113, m23)), f32x4.mul(s114, m24)));
-			f32x4.store(this.rawData, 4, f32x4.add(f32x4.add(f32x4.add(f32x4.mul(s121, m21), f32x4.mul(s122, m22)), f32x4.mul(s123, m23)), f32x4.mul(s124, m24)));
-			f32x4.store(this.rawData, 8, f32x4.add(f32x4.add(f32x4.add(f32x4.mul(s131, m21), f32x4.mul(s132, m22)), f32x4.mul(s133, m23)), f32x4.mul(s134, m24)));
-			f32x4.store(this.rawData, 12, f32x4.add(f32x4.add(f32x4.add(f32x4.mul(s141, m21), f32x4.mul(s142, m22)), f32x4.mul(s143, m23)), f32x4.mul(s144, m24)));
+			f32x4.store(this.rawData, 0, f32x4.add(f32x4.add(f32x4.add(f32x4.mul(f32x4.swizzle(m11, 0, 0, 0, 0), m21), f32x4.mul(f32x4.swizzle(m11, 1, 1, 1, 1), m22)), f32x4.mul(f32x4.swizzle(m11, 2, 2, 2, 2), m23)), f32x4.mul(f32x4.swizzle(m11, 3, 3, 3, 3), m24)));
+			f32x4.store(this.rawData, 4, f32x4.add(f32x4.add(f32x4.add(f32x4.mul(f32x4.swizzle(m12, 0, 0, 0, 0), m21), f32x4.mul(f32x4.swizzle(m12, 1, 1, 1, 1), m22)), f32x4.mul(f32x4.swizzle(m12, 2, 2, 2, 2), m23)), f32x4.mul(f32x4.swizzle(m12, 3, 3, 3, 3), m24)));
+			f32x4.store(this.rawData, 8, f32x4.add(f32x4.add(f32x4.add(f32x4.mul(f32x4.swizzle(m13, 0, 0, 0, 0), m21), f32x4.mul(f32x4.swizzle(m13, 1, 1, 1, 1), m22)), f32x4.mul(f32x4.swizzle(m13, 2, 2, 2, 2), m23)), f32x4.mul(f32x4.swizzle(m13, 3, 3, 3, 3), m24)));
+			f32x4.store(this.rawData, 12, f32x4.add(f32x4.add(f32x4.add(f32x4.mul(f32x4.swizzle(m14, 0, 0, 0, 0), m21), f32x4.mul(f32x4.swizzle(m14, 1, 1, 1, 1), m22)), f32x4.mul(f32x4.swizzle(m14, 2, 2, 2, 2), m23)), f32x4.mul(f32x4.swizzle(m14, 3, 3, 3, 3), m24)));
 		} else {
 			var m111:number = rrd[0];
 			var m112:number = rrd[1];
@@ -990,21 +968,41 @@ class Matrix3D
 	 */
 	public transpose()
 	{
-		var raw:Float32Array = Matrix3D.tempRawData;
-		this.copyRawDataTo(raw);
+		//use SIMD where available
+		if (false) {
+			var f32x4 = SIMD.float32x4 || SIMD.Float32x4;
 
-		this.rawData[1] = raw[4];
-		this.rawData[2] = raw[8];
-		this.rawData[3] = raw[12];
-		this.rawData[4] = raw[1];
-		this.rawData[6] = raw[9];
-		this.rawData[7] = raw[13];
-		this.rawData[8] = raw[2];
-		this.rawData[9] = raw[6];
-		this.rawData[11] = raw[14];
-		this.rawData[12] = raw[3];
-		this.rawData[13] = raw[7];
-		this.rawData[14] = raw[11];
+			var col0 = f32x4.load(this.rawData, 0);
+			var col1 = f32x4.load(this.rawData, 4);
+			var col2 = f32x4.load(this.rawData, 8);
+			var col3 = f32x4.load(this.rawData, 12);
+
+			var tmp0 = f32x4.shuffle(col0, col1, 0, 2, 4, 6);// 0  2  4  6
+			var tmp1 = f32x4.shuffle(col0, col1, 1, 3, 5, 7);// 1  3  5  7
+			var tmp2 = f32x4.shuffle(col2, col3, 0, 2, 4, 6);// 8 10 12 14
+			var tmp3 = f32x4.shuffle(col2, col3, 1, 3, 5, 7);// 9 11 13 15
+
+			f32x4.store(this.rawData, 0, f32x4.shuffle(tmp0, tmp2, 0, 2, 4, 6));// 0  4  8 12
+			f32x4.store(this.rawData, 4, f32x4.shuffle(tmp1, tmp3, 0, 2, 4, 6));// 1  5  9 13
+			f32x4.store(this.rawData, 8, f32x4.shuffle(tmp0, tmp2, 1, 3, 5, 7));// 2  6 10 14
+			f32x4.store(this.rawData, 12, f32x4.shuffle(tmp1, tmp3, 1, 3, 5, 7));//3  7 11 15
+		} else {
+			var raw:Float32Array = Matrix3D.tempRawData;
+			this.copyRawDataTo(raw);
+
+			this.rawData[1] = raw[4];
+			this.rawData[2] = raw[8];
+			this.rawData[3] = raw[12];
+			this.rawData[4] = raw[1];
+			this.rawData[6] = raw[9];
+			this.rawData[7] = raw[13];
+			this.rawData[8] = raw[2];
+			this.rawData[9] = raw[6];
+			this.rawData[11] = raw[14];
+			this.rawData[12] = raw[3];
+			this.rawData[13] = raw[7];
+			this.rawData[14] = raw[11];
+		}
 	}
 
 	static getAxisRotation(x:number, y:number, z:number, degrees:number):Matrix3D

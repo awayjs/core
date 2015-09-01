@@ -3693,125 +3693,22 @@ var Box = (function () {
         if (width === void 0) { width = 0; }
         if (height === void 0) { height = 0; }
         if (depth === void 0) { depth = 0; }
-        this.rawData = new Float32Array(6);
-        this.rawData[0] = x;
-        this.rawData[1] = y;
-        this.rawData[2] = z;
-        this.rawData[3] = width;
-        this.rawData[4] = height;
-        this.rawData[5] = depth;
+        this.x = x;
+        this.y = y;
+        this.z = z;
+        this.width = width;
+        this.height = height;
+        this.depth = depth;
     }
-    Object.defineProperty(Box.prototype, "height", {
-        /**
-         * The height of the box, in pixels. Changing the <code>height</code> value
-         * of a Box object has no effect on the <code>x</code>, <code>y</code>,
-         * <code>z</code>, <code>depth</code> and <code>width</code> properties.
-         */
-        get: function () {
-            return this.rawData[4];
-        },
-        set: function (value) {
-            this.rawData[4] = value;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Box.prototype, "width", {
-        /**
-         * The width of the box, in pixels. Changing the <code>width</code> value
-         * of a Box object has no effect on the <code>x</code>, <code>y</code>,
-         * <code>z</code>, <code>depth</code> and <code>height</code> properties.
-         */
-        get: function () {
-            return this.rawData[3];
-        },
-        set: function (value) {
-            this.rawData[3] = value;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Box.prototype, "depth", {
-        /**
-         * The deoth of the box, in pixels. Changing the <code>depth</code> value
-         * of a Box object has no effect on the <code>x</code>, <code>y</code>,
-         * <code>z</code>, <code>width</code> and <code>height</code> properties.
-         */
-        get: function () {
-            return this.rawData[5];
-        },
-        set: function (value) {
-            this.rawData[5] = value;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Box.prototype, "x", {
-        /**
-         * The <i>x</i> coordinate of the top-left-front corner of the box.
-         * Changing the value of the <code>x</code> property of a Box object has no
-         * effect on the <code>y</code>, <code>z</code>, <code>width</code>,
-         * <code>height</code> and <code>depth</code> properties.
-         *
-         * <p>The value of the <code>x</code> property is equal to the value of the
-         * <code>left</code> property.</p>
-         */
-        get: function () {
-            return this.rawData[0];
-        },
-        set: function (value) {
-            this.rawData[0] = value;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Box.prototype, "y", {
-        /**
-         * The <i>y</i> coordinate of the top-left-front corner of the box.
-         * Changing the value of the <code>y</code> property of a Box object has no
-         * effect on the <code>x</code>, <code>z</code>, <code>width</code>,
-         * <code>height</code> and <code>depth</code> properties.
-         *
-         * <p>The value of the <code>y</code> property is equal to the value of the
-         * <code>top</code> property.</p>
-         */
-        get: function () {
-            return this.rawData[1];
-        },
-        set: function (value) {
-            this.rawData[1] = value;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Box.prototype, "z", {
-        /**
-         * The <i>y</i> coordinate of the top-left-front corner of the box.
-         * Changing the value of the <code>z</code> property of a Box object has no
-         * effect on the <code>x</code>, <code>y</code>, <code>width</code>,
-         * <code>height</code> and <code>depth</code> properties.
-         *
-         * <p>The value of the <code>z</code> property is equal to the value of the
-         * <code>front</code> property.</p>
-         */
-        get: function () {
-            return this.rawData[2];
-        },
-        set: function (value) {
-            this.rawData[2] = value;
-        },
-        enumerable: true,
-        configurable: true
-    });
     Object.defineProperty(Box.prototype, "back", {
         /**
          * The sum of the <code>z</code> and <code>height</code> properties.
          */
         get: function () {
-            return this.rawData[2] + this.rawData[5];
+            return this.z + this.depth;
         },
         set: function (val) {
-            this.rawData[5] = val - this.rawData[2];
+            this.depth = val - this.z;
         },
         enumerable: true,
         configurable: true
@@ -3821,10 +3718,10 @@ var Box = (function () {
          * The sum of the <code>y</code> and <code>height</code> properties.
          */
         get: function () {
-            return this.rawData[1] + this.rawData[4];
+            return this.y + this.height;
         },
         set: function (val) {
-            this.rawData[4] = val - this.rawData[1];
+            this.height = val - this.y;
         },
         enumerable: true,
         configurable: true
@@ -3837,9 +3734,9 @@ var Box = (function () {
         get: function () {
             if (this._bottomRightBack == null)
                 this._bottomRightBack = new Vector3D();
-            this._bottomRightBack.x = this.rawData[0] + this.rawData[3];
-            this._bottomRightBack.y = this.rawData[1] + this.rawData[4];
-            this._bottomRightBack.z = this.rawData[2] + this.rawData[5];
+            this._bottomRightBack.x = this.x + this.width;
+            this._bottomRightBack.y = this.y + this.height;
+            this._bottomRightBack.z = this.z + this.depth;
             return this._bottomRightBack;
         },
         enumerable: true,
@@ -3858,11 +3755,11 @@ var Box = (function () {
          * the <code>x</code> property.</p>
          */
         get: function () {
-            return this.rawData[2];
+            return this.z;
         },
         set: function (val) {
-            this.rawData[5] += this.rawData[2] - val;
-            this.rawData[2] = val;
+            this.depth += this.z - val;
+            this.z = val;
         },
         enumerable: true,
         configurable: true
@@ -3879,11 +3776,11 @@ var Box = (function () {
          * the <code>x</code> property.</p>
          */
         get: function () {
-            return this.rawData[0];
+            return this.x;
         },
         set: function (val) {
-            this.rawData[3] += this.rawData[0] - val;
-            this.rawData[0] = val;
+            this.width += this.x - val;
+            this.x = val;
         },
         enumerable: true,
         configurable: true
@@ -3893,10 +3790,10 @@ var Box = (function () {
          * The sum of the <code>x</code> and <code>width</code> properties.
          */
         get: function () {
-            return this.rawData[0] + this.rawData[3];
+            return this.x + this.width;
         },
         set: function (val) {
-            this.rawData[3] = val - this.rawData[0];
+            this.width = val - this.x;
         },
         enumerable: true,
         configurable: true
@@ -3910,9 +3807,9 @@ var Box = (function () {
         get: function () {
             if (this._size == null)
                 this._size = new Vector3D();
-            this._size.x = this.rawData[3];
-            this._size.y = this.rawData[4];
-            this._size.z = this.rawData[5];
+            this._size.x = this.width;
+            this._size.y = this.height;
+            this._size.z = this.depth;
             return this._size;
         },
         enumerable: true,
@@ -3930,11 +3827,11 @@ var Box = (function () {
          * <code>y</code> property.</p>
          */
         get: function () {
-            return this.rawData[1];
+            return this.y;
         },
         set: function (val) {
-            this.rawData[4] += (this.rawData[1] - val);
-            this.rawData[1] = val;
+            this.height += (this.y - val);
+            this.y = val;
         },
         enumerable: true,
         configurable: true
@@ -3947,9 +3844,9 @@ var Box = (function () {
         get: function () {
             if (this._topLeftFront == null)
                 this._topLeftFront = new Vector3D();
-            this._topLeftFront.x = this.rawData[0];
-            this._topLeftFront.y = this.rawData[1];
-            this._topLeftFront.z = this.rawData[2];
+            this._topLeftFront.x = this.x;
+            this._topLeftFront.y = this.y;
+            this._topLeftFront.z = this.z;
             return this._topLeftFront;
         },
         enumerable: true,
@@ -3966,7 +3863,7 @@ var Box = (function () {
      *         original Box object.
      */
     Box.prototype.clone = function () {
-        return new Box(this.rawData[0], this.rawData[1], this.rawData[2], this.rawData[3], this.rawData[4], this.rawData[5]);
+        return new Box(this.x, this.y, this.z, this.width, this.height, this.depth);
     };
     /**
      * Determines whether the specified position is contained within the cubic
@@ -3979,7 +3876,7 @@ var Box = (function () {
      *         specified position; otherwise <code>false</code>.
      */
     Box.prototype.contains = function (x, y, z) {
-        return (this.rawData[0] <= x && this.rawData[0] + this.rawData[3] >= x && this.rawData[1] <= y && this.rawData[1] + this.rawData[4] >= y && this.rawData[2] <= z && this.rawData[2] + this.rawData[5] >= z);
+        return (this.x <= x && this.x + this.width >= x && this.y <= y && this.y + this.height >= y && this.z <= z && this.z + this.depth >= z);
     };
     /**
      * Determines whether the specified position is contained within the cubic
@@ -3993,7 +3890,7 @@ var Box = (function () {
      *         specified position; otherwise <code>false</code>.
      */
     Box.prototype.containsPoint = function (position) {
-        return (this.rawData[0] <= position.x && this.rawData[0] + this.rawData[3] >= position.x && this.rawData[1] <= position.y && this.rawData[1] + this.rawData[4] >= position.y && this.rawData[2] <= position.z && this.rawData[2] + this.rawData[5] >= position.z);
+        return (this.x <= position.x && this.x + this.width >= position.x && this.y <= position.y && this.y + this.height >= position.y && this.z <= position.z && this.z + this.depth >= position.z);
     };
     /**
      * Determines whether the Box object specified by the <code>box</code>
@@ -4006,7 +3903,7 @@ var Box = (function () {
      *         is contained by this Box object; otherwise <code>false</code>.
      */
     Box.prototype.containsBox = function (box) {
-        return (this.rawData[0] <= box.rawData[0] && this.rawData[0] + this.rawData[3] >= box.rawData[0] + box.rawData[3] && this.rawData[1] <= box.rawData[1] && this.rawData[1] + this.rawData[4] >= box.rawData[1] + box.rawData[4] && this.rawData[2] <= box.rawData[2] && this.rawData[2] + this.rawData[5] >= box.rawData[2] + box.rawData[5]);
+        return (this.x <= box.x && this.x + this.width >= box.x + box.width && this.y <= box.y && this.y + this.height >= box.y + box.height && this.z <= box.z && this.z + this.depth >= box.z + box.depth);
     };
     /**
      * Copies all of box data from the source Box object into the calling
@@ -4015,12 +3912,12 @@ var Box = (function () {
      * @param sourceBox The Box object from which to copy the data.
      */
     Box.prototype.copyFrom = function (sourceBox) {
-        this.rawData[0] = sourceBox.rawData[0];
-        this.rawData[1] = sourceBox.rawData[1];
-        this.rawData[2] = sourceBox.rawData[2];
-        this.rawData[3] = sourceBox.rawData[3];
-        this.rawData[4] = sourceBox.rawData[4];
-        this.rawData[5] = sourceBox.rawData[5];
+        this.x = sourceBox.x;
+        this.y = sourceBox.y;
+        this.z = sourceBox.z;
+        this.width = sourceBox.width;
+        this.height = sourceBox.height;
+        this.depth = sourceBox.depth;
     };
     /**
      * Determines whether the object specified in the <code>toCompare</code>
@@ -4036,7 +3933,7 @@ var Box = (function () {
      *         properties as this Box object; otherwise <code>false</code>.
      */
     Box.prototype.equals = function (toCompare) {
-        return (this.rawData[0] == toCompare.rawData[0] && this.rawData[1] == toCompare.rawData[1] && this.rawData[2] == toCompare.rawData[2] && this.rawData[3] == toCompare.rawData[3] && this.rawData[4] == toCompare.rawData[4] && this.rawData[5] == toCompare.rawData[5]);
+        return (this.x == toCompare.x && this.y == toCompare.y && this.z == toCompare.z && this.width == toCompare.width && this.height == toCompare.height && this.depth == toCompare.depth);
     };
     /**
      * Increases the size of the Box object by the specified amounts, in
@@ -4056,12 +3953,12 @@ var Box = (function () {
      *           depth and position of the box:
      */
     Box.prototype.inflate = function (dx, dy, dz) {
-        this.rawData[0] -= dx / 2;
-        this.rawData[1] -= dy / 2;
-        this.rawData[2] -= dz / 2;
-        this.rawData[3] += dx / 2;
-        this.rawData[4] += dy / 2;
-        this.rawData[5] += dz / 2;
+        this.x -= dx / 2;
+        this.y -= dy / 2;
+        this.z -= dz / 2;
+        this.width += dx / 2;
+        this.height += dy / 2;
+        this.depth += dz / 2;
     };
     /**
      * Increases the size of the Box object. This method is similar to the
@@ -4078,12 +3975,12 @@ var Box = (function () {
      *              longitudinal dimension of the Box object.
      */
     Box.prototype.inflatePoint = function (delta) {
-        this.rawData[0] -= delta.x / 2;
-        this.rawData[1] -= delta.y / 2;
-        this.rawData[2] -= delta.z / 2;
-        this.rawData[3] += delta.x / 2;
-        this.rawData[4] += delta.y / 2;
-        this.rawData[5] += delta.z / 2;
+        this.x -= delta.x / 2;
+        this.y -= delta.y / 2;
+        this.z -= delta.z / 2;
+        this.width += delta.x / 2;
+        this.height += delta.y / 2;
+        this.depth += delta.z / 2;
     };
     /**
      * If the Box object specified in the <code>toIntersect</code> parameter
@@ -4102,41 +3999,41 @@ var Box = (function () {
     Box.prototype.intersection = function (toIntersect) {
         if (this.intersects(toIntersect)) {
             var i = new Box();
-            if (this.rawData[0] > toIntersect.rawData[0]) {
-                i.rawData[0] = this.rawData[0];
-                i.rawData[3] = toIntersect.rawData[0] - this.rawData[0] + toIntersect.rawData[3];
-                if (i.rawData[3] > this.rawData[3])
-                    i.rawData[3] = this.rawData[3];
+            if (this.x > toIntersect.x) {
+                i.x = this.x;
+                i.width = toIntersect.x - this.x + toIntersect.width;
+                if (i.width > this.width)
+                    i.width = this.width;
             }
             else {
-                i.rawData[0] = toIntersect.rawData[0];
-                i.rawData[3] = this.rawData[0] - toIntersect.rawData[0] + this.rawData[3];
-                if (i.rawData[3] > toIntersect.rawData[3])
-                    i.rawData[3] = toIntersect.rawData[3];
+                i.x = toIntersect.x;
+                i.width = this.x - toIntersect.x + this.width;
+                if (i.width > toIntersect.width)
+                    i.width = toIntersect.width;
             }
-            if (this.rawData[1] > toIntersect.rawData[1]) {
-                i.rawData[1] = this.rawData[1];
-                i.rawData[4] = toIntersect.rawData[1] - this.rawData[1] + toIntersect.rawData[4];
-                if (i.rawData[4] > this.rawData[4])
-                    i.rawData[4] = this.rawData[4];
-            }
-            else {
-                i.rawData[1] = toIntersect.rawData[1];
-                i.rawData[4] = this.rawData[1] - toIntersect.rawData[1] + this.rawData[4];
-                if (i.rawData[4] > toIntersect.rawData[4])
-                    i.rawData[4] = toIntersect.rawData[4];
-            }
-            if (this.rawData[2] > toIntersect.rawData[2]) {
-                i.rawData[2] = this.rawData[2];
-                i.rawData[5] = toIntersect.rawData[2] - this.rawData[2] + toIntersect.rawData[5];
-                if (i.rawData[5] > this.rawData[5])
-                    i.rawData[5] = this.rawData[5];
+            if (this.y > toIntersect.y) {
+                i.y = this.y;
+                i.height = toIntersect.y - this.y + toIntersect.height;
+                if (i.height > this.height)
+                    i.height = this.height;
             }
             else {
-                i.rawData[2] = toIntersect.rawData[2];
-                i.rawData[5] = this.rawData[2] - toIntersect.rawData[2] + this.rawData[5];
-                if (i.rawData[5] > toIntersect.rawData[5])
-                    i.rawData[5] = toIntersect.rawData[5];
+                i.y = toIntersect.y;
+                i.height = this.y - toIntersect.y + this.height;
+                if (i.height > toIntersect.height)
+                    i.height = toIntersect.height;
+            }
+            if (this.z > toIntersect.z) {
+                i.z = this.z;
+                i.depth = toIntersect.z - this.z + toIntersect.depth;
+                if (i.depth > this.depth)
+                    i.depth = this.depth;
+            }
+            else {
+                i.z = toIntersect.z;
+                i.depth = this.z - toIntersect.z + this.depth;
+                if (i.depth > toIntersect.depth)
+                    i.depth = toIntersect.depth;
             }
             return i;
         }
@@ -4154,17 +4051,17 @@ var Box = (function () {
      *         with this Box object; otherwise <code>false</code>.
      */
     Box.prototype.intersects = function (toIntersect) {
-        return (this.rawData[0] + this.rawData[3] > toIntersect.rawData[0] && this.rawData[0] < toIntersect.rawData[0] + toIntersect.rawData[3] && this.rawData[1] + this.rawData[4] > toIntersect.rawData[1] && this.rawData[1] < toIntersect.rawData[1] + toIntersect.rawData[4] && this.rawData[2] + this.rawData[5] > toIntersect.rawData[2] && this.rawData[2] < toIntersect.rawData[2] + toIntersect.rawData[5]);
+        return (this.x + this.width > toIntersect.x && this.x < toIntersect.x + toIntersect.width && this.y + this.height > toIntersect.y && this.y < toIntersect.y + toIntersect.height && this.z + this.depth > toIntersect.z && this.z < toIntersect.z + toIntersect.depth);
     };
     Box.prototype.rayIntersection = function (position, direction, targetNormal) {
         if (this.containsPoint(position))
             return 0;
-        var halfExtentsX = this.rawData[3] / 2;
-        var halfExtentsY = this.rawData[4] / 2;
-        var halfExtentsZ = this.rawData[5] / 2;
-        var centerX = this.rawData[0] + halfExtentsX;
-        var centerY = this.rawData[1] + halfExtentsY;
-        var centerZ = this.rawData[2] + halfExtentsZ;
+        var halfExtentsX = this.width / 2;
+        var halfExtentsY = this.height / 2;
+        var halfExtentsZ = this.depth / 2;
+        var centerX = this.x + halfExtentsX;
+        var centerY = this.y + halfExtentsY;
+        var centerZ = this.z + halfExtentsZ;
         var px = position.x - centerX;
         var py = position.y - centerY;
         var pz = position.z - centerZ;
@@ -4270,22 +4167,22 @@ var Box = (function () {
         if (target == null)
             target = new Vector3D();
         p = point.x;
-        if (p < this.rawData[0])
-            p = this.rawData[0];
-        if (p > this.rawData[0] + this.rawData[3])
-            p = this.rawData[0] + this.rawData[3];
+        if (p < this.x)
+            p = this.x;
+        if (p > this.x + this.width)
+            p = this.x + this.width;
         target.x = p;
         p = point.y;
-        if (p < this.rawData[1] + this.rawData[4])
-            p = this.rawData[1] + this.rawData[4];
-        if (p > this.rawData[1])
-            p = this.rawData[1];
+        if (p < this.y + this.height)
+            p = this.y + this.height;
+        if (p > this.y)
+            p = this.y;
         target.y = p;
         p = point.z;
-        if (p < this.rawData[2])
-            p = this.rawData[2];
-        if (p > this.rawData[2] + this.rawData[5])
-            p = this.rawData[2] + this.rawData[5];
+        if (p < this.z)
+            p = this.z;
+        if (p > this.z + this.depth)
+            p = this.z + this.depth;
         target.z = p;
         return target;
     };
@@ -4296,7 +4193,7 @@ var Box = (function () {
      *         depth is less than or equal to 0; otherwise <code>false</code>.
      */
     Box.prototype.isEmpty = function () {
-        return (this.rawData[0] == 0 && this.rawData[1] == 0 && this.rawData[2] == 0 && this.rawData[3] == 0 && this.rawData[4] == 0 && this.rawData[5] == 0);
+        return (this.x == 0 && this.y == 0 && this.z == 0 && this.width == 0 && this.height == 0 && this.depth == 0);
     };
     /**
      * Adjusts the location of the Box object, as determined by its
@@ -4307,9 +4204,9 @@ var Box = (function () {
      * @param dz Moves the <i>z</i> value of the Box object by this amount.
      */
     Box.prototype.offset = function (dx, dy, dz) {
-        this.rawData[0] += dx;
-        this.rawData[1] += dy;
-        this.rawData[2] += dz;
+        this.x += dx;
+        this.y += dy;
+        this.z += dz;
     };
     /**
      * Adjusts the location of the Box object using a Vector3D object as a
@@ -4319,9 +4216,9 @@ var Box = (function () {
      * @param position A Vector3D object to use to offset this Box object.
      */
     Box.prototype.offsetPosition = function (position) {
-        this.rawData[0] += position.x;
-        this.rawData[1] += position.y;
-        this.rawData[2] += position.z;
+        this.x += position.x;
+        this.y += position.y;
+        this.z += position.z;
     };
     /**
      * Sets all of the Box object's properties to 0. A Box object is empty if its
@@ -4333,12 +4230,12 @@ var Box = (function () {
      *
      */
     Box.prototype.setEmpty = function () {
-        this.rawData[0] = 0;
-        this.rawData[1] = 0;
-        this.rawData[2] = 0;
-        this.rawData[3] = 0;
-        this.rawData[4] = 0;
-        this.rawData[5] = 0;
+        this.x = 0;
+        this.y = 0;
+        this.z = 0;
+        this.width = 0;
+        this.height = 0;
+        this.depth = 0;
     };
     /**
      * Sets the members of Box to the specified values
@@ -4354,12 +4251,12 @@ var Box = (function () {
      * @param deptha  The depth of the box, in pixels.
      */
     Box.prototype.setTo = function (xa, ya, za, widtha, heighta, deptha) {
-        this.rawData[0] = xa;
-        this.rawData[1] = ya;
-        this.rawData[2] = za;
-        this.rawData[3] = widtha;
-        this.rawData[4] = heighta;
-        this.rawData[5] = deptha;
+        this.x = xa;
+        this.y = ya;
+        this.z = za;
+        this.width = widtha;
+        this.height = heighta;
+        this.depth = deptha;
     };
     /**
      * Builds and returns a string that lists the horizontal, vertical and
@@ -4370,7 +4267,7 @@ var Box = (function () {
      *         <code>width</code>, <code>height</code>, and <code>depth</code>.
      */
     Box.prototype.toString = function () {
-        return "[Box] (x=" + this.rawData[0] + ", y=" + this.rawData[1] + ", z=" + this.rawData[2] + ", width=" + this.rawData[3] + ", height=" + this.rawData[4] + ", depth=" + this.rawData[5] + ")";
+        return "[Box] (x=" + this.x + ", y=" + this.y + ", z=" + this.z + ", width=" + this.width + ", height=" + this.height + ", depth=" + this.depth + ")";
     };
     /**
      * Adds two boxes together to create a new Box object, by filling
@@ -4385,41 +4282,41 @@ var Box = (function () {
      */
     Box.prototype.union = function (toUnion) {
         var u = new Box();
-        if (this.rawData[0] < toUnion.rawData[0]) {
-            u.rawData[0] = this.rawData[0];
-            u.rawData[3] = toUnion.rawData[0] - this.rawData[0] + toUnion.rawData[3];
-            if (u.rawData[3] < this.rawData[3])
-                u.rawData[3] = this.rawData[3];
+        if (this.x < toUnion.x) {
+            u.x = this.x;
+            u.width = toUnion.x - this.x + toUnion.width;
+            if (u.width < this.width)
+                u.width = this.width;
         }
         else {
-            u.rawData[0] = toUnion.rawData[0];
-            u.rawData[3] = this.rawData[0] - toUnion.rawData[0] + this.rawData[3];
-            if (u.rawData[3] < toUnion.rawData[3])
-                u.rawData[3] = toUnion.rawData[3];
+            u.x = toUnion.x;
+            u.width = this.x - toUnion.x + this.width;
+            if (u.width < toUnion.width)
+                u.width = toUnion.width;
         }
-        if (this.rawData[1] < toUnion.rawData[1]) {
-            u.rawData[1] = this.rawData[1];
-            u.rawData[4] = toUnion.rawData[1] - this.rawData[1] + toUnion.rawData[4];
-            if (u.rawData[4] < this.rawData[4])
-                u.rawData[4] = this.rawData[4];
-        }
-        else {
-            u.rawData[1] = toUnion.rawData[1];
-            u.rawData[4] = this.rawData[1] - toUnion.rawData[1] + this.rawData[4];
-            if (u.rawData[4] < toUnion.rawData[4])
-                u.rawData[4] = toUnion.rawData[4];
-        }
-        if (this.rawData[2] < toUnion.rawData[2]) {
-            u.rawData[2] = this.rawData[2];
-            u.rawData[5] = toUnion.rawData[2] - this.rawData[2] + toUnion.rawData[5];
-            if (u.rawData[5] < this.rawData[5])
-                u.rawData[5] = this.rawData[5];
+        if (this.y < toUnion.y) {
+            u.y = this.y;
+            u.height = toUnion.y - this.y + toUnion.height;
+            if (u.height < this.height)
+                u.height = this.height;
         }
         else {
-            u.rawData[2] = toUnion.rawData[2];
-            u.rawData[5] = this.rawData[2] - toUnion.rawData[2] + this.rawData[5];
-            if (u.rawData[5] < toUnion.rawData[5])
-                u.rawData[5] = toUnion.rawData[5];
+            u.y = toUnion.y;
+            u.height = this.y - toUnion.y + this.height;
+            if (u.height < toUnion.height)
+                u.height = toUnion.height;
+        }
+        if (this.z < toUnion.z) {
+            u.z = this.z;
+            u.depth = toUnion.z - this.z + toUnion.depth;
+            if (u.depth < this.depth)
+                u.depth = this.depth;
+        }
+        else {
+            u.z = toUnion.z;
+            u.depth = this.z - toUnion.z + this.depth;
+            if (u.depth < toUnion.depth)
+                u.depth = toUnion.depth;
         }
         return u;
     };

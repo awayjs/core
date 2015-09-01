@@ -6721,6 +6721,51 @@ declare module "awayjs-core/lib/projections/PerspectiveProjection" {
 	
 }
 
+declare module "awayjs-core/lib/projections/ProjectionBase" {
+	import Matrix3D = require("awayjs-core/lib/geom/Matrix3D");
+	import Rectangle = require("awayjs-core/lib/geom/Rectangle");
+	import Vector3D = require("awayjs-core/lib/geom/Vector3D");
+	import EventDispatcher = require("awayjs-core/lib/events/EventDispatcher");
+	import IProjection = require("awayjs-core/lib/projections/IProjection");
+	class ProjectionBase extends EventDispatcher implements IProjection {
+	    _pMatrix: Matrix3D;
+	    _pScissorRect: Rectangle;
+	    _pViewPort: Rectangle;
+	    _pNear: number;
+	    _pFar: number;
+	    _pAspectRatio: number;
+	    _pMatrixInvalid: boolean;
+	    _pFrustumCorners: number[];
+	    _pCoordinateSystem: string;
+	    _pOriginX: number;
+	    _pOriginY: number;
+	    private _unprojection;
+	    private _unprojectionInvalid;
+	    constructor(coordinateSystem?: string);
+	    /**
+	     * The handedness of the coordinate system projection. The default is LEFT_HANDED.
+	     */
+	    coordinateSystem: string;
+	    frustumCorners: number[];
+	    matrix: Matrix3D;
+	    near: number;
+	    originX: number;
+	    originY: number;
+	    far: number;
+	    project(point3d: Vector3D): Vector3D;
+	    unprojectionMatrix: Matrix3D;
+	    unproject(nX: number, nY: number, sZ: number): Vector3D;
+	    clone(): ProjectionBase;
+	    _iAspectRatio: number;
+	    pInvalidateMatrix(): void;
+	    pUpdateMatrix(): void;
+	    _iUpdateScissorRect(x: number, y: number, width: number, height: number): void;
+	    _iUpdateViewport(x: number, y: number, width: number, height: number): void;
+	}
+	export = ProjectionBase;
+	
+}
+
 declare module "awayjs-core/lib/ui/Keyboard" {
 	class Keyboard {
 	    /**
@@ -7542,51 +7587,6 @@ declare module "awayjs-core/lib/ui/Keyboard" {
 	    static Z: number;
 	}
 	export = Keyboard;
-	
-}
-
-declare module "awayjs-core/lib/projections/ProjectionBase" {
-	import Matrix3D = require("awayjs-core/lib/geom/Matrix3D");
-	import Rectangle = require("awayjs-core/lib/geom/Rectangle");
-	import Vector3D = require("awayjs-core/lib/geom/Vector3D");
-	import EventDispatcher = require("awayjs-core/lib/events/EventDispatcher");
-	import IProjection = require("awayjs-core/lib/projections/IProjection");
-	class ProjectionBase extends EventDispatcher implements IProjection {
-	    _pMatrix: Matrix3D;
-	    _pScissorRect: Rectangle;
-	    _pViewPort: Rectangle;
-	    _pNear: number;
-	    _pFar: number;
-	    _pAspectRatio: number;
-	    _pMatrixInvalid: boolean;
-	    _pFrustumCorners: number[];
-	    _pCoordinateSystem: string;
-	    _pOriginX: number;
-	    _pOriginY: number;
-	    private _unprojection;
-	    private _unprojectionInvalid;
-	    constructor(coordinateSystem?: string);
-	    /**
-	     * The handedness of the coordinate system projection. The default is LEFT_HANDED.
-	     */
-	    coordinateSystem: string;
-	    frustumCorners: number[];
-	    matrix: Matrix3D;
-	    near: number;
-	    originX: number;
-	    originY: number;
-	    far: number;
-	    project(point3d: Vector3D): Vector3D;
-	    unprojectionMatrix: Matrix3D;
-	    unproject(nX: number, nY: number, sZ: number): Vector3D;
-	    clone(): ProjectionBase;
-	    _iAspectRatio: number;
-	    pInvalidateMatrix(): void;
-	    pUpdateMatrix(): void;
-	    _iUpdateScissorRect(x: number, y: number, width: number, height: number): void;
-	    _iUpdateViewport(x: number, y: number, width: number, height: number): void;
-	}
-	export = ProjectionBase;
 	
 }
 

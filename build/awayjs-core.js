@@ -4873,7 +4873,6 @@ var Box = require("awayjs-core/lib/geom/Box");
 var Orientation3D = require("awayjs-core/lib/geom/Orientation3D");
 var Vector3D = require("awayjs-core/lib/geom/Vector3D");
 var ArgumentError = require("awayjs-core/lib/errors/ArgumentError");
-var Extensions = require("awayjs-core/lib/utils/Extensions");
 var Matrix3D = (function () {
     /**
      * Creates a Matrix3D object.
@@ -4899,68 +4898,54 @@ var Matrix3D = (function () {
      */
     Matrix3D.prototype.append = function (lhs) {
         var lrd = lhs.rawData;
-        //use SIMD where available
-        if (Extensions.SIMD) {
-            var f32x4 = SIMD.float32x4 || SIMD.Float32x4;
-            var m21 = f32x4.load(lrd, 0);
-            var m22 = f32x4.load(lrd, 4);
-            var m23 = f32x4.load(lrd, 8);
-            var m24 = f32x4.load(lrd, 12);
-            for (var i = 0; i < 16; i += 4) {
-                var m = f32x4.load(this.rawData, i);
-                f32x4.store(this.rawData, i, f32x4.add(f32x4.add(f32x4.add(f32x4.mul(f32x4.swizzle(m, 0, 0, 0, 0), m21), f32x4.mul(f32x4.swizzle(m, 1, 1, 1, 1), m22)), f32x4.mul(f32x4.swizzle(m, 2, 2, 2, 2), m23)), f32x4.mul(f32x4.swizzle(m, 3, 3, 3, 3), m24)));
-            }
-        }
-        else {
-            var m111 = this.rawData[0];
-            var m112 = this.rawData[1];
-            var m113 = this.rawData[2];
-            var m114 = this.rawData[3];
-            var m121 = this.rawData[4];
-            var m122 = this.rawData[5];
-            var m123 = this.rawData[6];
-            var m124 = this.rawData[7];
-            var m131 = this.rawData[8];
-            var m132 = this.rawData[9];
-            var m133 = this.rawData[10];
-            var m134 = this.rawData[11];
-            var m141 = this.rawData[12];
-            var m142 = this.rawData[13];
-            var m143 = this.rawData[14];
-            var m144 = this.rawData[15];
-            var m211 = lrd[0];
-            var m212 = lrd[1];
-            var m213 = lrd[2];
-            var m214 = lrd[3];
-            var m221 = lrd[4];
-            var m222 = lrd[5];
-            var m223 = lrd[6];
-            var m224 = lrd[7];
-            var m231 = lrd[8];
-            var m232 = lrd[9];
-            var m233 = lrd[10];
-            var m234 = lrd[11];
-            var m241 = lrd[12];
-            var m242 = lrd[13];
-            var m243 = lrd[14];
-            var m244 = lrd[15];
-            this.rawData[0] = m111 * m211 + m112 * m221 + m113 * m231 + m114 * m241;
-            this.rawData[1] = m111 * m212 + m112 * m222 + m113 * m232 + m114 * m242;
-            this.rawData[2] = m111 * m213 + m112 * m223 + m113 * m233 + m114 * m243;
-            this.rawData[3] = m111 * m214 + m112 * m224 + m113 * m234 + m114 * m244;
-            this.rawData[4] = m121 * m211 + m122 * m221 + m123 * m231 + m124 * m241;
-            this.rawData[5] = m121 * m212 + m122 * m222 + m123 * m232 + m124 * m242;
-            this.rawData[6] = m121 * m213 + m122 * m223 + m123 * m233 + m124 * m243;
-            this.rawData[7] = m121 * m214 + m122 * m224 + m123 * m234 + m124 * m244;
-            this.rawData[8] = m131 * m211 + m132 * m221 + m133 * m231 + m134 * m241;
-            this.rawData[9] = m131 * m212 + m132 * m222 + m133 * m232 + m134 * m242;
-            this.rawData[10] = m131 * m213 + m132 * m223 + m133 * m233 + m134 * m243;
-            this.rawData[11] = m131 * m214 + m132 * m224 + m133 * m234 + m134 * m244;
-            this.rawData[12] = m141 * m211 + m142 * m221 + m143 * m231 + m144 * m241;
-            this.rawData[13] = m141 * m212 + m142 * m222 + m143 * m232 + m144 * m242;
-            this.rawData[14] = m141 * m213 + m142 * m223 + m143 * m233 + m144 * m243;
-            this.rawData[15] = m141 * m214 + m142 * m224 + m143 * m234 + m144 * m244;
-        }
+        var m111 = this.rawData[0];
+        var m112 = this.rawData[1];
+        var m113 = this.rawData[2];
+        var m114 = this.rawData[3];
+        var m121 = this.rawData[4];
+        var m122 = this.rawData[5];
+        var m123 = this.rawData[6];
+        var m124 = this.rawData[7];
+        var m131 = this.rawData[8];
+        var m132 = this.rawData[9];
+        var m133 = this.rawData[10];
+        var m134 = this.rawData[11];
+        var m141 = this.rawData[12];
+        var m142 = this.rawData[13];
+        var m143 = this.rawData[14];
+        var m144 = this.rawData[15];
+        var m211 = lrd[0];
+        var m212 = lrd[1];
+        var m213 = lrd[2];
+        var m214 = lrd[3];
+        var m221 = lrd[4];
+        var m222 = lrd[5];
+        var m223 = lrd[6];
+        var m224 = lrd[7];
+        var m231 = lrd[8];
+        var m232 = lrd[9];
+        var m233 = lrd[10];
+        var m234 = lrd[11];
+        var m241 = lrd[12];
+        var m242 = lrd[13];
+        var m243 = lrd[14];
+        var m244 = lrd[15];
+        this.rawData[0] = m111 * m211 + m112 * m221 + m113 * m231 + m114 * m241;
+        this.rawData[1] = m111 * m212 + m112 * m222 + m113 * m232 + m114 * m242;
+        this.rawData[2] = m111 * m213 + m112 * m223 + m113 * m233 + m114 * m243;
+        this.rawData[3] = m111 * m214 + m112 * m224 + m113 * m234 + m114 * m244;
+        this.rawData[4] = m121 * m211 + m122 * m221 + m123 * m231 + m124 * m241;
+        this.rawData[5] = m121 * m212 + m122 * m222 + m123 * m232 + m124 * m242;
+        this.rawData[6] = m121 * m213 + m122 * m223 + m123 * m233 + m124 * m243;
+        this.rawData[7] = m121 * m214 + m122 * m224 + m123 * m234 + m124 * m244;
+        this.rawData[8] = m131 * m211 + m132 * m221 + m133 * m231 + m134 * m241;
+        this.rawData[9] = m131 * m212 + m132 * m222 + m133 * m232 + m134 * m242;
+        this.rawData[10] = m131 * m213 + m132 * m223 + m133 * m233 + m134 * m243;
+        this.rawData[11] = m131 * m214 + m132 * m224 + m133 * m234 + m134 * m244;
+        this.rawData[12] = m141 * m211 + m142 * m221 + m143 * m231 + m144 * m241;
+        this.rawData[13] = m141 * m212 + m142 * m222 + m143 * m232 + m144 * m242;
+        this.rawData[14] = m141 * m213 + m142 * m223 + m143 * m233 + m144 * m243;
+        this.rawData[15] = m141 * m214 + m142 * m224 + m143 * m234 + m144 * m244;
     };
     /**
      * Appends an incremental rotation to a Matrix3D object.
@@ -5307,11 +5292,11 @@ var Matrix3D = (function () {
      */
     Matrix3D.prototype.deltaTransformVector = function (v, t) {
         if (t === void 0) { t = null; }
-        if (!t)
-            t = new Vector3D();
         var x = v.x;
         var y = v.y;
         var z = v.z;
+        if (!t)
+            t = new Vector3D();
         t.x = x * this.rawData[0] + y * this.rawData[4] + z * this.rawData[8];
         t.y = x * this.rawData[1] + y * this.rawData[5] + z * this.rawData[9];
         t.z = x * this.rawData[2] + y * this.rawData[6] + z * this.rawData[10];
@@ -5407,69 +5392,54 @@ var Matrix3D = (function () {
      * Prepends a matrix by multiplying the current Matrix3D object by another Matrix3D object.
      */
     Matrix3D.prototype.prepend = function (rhs) {
-        var rrd = rhs.rawData;
-        //use SIMD where available
-        if (Extensions.SIMD) {
-            var f32x4 = SIMD.float32x4 || SIMD.Float32x4;
-            var m21 = f32x4.load(this.rawData, 0);
-            var m22 = f32x4.load(this.rawData, 4);
-            var m23 = f32x4.load(this.rawData, 8);
-            var m24 = f32x4.load(this.rawData, 12);
-            for (var i = 0; i < 16; i += 4) {
-                var m = f32x4.load(rrd, i);
-                f32x4.store(this.rawData, i, f32x4.add(f32x4.add(f32x4.add(f32x4.mul(f32x4.swizzle(m, 0, 0, 0, 0), m21), f32x4.mul(f32x4.swizzle(m, 1, 1, 1, 1), m22)), f32x4.mul(f32x4.swizzle(m, 2, 2, 2, 2), m23)), f32x4.mul(f32x4.swizzle(m, 3, 3, 3, 3), m24)));
-            }
-        }
-        else {
-            var m111 = rrd[0];
-            var m112 = rrd[1];
-            var m113 = rrd[2];
-            var m114 = rrd[3];
-            var m121 = rrd[4];
-            var m122 = rrd[5];
-            var m123 = rrd[6];
-            var m124 = rrd[7];
-            var m131 = rrd[8];
-            var m132 = rrd[9];
-            var m133 = rrd[10];
-            var m134 = rrd[11];
-            var m141 = rrd[12];
-            var m142 = rrd[13];
-            var m143 = rrd[14];
-            var m144 = rrd[15];
-            var m211 = this.rawData[0];
-            var m212 = this.rawData[1];
-            var m213 = this.rawData[2];
-            var m214 = this.rawData[3];
-            var m221 = this.rawData[4];
-            var m222 = this.rawData[5];
-            var m223 = this.rawData[6];
-            var m224 = this.rawData[7];
-            var m231 = this.rawData[8];
-            var m232 = this.rawData[9];
-            var m233 = this.rawData[10];
-            var m234 = this.rawData[11];
-            var m241 = this.rawData[12];
-            var m242 = this.rawData[13];
-            var m243 = this.rawData[14];
-            var m244 = this.rawData[15];
-            this.rawData[0] = m111 * m211 + m112 * m221 + m113 * m231 + m114 * m241;
-            this.rawData[1] = m111 * m212 + m112 * m222 + m113 * m232 + m114 * m242;
-            this.rawData[2] = m111 * m213 + m112 * m223 + m113 * m233 + m114 * m243;
-            this.rawData[3] = m111 * m214 + m112 * m224 + m113 * m234 + m114 * m244;
-            this.rawData[4] = m121 * m211 + m122 * m221 + m123 * m231 + m124 * m241;
-            this.rawData[5] = m121 * m212 + m122 * m222 + m123 * m232 + m124 * m242;
-            this.rawData[6] = m121 * m213 + m122 * m223 + m123 * m233 + m124 * m243;
-            this.rawData[7] = m121 * m214 + m122 * m224 + m123 * m234 + m124 * m244;
-            this.rawData[8] = m131 * m211 + m132 * m221 + m133 * m231 + m134 * m241;
-            this.rawData[9] = m131 * m212 + m132 * m222 + m133 * m232 + m134 * m242;
-            this.rawData[10] = m131 * m213 + m132 * m223 + m133 * m233 + m134 * m243;
-            this.rawData[11] = m131 * m214 + m132 * m224 + m133 * m234 + m134 * m244;
-            this.rawData[12] = m141 * m211 + m142 * m221 + m143 * m231 + m144 * m241;
-            this.rawData[13] = m141 * m212 + m142 * m222 + m143 * m232 + m144 * m242;
-            this.rawData[14] = m141 * m213 + m142 * m223 + m143 * m233 + m144 * m243;
-            this.rawData[15] = m141 * m214 + m142 * m224 + m143 * m234 + m144 * m244;
-        }
+        var m111 = rhs.rawData[0];
+        var m112 = rhs.rawData[1];
+        var m113 = rhs.rawData[2];
+        var m114 = rhs.rawData[3];
+        var m121 = rhs.rawData[4];
+        var m122 = rhs.rawData[5];
+        var m123 = rhs.rawData[6];
+        var m124 = rhs.rawData[7];
+        var m131 = rhs.rawData[8];
+        var m132 = rhs.rawData[9];
+        var m133 = rhs.rawData[10];
+        var m134 = rhs.rawData[11];
+        var m141 = rhs.rawData[12];
+        var m142 = rhs.rawData[13];
+        var m143 = rhs.rawData[14];
+        var m144 = rhs.rawData[15];
+        var m211 = this.rawData[0];
+        var m212 = this.rawData[1];
+        var m213 = this.rawData[2];
+        var m214 = this.rawData[3];
+        var m221 = this.rawData[4];
+        var m222 = this.rawData[5];
+        var m223 = this.rawData[6];
+        var m224 = this.rawData[7];
+        var m231 = this.rawData[8];
+        var m232 = this.rawData[9];
+        var m233 = this.rawData[10];
+        var m234 = this.rawData[11];
+        var m241 = this.rawData[12];
+        var m242 = this.rawData[13];
+        var m243 = this.rawData[14];
+        var m244 = this.rawData[15];
+        this.rawData[0] = m111 * m211 + m112 * m221 + m113 * m231 + m114 * m241;
+        this.rawData[1] = m111 * m212 + m112 * m222 + m113 * m232 + m114 * m242;
+        this.rawData[2] = m111 * m213 + m112 * m223 + m113 * m233 + m114 * m243;
+        this.rawData[3] = m111 * m214 + m112 * m224 + m113 * m234 + m114 * m244;
+        this.rawData[4] = m121 * m211 + m122 * m221 + m123 * m231 + m124 * m241;
+        this.rawData[5] = m121 * m212 + m122 * m222 + m123 * m232 + m124 * m242;
+        this.rawData[6] = m121 * m213 + m122 * m223 + m123 * m233 + m124 * m243;
+        this.rawData[7] = m121 * m214 + m122 * m224 + m123 * m234 + m124 * m244;
+        this.rawData[8] = m131 * m211 + m132 * m221 + m133 * m231 + m134 * m241;
+        this.rawData[9] = m131 * m212 + m132 * m222 + m133 * m232 + m134 * m242;
+        this.rawData[10] = m131 * m213 + m132 * m223 + m133 * m233 + m134 * m243;
+        this.rawData[11] = m131 * m214 + m132 * m224 + m133 * m234 + m134 * m244;
+        this.rawData[12] = m141 * m211 + m142 * m221 + m143 * m231 + m144 * m241;
+        this.rawData[13] = m141 * m212 + m142 * m222 + m143 * m232 + m144 * m242;
+        this.rawData[14] = m141 * m213 + m142 * m223 + m143 * m233 + m144 * m243;
+        this.rawData[15] = m141 * m214 + m142 * m224 + m143 * m234 + m144 * m244;
     };
     /**
      * Prepends an incremental rotation to a Matrix3D object.
@@ -5626,11 +5596,11 @@ var Matrix3D = (function () {
         if (t === void 0) { t = null; }
         if (v == null)
             return t || new Vector3D();
-        if (!t)
-            t = new Vector3D();
         var x = v.x;
         var y = v.y;
         var z = v.z;
+        if (!t)
+            t = new Vector3D();
         t.x = x * this.rawData[0] + y * this.rawData[4] + z * this.rawData[8] + this.rawData[12];
         t.y = x * this.rawData[1] + y * this.rawData[5] + z * this.rawData[9] + this.rawData[13];
         t.z = x * this.rawData[2] + y * this.rawData[6] + z * this.rawData[10] + this.rawData[14];
@@ -5674,38 +5644,20 @@ var Matrix3D = (function () {
      * Converts the current Matrix3D object to a matrix where the rows and columns are swapped.
      */
     Matrix3D.prototype.transpose = function () {
-        //use SIMD where available
-        if (false) {
-            var f32x4 = SIMD.float32x4 || SIMD.Float32x4;
-            var col0 = f32x4.load(this.rawData, 0);
-            var col1 = f32x4.load(this.rawData, 4);
-            var col2 = f32x4.load(this.rawData, 8);
-            var col3 = f32x4.load(this.rawData, 12);
-            var tmp0 = f32x4.shuffle(col0, col1, 0, 2, 4, 6); // 0  2  4  6
-            var tmp1 = f32x4.shuffle(col0, col1, 1, 3, 5, 7); // 1  3  5  7
-            var tmp2 = f32x4.shuffle(col2, col3, 0, 2, 4, 6); // 8 10 12 14
-            var tmp3 = f32x4.shuffle(col2, col3, 1, 3, 5, 7); // 9 11 13 15
-            f32x4.store(this.rawData, 0, f32x4.shuffle(tmp0, tmp2, 0, 2, 4, 6)); // 0  4  8 12
-            f32x4.store(this.rawData, 4, f32x4.shuffle(tmp1, tmp3, 0, 2, 4, 6)); // 1  5  9 13
-            f32x4.store(this.rawData, 8, f32x4.shuffle(tmp0, tmp2, 1, 3, 5, 7)); // 2  6 10 14
-            f32x4.store(this.rawData, 12, f32x4.shuffle(tmp1, tmp3, 1, 3, 5, 7)); //3  7 11 15
-        }
-        else {
-            var raw = Matrix3D.tempRawData;
-            this.copyRawDataTo(raw);
-            this.rawData[1] = raw[4];
-            this.rawData[2] = raw[8];
-            this.rawData[3] = raw[12];
-            this.rawData[4] = raw[1];
-            this.rawData[6] = raw[9];
-            this.rawData[7] = raw[13];
-            this.rawData[8] = raw[2];
-            this.rawData[9] = raw[6];
-            this.rawData[11] = raw[14];
-            this.rawData[12] = raw[3];
-            this.rawData[13] = raw[7];
-            this.rawData[14] = raw[11];
-        }
+        var raw = Matrix3D.tempRawData;
+        this.copyRawDataTo(raw);
+        this.rawData[1] = raw[4];
+        this.rawData[2] = raw[8];
+        this.rawData[3] = raw[12];
+        this.rawData[4] = raw[1];
+        this.rawData[6] = raw[9];
+        this.rawData[7] = raw[13];
+        this.rawData[8] = raw[2];
+        this.rawData[9] = raw[6];
+        this.rawData[11] = raw[14];
+        this.rawData[12] = raw[3];
+        this.rawData[13] = raw[7];
+        this.rawData[14] = raw[11];
     };
     Matrix3D.getAxisRotation = function (x, y, z, degrees) {
         // internal class use by rotations which have been tested
@@ -5776,7 +5728,7 @@ var Matrix3D = (function () {
 })();
 module.exports = Matrix3D;
 
-},{"awayjs-core/lib/errors/ArgumentError":"awayjs-core/lib/errors/ArgumentError","awayjs-core/lib/geom/Box":"awayjs-core/lib/geom/Box","awayjs-core/lib/geom/Orientation3D":"awayjs-core/lib/geom/Orientation3D","awayjs-core/lib/geom/Vector3D":"awayjs-core/lib/geom/Vector3D","awayjs-core/lib/utils/Extensions":"awayjs-core/lib/utils/Extensions"}],"awayjs-core/lib/geom/Matrix":[function(require,module,exports){
+},{"awayjs-core/lib/errors/ArgumentError":"awayjs-core/lib/errors/ArgumentError","awayjs-core/lib/geom/Box":"awayjs-core/lib/geom/Box","awayjs-core/lib/geom/Orientation3D":"awayjs-core/lib/geom/Orientation3D","awayjs-core/lib/geom/Vector3D":"awayjs-core/lib/geom/Vector3D"}],"awayjs-core/lib/geom/Matrix":[function(require,module,exports){
 var Point = require("awayjs-core/lib/geom/Point");
 var ArgumentError = require("awayjs-core/lib/errors/ArgumentError");
 /**

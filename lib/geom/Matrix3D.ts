@@ -3,9 +3,6 @@ import Orientation3D			= require("awayjs-core/lib/geom/Orientation3D");
 import Quaternion				= require("awayjs-core/lib/geom/Quaternion");
 import Vector3D					= require("awayjs-core/lib/geom/Vector3D");
 import ArgumentError			= require("awayjs-core/lib/errors/ArgumentError");
-import Extensions				= require("awayjs-core/lib/utils/Extensions");
-
-declare var SIMD:any;
 
 class Matrix3D
 {
@@ -43,74 +40,58 @@ class Matrix3D
 	{
 		var lrd:Float32Array = lhs.rawData;
 
-		//use SIMD where available
-		if (Extensions.SIMD) {
-			var f32x4 = SIMD.float32x4 || SIMD.Float32x4;
+		var m111:number = this.rawData[0];
+		var m112:number = this.rawData[1];
+		var m113:number = this.rawData[2];
+		var m114:number = this.rawData[3];
+		var m121:number = this.rawData[4];
+		var m122:number = this.rawData[5];
+		var m123:number = this.rawData[6];
+		var m124:number = this.rawData[7];
+		var m131:number = this.rawData[8];
+		var m132:number = this.rawData[9];
+		var m133:number = this.rawData[10];
+		var m134:number = this.rawData[11];
+		var m141:number = this.rawData[12];
+		var m142:number = this.rawData[13];
+		var m143:number = this.rawData[14];
+		var m144:number = this.rawData[15];
+		var m211:number = lrd[0];
+		var m212:number = lrd[1];
+		var m213:number = lrd[2];
+		var m214:number = lrd[3];
+		var m221:number = lrd[4];
+		var m222:number = lrd[5];
+		var m223:number = lrd[6];
+		var m224:number = lrd[7];
+		var m231:number = lrd[8];
+		var m232:number = lrd[9];
+		var m233:number = lrd[10];
+		var m234:number = lrd[11];
+		var m241:number = lrd[12];
+		var m242:number = lrd[13];
+		var m243:number = lrd[14];
+		var m244:number = lrd[15];
 
-			var m21 = f32x4.load(lrd, 0);
-			var m22 = f32x4.load(lrd, 4);
-			var m23 = f32x4.load(lrd, 8);
-			var m24 = f32x4.load(lrd, 12);
+		this.rawData[0] = m111*m211 + m112*m221 + m113*m231 + m114*m241;
+		this.rawData[1] = m111*m212 + m112*m222 + m113*m232 + m114*m242;
+		this.rawData[2] = m111*m213 + m112*m223 + m113*m233 + m114*m243;
+		this.rawData[3] = m111*m214 + m112*m224 + m113*m234 + m114*m244;
 
-			for (var i:number = 0; i < 16; i += 4) {
-				var m = f32x4.load(this.rawData, i);
-				f32x4.store(this.rawData, i, f32x4.add(f32x4.add(f32x4.add(f32x4.mul(f32x4.swizzle(m, 0, 0, 0, 0), m21), f32x4.mul(f32x4.swizzle(m, 1, 1, 1, 1), m22)), f32x4.mul(f32x4.swizzle(m, 2, 2, 2, 2), m23)), f32x4.mul(f32x4.swizzle(m, 3, 3, 3, 3), m24)));
-			}
-		} else {
-			var m111:number = this.rawData[0];
-			var m112:number = this.rawData[1];
-			var m113:number = this.rawData[2];
-			var m114:number = this.rawData[3];
-			var m121:number = this.rawData[4];
-			var m122:number = this.rawData[5];
-			var m123:number = this.rawData[6];
-			var m124:number = this.rawData[7];
-			var m131:number = this.rawData[8];
-			var m132:number = this.rawData[9];
-			var m133:number = this.rawData[10];
-			var m134:number = this.rawData[11];
-			var m141:number = this.rawData[12];
-			var m142:number = this.rawData[13];
-			var m143:number = this.rawData[14];
-			var m144:number = this.rawData[15];
-			var m211:number = lrd[0];
-			var m212:number = lrd[1];
-			var m213:number = lrd[2];
-			var m214:number = lrd[3];
-			var m221:number = lrd[4];
-			var m222:number = lrd[5];
-			var m223:number = lrd[6];
-			var m224:number = lrd[7];
-			var m231:number = lrd[8];
-			var m232:number = lrd[9];
-			var m233:number = lrd[10];
-			var m234:number = lrd[11];
-			var m241:number = lrd[12];
-			var m242:number = lrd[13];
-			var m243:number = lrd[14];
-			var m244:number = lrd[15];
+		this.rawData[4] = m121*m211 + m122*m221 + m123*m231 + m124*m241;
+		this.rawData[5] = m121*m212 + m122*m222 + m123*m232 + m124*m242;
+		this.rawData[6] = m121*m213 + m122*m223 + m123*m233 + m124*m243;
+		this.rawData[7] = m121*m214 + m122*m224 + m123*m234 + m124*m244;
 
-			this.rawData[0] = m111*m211 + m112*m221 + m113*m231 + m114*m241;
-			this.rawData[1] = m111*m212 + m112*m222 + m113*m232 + m114*m242;
-			this.rawData[2] = m111*m213 + m112*m223 + m113*m233 + m114*m243;
-			this.rawData[3] = m111*m214 + m112*m224 + m113*m234 + m114*m244;
+		this.rawData[8] = m131*m211 + m132*m221 + m133*m231 + m134*m241;
+		this.rawData[9] = m131*m212 + m132*m222 + m133*m232 + m134*m242;
+		this.rawData[10] = m131*m213 + m132*m223 + m133*m233 + m134*m243;
+		this.rawData[11] = m131*m214 + m132*m224 + m133*m234 + m134*m244;
 
-			this.rawData[4] = m121*m211 + m122*m221 + m123*m231 + m124*m241;
-			this.rawData[5] = m121*m212 + m122*m222 + m123*m232 + m124*m242;
-			this.rawData[6] = m121*m213 + m122*m223 + m123*m233 + m124*m243;
-			this.rawData[7] = m121*m214 + m122*m224 + m123*m234 + m124*m244;
-
-			this.rawData[8] = m131*m211 + m132*m221 + m133*m231 + m134*m241;
-			this.rawData[9] = m131*m212 + m132*m222 + m133*m232 + m134*m242;
-			this.rawData[10] = m131*m213 + m132*m223 + m133*m233 + m134*m243;
-			this.rawData[11] = m131*m214 + m132*m224 + m133*m234 + m134*m244;
-
-			this.rawData[12] = m141*m211 + m142*m221 + m143*m231 + m144*m241;
-			this.rawData[13] = m141*m212 + m142*m222 + m143*m232 + m144*m242;
-			this.rawData[14] = m141*m213 + m142*m223 + m143*m233 + m144*m243;
-			this.rawData[15] = m141*m214 + m142*m224 + m143*m234 + m144*m244;
-		}
-
+		this.rawData[12] = m141*m211 + m142*m221 + m143*m231 + m144*m241;
+		this.rawData[13] = m141*m212 + m142*m222 + m143*m232 + m144*m242;
+		this.rawData[14] = m141*m213 + m142*m223 + m143*m233 + m144*m243;
+		this.rawData[15] = m141*m214 + m142*m224 + m143*m234 + m144*m244;
 	}
 
 	/**
@@ -518,12 +499,12 @@ class Matrix3D
 	 */
 	public deltaTransformVector(v:Vector3D, t:Vector3D = null):Vector3D
 	{
-		if (!t)
-			t = new Vector3D();
-
 		var x:number = v.x;
 		var y:number = v.y;
 		var z:number = v.z;
+
+		if (!t)
+			t = new Vector3D();
 
 		t.x = x*this.rawData[0] + y*this.rawData[4] + z*this.rawData[8];
 		t.y = x*this.rawData[1] + y*this.rawData[5] + z*this.rawData[9];
@@ -635,76 +616,59 @@ class Matrix3D
 	 */
 	public prepend(rhs:Matrix3D)
 	{
-		var rrd:Float32Array = rhs.rawData;
+		var m111:number = rhs.rawData[0];
+		var m112:number = rhs.rawData[1];
+		var m113:number = rhs.rawData[2];
+		var m114:number = rhs.rawData[3];
+		var m121:number = rhs.rawData[4];
+		var m122:number = rhs.rawData[5];
+		var m123:number = rhs.rawData[6];
+		var m124:number = rhs.rawData[7];
+		var m131:number = rhs.rawData[8];
+		var m132:number = rhs.rawData[9];
+		var m133:number = rhs.rawData[10];
+		var m134:number = rhs.rawData[11];
+		var m141:number = rhs.rawData[12];
+		var m142:number = rhs.rawData[13];
+		var m143:number = rhs.rawData[14];
+		var m144:number = rhs.rawData[15];
 
-		//use SIMD where available
-		if (Extensions.SIMD) {
-			var f32x4 = SIMD.float32x4 || SIMD.Float32x4;
+		var m211:number = this.rawData[0];
+		var m212:number = this.rawData[1];
+		var m213:number = this.rawData[2];
+		var m214:number = this.rawData[3];
+		var m221:number = this.rawData[4];
+		var m222:number = this.rawData[5];
+		var m223:number = this.rawData[6];
+		var m224:number = this.rawData[7];
+		var m231:number = this.rawData[8];
+		var m232:number = this.rawData[9];
+		var m233:number = this.rawData[10];
+		var m234:number = this.rawData[11];
+		var m241:number = this.rawData[12];
+		var m242:number = this.rawData[13];
+		var m243:number = this.rawData[14];
+		var m244:number = this.rawData[15];
 
-			var m21 = f32x4.load(this.rawData, 0);
-			var m22 = f32x4.load(this.rawData, 4);
-			var m23 = f32x4.load(this.rawData, 8);
-			var m24 = f32x4.load(this.rawData, 12);
+		this.rawData[0] = m111*m211 + m112*m221 + m113*m231 + m114*m241;
+		this.rawData[1] = m111*m212 + m112*m222 + m113*m232 + m114*m242;
+		this.rawData[2] = m111*m213 + m112*m223 + m113*m233 + m114*m243;
+		this.rawData[3] = m111*m214 + m112*m224 + m113*m234 + m114*m244;
 
-			for (var i:number = 0; i < 16; i += 4) {
-				var m = f32x4.load(rrd, i);
-				f32x4.store(this.rawData, i, f32x4.add(f32x4.add(f32x4.add(f32x4.mul(f32x4.swizzle(m, 0, 0, 0, 0), m21), f32x4.mul(f32x4.swizzle(m, 1, 1, 1, 1), m22)), f32x4.mul(f32x4.swizzle(m, 2, 2, 2, 2), m23)), f32x4.mul(f32x4.swizzle(m, 3, 3, 3, 3), m24)));
-			}
-		} else {
-			var m111:number = rrd[0];
-			var m112:number = rrd[1];
-			var m113:number = rrd[2];
-			var m114:number = rrd[3];
-			var m121:number = rrd[4];
-			var m122:number = rrd[5];
-			var m123:number = rrd[6];
-			var m124:number = rrd[7];
-			var m131:number = rrd[8];
-			var m132:number = rrd[9];
-			var m133:number = rrd[10];
-			var m134:number = rrd[11];
-			var m141:number = rrd[12];
-			var m142:number = rrd[13];
-			var m143:number = rrd[14];
-			var m144:number = rrd[15];
+		this.rawData[4] = m121*m211 + m122*m221 + m123*m231 + m124*m241;
+		this.rawData[5] = m121*m212 + m122*m222 + m123*m232 + m124*m242;
+		this.rawData[6] = m121*m213 + m122*m223 + m123*m233 + m124*m243;
+		this.rawData[7] = m121*m214 + m122*m224 + m123*m234 + m124*m244;
 
-			var m211:number = this.rawData[0];
-			var m212:number = this.rawData[1];
-			var m213:number = this.rawData[2];
-			var m214:number = this.rawData[3];
-			var m221:number = this.rawData[4];
-			var m222:number = this.rawData[5];
-			var m223:number = this.rawData[6];
-			var m224:number = this.rawData[7];
-			var m231:number = this.rawData[8];
-			var m232:number = this.rawData[9];
-			var m233:number = this.rawData[10];
-			var m234:number = this.rawData[11];
-			var m241:number = this.rawData[12];
-			var m242:number = this.rawData[13];
-			var m243:number = this.rawData[14];
-			var m244:number = this.rawData[15];
+		this.rawData[8] = m131*m211 + m132*m221 + m133*m231 + m134*m241;
+		this.rawData[9] = m131*m212 + m132*m222 + m133*m232 + m134*m242;
+		this.rawData[10] = m131*m213 + m132*m223 + m133*m233 + m134*m243;
+		this.rawData[11] = m131*m214 + m132*m224 + m133*m234 + m134*m244;
 
-			this.rawData[0] = m111*m211 + m112*m221 + m113*m231 + m114*m241;
-			this.rawData[1] = m111*m212 + m112*m222 + m113*m232 + m114*m242;
-			this.rawData[2] = m111*m213 + m112*m223 + m113*m233 + m114*m243;
-			this.rawData[3] = m111*m214 + m112*m224 + m113*m234 + m114*m244;
-
-			this.rawData[4] = m121*m211 + m122*m221 + m123*m231 + m124*m241;
-			this.rawData[5] = m121*m212 + m122*m222 + m123*m232 + m124*m242;
-			this.rawData[6] = m121*m213 + m122*m223 + m123*m233 + m124*m243;
-			this.rawData[7] = m121*m214 + m122*m224 + m123*m234 + m124*m244;
-
-			this.rawData[8] = m131*m211 + m132*m221 + m133*m231 + m134*m241;
-			this.rawData[9] = m131*m212 + m132*m222 + m133*m232 + m134*m242;
-			this.rawData[10] = m131*m213 + m132*m223 + m133*m233 + m134*m243;
-			this.rawData[11] = m131*m214 + m132*m224 + m133*m234 + m134*m244;
-
-			this.rawData[12] = m141*m211 + m142*m221 + m143*m231 + m144*m241;
-			this.rawData[13] = m141*m212 + m142*m222 + m143*m232 + m144*m242;
-			this.rawData[14] = m141*m213 + m142*m223 + m143*m233 + m144*m243;
-			this.rawData[15] = m141*m214 + m142*m224 + m143*m234 + m144*m244;
-		}
+		this.rawData[12] = m141*m211 + m142*m221 + m143*m231 + m144*m241;
+		this.rawData[13] = m141*m212 + m142*m222 + m143*m232 + m144*m242;
+		this.rawData[14] = m141*m213 + m142*m223 + m143*m233 + m144*m243;
+		this.rawData[15] = m141*m214 + m142*m224 + m143*m234 + m144*m244;
 	}
 
 	/**
@@ -896,12 +860,12 @@ class Matrix3D
 		if (v == null)
 			return t || new Vector3D();
 
-		if (!t)
-			t = new Vector3D();
-
 		var x:number = v.x;
 		var y:number = v.y;
 		var z:number = v.z;
+
+		if (!t)
+			t = new Vector3D();
 
 		t.x = x*this.rawData[0] + y*this.rawData[4] + z*this.rawData[8] + this.rawData[12];
 		t.y = x*this.rawData[1] + y*this.rawData[5] + z*this.rawData[9] + this.rawData[13];
@@ -958,41 +922,21 @@ class Matrix3D
 	 */
 	public transpose()
 	{
-		//use SIMD where available
-		if (false) {
-			var f32x4 = SIMD.float32x4 || SIMD.Float32x4;
+		var raw:Float32Array = Matrix3D.tempRawData;
+		this.copyRawDataTo(raw);
 
-			var col0 = f32x4.load(this.rawData, 0);
-			var col1 = f32x4.load(this.rawData, 4);
-			var col2 = f32x4.load(this.rawData, 8);
-			var col3 = f32x4.load(this.rawData, 12);
-
-			var tmp0 = f32x4.shuffle(col0, col1, 0, 2, 4, 6);// 0  2  4  6
-			var tmp1 = f32x4.shuffle(col0, col1, 1, 3, 5, 7);// 1  3  5  7
-			var tmp2 = f32x4.shuffle(col2, col3, 0, 2, 4, 6);// 8 10 12 14
-			var tmp3 = f32x4.shuffle(col2, col3, 1, 3, 5, 7);// 9 11 13 15
-
-			f32x4.store(this.rawData, 0, f32x4.shuffle(tmp0, tmp2, 0, 2, 4, 6));// 0  4  8 12
-			f32x4.store(this.rawData, 4, f32x4.shuffle(tmp1, tmp3, 0, 2, 4, 6));// 1  5  9 13
-			f32x4.store(this.rawData, 8, f32x4.shuffle(tmp0, tmp2, 1, 3, 5, 7));// 2  6 10 14
-			f32x4.store(this.rawData, 12, f32x4.shuffle(tmp1, tmp3, 1, 3, 5, 7));//3  7 11 15
-		} else {
-			var raw:Float32Array = Matrix3D.tempRawData;
-			this.copyRawDataTo(raw);
-
-			this.rawData[1] = raw[4];
-			this.rawData[2] = raw[8];
-			this.rawData[3] = raw[12];
-			this.rawData[4] = raw[1];
-			this.rawData[6] = raw[9];
-			this.rawData[7] = raw[13];
-			this.rawData[8] = raw[2];
-			this.rawData[9] = raw[6];
-			this.rawData[11] = raw[14];
-			this.rawData[12] = raw[3];
-			this.rawData[13] = raw[7];
-			this.rawData[14] = raw[11];
-		}
+		this.rawData[1] = raw[4];
+		this.rawData[2] = raw[8];
+		this.rawData[3] = raw[12];
+		this.rawData[4] = raw[1];
+		this.rawData[6] = raw[9];
+		this.rawData[7] = raw[13];
+		this.rawData[8] = raw[2];
+		this.rawData[9] = raw[6];
+		this.rawData[11] = raw[14];
+		this.rawData[12] = raw[3];
+		this.rawData[13] = raw[7];
+		this.rawData[14] = raw[11];
 	}
 
 	static getAxisRotation(x:number, y:number, z:number, degrees:number):Matrix3D

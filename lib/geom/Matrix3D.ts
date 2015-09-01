@@ -47,20 +47,15 @@ class Matrix3D
 		if (Extensions.SIMD) {
 			var f32x4 = SIMD.float32x4 || SIMD.Float32x4;
 
-			var m11 = f32x4.load(this.rawData, 0);
-			var m12 = f32x4.load(this.rawData, 4);
-			var m13 = f32x4.load(this.rawData, 8);
-			var m14 = f32x4.load(this.rawData, 12);
-
 			var m21 = f32x4.load(lrd, 0);
 			var m22 = f32x4.load(lrd, 4);
 			var m23 = f32x4.load(lrd, 8);
 			var m24 = f32x4.load(lrd, 12);
 
-			f32x4.store(this.rawData, 0, f32x4.add(f32x4.add(f32x4.add(f32x4.mul(f32x4.swizzle(m11, 0, 0, 0, 0), m21), f32x4.mul(f32x4.swizzle(m11, 1, 1, 1, 1), m22)), f32x4.mul(f32x4.swizzle(m11, 2, 2, 2, 2), m23)), f32x4.mul(f32x4.swizzle(m11, 3, 3, 3, 3), m24)));
-			f32x4.store(this.rawData, 4, f32x4.add(f32x4.add(f32x4.add(f32x4.mul(f32x4.swizzle(m12, 0, 0, 0, 0), m21), f32x4.mul(f32x4.swizzle(m12, 1, 1, 1, 1), m22)), f32x4.mul(f32x4.swizzle(m12, 2, 2, 2, 2), m23)), f32x4.mul(f32x4.swizzle(m12, 3, 3, 3, 3), m24)));
-			f32x4.store(this.rawData, 8, f32x4.add(f32x4.add(f32x4.add(f32x4.mul(f32x4.swizzle(m13, 0, 0, 0, 0), m21), f32x4.mul(f32x4.swizzle(m13, 1, 1, 1, 1), m22)), f32x4.mul(f32x4.swizzle(m13, 2, 2, 2, 2), m23)), f32x4.mul(f32x4.swizzle(m13, 3, 3, 3, 3), m24)));
-			f32x4.store(this.rawData, 12, f32x4.add(f32x4.add(f32x4.add(f32x4.mul(f32x4.swizzle(m14, 0, 0, 0, 0), m21), f32x4.mul(f32x4.swizzle(m14, 1, 1, 1, 1), m22)), f32x4.mul(f32x4.swizzle(m14, 2, 2, 2, 2), m23)), f32x4.mul(f32x4.swizzle(m14, 3, 3, 3, 3), m24)));
+			for (var i:number = 0; i < 16; i += 4) {
+				var m = f32x4.load(this.rawData, i);
+				f32x4.store(this.rawData, i, f32x4.add(f32x4.add(f32x4.add(f32x4.mul(f32x4.swizzle(m, 0, 0, 0, 0), m21), f32x4.mul(f32x4.swizzle(m, 1, 1, 1, 1), m22)), f32x4.mul(f32x4.swizzle(m, 2, 2, 2, 2), m23)), f32x4.mul(f32x4.swizzle(m, 3, 3, 3, 3), m24)));
+			}
 		} else {
 			var m111:number = this.rawData[0];
 			var m112:number = this.rawData[1];
@@ -646,20 +641,15 @@ class Matrix3D
 		if (Extensions.SIMD) {
 			var f32x4 = SIMD.float32x4 || SIMD.Float32x4;
 
-			var m11 = f32x4.load(rrd, 0);
-			var m12 = f32x4.load(rrd, 4);
-			var m13 = f32x4.load(rrd, 8);
-			var m14 = f32x4.load(rrd, 12);
-
 			var m21 = f32x4.load(this.rawData, 0);
 			var m22 = f32x4.load(this.rawData, 4);
 			var m23 = f32x4.load(this.rawData, 8);
 			var m24 = f32x4.load(this.rawData, 12);
 
-			f32x4.store(this.rawData, 0, f32x4.add(f32x4.add(f32x4.add(f32x4.mul(f32x4.swizzle(m11, 0, 0, 0, 0), m21), f32x4.mul(f32x4.swizzle(m11, 1, 1, 1, 1), m22)), f32x4.mul(f32x4.swizzle(m11, 2, 2, 2, 2), m23)), f32x4.mul(f32x4.swizzle(m11, 3, 3, 3, 3), m24)));
-			f32x4.store(this.rawData, 4, f32x4.add(f32x4.add(f32x4.add(f32x4.mul(f32x4.swizzle(m12, 0, 0, 0, 0), m21), f32x4.mul(f32x4.swizzle(m12, 1, 1, 1, 1), m22)), f32x4.mul(f32x4.swizzle(m12, 2, 2, 2, 2), m23)), f32x4.mul(f32x4.swizzle(m12, 3, 3, 3, 3), m24)));
-			f32x4.store(this.rawData, 8, f32x4.add(f32x4.add(f32x4.add(f32x4.mul(f32x4.swizzle(m13, 0, 0, 0, 0), m21), f32x4.mul(f32x4.swizzle(m13, 1, 1, 1, 1), m22)), f32x4.mul(f32x4.swizzle(m13, 2, 2, 2, 2), m23)), f32x4.mul(f32x4.swizzle(m13, 3, 3, 3, 3), m24)));
-			f32x4.store(this.rawData, 12, f32x4.add(f32x4.add(f32x4.add(f32x4.mul(f32x4.swizzle(m14, 0, 0, 0, 0), m21), f32x4.mul(f32x4.swizzle(m14, 1, 1, 1, 1), m22)), f32x4.mul(f32x4.swizzle(m14, 2, 2, 2, 2), m23)), f32x4.mul(f32x4.swizzle(m14, 3, 3, 3, 3), m24)));
+			for (var i:number = 0; i < 16; i += 4) {
+				var m = f32x4.load(rrd, i);
+				f32x4.store(this.rawData, i, f32x4.add(f32x4.add(f32x4.add(f32x4.mul(f32x4.swizzle(m, 0, 0, 0, 0), m21), f32x4.mul(f32x4.swizzle(m, 1, 1, 1, 1), m22)), f32x4.mul(f32x4.swizzle(m, 2, 2, 2, 2), m23)), f32x4.mul(f32x4.swizzle(m, 3, 3, 3, 3), m24)));
+			}
 		} else {
 			var m111:number = rrd[0];
 			var m112:number = rrd[1];

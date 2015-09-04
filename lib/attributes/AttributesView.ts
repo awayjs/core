@@ -156,6 +156,7 @@ class AttributesView extends AssetBase implements IAsset
 	{
 		this._attributesBuffer._removeView(this);
 		this._attributesBuffer = null;
+		this._localArrayBuffer = null;
 	}
 }
 

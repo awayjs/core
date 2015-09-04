@@ -132,10 +132,16 @@ class AttributesBuffer extends AssetBase implements IAsset
 		if (this._lengthDirty)
 			return;
 
-		while (this._attributesBufferVO.length)
-			this._attributesBufferVO[0].dispose();
+		for (var i:number = this._attributesBufferVO.length - 1; i >= 0; i--)
+			this._attributesBufferVO[i].dispose();
 
 		this._lengthDirty = true;
+
+		//dispose buffer if stride is 0
+		if (!this._newStride) {
+			this._buffer = null;
+			this._bufferView = null;
+		}
 	}
 
 	public clone():AttributesBuffer

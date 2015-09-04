@@ -113,9 +113,14 @@ var AttributesBuffer = (function (_super) {
     AttributesBuffer.prototype.invalidateLength = function () {
         if (this._lengthDirty)
             return;
-        while (this._attributesBufferVO.length)
-            this._attributesBufferVO[0].dispose();
+        for (var i = this._attributesBufferVO.length - 1; i >= 0; i--)
+            this._attributesBufferVO[i].dispose();
         this._lengthDirty = true;
+        //dispose buffer if stride is 0
+        if (!this._newStride) {
+            this._buffer = null;
+            this._bufferView = null;
+        }
     };
     AttributesBuffer.prototype.clone = function () {
         var attributesBuffer = new AttributesBuffer(this._stride, this._count);
@@ -390,6 +395,7 @@ var AttributesView = (function (_super) {
     AttributesView.prototype.dispose = function () {
         this._attributesBuffer._removeView(this);
         this._attributesBuffer = null;
+        this._localArrayBuffer = null;
     };
     AttributesView.assetType = "[attributes AttributesView]";
     return AttributesView;

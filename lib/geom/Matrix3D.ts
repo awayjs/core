@@ -757,99 +757,96 @@ class Matrix3D
 	 */
 	public recompose(components:Vector3D[]):boolean
 	{
-		if (components.length < 3)
-			return false;
+		var pos:Vector3D = (components[0])? components[0] : this.position;
 
 		this.identity();
 		var scale:Vector3D = components[3];
-		if(scale.x !=1 || scale.y != 1 || scale.z != 1) this.appendScale(scale.x, scale.y, scale.z);
+		if(scale && (scale.x != 1 || scale.y != 1 || scale.z != 1))
+			this.appendScale(scale.x, scale.y, scale.z);
 
 		var skew:Vector3D = components[2];
-		if(skew.x !=0 || skew.y != 0 || skew.z != 0)	this.appendSkew(skew.x, skew.y, skew.z);
+		if(skew && (skew.x !=0 || skew.y != 0 || skew.z != 0))
+			this.appendSkew(skew.x, skew.y, skew.z);
 
-		var angle:number;
+		var sin:number;
+		var cos:number;
+		var raw:Float32Array = Matrix3D.tempRawData;
+		raw[12] = 0;
+		raw[13] = 0;
+		raw[14] = 0;
+		raw[15] = 0;
+
 		var rotation:Vector3D = components[1];
-		angle = -rotation.x;
-		if(angle != 0){
-			var sin:number = Math.sin(angle);
-			var cos:number = Math.cos(angle);
-			var raw:Float32Array = Matrix3D.tempRawData;
-			raw[0] = 1;
-			raw[1] = 0;
-			raw[2] = 0;
-			raw[3] = 0;
+		if (rotation) {
+			var angle:number = -rotation.x;
+			if(angle != 0){
+				sin = Math.sin(angle);
+				cos = Math.cos(angle);
 
-			raw[4] = 0;
-			raw[5] = cos;
-			raw[6] = -sin;
-			raw[7] = 0;
+				raw[0] = 1;
+				raw[1] = 0;
+				raw[2] = 0;
+				raw[3] = 0;
 
-			raw[8] = 0;
-			raw[9] = sin;
-			raw[10] = cos;
-			raw[11] = 0;
+				raw[4] = 0;
+				raw[5] = cos;
+				raw[6] = -sin;
+				raw[7] = 0;
 
-			raw[12] = 0;
-			raw[13] = 0;
-			raw[14] = 0;
-			raw[15] = 0;
-			this.append(Matrix3D.tempMatrix);
-		}
-		angle = -rotation.y;
-		if(angle != 0){
-			sin = Math.sin(angle);
-			cos = Math.cos(angle);
-			var raw:Float32Array = Matrix3D.tempRawData;
-			raw[0] = cos;
-			raw[1] = 0;
-			raw[2] = sin;
-			raw[3] = 0;
+				raw[8] = 0;
+				raw[9] = sin;
+				raw[10] = cos;
+				raw[11] = 0;
 
-			raw[4] = 0;
-			raw[5] = 1;
-			raw[6] = 0;
-			raw[7] = 0;
+				this.append(Matrix3D.tempMatrix);
+			}
+			angle = -rotation.y;
+			if(angle != 0){
+				sin = Math.sin(angle);
+				cos = Math.cos(angle);
 
-			raw[8] = -sin;
-			raw[9] = 0;
-			raw[10] = cos;
-			raw[11] = 0;
+				raw[0] = cos;
+				raw[1] = 0;
+				raw[2] = sin;
+				raw[3] = 0;
 
-			raw[12] = 0;
-			raw[13] = 0;
-			raw[14] = 0;
-			raw[15] = 0;
-			this.append(Matrix3D.tempMatrix);
-		}
-		angle = -rotation.z;
-		if(angle != 0){
-			sin = Math.sin(angle);
-			cos = Math.cos(angle);
+				raw[4] = 0;
+				raw[5] = 1;
+				raw[6] = 0;
+				raw[7] = 0;
 
-			var raw:Float32Array = Matrix3D.tempRawData;
-			raw[0] = cos;
-			raw[1] = -sin;
-			raw[2] = 0;
-			raw[3] = 0;
+				raw[8] = -sin;
+				raw[9] = 0;
+				raw[10] = cos;
+				raw[11] = 0;
 
-			raw[4] = sin;
-			raw[5] = cos;
-			raw[6] = 0;
-			raw[7] = 0;
+				this.append(Matrix3D.tempMatrix);
+			}
+			angle = -rotation.z;
+			if(angle != 0){
+				sin = Math.sin(angle);
+				cos = Math.cos(angle);
 
-			raw[8] = 0;
-			raw[9] = 0;
-			raw[10] = 1;
-			raw[11] = 0;
+				raw[0] = cos;
+				raw[1] = -sin;
+				raw[2] = 0;
+				raw[3] = 0;
 
-			raw[12] = 0;
-			raw[13] = 0;
-			raw[14] = 0;
-			raw[15] = 0;
-			this.append(Matrix3D.tempMatrix);
+				raw[4] = sin;
+				raw[5] = cos;
+				raw[6] = 0;
+				raw[7] = 0;
+
+				raw[8] = 0;
+				raw[9] = 0;
+				raw[10] = 1;
+				raw[11] = 0;
+
+				this.append(Matrix3D.tempMatrix);
+			}
 		}
 
-		this.position = components[0];
+		this.position = pos;
 		this.rawData[15] = 1;
 
 		return true;

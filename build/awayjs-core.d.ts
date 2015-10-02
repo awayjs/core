@@ -3589,18 +3589,6 @@ declare module "awayjs-core/lib/geom/Plane3D" {
 	
 }
 
-declare module "awayjs-core/lib/geom/PlaneClassification" {
-	class PlaneClassification {
-	    static BACK: number;
-	    static FRONT: number;
-	    static IN: number;
-	    static OUT: number;
-	    static INTERSECT: number;
-	}
-	export = PlaneClassification;
-	
-}
-
 declare module "awayjs-core/lib/geom/Point" {
 	/**
 	 * The Point object represents a location in a two-dimensional coordinate
@@ -3755,466 +3743,6 @@ declare module "awayjs-core/lib/geom/PoissonLookup" {
 	    static getDistribution(n: number): Array<number>;
 	}
 	export = PoissonLookup;
-	
-}
-
-declare module "awayjs-core/lib/geom/Quaternion" {
-	import Matrix3D = require("awayjs-core/lib/geom/Matrix3D");
-	import Vector3D = require("awayjs-core/lib/geom/Vector3D");
-	/**
-	 * A Quaternion object which can be used to represent rotations.
-	 */
-	class Quaternion {
-	    /**
-	     * The x value of the quaternion.
-	     */
-	    x: number;
-	    /**
-	     * The y value of the quaternion.
-	     */
-	    y: number;
-	    /**
-	     * The z value of the quaternion.
-	     */
-	    z: number;
-	    /**
-	     * The w value of the quaternion.
-	     */
-	    w: number;
-	    /**
-	     * Creates a new Quaternion object.
-	     * @param x The x value of the quaternion.
-	     * @param y The y value of the quaternion.
-	     * @param z The z value of the quaternion.
-	     * @param w The w value of the quaternion.
-	     */
-	    constructor(x?: number, y?: number, z?: number, w?: number);
-	    /**
-	     * Returns the magnitude of the quaternion object.
-	     */
-	    magnitude: number;
-	    /**
-	     * Fills the quaternion object with the result from a multiplication of two quaternion objects.
-	     *
-	     * @param    qa    The first quaternion in the multiplication.
-	     * @param    qb    The second quaternion in the multiplication.
-	     */
-	    multiply(qa: Quaternion, qb: Quaternion): void;
-	    multiplyVector(vector: Vector3D, target?: Quaternion): Quaternion;
-	    /**
-	     * Fills the quaternion object with values representing the given rotation around a vector.
-	     *
-	     * @param    axis    The axis around which to rotate
-	     * @param    angle    The angle in radians of the rotation.
-	     */
-	    fromAxisAngle(axis: Vector3D, angle: number): void;
-	    /**
-	     * Spherically interpolates between two quaternions, providing an interpolation between rotations with constant angle change rate.
-	     * @param qa The first quaternion to interpolate.
-	     * @param qb The second quaternion to interpolate.
-	     * @param t The interpolation weight, a value between 0 and 1.
-	     */
-	    slerp(qa: Quaternion, qb: Quaternion, t: number): void;
-	    /**
-	     * Linearly interpolates between two quaternions.
-	     * @param qa The first quaternion to interpolate.
-	     * @param qb The second quaternion to interpolate.
-	     * @param t The interpolation weight, a value between 0 and 1.
-	     */
-	    lerp(qa: Quaternion, qb: Quaternion, t: number): void;
-	    /**
-	     * Fills the quaternion object with values representing the given euler rotation.
-	     *
-	     * @param    ax        The angle in radians of the rotation around the ax axis.
-	     * @param    ay        The angle in radians of the rotation around the ay axis.
-	     * @param    az        The angle in radians of the rotation around the az axis.
-	     */
-	    fromEulerAngles(ax: number, ay: number, az: number): void;
-	    /**
-	     * Fills a target Vector3D object with the Euler angles that form the rotation represented by this quaternion.
-	     * @param target An optional Vector3D object to contain the Euler angles. If not provided, a new object is created.
-	     * @return The Vector3D containing the Euler angles.
-	     */
-	    toEulerAngles(target?: Vector3D): Vector3D;
-	    /**
-	     * Normalises the quaternion object.
-	     */
-	    normalize(val?: number): void;
-	    /**
-	     * Used to trace the values of a quaternion.
-	     *
-	     * @return A string representation of the quaternion object.
-	     */
-	    toString(): string;
-	    /**
-	     * Converts the quaternion to a Matrix3D object representing an equivalent rotation.
-	     * @param target An optional Matrix3D container to store the transformation in. If not provided, a new object is created.
-	     * @return A Matrix3D object representing an equivalent rotation.
-	     */
-	    toMatrix3D(target?: Matrix3D): Matrix3D;
-	    /**
-	     * Extracts a quaternion rotation matrix out of a given Matrix3D object.
-	     * @param matrix The Matrix3D out of which the rotation will be extracted.
-	     */
-	    fromMatrix(matrix: Matrix3D): void;
-	    /**
-	     * Converts the quaternion to a Vector.&lt;Number&gt; matrix representation of a rotation equivalent to this quaternion.
-	     * @param target The Vector.&lt;Number&gt; to contain the raw matrix data.
-	     * @param exclude4thRow If true, the last row will be omitted, and a 4x3 matrix will be generated instead of a 4x4.
-	     */
-	    toRawData(target: number[], exclude4thRow?: boolean): void;
-	    /**
-	     * Clones the quaternion.
-	     * @return An exact duplicate of the current Quaternion.
-	     */
-	    clone(): Quaternion;
-	    /**
-	     * Rotates a point.
-	     * @param vector The Vector3D object to be rotated.
-	     * @param target An optional Vector3D object that will contain the rotated coordinates. If not provided, a new object will be created.
-	     * @return A Vector3D object containing the rotated point.
-	     */
-	    rotatePoint(vector: Vector3D, target?: Vector3D): Vector3D;
-	    /**
-	     * Copies the data from a quaternion into this instance.
-	     * @param q The quaternion to copy from.
-	     */
-	    copyFrom(q: Quaternion): void;
-	}
-	export = Quaternion;
-	
-}
-
-declare module "awayjs-core/lib/geom/Rectangle" {
-	import Point = require("awayjs-core/lib/geom/Point");
-	/**
-	 * A Rectangle object is an area defined by its position, as indicated by its
-	 * top-left corner point(<i>x</i>, <i>y</i>) and by its width and its height.
-	 *
-	 *
-	 * <p>The <code>x</code>, <code>y</code>, <code>width</code>, and
-	 * <code>height</code> properties of the Rectangle class are independent of
-	 * each other; changing the value of one property has no effect on the others.
-	 * However, the <code>right</code> and <code>bottom</code> properties are
-	 * integrally related to those four properties. For example, if you change the
-	 * value of the <code>right</code> property, the value of the
-	 * <code>width</code> property changes; if you change the <code>bottom</code>
-	 * property, the value of the <code>height</code> property changes. </p>
-	 *
-	 * <p>The following methods and properties use Rectangle objects:</p>
-	 *
-	 * <ul>
-	 *   <li>The <code>applyFilter()</code>, <code>colorTransform()</code>,
-	 * <code>copyChannel()</code>, <code>copyPixels()</code>, <code>draw()</code>,
-	 * <code>fillRect()</code>, <code>generateFilterRect()</code>,
-	 * <code>getColorBoundsRect()</code>, <code>getPixels()</code>,
-	 * <code>merge()</code>, <code>paletteMap()</code>,
-	 * <code>pixelDisolve()</code>, <code>setPixels()</code>, and
-	 * <code>threshold()</code> methods, and the <code>rect</code> property of the
-	 * BitmapData class</li>
-	 *   <li>The <code>getBounds()</code> and <code>getRect()</code> methods, and
-	 * the <code>scrollRect</code> and <code>scale9Grid</code> properties of the
-	 * DisplayObject class</li>
-	 *   <li>The <code>getCharBoundaries()</code> method of the TextField
-	 * class</li>
-	 *   <li>The <code>pixelBounds</code> property of the Transform class</li>
-	 *   <li>The <code>bounds</code> parameter for the <code>startDrag()</code>
-	 * method of the Sprite class</li>
-	 *   <li>The <code>printArea</code> parameter of the <code>addPage()</code>
-	 * method of the PrintJob class</li>
-	 * </ul>
-	 *
-	 * <p>You can use the <code>new Rectangle()</code> constructor to create a
-	 * Rectangle object.</p>
-	 *
-	 * <p><b>Note:</b> The Rectangle class does not define a rectangular Shape
-	 * display object. To draw a rectangular Shape object onscreen, use the
-	 * <code>drawRect()</code> method of the Graphics class.</p>
-	 */
-	class Rectangle {
-	    private _size;
-	    private _bottomRight;
-	    private _topLeft;
-	    /**
-	     * The height of the rectangle, in pixels. Changing the <code>height</code>
-	     * value of a Rectangle object has no effect on the <code>x</code>,
-	     * <code>y</code>, and <code>width</code> properties.
-	     */
-	    height: number;
-	    /**
-	     * The width of the rectangle, in pixels. Changing the <code>width</code>
-	     * value of a Rectangle object has no effect on the <code>x</code>,
-	     * <code>y</code>, and <code>height</code> properties.
-	     */
-	    width: number;
-	    /**
-	     * The <i>x</i> coordinate of the top-left corner of the rectangle. Changing
-	     * the value of the <code>x</code> property of a Rectangle object has no
-	     * effect on the <code>y</code>, <code>width</code>, and <code>height</code>
-	     * properties.
-	     *
-	     * <p>The value of the <code>x</code> property is equal to the value of the
-	     * <code>left</code> property.</p>
-	     */
-	    x: number;
-	    /**
-	     * The <i>y</i> coordinate of the top-left corner of the rectangle. Changing
-	     * the value of the <code>y</code> property of a Rectangle object has no
-	     * effect on the <code>x</code>, <code>width</code>, and <code>height</code>
-	     * properties.
-	     *
-	     * <p>The value of the <code>y</code> property is equal to the value of the
-	     * <code>top</code> property.</p>
-	     */
-	    y: number;
-	    /**
-	     * The sum of the <code>y</code> and <code>height</code> properties.
-	     */
-	    bottom: number;
-	    /**
-	     * The location of the Rectangle object's bottom-right corner, determined by
-	     * the values of the <code>right</code> and <code>bottom</code> properties.
-	     */
-	    bottomRight: Point;
-	    /**
-	     * The <i>x</i> coordinate of the top-left corner of the rectangle. Changing
-	     * the <code>left</code> property of a Rectangle object has no effect on the
-	     * <code>y</code> and <code>height</code> properties. However it does affect
-	     * the <code>width</code> property, whereas changing the <code>x</code> value
-	     * does <i>not</i> affect the <code>width</code> property.
-	     *
-	     * <p>The value of the <code>left</code> property is equal to the value of
-	     * the <code>x</code> property.</p>
-	     */
-	    left: number;
-	    /**
-	     * The sum of the <code>x</code> and <code>width</code> properties.
-	     */
-	    right: number;
-	    /**
-	     * The size of the Rectangle object, expressed as a Point object with the
-	     * values of the <code>width</code> and <code>height</code> properties.
-	     */
-	    size: Point;
-	    /**
-	     * The <i>y</i> coordinate of the top-left corner of the rectangle. Changing
-	     * the <code>top</code> property of a Rectangle object has no effect on the
-	     * <code>x</code> and <code>width</code> properties. However it does affect
-	     * the <code>height</code> property, whereas changing the <code>y</code>
-	     * value does <i>not</i> affect the <code>height</code> property.
-	     *
-	     * <p>The value of the <code>top</code> property is equal to the value of the
-	     * <code>y</code> property.</p>
-	     */
-	    top: number;
-	    /**
-	     * The location of the Rectangle object's top-left corner, determined by the
-	     * <i>x</i> and <i>y</i> coordinates of the point.
-	     */
-	    topLeft: Point;
-	    /**
-	     * Creates a new Rectangle object with the top-left corner specified by the
-	     * <code>x</code> and <code>y</code> parameters and with the specified
-	     * <code>width</code> and <code>height</code> parameters. If you call this
-	     * public without parameters, a rectangle with <code>x</code>,
-	     * <code>y</code>, <code>width</code>, and <code>height</code> properties set
-	     * to 0 is created.
-	     *
-	     * @param x      The <i>x</i> coordinate of the top-left corner of the
-	     *               rectangle.
-	     * @param y      The <i>y</i> coordinate of the top-left corner of the
-	     *               rectangle.
-	     * @param width  The width of the rectangle, in pixels.
-	     * @param height The height of the rectangle, in pixels.
-	     */
-	    constructor(x?: number, y?: number, width?: number, height?: number);
-	    /**
-	     * Returns a new Rectangle object with the same values for the
-	     * <code>x</code>, <code>y</code>, <code>width</code>, and
-	     * <code>height</code> properties as the original Rectangle object.
-	     *
-	     * @return A new Rectangle object with the same values for the
-	     *         <code>x</code>, <code>y</code>, <code>width</code>, and
-	     *         <code>height</code> properties as the original Rectangle object.
-	     */
-	    clone(): Rectangle;
-	    /**
-	     * Determines whether the specified point is contained within the rectangular
-	     * region defined by this Rectangle object.
-	     *
-	     * @param x The <i>x</i> coordinate(horizontal position) of the point.
-	     * @param y The <i>y</i> coordinate(vertical position) of the point.
-	     * @return A value of <code>true</code> if the Rectangle object contains the
-	     *         specified point; otherwise <code>false</code>.
-	     */
-	    contains(x: number, y: number): boolean;
-	    /**
-	     * Determines whether the specified point is contained within the rectangular
-	     * region defined by this Rectangle object. This method is similar to the
-	     * <code>Rectangle.contains()</code> method, except that it takes a Point
-	     * object as a parameter.
-	     *
-	     * @param point The point, as represented by its <i>x</i> and <i>y</i>
-	     *              coordinates.
-	     * @return A value of <code>true</code> if the Rectangle object contains the
-	     *         specified point; otherwise <code>false</code>.
-	     */
-	    containsPoint(point: Point): boolean;
-	    /**
-	     * Determines whether the Rectangle object specified by the <code>rect</code>
-	     * parameter is contained within this Rectangle object. A Rectangle object is
-	     * said to contain another if the second Rectangle object falls entirely
-	     * within the boundaries of the first.
-	     *
-	     * @param rect The Rectangle object being checked.
-	     * @return A value of <code>true</code> if the Rectangle object that you
-	     *         specify is contained by this Rectangle object; otherwise
-	     *         <code>false</code>.
-	     */
-	    containsRect(rect: Rectangle): boolean;
-	    /**
-	     * Copies all of rectangle data from the source Rectangle object into the
-	     * calling Rectangle object.
-	     *
-	     * @param sourceRect The Rectangle object from which to copy the data.
-	     */
-	    copyFrom(sourceRect: Rectangle): void;
-	    /**
-	     * Determines whether the object specified in the <code>toCompare</code>
-	     * parameter is equal to this Rectangle object. This method compares the
-	     * <code>x</code>, <code>y</code>, <code>width</code>, and
-	     * <code>height</code> properties of an object against the same properties of
-	     * this Rectangle object.
-	     *
-	     * @param toCompare The rectangle to compare to this Rectangle object.
-	     * @return A value of <code>true</code> if the object has exactly the same
-	     *         values for the <code>x</code>, <code>y</code>, <code>width</code>,
-	     *         and <code>height</code> properties as this Rectangle object;
-	     *         otherwise <code>false</code>.
-	     */
-	    equals(toCompare: Rectangle): boolean;
-	    /**
-	     * Increases the size of the Rectangle object by the specified amounts, in
-	     * pixels. The center point of the Rectangle object stays the same, and its
-	     * size increases to the left and right by the <code>dx</code> value, and to
-	     * the top and the bottom by the <code>dy</code> value.
-	     *
-	     * @param dx The value to be added to the left and the right of the Rectangle
-	     *           object. The following equation is used to calculate the new
-	     *           width and position of the rectangle:
-	     * @param dy The value to be added to the top and the bottom of the
-	     *           Rectangle. The following equation is used to calculate the new
-	     *           height and position of the rectangle:
-	     */
-	    inflate(dx: number, dy: number): void;
-	    /**
-	     * Increases the size of the Rectangle object. This method is similar to the
-	     * <code>Rectangle.inflate()</code> method except it takes a Point object as
-	     * a parameter.
-	     *
-	     * <p>The following two code examples give the same result:</p>
-	     *
-	     * @param point The <code>x</code> property of this Point object is used to
-	     *              increase the horizontal dimension of the Rectangle object.
-	     *              The <code>y</code> property is used to increase the vertical
-	     *              dimension of the Rectangle object.
-	     */
-	    inflatePoint(point: Point): void;
-	    /**
-	     * If the Rectangle object specified in the <code>toIntersect</code>
-	     * parameter intersects with this Rectangle object, returns the area of
-	     * intersection as a Rectangle object. If the rectangles do not intersect,
-	     * this method returns an empty Rectangle object with its properties set to
-	     * 0.
-	     *
-	     * @param toIntersect The Rectangle object to compare against to see if it
-	     *                    intersects with this Rectangle object.
-	     * @return A Rectangle object that equals the area of intersection. If the
-	     *         rectangles do not intersect, this method returns an empty
-	     *         Rectangle object; that is, a rectangle with its <code>x</code>,
-	     *         <code>y</code>, <code>width</code>, and <code>height</code>
-	     *         properties set to 0.
-	     */
-	    intersection(toIntersect: Rectangle): Rectangle;
-	    /**
-	     * Determines whether the object specified in the <code>toIntersect</code>
-	     * parameter intersects with this Rectangle object. This method checks the
-	     * <code>x</code>, <code>y</code>, <code>width</code>, and
-	     * <code>height</code> properties of the specified Rectangle object to see if
-	     * it intersects with this Rectangle object.
-	     *
-	     * @param toIntersect The Rectangle object to compare against this Rectangle
-	     *                    object.
-	     * @return A value of <code>true</code> if the specified object intersects
-	     *         with this Rectangle object; otherwise <code>false</code>.
-	     */
-	    intersects(toIntersect: Rectangle): boolean;
-	    /**
-	     * Determines whether or not this Rectangle object is empty.
-	     *
-	     * @return A value of <code>true</code> if the Rectangle object's width or
-	     *         height is less than or equal to 0; otherwise <code>false</code>.
-	     */
-	    isEmpty(): boolean;
-	    /**
-	     * Adjusts the location of the Rectangle object, as determined by its
-	     * top-left corner, by the specified amounts.
-	     *
-	     * @param dx Moves the <i>x</i> value of the Rectangle object by this amount.
-	     * @param dy Moves the <i>y</i> value of the Rectangle object by this amount.
-	     */
-	    offset(dx: number, dy: number): void;
-	    /**
-	     * Adjusts the location of the Rectangle object using a Point object as a
-	     * parameter. This method is similar to the <code>Rectangle.offset()</code>
-	     * method, except that it takes a Point object as a parameter.
-	     *
-	     * @param point A Point object to use to offset this Rectangle object.
-	     */
-	    offsetPoint(point: Point): void;
-	    /**
-	     * Sets all of the Rectangle object's properties to 0. A Rectangle object is
-	     * empty if its width or height is less than or equal to 0.
-	     *
-	     * <p> This method sets the values of the <code>x</code>, <code>y</code>,
-	     * <code>width</code>, and <code>height</code> properties to 0.</p>
-	     *
-	     */
-	    setEmpty(): void;
-	    /**
-	     * Sets the members of Rectangle to the specified values
-	     *
-	     * @param xa      The <i>x</i> coordinate of the top-left corner of the
-	     *                rectangle.
-	     * @param ya      The <i>y</i> coordinate of the top-left corner of the
-	     *                rectangle.
-	     * @param widtha  The width of the rectangle, in pixels.
-	     * @param heighta The height of the rectangle, in pixels.
-	     */
-	    setTo(xa: number, ya: number, widtha: number, heighta: number): void;
-	    /**
-	     * Builds and returns a string that lists the horizontal and vertical
-	     * positions and the width and height of the Rectangle object.
-	     *
-	     * @return A string listing the value of each of the following properties of
-	     *         the Rectangle object: <code>x</code>, <code>y</code>,
-	     *         <code>width</code>, and <code>height</code>.
-	     */
-	    toString(): string;
-	    /**
-	     * Adds two rectangles together to create a new Rectangle object, by filling
-	     * in the horizontal and vertical space between the two rectangles.
-	     *
-	     * <p><b>Note:</b> The <code>union()</code> method ignores rectangles with
-	     * <code>0</code> as the height or width value, such as: <code>var
-	     * rect2:Rectangle = new Rectangle(300,300,50,0);</code></p>
-	     *
-	     * @param toUnion A Rectangle object to add to this Rectangle object.
-	     * @return A new Rectangle object that is the union of the two rectangles.
-	     */
-	    union(toUnion: Rectangle): Rectangle;
-	}
-	export = Rectangle;
 	
 }
 
@@ -5219,6 +4747,478 @@ declare module "awayjs-core/lib/library/IAsset" {
 	    _clearInterfaces(): any;
 	}
 	export = IAsset;
+	
+}
+
+declare module "awayjs-core/lib/geom/Rectangle" {
+	import Point = require("awayjs-core/lib/geom/Point");
+	/**
+	 * A Rectangle object is an area defined by its position, as indicated by its
+	 * top-left corner point(<i>x</i>, <i>y</i>) and by its width and its height.
+	 *
+	 *
+	 * <p>The <code>x</code>, <code>y</code>, <code>width</code>, and
+	 * <code>height</code> properties of the Rectangle class are independent of
+	 * each other; changing the value of one property has no effect on the others.
+	 * However, the <code>right</code> and <code>bottom</code> properties are
+	 * integrally related to those four properties. For example, if you change the
+	 * value of the <code>right</code> property, the value of the
+	 * <code>width</code> property changes; if you change the <code>bottom</code>
+	 * property, the value of the <code>height</code> property changes. </p>
+	 *
+	 * <p>The following methods and properties use Rectangle objects:</p>
+	 *
+	 * <ul>
+	 *   <li>The <code>applyFilter()</code>, <code>colorTransform()</code>,
+	 * <code>copyChannel()</code>, <code>copyPixels()</code>, <code>draw()</code>,
+	 * <code>fillRect()</code>, <code>generateFilterRect()</code>,
+	 * <code>getColorBoundsRect()</code>, <code>getPixels()</code>,
+	 * <code>merge()</code>, <code>paletteMap()</code>,
+	 * <code>pixelDisolve()</code>, <code>setPixels()</code>, and
+	 * <code>threshold()</code> methods, and the <code>rect</code> property of the
+	 * BitmapData class</li>
+	 *   <li>The <code>getBounds()</code> and <code>getRect()</code> methods, and
+	 * the <code>scrollRect</code> and <code>scale9Grid</code> properties of the
+	 * DisplayObject class</li>
+	 *   <li>The <code>getCharBoundaries()</code> method of the TextField
+	 * class</li>
+	 *   <li>The <code>pixelBounds</code> property of the Transform class</li>
+	 *   <li>The <code>bounds</code> parameter for the <code>startDrag()</code>
+	 * method of the Sprite class</li>
+	 *   <li>The <code>printArea</code> parameter of the <code>addPage()</code>
+	 * method of the PrintJob class</li>
+	 * </ul>
+	 *
+	 * <p>You can use the <code>new Rectangle()</code> constructor to create a
+	 * Rectangle object.</p>
+	 *
+	 * <p><b>Note:</b> The Rectangle class does not define a rectangular Shape
+	 * display object. To draw a rectangular Shape object onscreen, use the
+	 * <code>drawRect()</code> method of the Graphics class.</p>
+	 */
+	class Rectangle {
+	    private _size;
+	    private _bottomRight;
+	    private _topLeft;
+	    /**
+	     * The height of the rectangle, in pixels. Changing the <code>height</code>
+	     * value of a Rectangle object has no effect on the <code>x</code>,
+	     * <code>y</code>, and <code>width</code> properties.
+	     */
+	    height: number;
+	    /**
+	     * The width of the rectangle, in pixels. Changing the <code>width</code>
+	     * value of a Rectangle object has no effect on the <code>x</code>,
+	     * <code>y</code>, and <code>height</code> properties.
+	     */
+	    width: number;
+	    /**
+	     * The <i>x</i> coordinate of the top-left corner of the rectangle. Changing
+	     * the value of the <code>x</code> property of a Rectangle object has no
+	     * effect on the <code>y</code>, <code>width</code>, and <code>height</code>
+	     * properties.
+	     *
+	     * <p>The value of the <code>x</code> property is equal to the value of the
+	     * <code>left</code> property.</p>
+	     */
+	    x: number;
+	    /**
+	     * The <i>y</i> coordinate of the top-left corner of the rectangle. Changing
+	     * the value of the <code>y</code> property of a Rectangle object has no
+	     * effect on the <code>x</code>, <code>width</code>, and <code>height</code>
+	     * properties.
+	     *
+	     * <p>The value of the <code>y</code> property is equal to the value of the
+	     * <code>top</code> property.</p>
+	     */
+	    y: number;
+	    /**
+	     * The sum of the <code>y</code> and <code>height</code> properties.
+	     */
+	    bottom: number;
+	    /**
+	     * The location of the Rectangle object's bottom-right corner, determined by
+	     * the values of the <code>right</code> and <code>bottom</code> properties.
+	     */
+	    bottomRight: Point;
+	    /**
+	     * The <i>x</i> coordinate of the top-left corner of the rectangle. Changing
+	     * the <code>left</code> property of a Rectangle object has no effect on the
+	     * <code>y</code> and <code>height</code> properties. However it does affect
+	     * the <code>width</code> property, whereas changing the <code>x</code> value
+	     * does <i>not</i> affect the <code>width</code> property.
+	     *
+	     * <p>The value of the <code>left</code> property is equal to the value of
+	     * the <code>x</code> property.</p>
+	     */
+	    left: number;
+	    /**
+	     * The sum of the <code>x</code> and <code>width</code> properties.
+	     */
+	    right: number;
+	    /**
+	     * The size of the Rectangle object, expressed as a Point object with the
+	     * values of the <code>width</code> and <code>height</code> properties.
+	     */
+	    size: Point;
+	    /**
+	     * The <i>y</i> coordinate of the top-left corner of the rectangle. Changing
+	     * the <code>top</code> property of a Rectangle object has no effect on the
+	     * <code>x</code> and <code>width</code> properties. However it does affect
+	     * the <code>height</code> property, whereas changing the <code>y</code>
+	     * value does <i>not</i> affect the <code>height</code> property.
+	     *
+	     * <p>The value of the <code>top</code> property is equal to the value of the
+	     * <code>y</code> property.</p>
+	     */
+	    top: number;
+	    /**
+	     * The location of the Rectangle object's top-left corner, determined by the
+	     * <i>x</i> and <i>y</i> coordinates of the point.
+	     */
+	    topLeft: Point;
+	    /**
+	     * Creates a new Rectangle object with the top-left corner specified by the
+	     * <code>x</code> and <code>y</code> parameters and with the specified
+	     * <code>width</code> and <code>height</code> parameters. If you call this
+	     * public without parameters, a rectangle with <code>x</code>,
+	     * <code>y</code>, <code>width</code>, and <code>height</code> properties set
+	     * to 0 is created.
+	     *
+	     * @param x      The <i>x</i> coordinate of the top-left corner of the
+	     *               rectangle.
+	     * @param y      The <i>y</i> coordinate of the top-left corner of the
+	     *               rectangle.
+	     * @param width  The width of the rectangle, in pixels.
+	     * @param height The height of the rectangle, in pixels.
+	     */
+	    constructor(x?: number, y?: number, width?: number, height?: number);
+	    /**
+	     * Returns a new Rectangle object with the same values for the
+	     * <code>x</code>, <code>y</code>, <code>width</code>, and
+	     * <code>height</code> properties as the original Rectangle object.
+	     *
+	     * @return A new Rectangle object with the same values for the
+	     *         <code>x</code>, <code>y</code>, <code>width</code>, and
+	     *         <code>height</code> properties as the original Rectangle object.
+	     */
+	    clone(): Rectangle;
+	    /**
+	     * Determines whether the specified point is contained within the rectangular
+	     * region defined by this Rectangle object.
+	     *
+	     * @param x The <i>x</i> coordinate(horizontal position) of the point.
+	     * @param y The <i>y</i> coordinate(vertical position) of the point.
+	     * @return A value of <code>true</code> if the Rectangle object contains the
+	     *         specified point; otherwise <code>false</code>.
+	     */
+	    contains(x: number, y: number): boolean;
+	    /**
+	     * Determines whether the specified point is contained within the rectangular
+	     * region defined by this Rectangle object. This method is similar to the
+	     * <code>Rectangle.contains()</code> method, except that it takes a Point
+	     * object as a parameter.
+	     *
+	     * @param point The point, as represented by its <i>x</i> and <i>y</i>
+	     *              coordinates.
+	     * @return A value of <code>true</code> if the Rectangle object contains the
+	     *         specified point; otherwise <code>false</code>.
+	     */
+	    containsPoint(point: Point): boolean;
+	    /**
+	     * Determines whether the Rectangle object specified by the <code>rect</code>
+	     * parameter is contained within this Rectangle object. A Rectangle object is
+	     * said to contain another if the second Rectangle object falls entirely
+	     * within the boundaries of the first.
+	     *
+	     * @param rect The Rectangle object being checked.
+	     * @return A value of <code>true</code> if the Rectangle object that you
+	     *         specify is contained by this Rectangle object; otherwise
+	     *         <code>false</code>.
+	     */
+	    containsRect(rect: Rectangle): boolean;
+	    /**
+	     * Copies all of rectangle data from the source Rectangle object into the
+	     * calling Rectangle object.
+	     *
+	     * @param sourceRect The Rectangle object from which to copy the data.
+	     */
+	    copyFrom(sourceRect: Rectangle): void;
+	    /**
+	     * Determines whether the object specified in the <code>toCompare</code>
+	     * parameter is equal to this Rectangle object. This method compares the
+	     * <code>x</code>, <code>y</code>, <code>width</code>, and
+	     * <code>height</code> properties of an object against the same properties of
+	     * this Rectangle object.
+	     *
+	     * @param toCompare The rectangle to compare to this Rectangle object.
+	     * @return A value of <code>true</code> if the object has exactly the same
+	     *         values for the <code>x</code>, <code>y</code>, <code>width</code>,
+	     *         and <code>height</code> properties as this Rectangle object;
+	     *         otherwise <code>false</code>.
+	     */
+	    equals(toCompare: Rectangle): boolean;
+	    /**
+	     * Increases the size of the Rectangle object by the specified amounts, in
+	     * pixels. The center point of the Rectangle object stays the same, and its
+	     * size increases to the left and right by the <code>dx</code> value, and to
+	     * the top and the bottom by the <code>dy</code> value.
+	     *
+	     * @param dx The value to be added to the left and the right of the Rectangle
+	     *           object. The following equation is used to calculate the new
+	     *           width and position of the rectangle:
+	     * @param dy The value to be added to the top and the bottom of the
+	     *           Rectangle. The following equation is used to calculate the new
+	     *           height and position of the rectangle:
+	     */
+	    inflate(dx: number, dy: number): void;
+	    /**
+	     * Increases the size of the Rectangle object. This method is similar to the
+	     * <code>Rectangle.inflate()</code> method except it takes a Point object as
+	     * a parameter.
+	     *
+	     * <p>The following two code examples give the same result:</p>
+	     *
+	     * @param point The <code>x</code> property of this Point object is used to
+	     *              increase the horizontal dimension of the Rectangle object.
+	     *              The <code>y</code> property is used to increase the vertical
+	     *              dimension of the Rectangle object.
+	     */
+	    inflatePoint(point: Point): void;
+	    /**
+	     * If the Rectangle object specified in the <code>toIntersect</code>
+	     * parameter intersects with this Rectangle object, returns the area of
+	     * intersection as a Rectangle object. If the rectangles do not intersect,
+	     * this method returns an empty Rectangle object with its properties set to
+	     * 0.
+	     *
+	     * @param toIntersect The Rectangle object to compare against to see if it
+	     *                    intersects with this Rectangle object.
+	     * @return A Rectangle object that equals the area of intersection. If the
+	     *         rectangles do not intersect, this method returns an empty
+	     *         Rectangle object; that is, a rectangle with its <code>x</code>,
+	     *         <code>y</code>, <code>width</code>, and <code>height</code>
+	     *         properties set to 0.
+	     */
+	    intersection(toIntersect: Rectangle): Rectangle;
+	    /**
+	     * Determines whether the object specified in the <code>toIntersect</code>
+	     * parameter intersects with this Rectangle object. This method checks the
+	     * <code>x</code>, <code>y</code>, <code>width</code>, and
+	     * <code>height</code> properties of the specified Rectangle object to see if
+	     * it intersects with this Rectangle object.
+	     *
+	     * @param toIntersect The Rectangle object to compare against this Rectangle
+	     *                    object.
+	     * @return A value of <code>true</code> if the specified object intersects
+	     *         with this Rectangle object; otherwise <code>false</code>.
+	     */
+	    intersects(toIntersect: Rectangle): boolean;
+	    /**
+	     * Determines whether or not this Rectangle object is empty.
+	     *
+	     * @return A value of <code>true</code> if the Rectangle object's width or
+	     *         height is less than or equal to 0; otherwise <code>false</code>.
+	     */
+	    isEmpty(): boolean;
+	    /**
+	     * Adjusts the location of the Rectangle object, as determined by its
+	     * top-left corner, by the specified amounts.
+	     *
+	     * @param dx Moves the <i>x</i> value of the Rectangle object by this amount.
+	     * @param dy Moves the <i>y</i> value of the Rectangle object by this amount.
+	     */
+	    offset(dx: number, dy: number): void;
+	    /**
+	     * Adjusts the location of the Rectangle object using a Point object as a
+	     * parameter. This method is similar to the <code>Rectangle.offset()</code>
+	     * method, except that it takes a Point object as a parameter.
+	     *
+	     * @param point A Point object to use to offset this Rectangle object.
+	     */
+	    offsetPoint(point: Point): void;
+	    /**
+	     * Sets all of the Rectangle object's properties to 0. A Rectangle object is
+	     * empty if its width or height is less than or equal to 0.
+	     *
+	     * <p> This method sets the values of the <code>x</code>, <code>y</code>,
+	     * <code>width</code>, and <code>height</code> properties to 0.</p>
+	     *
+	     */
+	    setEmpty(): void;
+	    /**
+	     * Sets the members of Rectangle to the specified values
+	     *
+	     * @param xa      The <i>x</i> coordinate of the top-left corner of the
+	     *                rectangle.
+	     * @param ya      The <i>y</i> coordinate of the top-left corner of the
+	     *                rectangle.
+	     * @param widtha  The width of the rectangle, in pixels.
+	     * @param heighta The height of the rectangle, in pixels.
+	     */
+	    setTo(xa: number, ya: number, widtha: number, heighta: number): void;
+	    /**
+	     * Builds and returns a string that lists the horizontal and vertical
+	     * positions and the width and height of the Rectangle object.
+	     *
+	     * @return A string listing the value of each of the following properties of
+	     *         the Rectangle object: <code>x</code>, <code>y</code>,
+	     *         <code>width</code>, and <code>height</code>.
+	     */
+	    toString(): string;
+	    /**
+	     * Adds two rectangles together to create a new Rectangle object, by filling
+	     * in the horizontal and vertical space between the two rectangles.
+	     *
+	     * <p><b>Note:</b> The <code>union()</code> method ignores rectangles with
+	     * <code>0</code> as the height or width value, such as: <code>var
+	     * rect2:Rectangle = new Rectangle(300,300,50,0);</code></p>
+	     *
+	     * @param toUnion A Rectangle object to add to this Rectangle object.
+	     * @return A new Rectangle object that is the union of the two rectangles.
+	     */
+	    union(toUnion: Rectangle): Rectangle;
+	}
+	export = Rectangle;
+	
+}
+
+declare module "awayjs-core/lib/geom/Quaternion" {
+	import Matrix3D = require("awayjs-core/lib/geom/Matrix3D");
+	import Vector3D = require("awayjs-core/lib/geom/Vector3D");
+	/**
+	 * A Quaternion object which can be used to represent rotations.
+	 */
+	class Quaternion {
+	    /**
+	     * The x value of the quaternion.
+	     */
+	    x: number;
+	    /**
+	     * The y value of the quaternion.
+	     */
+	    y: number;
+	    /**
+	     * The z value of the quaternion.
+	     */
+	    z: number;
+	    /**
+	     * The w value of the quaternion.
+	     */
+	    w: number;
+	    /**
+	     * Creates a new Quaternion object.
+	     * @param x The x value of the quaternion.
+	     * @param y The y value of the quaternion.
+	     * @param z The z value of the quaternion.
+	     * @param w The w value of the quaternion.
+	     */
+	    constructor(x?: number, y?: number, z?: number, w?: number);
+	    /**
+	     * Returns the magnitude of the quaternion object.
+	     */
+	    magnitude: number;
+	    /**
+	     * Fills the quaternion object with the result from a multiplication of two quaternion objects.
+	     *
+	     * @param    qa    The first quaternion in the multiplication.
+	     * @param    qb    The second quaternion in the multiplication.
+	     */
+	    multiply(qa: Quaternion, qb: Quaternion): void;
+	    multiplyVector(vector: Vector3D, target?: Quaternion): Quaternion;
+	    /**
+	     * Fills the quaternion object with values representing the given rotation around a vector.
+	     *
+	     * @param    axis    The axis around which to rotate
+	     * @param    angle    The angle in radians of the rotation.
+	     */
+	    fromAxisAngle(axis: Vector3D, angle: number): void;
+	    /**
+	     * Spherically interpolates between two quaternions, providing an interpolation between rotations with constant angle change rate.
+	     * @param qa The first quaternion to interpolate.
+	     * @param qb The second quaternion to interpolate.
+	     * @param t The interpolation weight, a value between 0 and 1.
+	     */
+	    slerp(qa: Quaternion, qb: Quaternion, t: number): void;
+	    /**
+	     * Linearly interpolates between two quaternions.
+	     * @param qa The first quaternion to interpolate.
+	     * @param qb The second quaternion to interpolate.
+	     * @param t The interpolation weight, a value between 0 and 1.
+	     */
+	    lerp(qa: Quaternion, qb: Quaternion, t: number): void;
+	    /**
+	     * Fills the quaternion object with values representing the given euler rotation.
+	     *
+	     * @param    ax        The angle in radians of the rotation around the ax axis.
+	     * @param    ay        The angle in radians of the rotation around the ay axis.
+	     * @param    az        The angle in radians of the rotation around the az axis.
+	     */
+	    fromEulerAngles(ax: number, ay: number, az: number): void;
+	    /**
+	     * Fills a target Vector3D object with the Euler angles that form the rotation represented by this quaternion.
+	     * @param target An optional Vector3D object to contain the Euler angles. If not provided, a new object is created.
+	     * @return The Vector3D containing the Euler angles.
+	     */
+	    toEulerAngles(target?: Vector3D): Vector3D;
+	    /**
+	     * Normalises the quaternion object.
+	     */
+	    normalize(val?: number): void;
+	    /**
+	     * Used to trace the values of a quaternion.
+	     *
+	     * @return A string representation of the quaternion object.
+	     */
+	    toString(): string;
+	    /**
+	     * Converts the quaternion to a Matrix3D object representing an equivalent rotation.
+	     * @param target An optional Matrix3D container to store the transformation in. If not provided, a new object is created.
+	     * @return A Matrix3D object representing an equivalent rotation.
+	     */
+	    toMatrix3D(target?: Matrix3D): Matrix3D;
+	    /**
+	     * Extracts a quaternion rotation matrix out of a given Matrix3D object.
+	     * @param matrix The Matrix3D out of which the rotation will be extracted.
+	     */
+	    fromMatrix(matrix: Matrix3D): void;
+	    /**
+	     * Converts the quaternion to a Vector.&lt;Number&gt; matrix representation of a rotation equivalent to this quaternion.
+	     * @param target The Vector.&lt;Number&gt; to contain the raw matrix data.
+	     * @param exclude4thRow If true, the last row will be omitted, and a 4x3 matrix will be generated instead of a 4x4.
+	     */
+	    toRawData(target: number[], exclude4thRow?: boolean): void;
+	    /**
+	     * Clones the quaternion.
+	     * @return An exact duplicate of the current Quaternion.
+	     */
+	    clone(): Quaternion;
+	    /**
+	     * Rotates a point.
+	     * @param vector The Vector3D object to be rotated.
+	     * @param target An optional Vector3D object that will contain the rotated coordinates. If not provided, a new object will be created.
+	     * @return A Vector3D object containing the rotated point.
+	     */
+	    rotatePoint(vector: Vector3D, target?: Vector3D): Vector3D;
+	    /**
+	     * Copies the data from a quaternion into this instance.
+	     * @param q The quaternion to copy from.
+	     */
+	    copyFrom(q: Quaternion): void;
+	}
+	export = Quaternion;
+	
+}
+
+declare module "awayjs-core/lib/geom/PlaneClassification" {
+	class PlaneClassification {
+	    static BACK: number;
+	    static FRONT: number;
+	    static IN: number;
+	    static OUT: number;
+	    static INTERSECT: number;
+	}
+	export = PlaneClassification;
 	
 }
 

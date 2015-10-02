@@ -124,11 +124,6 @@ class Matrix3D
 		raw[10] = 1;
 		raw[11] = 0;
 
-		raw[8] = 0;
-		raw[9] = 0;
-		raw[10] = 0;
-		raw[11] = 0;
-
 		raw[12] = 0;
 		raw[13] = 0;
 		raw[14] = 0;

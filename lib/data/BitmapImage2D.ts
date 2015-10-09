@@ -153,7 +153,7 @@ class BitmapImage2D extends Image2D
 	 */
 	public clone():BitmapImage2D
 	{
-		var t:BitmapImage2D = new BitmapImage2D(this.width, this.height, this.transparent);
+		var t:BitmapImage2D = new BitmapImage2D(this.width, this.height, this.transparent, null, this.powerOfTwo);
 		t.draw(this);
 		return t;
 	}

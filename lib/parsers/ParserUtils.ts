@@ -102,9 +102,9 @@ class ParserUtils
 	/**
 	 *
 	 */
-	public static imageToBitmapImage2D(img:HTMLImageElement):BitmapImage2D
+	public static imageToBitmapImage2D(img:HTMLImageElement, powerOfTwo:boolean = true):BitmapImage2D
 	{
-		var bitmapData:BitmapImage2D = new BitmapImage2D(img.width, img.height, true);
+		var bitmapData:BitmapImage2D = new BitmapImage2D(img.width, img.height, true, null, powerOfTwo);
 		bitmapData.draw(img);
 
 		return bitmapData;

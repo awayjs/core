@@ -860,7 +860,7 @@ var BitmapImage2D = (function (_super) {
      * @return A new BitmapImage2D object that is identical to the original.
      */
     BitmapImage2D.prototype.clone = function () {
-        var t = new BitmapImage2D(this.width, this.height, this.transparent);
+        var t = new BitmapImage2D(this.width, this.height, this.transparent, null, this.powerOfTwo);
         t.draw(this);
         return t;
     };
@@ -11521,8 +11521,9 @@ var ParserUtils = (function () {
     /**
      *
      */
-    ParserUtils.imageToBitmapImage2D = function (img) {
-        var bitmapData = new BitmapImage2D(img.width, img.height, true);
+    ParserUtils.imageToBitmapImage2D = function (img, powerOfTwo) {
+        if (powerOfTwo === void 0) { powerOfTwo = true; }
+        var bitmapData = new BitmapImage2D(img.width, img.height, true, null, powerOfTwo);
         bitmapData.draw(img);
         return bitmapData;
     };

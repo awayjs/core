@@ -7853,6 +7853,30 @@ declare module "awayjs-core/lib/utils/ImageUtils" {
 	
 }
 
+declare module "awayjs-core/lib/utils/MipmapGenerator" {
+	import BitmapImage2D = require("awayjs-core/lib/data/BitmapImage2D");
+	class MipmapGenerator {
+	    private static _mipMaps;
+	    private static _mipMapUses;
+	    private static _matrix;
+	    private static _rect;
+	    private static _source;
+	    /**
+	     * Uploads a BitmapImage2D with mip maps to a target Texture object.
+	     * @param source The source to upload.
+	     * @param target The target Texture to upload to.
+	     * @param mipmap An optional mip map holder to avoids creating new instances for fe animated materials.
+	     * @param alpha Indicate whether or not the uploaded bitmapData is transparent.
+	     */
+	    static _generateMipMaps(source: HTMLElement, output?: Array<BitmapImage2D>, alpha?: boolean): any;
+	    static _generateMipMaps(source: BitmapImage2D, output?: Array<BitmapImage2D>, alpha?: boolean): any;
+	    private static _getMipmapHolder(mipMapHolder, newW, newH);
+	    static _freeMipMapHolder(mipMapHolder: BitmapImage2D): void;
+	}
+	export = MipmapGenerator;
+	
+}
+
 declare module "awayjs-core/lib/utils/RequestAnimationFrame" {
 	class RequestAnimationFrame {
 	    private _callback;
@@ -7891,30 +7915,6 @@ declare module "awayjs-core/lib/utils/RequestAnimationFrame" {
 	    private _tick();
 	}
 	export = RequestAnimationFrame;
-	
-}
-
-declare module "awayjs-core/lib/utils/MipmapGenerator" {
-	import BitmapImage2D = require("awayjs-core/lib/data/BitmapImage2D");
-	class MipmapGenerator {
-	    private static _mipMaps;
-	    private static _mipMapUses;
-	    private static _matrix;
-	    private static _rect;
-	    private static _source;
-	    /**
-	     * Uploads a BitmapImage2D with mip maps to a target Texture object.
-	     * @param source The source to upload.
-	     * @param target The target Texture to upload to.
-	     * @param mipmap An optional mip map holder to avoids creating new instances for fe animated materials.
-	     * @param alpha Indicate whether or not the uploaded bitmapData is transparent.
-	     */
-	    static _generateMipMaps(source: HTMLElement, output?: Array<BitmapImage2D>, alpha?: boolean): any;
-	    static _generateMipMaps(source: BitmapImage2D, output?: Array<BitmapImage2D>, alpha?: boolean): any;
-	    private static _getMipmapHolder(mipMapHolder, newW, newH);
-	    static _freeMipMapHolder(mipMapHolder: BitmapImage2D): void;
-	}
-	export = MipmapGenerator;
 	
 }
 

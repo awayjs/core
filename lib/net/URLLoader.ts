@@ -113,6 +113,10 @@ class URLLoader extends EventDispatcher
 			this.getRequest(request);
 	}
 
+	public isSupported():boolean {
+		return window != null;
+	}
+
 	/**
 	 *
 	 */

@@ -9,7 +9,7 @@ import ColorUtils				= require("awayjs-core/lib/utils/ColorUtils");
 import BitmapImageUtils			= require("awayjs-core/lib/utils/BitmapImageUtils");
 import ImageUtils				= require("awayjs-core/lib/utils/ImageUtils");
 import IImageCanvas				= require("awayjs-core/lib/data/IImageCanvas");
-
+import CPUCanvas = require('awayjs-core/lib/data/CPUCanvas');
 /**
  * The BitmapImage2D class lets you work with the data(pixels) of a Bitmap
  * object. You can use the methods of the BitmapImage2D class to create
@@ -71,7 +71,6 @@ class BitmapImage2D extends Image2D
 {
 	public static assetType:string = "[image BitmapImage2D]";
 
-	public static canvasClass;
 	private _imageCanvas:IImageCanvas;
 	private _context:CanvasRenderingContext2D;
 	private _imageData:ImageData;
@@ -138,10 +137,10 @@ class BitmapImage2D extends Image2D
 		super(width, height, powerOfTwo);
 
 		this._transparent = transparent;
-		if(BitmapImage2D.canvasClass) {
-			this._imageCanvas = new BitmapImage2D.canvasClass();
-		}else if(document) {
+		if(document) {
 			this._imageCanvas = <HTMLCanvasElement> document.createElement("canvas");
+		}else {
+			this._imageCanvas = new CPUCanvas();
 		}
 		this._imageCanvas.width = width;
 		this._imageCanvas.height = height;

@@ -8,6 +8,7 @@ import ByteArray				= require("awayjs-core/lib/utils/ByteArray");
 import ColorUtils				= require("awayjs-core/lib/utils/ColorUtils");
 import BitmapImageUtils			= require("awayjs-core/lib/utils/BitmapImageUtils");
 import ImageUtils				= require("awayjs-core/lib/utils/ImageUtils");
+import IImageCanvas				= require("awayjs-core/lib/data/IImageCanvas");
 
 /**
  * The BitmapImage2D class lets you work with the data(pixels) of a Bitmap
@@ -70,7 +71,8 @@ class BitmapImage2D extends Image2D
 {
 	public static assetType:string = "[image BitmapImage2D]";
 
-	private _imageCanvas:HTMLCanvasElement;
+	public static canvasClass;
+	private _imageCanvas:IImageCanvas;
 	private _context:CanvasRenderingContext2D;
 	private _imageData:ImageData;
 	private _transparent:boolean;
@@ -136,11 +138,15 @@ class BitmapImage2D extends Image2D
 		super(width, height, powerOfTwo);
 
 		this._transparent = transparent;
-		this._imageCanvas = <HTMLCanvasElement> document.createElement("canvas");
+		if(BitmapImage2D.canvasClass) {
+			this._imageCanvas = new BitmapImage2D.canvasClass();
+		}else if(document) {
+			this._imageCanvas = <HTMLCanvasElement> document.createElement("canvas");
+		}
 		this._imageCanvas.width = width;
 		this._imageCanvas.height = height;
 		this._context = this._imageCanvas.getContext("2d");
-		
+
 		if (fillColor != null)
 			this.fillRect(this._rect, fillColor);
 	}
@@ -442,8 +448,9 @@ class BitmapImage2D extends Image2D
 	public draw(source:HTMLElement, matrix?:Matrix, colorTransform?:ColorTransform, blendMode?:BlendMode, clipRect?:Rectangle, smoothing?:boolean);
 	public draw(source:any, matrix?:Matrix, colorTransform?:ColorTransform, blendMode?:BlendMode, clipRect?:Rectangle, smoothing?:boolean)
 	{
-		if (source instanceof BitmapImage2D)
+		if (source instanceof BitmapImage2D && source.getCanvas()){
 			source = source.getCanvas();
+		}
 
 		if (this._locked) {
 
@@ -535,7 +542,7 @@ class BitmapImage2D extends Image2D
 			a = pixelData.data[3];
 
 		} else {
-			var index:number = (x + y*this._imageCanvas.width)*4;
+			var index:number = (x + y*this._imageData.width)*4;
 
 			r = this._imageData.data[index + 0];
 			g = this._imageData.data[index + 1];
@@ -588,7 +595,7 @@ class BitmapImage2D extends Image2D
 			a = pixelData.data[3];
 
 		} else {
-			var index:number = (x + y*this._imageCanvas.width)*4;
+			var index:number = (x + y*this._imageData.width)*4;
 
 			r = this._imageData.data[index + 0];
 			g = this._imageData.data[index + 1];
@@ -637,7 +644,7 @@ class BitmapImage2D extends Image2D
 		for (i = 0; i < rect.width; ++i) {
 			for (j = 0; j < rect.height; ++j) {
 				argb = ColorUtils.float32ColorToARGB(inputArray[i + j*rect.width]);
-				index = (i + rect.x + (j + rect.y)*this._imageCanvas.width)*4;
+				index = (i + rect.x + (j + rect.y)*this._imageData.width)*4;
 
 				this._imageData.data[index + 0] = argb[1];
 				this._imageData.data[index + 1] = argb[2];
@@ -678,7 +685,7 @@ class BitmapImage2D extends Image2D
 		if (!this._locked)
 			this._imageData = this._context.getImageData(0, 0, this._rect.width, this._rect.height);
 
-		var index:number = (x + y*this._imageCanvas.width)*4;
+		var index:number = (x + y*this._imageData.width)*4;
 
 		this._imageData.data[index + 0] = argb[1];
 		this._imageData.data[index + 1] = argb[2];
@@ -731,7 +738,7 @@ class BitmapImage2D extends Image2D
 		if (!this._locked)
 			this._imageData = this._context.getImageData(0, 0, this._rect.width, this._rect.height);
 
-		var index:number = (x + y*this._imageCanvas.width)*4;
+		var index:number = (x + y*this._imageData.width)*4;
 
 		this._imageData.data[index + 0] = argb[1];
 		this._imageData.data[index + 1] = argb[2];
@@ -774,7 +781,7 @@ class BitmapImage2D extends Image2D
 		var i:number /*uint*/, j:number /*uint*/, index:number /*uint*/;
 		for (i = 0; i < rect.width; ++i) {
 			for (j = 0; j < rect.height; ++j) {
-				index = (i + rect.x + (j + rect.y)*this._imageCanvas.width)*4;
+				index = (i + rect.x + (j + rect.y)*this._imageData.width)*4;
 
 				this._imageData.data[index + 0] = inputByteArray.readUnsignedInt();
 				this._imageData.data[index + 1] = inputByteArray.readUnsignedInt();
@@ -832,7 +839,7 @@ class BitmapImage2D extends Image2D
 	 */
 	public getCanvas():HTMLCanvasElement
 	{
-		return this._imageCanvas;
+		return <HTMLCanvasElement> this._imageCanvas;
 	}
 
 	/**
@@ -846,8 +853,10 @@ class BitmapImage2D extends Image2D
 		if (this._locked)
 			this._context.putImageData(this._imageData, 0, 0);
 
-		this._imageCanvas.width = width;
-		this._imageCanvas.height = height;
+		if(this._imageCanvas) {
+			this._imageCanvas.width = width;
+			this._imageCanvas.height = height;
+		}
 		
 		super._setSize(width, height);
 

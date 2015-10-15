@@ -352,13 +352,24 @@ class ParserBase extends EventDispatcher
 
 	/**
 	 *
-	 * @returns {string}
+	 * @returns {ByteArray}
 	 * @private
 	 */
 	public _pGetByteData():ByteArray
 	{
 		return ParserUtils.toByteArray(this._data);
 	}
+
+	/**
+	 *
+	 * @returns {any}
+	 * @private
+	 */
+	public _pGetData():any
+	{
+		return this._data;
+	}
+
 }
 
 export = ParserBase;

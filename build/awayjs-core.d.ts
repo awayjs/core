@@ -1482,6 +1482,106 @@ declare module "awayjs-core/lib/data/BlendMode" {
 	
 }
 
+declare module "awayjs-core/lib/data/CPUCanvas" {
+	import IImageCanvas = require("awayjs-core/lib/data/IImageCanvas");
+	import ImageData = require('awayjs-core/lib/data/ImageData');
+	class CPUCanvas implements IImageCanvas {
+	    width: number;
+	    height: number;
+	    private imageData;
+	    getContext(contextId: string): CanvasRenderingContext2D;
+	    constructor();
+	    reset(): void;
+	    getImageData(): ImageData;
+	}
+	export = CPUCanvas;
+	
+}
+
+declare module "awayjs-core/lib/data/CPURenderingContext2D" {
+	import ImageData = require('awayjs-core/lib/data/ImageData');
+	import CPUCanvas = require('awayjs-core/lib/data/CPUCanvas');
+	class CPURenderingContext2D implements CanvasRenderingContext2D {
+	    miterLimit: number;
+	    font: string;
+	    globalCompositeOperation: string;
+	    msFillRule: string;
+	    lineCap: string;
+	    msImageSmoothingEnabled: boolean;
+	    lineDashOffset: number;
+	    shadowColor: string;
+	    lineJoin: string;
+	    shadowOffsetX: number;
+	    lineWidth: number;
+	    canvas: HTMLCanvasElement;
+	    strokeStyle: any;
+	    globalAlpha: number;
+	    shadowOffsetY: number;
+	    fillStyle: any;
+	    shadowBlur: number;
+	    textAlign: string;
+	    textBaseline: string;
+	    cpuCanvas: CPUCanvas;
+	    private matrix;
+	    constructor(cpuCanvas: CPUCanvas);
+	    restore(): void;
+	    setTransform(m11: number, m12: number, m21: number, m22: number, dx: number, dy: number): void;
+	    save(): void;
+	    arc(x: number, y: number, radius: number, startAngle: number, endAngle: number, anticlockwise: boolean): void;
+	    measureText(text: string): TextMetrics;
+	    isPointInPath(x: number, y: number, fillRule: string): boolean;
+	    quadraticCurveTo(cpx: number, cpy: number, x: number, y: number): void;
+	    putImageData(imagedata: ImageData, dx: number, dy: number, dirtyX: number, dirtyY: number, dirtyWidth: number, dirtyHeight: number): void;
+	    rotate(angle: number): void;
+	    fillText(text: string, x: number, y: number, maxWidth: number): void;
+	    translate(x: number, y: number): void;
+	    scale(x: number, y: number): void;
+	    createRadialGradient(x0: number, y0: number, r0: number, x1: number, y1: number, r1: number): CanvasGradient;
+	    lineTo(x: number, y: number): void;
+	    getLineDash(): number[];
+	    fill(fillRule: string): void;
+	    createImageData(imageDataOrSw: any, sh: number): ImageData;
+	    createPattern(image: HTMLElement, repetition: string): CanvasPattern;
+	    closePath(): void;
+	    rect(x: number, y: number, w: number, h: number): void;
+	    clip(fillRule: string): void;
+	    clearRect(x: number, y: number, w: number, h: number): void;
+	    moveTo(x: number, y: number): void;
+	    getImageData(sx: number, sy: number, sw: number, sh: number): ImageData;
+	    private point;
+	    private copyPixel32(target, x, y, source, fromX, fromY);
+	    private parsedFillStyle;
+	    private parsedA;
+	    private parsedR;
+	    private parsedG;
+	    private parsedB;
+	    fillRect(x: number, y: number, w: number, h: number): void;
+	    bezierCurveTo(cp1x: number, cp1y: number, cp2x: number, cp2y: number, x: number, y: number): void;
+	    drawImage(image: HTMLElement, offsetX: number, offsetY: number, width: number, height: number, canvasOffsetX: number, canvasOffsetY: number, canvasImageWidth: number, canvasImageHeight: number): void;
+	    private drawBitmap(bitmap, offsetX, offsetY, width, height);
+	    transform(m11: number, m12: number, m21: number, m22: number, dx: number, dy: number): void;
+	    stroke(): void;
+	    strokeRect(x: number, y: number, w: number, h: number): void;
+	    setLineDash(segments: number[]): void;
+	    strokeText(text: string, x: number, y: number, maxWidth: number): void;
+	    beginPath(): void;
+	    arcTo(x1: number, y1: number, x2: number, y2: number, radius: number): void;
+	    createLinearGradient(x0: number, y0: number, x1: number, y1: number): CanvasGradient;
+	}
+	export = CPURenderingContext2D;
+	
+}
+
+declare module "awayjs-core/lib/data/IImageCanvas" {
+	interface IImageCanvas {
+	    width: number;
+	    height: number;
+	    getContext(contextId: string): CanvasRenderingContext2D;
+	}
+	export = IImageCanvas;
+	
+}
+
 declare module "awayjs-core/lib/data/Image2D" {
 	import ImageBase = require("awayjs-core/lib/data/ImageBase");
 	import Rectangle = require("awayjs-core/lib/geom/Rectangle");
@@ -1596,6 +1696,17 @@ declare module "awayjs-core/lib/data/ImageCube" {
 	    private _testDimensions();
 	}
 	export = ImageCube;
+	
+}
+
+declare module "awayjs-core/lib/data/ImageData" {
+	class ImageData {
+	    width: number;
+	    data: number[];
+	    height: number;
+	    constructor(width: number, height: number);
+	}
+	export = ImageData;
 	
 }
 
@@ -4843,24 +4954,6 @@ declare module "awayjs-core/lib/library/AssetLibrary" {
 	
 }
 
-declare module "awayjs-core/lib/library/AssetLibraryIterator" {
-	import IAsset = require("awayjs-core/lib/library/IAsset");
-	class AssetLibraryIterator {
-	    private _assets;
-	    private _filtered;
-	    private _idx;
-	    constructor(assets: Array<IAsset>, assetTypeFilter: string, namespaceFilter: string, filterFunc: any);
-	    currentAsset: IAsset;
-	    numAssets: number;
-	    next(): IAsset;
-	    reset(): void;
-	    setIndex(index: number): void;
-	    private filter(assetTypeFilter, namespaceFilter, filterFunc);
-	}
-	export = AssetLibraryIterator;
-	
-}
-
 declare module "awayjs-core/lib/library/AssetLibraryBundle" {
 	import URLRequest = require("awayjs-core/lib/net/URLRequest");
 	import AssetLibraryIterator = require("awayjs-core/lib/library/AssetLibraryIterator");
@@ -5051,6 +5144,24 @@ declare module "awayjs-core/lib/library/AssetLibraryBundle" {
 	    private onAssetConflictResolved(event);
 	}
 	export = AssetLibraryBundle;
+	
+}
+
+declare module "awayjs-core/lib/library/AssetLibraryIterator" {
+	import IAsset = require("awayjs-core/lib/library/IAsset");
+	class AssetLibraryIterator {
+	    private _assets;
+	    private _filtered;
+	    private _idx;
+	    constructor(assets: Array<IAsset>, assetTypeFilter: string, namespaceFilter: string, filterFunc: any);
+	    currentAsset: IAsset;
+	    numAssets: number;
+	    next(): IAsset;
+	    reset(): void;
+	    setIndex(index: number): void;
+	    private filter(assetTypeFilter, namespaceFilter, filterFunc);
+	}
+	export = AssetLibraryIterator;
 	
 }
 
@@ -5261,15 +5372,6 @@ declare module "awayjs-core/lib/library/IDUtil" {
 	
 }
 
-declare module "awayjs-core/lib/library/IWrapperClass" {
-	import IAssetClass = require("awayjs-core/lib/library/IAssetClass");
-	interface IWrapperClass {
-	    assetClass: IAssetClass;
-	}
-	export = IWrapperClass;
-	
-}
-
 declare module "awayjs-core/lib/library/IgnoreConflictStrategy" {
 	import ConflictStrategyBase = require("awayjs-core/lib/library/ConflictStrategyBase");
 	import IAsset = require("awayjs-core/lib/library/IAsset");
@@ -5279,6 +5381,15 @@ declare module "awayjs-core/lib/library/IgnoreConflictStrategy" {
 	    create(): ConflictStrategyBase;
 	}
 	export = IgnoreConflictStrategy;
+	
+}
+
+declare module "awayjs-core/lib/library/IWrapperClass" {
+	import IAssetClass = require("awayjs-core/lib/library/IAssetClass");
+	interface IWrapperClass {
+	    assetClass: IAssetClass;
+	}
+	export = IWrapperClass;
 	
 }
 
@@ -5586,62 +5697,12 @@ declare module "awayjs-core/lib/library/NumSuffixConflictStrategy" {
 	
 }
 
-declare module "awayjs-core/lib/managers/AudioChannel" {
-	class AudioChannel {
-	    static maxChannels: number;
-	    static _channels: Array<AudioChannel>;
-	    private _isPlaying;
-	    private _isLooping;
-	    private static _audioCtx;
-	    private _audioCtx;
-	    private _gainNode;
-	    private _audio;
-	    currentTime: number;
-	    volume: number;
-	    isPlaying(): boolean;
-	    isLooping(): boolean;
-	    isDecoding(): boolean;
-	    constructor();
-	    play(url: string, offset?: number, loop?: boolean): void;
-	    stop(): void;
-	    private _onEnded(event);
-	}
-	export = AudioChannel;
-	
-}
-
 declare module "awayjs-core/lib/managers/AudioManager" {
 	import IAudioChannel = require("awayjs-core/lib/managers/IAudioChannel");
 	class AudioManager {
 	    static getChannel(byteLength: number): IAudioChannel;
 	}
 	export = AudioManager;
-	
-}
-
-declare module "awayjs-core/lib/managers/EventAudioChannel" {
-	class EventAudioChannel {
-	    static maxChannels: number;
-	    static _channels: Array<EventAudioChannel>;
-	    static _base64Cache: Object;
-	    private _isPlaying;
-	    private _isLooping;
-	    private _volume;
-	    private _startTime;
-	    private _duration;
-	    private _audio;
-	    duration: number;
-	    currentTime: number;
-	    volume: number;
-	    isPlaying(): boolean;
-	    isLooping(): boolean;
-	    isDecoding(): boolean;
-	    constructor();
-	    play(buffer: ArrayBuffer, offset?: number, loop?: boolean, id?: number): void;
-	    stop(): void;
-	    private _onTimeUpdate(event);
-	}
-	export = EventAudioChannel;
 	
 }
 
@@ -5822,6 +5883,7 @@ declare module "awayjs-core/lib/net/URLLoader" {
 	     * @param request The URLRequest object containing the URL of the object to be loaded.
 	     */
 	    load(request: URLRequest): void;
+	    isSupported(): boolean;
 	    /**
 	     *
 	     */
@@ -6280,10 +6342,16 @@ declare module "awayjs-core/lib/parsers/ParserBase" {
 	    _pGetTextData(): string;
 	    /**
 	     *
-	     * @returns {string}
+	     * @returns {ByteArray}
 	     * @private
 	     */
 	    _pGetByteData(): ByteArray;
+	    /**
+	     *
+	     * @returns {any}
+	     * @private
+	     */
+	    _pGetData(): any;
 	}
 	export = ParserBase;
 	
@@ -7597,7 +7665,7 @@ declare module "awayjs-core/lib/utils/BitmapImageUtils" {
 	class BitmapImageUtils {
 	    static _fillRect(context: CanvasRenderingContext2D, rect: Rectangle, color: number, transparent: boolean): void;
 	    static _copyPixels(context: CanvasRenderingContext2D, bmpd: HTMLElement, sourceRect: Rectangle, destRect: Rectangle): void;
-	    static _draw(context: CanvasRenderingContext2D, source: HTMLElement, matrix: Matrix, colorTransform: ColorTransform, blendMode: BlendMode, clipRect: Rectangle, smoothing: boolean): void;
+	    static _draw(context: CanvasRenderingContext2D, source: any, matrix: Matrix, colorTransform: ColorTransform, blendMode: BlendMode, clipRect: Rectangle, smoothing: boolean): void;
 	}
 	export = BitmapImageUtils;
 	
@@ -7687,6 +7755,21 @@ declare module "awayjs-core/lib/utils/ByteArrayBuffer" {
 	
 }
 
+declare module "awayjs-core/lib/utils/ColorUtils" {
+	/**
+	 *
+	 */
+	class ColorUtils {
+	    static float32ColorToARGB(float32Color: number): number[];
+	    static ARGBtoFloat32(a: number, r: number, g: number, b: number): number;
+	    private static componentToHex(c);
+	    static RGBToHexString(argb: number[]): string;
+	    static ARGBToHexString(argb: number[]): string;
+	}
+	export = ColorUtils;
+	
+}
+
 declare module "awayjs-core/lib/utils/CSS" {
 	class CSS {
 	    static setElementSize(element: HTMLElement, width: number, height: number): void;
@@ -7700,21 +7783,6 @@ declare module "awayjs-core/lib/utils/CSS" {
 	    static setElementPosition(element: HTMLElement, x: number, y: number, absolute?: boolean): void;
 	}
 	export = CSS;
-	
-}
-
-declare module "awayjs-core/lib/utils/ColorUtils" {
-	/**
-	 *
-	 */
-	class ColorUtils {
-	    static float32ColorToARGB(float32Color: number): number[];
-	    static ARGBtoFloat32(a: number, r: number, g: number, b: number): number;
-	    private static componentToHex(c);
-	    static RGBToHexString(argb: number[]): string;
-	    static ARGBToHexString(argb: number[]): string;
-	}
-	export = ColorUtils;
 	
 }
 
@@ -7748,6 +7816,17 @@ declare module "awayjs-core/lib/utils/Extensions" {
 	
 }
 
+declare module "awayjs-core/lib/utils/getTimer" {
+	/**
+	 *
+	 *
+	 * @returns {number}
+	 */
+	function getTimer(): number;
+	export = getTimer;
+	
+}
+
 declare module "awayjs-core/lib/utils/IArrayBufferViewClass" {
 	interface IArrayBufferViewClass {
 	    BYTES_PER_ELEMENT: number;
@@ -7771,30 +7850,6 @@ declare module "awayjs-core/lib/utils/ImageUtils" {
 	    static getBestPowerOf2(value: number): number;
 	}
 	export = ImageUtils;
-	
-}
-
-declare module "awayjs-core/lib/utils/MipmapGenerator" {
-	import BitmapImage2D = require("awayjs-core/lib/data/BitmapImage2D");
-	class MipmapGenerator {
-	    private static _mipMaps;
-	    private static _mipMapUses;
-	    private static _matrix;
-	    private static _rect;
-	    private static _source;
-	    /**
-	     * Uploads a BitmapImage2D with mip maps to a target Texture object.
-	     * @param source The source to upload.
-	     * @param target The target Texture to upload to.
-	     * @param mipmap An optional mip map holder to avoids creating new instances for fe animated materials.
-	     * @param alpha Indicate whether or not the uploaded bitmapData is transparent.
-	     */
-	    static _generateMipMaps(source: HTMLElement, output?: Array<BitmapImage2D>, alpha?: boolean): any;
-	    static _generateMipMaps(source: BitmapImage2D, output?: Array<BitmapImage2D>, alpha?: boolean): any;
-	    private static _getMipmapHolder(mipMapHolder, newW, newH);
-	    static _freeMipMapHolder(mipMapHolder: BitmapImage2D): void;
-	}
-	export = MipmapGenerator;
 	
 }
 
@@ -7839,6 +7894,30 @@ declare module "awayjs-core/lib/utils/RequestAnimationFrame" {
 	
 }
 
+declare module "awayjs-core/lib/utils/MipmapGenerator" {
+	import BitmapImage2D = require("awayjs-core/lib/data/BitmapImage2D");
+	class MipmapGenerator {
+	    private static _mipMaps;
+	    private static _mipMapUses;
+	    private static _matrix;
+	    private static _rect;
+	    private static _source;
+	    /**
+	     * Uploads a BitmapImage2D with mip maps to a target Texture object.
+	     * @param source The source to upload.
+	     * @param target The target Texture to upload to.
+	     * @param mipmap An optional mip map holder to avoids creating new instances for fe animated materials.
+	     * @param alpha Indicate whether or not the uploaded bitmapData is transparent.
+	     */
+	    static _generateMipMaps(source: HTMLElement, output?: Array<BitmapImage2D>, alpha?: boolean): any;
+	    static _generateMipMaps(source: BitmapImage2D, output?: Array<BitmapImage2D>, alpha?: boolean): any;
+	    private static _getMipmapHolder(mipMapHolder, newW, newH);
+	    static _freeMipMapHolder(mipMapHolder: BitmapImage2D): void;
+	}
+	export = MipmapGenerator;
+	
+}
+
 declare module "awayjs-core/lib/utils/Timer" {
 	import EventDispatcher = require("awayjs-core/lib/events/EventDispatcher");
 	class Timer extends EventDispatcher {
@@ -7872,17 +7951,6 @@ declare module "awayjs-core/lib/utils/XmlUtils" {
 	    static hasAttribute(node: Node, attrName: string): boolean;
 	}
 	export = XmlUtils;
-	
-}
-
-declare module "awayjs-core/lib/utils/getTimer" {
-	/**
-	 *
-	 *
-	 * @returns {number}
-	 */
-	function getTimer(): number;
-	export = getTimer;
 	
 }
 

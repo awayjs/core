@@ -723,6 +723,7 @@ var __extends = this.__extends || function (d, b) {
 var Image2D = require("awayjs-core/lib/data/Image2D");
 var ColorUtils = require("awayjs-core/lib/utils/ColorUtils");
 var BitmapImageUtils = require("awayjs-core/lib/utils/BitmapImageUtils");
+var CPUCanvas = require('awayjs-core/lib/data/CPUCanvas');
 /**
  * The BitmapImage2D class lets you work with the data(pixels) of a Bitmap
  * object. You can use the methods of the BitmapImage2D class to create
@@ -817,7 +818,12 @@ var BitmapImage2D = (function (_super) {
         _super.call(this, width, height, powerOfTwo);
         this._locked = false;
         this._transparent = transparent;
-        this._imageCanvas = document.createElement("canvas");
+        if (document) {
+            this._imageCanvas = document.createElement("canvas");
+        }
+        else {
+            this._imageCanvas = new CPUCanvas();
+        }
         this._imageCanvas.width = width;
         this._imageCanvas.height = height;
         this._context = this._imageCanvas.getContext("2d");
@@ -1007,8 +1013,9 @@ var BitmapImage2D = (function (_super) {
         this._locked = null;
     };
     BitmapImage2D.prototype.draw = function (source, matrix, colorTransform, blendMode, clipRect, smoothing) {
-        if (source instanceof BitmapImage2D)
+        if (source instanceof BitmapImage2D && source.getCanvas()) {
             source = source.getCanvas();
+        }
         if (this._locked) {
             // If canvas is locked:
             //
@@ -1087,7 +1094,7 @@ var BitmapImage2D = (function (_super) {
             a = pixelData.data[3];
         }
         else {
-            var index = (x + y * this._imageCanvas.width) * 4;
+            var index = (x + y * this._imageData.width) * 4;
             r = this._imageData.data[index + 0];
             g = this._imageData.data[index + 1];
             b = this._imageData.data[index + 2];
@@ -1133,7 +1140,7 @@ var BitmapImage2D = (function (_super) {
             a = pixelData.data[3];
         }
         else {
-            var index = (x + y * this._imageCanvas.width) * 4;
+            var index = (x + y * this._imageData.width) * 4;
             r = this._imageData.data[index + 0];
             g = this._imageData.data[index + 1];
             b = this._imageData.data[index + 2];
@@ -1174,7 +1181,7 @@ var BitmapImage2D = (function (_super) {
         for (i = 0; i < rect.width; ++i) {
             for (j = 0; j < rect.height; ++j) {
                 argb = ColorUtils.float32ColorToARGB(inputArray[i + j * rect.width]);
-                index = (i + rect.x + (j + rect.y) * this._imageCanvas.width) * 4;
+                index = (i + rect.x + (j + rect.y) * this._imageData.width) * 4;
                 this._imageData.data[index + 0] = argb[1];
                 this._imageData.data[index + 1] = argb[2];
                 this._imageData.data[index + 2] = argb[3];
@@ -1208,7 +1215,7 @@ var BitmapImage2D = (function (_super) {
         var argb = ColorUtils.float32ColorToARGB(color);
         if (!this._locked)
             this._imageData = this._context.getImageData(0, 0, this._rect.width, this._rect.height);
-        var index = (x + y * this._imageCanvas.width) * 4;
+        var index = (x + y * this._imageData.width) * 4;
         this._imageData.data[index + 0] = argb[1];
         this._imageData.data[index + 1] = argb[2];
         this._imageData.data[index + 2] = argb[3];
@@ -1254,7 +1261,7 @@ var BitmapImage2D = (function (_super) {
         var argb = ColorUtils.float32ColorToARGB(color);
         if (!this._locked)
             this._imageData = this._context.getImageData(0, 0, this._rect.width, this._rect.height);
-        var index = (x + y * this._imageCanvas.width) * 4;
+        var index = (x + y * this._imageData.width) * 4;
         this._imageData.data[index + 0] = argb[1];
         this._imageData.data[index + 1] = argb[2];
         this._imageData.data[index + 2] = argb[3];
@@ -1291,7 +1298,7 @@ var BitmapImage2D = (function (_super) {
         var i /*uint*/, j /*uint*/, index /*uint*/;
         for (i = 0; i < rect.width; ++i) {
             for (j = 0; j < rect.height; ++j) {
-                index = (i + rect.x + (j + rect.y) * this._imageCanvas.width) * 4;
+                index = (i + rect.x + (j + rect.y) * this._imageData.width) * 4;
                 this._imageData.data[index + 0] = inputByteArray.readUnsignedInt();
                 this._imageData.data[index + 1] = inputByteArray.readUnsignedInt();
                 this._imageData.data[index + 2] = inputByteArray.readUnsignedInt();
@@ -1348,8 +1355,10 @@ var BitmapImage2D = (function (_super) {
     BitmapImage2D.prototype._setSize = function (width, height) {
         if (this._locked)
             this._context.putImageData(this._imageData, 0, 0);
-        this._imageCanvas.width = width;
-        this._imageCanvas.height = height;
+        if (this._imageCanvas) {
+            this._imageCanvas.width = width;
+            this._imageCanvas.height = height;
+        }
         _super.prototype._setSize.call(this, width, height);
         if (this._locked)
             this._imageData = this._context.getImageData(0, 0, this._rect.width, this._rect.height);
@@ -1359,7 +1368,7 @@ var BitmapImage2D = (function (_super) {
 })(Image2D);
 module.exports = BitmapImage2D;
 
-},{"awayjs-core/lib/data/Image2D":"awayjs-core/lib/data/Image2D","awayjs-core/lib/utils/BitmapImageUtils":"awayjs-core/lib/utils/BitmapImageUtils","awayjs-core/lib/utils/ColorUtils":"awayjs-core/lib/utils/ColorUtils"}],"awayjs-core/lib/data/BitmapImageChannel":[function(require,module,exports){
+},{"awayjs-core/lib/data/CPUCanvas":"awayjs-core/lib/data/CPUCanvas","awayjs-core/lib/data/Image2D":"awayjs-core/lib/data/Image2D","awayjs-core/lib/utils/BitmapImageUtils":"awayjs-core/lib/utils/BitmapImageUtils","awayjs-core/lib/utils/ColorUtils":"awayjs-core/lib/utils/ColorUtils"}],"awayjs-core/lib/data/BitmapImageChannel":[function(require,module,exports){
 var BitmapImageChannel = (function () {
     function BitmapImageChannel() {
     }
@@ -2216,6 +2225,264 @@ var BlendMode = (function () {
 })();
 module.exports = BlendMode;
 
+},{}],"awayjs-core/lib/data/CPUCanvas":[function(require,module,exports){
+var CPURenderingContext2D = require('awayjs-core/lib/data/CPURenderingContext2D');
+var ImageData = require('awayjs-core/lib/data/ImageData');
+var CPUCanvas = (function () {
+    function CPUCanvas() {
+        this.width = 1;
+        this.height = 1;
+        this.reset();
+    }
+    CPUCanvas.prototype.getContext = function (contextId) {
+        return new CPURenderingContext2D(this);
+    };
+    CPUCanvas.prototype.reset = function () {
+        if (!this.imageData) {
+            this.imageData = new ImageData(this.width, this.height);
+        }
+        this.imageData.width = this.width;
+        this.imageData.height = this.height;
+        for (var i = 0; i < this.width * this.height * 4; i += 4) {
+            this.imageData.data[i] = 255;
+            this.imageData.data[i + 1] = 255;
+            this.imageData.data[i + 2] = 255;
+            this.imageData.data[i + 3] = 255;
+        }
+    };
+    CPUCanvas.prototype.getImageData = function () {
+        if (this.imageData.width != this.width || this.imageData.height != this.height) {
+            this.reset();
+        }
+        return this.imageData;
+    };
+    return CPUCanvas;
+})();
+module.exports = CPUCanvas;
+
+},{"awayjs-core/lib/data/CPURenderingContext2D":"awayjs-core/lib/data/CPURenderingContext2D","awayjs-core/lib/data/ImageData":"awayjs-core/lib/data/ImageData"}],"awayjs-core/lib/data/CPURenderingContext2D":[function(require,module,exports){
+var BitmapImage2D = require("awayjs-core/lib/data/BitmapImage2D");
+var Matrix = require("awayjs-core/lib/geom/Matrix");
+var Point = require("awayjs-core/lib/geom/Point");
+//TODO: implement all methods
+var CPURenderingContext2D = (function () {
+    function CPURenderingContext2D(cpuCanvas) {
+        this.point = new Point();
+        this.cpuCanvas = cpuCanvas;
+    }
+    CPURenderingContext2D.prototype.restore = function () {
+        this.matrix = null;
+    };
+    CPURenderingContext2D.prototype.setTransform = function (m11, m12, m21, m22, dx, dy) {
+        this.matrix = new Matrix(m11, m12, m21, m22, dx, dy);
+    };
+    CPURenderingContext2D.prototype.save = function () {
+    };
+    CPURenderingContext2D.prototype.arc = function (x, y, radius, startAngle, endAngle, anticlockwise) {
+    };
+    CPURenderingContext2D.prototype.measureText = function (text) {
+        return undefined;
+    };
+    CPURenderingContext2D.prototype.isPointInPath = function (x, y, fillRule) {
+        return undefined;
+    };
+    CPURenderingContext2D.prototype.quadraticCurveTo = function (cpx, cpy, x, y) {
+    };
+    CPURenderingContext2D.prototype.putImageData = function (imagedata, dx, dy, dirtyX, dirtyY, dirtyWidth, dirtyHeight) {
+    };
+    CPURenderingContext2D.prototype.rotate = function (angle) {
+    };
+    CPURenderingContext2D.prototype.fillText = function (text, x, y, maxWidth) {
+    };
+    CPURenderingContext2D.prototype.translate = function (x, y) {
+    };
+    CPURenderingContext2D.prototype.scale = function (x, y) {
+    };
+    CPURenderingContext2D.prototype.createRadialGradient = function (x0, y0, r0, x1, y1, r1) {
+        return undefined;
+    };
+    CPURenderingContext2D.prototype.lineTo = function (x, y) {
+    };
+    CPURenderingContext2D.prototype.getLineDash = function () {
+        return undefined;
+    };
+    CPURenderingContext2D.prototype.fill = function (fillRule) {
+    };
+    CPURenderingContext2D.prototype.createImageData = function (imageDataOrSw, sh) {
+        return undefined;
+    };
+    CPURenderingContext2D.prototype.createPattern = function (image, repetition) {
+        return undefined;
+    };
+    CPURenderingContext2D.prototype.closePath = function () {
+    };
+    CPURenderingContext2D.prototype.rect = function (x, y, w, h) {
+    };
+    CPURenderingContext2D.prototype.clip = function (fillRule) {
+    };
+    CPURenderingContext2D.prototype.clearRect = function (x, y, w, h) {
+    };
+    CPURenderingContext2D.prototype.moveTo = function (x, y) {
+    };
+    CPURenderingContext2D.prototype.getImageData = function (sx, sy, sw, sh) {
+        //var result:ImageData = new ImageData(sw, sh);
+        //var i:number = 0;
+        //
+        //for (i = 0; i < sw * sh * 4; i += 4) {
+        //    result.data[i] = 255;
+        //    result.data[i + 1] = 255;
+        //    result.data[i + 2] = 255;
+        //    result.data[i + 3] = 255;
+        //}
+        //
+        //var imageData:ImageData = this.cpuCanvas.getImageData();
+        //for (i = sx; i < sx + sw; i++) {
+        //    for (var j:number = sy; j < sy + sh; j++) {
+        //        this.copyPixel32(result, i - sx, i - sy, imageData, i, j);
+        //    }
+        //}
+        return this.cpuCanvas.getImageData();
+    };
+    CPURenderingContext2D.prototype.copyPixel32 = function (target, x, y, source, fromX, fromY) {
+        x = Math.floor(x);
+        y = Math.floor(y);
+        fromX = Math.floor(fromX);
+        fromY = Math.floor(fromY);
+        if (x < 0 || x >= target.width || y >= target.height || y < 0)
+            return;
+        if (fromX < 0 || fromX >= source.width || fromY >= source.height || fromY < 0)
+            return;
+        var index = (x + y * target.width) * 4;
+        var fromIndex = (fromX + fromY * source.width) * 4;
+        target.data[index] = source.data[fromIndex];
+        target.data[index + 1] = source.data[fromIndex + 1];
+        target.data[index + 2] = source.data[fromIndex + 2];
+        target.data[index + 3] = source.data[fromIndex + 3];
+    };
+    CPURenderingContext2D.prototype.fillRect = function (x, y, w, h) {
+        if (this.fillStyle) {
+            if (this.parsedFillStyle != this.fillStyle) {
+                var colorStrings = this.fillStyle.substring(5, this.fillStyle.lastIndexOf(")")).split(",");
+                this.parsedA = parseFloat(colorStrings[3]) * 255;
+                this.parsedR = parseInt(colorStrings[0]);
+                this.parsedG = parseInt(colorStrings[1]);
+                this.parsedB = parseInt(colorStrings[2]);
+                this.parsedFillStyle = this.fillStyle;
+            }
+            var imageData = this.cpuCanvas.getImageData();
+            for (var i = x; i < x + w; i++) {
+                for (var j = y; j < y + h; j++) {
+                    var index = (x + y * imageData.width) * 4;
+                    imageData.data[index] = this.parsedR;
+                    imageData.data[index + 1] = this.parsedG;
+                    imageData.data[index + 2] = this.parsedB;
+                    imageData.data[index + 3] = this.parsedA;
+                }
+            }
+        }
+    };
+    CPURenderingContext2D.prototype.bezierCurveTo = function (cp1x, cp1y, cp2x, cp2y, x, y) {
+    };
+    CPURenderingContext2D.prototype.drawImage = function (image, offsetX, offsetY, width, height, canvasOffsetX, canvasOffsetY, canvasImageWidth, canvasImageHeight) {
+        var b = image;
+        if (image.constructor.toString().indexOf("BitmapImage2D") > -1) {
+            var bitmap = b;
+            bitmap.lock();
+            this.drawBitmap(bitmap, offsetX, offsetY, width, height);
+            //if (!width || width == 0) {
+            //    width = bitmap.width;
+            //    height = bitmap.height;
+            //}
+            //
+            //var sourceData:ImageData = bitmap.getImageData();
+            //var scaleX:number = width / sourceData.width;
+            //var scaleY:number = height / sourceData.height;
+            //
+            //var imageData:ImageData = this.cpuCanvas.getImageData();
+            //for (var i:number = offsetX; i < offsetX + width; i++) {
+            //    for (var j:number = offsetY; j < offsetY + height; j++) {
+            //        this.copyPixel32(imageData, i, j, sourceData, (i - offsetX) * scaleX, (j - offsetY) * scaleY);
+            //    }
+            //}
+            bitmap.unlock();
+        }
+        else if (image.constructor.toString().indexOf("HTMLImage") > -1) {
+            var htmlImage = image;
+            var htmlCanvas = document.createElement("canvas");
+            htmlCanvas.width = htmlImage.width;
+            htmlCanvas.height = htmlImage.height;
+            var htmlContext = htmlCanvas.getContext("2d");
+            htmlContext.drawImage(htmlImage, 0, 0);
+            var htmlImageData = htmlContext.getImageData(0, 0, htmlImage.width, htmlImage.height);
+            var resultBitmap = new BitmapImage2D(htmlImage.width, htmlImage.height, true, 0, false);
+            resultBitmap.getImageData().data = htmlImageData.data;
+            var passBitmap = resultBitmap;
+            this.drawImage(passBitmap, offsetX, offsetY, width, height, canvasOffsetX, canvasOffsetY, canvasImageWidth, canvasImageHeight);
+        }
+        else if (image.constructor.toString().indexOf("CPUCanvas") > -1) {
+            //
+            var canvas = b;
+            this.drawBitmap(canvas, offsetX, offsetY, width, height);
+        }
+    };
+    CPURenderingContext2D.prototype.drawBitmap = function (bitmap, offsetX, offsetY, width, height) {
+        if (!width || width == 0) {
+            width = bitmap.width;
+            height = bitmap.height;
+        }
+        var sourceData = bitmap.getImageData();
+        if (this.matrix) {
+            width *= this.matrix.a;
+            height *= this.matrix.d;
+            this.matrix.tx += offsetX;
+            this.matrix.ty += offsetY;
+            offsetX = this.matrix.tx;
+            offsetY = this.matrix.ty;
+            this.matrix.invert();
+            var imageData = this.cpuCanvas.getImageData();
+            for (var i = offsetX; i < offsetX + width; i++) {
+                for (var j = offsetY; j < offsetY + height; j++) {
+                    this.point.x = i;
+                    this.point.y = j;
+                    this.point = this.matrix.transformPoint(this.point);
+                    this.copyPixel32(imageData, i, j, sourceData, this.point.x, this.point.y);
+                }
+            }
+        }
+        else {
+            var scaleX = width / sourceData.width;
+            var scaleY = height / sourceData.height;
+            var imageData = this.cpuCanvas.getImageData();
+            for (var i = offsetX; i < offsetX + width; i++) {
+                for (var j = offsetY; j < offsetY + height; j++) {
+                    this.copyPixel32(imageData, i, j, sourceData, (i - offsetX) * scaleX, (j - offsetY) * scaleY);
+                }
+            }
+        }
+    };
+    CPURenderingContext2D.prototype.transform = function (m11, m12, m21, m22, dx, dy) {
+    };
+    CPURenderingContext2D.prototype.stroke = function () {
+    };
+    CPURenderingContext2D.prototype.strokeRect = function (x, y, w, h) {
+    };
+    CPURenderingContext2D.prototype.setLineDash = function (segments) {
+    };
+    CPURenderingContext2D.prototype.strokeText = function (text, x, y, maxWidth) {
+    };
+    CPURenderingContext2D.prototype.beginPath = function () {
+    };
+    CPURenderingContext2D.prototype.arcTo = function (x1, y1, x2, y2, radius) {
+    };
+    CPURenderingContext2D.prototype.createLinearGradient = function (x0, y0, x1, y1) {
+        return undefined;
+    };
+    return CPURenderingContext2D;
+})();
+module.exports = CPURenderingContext2D;
+
+},{"awayjs-core/lib/data/BitmapImage2D":"awayjs-core/lib/data/BitmapImage2D","awayjs-core/lib/geom/Matrix":"awayjs-core/lib/geom/Matrix","awayjs-core/lib/geom/Point":"awayjs-core/lib/geom/Point"}],"awayjs-core/lib/data/IImageCanvas":[function(require,module,exports){
+
 },{}],"awayjs-core/lib/data/Image2D":[function(require,module,exports){
 var __extends = this.__extends || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -2457,7 +2724,18 @@ var ImageCube = (function (_super) {
 })(ImageBase);
 module.exports = ImageCube;
 
-},{"awayjs-core/lib/data/ImageBase":"awayjs-core/lib/data/ImageBase","awayjs-core/lib/utils/ImageUtils":"awayjs-core/lib/utils/ImageUtils"}],"awayjs-core/lib/data/Sampler2D":[function(require,module,exports){
+},{"awayjs-core/lib/data/ImageBase":"awayjs-core/lib/data/ImageBase","awayjs-core/lib/utils/ImageUtils":"awayjs-core/lib/utils/ImageUtils"}],"awayjs-core/lib/data/ImageData":[function(require,module,exports){
+var ImageData = (function () {
+    function ImageData(width, height) {
+        this.data = [];
+        this.width = width;
+        this.height = height;
+    }
+    return ImageData;
+})();
+module.exports = ImageData;
+
+},{}],"awayjs-core/lib/data/Sampler2D":[function(require,module,exports){
 var __extends = this.__extends || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
@@ -9890,73 +10168,7 @@ var NumSuffixConflictStrategy = (function (_super) {
 })(ConflictStrategyBase);
 module.exports = NumSuffixConflictStrategy;
 
-},{"awayjs-core/lib/library/ConflictStrategyBase":"awayjs-core/lib/library/ConflictStrategyBase"}],"awayjs-core/lib/managers/AudioChannel":[function(require,module,exports){
-var AudioChannel = (function () {
-    function AudioChannel() {
-        var _this = this;
-        this._isPlaying = false;
-        this._isLooping = false;
-        this._audioCtx = AudioChannel._audioCtx || (AudioChannel._audioCtx = new (window["AudioContext"] || window["webkitAudioContext"])());
-        this._gainNode = this._audioCtx.createGain();
-        this._gainNode = this._audioCtx.createGain();
-        this._gainNode.connect(this._audioCtx.destination);
-        this._audio = new Audio();
-        this._audio.onended = function (event) { return _this._onEnded(event); };
-        this._audio["crossOrigin"] = "anonymous";
-        var source = this._audioCtx.createMediaElementSource(this._audio);
-        source.connect(this._gainNode);
-    }
-    Object.defineProperty(AudioChannel.prototype, "currentTime", {
-        get: function () {
-            return this._audio.currentTime;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(AudioChannel.prototype, "volume", {
-        get: function () {
-            return this._gainNode.gain.value;
-        },
-        set: function (value) {
-            this._gainNode.gain.value = value;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    AudioChannel.prototype.isPlaying = function () {
-        return this._isPlaying;
-    };
-    AudioChannel.prototype.isLooping = function () {
-        return this._isLooping;
-    };
-    AudioChannel.prototype.isDecoding = function () {
-        return false;
-    };
-    AudioChannel.prototype.play = function (url, offset, loop) {
-        if (offset === void 0) { offset = 0; }
-        if (loop === void 0) { loop = false; }
-        this._isPlaying = true;
-        this._isLooping = loop;
-        this._audio.src = url;
-        this._audio.loop = loop;
-        this._audio.currentTime = offset;
-        this._audio.play();
-    };
-    AudioChannel.prototype.stop = function () {
-        this._audio.pause();
-        this._isPlaying = false;
-        this._isLooping = false;
-    };
-    AudioChannel.prototype._onEnded = function (event) {
-        this.stop();
-    };
-    AudioChannel.maxChannels = 16;
-    AudioChannel._channels = new Array();
-    return AudioChannel;
-})();
-module.exports = AudioChannel;
-
-},{}],"awayjs-core/lib/managers/AudioManager":[function(require,module,exports){
+},{"awayjs-core/lib/library/ConflictStrategyBase":"awayjs-core/lib/library/ConflictStrategyBase"}],"awayjs-core/lib/managers/AudioManager":[function(require,module,exports){
 var StreamingAudioChannel = require("awayjs-core/lib/managers/StreamingAudioChannel");
 var WebAudioChannel = require("awayjs-core/lib/managers/WebAudioChannel");
 var AudioManager = (function () {
@@ -9989,82 +10201,7 @@ var AudioManager = (function () {
 })();
 module.exports = AudioManager;
 
-},{"awayjs-core/lib/managers/StreamingAudioChannel":"awayjs-core/lib/managers/StreamingAudioChannel","awayjs-core/lib/managers/WebAudioChannel":"awayjs-core/lib/managers/WebAudioChannel"}],"awayjs-core/lib/managers/EventAudioChannel":[function(require,module,exports){
-var ParserUtils = require("awayjs-core/lib/parsers/ParserUtils");
-var EventAudioChannel = (function () {
-    function EventAudioChannel() {
-        var _this = this;
-        this._isPlaying = false;
-        this._isLooping = false;
-        this._startTime = 0;
-        this._audio = new Audio();
-        this._audio.ontimeupdate = function (event) { return _this._onTimeUpdate(event); };
-    }
-    Object.defineProperty(EventAudioChannel.prototype, "duration", {
-        get: function () {
-            return this._duration;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(EventAudioChannel.prototype, "currentTime", {
-        get: function () {
-            return this._audio.currentTime - this._startTime;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(EventAudioChannel.prototype, "volume", {
-        get: function () {
-            return this._volume;
-        },
-        set: function (value) {
-            if (this._volume == value)
-                return;
-            this._volume = value;
-            this._audio.volume = this._volume;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    EventAudioChannel.prototype.isPlaying = function () {
-        return this._isPlaying;
-    };
-    EventAudioChannel.prototype.isLooping = function () {
-        return this._isLooping;
-    };
-    EventAudioChannel.prototype.isDecoding = function () {
-        return false;
-    };
-    EventAudioChannel.prototype.play = function (buffer, offset, loop, id) {
-        if (offset === void 0) { offset = 0; }
-        if (loop === void 0) { loop = false; }
-        if (id === void 0) { id = 0; }
-        this._isPlaying = true;
-        this._isLooping = loop;
-        this._audio.src = EventAudioChannel._base64Cache[id] || (EventAudioChannel._base64Cache[id] = ParserUtils.arrayBufferToBase64(buffer, "audio/mp3"));
-        this._audio.loop = this._isLooping;
-        this._audio.currentTime = offset;
-        this._audio.play();
-    };
-    EventAudioChannel.prototype.stop = function () {
-        this._audio.pause();
-        this._isPlaying = false;
-        this._isLooping = false;
-    };
-    EventAudioChannel.prototype._onTimeUpdate = function (event) {
-        //TODO: more accurate end detection
-        if (!this._isLooping && this._duration < this._audio.currentTime - this._startTime + 0.1)
-            this.stop();
-    };
-    EventAudioChannel.maxChannels = 4;
-    EventAudioChannel._channels = new Array();
-    EventAudioChannel._base64Cache = new Object();
-    return EventAudioChannel;
-})();
-module.exports = EventAudioChannel;
-
-},{"awayjs-core/lib/parsers/ParserUtils":"awayjs-core/lib/parsers/ParserUtils"}],"awayjs-core/lib/managers/IAudioChannelClass":[function(require,module,exports){
+},{"awayjs-core/lib/managers/StreamingAudioChannel":"awayjs-core/lib/managers/StreamingAudioChannel","awayjs-core/lib/managers/WebAudioChannel":"awayjs-core/lib/managers/WebAudioChannel"}],"awayjs-core/lib/managers/IAudioChannelClass":[function(require,module,exports){
 
 },{}],"awayjs-core/lib/managers/IAudioChannel":[function(require,module,exports){
 
@@ -10477,6 +10614,9 @@ var URLLoader = (function (_super) {
             this.postRequest(request);
         else
             this.getRequest(request);
+    };
+    URLLoader.prototype.isSupported = function () {
+        return window != null;
     };
     /**
      *
@@ -11391,11 +11531,19 @@ var ParserBase = (function (_super) {
     };
     /**
      *
-     * @returns {string}
+     * @returns {ByteArray}
      * @private
      */
     ParserBase.prototype._pGetByteData = function () {
         return ParserUtils.toByteArray(this._data);
+    };
+    /**
+     *
+     * @returns {any}
+     * @private
+     */
+    ParserBase.prototype._pGetData = function () {
+        return this._data;
     };
     /**
      * Returned by <code>proceedParsing</code> to indicate no more parsing is needed.
@@ -14106,31 +14254,45 @@ var CSS = (function () {
     function CSS() {
     }
     CSS.setElementSize = function (element, width, height) {
+        if (!element)
+            return;
         element.style.width = width + "px";
         element.style.height = height + "px";
         element["width"] = width;
         element["height"] = height;
     };
     CSS.setElementWidth = function (element, width) {
+        if (!element)
+            return;
         element.style.width = width + "px";
         element["width"] = width;
     };
     CSS.setElementHeight = function (element, height) {
+        if (!element)
+            return;
         element.style.height = height + "px";
         element["height"] = height;
     };
     CSS.setElementX = function (element, x) {
+        if (!element)
+            return;
         element.style.position = 'absolute';
         element.style.left = x + "px";
     };
     CSS.setElementY = function (element, y) {
+        if (!element)
+            return;
         element.style.position = 'absolute';
         element.style.top = y + "px";
     };
     CSS.getElementVisibility = function (element) {
+        if (!element)
+            return false;
         return element.style.visibility == 'visible';
     };
     CSS.setElementVisibility = function (element, visible) {
+        if (!element)
+            return;
         if (visible) {
             element.style.visibility = 'visible';
         }
@@ -14146,6 +14308,8 @@ var CSS = (function () {
     };
     CSS.setElementPosition = function (element, x, y, absolute) {
         if (absolute === void 0) { absolute = false; }
+        if (!element)
+            return;
         if (absolute) {
             element.style.position = "absolute";
         }
@@ -14384,16 +14548,18 @@ var RequestAnimationFrame = (function () {
     RequestAnimationFrame.prototype.start = function () {
         this._prevTime = this._getTimer();
         this._active = true;
-        if (window.requestAnimationFrame) {
-            window.requestAnimationFrame(this._rafUpdateFunction);
-        }
-        else {
-            if (window['mozRequestAnimationFrame'])
-                window.requestAnimationFrame = window['mozRequestAnimationFrame'];
-            else if (window['webkitRequestAnimationFrame'])
-                window.requestAnimationFrame = window['webkitRequestAnimationFrame'];
-            else if (window['oRequestAnimationFrame'])
-                window.requestAnimationFrame = window['oRequestAnimationFrame'];
+        if (window) {
+            if (window.requestAnimationFrame) {
+                window.requestAnimationFrame(this._rafUpdateFunction);
+            }
+            else {
+                if (window['mozRequestAnimationFrame'])
+                    window.requestAnimationFrame = window['mozRequestAnimationFrame'];
+                else if (window['webkitRequestAnimationFrame'])
+                    window.requestAnimationFrame = window['webkitRequestAnimationFrame'];
+                else if (window['oRequestAnimationFrame'])
+                    window.requestAnimationFrame = window['oRequestAnimationFrame'];
+            }
         }
     };
     /**

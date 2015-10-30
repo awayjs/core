@@ -27,13 +27,6 @@ class Sampler2D extends SamplerBase
 {
 	public static assetType:string = "[asset Sampler2D]";
 
-	private _offsetX:number = 0;
-	private _offsetY:number = 0;
-
-	private _scaleX:number = 1;
-	private _scaleY:number = 1;
-
-	private _rect:Rectangle;
 	private _imageRect:Rectangle;
 	private _frameRect:Rectangle;
 	private _repeat:boolean;
@@ -46,11 +39,6 @@ class Sampler2D extends SamplerBase
 	{
 		return Sampler2D.assetType;
 	}
-
-	/**
-	 * The Image2D object being referenced.
-	 */
-	public image2D:Image2D;
 
 	/**
 	 * Controls whether or not the Sampler2D object is snapped to the nearest pixel.
@@ -76,38 +64,6 @@ class Sampler2D extends SamplerBase
 	 * <code>true</code>, the bitmap is smoothed when scaled. If
 	 * <code>false</code>, the bitmap is not smoothed when scaled.
 	 */
-
-	/**
-	 *
-	 */
-	public get offsetX():number
-	{
-		return this._offsetX;
-	}
-
-	/**
-	 *
-	 */
-	public get offsetY():number
-	{
-		return this._offsetY;
-	}
-
-	/**
-	 *
-	 */
-	public get scaleX():number
-	{
-		return this._scaleX;
-	}
-
-	/**
-	 *
-	 */
-	public get scaleY():number
-	{
-		return this._scaleY;
-	}
 
 	/**
 	 *
@@ -162,51 +118,20 @@ class Sampler2D extends SamplerBase
 
 	/**
 	 *
-	 */
-	public get rect():Rectangle
-	{
-		return this._rect;
-	}
-
-	/**
-	 *
 	 * @param image2D
 	 * @param smoothing
 	 */
-	constructor(image2D:Image2D = null, repeat:boolean = false, smooth:boolean = false, mipmap:boolean = false)
+	constructor(repeat:boolean = false, smooth:boolean = false, mipmap:boolean = false)
 	{
-		super();
-		
-		this.image2D = image2D;
+		super(smooth, mipmap);
 
-		this.repeat = repeat;
-		this.smooth = smooth;
-		this.mipmap = mipmap;
+		this._repeat = repeat;
 
 		this._updateRect();
 	}
 
 	private _updateRect()
 	{
-		if (this._imageRect)
-			this._rect = this._imageRect;
-		else
-			this._rect = this.image2D.rect;
-
-		if (this._imageRect) {
-			this._offsetX = this._imageRect.x/this.image2D.width;
-			this._offsetY = this._imageRect.y/this.image2D.height;
-
-			this._scaleX = this._imageRect.width/this.image2D.width;
-			this._scaleY = this._imageRect.height/this.image2D.height;
-		} else {
-			this._offsetX = 0;
-			this._offsetY = 0;
-
-			this._scaleX = 1;
-			this._scaleY = 1;
-		}
-
 	}
 }
 

@@ -35,20 +35,13 @@ class SamplerCube extends SamplerBase
 	}
 
 	/**
-	 * The ImageCube object being referenced.
-	 */
-	public imageCube:ImageCube;
-
-	/**
 	 *
 	 * @param bitmapData
 	 * @param smoothing
 	 */
-	constructor(imageCube:ImageCube = null)
+	constructor(smooth:boolean = false, mipmap:boolean = false)
 	{
-		super();
-
-		this.imageCube = imageCube;
+		super(smooth, mipmap);
 	}
 }
 

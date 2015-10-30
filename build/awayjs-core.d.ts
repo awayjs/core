@@ -1640,6 +1640,7 @@ declare module "awayjs-core/lib/data/ImageBase" {
 	import IImageObject = require("awayjs-core/lib/pool/IImageObject");
 	class ImageBase extends AssetBase implements IAsset {
 	    private _imageObject;
+	    _pFormat: string;
 	    /**
 	     *
 	     */
@@ -1659,6 +1660,11 @@ declare module "awayjs-core/lib/data/ImageBase" {
 	    dispose(): void;
 	    _iAddImageObject(ImageObject: IImageObject): IImageObject;
 	    _iRemoveImageObject(ImageObject: IImageObject): IImageObject;
+	    /**
+	     *
+	     * @returns {string}
+	     */
+	    format: string;
 	}
 	export = ImageBase;
 	
@@ -1712,7 +1718,6 @@ declare module "awayjs-core/lib/data/ImageData" {
 
 declare module "awayjs-core/lib/data/Sampler2D" {
 	import SamplerBase = require("awayjs-core/lib/data/SamplerBase");
-	import Image2D = require("awayjs-core/lib/data/Image2D");
 	import Rectangle = require("awayjs-core/lib/geom/Rectangle");
 	/**
 	 * The Sampler2D class represents display objects that represent bitmap images.
@@ -1736,11 +1741,6 @@ declare module "awayjs-core/lib/data/Sampler2D" {
 	 */
 	class Sampler2D extends SamplerBase {
 	    static assetType: string;
-	    private _offsetX;
-	    private _offsetY;
-	    private _scaleX;
-	    private _scaleY;
-	    private _rect;
 	    private _imageRect;
 	    private _frameRect;
 	    private _repeat;
@@ -1749,10 +1749,6 @@ declare module "awayjs-core/lib/data/Sampler2D" {
 	     * @returns {string}
 	     */
 	    assetType: string;
-	    /**
-	     * The Image2D object being referenced.
-	     */
-	    image2D: Image2D;
 	    /**
 	     * Controls whether or not the Sampler2D object is snapped to the nearest pixel.
 	     * This value is ignored in the native and HTML5 targets.
@@ -1777,22 +1773,6 @@ declare module "awayjs-core/lib/data/Sampler2D" {
 	    /**
 	     *
 	     */
-	    offsetX: number;
-	    /**
-	     *
-	     */
-	    offsetY: number;
-	    /**
-	     *
-	     */
-	    scaleX: number;
-	    /**
-	     *
-	     */
-	    scaleY: number;
-	    /**
-	     *
-	     */
 	    repeat: boolean;
 	    /**
 	     *
@@ -1804,14 +1784,10 @@ declare module "awayjs-core/lib/data/Sampler2D" {
 	    frameRect: Rectangle;
 	    /**
 	     *
-	     */
-	    rect: Rectangle;
-	    /**
-	     *
 	     * @param image2D
 	     * @param smoothing
 	     */
-	    constructor(image2D?: Image2D, repeat?: boolean, smooth?: boolean, mipmap?: boolean);
+	    constructor(repeat?: boolean, smooth?: boolean, mipmap?: boolean);
 	    private _updateRect();
 	}
 	export = Sampler2D;
@@ -1827,7 +1803,6 @@ declare module "awayjs-core/lib/data/SamplerBase" {
 	class SamplerBase extends AssetBase implements IAsset {
 	    private _smooth;
 	    private _mipmap;
-	    _pFormat: string;
 	    /**
 	     *
 	     */
@@ -1839,12 +1814,7 @@ declare module "awayjs-core/lib/data/SamplerBase" {
 	    /**
 	     *
 	     */
-	    constructor();
-	    /**
-	     *
-	     * @returns {string}
-	     */
-	    format: string;
+	    constructor(smooth?: boolean, mipmap?: boolean);
 	}
 	export = SamplerBase;
 	
@@ -1852,7 +1822,6 @@ declare module "awayjs-core/lib/data/SamplerBase" {
 
 declare module "awayjs-core/lib/data/SamplerCube" {
 	import SamplerBase = require("awayjs-core/lib/data/SamplerBase");
-	import ImageCube = require("awayjs-core/lib/data/ImageCube");
 	/**
 	 * The Bitmap class represents display objects that represent bitmap images.
 	 * These can be images that you load with the <code>flash.Assets</code> or
@@ -1881,15 +1850,11 @@ declare module "awayjs-core/lib/data/SamplerCube" {
 	     */
 	    assetType: string;
 	    /**
-	     * The ImageCube object being referenced.
-	     */
-	    imageCube: ImageCube;
-	    /**
 	     *
 	     * @param bitmapData
 	     * @param smoothing
 	     */
-	    constructor(imageCube?: ImageCube);
+	    constructor(smooth?: boolean, mipmap?: boolean);
 	}
 	export = SamplerCube;
 	
@@ -5372,6 +5337,15 @@ declare module "awayjs-core/lib/library/IDUtil" {
 	
 }
 
+declare module "awayjs-core/lib/library/IWrapperClass" {
+	import IAssetClass = require("awayjs-core/lib/library/IAssetClass");
+	interface IWrapperClass {
+	    assetClass: IAssetClass;
+	}
+	export = IWrapperClass;
+	
+}
+
 declare module "awayjs-core/lib/library/IgnoreConflictStrategy" {
 	import ConflictStrategyBase = require("awayjs-core/lib/library/ConflictStrategyBase");
 	import IAsset = require("awayjs-core/lib/library/IAsset");
@@ -5381,15 +5355,6 @@ declare module "awayjs-core/lib/library/IgnoreConflictStrategy" {
 	    create(): ConflictStrategyBase;
 	}
 	export = IgnoreConflictStrategy;
-	
-}
-
-declare module "awayjs-core/lib/library/IWrapperClass" {
-	import IAssetClass = require("awayjs-core/lib/library/IAssetClass");
-	interface IWrapperClass {
-	    assetClass: IAssetClass;
-	}
-	export = IWrapperClass;
 	
 }
 
@@ -5697,12 +5662,62 @@ declare module "awayjs-core/lib/library/NumSuffixConflictStrategy" {
 	
 }
 
+declare module "awayjs-core/lib/managers/AudioChannel" {
+	class AudioChannel {
+	    static maxChannels: number;
+	    static _channels: Array<AudioChannel>;
+	    private _isPlaying;
+	    private _isLooping;
+	    private static _audioCtx;
+	    private _audioCtx;
+	    private _gainNode;
+	    private _audio;
+	    currentTime: number;
+	    volume: number;
+	    isPlaying(): boolean;
+	    isLooping(): boolean;
+	    isDecoding(): boolean;
+	    constructor();
+	    play(url: string, offset?: number, loop?: boolean): void;
+	    stop(): void;
+	    private _onEnded(event);
+	}
+	export = AudioChannel;
+	
+}
+
 declare module "awayjs-core/lib/managers/AudioManager" {
 	import IAudioChannel = require("awayjs-core/lib/managers/IAudioChannel");
 	class AudioManager {
 	    static getChannel(byteLength: number): IAudioChannel;
 	}
 	export = AudioManager;
+	
+}
+
+declare module "awayjs-core/lib/managers/EventAudioChannel" {
+	class EventAudioChannel {
+	    static maxChannels: number;
+	    static _channels: Array<EventAudioChannel>;
+	    static _base64Cache: Object;
+	    private _isPlaying;
+	    private _isLooping;
+	    private _volume;
+	    private _startTime;
+	    private _duration;
+	    private _audio;
+	    duration: number;
+	    currentTime: number;
+	    volume: number;
+	    isPlaying(): boolean;
+	    isLooping(): boolean;
+	    isDecoding(): boolean;
+	    constructor();
+	    play(buffer: ArrayBuffer, offset?: number, loop?: boolean, id?: number): void;
+	    stop(): void;
+	    private _onTimeUpdate(event);
+	}
+	export = EventAudioChannel;
 	
 }
 
@@ -7755,21 +7770,6 @@ declare module "awayjs-core/lib/utils/ByteArrayBuffer" {
 	
 }
 
-declare module "awayjs-core/lib/utils/ColorUtils" {
-	/**
-	 *
-	 */
-	class ColorUtils {
-	    static float32ColorToARGB(float32Color: number): number[];
-	    static ARGBtoFloat32(a: number, r: number, g: number, b: number): number;
-	    private static componentToHex(c);
-	    static RGBToHexString(argb: number[]): string;
-	    static ARGBToHexString(argb: number[]): string;
-	}
-	export = ColorUtils;
-	
-}
-
 declare module "awayjs-core/lib/utils/CSS" {
 	class CSS {
 	    static setElementSize(element: HTMLElement, width: number, height: number): void;
@@ -7783,6 +7783,21 @@ declare module "awayjs-core/lib/utils/CSS" {
 	    static setElementPosition(element: HTMLElement, x: number, y: number, absolute?: boolean): void;
 	}
 	export = CSS;
+	
+}
+
+declare module "awayjs-core/lib/utils/ColorUtils" {
+	/**
+	 *
+	 */
+	class ColorUtils {
+	    static float32ColorToARGB(float32Color: number): number[];
+	    static ARGBtoFloat32(a: number, r: number, g: number, b: number): number;
+	    private static componentToHex(c);
+	    static RGBToHexString(argb: number[]): string;
+	    static ARGBToHexString(argb: number[]): string;
+	}
+	export = ColorUtils;
 	
 }
 
@@ -7813,17 +7828,6 @@ declare module "awayjs-core/lib/utils/Extensions" {
 	    static SIMD: boolean;
 	}
 	export = Extensions;
-	
-}
-
-declare module "awayjs-core/lib/utils/getTimer" {
-	/**
-	 *
-	 *
-	 * @returns {number}
-	 */
-	function getTimer(): number;
-	export = getTimer;
 	
 }
 
@@ -7951,6 +7955,17 @@ declare module "awayjs-core/lib/utils/XmlUtils" {
 	    static hasAttribute(node: Node, attrName: string): boolean;
 	}
 	export = XmlUtils;
+	
+}
+
+declare module "awayjs-core/lib/utils/getTimer" {
+	/**
+	 *
+	 *
+	 * @returns {number}
+	 */
+	function getTimer(): number;
+	export = getTimer;
 	
 }
 

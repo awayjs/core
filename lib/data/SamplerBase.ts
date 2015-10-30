@@ -9,8 +9,6 @@ class SamplerBase extends AssetBase implements IAsset
 	private _smooth:boolean;
 	private _mipmap:boolean;
 
-	public _pFormat:string = "bgra";
-
 	/**
 	 *
 	 */
@@ -48,18 +46,12 @@ class SamplerBase extends AssetBase implements IAsset
 	/**
 	 *
 	 */
-	constructor()
+	constructor(smooth:boolean = false, mipmap:boolean = false)
 	{
 		super();
-	}
 
-	/**
-	 *
-	 * @returns {string}
-	 */
-	public get format():string
-	{
-		return this._pFormat;
+		this._smooth = smooth;
+		this._mipmap = mipmap;
 	}
 }
 

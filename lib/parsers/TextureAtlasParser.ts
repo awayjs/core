@@ -71,6 +71,7 @@ class TextureAtlasParser extends ParserBase
 	{
 		if(resourceDependency.assets.length) {
 			this._imageData = <BitmapImage2D> resourceDependency.assets[0];
+			this._pFinalizeAsset(this._imageData);
 			this._parseState = TextureAtlasParserState.PARSE_SUBTEXTURES;
 		} else {
 			this._parseState = TextureAtlasParserState.PARSE_COMPLETE;
@@ -119,7 +120,7 @@ class TextureAtlasParser extends ParserBase
 				break;
 
 			case TextureAtlasParserState.PARSE_SUBTEXTURES:
-				var bitmap:Sampler2D;
+				var sampler:Sampler2D;
 				var element:Node;
 				var x:string;
 				var y:string;
@@ -128,7 +129,7 @@ class TextureAtlasParser extends ParserBase
 				var len:number = this._subTextureNodes.length;
 				for (var i:number = 0; i < len; i++) {
 					element = this._subTextureNodes[i];
-					bitmap = new Sampler2D(this._imageData);
+					sampler = new Sampler2D();
 
 					//setup subtexture rect
 					x = XmlUtils.readAttributeValue(element, "x");
@@ -136,7 +137,7 @@ class TextureAtlasParser extends ParserBase
 					width = XmlUtils.readAttributeValue(element, "width");
 					height = XmlUtils.readAttributeValue(element, "height");
 					if (x || y || width || height)
-						bitmap.imageRect = new Rectangle(parseInt(x), parseInt(y), parseInt(width), parseInt(height));
+						sampler.imageRect = new Rectangle(parseInt(x), parseInt(y), parseInt(width), parseInt(height));
 
 					//setup frame rect
 					x = XmlUtils.readAttributeValue(element, "frameX");
@@ -144,9 +145,9 @@ class TextureAtlasParser extends ParserBase
 					width = XmlUtils.readAttributeValue(element, "frameWidth");
 					height = XmlUtils.readAttributeValue(element, "frameHeight");
 					if (x || y || width || height)
-						bitmap.frameRect = new Rectangle(parseInt(x), parseInt(y), parseInt(width), parseInt(height));
+						sampler.frameRect = new Rectangle(parseInt(x), parseInt(y), parseInt(width), parseInt(height));
 
-					this._pFinalizeAsset(bitmap, XmlUtils.readAttributeValue(element, "name"));
+					this._pFinalizeAsset(sampler, XmlUtils.readAttributeValue(element, "name"));
 				}
 
 				this._parseState = TextureAtlasParserState.PARSE_COMPLETE;

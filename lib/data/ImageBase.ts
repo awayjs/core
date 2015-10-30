@@ -11,6 +11,8 @@ class ImageBase extends AssetBase implements IAsset
 {
 	private _imageObject:Array<IImageObject> = new Array<IImageObject>();
 
+	public _pFormat:string = "bgra";
+
 	/**
 	 *
 	 */
@@ -61,6 +63,16 @@ class ImageBase extends AssetBase implements IAsset
 		this._imageObject.splice(this._imageObject.indexOf(ImageObject), 1);
 
 		return ImageObject;
+	}
+
+
+	/**
+	 *
+	 * @returns {string}
+	 */
+	public get format():string
+	{
+		return this._pFormat;
 	}
 }
 

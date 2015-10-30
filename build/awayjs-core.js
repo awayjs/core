@@ -2618,6 +2618,7 @@ var ImageBase = (function (_super) {
     function ImageBase() {
         _super.call(this);
         this._imageObject = new Array();
+        this._pFormat = "bgra";
     }
     /**
      *
@@ -2650,6 +2651,17 @@ var ImageBase = (function (_super) {
         this._imageObject.splice(this._imageObject.indexOf(ImageObject), 1);
         return ImageObject;
     };
+    Object.defineProperty(ImageBase.prototype, "format", {
+        /**
+         *
+         * @returns {string}
+         */
+        get: function () {
+            return this._pFormat;
+        },
+        enumerable: true,
+        configurable: true
+    });
     return ImageBase;
 })(AssetBase);
 module.exports = ImageBase;
@@ -2770,20 +2782,12 @@ var Sampler2D = (function (_super) {
      * @param image2D
      * @param smoothing
      */
-    function Sampler2D(image2D, repeat, smooth, mipmap) {
-        if (image2D === void 0) { image2D = null; }
+    function Sampler2D(repeat, smooth, mipmap) {
         if (repeat === void 0) { repeat = false; }
         if (smooth === void 0) { smooth = false; }
         if (mipmap === void 0) { mipmap = false; }
-        _super.call(this);
-        this._offsetX = 0;
-        this._offsetY = 0;
-        this._scaleX = 1;
-        this._scaleY = 1;
-        this.image2D = image2D;
-        this.repeat = repeat;
-        this.smooth = smooth;
-        this.mipmap = mipmap;
+        _super.call(this, smooth, mipmap);
+        this._repeat = repeat;
         this._updateRect();
     }
     Object.defineProperty(Sampler2D.prototype, "assetType", {
@@ -2797,7 +2801,7 @@ var Sampler2D = (function (_super) {
         enumerable: true,
         configurable: true
     });
-    Object.defineProperty(Sampler2D.prototype, "offsetX", {
+    Object.defineProperty(Sampler2D.prototype, "repeat", {
         /**
          * Controls whether or not the Sampler2D object is snapped to the nearest pixel.
          * This value is ignored in the native and HTML5 targets.
@@ -2820,46 +2824,6 @@ var Sampler2D = (function (_super) {
          * <code>true</code>, the bitmap is smoothed when scaled. If
          * <code>false</code>, the bitmap is not smoothed when scaled.
          */
-        /**
-         *
-         */
-        get: function () {
-            return this._offsetX;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Sampler2D.prototype, "offsetY", {
-        /**
-         *
-         */
-        get: function () {
-            return this._offsetY;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Sampler2D.prototype, "scaleX", {
-        /**
-         *
-         */
-        get: function () {
-            return this._scaleX;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Sampler2D.prototype, "scaleY", {
-        /**
-         *
-         */
-        get: function () {
-            return this._scaleY;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Sampler2D.prototype, "repeat", {
         /**
          *
          */
@@ -2907,33 +2871,7 @@ var Sampler2D = (function (_super) {
         enumerable: true,
         configurable: true
     });
-    Object.defineProperty(Sampler2D.prototype, "rect", {
-        /**
-         *
-         */
-        get: function () {
-            return this._rect;
-        },
-        enumerable: true,
-        configurable: true
-    });
     Sampler2D.prototype._updateRect = function () {
-        if (this._imageRect)
-            this._rect = this._imageRect;
-        else
-            this._rect = this.image2D.rect;
-        if (this._imageRect) {
-            this._offsetX = this._imageRect.x / this.image2D.width;
-            this._offsetY = this._imageRect.y / this.image2D.height;
-            this._scaleX = this._imageRect.width / this.image2D.width;
-            this._scaleY = this._imageRect.height / this.image2D.height;
-        }
-        else {
-            this._offsetX = 0;
-            this._offsetY = 0;
-            this._scaleX = 1;
-            this._scaleY = 1;
-        }
     };
     Sampler2D.assetType = "[asset Sampler2D]";
     return Sampler2D;
@@ -2956,9 +2894,12 @@ var SamplerBase = (function (_super) {
     /**
      *
      */
-    function SamplerBase() {
+    function SamplerBase(smooth, mipmap) {
+        if (smooth === void 0) { smooth = false; }
+        if (mipmap === void 0) { mipmap = false; }
         _super.call(this);
-        this._pFormat = "bgra";
+        this._smooth = smooth;
+        this._mipmap = mipmap;
     }
     Object.defineProperty(SamplerBase.prototype, "smooth", {
         /**
@@ -2988,17 +2929,6 @@ var SamplerBase = (function (_super) {
                 return;
             this._mipmap = value;
             //TODO: update dependencies
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(SamplerBase.prototype, "format", {
-        /**
-         *
-         * @returns {string}
-         */
-        get: function () {
-            return this._pFormat;
         },
         enumerable: true,
         configurable: true
@@ -3042,10 +2972,10 @@ var SamplerCube = (function (_super) {
      * @param bitmapData
      * @param smoothing
      */
-    function SamplerCube(imageCube) {
-        if (imageCube === void 0) { imageCube = null; }
-        _super.call(this);
-        this.imageCube = imageCube;
+    function SamplerCube(smooth, mipmap) {
+        if (smooth === void 0) { smooth = false; }
+        if (mipmap === void 0) { mipmap = false; }
+        _super.call(this, smooth, mipmap);
     }
     Object.defineProperty(SamplerCube.prototype, "assetType", {
         /**
@@ -10168,7 +10098,73 @@ var NumSuffixConflictStrategy = (function (_super) {
 })(ConflictStrategyBase);
 module.exports = NumSuffixConflictStrategy;
 
-},{"awayjs-core/lib/library/ConflictStrategyBase":"awayjs-core/lib/library/ConflictStrategyBase"}],"awayjs-core/lib/managers/AudioManager":[function(require,module,exports){
+},{"awayjs-core/lib/library/ConflictStrategyBase":"awayjs-core/lib/library/ConflictStrategyBase"}],"awayjs-core/lib/managers/AudioChannel":[function(require,module,exports){
+var AudioChannel = (function () {
+    function AudioChannel() {
+        var _this = this;
+        this._isPlaying = false;
+        this._isLooping = false;
+        this._audioCtx = AudioChannel._audioCtx || (AudioChannel._audioCtx = new (window["AudioContext"] || window["webkitAudioContext"])());
+        this._gainNode = this._audioCtx.createGain();
+        this._gainNode = this._audioCtx.createGain();
+        this._gainNode.connect(this._audioCtx.destination);
+        this._audio = new Audio();
+        this._audio.onended = function (event) { return _this._onEnded(event); };
+        this._audio["crossOrigin"] = "anonymous";
+        var source = this._audioCtx.createMediaElementSource(this._audio);
+        source.connect(this._gainNode);
+    }
+    Object.defineProperty(AudioChannel.prototype, "currentTime", {
+        get: function () {
+            return this._audio.currentTime;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(AudioChannel.prototype, "volume", {
+        get: function () {
+            return this._gainNode.gain.value;
+        },
+        set: function (value) {
+            this._gainNode.gain.value = value;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    AudioChannel.prototype.isPlaying = function () {
+        return this._isPlaying;
+    };
+    AudioChannel.prototype.isLooping = function () {
+        return this._isLooping;
+    };
+    AudioChannel.prototype.isDecoding = function () {
+        return false;
+    };
+    AudioChannel.prototype.play = function (url, offset, loop) {
+        if (offset === void 0) { offset = 0; }
+        if (loop === void 0) { loop = false; }
+        this._isPlaying = true;
+        this._isLooping = loop;
+        this._audio.src = url;
+        this._audio.loop = loop;
+        this._audio.currentTime = offset;
+        this._audio.play();
+    };
+    AudioChannel.prototype.stop = function () {
+        this._audio.pause();
+        this._isPlaying = false;
+        this._isLooping = false;
+    };
+    AudioChannel.prototype._onEnded = function (event) {
+        this.stop();
+    };
+    AudioChannel.maxChannels = 16;
+    AudioChannel._channels = new Array();
+    return AudioChannel;
+})();
+module.exports = AudioChannel;
+
+},{}],"awayjs-core/lib/managers/AudioManager":[function(require,module,exports){
 var StreamingAudioChannel = require("awayjs-core/lib/managers/StreamingAudioChannel");
 var WebAudioChannel = require("awayjs-core/lib/managers/WebAudioChannel");
 var AudioManager = (function () {
@@ -10201,7 +10197,82 @@ var AudioManager = (function () {
 })();
 module.exports = AudioManager;
 
-},{"awayjs-core/lib/managers/StreamingAudioChannel":"awayjs-core/lib/managers/StreamingAudioChannel","awayjs-core/lib/managers/WebAudioChannel":"awayjs-core/lib/managers/WebAudioChannel"}],"awayjs-core/lib/managers/IAudioChannelClass":[function(require,module,exports){
+},{"awayjs-core/lib/managers/StreamingAudioChannel":"awayjs-core/lib/managers/StreamingAudioChannel","awayjs-core/lib/managers/WebAudioChannel":"awayjs-core/lib/managers/WebAudioChannel"}],"awayjs-core/lib/managers/EventAudioChannel":[function(require,module,exports){
+var ParserUtils = require("awayjs-core/lib/parsers/ParserUtils");
+var EventAudioChannel = (function () {
+    function EventAudioChannel() {
+        var _this = this;
+        this._isPlaying = false;
+        this._isLooping = false;
+        this._startTime = 0;
+        this._audio = new Audio();
+        this._audio.ontimeupdate = function (event) { return _this._onTimeUpdate(event); };
+    }
+    Object.defineProperty(EventAudioChannel.prototype, "duration", {
+        get: function () {
+            return this._duration;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(EventAudioChannel.prototype, "currentTime", {
+        get: function () {
+            return this._audio.currentTime - this._startTime;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(EventAudioChannel.prototype, "volume", {
+        get: function () {
+            return this._volume;
+        },
+        set: function (value) {
+            if (this._volume == value)
+                return;
+            this._volume = value;
+            this._audio.volume = this._volume;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    EventAudioChannel.prototype.isPlaying = function () {
+        return this._isPlaying;
+    };
+    EventAudioChannel.prototype.isLooping = function () {
+        return this._isLooping;
+    };
+    EventAudioChannel.prototype.isDecoding = function () {
+        return false;
+    };
+    EventAudioChannel.prototype.play = function (buffer, offset, loop, id) {
+        if (offset === void 0) { offset = 0; }
+        if (loop === void 0) { loop = false; }
+        if (id === void 0) { id = 0; }
+        this._isPlaying = true;
+        this._isLooping = loop;
+        this._audio.src = EventAudioChannel._base64Cache[id] || (EventAudioChannel._base64Cache[id] = ParserUtils.arrayBufferToBase64(buffer, "audio/mp3"));
+        this._audio.loop = this._isLooping;
+        this._audio.currentTime = offset;
+        this._audio.play();
+    };
+    EventAudioChannel.prototype.stop = function () {
+        this._audio.pause();
+        this._isPlaying = false;
+        this._isLooping = false;
+    };
+    EventAudioChannel.prototype._onTimeUpdate = function (event) {
+        //TODO: more accurate end detection
+        if (!this._isLooping && this._duration < this._audio.currentTime - this._startTime + 0.1)
+            this.stop();
+    };
+    EventAudioChannel.maxChannels = 4;
+    EventAudioChannel._channels = new Array();
+    EventAudioChannel._base64Cache = new Object();
+    return EventAudioChannel;
+})();
+module.exports = EventAudioChannel;
+
+},{"awayjs-core/lib/parsers/ParserUtils":"awayjs-core/lib/parsers/ParserUtils"}],"awayjs-core/lib/managers/IAudioChannelClass":[function(require,module,exports){
 
 },{}],"awayjs-core/lib/managers/IAudioChannel":[function(require,module,exports){
 
@@ -11955,6 +12026,7 @@ var TextureAtlasParser = (function (_super) {
     TextureAtlasParser.prototype._iResolveDependency = function (resourceDependency) {
         if (resourceDependency.assets.length) {
             this._imageData = resourceDependency.assets[0];
+            this._pFinalizeAsset(this._imageData);
             this._parseState = TextureAtlasParserState.PARSE_SUBTEXTURES;
         }
         else {
@@ -11994,7 +12066,7 @@ var TextureAtlasParser = (function (_super) {
                 }
                 break;
             case TextureAtlasParserState.PARSE_SUBTEXTURES:
-                var bitmap;
+                var sampler;
                 var element;
                 var x;
                 var y;
@@ -12003,22 +12075,22 @@ var TextureAtlasParser = (function (_super) {
                 var len = this._subTextureNodes.length;
                 for (var i = 0; i < len; i++) {
                     element = this._subTextureNodes[i];
-                    bitmap = new Sampler2D(this._imageData);
+                    sampler = new Sampler2D();
                     //setup subtexture rect
                     x = XmlUtils.readAttributeValue(element, "x");
                     y = XmlUtils.readAttributeValue(element, "y");
                     width = XmlUtils.readAttributeValue(element, "width");
                     height = XmlUtils.readAttributeValue(element, "height");
                     if (x || y || width || height)
-                        bitmap.imageRect = new Rectangle(parseInt(x), parseInt(y), parseInt(width), parseInt(height));
+                        sampler.imageRect = new Rectangle(parseInt(x), parseInt(y), parseInt(width), parseInt(height));
                     //setup frame rect
                     x = XmlUtils.readAttributeValue(element, "frameX");
                     y = XmlUtils.readAttributeValue(element, "frameY");
                     width = XmlUtils.readAttributeValue(element, "frameWidth");
                     height = XmlUtils.readAttributeValue(element, "frameHeight");
                     if (x || y || width || height)
-                        bitmap.frameRect = new Rectangle(parseInt(x), parseInt(y), parseInt(width), parseInt(height));
-                    this._pFinalizeAsset(bitmap, XmlUtils.readAttributeValue(element, "name"));
+                        sampler.frameRect = new Rectangle(parseInt(x), parseInt(y), parseInt(width), parseInt(height));
+                    this._pFinalizeAsset(sampler, XmlUtils.readAttributeValue(element, "name"));
                 }
                 this._parseState = TextureAtlasParserState.PARSE_COMPLETE;
                 break;

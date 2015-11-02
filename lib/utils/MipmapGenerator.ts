@@ -41,7 +41,7 @@ class MipmapGenerator {
 
             MipmapGenerator._matrix.a = MipmapGenerator._rect.width / source.width;
             MipmapGenerator._matrix.d = MipmapGenerator._rect.height / source.height;
-
+            //todo: add support for NPOT textures
             if (document) {
                 mipmap.draw(source, MipmapGenerator._matrix); //TODO: smoothing?
             } else {
@@ -110,7 +110,7 @@ class MipmapGenerator {
         var xkernel:PolyphaseKernel = new PolyphaseKernel(box, bitmap.width, destBitmap.width, 4);
         var ykernel:PolyphaseKernel = new PolyphaseKernel(box, bitmap.height, destBitmap.height, 4);
 
-        var bitmap1:number[] = [];//destBitmap.width, bitmap.height
+        var tempBitmap:number[] = [];//destBitmap.width, bitmap.height
 
         var scale:number = 0;
         var iscale:number = 0;
@@ -156,10 +156,10 @@ class MipmapGenerator {
                 }
 
                 index = (y * destBitmap.width + i) * 4;
-                bitmap1[index] = sumR;
-                bitmap1[index + 1] = sumG;
-                bitmap1[index + 2] = sumB;
-                bitmap1[index + 3] = sumA;
+                tempBitmap[index] = sumR;
+                tempBitmap[index + 1] = sumG;
+                tempBitmap[index + 2] = sumB;
+                tempBitmap[index + 3] = sumA;
             }
         }
 
@@ -181,10 +181,10 @@ class MipmapGenerator {
                 sumA = 0;
                 for (j = 0; j < kernelWindowSize; ++j) {
                     index = ((j + left) * destBitmap.width + x) * 4;
-                    var colorR:number = bitmap1[index];
-                    var colorG:number = bitmap1[index + 1];
-                    var colorB:number = bitmap1[index + 2];
-                    var colorA:number = bitmap1[index + 3];
+                    var colorR:number = tempBitmap[index];
+                    var colorG:number = tempBitmap[index + 1];
+                    var colorB:number = tempBitmap[index + 2];
+                    var colorA:number = tempBitmap[index + 3];
 
                     var value:number = ykernel.valueAt(i, j);
                     sumR += value * colorR;

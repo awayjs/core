@@ -2268,6 +2268,7 @@ var Point = require("awayjs-core/lib/geom/Point");
 var CPURenderingContext2D = (function () {
     function CPURenderingContext2D(cpuCanvas) {
         this.point = new Point();
+        this.point2 = new Point();
         this.cpuCanvas = cpuCanvas;
     }
     CPURenderingContext2D.prototype.restore = function () {
@@ -2343,6 +2344,23 @@ var CPURenderingContext2D = (function () {
         //}
         return this.cpuCanvas.getImageData();
     };
+    CPURenderingContext2D.prototype.applyPixel32 = function (target, x, y, color) {
+        //todo: blending support
+        x = Math.floor(x);
+        y = Math.floor(y);
+        if (x < 0 || x >= target.width || y >= target.height || y < 0)
+            return;
+        var index = (x + y * target.width) * 4;
+        var alpha = color[3] / 255;
+        target.data[index] += color[0] * alpha;
+        target.data[index + 1] += color[1] * alpha;
+        target.data[index + 2] += color[2] * alpha;
+        target.data[index + 3] += color[3];
+        target.data[index] = target.data[index] & 0xFF;
+        target.data[index + 1] = target.data[index + 1] & 0xFF;
+        target.data[index + 2] = target.data[index + 2] & 0xFF;
+        target.data[index + 3] = target.data[index + 3] & 0xFF;
+    };
     CPURenderingContext2D.prototype.copyPixel32 = function (target, x, y, source, fromX, fromY) {
         x = Math.floor(x);
         y = Math.floor(y);
@@ -2388,22 +2406,7 @@ var CPURenderingContext2D = (function () {
         if (image.constructor.toString().indexOf("BitmapImage2D") > -1) {
             var bitmap = b;
             bitmap.lock();
-            this.drawBitmap(bitmap, offsetX, offsetY, width, height);
-            //if (!width || width == 0) {
-            //    width = bitmap.width;
-            //    height = bitmap.height;
-            //}
-            //
-            //var sourceData:ImageData = bitmap.getImageData();
-            //var scaleX:number = width / sourceData.width;
-            //var scaleY:number = height / sourceData.height;
-            //
-            //var imageData:ImageData = this.cpuCanvas.getImageData();
-            //for (var i:number = offsetX; i < offsetX + width; i++) {
-            //    for (var j:number = offsetY; j < offsetY + height; j++) {
-            //        this.copyPixel32(imageData, i, j, sourceData, (i - offsetX) * scaleX, (j - offsetY) * scaleY);
-            //    }
-            //}
+            this.drawBitmap(bitmap, offsetX, offsetY, width, height, canvasOffsetX, canvasOffsetY, canvasImageWidth, canvasImageHeight);
             bitmap.unlock();
         }
         else if (image.constructor.toString().indexOf("HTMLImage") > -1) {
@@ -2422,40 +2425,75 @@ var CPURenderingContext2D = (function () {
         else if (image.constructor.toString().indexOf("CPUCanvas") > -1) {
             //
             var canvas = b;
-            this.drawBitmap(canvas, offsetX, offsetY, width, height);
+            this.drawBitmap(canvas, offsetX, offsetY, width, height, canvasOffsetX, canvasOffsetY, canvasImageWidth, canvasImageHeight);
         }
     };
-    CPURenderingContext2D.prototype.drawBitmap = function (bitmap, offsetX, offsetY, width, height) {
+    CPURenderingContext2D.prototype.drawBitmap = function (bitmap, offsetX, offsetY, width, height, canvasOffsetX, canvasOffsetY, canvasImageWidth, canvasImageHeight) {
         if (!width || width == 0) {
             width = bitmap.width;
             height = bitmap.height;
         }
+        if (!canvasOffsetX || canvasOffsetX == 0) {
+            canvasOffsetX = 0;
+            canvasOffsetY = 0;
+        }
+        if (!canvasImageWidth || canvasImageWidth == 0 || this.matrix) {
+            canvasImageWidth = width;
+            canvasImageHeight = height;
+        }
         var sourceData = bitmap.getImageData();
-        if (this.matrix) {
-            width *= this.matrix.a;
-            height *= this.matrix.d;
-            this.matrix.tx += offsetX;
-            this.matrix.ty += offsetY;
-            offsetX = this.matrix.tx;
-            offsetY = this.matrix.ty;
-            this.matrix.invert();
-            var imageData = this.cpuCanvas.getImageData();
-            for (var i = offsetX; i < offsetX + width; i++) {
-                for (var j = offsetY; j < offsetY + height; j++) {
-                    this.point.x = i;
-                    this.point.y = j;
-                    this.point = this.matrix.transformPoint(this.point);
-                    this.copyPixel32(imageData, i, j, sourceData, this.point.x, this.point.y);
+        var canvasImageData = this.cpuCanvas.getImageData();
+        if (this.matrix || (canvasImageWidth != width || canvasImageHeight != height)) {
+            var matrix = this.matrix;
+            if (!matrix) {
+                matrix = new Matrix();
+                matrix.scale(canvasImageWidth / width, canvasImageHeight / height);
+            }
+            var scaleX = Math.sqrt(matrix.a * matrix.a + matrix.b * matrix.b);
+            var scaleY = Math.sqrt(matrix.c * matrix.c + matrix.d * matrix.d);
+            canvasImageWidth = width * scaleX;
+            canvasImageHeight = height * scaleY;
+            matrix.tx += canvasOffsetX;
+            matrix.ty += canvasOffsetY;
+            canvasOffsetX = Math.floor(matrix.tx);
+            canvasOffsetY = Math.floor(matrix.ty);
+            matrix.invert();
+            if (scaleX >= 1 || scaleY >= 1) {
+                var p = new Point();
+                for (var i = canvasOffsetX; i < canvasOffsetX + canvasImageWidth; i++) {
+                    for (var j = canvasOffsetY; j < canvasOffsetY + canvasImageHeight; j++) {
+                        p.x = i;
+                        p.y = j;
+                        p = matrix.transformPoint(p);
+                        var color = CPURenderingContext2D.sampleBilinear(p.x, p.y, sourceData);
+                        this.applyPixel32(canvasImageData, i, j, color);
+                    }
                 }
             }
+            else {
+                //decimate
+                var p1 = this.point;
+                var p2 = this.point2;
+                for (var i = canvasOffsetX; i < canvasOffsetX + canvasImageWidth; i++) {
+                    for (var j = canvasOffsetY; j < canvasOffsetY + canvasImageHeight; j++) {
+                        p1.x = i;
+                        p1.y = j;
+                        p1 = matrix.transformPoint(p1);
+                        p2.x = i + 1;
+                        p2.y = j + 1;
+                        p2 = matrix.transformPoint(p2);
+                        var color = CPURenderingContext2D.sampleBox(p1.x + offsetX, p1.y + offsetY, p2.x + offsetX, p2.y + offsetY, sourceData);
+                        this.applyPixel32(canvasImageData, i, j, color);
+                    }
+                }
+            }
+            matrix.invert();
         }
         else {
-            var scaleX = width / sourceData.width;
-            var scaleY = height / sourceData.height;
-            var imageData = this.cpuCanvas.getImageData();
-            for (var i = offsetX; i < offsetX + width; i++) {
-                for (var j = offsetY; j < offsetY + height; j++) {
-                    this.copyPixel32(imageData, i, j, sourceData, (i - offsetX) * scaleX, (j - offsetY) * scaleY);
+            for (var i = canvasOffsetX; i < canvasOffsetX + canvasImageWidth; i++) {
+                for (var j = canvasOffsetY; j < canvasOffsetY + canvasImageHeight; j++) {
+                    var color = CPURenderingContext2D.sample(i - canvasOffsetX + offsetX, j - canvasOffsetY + offsetY, sourceData);
+                    this.applyPixel32(canvasImageData, i, j, color);
                 }
             }
         }
@@ -2476,6 +2514,88 @@ var CPURenderingContext2D = (function () {
     };
     CPURenderingContext2D.prototype.createLinearGradient = function (x0, y0, x1, y1) {
         return undefined;
+    };
+    CPURenderingContext2D.sampleBilinear = function (u, v, texture, texelSizeX, texelSizeY) {
+        if (texelSizeX === void 0) { texelSizeX = 1; }
+        if (texelSizeY === void 0) { texelSizeY = 1; }
+        var color00 = CPURenderingContext2D.sample(u, v, texture);
+        var color10 = CPURenderingContext2D.sample(u + texelSizeX, v, texture);
+        var color01 = CPURenderingContext2D.sample(u, v + texelSizeY, texture);
+        var color11 = CPURenderingContext2D.sample(u + texelSizeX, v + texelSizeY, texture);
+        var a = u;
+        a = a - Math.floor(a);
+        var interColor0 = CPURenderingContext2D.interpolateColor(color00, color10, a);
+        var interColor1 = CPURenderingContext2D.interpolateColor(color01, color11, a);
+        var b = v;
+        b = b - Math.floor(b);
+        return CPURenderingContext2D.interpolateColor(interColor0, interColor1, b);
+    };
+    CPURenderingContext2D.sample = function (u, v, imageData) {
+        u = Math.floor(u);
+        v = Math.floor(v);
+        var result = [0, 0, 0, 0];
+        if (u < 0 || u >= imageData.width || v < 0 || v >= imageData.height) {
+            return result;
+        }
+        var index = (u + v * imageData.width) * 4;
+        result[0] = imageData.data[index];
+        result[1] = imageData.data[index + 1];
+        result[2] = imageData.data[index + 2];
+        result[3] = imageData.data[index + 3];
+        return result;
+    };
+    CPURenderingContext2D.sampleBox = function (x0, y0, x1, y1, texture) {
+        var area = 0; // -- total area accumulated in pixels
+        var result = [0, 0, 0, 0];
+        var x;
+        var y;
+        var xsize;
+        var ysize;
+        var fromY = Math.floor(y0);
+        var toY = Math.ceil(y1);
+        fromY = Math.max(Math.min(fromY, texture.height - 1), 0);
+        toY = Math.max(Math.min(toY, texture.height - 1), 0);
+        for (y = fromY; y < toY; y++) {
+            ysize = 1;
+            if (y < y0) {
+                ysize = ysize * (1.0 - (y0 - y));
+            }
+            if (y > y1) {
+                ysize = ysize * (1.0 - (y - y1));
+            }
+            var fromX = Math.floor(x0);
+            var toX = Math.ceil(x1);
+            fromX = Math.max(Math.min(fromX, texture.width - 1), 0);
+            toX = Math.max(Math.min(toX, texture.width - 1), 0);
+            for (x = fromX; x < toX; x++) {
+                xsize = ysize;
+                var color = CPURenderingContext2D.sample(x, y, texture);
+                if (x < x0) {
+                    xsize = xsize * (1.0 - (x0 - x));
+                }
+                if (x > x1) {
+                    xsize = xsize * (1.0 - (x - x1));
+                }
+                result[0] += color[0] * xsize;
+                result[1] += color[1] * xsize;
+                result[2] += color[2] * xsize;
+                result[3] += color[3] * xsize;
+                area = area + xsize;
+            }
+        }
+        result[0] /= area;
+        result[1] /= area;
+        result[2] /= area;
+        result[3] /= area;
+        return result;
+    };
+    CPURenderingContext2D.interpolateColor = function (source, target, a) {
+        var result = [];
+        result[0] = source[0] + (target[0] - source[0]) * a;
+        result[1] = source[1] + (target[1] - source[1]) * a;
+        result[2] = source[2] + (target[2] - source[2]) * a;
+        result[3] = source[3] + (target[3] - source[3]) * a;
+        return result;
     };
     return CPURenderingContext2D;
 })();
@@ -10098,73 +10218,7 @@ var NumSuffixConflictStrategy = (function (_super) {
 })(ConflictStrategyBase);
 module.exports = NumSuffixConflictStrategy;
 
-},{"awayjs-core/lib/library/ConflictStrategyBase":"awayjs-core/lib/library/ConflictStrategyBase"}],"awayjs-core/lib/managers/AudioChannel":[function(require,module,exports){
-var AudioChannel = (function () {
-    function AudioChannel() {
-        var _this = this;
-        this._isPlaying = false;
-        this._isLooping = false;
-        this._audioCtx = AudioChannel._audioCtx || (AudioChannel._audioCtx = new (window["AudioContext"] || window["webkitAudioContext"])());
-        this._gainNode = this._audioCtx.createGain();
-        this._gainNode = this._audioCtx.createGain();
-        this._gainNode.connect(this._audioCtx.destination);
-        this._audio = new Audio();
-        this._audio.onended = function (event) { return _this._onEnded(event); };
-        this._audio["crossOrigin"] = "anonymous";
-        var source = this._audioCtx.createMediaElementSource(this._audio);
-        source.connect(this._gainNode);
-    }
-    Object.defineProperty(AudioChannel.prototype, "currentTime", {
-        get: function () {
-            return this._audio.currentTime;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(AudioChannel.prototype, "volume", {
-        get: function () {
-            return this._gainNode.gain.value;
-        },
-        set: function (value) {
-            this._gainNode.gain.value = value;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    AudioChannel.prototype.isPlaying = function () {
-        return this._isPlaying;
-    };
-    AudioChannel.prototype.isLooping = function () {
-        return this._isLooping;
-    };
-    AudioChannel.prototype.isDecoding = function () {
-        return false;
-    };
-    AudioChannel.prototype.play = function (url, offset, loop) {
-        if (offset === void 0) { offset = 0; }
-        if (loop === void 0) { loop = false; }
-        this._isPlaying = true;
-        this._isLooping = loop;
-        this._audio.src = url;
-        this._audio.loop = loop;
-        this._audio.currentTime = offset;
-        this._audio.play();
-    };
-    AudioChannel.prototype.stop = function () {
-        this._audio.pause();
-        this._isPlaying = false;
-        this._isLooping = false;
-    };
-    AudioChannel.prototype._onEnded = function (event) {
-        this.stop();
-    };
-    AudioChannel.maxChannels = 16;
-    AudioChannel._channels = new Array();
-    return AudioChannel;
-})();
-module.exports = AudioChannel;
-
-},{}],"awayjs-core/lib/managers/AudioManager":[function(require,module,exports){
+},{"awayjs-core/lib/library/ConflictStrategyBase":"awayjs-core/lib/library/ConflictStrategyBase"}],"awayjs-core/lib/managers/AudioManager":[function(require,module,exports){
 var StreamingAudioChannel = require("awayjs-core/lib/managers/StreamingAudioChannel");
 var WebAudioChannel = require("awayjs-core/lib/managers/WebAudioChannel");
 var AudioManager = (function () {
@@ -10197,82 +10251,7 @@ var AudioManager = (function () {
 })();
 module.exports = AudioManager;
 
-},{"awayjs-core/lib/managers/StreamingAudioChannel":"awayjs-core/lib/managers/StreamingAudioChannel","awayjs-core/lib/managers/WebAudioChannel":"awayjs-core/lib/managers/WebAudioChannel"}],"awayjs-core/lib/managers/EventAudioChannel":[function(require,module,exports){
-var ParserUtils = require("awayjs-core/lib/parsers/ParserUtils");
-var EventAudioChannel = (function () {
-    function EventAudioChannel() {
-        var _this = this;
-        this._isPlaying = false;
-        this._isLooping = false;
-        this._startTime = 0;
-        this._audio = new Audio();
-        this._audio.ontimeupdate = function (event) { return _this._onTimeUpdate(event); };
-    }
-    Object.defineProperty(EventAudioChannel.prototype, "duration", {
-        get: function () {
-            return this._duration;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(EventAudioChannel.prototype, "currentTime", {
-        get: function () {
-            return this._audio.currentTime - this._startTime;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(EventAudioChannel.prototype, "volume", {
-        get: function () {
-            return this._volume;
-        },
-        set: function (value) {
-            if (this._volume == value)
-                return;
-            this._volume = value;
-            this._audio.volume = this._volume;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    EventAudioChannel.prototype.isPlaying = function () {
-        return this._isPlaying;
-    };
-    EventAudioChannel.prototype.isLooping = function () {
-        return this._isLooping;
-    };
-    EventAudioChannel.prototype.isDecoding = function () {
-        return false;
-    };
-    EventAudioChannel.prototype.play = function (buffer, offset, loop, id) {
-        if (offset === void 0) { offset = 0; }
-        if (loop === void 0) { loop = false; }
-        if (id === void 0) { id = 0; }
-        this._isPlaying = true;
-        this._isLooping = loop;
-        this._audio.src = EventAudioChannel._base64Cache[id] || (EventAudioChannel._base64Cache[id] = ParserUtils.arrayBufferToBase64(buffer, "audio/mp3"));
-        this._audio.loop = this._isLooping;
-        this._audio.currentTime = offset;
-        this._audio.play();
-    };
-    EventAudioChannel.prototype.stop = function () {
-        this._audio.pause();
-        this._isPlaying = false;
-        this._isLooping = false;
-    };
-    EventAudioChannel.prototype._onTimeUpdate = function (event) {
-        //TODO: more accurate end detection
-        if (!this._isLooping && this._duration < this._audio.currentTime - this._startTime + 0.1)
-            this.stop();
-    };
-    EventAudioChannel.maxChannels = 4;
-    EventAudioChannel._channels = new Array();
-    EventAudioChannel._base64Cache = new Object();
-    return EventAudioChannel;
-})();
-module.exports = EventAudioChannel;
-
-},{"awayjs-core/lib/parsers/ParserUtils":"awayjs-core/lib/parsers/ParserUtils"}],"awayjs-core/lib/managers/IAudioChannelClass":[function(require,module,exports){
+},{"awayjs-core/lib/managers/StreamingAudioChannel":"awayjs-core/lib/managers/StreamingAudioChannel","awayjs-core/lib/managers/WebAudioChannel":"awayjs-core/lib/managers/WebAudioChannel"}],"awayjs-core/lib/managers/IAudioChannelClass":[function(require,module,exports){
 
 },{}],"awayjs-core/lib/managers/IAudioChannel":[function(require,module,exports){
 
@@ -14545,7 +14524,28 @@ var MipmapGenerator = (function () {
                 mipmap.fillRect(MipmapGenerator._rect, 0);
             MipmapGenerator._matrix.a = MipmapGenerator._rect.width / source.width;
             MipmapGenerator._matrix.d = MipmapGenerator._rect.height / source.height;
-            mipmap.draw(source, MipmapGenerator._matrix); //TODO: smoothing?
+            //todo: add support for NPOT textures
+            if (document) {
+                mipmap.draw(source, MipmapGenerator._matrix); //TODO: smoothing?
+            }
+            else {
+                if (source.constructor.toString().indexOf("BitmapImage2D") > -1) {
+                    //for BitmapImage2D
+                    var bitmapImage = source;
+                    bitmapImage.lock();
+                    mipmap.lock();
+                    this.downsampleImage(bitmapImage.getImageData(), mipmap.getImageData());
+                    mipmap.unlock();
+                    bitmapImage.unlock();
+                }
+                else if (source.constructor.toString().indexOf("CPUCanvas") > -1) {
+                    this.downsampleImage(source.getImageData(), mipmap.getImageData());
+                }
+                else {
+                    //for imageData
+                    this.downsampleImage(source, mipmap.getImageData());
+                }
+            }
             w >>= 1;
             h >>= 1;
             MipmapGenerator._rect.width = w > 1 ? w : 1;
@@ -14581,11 +14581,157 @@ var MipmapGenerator = (function () {
             MipmapGenerator._mipMaps[holderWidth][holderHeight] = null;
         }
     };
+    MipmapGenerator.downsampleImage = function (bitmap, destBitmap) {
+        var box = new BoxFilter();
+        var xkernel = new PolyphaseKernel(box, bitmap.width, destBitmap.width, 4);
+        var ykernel = new PolyphaseKernel(box, bitmap.height, destBitmap.height, 4);
+        var tempBitmap = []; //destBitmap.width, bitmap.height
+        var scale = 0;
+        var iscale = 0;
+        var kernelLength = 0;
+        var kernelWidth = 0;
+        var kernelWindowSize = 0;
+        var sumR = 0;
+        var sumG = 0;
+        var sumB = 0;
+        var sumA = 0;
+        var center;
+        var left;
+        var i = 0;
+        var j = 0;
+        var index = 0;
+        for (var y = 0; y < bitmap.height; y++) {
+            kernelLength = xkernel.len;
+            scale = kernelLength / bitmap.width;
+            iscale = 1.0 / scale;
+            kernelWidth = xkernel.width;
+            kernelWindowSize = xkernel.windowSize;
+            for (i = 0; i < kernelLength; i++) {
+                center = (0.5 + i) * iscale;
+                left = Math.floor(center - kernelWidth);
+                sumR = 0;
+                sumG = 0;
+                sumB = 0;
+                sumA = 0;
+                for (var j = 0; j < kernelWindowSize; ++j) {
+                    index = (y * bitmap.width + (left + j)) * 4;
+                    var colorR = bitmap.data[index];
+                    var colorG = bitmap.data[index + 1];
+                    var colorB = bitmap.data[index + 2];
+                    var colorA = bitmap.data[index + 3];
+                    var value = xkernel.valueAt(i, j);
+                    sumR += value * colorR;
+                    sumG += value * colorG;
+                    sumB += value * colorB;
+                    sumA += value * colorA;
+                }
+                index = (y * destBitmap.width + i) * 4;
+                tempBitmap[index] = sumR;
+                tempBitmap[index + 1] = sumG;
+                tempBitmap[index + 2] = sumB;
+                tempBitmap[index + 3] = sumA;
+            }
+        }
+        for (var x = 0; x < destBitmap.width; x++) {
+            kernelLength = ykernel.len;
+            scale = kernelLength / bitmap.height;
+            iscale = 1.0 / scale;
+            kernelWidth = ykernel.width;
+            kernelWindowSize = ykernel.windowSize;
+            for (i = 0; i < kernelLength; i++) {
+                center = (0.5 + i) * iscale;
+                left = Math.floor(center - kernelWidth);
+                sumR = 0;
+                sumG = 0;
+                sumB = 0;
+                sumA = 0;
+                for (j = 0; j < kernelWindowSize; ++j) {
+                    index = ((j + left) * destBitmap.width + x) * 4;
+                    var colorR = tempBitmap[index];
+                    var colorG = tempBitmap[index + 1];
+                    var colorB = tempBitmap[index + 2];
+                    var colorA = tempBitmap[index + 3];
+                    var value = ykernel.valueAt(i, j);
+                    sumR += value * colorR;
+                    sumG += value * colorG;
+                    sumB += value * colorB;
+                    sumA += value * colorA;
+                }
+                index = (i * destBitmap.width + x) * 4;
+                destBitmap.data[index] = sumR;
+                destBitmap.data[index + 1] = sumG;
+                destBitmap.data[index + 2] = sumB;
+                destBitmap.data[index + 3] = sumA;
+            }
+        }
+        return destBitmap;
+    };
     MipmapGenerator._mipMaps = [];
     MipmapGenerator._mipMapUses = [];
     MipmapGenerator._matrix = new Matrix();
     MipmapGenerator._rect = new Rectangle();
     return MipmapGenerator;
+})();
+var PolyphaseKernel = (function () {
+    function PolyphaseKernel(f, srcLength, dstLength, samples) {
+        var scale = dstLength / srcLength;
+        var iscale = 1.0 / scale;
+        if (scale > 1) {
+            // Upsampling.
+            samples = 1;
+            scale = 1;
+        }
+        this.len = dstLength;
+        this.width = f.width * iscale;
+        this.windowSize = Math.ceil(this.width * 2);
+        this.data = [];
+        for (var i = 0; i < this.len; i++) {
+            var center = (0.5 + i) * iscale;
+            var left = Math.floor(center - this.width);
+            var total = 0.0;
+            for (var j = 0; j < this.windowSize; j++) {
+                var sample = f.sampleBox(left + j - center, scale, samples);
+                //printf("%f %X\n", sample, *(uint32 *)&sample);
+                this.data[i * this.windowSize + j] = sample;
+                total += sample;
+            }
+            for (var j = 0; j < this.windowSize; j++) {
+                this.data[i * this.windowSize + j] /= total;
+            }
+        }
+    }
+    PolyphaseKernel.prototype.valueAt = function (column, x) {
+        return this.data[column * this.windowSize + x];
+    };
+    return PolyphaseKernel;
+})();
+var BoxFilter = (function () {
+    function BoxFilter() {
+    }
+    Object.defineProperty(BoxFilter.prototype, "width", {
+        get: function () {
+            return 0.5;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    BoxFilter.prototype.sampleBox = function (x, scale, samples) {
+        var sum = 0;
+        var isamples = 1.0 / samples;
+        for (var s = 0; s < samples; s++) {
+            var p = (x + (s + 0.5) * isamples) * scale;
+            var value = this.evaluate(p);
+            sum += value;
+        }
+        return sum * isamples;
+    };
+    BoxFilter.prototype.evaluate = function (x) {
+        if (Math.abs(x) <= this.width)
+            return 1.0;
+        else
+            return 0.0;
+    };
+    return BoxFilter;
 })();
 module.exports = MipmapGenerator;
 

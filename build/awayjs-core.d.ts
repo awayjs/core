@@ -56,6 +56,34 @@ declare module "awayjs-core/lib/attributes/AttributesBuffer" {
 	
 }
 
+declare module "awayjs-core/lib/attributes/Byte4Attributes" {
+	import AttributesBuffer = require("awayjs-core/lib/attributes/AttributesBuffer");
+	import AttributesView = require("awayjs-core/lib/attributes/AttributesView");
+	class Byte4Attributes extends AttributesView {
+	    static assetType: string;
+	    /**
+	     *
+	     * @returns {string}
+	     */
+	    assetType: string;
+	    /**
+	     *
+	     */
+	    constructor(length?: number, unsigned?: boolean);
+	    constructor(attributesBuffer?: AttributesBuffer, unsigned?: boolean);
+	    set(array: Array<number>, offset?: number): any;
+	    set(typedArray: Float32Array, offset?: number): any;
+	    set(typedArray: Uint8Array, offset?: number): any;
+	    set(typedArray: Int8Array, offset?: number): any;
+	    get(count: number, offset?: number): Uint8Array;
+	    get(count: number, offset?: number): Int8Array;
+	    _internalClone(attributesBuffer: AttributesBuffer): Byte4Attributes;
+	    clone(attributesBuffer?: AttributesBuffer): Byte4Attributes;
+	}
+	export = Byte4Attributes;
+	
+}
+
 declare module "awayjs-core/lib/attributes/AttributesView" {
 	import AttributesBuffer = require("awayjs-core/lib/attributes/AttributesBuffer");
 	import IAsset = require("awayjs-core/lib/library/IAsset");
@@ -110,34 +138,6 @@ declare module "awayjs-core/lib/attributes/AttributesView" {
 	
 }
 
-declare module "awayjs-core/lib/attributes/Byte4Attributes" {
-	import AttributesBuffer = require("awayjs-core/lib/attributes/AttributesBuffer");
-	import AttributesView = require("awayjs-core/lib/attributes/AttributesView");
-	class Byte4Attributes extends AttributesView {
-	    static assetType: string;
-	    /**
-	     *
-	     * @returns {string}
-	     */
-	    assetType: string;
-	    /**
-	     *
-	     */
-	    constructor(length?: number, unsigned?: boolean);
-	    constructor(attributesBuffer?: AttributesBuffer, unsigned?: boolean);
-	    set(array: Array<number>, offset?: number): any;
-	    set(typedArray: Float32Array, offset?: number): any;
-	    set(typedArray: Uint8Array, offset?: number): any;
-	    set(typedArray: Int8Array, offset?: number): any;
-	    get(count: number, offset?: number): Uint8Array;
-	    get(count: number, offset?: number): Int8Array;
-	    _internalClone(attributesBuffer: AttributesBuffer): Byte4Attributes;
-	    clone(attributesBuffer?: AttributesBuffer): Byte4Attributes;
-	}
-	export = Byte4Attributes;
-	
-}
-
 declare module "awayjs-core/lib/attributes/Float1Attributes" {
 	import AttributesBuffer = require("awayjs-core/lib/attributes/AttributesBuffer");
 	import AttributesView = require("awayjs-core/lib/attributes/AttributesView");
@@ -160,31 +160,6 @@ declare module "awayjs-core/lib/attributes/Float1Attributes" {
 	    clone(attributesBuffer?: AttributesBuffer): Float1Attributes;
 	}
 	export = Float1Attributes;
-	
-}
-
-declare module "awayjs-core/lib/attributes/Float2Attributes" {
-	import AttributesBuffer = require("awayjs-core/lib/attributes/AttributesBuffer");
-	import AttributesView = require("awayjs-core/lib/attributes/AttributesView");
-	class Float2Attributes extends AttributesView {
-	    static assetType: string;
-	    /**
-	     *
-	     * @returns {string}
-	     */
-	    assetType: string;
-	    /**
-	     *
-	     */
-	    constructor(length?: number);
-	    constructor(attributesBuffer?: AttributesBuffer);
-	    set(array: Array<number>, offset?: number): any;
-	    set(typedArray: Float32Array, offset?: number): any;
-	    get(count: number, offset?: number): Float32Array;
-	    _internalClone(attributesBuffer: AttributesBuffer): Float2Attributes;
-	    clone(attributesBuffer?: AttributesBuffer): Float2Attributes;
-	}
-	export = Float2Attributes;
 	
 }
 
@@ -213,6 +188,31 @@ declare module "awayjs-core/lib/attributes/Float3Attributes" {
 	
 }
 
+declare module "awayjs-core/lib/attributes/Float2Attributes" {
+	import AttributesBuffer = require("awayjs-core/lib/attributes/AttributesBuffer");
+	import AttributesView = require("awayjs-core/lib/attributes/AttributesView");
+	class Float2Attributes extends AttributesView {
+	    static assetType: string;
+	    /**
+	     *
+	     * @returns {string}
+	     */
+	    assetType: string;
+	    /**
+	     *
+	     */
+	    constructor(length?: number);
+	    constructor(attributesBuffer?: AttributesBuffer);
+	    set(array: Array<number>, offset?: number): any;
+	    set(typedArray: Float32Array, offset?: number): any;
+	    get(count: number, offset?: number): Float32Array;
+	    _internalClone(attributesBuffer: AttributesBuffer): Float2Attributes;
+	    clone(attributesBuffer?: AttributesBuffer): Float2Attributes;
+	}
+	export = Float2Attributes;
+	
+}
+
 declare module "awayjs-core/lib/attributes/Float4Attributes" {
 	import AttributesBuffer = require("awayjs-core/lib/attributes/AttributesBuffer");
 	import AttributesView = require("awayjs-core/lib/attributes/AttributesView");
@@ -235,6 +235,33 @@ declare module "awayjs-core/lib/attributes/Float4Attributes" {
 	    clone(attributesBuffer?: AttributesBuffer): Float4Attributes;
 	}
 	export = Float4Attributes;
+	
+}
+
+declare module "awayjs-core/lib/attributes/Short3Attributes" {
+	import AttributesBuffer = require("awayjs-core/lib/attributes/AttributesBuffer");
+	import AttributesView = require("awayjs-core/lib/attributes/AttributesView");
+	class Short3Attributes extends AttributesView {
+	    static assetType: string;
+	    /**
+	     *
+	     * @returns {string}
+	     */
+	    assetType: string;
+	    /**
+	     *
+	     */
+	    constructor(length?: number, unsigned?: boolean);
+	    constructor(attributesBuffer?: AttributesBuffer, unsigned?: boolean);
+	    set(array: Array<number>, offset?: number): any;
+	    set(typedArray: Uint16Array, offset?: number): any;
+	    set(typedArray: Int16Array, offset?: number): any;
+	    get(count: number, offset?: number): Uint16Array;
+	    get(count: number, offset?: number): Int16Array;
+	    _internalClone(attributesBuffer: AttributesBuffer): Short3Attributes;
+	    clone(attributesBuffer?: AttributesBuffer): Short3Attributes;
+	}
+	export = Short3Attributes;
 	
 }
 
@@ -265,30 +292,14 @@ declare module "awayjs-core/lib/attributes/Short2Attributes" {
 	
 }
 
-declare module "awayjs-core/lib/attributes/Short3Attributes" {
-	import AttributesBuffer = require("awayjs-core/lib/attributes/AttributesBuffer");
-	import AttributesView = require("awayjs-core/lib/attributes/AttributesView");
-	class Short3Attributes extends AttributesView {
-	    static assetType: string;
-	    /**
-	     *
-	     * @returns {string}
-	     */
-	    assetType: string;
-	    /**
-	     *
-	     */
-	    constructor(length?: number, unsigned?: boolean);
-	    constructor(attributesBuffer?: AttributesBuffer, unsigned?: boolean);
-	    set(array: Array<number>, offset?: number): any;
-	    set(typedArray: Uint16Array, offset?: number): any;
-	    set(typedArray: Int16Array, offset?: number): any;
-	    get(count: number, offset?: number): Uint16Array;
-	    get(count: number, offset?: number): Int16Array;
-	    _internalClone(attributesBuffer: AttributesBuffer): Short3Attributes;
-	    clone(attributesBuffer?: AttributesBuffer): Short3Attributes;
+declare module "awayjs-core/lib/data/BitmapImageChannel" {
+	class BitmapImageChannel {
+	    static ALPHA: number;
+	    static BLUE: number;
+	    static GREEN: number;
+	    static RED: number;
 	}
-	export = Short3Attributes;
+	export = BitmapImageChannel;
 	
 }
 
@@ -786,17 +797,6 @@ declare module "awayjs-core/lib/data/BitmapImage2D" {
 	    _setSize(width: number, height: number): void;
 	}
 	export = BitmapImage2D;
-	
-}
-
-declare module "awayjs-core/lib/data/BitmapImageChannel" {
-	class BitmapImageChannel {
-	    static ALPHA: number;
-	    static BLUE: number;
-	    static GREEN: number;
-	    static RED: number;
-	}
-	export = BitmapImageChannel;
 	
 }
 
@@ -1304,6 +1304,22 @@ declare module "awayjs-core/lib/data/BitmapImageCube" {
 	
 }
 
+declare module "awayjs-core/lib/data/CPUCanvas" {
+	import IImageCanvas = require("awayjs-core/lib/data/IImageCanvas");
+	import ImageData = require('awayjs-core/lib/data/ImageData');
+	class CPUCanvas implements IImageCanvas {
+	    width: number;
+	    height: number;
+	    private imageData;
+	    getContext(contextId: string): CanvasRenderingContext2D;
+	    constructor();
+	    reset(): void;
+	    getImageData(): ImageData;
+	}
+	export = CPUCanvas;
+	
+}
+
 declare module "awayjs-core/lib/data/BlendMode" {
 	/**
 	 * A class that provides constant values for visual blend mode effects. These
@@ -1482,19 +1498,13 @@ declare module "awayjs-core/lib/data/BlendMode" {
 	
 }
 
-declare module "awayjs-core/lib/data/CPUCanvas" {
-	import IImageCanvas = require("awayjs-core/lib/data/IImageCanvas");
-	import ImageData = require('awayjs-core/lib/data/ImageData');
-	class CPUCanvas implements IImageCanvas {
+declare module "awayjs-core/lib/data/IImageCanvas" {
+	interface IImageCanvas {
 	    width: number;
 	    height: number;
-	    private imageData;
 	    getContext(contextId: string): CanvasRenderingContext2D;
-	    constructor();
-	    reset(): void;
-	    getImageData(): ImageData;
 	}
-	export = CPUCanvas;
+	export = IImageCanvas;
 	
 }
 
@@ -1575,16 +1585,6 @@ declare module "awayjs-core/lib/data/CPURenderingContext2D" {
 	    private static interpolateColor(source, target, a);
 	}
 	export = CPURenderingContext2D;
-	
-}
-
-declare module "awayjs-core/lib/data/IImageCanvas" {
-	interface IImageCanvas {
-	    width: number;
-	    height: number;
-	    getContext(contextId: string): CanvasRenderingContext2D;
-	}
-	export = IImageCanvas;
 	
 }
 
@@ -2048,43 +2048,6 @@ declare module "awayjs-core/lib/errors/Error" {
 	
 }
 
-declare module "awayjs-core/lib/errors/PartialImplementationError" {
-	import Error = require("awayjs-core/lib/errors/Error");
-	/**
-	 * AbstractMethodError is thrown when an abstract method is called. The method in question should be overridden
-	 * by a concrete subclass.
-	 */
-	class PartialImplementationError extends Error {
-	    /**
-	     * Create a new AbstractMethodError.
-	     * @param message An optional message to override the default error message.
-	     * @param id The id of the error.
-	     */
-	    constructor(dependency?: string, id?: number);
-	}
-	export = PartialImplementationError;
-	
-}
-
-declare module "awayjs-core/lib/errors/RangeError" {
-	import Error = require("awayjs-core/lib/errors/Error");
-	/**
-	 * RangeError is thrown when an index is accessed out of range of the number of
-	 * available indices on an Array.
-	 */
-	class RangeError extends Error {
-	    /**
-	     * Create a new RangeError.
-	     *
-	     * @param message An optional message to override the default error message.
-	     * @param id The id of the error.
-	     */
-	    constructor(message?: string, id?: number);
-	}
-	export = RangeError;
-	
-}
-
 declare module "awayjs-core/lib/events/AssetEvent" {
 	import IAsset = require("awayjs-core/lib/library/IAsset");
 	import Event = require("awayjs-core/lib/events/Event");
@@ -2131,6 +2094,24 @@ declare module "awayjs-core/lib/events/AssetEvent" {
 	
 }
 
+declare module "awayjs-core/lib/errors/PartialImplementationError" {
+	import Error = require("awayjs-core/lib/errors/Error");
+	/**
+	 * AbstractMethodError is thrown when an abstract method is called. The method in question should be overridden
+	 * by a concrete subclass.
+	 */
+	class PartialImplementationError extends Error {
+	    /**
+	     * Create a new AbstractMethodError.
+	     * @param message An optional message to override the default error message.
+	     * @param id The id of the error.
+	     */
+	    constructor(dependency?: string, id?: number);
+	}
+	export = PartialImplementationError;
+	
+}
+
 declare module "awayjs-core/lib/events/Event" {
 	class Event {
 	    static COMPLETE: string;
@@ -2160,6 +2141,25 @@ declare module "awayjs-core/lib/events/Event" {
 	    clone(): Event;
 	}
 	export = Event;
+	
+}
+
+declare module "awayjs-core/lib/errors/RangeError" {
+	import Error = require("awayjs-core/lib/errors/Error");
+	/**
+	 * RangeError is thrown when an index is accessed out of range of the number of
+	 * available indices on an Array.
+	 */
+	class RangeError extends Error {
+	    /**
+	     * Create a new RangeError.
+	     *
+	     * @param message An optional message to override the default error message.
+	     * @param id The id of the error.
+	     */
+	    constructor(message?: string, id?: number);
+	}
+	export = RangeError;
 	
 }
 
@@ -2351,18 +2351,6 @@ declare module "awayjs-core/lib/events/ParserEvent" {
 	
 }
 
-declare module "awayjs-core/lib/events/ProgressEvent" {
-	import Event = require("awayjs-core/lib/events/Event");
-	class ProgressEvent extends Event {
-	    static PROGRESS: string;
-	    bytesLoaded: number;
-	    bytesTotal: number;
-	    constructor(type: string);
-	}
-	export = ProgressEvent;
-	
-}
-
 declare module "awayjs-core/lib/events/ProjectionEvent" {
 	import Event = require("awayjs-core/lib/events/Event");
 	import IProjection = require("awayjs-core/lib/projections/IProjection");
@@ -2373,6 +2361,18 @@ declare module "awayjs-core/lib/events/ProjectionEvent" {
 	    projection: IProjection;
 	}
 	export = ProjectionEvent;
+	
+}
+
+declare module "awayjs-core/lib/events/ProgressEvent" {
+	import Event = require("awayjs-core/lib/events/Event");
+	class ProgressEvent extends Event {
+	    static PROGRESS: string;
+	    bytesLoaded: number;
+	    bytesTotal: number;
+	    constructor(type: string);
+	}
+	export = ProgressEvent;
 	
 }
 
@@ -2893,24 +2893,6 @@ declare module "awayjs-core/lib/geom/ColorTransform" {
 	
 }
 
-declare module "awayjs-core/lib/geom/MathConsts" {
-	/**
-	* MathConsts provides some commonly used mathematical constants
-	*/
-	class MathConsts {
-	    /**
-	     * The amount to multiply with when converting radians to degrees.
-	     */
-	    static RADIANS_TO_DEGREES: number;
-	    /**
-	     * The amount to multiply with when converting degrees to radians.
-	     */
-	    static DEGREES_TO_RADIANS: number;
-	}
-	export = MathConsts;
-	
-}
-
 declare module "awayjs-core/lib/geom/Matrix" {
 	import Point = require("awayjs-core/lib/geom/Point");
 	import Vector3D = require("awayjs-core/lib/geom/Vector3D");
@@ -3251,6 +3233,24 @@ declare module "awayjs-core/lib/geom/Matrix" {
 	    translate(dx: number, dy: number): void;
 	}
 	export = Matrix;
+	
+}
+
+declare module "awayjs-core/lib/geom/MathConsts" {
+	/**
+	* MathConsts provides some commonly used mathematical constants
+	*/
+	class MathConsts {
+	    /**
+	     * The amount to multiply with when converting radians to degrees.
+	     */
+	    static RADIANS_TO_DEGREES: number;
+	    /**
+	     * The amount to multiply with when converting degrees to radians.
+	     */
+	    static DEGREES_TO_RADIANS: number;
+	}
+	export = MathConsts;
 	
 }
 
@@ -3683,6 +3683,16 @@ declare module "awayjs-core/lib/geom/PlaneClassification" {
 	
 }
 
+declare module "awayjs-core/lib/geom/PoissonLookup" {
+	class PoissonLookup {
+	    static _distributions: Array<Array<number>>;
+	    static initDistributions(): void;
+	    static getDistribution(n: number): Array<number>;
+	}
+	export = PoissonLookup;
+	
+}
+
 declare module "awayjs-core/lib/geom/Point" {
 	/**
 	 * The Point object represents a location in a two-dimensional coordinate
@@ -3830,16 +3840,6 @@ declare module "awayjs-core/lib/geom/Point" {
 	
 }
 
-declare module "awayjs-core/lib/geom/PoissonLookup" {
-	class PoissonLookup {
-	    static _distributions: Array<Array<number>>;
-	    static initDistributions(): void;
-	    static getDistribution(n: number): Array<number>;
-	}
-	export = PoissonLookup;
-	
-}
-
 declare module "awayjs-core/lib/geom/Quaternion" {
 	import Matrix3D = require("awayjs-core/lib/geom/Matrix3D");
 	import Vector3D = require("awayjs-core/lib/geom/Vector3D");
@@ -3964,6 +3964,37 @@ declare module "awayjs-core/lib/geom/Quaternion" {
 	    copyFrom(q: Quaternion): void;
 	}
 	export = Quaternion;
+	
+}
+
+declare module "awayjs-core/lib/geom/Sphere" {
+	import Vector3D = require("awayjs-core/lib/geom/Vector3D");
+	class Sphere {
+	    /**
+	     *
+	     */
+	    x: number;
+	    /**
+	     *
+	     */
+	    y: number;
+	    /**
+	     *
+	     */
+	    z: number;
+	    /**
+	     *
+	     */
+	    radius: number;
+	    /**
+	     * Create a Sphere with ABCD coefficients
+	     */
+	    constructor(x?: number, y?: number, z?: number, radius?: number);
+	    rayIntersection(position: Vector3D, direction: Vector3D, targetNormal: Vector3D): number;
+	    containsPoint(position: Vector3D): boolean;
+	    toString(): string;
+	}
+	export = Sphere;
 	
 }
 
@@ -4300,37 +4331,6 @@ declare module "awayjs-core/lib/geom/Rectangle" {
 	
 }
 
-declare module "awayjs-core/lib/geom/Sphere" {
-	import Vector3D = require("awayjs-core/lib/geom/Vector3D");
-	class Sphere {
-	    /**
-	     *
-	     */
-	    x: number;
-	    /**
-	     *
-	     */
-	    y: number;
-	    /**
-	     *
-	     */
-	    z: number;
-	    /**
-	     *
-	     */
-	    radius: number;
-	    /**
-	     * Create a Sphere with ABCD coefficients
-	     */
-	    constructor(x?: number, y?: number, z?: number, radius?: number);
-	    rayIntersection(position: Vector3D, direction: Vector3D, targetNormal: Vector3D): number;
-	    containsPoint(position: Vector3D): boolean;
-	    toString(): string;
-	}
-	export = Sphere;
-	
-}
-
 declare module "awayjs-core/lib/geom/UVTransform" {
 	import Matrix = require("awayjs-core/lib/geom/Matrix");
 	class UVTransform {
@@ -4372,6 +4372,46 @@ declare module "awayjs-core/lib/geom/UVTransform" {
 	    private updateUVMatrix();
 	}
 	export = UVTransform;
+	
+}
+
+declare module "awayjs-core/lib/library/AssetBase" {
+	import IAssetClass = require("awayjs-core/lib/library/IAssetClass");
+	import EventDispatcher = require("awayjs-core/lib/events/EventDispatcher");
+	class AssetBase extends EventDispatcher {
+	    static ID_COUNT: number;
+	    private _originalName;
+	    private _namespace;
+	    private _name;
+	    private _id;
+	    private _full_path;
+	    static DEFAULT_NAMESPACE: string;
+	    constructor(name?: string);
+	    /**
+	     *
+	     */
+	    assetType: string;
+	    /**
+	     * The original name used for this asset in the resource (e.g. file) in which
+	     * it was found. This may not be the same as <code>name</code>, which may
+	     * have changed due to of a name conflict.
+	     */
+	    originalName: string;
+	    /**
+	     * A unique id for the asset, used to identify assets in an associative array
+	     */
+	    id: number;
+	    name: string;
+	    dispose(): void;
+	    _clearInterfaces(): void;
+	    assetNamespace: string;
+	    assetFullPath: Array<string>;
+	    assetPathEquals(name: string, ns: string): boolean;
+	    isAsset(assetClass: IAssetClass): boolean;
+	    resetAssetPath(name: string, ns?: string, overrideOriginal?: boolean): void;
+	    private updateFullPath();
+	}
+	export = AssetBase;
 	
 }
 
@@ -4738,193 +4778,6 @@ declare module "awayjs-core/lib/geom/Vector3D" {
 	
 }
 
-declare module "awayjs-core/lib/library/AssetBase" {
-	import IAssetClass = require("awayjs-core/lib/library/IAssetClass");
-	import EventDispatcher = require("awayjs-core/lib/events/EventDispatcher");
-	class AssetBase extends EventDispatcher {
-	    static ID_COUNT: number;
-	    private _originalName;
-	    private _namespace;
-	    private _name;
-	    private _id;
-	    private _full_path;
-	    static DEFAULT_NAMESPACE: string;
-	    constructor(name?: string);
-	    /**
-	     *
-	     */
-	    assetType: string;
-	    /**
-	     * The original name used for this asset in the resource (e.g. file) in which
-	     * it was found. This may not be the same as <code>name</code>, which may
-	     * have changed due to of a name conflict.
-	     */
-	    originalName: string;
-	    /**
-	     * A unique id for the asset, used to identify assets in an associative array
-	     */
-	    id: number;
-	    name: string;
-	    dispose(): void;
-	    _clearInterfaces(): void;
-	    assetNamespace: string;
-	    assetFullPath: Array<string>;
-	    assetPathEquals(name: string, ns: string): boolean;
-	    isAsset(assetClass: IAssetClass): boolean;
-	    resetAssetPath(name: string, ns?: string, overrideOriginal?: boolean): void;
-	    private updateFullPath();
-	}
-	export = AssetBase;
-	
-}
-
-declare module "awayjs-core/lib/library/AssetLibrary" {
-	import URLRequest = require("awayjs-core/lib/net/URLRequest");
-	import AssetLibraryBundle = require("awayjs-core/lib/library/AssetLibraryBundle");
-	import AssetLibraryIterator = require("awayjs-core/lib/library/AssetLibraryIterator");
-	import LoaderSession = require("awayjs-core/lib/library/LoaderSession");
-	import LoaderContext = require("awayjs-core/lib/library/LoaderContext");
-	import ConflictStrategyBase = require("awayjs-core/lib/library/ConflictStrategyBase");
-	import IAsset = require("awayjs-core/lib/library/IAsset");
-	import ParserBase = require("awayjs-core/lib/parsers/ParserBase");
-	/**
-	 * AssetLibrary enforces a singleton pattern and is not intended to be instanced.
-	 * It's purpose is to allow access to the default library bundle through a set of static shortcut methods.
-	 * If you are interested in creating multiple library bundles, please use the <code>getBundle()</code> method.
-	 */
-	class AssetLibrary {
-	    /**
-	     * Creates a new <code>AssetLibrary</code> object.
-	     *
-	     */
-	    constructor();
-	    /**
-	     * Returns an AssetLibrary bundle instance. If no key is given, returns the default bundle (which is
-	     * similar to using the AssetLibraryBundle as a singleton). To keep several separated library bundles,
-	     * pass a string key to this method to define which bundle should be returned. This is
-	     * referred to as using the AssetLibraryBundle as a multiton.
-	     *
-	     * @param key Defines which multiton instance should be returned.
-	     * @return An instance of the asset library
-	     */
-	    static getBundle(key?: string): AssetLibraryBundle;
-	    /**
-	     *
-	     */
-	    static enableParser(parserClass: any): void;
-	    /**
-	     *
-	     */
-	    static enableParsers(parserClasses: Array<Object>): void;
-	    /**
-	     * Short-hand for conflictStrategy property on default asset library bundle.
-	     *
-	     * @see AssetLibraryBundle.conflictStrategy
-	     */
-	    static conflictStrategy: ConflictStrategyBase;
-	    /**
-	     * Short-hand for conflictPrecedence property on default asset library bundle.
-	     *
-	     * @see AssetLibraryBundle.conflictPrecedence
-	     */
-	    static conflictPrecedence: string;
-	    /**
-	     * Short-hand for createIterator() method on default asset library bundle.
-	     *
-	     * @see AssetLibraryBundle.createIterator()
-	     */
-	    static createIterator(assetTypeFilter?: string, namespaceFilter?: string, filterFunc?: any): AssetLibraryIterator;
-	    /**
-	     * Short-hand for load() method on default asset library bundle.
-	     *
-	     * @see AssetLibraryBundle.load()
-	     */
-	    static load(req: URLRequest, context?: LoaderContext, ns?: string, parser?: ParserBase): void;
-	    /**
-	     * Short-hand for loadData() method on default asset library bundle.
-	     *
-	     * @see AssetLibraryBundle.loadData()
-	     */
-	    static loadData(data: any, context?: LoaderContext, ns?: string, parser?: ParserBase): void;
-	    static stopLoad(): void;
-	    static getLoaderSession(): LoaderSession;
-	    /**
-	     * Short-hand for getAsset() method on default asset library bundle.
-	     *
-	     * @see AssetLibraryBundle.getAsset()
-	     */
-	    static getAsset(name: string, ns?: string): IAsset;
-	    /**
-	     * Short-hand for getAsset() method on default asset library bundle.
-	     *
-	     * @see AssetLibraryBundle.getAsset()
-	     */
-	    static getAllAssets(): Array<IAsset>;
-	    /**
-	     * Short-hand for addEventListener() method on default asset library bundle.
-	     */
-	    static addEventListener(type: string, listener: Function): void;
-	    /**
-	     * Short-hand for removeEventListener() method on default asset library bundle.
-	     */
-	    static removeEventListener(type: string, listener: Function): void;
-	    /**
-	     * Short-hand for hasEventListener() method on default asset library bundle.
-	
-	     public static hasEventListener(type:string):boolean
-	     {
-	        return AssetLibrary.getBundle().hasEventListener(type);
-	    }
-	
-	     public static willTrigger(type:string):boolean
-	     {
-	        return getBundle().willTrigger(type);
-	    }
-	     */
-	    /**
-	     * Short-hand for addAsset() method on default asset library bundle.
-	     *
-	     * @see AssetLibraryBundle.addAsset()
-	     */
-	    static addAsset(asset: IAsset): void;
-	    /**
-	     * Short-hand for removeAsset() method on default asset library bundle.
-	     *
-	     * @param asset The asset which should be removed from the library.
-	     * @param dispose Defines whether the assets should also be disposed.
-	     *
-	     * @see AssetLibraryBundle.removeAsset()
-	     */
-	    static removeAsset(asset: IAsset, dispose?: boolean): void;
-	    /**
-	     * Short-hand for removeAssetByName() method on default asset library bundle.
-	     *
-	     * @param name The name of the asset to be removed.
-	     * @param ns The namespace to which the desired asset belongs.
-	     * @param dispose Defines whether the assets should also be disposed.
-	     *
-	     * @see AssetLibraryBundle.removeAssetByName()
-	     */
-	    static removeAssetByName(name: string, ns?: string, dispose?: boolean): IAsset;
-	    /**
-	     * Short-hand for removeAllAssets() method on default asset library bundle.
-	     *
-	     * @param dispose Defines whether the assets should also be disposed.
-	     *
-	     * @see AssetLibraryBundle.removeAllAssets()
-	     */
-	    static removeAllAssets(dispose?: boolean): void;
-	    /**
-	     * Short-hand for removeNamespaceAssets() method on default asset library bundle.
-	     *
-	     * @see AssetLibraryBundle.removeNamespaceAssets()
-	     */
-	    static removeNamespaceAssets(ns?: string, dispose?: boolean): void;
-	}
-	export = AssetLibrary;
-	
-}
-
 declare module "awayjs-core/lib/library/AssetLibraryBundle" {
 	import URLRequest = require("awayjs-core/lib/net/URLRequest");
 	import AssetLibraryIterator = require("awayjs-core/lib/library/AssetLibraryIterator");
@@ -5118,6 +4971,153 @@ declare module "awayjs-core/lib/library/AssetLibraryBundle" {
 	
 }
 
+declare module "awayjs-core/lib/library/AssetLibrary" {
+	import URLRequest = require("awayjs-core/lib/net/URLRequest");
+	import AssetLibraryBundle = require("awayjs-core/lib/library/AssetLibraryBundle");
+	import AssetLibraryIterator = require("awayjs-core/lib/library/AssetLibraryIterator");
+	import LoaderSession = require("awayjs-core/lib/library/LoaderSession");
+	import LoaderContext = require("awayjs-core/lib/library/LoaderContext");
+	import ConflictStrategyBase = require("awayjs-core/lib/library/ConflictStrategyBase");
+	import IAsset = require("awayjs-core/lib/library/IAsset");
+	import ParserBase = require("awayjs-core/lib/parsers/ParserBase");
+	/**
+	 * AssetLibrary enforces a singleton pattern and is not intended to be instanced.
+	 * It's purpose is to allow access to the default library bundle through a set of static shortcut methods.
+	 * If you are interested in creating multiple library bundles, please use the <code>getBundle()</code> method.
+	 */
+	class AssetLibrary {
+	    /**
+	     * Creates a new <code>AssetLibrary</code> object.
+	     *
+	     */
+	    constructor();
+	    /**
+	     * Returns an AssetLibrary bundle instance. If no key is given, returns the default bundle (which is
+	     * similar to using the AssetLibraryBundle as a singleton). To keep several separated library bundles,
+	     * pass a string key to this method to define which bundle should be returned. This is
+	     * referred to as using the AssetLibraryBundle as a multiton.
+	     *
+	     * @param key Defines which multiton instance should be returned.
+	     * @return An instance of the asset library
+	     */
+	    static getBundle(key?: string): AssetLibraryBundle;
+	    /**
+	     *
+	     */
+	    static enableParser(parserClass: any): void;
+	    /**
+	     *
+	     */
+	    static enableParsers(parserClasses: Array<Object>): void;
+	    /**
+	     * Short-hand for conflictStrategy property on default asset library bundle.
+	     *
+	     * @see AssetLibraryBundle.conflictStrategy
+	     */
+	    static conflictStrategy: ConflictStrategyBase;
+	    /**
+	     * Short-hand for conflictPrecedence property on default asset library bundle.
+	     *
+	     * @see AssetLibraryBundle.conflictPrecedence
+	     */
+	    static conflictPrecedence: string;
+	    /**
+	     * Short-hand for createIterator() method on default asset library bundle.
+	     *
+	     * @see AssetLibraryBundle.createIterator()
+	     */
+	    static createIterator(assetTypeFilter?: string, namespaceFilter?: string, filterFunc?: any): AssetLibraryIterator;
+	    /**
+	     * Short-hand for load() method on default asset library bundle.
+	     *
+	     * @see AssetLibraryBundle.load()
+	     */
+	    static load(req: URLRequest, context?: LoaderContext, ns?: string, parser?: ParserBase): void;
+	    /**
+	     * Short-hand for loadData() method on default asset library bundle.
+	     *
+	     * @see AssetLibraryBundle.loadData()
+	     */
+	    static loadData(data: any, context?: LoaderContext, ns?: string, parser?: ParserBase): void;
+	    static stopLoad(): void;
+	    static getLoaderSession(): LoaderSession;
+	    /**
+	     * Short-hand for getAsset() method on default asset library bundle.
+	     *
+	     * @see AssetLibraryBundle.getAsset()
+	     */
+	    static getAsset(name: string, ns?: string): IAsset;
+	    /**
+	     * Short-hand for getAsset() method on default asset library bundle.
+	     *
+	     * @see AssetLibraryBundle.getAsset()
+	     */
+	    static getAllAssets(): Array<IAsset>;
+	    /**
+	     * Short-hand for addEventListener() method on default asset library bundle.
+	     */
+	    static addEventListener(type: string, listener: Function): void;
+	    /**
+	     * Short-hand for removeEventListener() method on default asset library bundle.
+	     */
+	    static removeEventListener(type: string, listener: Function): void;
+	    /**
+	     * Short-hand for hasEventListener() method on default asset library bundle.
+	
+	     public static hasEventListener(type:string):boolean
+	     {
+	        return AssetLibrary.getBundle().hasEventListener(type);
+	    }
+	
+	     public static willTrigger(type:string):boolean
+	     {
+	        return getBundle().willTrigger(type);
+	    }
+	     */
+	    /**
+	     * Short-hand for addAsset() method on default asset library bundle.
+	     *
+	     * @see AssetLibraryBundle.addAsset()
+	     */
+	    static addAsset(asset: IAsset): void;
+	    /**
+	     * Short-hand for removeAsset() method on default asset library bundle.
+	     *
+	     * @param asset The asset which should be removed from the library.
+	     * @param dispose Defines whether the assets should also be disposed.
+	     *
+	     * @see AssetLibraryBundle.removeAsset()
+	     */
+	    static removeAsset(asset: IAsset, dispose?: boolean): void;
+	    /**
+	     * Short-hand for removeAssetByName() method on default asset library bundle.
+	     *
+	     * @param name The name of the asset to be removed.
+	     * @param ns The namespace to which the desired asset belongs.
+	     * @param dispose Defines whether the assets should also be disposed.
+	     *
+	     * @see AssetLibraryBundle.removeAssetByName()
+	     */
+	    static removeAssetByName(name: string, ns?: string, dispose?: boolean): IAsset;
+	    /**
+	     * Short-hand for removeAllAssets() method on default asset library bundle.
+	     *
+	     * @param dispose Defines whether the assets should also be disposed.
+	     *
+	     * @see AssetLibraryBundle.removeAllAssets()
+	     */
+	    static removeAllAssets(dispose?: boolean): void;
+	    /**
+	     * Short-hand for removeNamespaceAssets() method on default asset library bundle.
+	     *
+	     * @see AssetLibraryBundle.removeNamespaceAssets()
+	     */
+	    static removeNamespaceAssets(ns?: string, dispose?: boolean): void;
+	}
+	export = AssetLibrary;
+	
+}
+
 declare module "awayjs-core/lib/library/AssetLibraryIterator" {
 	import IAsset = require("awayjs-core/lib/library/IAsset");
 	class AssetLibraryIterator {
@@ -5304,14 +5304,6 @@ declare module "awayjs-core/lib/library/IAsset" {
 	
 }
 
-declare module "awayjs-core/lib/library/IAssetClass" {
-	interface IAssetClass {
-	    assetType: string;
-	}
-	export = IAssetClass;
-	
-}
-
 declare module "awayjs-core/lib/library/IDUtil" {
 	class IDUtil {
 	    /**
@@ -5340,6 +5332,14 @@ declare module "awayjs-core/lib/library/IDUtil" {
 	    static createUID(): string;
 	}
 	export = IDUtil;
+	
+}
+
+declare module "awayjs-core/lib/library/IAssetClass" {
+	interface IAssetClass {
+	    assetType: string;
+	}
+	export = IAssetClass;
 	
 }
 
@@ -6038,43 +6038,6 @@ declare module "awayjs-core/lib/net/URLRequestMethod" {
 	
 }
 
-declare module "awayjs-core/lib/net/URLVariables" {
-	class URLVariables {
-	    private _variables;
-	    /**
-	     *
-	     * @param source
-	     */
-	    constructor(source?: string);
-	    /**
-	     *
-	     * @param source
-	     */
-	    decode(source: string): void;
-	    /**
-	     *
-	     * @returns {string}
-	     */
-	    toString(): string;
-	    /**
-	     *
-	     * @returns {Object}
-	     */
-	    /**
-	     *
-	     * @returns {Object}
-	     */
-	    variables: Object;
-	    /**
-	     *
-	     * @returns {Object}
-	     */
-	    formData: FormData;
-	}
-	export = URLVariables;
-	
-}
-
 declare module "awayjs-core/lib/parsers/Image2DParser" {
 	import ParserBase = require("awayjs-core/lib/parsers/ParserBase");
 	/**
@@ -6112,6 +6075,43 @@ declare module "awayjs-core/lib/parsers/Image2DParser" {
 	    onLoadComplete(event: any): void;
 	}
 	export = Image2DParser;
+	
+}
+
+declare module "awayjs-core/lib/net/URLVariables" {
+	class URLVariables {
+	    private _variables;
+	    /**
+	     *
+	     * @param source
+	     */
+	    constructor(source?: string);
+	    /**
+	     *
+	     * @param source
+	     */
+	    decode(source: string): void;
+	    /**
+	     *
+	     * @returns {string}
+	     */
+	    toString(): string;
+	    /**
+	     *
+	     * @returns {Object}
+	     */
+	    /**
+	     *
+	     * @returns {Object}
+	     */
+	    variables: Object;
+	    /**
+	     *
+	     * @returns {Object}
+	     */
+	    formData: FormData;
+	}
+	export = URLVariables;
 	
 }
 

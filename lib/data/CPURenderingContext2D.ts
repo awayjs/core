@@ -265,6 +265,8 @@ class CPURenderingContext2D implements CanvasRenderingContext2D {
             canvasImageHeight = height;
         }
 
+        //console.log("CPURenderingContext2D:drawBitmap(width: " + width + " height: " + height + " canvasImageWidth: " + canvasImageWidth + " canvasImageHeight: " + canvasImageHeight);
+
         var sourceData:ImageData = bitmap.getImageData();
         var canvasImageData:ImageData = this.cpuCanvas.getImageData();
 
@@ -447,6 +449,11 @@ class CPURenderingContext2D implements CanvasRenderingContext2D {
         result[1] /= area;
         result[2] /= area;
         result[3] /= area;
+
+        result[0] = result[0] & 0xFF;
+        result[1] = result[1] & 0xFF;
+        result[2] = result[2] & 0xFF;
+        result[3] = result[3] & 0xFF;
         return result;
     }
 

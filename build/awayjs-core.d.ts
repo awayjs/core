@@ -110,31 +110,6 @@ declare module "awayjs-core/lib/attributes/AttributesView" {
 	
 }
 
-declare module "awayjs-core/lib/attributes/Float1Attributes" {
-	import AttributesBuffer = require("awayjs-core/lib/attributes/AttributesBuffer");
-	import AttributesView = require("awayjs-core/lib/attributes/AttributesView");
-	class Float1Attributes extends AttributesView {
-	    static assetType: string;
-	    /**
-	     *
-	     * @returns {string}
-	     */
-	    assetType: string;
-	    /**
-	     *
-	     */
-	    constructor(length?: number);
-	    constructor(attributesBuffer?: AttributesBuffer);
-	    set(array: Array<number>, offset?: number): any;
-	    set(typedArray: Float32Array, offset?: number): any;
-	    get(count: number, offset?: number): Float32Array;
-	    _internalClone(attributesBuffer: AttributesBuffer): Float1Attributes;
-	    clone(attributesBuffer?: AttributesBuffer): Float1Attributes;
-	}
-	export = Float1Attributes;
-	
-}
-
 declare module "awayjs-core/lib/attributes/Byte4Attributes" {
 	import AttributesBuffer = require("awayjs-core/lib/attributes/AttributesBuffer");
 	import AttributesView = require("awayjs-core/lib/attributes/AttributesView");
@@ -160,6 +135,31 @@ declare module "awayjs-core/lib/attributes/Byte4Attributes" {
 	    clone(attributesBuffer?: AttributesBuffer): Byte4Attributes;
 	}
 	export = Byte4Attributes;
+	
+}
+
+declare module "awayjs-core/lib/attributes/Float1Attributes" {
+	import AttributesBuffer = require("awayjs-core/lib/attributes/AttributesBuffer");
+	import AttributesView = require("awayjs-core/lib/attributes/AttributesView");
+	class Float1Attributes extends AttributesView {
+	    static assetType: string;
+	    /**
+	     *
+	     * @returns {string}
+	     */
+	    assetType: string;
+	    /**
+	     *
+	     */
+	    constructor(length?: number);
+	    constructor(attributesBuffer?: AttributesBuffer);
+	    set(array: Array<number>, offset?: number): any;
+	    set(typedArray: Float32Array, offset?: number): any;
+	    get(count: number, offset?: number): Float32Array;
+	    _internalClone(attributesBuffer: AttributesBuffer): Float1Attributes;
+	    clone(attributesBuffer?: AttributesBuffer): Float1Attributes;
+	}
+	export = Float1Attributes;
 	
 }
 
@@ -238,33 +238,6 @@ declare module "awayjs-core/lib/attributes/Float4Attributes" {
 	
 }
 
-declare module "awayjs-core/lib/attributes/Short3Attributes" {
-	import AttributesBuffer = require("awayjs-core/lib/attributes/AttributesBuffer");
-	import AttributesView = require("awayjs-core/lib/attributes/AttributesView");
-	class Short3Attributes extends AttributesView {
-	    static assetType: string;
-	    /**
-	     *
-	     * @returns {string}
-	     */
-	    assetType: string;
-	    /**
-	     *
-	     */
-	    constructor(length?: number, unsigned?: boolean);
-	    constructor(attributesBuffer?: AttributesBuffer, unsigned?: boolean);
-	    set(array: Array<number>, offset?: number): any;
-	    set(typedArray: Uint16Array, offset?: number): any;
-	    set(typedArray: Int16Array, offset?: number): any;
-	    get(count: number, offset?: number): Uint16Array;
-	    get(count: number, offset?: number): Int16Array;
-	    _internalClone(attributesBuffer: AttributesBuffer): Short3Attributes;
-	    clone(attributesBuffer?: AttributesBuffer): Short3Attributes;
-	}
-	export = Short3Attributes;
-	
-}
-
 declare module "awayjs-core/lib/attributes/Short2Attributes" {
 	import AttributesBuffer = require("awayjs-core/lib/attributes/AttributesBuffer");
 	import AttributesView = require("awayjs-core/lib/attributes/AttributesView");
@@ -289,6 +262,33 @@ declare module "awayjs-core/lib/attributes/Short2Attributes" {
 	    clone(attributesBuffer?: AttributesBuffer): Short2Attributes;
 	}
 	export = Short2Attributes;
+	
+}
+
+declare module "awayjs-core/lib/attributes/Short3Attributes" {
+	import AttributesBuffer = require("awayjs-core/lib/attributes/AttributesBuffer");
+	import AttributesView = require("awayjs-core/lib/attributes/AttributesView");
+	class Short3Attributes extends AttributesView {
+	    static assetType: string;
+	    /**
+	     *
+	     * @returns {string}
+	     */
+	    assetType: string;
+	    /**
+	     *
+	     */
+	    constructor(length?: number, unsigned?: boolean);
+	    constructor(attributesBuffer?: AttributesBuffer, unsigned?: boolean);
+	    set(array: Array<number>, offset?: number): any;
+	    set(typedArray: Uint16Array, offset?: number): any;
+	    set(typedArray: Int16Array, offset?: number): any;
+	    get(count: number, offset?: number): Uint16Array;
+	    get(count: number, offset?: number): Int16Array;
+	    _internalClone(attributesBuffer: AttributesBuffer): Short3Attributes;
+	    clone(attributesBuffer?: AttributesBuffer): Short3Attributes;
+	}
+	export = Short3Attributes;
 	
 }
 
@@ -1866,72 +1866,6 @@ declare module "awayjs-core/lib/data/SamplerCube" {
 	
 }
 
-declare module "awayjs-core/lib/data/WaveAudio" {
-	import IAsset = require("awayjs-core/lib/library/IAsset");
-	import AssetBase = require("awayjs-core/lib/library/AssetBase");
-	class WaveAudio extends AssetBase implements IAsset {
-	    static assetType: string;
-	    private _audioChannel;
-	    private _volume;
-	    private _buffer;
-	    /**
-	     *
-	     * @returns {string}
-	     */
-	    assetType: string;
-	    volume: number;
-	    currentTime: number;
-	    duration: number;
-	    /**
-	     *
-	     */
-	    constructor(buffer: ArrayBuffer);
-	    dispose(): void;
-	    play(offset: number, loop?: boolean): void;
-	    stop(): void;
-	    clone(): WaveAudio;
-	}
-	export = WaveAudio;
-	
-}
-
-declare module "awayjs-core/lib/errors/AbstractMethodError" {
-	import Error = require("awayjs-core/lib/errors/Error");
-	/**
-	 * AbstractMethodError is thrown when an abstract method is called. The method in question should be overridden
-	 * by a concrete subclass.
-	 */
-	class AbstractMethodError extends Error {
-	    /**
-	     * Create a new AbstractMethodError.
-	     * @param message An optional message to override the default error message.
-	     * @param id The id of the error.
-	     */
-	    constructor(message?: string, id?: number);
-	}
-	export = AbstractMethodError;
-	
-}
-
-declare module "awayjs-core/lib/errors/ArgumentError" {
-	import Error = require("awayjs-core/lib/errors/Error");
-	/**
-	 * AbstractMethodError is thrown when an abstract method is called. The method in question should be overridden
-	 * by a concrete subclass.
-	 */
-	class ArgumentError extends Error {
-	    /**
-	     * Create a new ArgumentError.
-	     *
-	     * @param message An optional message to override the default error message.
-	     * @param id The id of the error.
-	     */
-	    constructor(message?: string, id?: number);
-	}
-	export = ArgumentError;
-	
-}
-
 declare module "awayjs-core/lib/data/SpecularImage2D" {
 	import BitmapImage2D = require("awayjs-core/lib/data/BitmapImage2D");
 	import Image2D = require("awayjs-core/lib/data/Image2D");
@@ -2001,6 +1935,72 @@ declare module "awayjs-core/lib/data/SpecularImage2D" {
 	    private _testSize();
 	}
 	export = SpecularImage2D;
+	
+}
+
+declare module "awayjs-core/lib/data/WaveAudio" {
+	import IAsset = require("awayjs-core/lib/library/IAsset");
+	import AssetBase = require("awayjs-core/lib/library/AssetBase");
+	class WaveAudio extends AssetBase implements IAsset {
+	    static assetType: string;
+	    private _audioChannel;
+	    private _volume;
+	    private _buffer;
+	    /**
+	     *
+	     * @returns {string}
+	     */
+	    assetType: string;
+	    volume: number;
+	    currentTime: number;
+	    duration: number;
+	    /**
+	     *
+	     */
+	    constructor(buffer: ArrayBuffer);
+	    dispose(): void;
+	    play(offset: number, loop?: boolean): void;
+	    stop(): void;
+	    clone(): WaveAudio;
+	}
+	export = WaveAudio;
+	
+}
+
+declare module "awayjs-core/lib/errors/AbstractMethodError" {
+	import Error = require("awayjs-core/lib/errors/Error");
+	/**
+	 * AbstractMethodError is thrown when an abstract method is called. The method in question should be overridden
+	 * by a concrete subclass.
+	 */
+	class AbstractMethodError extends Error {
+	    /**
+	     * Create a new AbstractMethodError.
+	     * @param message An optional message to override the default error message.
+	     * @param id The id of the error.
+	     */
+	    constructor(message?: string, id?: number);
+	}
+	export = AbstractMethodError;
+	
+}
+
+declare module "awayjs-core/lib/errors/ArgumentError" {
+	import Error = require("awayjs-core/lib/errors/Error");
+	/**
+	 * AbstractMethodError is thrown when an abstract method is called. The method in question should be overridden
+	 * by a concrete subclass.
+	 */
+	class ArgumentError extends Error {
+	    /**
+	     * Create a new ArgumentError.
+	     *
+	     * @param message An optional message to override the default error message.
+	     * @param id The id of the error.
+	     */
+	    constructor(message?: string, id?: number);
+	}
+	export = ArgumentError;
 	
 }
 
@@ -2163,20 +2163,6 @@ declare module "awayjs-core/lib/events/Event" {
 	
 }
 
-declare module "awayjs-core/lib/events/HTTPStatusEvent" {
-	import Event = require("awayjs-core/lib/events/Event");
-	/**
-	 * @class away.events.HTTPStatusEvent
-	 */
-	class HTTPStatusEvent extends Event {
-	    static HTTP_STATUS: string;
-	    status: number;
-	    constructor(type: string, status?: number);
-	}
-	export = HTTPStatusEvent;
-	
-}
-
 declare module "awayjs-core/lib/events/EventDispatcher" {
 	import Event = require("awayjs-core/lib/events/Event");
 	/**
@@ -2225,6 +2211,20 @@ declare module "awayjs-core/lib/events/EventDispatcher" {
 	    hasEventListener(type: string, listener?: Function): boolean;
 	}
 	export = EventDispatcher;
+	
+}
+
+declare module "awayjs-core/lib/events/HTTPStatusEvent" {
+	import Event = require("awayjs-core/lib/events/Event");
+	/**
+	 * @class away.events.HTTPStatusEvent
+	 */
+	class HTTPStatusEvent extends Event {
+	    static HTTP_STATUS: string;
+	    status: number;
+	    constructor(type: string, status?: number);
+	}
+	export = HTTPStatusEvent;
 	
 }
 
@@ -6038,6 +6038,43 @@ declare module "awayjs-core/lib/net/URLRequestMethod" {
 	
 }
 
+declare module "awayjs-core/lib/net/URLVariables" {
+	class URLVariables {
+	    private _variables;
+	    /**
+	     *
+	     * @param source
+	     */
+	    constructor(source?: string);
+	    /**
+	     *
+	     * @param source
+	     */
+	    decode(source: string): void;
+	    /**
+	     *
+	     * @returns {string}
+	     */
+	    toString(): string;
+	    /**
+	     *
+	     * @returns {Object}
+	     */
+	    /**
+	     *
+	     * @returns {Object}
+	     */
+	    variables: Object;
+	    /**
+	     *
+	     * @returns {Object}
+	     */
+	    formData: FormData;
+	}
+	export = URLVariables;
+	
+}
+
 declare module "awayjs-core/lib/parsers/Image2DParser" {
 	import ParserBase = require("awayjs-core/lib/parsers/ParserBase");
 	/**
@@ -6075,43 +6112,6 @@ declare module "awayjs-core/lib/parsers/Image2DParser" {
 	    onLoadComplete(event: any): void;
 	}
 	export = Image2DParser;
-	
-}
-
-declare module "awayjs-core/lib/net/URLVariables" {
-	class URLVariables {
-	    private _variables;
-	    /**
-	     *
-	     * @param source
-	     */
-	    constructor(source?: string);
-	    /**
-	     *
-	     * @param source
-	     */
-	    decode(source: string): void;
-	    /**
-	     *
-	     * @returns {string}
-	     */
-	    toString(): string;
-	    /**
-	     *
-	     * @returns {Object}
-	     */
-	    /**
-	     *
-	     * @returns {Object}
-	     */
-	    variables: Object;
-	    /**
-	     *
-	     * @returns {Object}
-	     */
-	    formData: FormData;
-	}
-	export = URLVariables;
 	
 }
 
@@ -6756,6 +6756,51 @@ declare module "awayjs-core/lib/projections/PerspectiveProjection" {
 	    pUpdateMatrix(): void;
 	}
 	export = PerspectiveProjection;
+	
+}
+
+declare module "awayjs-core/lib/projections/ProjectionBase" {
+	import Matrix3D = require("awayjs-core/lib/geom/Matrix3D");
+	import Rectangle = require("awayjs-core/lib/geom/Rectangle");
+	import Vector3D = require("awayjs-core/lib/geom/Vector3D");
+	import EventDispatcher = require("awayjs-core/lib/events/EventDispatcher");
+	import IProjection = require("awayjs-core/lib/projections/IProjection");
+	class ProjectionBase extends EventDispatcher implements IProjection {
+	    _pMatrix: Matrix3D;
+	    _pScissorRect: Rectangle;
+	    _pViewPort: Rectangle;
+	    _pNear: number;
+	    _pFar: number;
+	    _pAspectRatio: number;
+	    _pMatrixInvalid: boolean;
+	    _pFrustumCorners: number[];
+	    _pCoordinateSystem: string;
+	    _pOriginX: number;
+	    _pOriginY: number;
+	    private _unprojection;
+	    private _unprojectionInvalid;
+	    constructor(coordinateSystem?: string);
+	    /**
+	     * The handedness of the coordinate system projection. The default is LEFT_HANDED.
+	     */
+	    coordinateSystem: string;
+	    frustumCorners: number[];
+	    matrix: Matrix3D;
+	    near: number;
+	    originX: number;
+	    originY: number;
+	    far: number;
+	    project(point3d: Vector3D): Vector3D;
+	    unprojectionMatrix: Matrix3D;
+	    unproject(nX: number, nY: number, sZ: number): Vector3D;
+	    clone(): ProjectionBase;
+	    _iAspectRatio: number;
+	    pInvalidateMatrix(): void;
+	    pUpdateMatrix(): void;
+	    _iUpdateScissorRect(x: number, y: number, width: number, height: number): void;
+	    _iUpdateViewport(x: number, y: number, width: number, height: number): void;
+	}
+	export = ProjectionBase;
 	
 }
 
@@ -7580,51 +7625,6 @@ declare module "awayjs-core/lib/ui/Keyboard" {
 	    static Z: number;
 	}
 	export = Keyboard;
-	
-}
-
-declare module "awayjs-core/lib/projections/ProjectionBase" {
-	import Matrix3D = require("awayjs-core/lib/geom/Matrix3D");
-	import Rectangle = require("awayjs-core/lib/geom/Rectangle");
-	import Vector3D = require("awayjs-core/lib/geom/Vector3D");
-	import EventDispatcher = require("awayjs-core/lib/events/EventDispatcher");
-	import IProjection = require("awayjs-core/lib/projections/IProjection");
-	class ProjectionBase extends EventDispatcher implements IProjection {
-	    _pMatrix: Matrix3D;
-	    _pScissorRect: Rectangle;
-	    _pViewPort: Rectangle;
-	    _pNear: number;
-	    _pFar: number;
-	    _pAspectRatio: number;
-	    _pMatrixInvalid: boolean;
-	    _pFrustumCorners: number[];
-	    _pCoordinateSystem: string;
-	    _pOriginX: number;
-	    _pOriginY: number;
-	    private _unprojection;
-	    private _unprojectionInvalid;
-	    constructor(coordinateSystem?: string);
-	    /**
-	     * The handedness of the coordinate system projection. The default is LEFT_HANDED.
-	     */
-	    coordinateSystem: string;
-	    frustumCorners: number[];
-	    matrix: Matrix3D;
-	    near: number;
-	    originX: number;
-	    originY: number;
-	    far: number;
-	    project(point3d: Vector3D): Vector3D;
-	    unprojectionMatrix: Matrix3D;
-	    unproject(nX: number, nY: number, sZ: number): Vector3D;
-	    clone(): ProjectionBase;
-	    _iAspectRatio: number;
-	    pInvalidateMatrix(): void;
-	    pUpdateMatrix(): void;
-	    _iUpdateScissorRect(x: number, y: number, width: number, height: number): void;
-	    _iUpdateViewport(x: number, y: number, width: number, height: number): void;
-	}
-	export = ProjectionBase;
 	
 }
 

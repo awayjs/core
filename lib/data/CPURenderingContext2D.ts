@@ -142,16 +142,16 @@ class CPURenderingContext2D implements CanvasRenderingContext2D {
 
         if (x < 0 || x >= target.width || y >= target.height || y < 0) return;
         var index:number = (x + y * target.width) * 4;
-        var alpha:number = color[3] / 255;
-        target.data[index] += color[0] * alpha;
-        target.data[index + 1] += color[1] * alpha;
-        target.data[index + 2] += color[2] * alpha;
-        target.data[index + 3] += color[3];
+        //var alpha:number = color[3] / 255;
+        target.data[index] = color[0];
+        target.data[index + 1] = color[1];
+        target.data[index + 2] = color[2];
+        target.data[index + 3] = color[3];
 
-        target.data[index] = target.data[index] & 0xFF;
-        target.data[index + 1] = target.data[index + 1] & 0xFF;
-        target.data[index + 2] = target.data[index + 2] & 0xFF;
-        target.data[index + 3] = target.data[index + 3] & 0xFF;
+        //target.data[index] = target.data[index] & 0xFF;
+        //target.data[index + 1] = target.data[index + 1] & 0xFF;
+        //target.data[index + 2] = target.data[index + 2] & 0xFF;
+        //target.data[index + 3] = target.data[index + 3] & 0xFF;
     }
 
     private copyPixel32(target:ImageData, x:number, y:number, source:ImageData, fromX:number, fromY:number) {
@@ -265,7 +265,7 @@ class CPURenderingContext2D implements CanvasRenderingContext2D {
             canvasImageHeight = height;
         }
 
-        //console.log("CPURenderingContext2D:drawBitmap(width: " + width + " height: " + height + " canvasImageWidth: " + canvasImageWidth + " canvasImageHeight: " + canvasImageHeight);
+        console.log("CPURenderingContext2D:drawBitmap(width: " + width + " height: " + height + " canvasImageWidth: " + canvasImageWidth + " canvasImageHeight: " + canvasImageHeight);
 
         var sourceData:ImageData = bitmap.getImageData();
         var canvasImageData:ImageData = this.cpuCanvas.getImageData();
@@ -292,6 +292,7 @@ class CPURenderingContext2D implements CanvasRenderingContext2D {
             matrix.invert();
 
             if (scaleX >= 1 || scaleY >= 1) {
+                console.log("draw upscale");
                 var p:Point = new Point();
                 for (var i:number = canvasOffsetX; i < canvasOffsetX + canvasImageWidth; i++) {
                     for (var j:number = canvasOffsetY; j < canvasOffsetY + canvasImageHeight; j++) {
@@ -305,6 +306,7 @@ class CPURenderingContext2D implements CanvasRenderingContext2D {
                 }
             } else {
                 //decimate
+                console.log("draw decimate");
                 var p1:Point = this.point;
                 var p2:Point = this.point2;
                 for (var i:number = canvasOffsetX; i < canvasOffsetX + canvasImageWidth; i++) {

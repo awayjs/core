@@ -2322,6 +2322,16 @@ var CPURenderingContext2D = (function () {
     CPURenderingContext2D.prototype.clip = function (fillRule) {
     };
     CPURenderingContext2D.prototype.clearRect = function (x, y, w, h) {
+        var imageData = this.cpuCanvas.getImageData();
+        for (var i = x; i < x + w; i++) {
+            for (var j = y; j < y + h; j++) {
+                var index = (i + j * imageData.width) * 4;
+                imageData.data[index] = 0;
+                imageData.data[index + 1] = 0;
+                imageData.data[index + 2] = 0;
+                imageData.data[index + 3] = 0;
+            }
+        }
     };
     CPURenderingContext2D.prototype.moveTo = function (x, y) {
     };
@@ -2351,11 +2361,15 @@ var CPURenderingContext2D = (function () {
         if (x < 0 || x >= target.width || y >= target.height || y < 0)
             return;
         var index = (x + y * target.width) * 4;
-        var alpha = color[3] / 255;
-        target.data[index] += color[0] * alpha;
-        target.data[index + 1] += color[1] * alpha;
-        target.data[index + 2] += color[2] * alpha;
+        //var alpha:number = color[3] / 255;
+        target.data[index] += color[0];
+        target.data[index + 1] += color[1];
+        target.data[index + 2] += color[2];
         target.data[index + 3] += color[3];
+        //target.data[index] = color[0];
+        //target.data[index + 1] = color[1];
+        //target.data[index + 2] = color[2];
+        //target.data[index + 3] = color[3];
         target.data[index] = target.data[index] & 0xFF;
         target.data[index + 1] = target.data[index + 1] & 0xFF;
         target.data[index + 2] = target.data[index + 2] & 0xFF;
@@ -2390,7 +2404,7 @@ var CPURenderingContext2D = (function () {
             var imageData = this.cpuCanvas.getImageData();
             for (var i = x; i < x + w; i++) {
                 for (var j = y; j < y + h; j++) {
-                    var index = (x + y * imageData.width) * 4;
+                    var index = (i + j * imageData.width) * 4;
                     imageData.data[index] = this.parsedR;
                     imageData.data[index + 1] = this.parsedG;
                     imageData.data[index + 2] = this.parsedB;

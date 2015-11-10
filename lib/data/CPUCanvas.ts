@@ -3,8 +3,8 @@ import CPURenderingContext2D = require('awayjs-core/lib/data/CPURenderingContext
 import ImageData = require('awayjs-core/lib/data/ImageData');
 
 class CPUCanvas implements IImageCanvas {
-    width:number = 1;
-    height:number = 1;
+    public width:number = 1;
+    public height:number = 1;
 
     private imageData:ImageData;
 

@@ -19,9 +19,16 @@ class CPUCanvas implements IImageCanvas {
     public reset() {
         if (!this.imageData) {
             this.imageData = new ImageData(this.width, this.height);
+        }else{
+            this.imageData.width = this.width;
+            this.imageData.height = this.height;
+
+            if(this.imageData.data) {
+                this.imageData.data.length = 0;
+                this.imageData.data = null;
+            }
+            this.imageData.data = new Uint8Array(this.width*this.height*4);
         }
-        this.imageData.width = this.width;
-        this.imageData.height = this.height;
 
         for (var i:number = 0; i < this.width * this.height * 4; i += 4) {
             this.imageData.data[i] = 255;

@@ -2241,8 +2241,15 @@ var CPUCanvas = (function () {
         if (!this.imageData) {
             this.imageData = new ImageData(this.width, this.height);
         }
-        this.imageData.width = this.width;
-        this.imageData.height = this.height;
+        else {
+            this.imageData.width = this.width;
+            this.imageData.height = this.height;
+            if (this.imageData.data) {
+                this.imageData.data.length = 0;
+                this.imageData.data = null;
+            }
+            this.imageData.data = new Uint8Array(this.width * this.height * 4);
+        }
         for (var i = 0; i < this.width * this.height * 4; i += 4) {
             this.imageData.data[i] = 255;
             this.imageData.data[i + 1] = 255;
@@ -2878,9 +2885,9 @@ module.exports = ImageCube;
 },{"awayjs-core/lib/data/ImageBase":"awayjs-core/lib/data/ImageBase","awayjs-core/lib/utils/ImageUtils":"awayjs-core/lib/utils/ImageUtils"}],"awayjs-core/lib/data/ImageData":[function(require,module,exports){
 var ImageData = (function () {
     function ImageData(width, height) {
-        this.data = [];
         this.width = width;
         this.height = height;
+        this.data = new Uint8Array(width * height * 4);
     }
     return ImageData;
 })();

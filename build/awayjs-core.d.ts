@@ -1714,7 +1714,7 @@ declare module "awayjs-core/lib/data/ImageCube" {
 declare module "awayjs-core/lib/data/ImageData" {
 	class ImageData {
 	    width: number;
-	    data: number[];
+	    data: any;
 	    height: number;
 	    constructor(width: number, height: number);
 	}
@@ -5746,6 +5746,15 @@ declare module "awayjs-core/lib/managers/StreamingAudioChannel" {
 	
 }
 
+declare module "awayjs-core/lib/net/CrossDomainPolicy" {
+	class CrossDomainPolicy {
+	    static ANONYMOUS: string;
+	    static USE_CREDENTIALS: string;
+	}
+	export = CrossDomainPolicy;
+	
+}
+
 declare module "awayjs-core/lib/managers/WebAudioChannel" {
 	class WebAudioChannel {
 	    static maxChannels: number;
@@ -5780,15 +5789,6 @@ declare module "awayjs-core/lib/managers/WebAudioChannel" {
 	    private _disposeSource();
 	}
 	export = WebAudioChannel;
-	
-}
-
-declare module "awayjs-core/lib/net/CrossDomainPolicy" {
-	class CrossDomainPolicy {
-	    static ANONYMOUS: string;
-	    static USE_CREDENTIALS: string;
-	}
-	export = CrossDomainPolicy;
 	
 }
 

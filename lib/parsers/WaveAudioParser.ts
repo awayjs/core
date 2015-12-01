@@ -58,7 +58,7 @@ class WaveAudioParser extends ParserBase
 		ba.position = 0;
 
 		ba.position = 0;
-		if (ba.readUnsignedShort() & 0xFFE0) {
+		if ((ba.readUnsignedShort() & 0xFFE0) == 0xFFE0) {
 			return 'mp3'; // test for MP3 syncword
 		}
 

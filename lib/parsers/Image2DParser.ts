@@ -58,7 +58,7 @@ class Image2DParser extends ParserBase
 		var ba:ByteArray = <ByteArray> data;
 		ba.position = 0;
 
-		if (ba.readUnsignedShort() == 0xffd8)
+		if (ba.readUnsignedShort() == 0xd8ff)
 			return true; // JPEG, maybe check for "JFIF" as well?
 
 		ba.position = 0;
@@ -111,13 +111,21 @@ class Image2DParser extends ParserBase
 
 			var ba:ByteArray = this.data;
 			ba.position = 0;
-			var htmlImageElement:HTMLImageElement = ParserUtils.byteArrayToImage(this.data);
+			this._htmlImageElement = ParserUtils.byteArrayToImage(this.data);
 
-			if (ImageUtils.isHTMLImageElementValid(htmlImageElement)) {
-				asset = ParserUtils.imageToBitmapImage2D(htmlImageElement);
+			if (!this._htmlImageElement.complete) {
+				this._htmlImageElement.onload = (event) => this.onLoadComplete(event);
+				this._loadingImage = true;
+
+				return ParserBase.MORE_TO_PARSE;
+			}
+
+			if (ImageUtils.isHTMLImageElementValid(this._htmlImageElement)) {
+				asset = ParserUtils.imageToBitmapImage2D(this._htmlImageElement);
 				this._pFinalizeAsset(<IAsset> asset, this._iFileName);
 			} else {
 				sizeError = true;
+
 			}
 
 		} else if (this.data instanceof ArrayBuffer) {// Parse an ArrayBuffer

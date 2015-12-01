@@ -11115,7 +11115,7 @@ var Image2DParser = (function (_super) {
             return false;
         var ba = data;
         ba.position = 0;
-        if (ba.readUnsignedShort() == 0xffd8)
+        if (ba.readUnsignedShort() == 0xd8ff)
             return true; // JPEG, maybe check for "JFIF" as well?
         ba.position = 0;
         if (ba.readShort() == 0x424D)
@@ -11160,9 +11160,14 @@ var Image2DParser = (function (_super) {
         else if (this.data instanceof ByteArray) {
             var ba = this.data;
             ba.position = 0;
-            var htmlImageElement = ParserUtils.byteArrayToImage(this.data);
-            if (ImageUtils.isHTMLImageElementValid(htmlImageElement)) {
-                asset = ParserUtils.imageToBitmapImage2D(htmlImageElement);
+            this._htmlImageElement = ParserUtils.byteArrayToImage(this.data);
+            if (!this._htmlImageElement.complete) {
+                this._htmlImageElement.onload = function (event) { return _this.onLoadComplete(event); };
+                this._loadingImage = true;
+                return ParserBase.MORE_TO_PARSE;
+            }
+            if (ImageUtils.isHTMLImageElementValid(this._htmlImageElement)) {
+                asset = ParserUtils.imageToBitmapImage2D(this._htmlImageElement);
                 this._pFinalizeAsset(asset, this._iFileName);
             }
             else {
@@ -12164,7 +12169,7 @@ var WaveAudioParser = (function (_super) {
     WaveAudioParser.parseFileType = function (ba) {
         ba.position = 0;
         ba.position = 0;
-        if (ba.readUnsignedShort() & 0xFFE0) {
+        if ((ba.readUnsignedShort() & 0xFFE0) == 0xFFE0) {
             return 'mp3'; // test for MP3 syncword
         }
         ba.position = 0;

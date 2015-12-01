@@ -1549,6 +1549,8 @@ declare module "awayjs-core/lib/data/CPURenderingContext2D" {
 	    moveTo(x: number, y: number): void;
 	    getImageData(sx: number, sy: number, sw: number, sh: number): ImageData;
 	    private point;
+	    private point2;
+	    private applyPixel32(target, x, y, color);
 	    private copyPixel32(target, x, y, source, fromX, fromY);
 	    private parsedFillStyle;
 	    private parsedA;
@@ -1558,7 +1560,7 @@ declare module "awayjs-core/lib/data/CPURenderingContext2D" {
 	    fillRect(x: number, y: number, w: number, h: number): void;
 	    bezierCurveTo(cp1x: number, cp1y: number, cp2x: number, cp2y: number, x: number, y: number): void;
 	    drawImage(image: HTMLElement, offsetX: number, offsetY: number, width: number, height: number, canvasOffsetX: number, canvasOffsetY: number, canvasImageWidth: number, canvasImageHeight: number): void;
-	    private drawBitmap(bitmap, offsetX, offsetY, width, height);
+	    private drawBitmap(bitmap, offsetX, offsetY, width, height, canvasOffsetX, canvasOffsetY, canvasImageWidth, canvasImageHeight);
 	    transform(m11: number, m12: number, m21: number, m22: number, dx: number, dy: number): void;
 	    stroke(): void;
 	    strokeRect(x: number, y: number, w: number, h: number): void;
@@ -1567,6 +1569,10 @@ declare module "awayjs-core/lib/data/CPURenderingContext2D" {
 	    beginPath(): void;
 	    arcTo(x1: number, y1: number, x2: number, y2: number, radius: number): void;
 	    createLinearGradient(x0: number, y0: number, x1: number, y1: number): CanvasGradient;
+	    private static sampleBilinear(u, v, texture, texelSizeX?, texelSizeY?);
+	    private static sample(u, v, imageData);
+	    private static sampleBox(x0, y0, x1, y1, texture);
+	    private static interpolateColor(source, target, a);
 	}
 	export = CPURenderingContext2D;
 	
@@ -1708,7 +1714,7 @@ declare module "awayjs-core/lib/data/ImageCube" {
 declare module "awayjs-core/lib/data/ImageData" {
 	class ImageData {
 	    width: number;
-	    data: number[];
+	    data: any;
 	    height: number;
 	    constructor(width: number, height: number);
 	}
@@ -5337,15 +5343,6 @@ declare module "awayjs-core/lib/library/IDUtil" {
 	
 }
 
-declare module "awayjs-core/lib/library/IWrapperClass" {
-	import IAssetClass = require("awayjs-core/lib/library/IAssetClass");
-	interface IWrapperClass {
-	    assetClass: IAssetClass;
-	}
-	export = IWrapperClass;
-	
-}
-
 declare module "awayjs-core/lib/library/IgnoreConflictStrategy" {
 	import ConflictStrategyBase = require("awayjs-core/lib/library/ConflictStrategyBase");
 	import IAsset = require("awayjs-core/lib/library/IAsset");
@@ -5355,6 +5352,15 @@ declare module "awayjs-core/lib/library/IgnoreConflictStrategy" {
 	    create(): ConflictStrategyBase;
 	}
 	export = IgnoreConflictStrategy;
+	
+}
+
+declare module "awayjs-core/lib/library/IWrapperClass" {
+	import IAssetClass = require("awayjs-core/lib/library/IAssetClass");
+	interface IWrapperClass {
+	    assetClass: IAssetClass;
+	}
+	export = IWrapperClass;
 	
 }
 
@@ -5662,62 +5668,12 @@ declare module "awayjs-core/lib/library/NumSuffixConflictStrategy" {
 	
 }
 
-declare module "awayjs-core/lib/managers/AudioChannel" {
-	class AudioChannel {
-	    static maxChannels: number;
-	    static _channels: Array<AudioChannel>;
-	    private _isPlaying;
-	    private _isLooping;
-	    private static _audioCtx;
-	    private _audioCtx;
-	    private _gainNode;
-	    private _audio;
-	    currentTime: number;
-	    volume: number;
-	    isPlaying(): boolean;
-	    isLooping(): boolean;
-	    isDecoding(): boolean;
-	    constructor();
-	    play(url: string, offset?: number, loop?: boolean): void;
-	    stop(): void;
-	    private _onEnded(event);
-	}
-	export = AudioChannel;
-	
-}
-
 declare module "awayjs-core/lib/managers/AudioManager" {
 	import IAudioChannel = require("awayjs-core/lib/managers/IAudioChannel");
 	class AudioManager {
 	    static getChannel(byteLength: number): IAudioChannel;
 	}
 	export = AudioManager;
-	
-}
-
-declare module "awayjs-core/lib/managers/EventAudioChannel" {
-	class EventAudioChannel {
-	    static maxChannels: number;
-	    static _channels: Array<EventAudioChannel>;
-	    static _base64Cache: Object;
-	    private _isPlaying;
-	    private _isLooping;
-	    private _volume;
-	    private _startTime;
-	    private _duration;
-	    private _audio;
-	    duration: number;
-	    currentTime: number;
-	    volume: number;
-	    isPlaying(): boolean;
-	    isLooping(): boolean;
-	    isDecoding(): boolean;
-	    constructor();
-	    play(buffer: ArrayBuffer, offset?: number, loop?: boolean, id?: number): void;
-	    stop(): void;
-	    private _onTimeUpdate(event);
-	}
-	export = EventAudioChannel;
 	
 }
 
@@ -5790,6 +5746,15 @@ declare module "awayjs-core/lib/managers/StreamingAudioChannel" {
 	
 }
 
+declare module "awayjs-core/lib/net/CrossDomainPolicy" {
+	class CrossDomainPolicy {
+	    static ANONYMOUS: string;
+	    static USE_CREDENTIALS: string;
+	}
+	export = CrossDomainPolicy;
+	
+}
+
 declare module "awayjs-core/lib/managers/WebAudioChannel" {
 	class WebAudioChannel {
 	    static maxChannels: number;
@@ -5824,15 +5789,6 @@ declare module "awayjs-core/lib/managers/WebAudioChannel" {
 	    private _disposeSource();
 	}
 	export = WebAudioChannel;
-	
-}
-
-declare module "awayjs-core/lib/net/CrossDomainPolicy" {
-	class CrossDomainPolicy {
-	    static ANONYMOUS: string;
-	    static USE_CREDENTIALS: string;
-	}
-	export = CrossDomainPolicy;
 	
 }
 
@@ -7770,6 +7726,21 @@ declare module "awayjs-core/lib/utils/ByteArrayBuffer" {
 	
 }
 
+declare module "awayjs-core/lib/utils/ColorUtils" {
+	/**
+	 *
+	 */
+	class ColorUtils {
+	    static float32ColorToARGB(float32Color: number): number[];
+	    static ARGBtoFloat32(a: number, r: number, g: number, b: number): number;
+	    private static componentToHex(c);
+	    static RGBToHexString(argb: number[]): string;
+	    static ARGBToHexString(argb: number[]): string;
+	}
+	export = ColorUtils;
+	
+}
+
 declare module "awayjs-core/lib/utils/CSS" {
 	class CSS {
 	    static setElementSize(element: HTMLElement, width: number, height: number): void;
@@ -7783,21 +7754,6 @@ declare module "awayjs-core/lib/utils/CSS" {
 	    static setElementPosition(element: HTMLElement, x: number, y: number, absolute?: boolean): void;
 	}
 	export = CSS;
-	
-}
-
-declare module "awayjs-core/lib/utils/ColorUtils" {
-	/**
-	 *
-	 */
-	class ColorUtils {
-	    static float32ColorToARGB(float32Color: number): number[];
-	    static ARGBtoFloat32(a: number, r: number, g: number, b: number): number;
-	    private static componentToHex(c);
-	    static RGBToHexString(argb: number[]): string;
-	    static ARGBToHexString(argb: number[]): string;
-	}
-	export = ColorUtils;
 	
 }
 
@@ -7828,6 +7784,17 @@ declare module "awayjs-core/lib/utils/Extensions" {
 	    static SIMD: boolean;
 	}
 	export = Extensions;
+	
+}
+
+declare module "awayjs-core/lib/utils/getTimer" {
+	/**
+	 *
+	 *
+	 * @returns {number}
+	 */
+	function getTimer(): number;
+	export = getTimer;
 	
 }
 
@@ -7876,6 +7843,7 @@ declare module "awayjs-core/lib/utils/MipmapGenerator" {
 	    static _generateMipMaps(source: BitmapImage2D, output?: Array<BitmapImage2D>, alpha?: boolean): any;
 	    private static _getMipmapHolder(mipMapHolder, newW, newH);
 	    static _freeMipMapHolder(mipMapHolder: BitmapImage2D): void;
+	    static downsampleImage(bitmap: ImageData, destBitmap: ImageData): ImageData;
 	}
 	export = MipmapGenerator;
 	
@@ -7955,17 +7923,6 @@ declare module "awayjs-core/lib/utils/XmlUtils" {
 	    static hasAttribute(node: Node, attrName: string): boolean;
 	}
 	export = XmlUtils;
-	
-}
-
-declare module "awayjs-core/lib/utils/getTimer" {
-	/**
-	 *
-	 *
-	 * @returns {number}
-	 */
-	function getTimer(): number;
-	export = getTimer;
 	
 }
 

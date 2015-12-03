@@ -2637,6 +2637,7 @@ var __extends = this.__extends || function (d, b) {
     d.prototype = new __();
 };
 var ImageBase = require("awayjs-core/lib/data/ImageBase");
+var Sampler2D = require("awayjs-core/lib/data/Sampler2D");
 var Rectangle = require("awayjs-core/lib/geom/Rectangle");
 var ImageUtils = require("awayjs-core/lib/utils/ImageUtils");
 var Image2D = (function (_super) {
@@ -2743,18 +2744,22 @@ var Image2D = (function (_super) {
         enumerable: true,
         configurable: true
     });
+    Image2D.prototype.createSampler = function () {
+        return new Sampler2D();
+    };
     Image2D.assetType = "[image Image2D]";
     return Image2D;
 })(ImageBase);
 module.exports = Image2D;
 
-},{"awayjs-core/lib/data/ImageBase":"awayjs-core/lib/data/ImageBase","awayjs-core/lib/geom/Rectangle":"awayjs-core/lib/geom/Rectangle","awayjs-core/lib/utils/ImageUtils":"awayjs-core/lib/utils/ImageUtils"}],"awayjs-core/lib/data/ImageBase":[function(require,module,exports){
+},{"awayjs-core/lib/data/ImageBase":"awayjs-core/lib/data/ImageBase","awayjs-core/lib/data/Sampler2D":"awayjs-core/lib/data/Sampler2D","awayjs-core/lib/geom/Rectangle":"awayjs-core/lib/geom/Rectangle","awayjs-core/lib/utils/ImageUtils":"awayjs-core/lib/utils/ImageUtils"}],"awayjs-core/lib/data/ImageBase":[function(require,module,exports){
 var __extends = this.__extends || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
     __.prototype = b.prototype;
     d.prototype = new __();
 };
+var AbstractMethodError = require("awayjs-core/lib/errors/AbstractMethodError");
 var AssetBase = require("awayjs-core/lib/library/AssetBase");
 var ImageBase = (function (_super) {
     __extends(ImageBase, _super);
@@ -2808,11 +2813,14 @@ var ImageBase = (function (_super) {
         enumerable: true,
         configurable: true
     });
+    ImageBase.prototype.createSampler = function () {
+        throw new AbstractMethodError();
+    };
     return ImageBase;
 })(AssetBase);
 module.exports = ImageBase;
 
-},{"awayjs-core/lib/library/AssetBase":"awayjs-core/lib/library/AssetBase"}],"awayjs-core/lib/data/ImageCube":[function(require,module,exports){
+},{"awayjs-core/lib/errors/AbstractMethodError":"awayjs-core/lib/errors/AbstractMethodError","awayjs-core/lib/library/AssetBase":"awayjs-core/lib/library/AssetBase"}],"awayjs-core/lib/data/ImageCube":[function(require,module,exports){
 var __extends = this.__extends || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
@@ -2820,6 +2828,7 @@ var __extends = this.__extends || function (d, b) {
     d.prototype = new __();
 };
 var ImageBase = require("awayjs-core/lib/data/ImageBase");
+var SamplerCube = require("awayjs-core/lib/data/SamplerCube");
 var ImageUtils = require("awayjs-core/lib/utils/ImageUtils");
 var ImageCube = (function (_super) {
     __extends(ImageCube, _super);
@@ -2877,12 +2886,15 @@ var ImageCube = (function (_super) {
         if (!ImageUtils.isDimensionValid(this._size))
             throw new Error("Invalid dimension: Width and height must be power of 2 and cannot exceed 2048");
     };
+    ImageCube.prototype.createSampler = function () {
+        return new SamplerCube();
+    };
     ImageCube.assetType = "[image ImageCube]";
     return ImageCube;
 })(ImageBase);
 module.exports = ImageCube;
 
-},{"awayjs-core/lib/data/ImageBase":"awayjs-core/lib/data/ImageBase","awayjs-core/lib/utils/ImageUtils":"awayjs-core/lib/utils/ImageUtils"}],"awayjs-core/lib/data/ImageData":[function(require,module,exports){
+},{"awayjs-core/lib/data/ImageBase":"awayjs-core/lib/data/ImageBase","awayjs-core/lib/data/SamplerCube":"awayjs-core/lib/data/SamplerCube","awayjs-core/lib/utils/ImageUtils":"awayjs-core/lib/utils/ImageUtils"}],"awayjs-core/lib/data/ImageData":[function(require,module,exports){
 var ImageData = (function () {
     function ImageData(width, height) {
         this.width = width;

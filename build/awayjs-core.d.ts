@@ -1590,6 +1590,7 @@ declare module "awayjs-core/lib/data/IImageCanvas" {
 
 declare module "awayjs-core/lib/data/Image2D" {
 	import ImageBase = require("awayjs-core/lib/data/ImageBase");
+	import Sampler2D = require("awayjs-core/lib/data/Sampler2D");
 	import Rectangle = require("awayjs-core/lib/geom/Rectangle");
 	class Image2D extends ImageBase {
 	    static assetType: string;
@@ -1635,12 +1636,14 @@ declare module "awayjs-core/lib/data/Image2D" {
 	     * @returns {boolean}
 	     */
 	    powerOfTwo: boolean;
+	    createSampler(): Sampler2D;
 	}
 	export = Image2D;
 	
 }
 
 declare module "awayjs-core/lib/data/ImageBase" {
+	import SamplerBase = require("awayjs-core/lib/data/SamplerBase");
 	import IAsset = require("awayjs-core/lib/library/IAsset");
 	import AssetBase = require("awayjs-core/lib/library/AssetBase");
 	import IImageObject = require("awayjs-core/lib/pool/IImageObject");
@@ -1671,6 +1674,7 @@ declare module "awayjs-core/lib/data/ImageBase" {
 	     * @returns {string}
 	     */
 	    format: string;
+	    createSampler(): SamplerBase;
 	}
 	export = ImageBase;
 	
@@ -1678,6 +1682,7 @@ declare module "awayjs-core/lib/data/ImageBase" {
 
 declare module "awayjs-core/lib/data/ImageCube" {
 	import ImageBase = require("awayjs-core/lib/data/ImageBase");
+	import SamplerCube = require("awayjs-core/lib/data/SamplerCube");
 	class ImageCube extends ImageBase {
 	    static assetType: string;
 	    _size: number;
@@ -1706,6 +1711,7 @@ declare module "awayjs-core/lib/data/ImageCube" {
 	     * @private
 	     */
 	    private _testDimensions();
+	    createSampler(): SamplerCube;
 	}
 	export = ImageCube;
 	

@@ -1,4 +1,5 @@
 import ImageBase				= require("awayjs-core/lib/data/ImageBase");
+import Sampler2D				= require("awayjs-core/lib/data/Sampler2D");
 import Rectangle				= require("awayjs-core/lib/geom/Rectangle");
 import ImageUtils				= require("awayjs-core/lib/utils/ImageUtils");
 
@@ -112,6 +113,11 @@ class Image2D extends ImageBase
 		if(this._powerOfTwo == value) return;
 		this._powerOfTwo = value;
 		this._testDimensions();
+	}
+
+	public createSampler():Sampler2D
+	{
+		return new Sampler2D();
 	}
 }
 

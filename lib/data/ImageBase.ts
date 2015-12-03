@@ -1,11 +1,8 @@
-import BlendMode				= require("awayjs-core/lib/data/BlendMode");
-import ColorTransform			= require("awayjs-core/lib/geom/ColorTransform");
-import Matrix					= require("awayjs-core/lib/geom/Matrix");
-import Rectangle				= require("awayjs-core/lib/geom/Rectangle");
-import IAsset					= require("awayjs-core/lib/library/IAsset");
-import AssetBase				= require("awayjs-core/lib/library/AssetBase");
-import IImageObject				= require("awayjs-core/lib/pool/IImageObject");
-import ColorUtils				= require("awayjs-core/lib/utils/ColorUtils");
+import SamplerBase					= require("awayjs-core/lib/data/SamplerBase");
+import AbstractMethodError			= require("awayjs-core/lib/errors/AbstractMethodError");
+import IAsset						= require("awayjs-core/lib/library/IAsset");
+import AssetBase					= require("awayjs-core/lib/library/AssetBase");
+import IImageObject					= require("awayjs-core/lib/pool/IImageObject");
 
 class ImageBase extends AssetBase implements IAsset
 {
@@ -73,6 +70,11 @@ class ImageBase extends AssetBase implements IAsset
 	public get format():string
 	{
 		return this._pFormat;
+	}
+
+	public createSampler():SamplerBase
+	{
+		throw new AbstractMethodError();
 	}
 }
 

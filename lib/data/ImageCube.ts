@@ -1,4 +1,5 @@
 import ImageBase				= require("awayjs-core/lib/data/ImageBase");
+import SamplerCube				= require("awayjs-core/lib/data/SamplerCube");
 import ImageUtils				= require("awayjs-core/lib/utils/ImageUtils");
 
 class ImageCube extends ImageBase
@@ -68,6 +69,12 @@ class ImageCube extends ImageBase
 	{
 		if (!ImageUtils.isDimensionValid(this._size))
 			throw new Error("Invalid dimension: Width and height must be power of 2 and cannot exceed 2048");
+	}
+
+
+	public createSampler():SamplerCube
+	{
+		return new SamplerCube();
 	}
 }
 

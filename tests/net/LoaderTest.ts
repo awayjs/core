@@ -1,30 +1,30 @@
-import BitmapImage2D		= require("awayjs-core/lib/data/BitmapImage2D");
+import BitmapImage2D		= require("awayjs-core/lib/image/BitmapImage2D");
 import AssetEvent			= require("awayjs-core/lib/events/AssetEvent");
 import LoaderEvent			= require("awayjs-core/lib/events/LoaderEvent");
 import ParserEvent			= require("awayjs-core/lib/events/ParserEvent");
-import LoaderSession		= require("awayjs-core/lib/library/LoaderSession");
+import Loader				= require("awayjs-core/lib/library/Loader");
 import IAsset				= require("awayjs-core/lib/library/IAsset");
 import URLRequest			= require("awayjs-core/lib/net/URLRequest");
 import ParserBase			= require("awayjs-core/lib/parsers/ParserBase");
 import ParserDataFormat		= require("awayjs-core/lib/parsers/ParserDataFormat");
 import ResourceDependency	= require("awayjs-core/lib/parsers/ResourceDependency");
 
-class LoaderSessionTest
+class LoaderTest
 {
-	private alJson:LoaderSession;
-	private alImage:LoaderSession;
-	private alErrorImage:LoaderSession;
+	private alJson:Loader;
+	private alImage:Loader;
+	private alErrorImage:Loader;
 
 	constructor()
 	{
 		//---------------------------------------------------------------------------------------------------------------------
 		// Enable Custom Parser ( JSON file format with multiple texture dependencies )
-		LoaderSession.enableParser(JSONTextureParser);
+		Loader.enableParser(JSONTextureParser);
 
 		//---------------------------------------------------------------------------------------------------------------------
 		// LOAD A SINGLE IMAGE
 
-		this.alImage  = new LoaderSession();
+		this.alImage  = new Loader();
 		this.alImage.addEventListener(AssetEvent.ASSET_COMPLETE, (event:AssetEvent) => this.onAssetComplete(event));
 		this.alImage.addEventListener(AssetEvent.TEXTURE_SIZE_ERROR, (event:AssetEvent) => this.onTextureSizeError(event));
 		this.alImage.load(new URLRequest('assets/1024x1024.png'));
@@ -32,7 +32,7 @@ class LoaderSessionTest
 		//---------------------------------------------------------------------------------------------------------------------
 		// LOAD A SINGLE IMAGE - With wrong dimensions
 
-		this.alErrorImage = new LoaderSession();
+		this.alErrorImage = new Loader();
 		this.alErrorImage.addEventListener(AssetEvent.ASSET_COMPLETE, (event:AssetEvent) => this.onAssetComplete(event));
 		this.alErrorImage.addEventListener(AssetEvent.TEXTURE_SIZE_ERROR, (event:AssetEvent) => this.onTextureSizeError(event));
 		this.alErrorImage.load(new URLRequest('assets/2.png'));
@@ -40,7 +40,7 @@ class LoaderSessionTest
 		//---------------------------------------------------------------------------------------------------------------------
 		// LOAD WITH A JSON PARSER
 
-		this.alJson = new LoaderSession();
+		this.alJson = new Loader();
 		this.alJson.addEventListener( AssetEvent.ASSET_COMPLETE, (event:AssetEvent) => this.onAssetComplete(event));
 		this.alJson.addEventListener( AssetEvent.TEXTURE_SIZE_ERROR, (event:AssetEvent) => this.onTextureSizeError(event));
 		this.alJson.addEventListener( ParserEvent.PARSE_COMPLETE, (event:ParserEvent) => this.onParseComplete(event));
@@ -50,25 +50,25 @@ class LoaderSessionTest
 	public onParseComplete(event:ParserEvent):void
 	{
 		console.log( '--------------------------------------------------------------------------------');
-		console.log( 'LoaderSessionTest.onParseComplete' , event );
+		console.log( 'LoaderTest.onParseComplete' , event );
 		console.log( '--------------------------------------------------------------------------------');
 	}
 
 	public onTextureSizeError(event:AssetEvent):void
 	{
-		var assetLoader:LoaderSession = <LoaderSession> event.target;
+		var assetLoader:Loader = <Loader> event.target;
 
 		console.log( '--------------------------------------------------------------------------------');
-		console.log( 'LoaderSessionTest.onTextureSizeError' , assetLoader.baseDependency._iLoader.url , event );
+		console.log( 'LoaderTest.onTextureSizeError' , assetLoader.baseDependency._iLoader.url , event );
 		console.log( '--------------------------------------------------------------------------------');
 	}
 
 	public onAssetComplete(event:AssetEvent):void
 	{
-		var assetLoader:LoaderSession = <LoaderSession> event.target;
+		var assetLoader:Loader = <Loader> event.target;
 
 		console.log( '--------------------------------------------------------------------------------');
-		console.log( 'LoaderSessionTest.onAssetComplete', assetLoader.baseDependency._iLoader.url , event );
+		console.log( 'LoaderTest.onAssetComplete', assetLoader.baseDependency._iLoader.url , event );
 		console.log( '--------------------------------------------------------------------------------');
 	}
 }

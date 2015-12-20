@@ -1,11 +1,10 @@
-import BitmapImage2D			= require("awayjs-core/lib/data/BitmapImage2D");
+import BitmapImage2D			= require("awayjs-core/lib/image/BitmapImage2D");
 import Matrix					= require("awayjs-core/lib/geom/Matrix");
 import Rectangle				= require("awayjs-core/lib/geom/Rectangle");
 import URLLoader				= require("awayjs-core/lib/net/URLLoader");
 import URLLoaderDataFormat		= require("awayjs-core/lib/net/URLLoaderDataFormat");
 import URLRequest				= require("awayjs-core/lib/net/URLRequest");
-import AwayEvent				= require("awayjs-core/lib/events/Event");
-import IOErrorEvent				= require("awayjs-core/lib/events/IOErrorEvent");
+import URLLoaderEvent			= require("awayjs-core/lib/events/URLLoaderEvent");
 import ParserUtils				= require("awayjs-core/lib/parsers/ParserUtils");
 import ColorUtils				= require("awayjs-core/lib/utils/ColorUtils");
 
@@ -30,8 +29,8 @@ class BitmapImage2DTest
 		this.urlLoader.dataFormat = URLLoaderDataFormat.BLOB;
 
 		this.urlLoader.load(this.urlRequest);
-		this.urlLoader.addEventListener(AwayEvent.COMPLETE, (event:AwayEvent) => this.imgLoaded(event));
-		this.urlLoader.addEventListener(IOErrorEvent.IO_ERROR, (event:IOErrorEvent) => this.imgLoadedError(event));
+		this.urlLoader.addEventListener(URLLoaderEvent.LOAD_COMPLETE, (event:URLLoaderEvent) => this.imgLoaded(event));
+		this.urlLoader.addEventListener(URLLoaderEvent.LOAD_ERROR, (event:URLLoaderEvent) => this.imgLoadedError(event));
 
 		//---------------------------------------
 		// BitmapImage2D Object - 1
@@ -149,12 +148,12 @@ class BitmapImage2DTest
 
 	}
 
-	private imgLoadedError(event:IOErrorEvent)
+	private imgLoadedError(event:URLLoaderEvent)
 	{
 		console.log('error');
 	}
 
-	private imgLoaded(event:AwayEvent)
+	private imgLoaded(event:URLLoaderEvent)
 	{
 		var loader :URLLoader = <URLLoader> event.target;
 		this.image = ParserUtils.blobToImage(loader.data);

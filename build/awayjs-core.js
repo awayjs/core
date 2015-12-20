@@ -15,7 +15,6 @@ var AttributesBuffer = (function (_super) {
         if (stride === void 0) { stride = 0; }
         if (count === void 0) { count = 0; }
         _super.call(this);
-        this._attributesBufferVO = new Array();
         this._count = 0;
         this._stride = 0;
         this._newStride = 0;
@@ -46,7 +45,7 @@ var AttributesBuffer = (function (_super) {
             if (this._newStride == value)
                 return;
             this._newStride = value;
-            this.invalidateLength();
+            this.resize();
         },
         enumerable: true,
         configurable: true
@@ -59,7 +58,7 @@ var AttributesBuffer = (function (_super) {
             if (this._count == value)
                 return;
             this._count = value;
-            this.invalidateLength();
+            this.resize();
         },
         enumerable: true,
         configurable: true
@@ -98,23 +97,20 @@ var AttributesBuffer = (function (_super) {
     /**
      *
      */
-    AttributesBuffer.prototype.invalidateContent = function () {
+    AttributesBuffer.prototype.invalidate = function () {
         if (this._contentDirty)
             return;
-        var len = this._attributesBufferVO.length;
-        for (var i = 0; i < len; i++)
-            this._attributesBufferVO[i].invalidate();
+        _super.prototype.invalidate.call(this);
         this._contentDirty = true;
     };
     /**
      *
      * @private
      */
-    AttributesBuffer.prototype.invalidateLength = function () {
+    AttributesBuffer.prototype.resize = function () {
         if (this._lengthDirty)
             return;
-        for (var i = this._attributesBufferVO.length - 1; i >= 0; i--)
-            this._attributesBufferVO[i].dispose();
+        this.clear();
         this._lengthDirty = true;
         //dispose buffer if stride is 0
         if (!this._newStride) {
@@ -134,13 +130,6 @@ var AttributesBuffer = (function (_super) {
         if (index < this._viewVOs.length)
             return this._viewVOs[index].view;
         return null;
-    };
-    /**
-     * @inheritDoc
-     */
-    AttributesBuffer.prototype.dispose = function () {
-        while (this._attributesBufferVO.length)
-            this._attributesBufferVO[0].dispose();
     };
     AttributesBuffer.prototype._setAttributes = function (viewIndex, arrayBufferView, offset) {
         if (offset === void 0) { offset = 0; }
@@ -162,7 +151,7 @@ var AttributesBuffer = (function (_super) {
             for (var i = 0; i < vCount; i++)
                 this._bufferView.set(array.subarray(i * vLength, (i + 1) * vLength), (i + offset) * this._stride + vOffset);
         }
-        this.invalidateContent();
+        this.invalidate();
     };
     AttributesBuffer.prototype._getLocalArrayBuffer = function (viewIndex) {
         var viewVO = this._viewVOs[viewIndex];
@@ -179,14 +168,6 @@ var AttributesBuffer = (function (_super) {
             localBufferView.set(this._bufferView.subarray(i * this._stride + vOffset, i * this._stride + vOffset + vLength), i * vLength);
         return localBuffer;
     };
-    AttributesBuffer.prototype._iAddAttributesBufferVO = function (AttributesBufferVO) {
-        this._attributesBufferVO.push(AttributesBufferVO);
-        return AttributesBufferVO;
-    };
-    AttributesBuffer.prototype._iRemoveAttributesBufferVO = function (AttributesBufferVO) {
-        this._attributesBufferVO.splice(this._attributesBufferVO.indexOf(AttributesBufferVO), 1);
-        return AttributesBufferVO;
-    };
     AttributesBuffer.prototype._addView = function (view) {
         var viewVO = new ViewVO(view);
         var len = this._viewVOs.length;
@@ -194,7 +175,7 @@ var AttributesBuffer = (function (_super) {
         this._viewVOs.push(viewVO);
         if (this._newStride < viewVO.offset + viewVO.length) {
             this._newStride = viewVO.offset + viewVO.length;
-            this.invalidateLength();
+            this.resize();
         }
         view._index = len;
     };
@@ -209,7 +190,7 @@ var AttributesBuffer = (function (_super) {
             viewVO.view._index = i;
         }
         this._newStride = viewVO.offset + viewVO.length;
-        this.invalidateLength();
+        this.resize();
     };
     AttributesBuffer.prototype._getOffset = function (viewIndex) {
         return this._viewVOs[viewIndex].offset;
@@ -288,7 +269,6 @@ var AttributesView = (function (_super) {
     Object.defineProperty(AttributesView.prototype, "assetType", {
         /**
          *
-         * @returns {string}
          */
         get: function () {
             return AttributesView.assetType;
@@ -713,2600 +693,7 @@ var Short3Attributes = (function (_super) {
 })(AttributesView);
 module.exports = Short3Attributes;
 
-},{"awayjs-core/lib/attributes/AttributesView":"awayjs-core/lib/attributes/AttributesView"}],"awayjs-core/lib/data/BitmapImage2D":[function(require,module,exports){
-var __extends = this.__extends || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    __.prototype = b.prototype;
-    d.prototype = new __();
-};
-var Image2D = require("awayjs-core/lib/data/Image2D");
-var ColorUtils = require("awayjs-core/lib/utils/ColorUtils");
-var BitmapImageUtils = require("awayjs-core/lib/utils/BitmapImageUtils");
-var CPUCanvas = require('awayjs-core/lib/data/CPUCanvas');
-/**
- * The BitmapImage2D class lets you work with the data(pixels) of a Bitmap
- * object. You can use the methods of the BitmapImage2D class to create
- * arbitrarily sized transparent or opaque bitmap images and manipulate them
- * in various ways at runtime. You can also access the BitmapImage2D for a bitmap
- * image that you load with the <code>flash.Assets</code> or
- * <code>flash.display.Loader</code> classes.
- *
- * <p>This class lets you separate bitmap rendering operations from the
- * internal display updating routines of flash. By manipulating a
- * BitmapImage2D object directly, you can create complex images without incurring
- * the per-frame overhead of constantly redrawing the content from vector
- * data.</p>
- *
- * <p>The methods of the BitmapImage2D class support effects that are not
- * available through the filters available to non-bitmap display objects.</p>
- *
- * <p>A BitmapImage2D object contains an array of pixel data. This data can
- * represent either a fully opaque bitmap or a transparent bitmap that
- * contains alpha channel data. Either type of BitmapImage2D object is stored as
- * a buffer of 32-bit integers. Each 32-bit integer determines the properties
- * of a single pixel in the bitmap.</p>
- *
- * <p>Each 32-bit integer is a combination of four 8-bit channel values(from
- * 0 to 255) that describe the alpha transparency and the red, green, and blue
- * (ARGB) values of the pixel.(For ARGB values, the most significant byte
- * represents the alpha channel value, followed by red, green, and blue.)</p>
- *
- * <p>The four channels(alpha, red, green, and blue) are represented as
- * numbers when you use them with the <code>BitmapImage2D.copyChannel()</code>
- * method or the <code>DisplacementMapFilter.componentX</code> and
- * <code>DisplacementMapFilter.componentY</code> properties, and these numbers
- * are represented by the following constants in the BitmapImage2DChannel
- * class:</p>
- *
- * <ul>
- *   <li><code>BitmapImage2DChannel.ALPHA</code></li>
- *   <li><code>BitmapImage2DChannel.RED</code></li>
- *   <li><code>BitmapImage2DChannel.GREEN</code></li>
- *   <li><code>BitmapImage2DChannel.BLUE</code></li>
- * </ul>
- *
- * <p>You can attach BitmapImage2D objects to a Bitmap object by using the
- * <code>bitmapData</code> property of the Bitmap object.</p>
- *
- * <p>You can use a BitmapImage2D object to fill a Graphics object by using the
- * <code>Graphics.beginBitmapFill()</code> method.</p>
- *
- * <p>You can also use a BitmapImage2D object to perform batch tile rendering
- * using the <code>flash.display.Tilesheet</code> class.</p>
- *
- * <p>In Flash Player 10, the maximum size for a BitmapImage2D object
- * is 8,191 pixels in width or height, and the total number of pixels cannot
- * exceed 16,777,215 pixels.(So, if a BitmapImage2D object is 8,191 pixels wide,
- * it can only be 2,048 pixels high.) In Flash Player 9 and earlier, the limitation
- * is 2,880 pixels in height and 2,880 in width.</p>
- */
-var BitmapImage2D = (function (_super) {
-    __extends(BitmapImage2D, _super);
-    /**
-     * Creates a BitmapImage2D object with a specified width and height. If you
-     * specify a value for the <code>fillColor</code> parameter, every pixel in
-     * the bitmap is set to that color.
-     *
-     * <p>By default, the bitmap is created as transparent, unless you pass
-     * the value <code>false</code> for the transparent parameter. After you
-     * create an opaque bitmap, you cannot change it to a transparent bitmap.
-     * Every pixel in an opaque bitmap uses only 24 bits of color channel
-     * information. If you define the bitmap as transparent, every pixel uses 32
-     * bits of color channel information, including an alpha transparency
-     * channel.</p>
-     *
-     * @param width       The width of the bitmap image in pixels.
-     * @param height      The height of the bitmap image in pixels.
-     * @param transparent Specifies whether the bitmap image supports per-pixel
-     *                    transparency. The default value is <code>true</code>
-     *                    (transparent). To create a fully transparent bitmap,
-     *                    set the value of the <code>transparent</code>
-     *                    parameter to <code>true</code> and the value of the
-     *                    <code>fillColor</code> parameter to 0x00000000(or to
-     *                    0). Setting the <code>transparent</code> property to
-     *                    <code>false</code> can result in minor improvements
-     *                    in rendering performance.
-     * @param fillColor   A 32-bit ARGB color value that you use to fill the
-     *                    bitmap image area. The default value is
-     *                    0xFFFFFFFF(solid white).
-     */
-    function BitmapImage2D(width, height, transparent, fillColor, powerOfTwo) {
-        if (transparent === void 0) { transparent = true; }
-        if (fillColor === void 0) { fillColor = null; }
-        if (powerOfTwo === void 0) { powerOfTwo = true; }
-        _super.call(this, width, height, powerOfTwo);
-        this._locked = false;
-        this._transparent = transparent;
-        if (document) {
-            this._imageCanvas = document.createElement("canvas");
-        }
-        else {
-            this._imageCanvas = new CPUCanvas();
-        }
-        this._imageCanvas.width = width;
-        this._imageCanvas.height = height;
-        this._context = this._imageCanvas.getContext("2d");
-        if (fillColor != null)
-            this.fillRect(this._rect, fillColor);
-    }
-    Object.defineProperty(BitmapImage2D.prototype, "assetType", {
-        /**
-         *
-         * @returns {string}
-         */
-        get: function () {
-            return BitmapImage2D.assetType;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(BitmapImage2D.prototype, "transparent", {
-        /**
-         * Defines whether the bitmap image supports per-pixel transparency. You can
-         * set this value only when you construct a BitmapImage2D object by passing in
-         * <code>true</code> for the <code>transparent</code> parameter of the
-         * constructor. Then, after you create a BitmapImage2D object, you can check
-         * whether it supports per-pixel transparency by determining if the value of
-         * the <code>transparent</code> property is <code>true</code>.
-         */
-        get: function () {
-            return this._transparent;
-        },
-        set: function (value) {
-            this._transparent = value;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    /**
-     * Returns a new BitmapImage2D object that is a clone of the original instance
-     * with an exact copy of the contained bitmap.
-     *
-     * @return A new BitmapImage2D object that is identical to the original.
-     */
-    BitmapImage2D.prototype.clone = function () {
-        var t = new BitmapImage2D(this.width, this.height, this.transparent, null, this.powerOfTwo);
-        t.draw(this);
-        return t;
-    };
-    /**
-     * Adjusts the color values in a specified area of a bitmap image by using a
-     * <code>ColorTransform</code> object. If the rectangle matches the
-     * boundaries of the bitmap image, this method transforms the color values of
-     * the entire image.
-     *
-     * @param rect           A Rectangle object that defines the area of the
-     *                       image in which the ColorTransform object is applied.
-     * @param colorTransform A ColorTransform object that describes the color
-     *                       transformation values to apply.
-     */
-    BitmapImage2D.prototype.colorTransform = function (rect, colorTransform) {
-        if (!this._locked)
-            this._imageData = this._context.getImageData(0, 0, this._rect.width, this._rect.height);
-        var data = this._imageData.data;
-        var i /*uint*/, j /*uint*/, index /*uint*/;
-        for (i = 0; i < rect.width; ++i) {
-            for (j = 0; j < rect.height; ++j) {
-                index = (i + rect.x + (j + rect.y) * this.width) * 4;
-                data[index] = data[index] * colorTransform.redMultiplier + colorTransform.redOffset;
-                data[index + 1] = data[index + 1] * colorTransform.greenMultiplier + colorTransform.greenOffset;
-                data[index + 2] = data[index + 2] * colorTransform.blueMultiplier + colorTransform.blueOffset;
-                data[index + 3] = data[index + 3] * colorTransform.alphaMultiplier + colorTransform.alphaOffset;
-            }
-        }
-        if (!this._locked) {
-            this._context.putImageData(this._imageData, 0, 0);
-            this._imageData = null;
-        }
-        this.invalidateContent();
-    };
-    /**
-     * Transfers data from one channel of another BitmapImage2D object or the
-     * current BitmapImage2D object into a channel of the current BitmapImage2D object.
-     * All of the data in the other channels in the destination BitmapImage2D object
-     * are preserved.
-     *
-     * <p>The source channel value and destination channel value can be one of
-     * following values: </p>
-     *
-     * <ul>
-     *   <li><code>BitmapImage2DChannel.RED</code></li>
-     *   <li><code>BitmapImage2DChannel.GREEN</code></li>
-     *   <li><code>BitmapImage2DChannel.BLUE</code></li>
-     *   <li><code>BitmapImage2DChannel.ALPHA</code></li>
-     * </ul>
-     *
-     * @param sourceBitmapImage2D The input bitmap image to use. The source image
-     *                         can be a different BitmapImage2D object or it can
-     *                         refer to the current BitmapImage2D object.
-     * @param sourceRect       The source Rectangle object. To copy only channel
-     *                         data from a smaller area within the bitmap,
-     *                         specify a source rectangle that is smaller than
-     *                         the overall size of the BitmapImage2D object.
-     * @param destPoint        The destination Point object that represents the
-     *                         upper-left corner of the rectangular area where
-     *                         the new channel data is placed. To copy only
-     *                         channel data from one area to a different area in
-     *                         the destination image, specify a point other than
-     *                        (0,0).
-     * @param sourceChannel    The source channel. Use a value from the
-     *                         BitmapImage2DChannel class
-     *                        (<code>BitmapImage2DChannel.RED</code>,
-     *                         <code>BitmapImage2DChannel.BLUE</code>,
-     *                         <code>BitmapImage2DChannel.GREEN</code>,
-     *                         <code>BitmapImage2DChannel.ALPHA</code>).
-     * @param destChannel      The destination channel. Use a value from the
-     *                         BitmapImage2DChannel class
-     *                        (<code>BitmapImage2DChannel.RED</code>,
-     *                         <code>BitmapImage2DChannel.BLUE</code>,
-     *                         <code>BitmapImage2DChannel.GREEN</code>,
-     *                         <code>BitmapImage2DChannel.ALPHA</code>).
-     * @throws TypeError The sourceBitmapImage2D, sourceRect or destPoint are null.
-     */
-    BitmapImage2D.prototype.copyChannel = function (sourceBitmap, sourceRect, destPoint, sourceChannel, destChannel) {
-        var imageData = sourceBitmap.getImageData();
-        if (!this._locked)
-            this._imageData = this._context.getImageData(0, 0, this._rect.width, this._rect.height);
-        var sourceData = sourceBitmap.getImageData().data;
-        var destData = this._imageData.data;
-        var sourceOffset = Math.round(Math.log(sourceChannel) / Math.log(2));
-        var destOffset = Math.round(Math.log(destChannel) / Math.log(2));
-        var i /*uint*/, j /*uint*/, sourceIndex /*uint*/, destIndex /*uint*/;
-        for (i = 0; i < sourceRect.width; ++i) {
-            for (j = 0; j < sourceRect.height; ++j) {
-                sourceIndex = (i + sourceRect.x + (j + sourceRect.y) * sourceBitmap.width) * 4;
-                destIndex = (i + destPoint.x + (j + destPoint.y) * this.width) * 4;
-                destData[destIndex + destOffset] = sourceData[sourceIndex + sourceOffset];
-            }
-        }
-        if (!this._locked) {
-            this._context.putImageData(this._imageData, 0, 0);
-            this._imageData = null;
-        }
-        this.invalidateContent();
-    };
-    BitmapImage2D.prototype.copyPixels = function (source, sourceRect, destRect) {
-        if (source instanceof BitmapImage2D)
-            source = source.getCanvas();
-        if (this._locked) {
-            // If canvas is locked:
-            //
-            //      1) copy image data back to canvas
-            //      2) draw object
-            //      3) read _imageData back out
-            this._context.putImageData(this._imageData, 0, 0); // at coords 0,0
-            BitmapImageUtils._copyPixels(this._context, source, sourceRect, destRect);
-            this._imageData = this._context.getImageData(0, 0, this._rect.width, this._rect.height);
-        }
-        else {
-            BitmapImageUtils._copyPixels(this._context, source, sourceRect, destRect);
-        }
-        this.invalidateContent();
-    };
-    /**
-     * Frees memory that is used to store the BitmapImage2D object.
-     *
-     * <p>When the <code>dispose()</code> method is called on an image, the width
-     * and height of the image are set to 0. All subsequent calls to methods or
-     * properties of this BitmapImage2D instance fail, and an exception is thrown.
-     * </p>
-     *
-     * <p><code>BitmapImage2D.dispose()</code> releases the memory occupied by the
-     * actual bitmap data, immediately(a bitmap can consume up to 64 MB of
-     * memory). After using <code>BitmapImage2D.dispose()</code>, the BitmapImage2D
-     * object is no longer usable and an exception may be thrown if
-     * you call functions on the BitmapImage2D object. However,
-     * <code>BitmapImage2D.dispose()</code> does not garbage collect the BitmapImage2D
-     * object(approximately 128 bytes); the memory occupied by the actual
-     * BitmapImage2D object is released at the time the BitmapImage2D object is
-     * collected by the garbage collector.</p>
-     *
-     */
-    BitmapImage2D.prototype.dispose = function () {
-        _super.prototype.dispose.call(this);
-        this._context = null;
-        this._imageCanvas = null;
-        this._imageData = null;
-        this._rect = null;
-        this._transparent = null;
-        this._locked = null;
-    };
-    BitmapImage2D.prototype.draw = function (source, matrix, colorTransform, blendMode, clipRect, smoothing) {
-        if (source instanceof BitmapImage2D && source.getCanvas()) {
-            source = source.getCanvas();
-        }
-        if (this._locked) {
-            // If canvas is locked:
-            //
-            //      1) copy image data back to canvas
-            //      2) draw object
-            //      3) read _imageData back out
-            this._context.putImageData(this._imageData, 0, 0); // at coords 0,0
-            BitmapImageUtils._draw(this._context, source, matrix, colorTransform, blendMode, clipRect, smoothing);
-            this._imageData = this._context.getImageData(0, 0, this._rect.width, this._rect.height);
-        }
-        else {
-            BitmapImageUtils._draw(this._context, source, matrix, colorTransform, blendMode, clipRect, smoothing);
-        }
-        this.invalidateContent();
-    };
-    /**
-     * Fills a rectangular area of pixels with a specified ARGB color.
-     *
-     * @param rect  The rectangular area to fill.
-     * @param color The ARGB color value that fills the area. ARGB colors are
-     *              often specified in hexadecimal format; for example,
-     *              0xFF336699.
-     * @throws TypeError The rect is null.
-     */
-    BitmapImage2D.prototype.fillRect = function (rect, color) {
-        if (this._locked) {
-            // If canvas is locked:
-            //
-            //      1) copy image data back to canvas
-            //      2) apply fill
-            //      3) read _imageData back out
-            if (this._imageData)
-                this._context.putImageData(this._imageData, 0, 0); // at coords 0,0
-            BitmapImageUtils._fillRect(this._context, rect, color, this._transparent);
-            if (this._imageData)
-                this._imageData = this._context.getImageData(0, 0, this._rect.width, this._rect.height);
-        }
-        else {
-            BitmapImageUtils._fillRect(this._context, rect, color, this._transparent);
-        }
-        this.invalidateContent();
-    };
-    /**
-     * Returns an integer that represents an RGB pixel value from a BitmapImage2D
-     * object at a specific point(<i>x</i>, <i>y</i>). The
-     * <code>getPixel()</code> method returns an unmultiplied pixel value. No
-     * alpha information is returned.
-     *
-     * <p>All pixels in a BitmapImage2D object are stored as premultiplied color
-     * values. A premultiplied image pixel has the red, green, and blue color
-     * channel values already multiplied by the alpha data. For example, if the
-     * alpha value is 0, the values for the RGB channels are also 0, independent
-     * of their unmultiplied values. This loss of data can cause some problems
-     * when you perform operations. All BitmapImage2D methods take and return
-     * unmultiplied values. The internal pixel representation is converted from
-     * premultiplied to unmultiplied before it is returned as a value. During a
-     * set operation, the pixel value is premultiplied before the raw image pixel
-     * is set.</p>
-     *
-     * @param x The <i>x</i> position of the pixel.
-     * @param y The <i>y</i> position of the pixel.
-     * @return A number that represents an RGB pixel value. If the(<i>x</i>,
-     *         <i>y</i>) coordinates are outside the bounds of the image, the
-     *         method returns 0.
-     */
-    BitmapImage2D.prototype.getPixel = function (x, y) {
-        var r;
-        var g;
-        var b;
-        var a;
-        if (!this._locked) {
-            var pixelData = this._context.getImageData(x, y, 1, 1);
-            r = pixelData.data[0];
-            g = pixelData.data[1];
-            b = pixelData.data[2];
-            a = pixelData.data[3];
-        }
-        else {
-            var index = (x + y * this._imageData.width) * 4;
-            r = this._imageData.data[index + 0];
-            g = this._imageData.data[index + 1];
-            b = this._imageData.data[index + 2];
-            a = this._imageData.data[index + 3];
-        }
-        //returns black if fully transparent
-        if (!a)
-            return 0x0;
-        return (r << 16) | (g << 8) | b;
-    };
-    /**
-     * Returns an ARGB color value that contains alpha channel data and RGB data.
-     * This method is similar to the <code>getPixel()</code> method, which
-     * returns an RGB color without alpha channel data.
-     *
-     * <p>All pixels in a BitmapImage2D object are stored as premultiplied color
-     * values. A premultiplied image pixel has the red, green, and blue color
-     * channel values already multiplied by the alpha data. For example, if the
-     * alpha value is 0, the values for the RGB channels are also 0, independent
-     * of their unmultiplied values. This loss of data can cause some problems
-     * when you perform operations. All BitmapImage2D methods take and return
-     * unmultiplied values. The internal pixel representation is converted from
-     * premultiplied to unmultiplied before it is returned as a value. During a
-     * set operation, the pixel value is premultiplied before the raw image pixel
-     * is set.</p>
-     *
-     * @param x The <i>x</i> position of the pixel.
-     * @param y The <i>y</i> position of the pixel.
-     * @return A number representing an ARGB pixel value. If the(<i>x</i>,
-     *         <i>y</i>) coordinates are outside the bounds of the image, 0 is
-     *         returned.
-     */
-    BitmapImage2D.prototype.getPixel32 = function (x, y) {
-        var r;
-        var g;
-        var b;
-        var a;
-        if (!this._locked) {
-            var pixelData = this._context.getImageData(x, y, 1, 1);
-            r = pixelData.data[0];
-            g = pixelData.data[1];
-            b = pixelData.data[2];
-            a = pixelData.data[3];
-        }
-        else {
-            var index = (x + y * this._imageData.width) * 4;
-            r = this._imageData.data[index + 0];
-            g = this._imageData.data[index + 1];
-            b = this._imageData.data[index + 2];
-            a = this._imageData.data[index + 3];
-        }
-        return (a << 24) | (r << 16) | (g << 8) | b;
-    };
-    /**
-     * Locks an image so that any objects that reference the BitmapImage2D object,
-     * such as Bitmap objects, are not updated when this BitmapImage2D object
-     * changes. To improve performance, use this method along with the
-     * <code>unlock()</code> method before and after numerous calls to the
-     * <code>setPixel()</code> or <code>setPixel32()</code> method.
-     *
-     */
-    BitmapImage2D.prototype.lock = function () {
-        if (this._locked)
-            return;
-        this._locked = true;
-        this._imageData = this._context.getImageData(0, 0, this._rect.width, this._rect.height);
-    };
-    /**
-     * Converts an Array into a rectangular region of pixel data. For each pixel,
-     * an Array element is read and written into the BitmapImage2D pixel. The data
-     * in the Array is expected to be 32-bit ARGB pixel values.
-     *
-     * @param rect        Specifies the rectangular region of the BitmapImage2D
-     *                    object.
-     * @param inputArray  An Array that consists of 32-bit unmultiplied pixel
-     *                    values to be used in the rectangular region.
-     * @throws RangeError The vector array is not large enough to read all the
-     *                    pixel data.
-     */
-    BitmapImage2D.prototype.setArray = function (rect, inputArray) {
-        if (!this._locked)
-            this._imageData = this._context.getImageData(0, 0, this._rect.width, this._rect.height);
-        var i /*uint*/, j /*uint*/, index /*uint*/, argb /*uint*/;
-        for (i = 0; i < rect.width; ++i) {
-            for (j = 0; j < rect.height; ++j) {
-                argb = ColorUtils.float32ColorToARGB(inputArray[i + j * rect.width]);
-                index = (i + rect.x + (j + rect.y) * this._imageData.width) * 4;
-                this._imageData.data[index + 0] = argb[1];
-                this._imageData.data[index + 1] = argb[2];
-                this._imageData.data[index + 2] = argb[3];
-                this._imageData.data[index + 3] = argb[0];
-            }
-        }
-        if (!this._locked) {
-            this._context.putImageData(this._imageData, 0, 0);
-            this._imageData = null;
-        }
-        this.invalidateContent();
-    };
-    /**
-     * Sets a single pixel of a BitmapImage2D object. The current alpha channel
-     * value of the image pixel is preserved during this operation. The value of
-     * the RGB color parameter is treated as an unmultiplied color value.
-     *
-     * <p><b>Note:</b> To increase performance, when you use the
-     * <code>setPixel()</code> or <code>setPixel32()</code> method repeatedly,
-     * call the <code>lock()</code> method before you call the
-     * <code>setPixel()</code> or <code>setPixel32()</code> method, and then call
-     * the <code>unlock()</code> method when you have made all pixel changes.
-     * This process prevents objects that reference this BitmapImage2D instance from
-     * updating until you finish making the pixel changes.</p>
-     *
-     * @param x     The <i>x</i> position of the pixel whose value changes.
-     * @param y     The <i>y</i> position of the pixel whose value changes.
-     * @param color The resulting RGB color for the pixel.
-     */
-    BitmapImage2D.prototype.setPixel = function (x, y, color) {
-        var argb = ColorUtils.float32ColorToARGB(color);
-        if (!this._locked)
-            this._imageData = this._context.getImageData(0, 0, this._rect.width, this._rect.height);
-        var index = (x + y * this._imageData.width) * 4;
-        this._imageData.data[index + 0] = argb[1];
-        this._imageData.data[index + 1] = argb[2];
-        this._imageData.data[index + 2] = argb[3];
-        this._imageData.data[index + 3] = 255;
-        if (!this._locked) {
-            this._context.putImageData(this._imageData, 0, 0);
-            this._imageData = null;
-        }
-        this.invalidateContent();
-    };
-    /**
-     * Sets the color and alpha transparency values of a single pixel of a
-     * BitmapImage2D object. This method is similar to the <code>setPixel()</code>
-     * method; the main difference is that the <code>setPixel32()</code> method
-     * takes an ARGB color value that contains alpha channel information.
-     *
-     * <p>All pixels in a BitmapImage2D object are stored as premultiplied color
-     * values. A premultiplied image pixel has the red, green, and blue color
-     * channel values already multiplied by the alpha data. For example, if the
-     * alpha value is 0, the values for the RGB channels are also 0, independent
-     * of their unmultiplied values. This loss of data can cause some problems
-     * when you perform operations. All BitmapImage2D methods take and return
-     * unmultiplied values. The internal pixel representation is converted from
-     * premultiplied to unmultiplied before it is returned as a value. During a
-     * set operation, the pixel value is premultiplied before the raw image pixel
-     * is set.</p>
-     *
-     * <p><b>Note:</b> To increase performance, when you use the
-     * <code>setPixel()</code> or <code>setPixel32()</code> method repeatedly,
-     * call the <code>lock()</code> method before you call the
-     * <code>setPixel()</code> or <code>setPixel32()</code> method, and then call
-     * the <code>unlock()</code> method when you have made all pixel changes.
-     * This process prevents objects that reference this BitmapImage2D instance from
-     * updating until you finish making the pixel changes.</p>
-     *
-     * @param x     The <i>x</i> position of the pixel whose value changes.
-     * @param y     The <i>y</i> position of the pixel whose value changes.
-     * @param color The resulting ARGB color for the pixel. If the bitmap is
-     *              opaque(not transparent), the alpha transparency portion of
-     *              this color value is ignored.
-     */
-    BitmapImage2D.prototype.setPixel32 = function (x, y, color) {
-        var argb = ColorUtils.float32ColorToARGB(color);
-        if (!this._locked)
-            this._imageData = this._context.getImageData(0, 0, this._rect.width, this._rect.height);
-        var index = (x + y * this._imageData.width) * 4;
-        this._imageData.data[index + 0] = argb[1];
-        this._imageData.data[index + 1] = argb[2];
-        this._imageData.data[index + 2] = argb[3];
-        this._imageData.data[index + 3] = argb[0];
-        if (!this._locked) {
-            this._context.putImageData(this._imageData, 0, 0);
-            this._imageData = null;
-        }
-        this.invalidateContent();
-    };
-    /**
-     * Converts a byte array into a rectangular region of pixel data. For each
-     * pixel, the <code>ByteArray.readUnsignedInt()</code> method is called and
-     * the return value is written into the pixel. If the byte array ends before
-     * the full rectangle is written, the function returns. The data in the byte
-     * array is expected to be 32-bit ARGB pixel values. No seeking is performed
-     * on the byte array before or after the pixels are read.
-     *
-     * @param rect           Specifies the rectangular region of the BitmapImage2D
-     *                       object.
-     * @param inputByteArray A ByteArray object that consists of 32-bit
-     *                       unmultiplied pixel values to be used in the
-     *                       rectangular region.
-     * @throws EOFError  The <code>inputByteArray</code> object does not include
-     *                   enough data to fill the area of the <code>rect</code>
-     *                   rectangle. The method fills as many pixels as possible
-     *                   before throwing the exception.
-     * @throws TypeError The rect or inputByteArray are null.
-     */
-    BitmapImage2D.prototype.setPixels = function (rect, inputByteArray) {
-        if (!this._locked)
-            this._imageData = this._context.getImageData(0, 0, this._rect.width, this._rect.height);
-        inputByteArray.position = 0;
-        var i /*uint*/, j /*uint*/, index /*uint*/;
-        for (i = 0; i < rect.width; ++i) {
-            for (j = 0; j < rect.height; ++j) {
-                index = (i + rect.x + (j + rect.y) * this._imageData.width) * 4;
-                this._imageData.data[index + 0] = inputByteArray.readUnsignedInt();
-                this._imageData.data[index + 1] = inputByteArray.readUnsignedInt();
-                this._imageData.data[index + 2] = inputByteArray.readUnsignedInt();
-                this._imageData.data[index + 3] = inputByteArray.readUnsignedInt();
-            }
-        }
-        if (!this._locked) {
-            this._context.putImageData(this._imageData, 0, 0);
-            this._imageData = null;
-        }
-        this.invalidateContent();
-    };
-    /**
-     * Unlocks an image so that any objects that reference the BitmapImage2D object,
-     * such as Bitmap objects, are updated when this BitmapImage2D object changes.
-     * To improve performance, use this method along with the <code>lock()</code>
-     * method before and after numerous calls to the <code>setPixel()</code> or
-     * <code>setPixel32()</code> method.
-     *
-     * @param changeRect The area of the BitmapImage2D object that has changed. If
-     *                   you do not specify a value for this parameter, the
-     *                   entire area of the BitmapImage2D object is considered
-     *                   changed.
-     */
-    BitmapImage2D.prototype.unlock = function () {
-        if (!this._locked)
-            return;
-        this._locked = false;
-        this._context.putImageData(this._imageData, 0, 0); // at coords 0,0
-        this._imageData = null;
-    };
-    /**
-     *
-     * @returns {ImageData}
-     */
-    BitmapImage2D.prototype.getImageData = function () {
-        if (!this._locked)
-            return this._context.getImageData(0, 0, this._rect.width, this._rect.height);
-        return this._imageData;
-    };
-    /**
-     *
-     * @returns {HTMLCanvasElement}
-     */
-    BitmapImage2D.prototype.getCanvas = function () {
-        return this._imageCanvas;
-    };
-    /**
-     *
-     * @param width
-     * @param height
-     * @private
-     */
-    BitmapImage2D.prototype._setSize = function (width, height) {
-        if (this._locked)
-            this._context.putImageData(this._imageData, 0, 0);
-        if (this._imageCanvas) {
-            this._imageCanvas.width = width;
-            this._imageCanvas.height = height;
-        }
-        _super.prototype._setSize.call(this, width, height);
-        if (this._locked)
-            this._imageData = this._context.getImageData(0, 0, this._rect.width, this._rect.height);
-    };
-    BitmapImage2D.assetType = "[image BitmapImage2D]";
-    return BitmapImage2D;
-})(Image2D);
-module.exports = BitmapImage2D;
-
-},{"awayjs-core/lib/data/CPUCanvas":"awayjs-core/lib/data/CPUCanvas","awayjs-core/lib/data/Image2D":"awayjs-core/lib/data/Image2D","awayjs-core/lib/utils/BitmapImageUtils":"awayjs-core/lib/utils/BitmapImageUtils","awayjs-core/lib/utils/ColorUtils":"awayjs-core/lib/utils/ColorUtils"}],"awayjs-core/lib/data/BitmapImageChannel":[function(require,module,exports){
-var BitmapImageChannel = (function () {
-    function BitmapImageChannel() {
-    }
-    BitmapImageChannel.ALPHA = 8;
-    BitmapImageChannel.BLUE = 4;
-    BitmapImageChannel.GREEN = 2;
-    BitmapImageChannel.RED = 1;
-    return BitmapImageChannel;
-})();
-module.exports = BitmapImageChannel;
-
-},{}],"awayjs-core/lib/data/BitmapImageCube":[function(require,module,exports){
-var __extends = this.__extends || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    __.prototype = b.prototype;
-    d.prototype = new __();
-};
-var BitmapImage2D = require("awayjs-core/lib/data/BitmapImage2D");
-var ImageCube = require("awayjs-core/lib/data/ImageCube");
-var Rectangle = require("awayjs-core/lib/geom/Rectangle");
-var ColorUtils = require("awayjs-core/lib/utils/ColorUtils");
-var BitmapImageUtils = require("awayjs-core/lib/utils/BitmapImageUtils");
-/**
- * The BitmapImage2D class lets you work with the data(pixels) of a Bitmap
- * object. You can use the methods of the BitmapImage2D class to create
- * arbitrarily sized transparent or opaque bitmap images and manipulate them
- * in various ways at runtime. You can also access the BitmapImage2D for a bitmap
- * image that you load with the <code>flash.Assets</code> or
- * <code>flash.display.Loader</code> classes.
- *
- * <p>This class lets you separate bitmap rendering operations from the
- * internal display updating routines of flash. By manipulating a
- * BitmapImage2D object directly, you can create complex images without incurring
- * the per-frame overhead of constantly redrawing the content from vector
- * data.</p>
- *
- * <p>The methods of the BitmapImage2D class support effects that are not
- * available through the filters available to non-bitmap display objects.</p>
- *
- * <p>A BitmapImage2D object contains an array of pixel data. This data can
- * represent either a fully opaque bitmap or a transparent bitmap that
- * contains alpha channel data. Either type of BitmapImage2D object is stored as
- * a buffer of 32-bit integers. Each 32-bit integer determines the properties
- * of a single pixel in the bitmap.</p>
- *
- * <p>Each 32-bit integer is a combination of four 8-bit channel values(from
- * 0 to 255) that describe the alpha transparency and the red, green, and blue
- * (ARGB) values of the pixel.(For ARGB values, the most significant byte
- * represents the alpha channel value, followed by red, green, and blue.)</p>
- *
- * <p>The four channels(alpha, red, green, and blue) are represented as
- * numbers when you use them with the <code>BitmapImage2D.copyChannel()</code>
- * method or the <code>DisplacementMapFilter.componentX</code> and
- * <code>DisplacementMapFilter.componentY</code> properties, and these numbers
- * are represented by the following constants in the BitmapImage2DChannel
- * class:</p>
- *
- * <ul>
- *   <li><code>BitmapImage2DChannel.ALPHA</code></li>
- *   <li><code>BitmapImage2DChannel.RED</code></li>
- *   <li><code>BitmapImage2DChannel.GREEN</code></li>
- *   <li><code>BitmapImage2DChannel.BLUE</code></li>
- * </ul>
- *
- * <p>You can attach BitmapImage2D objects to a Bitmap object by using the
- * <code>bitmapData</code> property of the Bitmap object.</p>
- *
- * <p>You can use a BitmapImage2D object to fill a Graphics object by using the
- * <code>Graphics.beginBitmapFill()</code> method.</p>
- *
- * <p>You can also use a BitmapImage2D object to perform batch tile rendering
- * using the <code>flash.display.Tilesheet</code> class.</p>
- *
- * <p>In Flash Player 10, the maximum size for a BitmapImage2D object
- * is 8,191 pixels in width or height, and the total number of pixels cannot
- * exceed 16,777,215 pixels.(So, if a BitmapImage2D object is 8,191 pixels wide,
- * it can only be 2,048 pixels high.) In Flash Player 9 and earlier, the limitation
- * is 2,880 pixels in height and 2,880 in width.</p>
- */
-var BitmapImageCube = (function (_super) {
-    __extends(BitmapImageCube, _super);
-    /**
-     * Creates a BitmapImage2D object with a specified width and height. If you
-     * specify a value for the <code>fillColor</code> parameter, every pixel in
-     * the bitmap is set to that color.
-     *
-     * <p>By default, the bitmap is created as transparent, unless you pass
-     * the value <code>false</code> for the transparent parameter. After you
-     * create an opaque bitmap, you cannot change it to a transparent bitmap.
-     * Every pixel in an opaque bitmap uses only 24 bits of color channel
-     * information. If you define the bitmap as transparent, every pixel uses 32
-     * bits of color channel information, including an alpha transparency
-     * channel.</p>
-     *
-     * @param width       The width of the bitmap image in pixels.
-     * @param height      The height of the bitmap image in pixels.
-     * @param transparent Specifies whether the bitmap image supports per-pixel
-     *                    transparency. The default value is <code>true</code>
-     *                    (transparent). To create a fully transparent bitmap,
-     *                    set the value of the <code>transparent</code>
-     *                    parameter to <code>true</code> and the value of the
-     *                    <code>fillColor</code> parameter to 0x00000000(or to
-     *                    0). Setting the <code>transparent</code> property to
-     *                    <code>false</code> can result in minor improvements
-     *                    in rendering performance.
-     * @param fillColor   A 32-bit ARGB color value that you use to fill the
-     *                    bitmap image area. The default value is
-     *                    0xFFFFFFFF(solid white).
-     */
-    function BitmapImageCube(size, transparent, fillColor) {
-        if (transparent === void 0) { transparent = true; }
-        if (fillColor === void 0) { fillColor = null; }
-        _super.call(this, size);
-        this._imageCanvas = new Array(6);
-        this._context = new Array(6);
-        this._imageData = new Array(6);
-        this._locked = false;
-        this._transparent = transparent;
-        for (var i = 0; i < 6; i++) {
-            this._imageCanvas[i] = document.createElement("canvas");
-            this._imageCanvas[i].width = size;
-            this._imageCanvas[i].height = size;
-            this._context[i] = this._imageCanvas[i].getContext("2d");
-            if (fillColor != null)
-                this.fillRect(i, new Rectangle(0, 0, size, size), fillColor);
-        }
-    }
-    Object.defineProperty(BitmapImageCube.prototype, "assetType", {
-        /**
-         *
-         * @returns {string}
-         */
-        get: function () {
-            return BitmapImageCube.assetType;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(BitmapImageCube.prototype, "transparent", {
-        /**
-         * Defines whether the bitmap image supports per-pixel transparency. You can
-         * set this value only when you construct a BitmapImage2D object by passing in
-         * <code>true</code> for the <code>transparent</code> parameter of the
-         * constructor. Then, after you create a BitmapImage2D object, you can check
-         * whether it supports per-pixel transparency by determining if the value of
-         * the <code>transparent</code> property is <code>true</code>.
-         */
-        get: function () {
-            return this._transparent;
-        },
-        set: function (value) {
-            this._transparent = value;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    /**
-     * Returns a new BitmapImage2D object that is a clone of the original instance
-     * with an exact copy of the contained bitmap.
-     *
-     * @return A new BitmapImage2D object that is identical to the original.
-     */
-    BitmapImageCube.prototype.clone = function () {
-        var t = new BitmapImageCube(this._size, this.transparent);
-        for (var i = 0; i < 6; i++) {
-            t.draw(i, this.getCanvas(i));
-        }
-        return t;
-    };
-    /**
-     * Adjusts the color values in a specified area of a bitmap image by using a
-     * <code>ColorTransform</code> object. If the rectangle matches the
-     * boundaries of the bitmap image, this method transforms the color values of
-     * the entire image.
-     *
-     * @param rect           A Rectangle object that defines the area of the
-     *                       image in which the ColorTransform object is applied.
-     * @param colorTransform A ColorTransform object that describes the color
-     *                       transformation values to apply.
-     */
-    BitmapImageCube.prototype.colorTransform = function (side, rect, colorTransform) {
-        if (!this._locked)
-            this._imageData[side] = this._context[side].getImageData(0, 0, this._size, this._size);
-        var data = this._imageData[side].data;
-        var i /*uint*/, j /*uint*/, index /*uint*/;
-        for (i = 0; i < rect.width; ++i) {
-            for (j = 0; j < rect.height; ++j) {
-                index = (i + rect.x + (j + rect.y) * this._size) * 4;
-                data[index] = data[index] * colorTransform.redMultiplier + colorTransform.redOffset;
-                data[index + 1] = data[index + 1] * colorTransform.greenMultiplier + colorTransform.greenOffset;
-                data[index + 2] = data[index + 2] * colorTransform.blueMultiplier + colorTransform.blueOffset;
-                data[index + 3] = data[index + 3] * colorTransform.alphaMultiplier + colorTransform.alphaOffset;
-            }
-        }
-        if (!this._locked) {
-            this._context[side].putImageData(this._imageData[side], 0, 0);
-            this._imageData[side] = null;
-        }
-        this.invalidateContent();
-    };
-    /**
-     * Transfers data from one channel of another BitmapImage2D object or the
-     * current BitmapImage2D object into a channel of the current BitmapImage2D object.
-     * All of the data in the other channels in the destination BitmapImage2D object
-     * are preserved.
-     *
-     * <p>The source channel value and destination channel value can be one of
-     * following values: </p>
-     *
-     * <ul>
-     *   <li><code>BitmapImage2DChannel.RED</code></li>
-     *   <li><code>BitmapImage2DChannel.GREEN</code></li>
-     *   <li><code>BitmapImage2DChannel.BLUE</code></li>
-     *   <li><code>BitmapImage2DChannel.ALPHA</code></li>
-     * </ul>
-     *
-     * @param sourceBitmapImage2D The input bitmap image to use. The source image
-     *                         can be a different BitmapImage2D object or it can
-     *                         refer to the current BitmapImage2D object.
-     * @param sourceRect       The source Rectangle object. To copy only channel
-     *                         data from a smaller area within the bitmap,
-     *                         specify a source rectangle that is smaller than
-     *                         the overall size of the BitmapImage2D object.
-     * @param destPoint        The destination Point object that represents the
-     *                         upper-left corner of the rectangular area where
-     *                         the new channel data is placed. To copy only
-     *                         channel data from one area to a different area in
-     *                         the destination image, specify a point other than
-     *                        (0,0).
-     * @param sourceChannel    The source channel. Use a value from the
-     *                         BitmapImage2DChannel class
-     *                        (<code>BitmapImage2DChannel.RED</code>,
-     *                         <code>BitmapImage2DChannel.BLUE</code>,
-     *                         <code>BitmapImage2DChannel.GREEN</code>,
-     *                         <code>BitmapImage2DChannel.ALPHA</code>).
-     * @param destChannel      The destination channel. Use a value from the
-     *                         BitmapImage2DChannel class
-     *                        (<code>BitmapImage2DChannel.RED</code>,
-     *                         <code>BitmapImage2DChannel.BLUE</code>,
-     *                         <code>BitmapImage2DChannel.GREEN</code>,
-     *                         <code>BitmapImage2DChannel.ALPHA</code>).
-     * @throws TypeError The sourceBitmapImage2D, sourceRect or destPoint are null.
-     */
-    BitmapImageCube.prototype.copyChannel = function (side, sourceBitmap, sourceRect, destPoint, sourceChannel, destChannel) {
-        var imageData = sourceBitmap.getImageData();
-        if (!this._locked)
-            this._imageData[side] = this._context[side].getImageData(0, 0, this._size, this._size);
-        var sourceData = sourceBitmap.getImageData().data;
-        var destData = this._imageData[side].data;
-        var sourceOffset = Math.round(Math.log(sourceChannel) / Math.log(2));
-        var destOffset = Math.round(Math.log(destChannel) / Math.log(2));
-        var i /*uint*/, j /*uint*/, sourceIndex /*uint*/, destIndex /*uint*/;
-        for (i = 0; i < sourceRect.width; ++i) {
-            for (j = 0; j < sourceRect.height; ++j) {
-                sourceIndex = (i + sourceRect.x + (j + sourceRect.y) * sourceBitmap.width) * 4;
-                destIndex = (i + destPoint.x + (j + destPoint.y) * this._size) * 4;
-                destData[destIndex + destOffset] = sourceData[sourceIndex + sourceOffset];
-            }
-        }
-        if (!this._locked) {
-            this._context[side].putImageData(this._imageData[side], 0, 0);
-            this._imageData[side] = null;
-        }
-        this.invalidateContent();
-    };
-    BitmapImageCube.prototype.copyPixels = function (side, source, sourceRect, destRect) {
-        if (source instanceof BitmapImage2D)
-            source = source.getCanvas();
-        if (this._locked) {
-            // If canvas is locked:
-            //
-            //      1) copy image data back to canvas
-            //      2) draw object
-            //      3) read _imageData back out
-            this._context[side].putImageData(this._imageData[side], 0, 0); // at coords 0,0
-            BitmapImageUtils._copyPixels(this._context[side], source, sourceRect, destRect);
-            this._imageData[side] = this._context[side].getImageData(0, 0, this._size, this._size);
-        }
-        else {
-            BitmapImageUtils._copyPixels(this._context[side], source, sourceRect, destRect);
-        }
-        this.invalidateContent();
-    };
-    /**
-     * Frees memory that is used to store the BitmapImage2D object.
-     *
-     * <p>When the <code>dispose()</code> method is called on an image, the width
-     * and height of the image are set to 0. All subsequent calls to methods or
-     * properties of this BitmapImage2D instance fail, and an exception is thrown.
-     * </p>
-     *
-     * <p><code>BitmapImage2D.dispose()</code> releases the memory occupied by the
-     * actual bitmap data, immediately(a bitmap can consume up to 64 MB of
-     * memory). After using <code>BitmapImage2D.dispose()</code>, the BitmapImage2D
-     * object is no longer usable and an exception may be thrown if
-     * you call functions on the BitmapImage2D object. However,
-     * <code>BitmapImage2D.dispose()</code> does not garbage collect the BitmapImage2D
-     * object(approximately 128 bytes); the memory occupied by the actual
-     * BitmapImage2D object is released at the time the BitmapImage2D object is
-     * collected by the garbage collector.</p>
-     *
-     */
-    BitmapImageCube.prototype.dispose = function () {
-        _super.prototype.dispose.call(this);
-        for (var i = 0; i < 6; i++) {
-            this._context[i] = null;
-            this._imageCanvas[i] = null;
-            this._imageData[i] = null;
-        }
-        this._transparent = null;
-        this._locked = null;
-    };
-    BitmapImageCube.prototype.draw = function (side, source, matrix, colorTransform, blendMode, clipRect, smoothing) {
-        if (source instanceof BitmapImage2D)
-            source = source.getCanvas();
-        if (this._locked) {
-            // If canvas is locked:
-            //
-            //      1) copy image data back to canvas
-            //      2) draw object
-            //      3) read _imageData back out
-            this._context[side].putImageData(this._imageData[side], 0, 0); // at coords 0,0
-            BitmapImageUtils._draw(this._context[side], source, matrix, colorTransform, blendMode, clipRect, smoothing);
-            this._imageData[side] = this._context[side].getImageData(0, 0, this._size, this._size);
-        }
-        else {
-            BitmapImageUtils._draw(this._context[side], source, matrix, colorTransform, blendMode, clipRect, smoothing);
-        }
-        this.invalidateContent();
-    };
-    /**
-     * Fills a rectangular area of pixels with a specified ARGB color.
-     *
-     * @param rect  The rectangular area to fill.
-     * @param color The ARGB color value that fills the area. ARGB colors are
-     *              often specified in hexadecimal format; for example,
-     *              0xFF336699.
-     * @throws TypeError The rect is null.
-     */
-    BitmapImageCube.prototype.fillRect = function (side, rect, color) {
-        if (this._locked) {
-            // If canvas is locked:
-            //
-            //      1) copy image data back to canvas
-            //      2) apply fill
-            //      3) read _imageData back out
-            if (this._imageData[side])
-                this._context[side].putImageData(this._imageData[side], 0, 0); // at coords 0,0
-            BitmapImageUtils._fillRect(this._context[side], rect, color, this._transparent);
-            if (this._imageData[side])
-                this._imageData[side] = this._context[side].getImageData(0, 0, this._size, this._size);
-        }
-        else {
-            BitmapImageUtils._fillRect(this._context[side], rect, color, this._transparent);
-        }
-        this.invalidateContent();
-    };
-    /**
-     * Returns an integer that represents an RGB pixel value from a BitmapImage2D
-     * object at a specific point(<i>x</i>, <i>y</i>). The
-     * <code>getPixel()</code> method returns an unmultiplied pixel value. No
-     * alpha information is returned.
-     *
-     * <p>All pixels in a BitmapImage2D object are stored as premultiplied color
-     * values. A premultiplied image pixel has the red, green, and blue color
-     * channel values already multiplied by the alpha data. For example, if the
-     * alpha value is 0, the values for the RGB channels are also 0, independent
-     * of their unmultiplied values. This loss of data can cause some problems
-     * when you perform operations. All BitmapImage2D methods take and return
-     * unmultiplied values. The internal pixel representation is converted from
-     * premultiplied to unmultiplied before it is returned as a value. During a
-     * set operation, the pixel value is premultiplied before the raw image pixel
-     * is set.</p>
-     *
-     * @param x The <i>x</i> position of the pixel.
-     * @param y The <i>y</i> position of the pixel.
-     * @return A number that represents an RGB pixel value. If the(<i>x</i>,
-     *         <i>y</i>) coordinates are outside the bounds of the image, the
-     *         method returns 0.
-     */
-    BitmapImageCube.prototype.getPixel = function (side, x, y) {
-        var r;
-        var g;
-        var b;
-        var a;
-        if (!this._locked) {
-            var pixelData = this._context[side].getImageData(x, y, 1, 1);
-            r = pixelData.data[0];
-            g = pixelData.data[1];
-            b = pixelData.data[2];
-            a = pixelData.data[3];
-        }
-        else {
-            var index = (x + y * this._size) * 4;
-            r = this._imageData[side].data[index + 0];
-            g = this._imageData[side].data[index + 1];
-            b = this._imageData[side].data[index + 2];
-            a = this._imageData[side].data[index + 3];
-        }
-        //returns black if fully transparent
-        if (!a)
-            return 0x0;
-        return (r << 16) | (g << 8) | b;
-    };
-    /**
-     * Returns an ARGB color value that contains alpha channel data and RGB data.
-     * This method is similar to the <code>getPixel()</code> method, which
-     * returns an RGB color without alpha channel data.
-     *
-     * <p>All pixels in a BitmapImage2D object are stored as premultiplied color
-     * values. A premultiplied image pixel has the red, green, and blue color
-     * channel values already multiplied by the alpha data. For example, if the
-     * alpha value is 0, the values for the RGB channels are also 0, independent
-     * of their unmultiplied values. This loss of data can cause some problems
-     * when you perform operations. All BitmapImage2D methods take and return
-     * unmultiplied values. The internal pixel representation is converted from
-     * premultiplied to unmultiplied before it is returned as a value. During a
-     * set operation, the pixel value is premultiplied before the raw image pixel
-     * is set.</p>
-     *
-     * @param x The <i>x</i> position of the pixel.
-     * @param y The <i>y</i> position of the pixel.
-     * @return A number representing an ARGB pixel value. If the(<i>x</i>,
-     *         <i>y</i>) coordinates are outside the bounds of the image, 0 is
-     *         returned.
-     */
-    BitmapImageCube.prototype.getPixel32 = function (side, x, y) {
-        var r;
-        var g;
-        var b;
-        var a;
-        if (!this._locked) {
-            var pixelData = this._context[side].getImageData(x, y, 1, 1);
-            r = pixelData.data[0];
-            g = pixelData.data[1];
-            b = pixelData.data[2];
-            a = pixelData.data[3];
-        }
-        else {
-            var index = (x + y * this._size) * 4;
-            r = this._imageData[side].data[index + 0];
-            g = this._imageData[side].data[index + 1];
-            b = this._imageData[side].data[index + 2];
-            a = this._imageData[side].data[index + 3];
-        }
-        return (a << 24) | (r << 16) | (g << 8) | b;
-    };
-    /**
-     * Locks an image so that any objects that reference the BitmapImage2D object,
-     * such as Bitmap objects, are not updated when this BitmapImage2D object
-     * changes. To improve performance, use this method along with the
-     * <code>unlock()</code> method before and after numerous calls to the
-     * <code>setPixel()</code> or <code>setPixel32()</code> method.
-     *
-     */
-    BitmapImageCube.prototype.lock = function () {
-        if (this._locked)
-            return;
-        this._locked = true;
-        for (var i = 0; i < 6; i++)
-            this._imageData[i] = this._context[i].getImageData(0, 0, this._size, this._size);
-    };
-    /**
-     * Converts an Array into a rectangular region of pixel data. For each pixel,
-     * an Array element is read and written into the BitmapImage2D pixel. The data
-     * in the Array is expected to be 32-bit ARGB pixel values.
-     *
-     * @param rect        Specifies the rectangular region of the BitmapImage2D
-     *                    object.
-     * @param inputArray  An Array that consists of 32-bit unmultiplied pixel
-     *                    values to be used in the rectangular region.
-     * @throws RangeError The vector array is not large enough to read all the
-     *                    pixel data.
-     */
-    BitmapImageCube.prototype.setArray = function (side, rect, inputArray) {
-        if (!this._locked)
-            this._imageData[side] = this._context[side].getImageData(0, 0, this._size, this._size);
-        var i /*uint*/, j /*uint*/, index /*uint*/, argb /*uint*/;
-        for (i = 0; i < rect.width; ++i) {
-            for (j = 0; j < rect.height; ++j) {
-                argb = ColorUtils.float32ColorToARGB(inputArray[i + j * rect.width]);
-                index = (i + rect.x + (j + rect.y) * this._size) * 4;
-                this._imageData[side].data[index + 0] = argb[1];
-                this._imageData[side].data[index + 1] = argb[2];
-                this._imageData[side].data[index + 2] = argb[3];
-                this._imageData[side].data[index + 3] = argb[0];
-            }
-        }
-        if (!this._locked) {
-            this._context[side].putImageData(this._imageData[side], 0, 0);
-            this._imageData[side] = null;
-        }
-        this.invalidateContent();
-    };
-    /**
-     * Sets a single pixel of a BitmapImage2D object. The current alpha channel
-     * value of the image pixel is preserved during this operation. The value of
-     * the RGB color parameter is treated as an unmultiplied color value.
-     *
-     * <p><b>Note:</b> To increase performance, when you use the
-     * <code>setPixel()</code> or <code>setPixel32()</code> method repeatedly,
-     * call the <code>lock()</code> method before you call the
-     * <code>setPixel()</code> or <code>setPixel32()</code> method, and then call
-     * the <code>unlock()</code> method when you have made all pixel changes.
-     * This process prevents objects that reference this BitmapImage2D instance from
-     * updating until you finish making the pixel changes.</p>
-     *
-     * @param x     The <i>x</i> position of the pixel whose value changes.
-     * @param y     The <i>y</i> position of the pixel whose value changes.
-     * @param color The resulting RGB color for the pixel.
-     */
-    BitmapImageCube.prototype.setPixel = function (side, x, y, color) {
-        var argb = ColorUtils.float32ColorToARGB(color);
-        if (!this._locked)
-            this._imageData[side] = this._context[side].getImageData(0, 0, this._size, this._size);
-        var index = (x + y * this._size) * 4;
-        this._imageData[side].data[index + 0] = argb[1];
-        this._imageData[side].data[index + 1] = argb[2];
-        this._imageData[side].data[index + 2] = argb[3];
-        this._imageData[side].data[index + 3] = 255;
-        if (!this._locked) {
-            this._context[side].putImageData(this._imageData[side], 0, 0);
-            this._imageData = null;
-        }
-        this.invalidateContent();
-    };
-    /**
-     * Sets the color and alpha transparency values of a single pixel of a
-     * BitmapImage2D object. This method is similar to the <code>setPixel()</code>
-     * method; the main difference is that the <code>setPixel32()</code> method
-     * takes an ARGB color value that contains alpha channel information.
-     *
-     * <p>All pixels in a BitmapImage2D object are stored as premultiplied color
-     * values. A premultiplied image pixel has the red, green, and blue color
-     * channel values already multiplied by the alpha data. For example, if the
-     * alpha value is 0, the values for the RGB channels are also 0, independent
-     * of their unmultiplied values. This loss of data can cause some problems
-     * when you perform operations. All BitmapImage2D methods take and return
-     * unmultiplied values. The internal pixel representation is converted from
-     * premultiplied to unmultiplied before it is returned as a value. During a
-     * set operation, the pixel value is premultiplied before the raw image pixel
-     * is set.</p>
-     *
-     * <p><b>Note:</b> To increase performance, when you use the
-     * <code>setPixel()</code> or <code>setPixel32()</code> method repeatedly,
-     * call the <code>lock()</code> method before you call the
-     * <code>setPixel()</code> or <code>setPixel32()</code> method, and then call
-     * the <code>unlock()</code> method when you have made all pixel changes.
-     * This process prevents objects that reference this BitmapImage2D instance from
-     * updating until you finish making the pixel changes.</p>
-     *
-     * @param x     The <i>x</i> position of the pixel whose value changes.
-     * @param y     The <i>y</i> position of the pixel whose value changes.
-     * @param color The resulting ARGB color for the pixel. If the bitmap is
-     *              opaque(not transparent), the alpha transparency portion of
-     *              this color value is ignored.
-     */
-    BitmapImageCube.prototype.setPixel32 = function (side, x, y, color) {
-        var argb = ColorUtils.float32ColorToARGB(color);
-        if (!this._locked)
-            this._imageData[side] = this._context[side].getImageData(0, 0, this._size, this._size);
-        var index = (x + y * this._size) * 4;
-        this._imageData[side].data[index + 0] = argb[1];
-        this._imageData[side].data[index + 1] = argb[2];
-        this._imageData[side].data[index + 2] = argb[3];
-        this._imageData[side].data[index + 3] = argb[0];
-        if (!this._locked) {
-            this._context[side].putImageData(this._imageData[side], 0, 0);
-            this._imageData[side] = null;
-        }
-        this.invalidateContent();
-    };
-    /**
-     * Converts a byte array into a rectangular region of pixel data. For each
-     * pixel, the <code>ByteArray.readUnsignedInt()</code> method is called and
-     * the return value is written into the pixel. If the byte array ends before
-     * the full rectangle is written, the function returns. The data in the byte
-     * array is expected to be 32-bit ARGB pixel values. No seeking is performed
-     * on the byte array before or after the pixels are read.
-     *
-     * @param rect           Specifies the rectangular region of the BitmapImage2D
-     *                       object.
-     * @param inputByteArray A ByteArray object that consists of 32-bit
-     *                       unmultiplied pixel values to be used in the
-     *                       rectangular region.
-     * @throws EOFError  The <code>inputByteArray</code> object does not include
-     *                   enough data to fill the area of the <code>rect</code>
-     *                   rectangle. The method fills as many pixels as possible
-     *                   before throwing the exception.
-     * @throws TypeError The rect or inputByteArray are null.
-     */
-    BitmapImageCube.prototype.setPixels = function (side, rect, inputByteArray) {
-        if (!this._locked)
-            this._imageData[side] = this._context[side].getImageData(0, 0, this._size, this._size);
-        inputByteArray.position = 0;
-        var i /*uint*/, j /*uint*/, index /*uint*/;
-        for (i = 0; i < rect.width; ++i) {
-            for (j = 0; j < rect.height; ++j) {
-                index = (i + rect.x + (j + rect.y) * this._size) * 4;
-                this._imageData[side].data[index + 0] = inputByteArray.readUnsignedInt();
-                this._imageData[side].data[index + 1] = inputByteArray.readUnsignedInt();
-                this._imageData[side].data[index + 2] = inputByteArray.readUnsignedInt();
-                this._imageData[side].data[index + 3] = inputByteArray.readUnsignedInt();
-            }
-        }
-        if (!this._locked) {
-            this._context[side].putImageData(this._imageData[side], 0, 0);
-            this._imageData[side] = null;
-        }
-        this.invalidateContent();
-    };
-    /**
-     * Unlocks an image so that any objects that reference the BitmapImage2D object,
-     * such as Bitmap objects, are updated when this BitmapImage2D object changes.
-     * To improve performance, use this method along with the <code>lock()</code>
-     * method before and after numerous calls to the <code>setPixel()</code> or
-     * <code>setPixel32()</code> method.
-     *
-     * @param changeRect The area of the BitmapImage2D object that has changed. If
-     *                   you do not specify a value for this parameter, the
-     *                   entire area of the BitmapImage2D object is considered
-     *                   changed.
-     */
-    BitmapImageCube.prototype.unlock = function () {
-        if (!this._locked)
-            return;
-        this._locked = false;
-        for (var i = 0; i < 6; i++) {
-            this._context[i].putImageData(this._imageData[i], 0, 0); // at coords 0,0
-            this._imageData[i] = null;
-        }
-    };
-    /**
-     *
-     * @returns {ImageData}
-     */
-    BitmapImageCube.prototype.getImageData = function (side) {
-        if (!this._locked)
-            return this._context[side].getImageData(0, 0, this._size, this._size);
-        return this._imageData[side];
-    };
-    /**
-     *
-     * @returns {HTMLCanvasElement}
-     */
-    BitmapImageCube.prototype.getCanvas = function (side) {
-        return this._imageCanvas[side];
-    };
-    /**
-     *
-     * @param width
-     * @param height
-     * @private
-     */
-    BitmapImageCube.prototype._setSize = function (size) {
-        _super.prototype._setSize.call(this, size);
-        for (var i = 0; i < 6; i++) {
-            if (this._locked)
-                this._context[i].putImageData(this._imageData[i], 0, 0);
-            this._imageCanvas[i].width = size;
-            this._imageCanvas[i].height = size;
-            if (this._locked)
-                this._imageData[i] = this._context[i].getImageData(0, 0, this._size, this._size);
-        }
-    };
-    BitmapImageCube.assetType = "[image BitmapImageCube]";
-    BitmapImageCube.posX = 0;
-    BitmapImageCube.negX = 1;
-    BitmapImageCube.posY = 2;
-    BitmapImageCube.negY = 3;
-    BitmapImageCube.posZ = 4;
-    BitmapImageCube.negZ = 5;
-    return BitmapImageCube;
-})(ImageCube);
-module.exports = BitmapImageCube;
-
-},{"awayjs-core/lib/data/BitmapImage2D":"awayjs-core/lib/data/BitmapImage2D","awayjs-core/lib/data/ImageCube":"awayjs-core/lib/data/ImageCube","awayjs-core/lib/geom/Rectangle":"awayjs-core/lib/geom/Rectangle","awayjs-core/lib/utils/BitmapImageUtils":"awayjs-core/lib/utils/BitmapImageUtils","awayjs-core/lib/utils/ColorUtils":"awayjs-core/lib/utils/ColorUtils"}],"awayjs-core/lib/data/BlendMode":[function(require,module,exports){
-/**
- * A class that provides constant values for visual blend mode effects. These
- * constants are used in the following:
- * <ul>
- *   <li> The <code>blendMode</code> property of the
- * flash.display.DisplayObject class.</li>
- *   <li> The <code>blendMode</code> parameter of the <code>draw()</code>
- * method of the flash.display.BitmapData class</li>
- * </ul>
- */
-var BlendMode = (function () {
-    function BlendMode() {
-    }
-    /**
-     * Adds the values of the constituent colors of the display object to the
-     * colors of its background, applying a ceiling of 0xFF. This setting is
-     * commonly used for animating a lightening dissolve between two objects.
-     *
-     * <p>For example, if the display object has a pixel with an RGB value of
-     * 0xAAA633, and the background pixel has an RGB value of 0xDD2200, the
-     * resulting RGB value for the displayed pixel is 0xFFC833(because 0xAA +
-     * 0xDD > 0xFF, 0xA6 + 0x22 = 0xC8, and 0x33 + 0x00 = 0x33).</p>
-     */
-    BlendMode.ADD = "add";
-    /**
-     * Applies the alpha value of each pixel of the display object to the
-     * background. This requires the <code>blendMode</code> property of the
-     * parent display object be set to
-     * <code>away.base.BlendMode.LAYER</code>.
-     *
-     * <p>Not supported under GPU rendering.</p>
-     */
-    BlendMode.ALPHA = "alpha";
-    /**
-     * Selects the darker of the constituent colors of the display object and the
-     * colors of the background(the colors with the smaller values). This
-     * setting is commonly used for superimposing type.
-     *
-     * <p>For example, if the display object has a pixel with an RGB value of
-     * 0xFFCC33, and the background pixel has an RGB value of 0xDDF800, the
-     * resulting RGB value for the displayed pixel is 0xDDCC00(because 0xFF >
-     * 0xDD, 0xCC < 0xF8, and 0x33 > 0x00 = 33).</p>
-     *
-     * <p>Not supported under GPU rendering.</p>
-     */
-    BlendMode.DARKEN = "darken";
-    /**
-     * Compares the constituent colors of the display object with the colors of
-     * its background, and subtracts the darker of the values of the two
-     * constituent colors from the lighter value. This setting is commonly used
-     * for more vibrant colors.
-     *
-     * <p>For example, if the display object has a pixel with an RGB value of
-     * 0xFFCC33, and the background pixel has an RGB value of 0xDDF800, the
-     * resulting RGB value for the displayed pixel is 0x222C33(because 0xFF -
-     * 0xDD = 0x22, 0xF8 - 0xCC = 0x2C, and 0x33 - 0x00 = 0x33).</p>
-     */
-    BlendMode.DIFFERENCE = "difference";
-    /**
-     * Erases the background based on the alpha value of the display object. This
-     * process requires that the <code>blendMode</code> property of the parent
-     * display object be set to <code>flash.display.BlendMode.LAYER</code>.
-     *
-     * <p>Not supported under GPU rendering.</p>
-     */
-    BlendMode.ERASE = "erase";
-    /**
-     * Adjusts the color of each pixel based on the darkness of the display
-     * object. If the display object is lighter than 50% gray, the display object
-     * and background colors are screened, which results in a lighter color. If
-     * the display object is darker than 50% gray, the colors are multiplied,
-     * which results in a darker color. This setting is commonly used for shading
-     * effects.
-     *
-     * <p>Not supported under GPU rendering.</p>
-     */
-    BlendMode.HARDLIGHT = "hardlight";
-    /**
-     * Inverts the background.
-     */
-    BlendMode.INVERT = "invert";
-    /**
-     * Forces the creation of a transparency group for the display object. This
-     * means that the display object is precomposed in a temporary buffer before
-     * it is processed further. The precomposition is done automatically if the
-     * display object is precached by means of bitmap caching or if the display
-     * object is a display object container that has at least one child object
-     * with a <code>blendMode</code> setting other than <code>"normal"</code>.
-     *
-     * <p>Not supported under GPU rendering.</p>
-     */
-    BlendMode.LAYER = "layer";
-    /**
-     * Selects the lighter of the constituent colors of the display object and
-     * the colors of the background(the colors with the larger values). This
-     * setting is commonly used for superimposing type.
-     *
-     * <p>For example, if the display object has a pixel with an RGB value of
-     * 0xFFCC33, and the background pixel has an RGB value of 0xDDF800, the
-     * resulting RGB value for the displayed pixel is 0xFFF833(because 0xFF >
-     * 0xDD, 0xCC < 0xF8, and 0x33 > 0x00 = 33).</p>
-     *
-     * <p>Not supported under GPU rendering.</p>
-     */
-    BlendMode.LIGHTEN = "lighten";
-    /**
-     * Multiplies the values of the display object constituent colors by the
-     * constituent colors of the background color, and normalizes by dividing by
-     * 0xFF, resulting in darker colors. This setting is commonly used for
-     * shadows and depth effects.
-     *
-     * <p>For example, if a constituent color(such as red) of one pixel in the
-     * display object and the corresponding color of the pixel in the background
-     * both have the value 0x88, the multiplied result is 0x4840. Dividing by
-     * 0xFF yields a value of 0x48 for that constituent color, which is a darker
-     * shade than the color of the display object or the color of the
-     * background.</p>
-     */
-    BlendMode.MULTIPLY = "multiply";
-    /**
-     * The display object appears in front of the background. Pixel values of the
-     * display object override the pixel values of the background. Where the
-     * display object is transparent, the background is visible.
-     */
-    BlendMode.NORMAL = "normal";
-    /**
-     * Adjusts the color of each pixel based on the darkness of the background.
-     * If the background is lighter than 50% gray, the display object and
-     * background colors are screened, which results in a lighter color. If the
-     * background is darker than 50% gray, the colors are multiplied, which
-     * results in a darker color. This setting is commonly used for shading
-     * effects.
-     *
-     * <p>Not supported under GPU rendering.</p>
-     */
-    BlendMode.OVERLAY = "overlay";
-    /**
-     * Multiplies the complement(inverse) of the display object color by the
-     * complement of the background color, resulting in a bleaching effect. This
-     * setting is commonly used for highlights or to remove black areas of the
-     * display object.
-     */
-    BlendMode.SCREEN = "screen";
-    /**
-     * Uses a shader to define the blend between objects.
-     *
-     * <p>Setting the <code>blendShader</code> property to a Shader instance
-     * automatically sets the display object's <code>blendMode</code> property to
-     * <code>BlendMode.SHADER</code>. If the <code>blendMode</code> property is
-     * set to <code>BlendMode.SHADER</code> without first setting the
-     * <code>blendShader</code> property, the <code>blendMode</code> property is
-     * set to <code>BlendMode.NORMAL</code> instead. If the
-     * <code>blendShader</code> property is set(which sets the
-     * <code>blendMode</code> property to <code>BlendMode.SHADER</code>), then
-     * later the value of the <code>blendMode</code> property is changed, the
-     * blend mode can be reset to use the blend shader simply by setting the
-     * <code>blendMode</code> property to <code>BlendMode.SHADER</code>. The
-     * <code>blendShader</code> property does not need to be set again except to
-     * change the shader that's used to define the blend mode.</p>
-     *
-     * <p>Not supported under GPU rendering.</p>
-     */
-    BlendMode.SHADER = "shader";
-    /**
-     * Subtracts the values of the constituent colors in the display object from
-     * the values of the background color, applying a floor of 0. This setting is
-     * commonly used for animating a darkening dissolve between two objects.
-     *
-     * <p>For example, if the display object has a pixel with an RGB value of
-     * 0xAA2233, and the background pixel has an RGB value of 0xDDA600, the
-     * resulting RGB value for the displayed pixel is 0x338400(because 0xDD -
-     * 0xAA = 0x33, 0xA6 - 0x22 = 0x84, and 0x00 - 0x33 < 0x00).</p>
-     */
-    BlendMode.SUBTRACT = "subtract";
-    return BlendMode;
-})();
-module.exports = BlendMode;
-
-},{}],"awayjs-core/lib/data/CPUCanvas":[function(require,module,exports){
-var CPURenderingContext2D = require('awayjs-core/lib/data/CPURenderingContext2D');
-var ImageData = require('awayjs-core/lib/data/ImageData');
-var CPUCanvas = (function () {
-    function CPUCanvas() {
-        this.width = 1;
-        this.height = 1;
-        this.reset();
-    }
-    CPUCanvas.prototype.getContext = function (contextId) {
-        return new CPURenderingContext2D(this);
-    };
-    CPUCanvas.prototype.reset = function () {
-        if (!this.imageData) {
-            this.imageData = new ImageData(this.width, this.height);
-        }
-        else {
-            this.imageData.width = this.width;
-            this.imageData.height = this.height;
-            if (this.imageData.data) {
-                this.imageData.data.length = 0;
-                this.imageData.data = null;
-            }
-            this.imageData.data = new Uint8Array(this.width * this.height * 4);
-        }
-        for (var i = 0; i < this.width * this.height * 4; i += 4) {
-            this.imageData.data[i] = 255;
-            this.imageData.data[i + 1] = 255;
-            this.imageData.data[i + 2] = 255;
-            this.imageData.data[i + 3] = 255;
-        }
-    };
-    CPUCanvas.prototype.getImageData = function () {
-        if (this.imageData.width != this.width || this.imageData.height != this.height) {
-            this.reset();
-        }
-        return this.imageData;
-    };
-    return CPUCanvas;
-})();
-module.exports = CPUCanvas;
-
-},{"awayjs-core/lib/data/CPURenderingContext2D":"awayjs-core/lib/data/CPURenderingContext2D","awayjs-core/lib/data/ImageData":"awayjs-core/lib/data/ImageData"}],"awayjs-core/lib/data/CPURenderingContext2D":[function(require,module,exports){
-var BitmapImage2D = require("awayjs-core/lib/data/BitmapImage2D");
-var Matrix = require("awayjs-core/lib/geom/Matrix");
-var Point = require("awayjs-core/lib/geom/Point");
-//TODO: implement all methods
-var CPURenderingContext2D = (function () {
-    function CPURenderingContext2D(cpuCanvas) {
-        this.point = new Point();
-        this.point2 = new Point();
-        this.cpuCanvas = cpuCanvas;
-    }
-    CPURenderingContext2D.prototype.restore = function () {
-        this.matrix = null;
-    };
-    CPURenderingContext2D.prototype.setTransform = function (m11, m12, m21, m22, dx, dy) {
-        this.matrix = new Matrix(m11, m12, m21, m22, dx, dy);
-    };
-    CPURenderingContext2D.prototype.save = function () {
-    };
-    CPURenderingContext2D.prototype.arc = function (x, y, radius, startAngle, endAngle, anticlockwise) {
-    };
-    CPURenderingContext2D.prototype.measureText = function (text) {
-        return undefined;
-    };
-    CPURenderingContext2D.prototype.isPointInPath = function (x, y, fillRule) {
-        return undefined;
-    };
-    CPURenderingContext2D.prototype.quadraticCurveTo = function (cpx, cpy, x, y) {
-    };
-    CPURenderingContext2D.prototype.putImageData = function (imagedata, dx, dy, dirtyX, dirtyY, dirtyWidth, dirtyHeight) {
-    };
-    CPURenderingContext2D.prototype.rotate = function (angle) {
-    };
-    CPURenderingContext2D.prototype.fillText = function (text, x, y, maxWidth) {
-    };
-    CPURenderingContext2D.prototype.translate = function (x, y) {
-    };
-    CPURenderingContext2D.prototype.scale = function (x, y) {
-    };
-    CPURenderingContext2D.prototype.createRadialGradient = function (x0, y0, r0, x1, y1, r1) {
-        return undefined;
-    };
-    CPURenderingContext2D.prototype.lineTo = function (x, y) {
-    };
-    CPURenderingContext2D.prototype.getLineDash = function () {
-        return undefined;
-    };
-    CPURenderingContext2D.prototype.fill = function (fillRule) {
-    };
-    CPURenderingContext2D.prototype.createImageData = function (imageDataOrSw, sh) {
-        return undefined;
-    };
-    CPURenderingContext2D.prototype.createPattern = function (image, repetition) {
-        return undefined;
-    };
-    CPURenderingContext2D.prototype.closePath = function () {
-    };
-    CPURenderingContext2D.prototype.rect = function (x, y, w, h) {
-    };
-    CPURenderingContext2D.prototype.clip = function (fillRule) {
-    };
-    CPURenderingContext2D.prototype.clearRect = function (x, y, w, h) {
-        var imageData = this.cpuCanvas.getImageData();
-        for (var i = x; i < x + w; i++) {
-            for (var j = y; j < y + h; j++) {
-                var index = (i + j * imageData.width) * 4;
-                imageData.data[index] = 0;
-                imageData.data[index + 1] = 0;
-                imageData.data[index + 2] = 0;
-                imageData.data[index + 3] = 0;
-            }
-        }
-    };
-    CPURenderingContext2D.prototype.moveTo = function (x, y) {
-    };
-    CPURenderingContext2D.prototype.getImageData = function (sx, sy, sw, sh) {
-        //var result:ImageData = new ImageData(sw, sh);
-        //var i:number = 0;
-        //
-        //for (i = 0; i < sw * sh * 4; i += 4) {
-        //    result.data[i] = 255;
-        //    result.data[i + 1] = 255;
-        //    result.data[i + 2] = 255;
-        //    result.data[i + 3] = 255;
-        //}
-        //
-        //var imageData:ImageData = this.cpuCanvas.getImageData();
-        //for (i = sx; i < sx + sw; i++) {
-        //    for (var j:number = sy; j < sy + sh; j++) {
-        //        this.copyPixel32(result, i - sx, i - sy, imageData, i, j);
-        //    }
-        //}
-        return this.cpuCanvas.getImageData();
-    };
-    CPURenderingContext2D.prototype.applyPixel32 = function (target, x, y, color) {
-        //todo: blending support
-        x = Math.floor(x);
-        y = Math.floor(y);
-        if (x < 0 || x >= target.width || y >= target.height || y < 0)
-            return;
-        var index = (x + y * target.width) * 4;
-        //var alpha:number = color[3] / 255;
-        target.data[index] += color[0];
-        target.data[index + 1] += color[1];
-        target.data[index + 2] += color[2];
-        target.data[index + 3] += color[3];
-        //target.data[index] = color[0];
-        //target.data[index + 1] = color[1];
-        //target.data[index + 2] = color[2];
-        //target.data[index + 3] = color[3];
-        target.data[index] = target.data[index] & 0xFF;
-        target.data[index + 1] = target.data[index + 1] & 0xFF;
-        target.data[index + 2] = target.data[index + 2] & 0xFF;
-        target.data[index + 3] = target.data[index + 3] & 0xFF;
-    };
-    CPURenderingContext2D.prototype.copyPixel32 = function (target, x, y, source, fromX, fromY) {
-        x = Math.floor(x);
-        y = Math.floor(y);
-        fromX = Math.floor(fromX);
-        fromY = Math.floor(fromY);
-        if (x < 0 || x >= target.width || y >= target.height || y < 0)
-            return;
-        if (fromX < 0 || fromX >= source.width || fromY >= source.height || fromY < 0)
-            return;
-        var index = (x + y * target.width) * 4;
-        var fromIndex = (fromX + fromY * source.width) * 4;
-        target.data[index] = source.data[fromIndex];
-        target.data[index + 1] = source.data[fromIndex + 1];
-        target.data[index + 2] = source.data[fromIndex + 2];
-        target.data[index + 3] = source.data[fromIndex + 3];
-    };
-    CPURenderingContext2D.prototype.fillRect = function (x, y, w, h) {
-        if (this.fillStyle) {
-            if (this.parsedFillStyle != this.fillStyle) {
-                var colorStrings = this.fillStyle.substring(5, this.fillStyle.lastIndexOf(")")).split(",");
-                this.parsedA = parseFloat(colorStrings[3]) * 255;
-                this.parsedR = parseInt(colorStrings[0]);
-                this.parsedG = parseInt(colorStrings[1]);
-                this.parsedB = parseInt(colorStrings[2]);
-                this.parsedFillStyle = this.fillStyle;
-            }
-            var imageData = this.cpuCanvas.getImageData();
-            for (var i = x; i < x + w; i++) {
-                for (var j = y; j < y + h; j++) {
-                    var index = (i + j * imageData.width) * 4;
-                    imageData.data[index] = this.parsedR;
-                    imageData.data[index + 1] = this.parsedG;
-                    imageData.data[index + 2] = this.parsedB;
-                    imageData.data[index + 3] = this.parsedA;
-                }
-            }
-        }
-    };
-    CPURenderingContext2D.prototype.bezierCurveTo = function (cp1x, cp1y, cp2x, cp2y, x, y) {
-    };
-    CPURenderingContext2D.prototype.drawImage = function (image, offsetX, offsetY, width, height, canvasOffsetX, canvasOffsetY, canvasImageWidth, canvasImageHeight) {
-        var b = image;
-        if (image.constructor.toString().indexOf("BitmapImage2D") > -1) {
-            var bitmap = b;
-            bitmap.lock();
-            this.drawBitmap(bitmap, offsetX, offsetY, width, height, canvasOffsetX, canvasOffsetY, canvasImageWidth, canvasImageHeight);
-            bitmap.unlock();
-        }
-        else if (image.constructor.toString().indexOf("HTMLImage") > -1) {
-            var htmlImage = image;
-            var htmlCanvas = document.createElement("canvas");
-            htmlCanvas.width = htmlImage.width;
-            htmlCanvas.height = htmlImage.height;
-            var htmlContext = htmlCanvas.getContext("2d");
-            htmlContext.drawImage(htmlImage, 0, 0);
-            var htmlImageData = htmlContext.getImageData(0, 0, htmlImage.width, htmlImage.height);
-            var resultBitmap = new BitmapImage2D(htmlImage.width, htmlImage.height, true, 0, false);
-            resultBitmap.getImageData().data = htmlImageData.data;
-            var passBitmap = resultBitmap;
-            this.drawImage(passBitmap, offsetX, offsetY, width, height, canvasOffsetX, canvasOffsetY, canvasImageWidth, canvasImageHeight);
-        }
-        else if (image.constructor.toString().indexOf("CPUCanvas") > -1) {
-            //
-            var canvas = b;
-            this.drawBitmap(canvas, offsetX, offsetY, width, height, canvasOffsetX, canvasOffsetY, canvasImageWidth, canvasImageHeight);
-        }
-    };
-    CPURenderingContext2D.prototype.drawBitmap = function (bitmap, offsetX, offsetY, width, height, canvasOffsetX, canvasOffsetY, canvasImageWidth, canvasImageHeight) {
-        if (!width || width == 0) {
-            width = bitmap.width;
-            height = bitmap.height;
-        }
-        if (!canvasOffsetX || canvasOffsetX == 0) {
-            canvasOffsetX = 0;
-            canvasOffsetY = 0;
-        }
-        if (!canvasImageWidth || canvasImageWidth == 0 || this.matrix) {
-            canvasImageWidth = width;
-            canvasImageHeight = height;
-        }
-        //console.log("CPURenderingContext2D:drawBitmap(width: " + width + " height: " + height + " canvasImageWidth: " + canvasImageWidth + " canvasImageHeight: " + canvasImageHeight);
-        var sourceData = bitmap.getImageData();
-        var canvasImageData = this.cpuCanvas.getImageData();
-        if (this.matrix || (canvasImageWidth != width || canvasImageHeight != height)) {
-            var matrix = this.matrix;
-            if (!matrix) {
-                matrix = new Matrix();
-                matrix.scale(canvasImageWidth / width, canvasImageHeight / height);
-            }
-            var scaleX = Math.sqrt(matrix.a * matrix.a + matrix.b * matrix.b);
-            var scaleY = Math.sqrt(matrix.c * matrix.c + matrix.d * matrix.d);
-            canvasImageWidth = width * scaleX;
-            canvasImageHeight = height * scaleY;
-            matrix.tx += canvasOffsetX;
-            matrix.ty += canvasOffsetY;
-            canvasOffsetX = Math.floor(matrix.tx);
-            canvasOffsetY = Math.floor(matrix.ty);
-            matrix.invert();
-            if (scaleX >= 1 || scaleY >= 1) {
-                var p = new Point();
-                for (var i = canvasOffsetX; i < canvasOffsetX + canvasImageWidth; i++) {
-                    for (var j = canvasOffsetY; j < canvasOffsetY + canvasImageHeight; j++) {
-                        p.x = i;
-                        p.y = j;
-                        p = matrix.transformPoint(p);
-                        var color = CPURenderingContext2D.sampleBilinear(p.x, p.y, sourceData);
-                        this.applyPixel32(canvasImageData, i, j, color);
-                    }
-                }
-            }
-            else {
-                //decimate
-                var p1 = this.point;
-                var p2 = this.point2;
-                for (var i = canvasOffsetX; i < canvasOffsetX + canvasImageWidth; i++) {
-                    for (var j = canvasOffsetY; j < canvasOffsetY + canvasImageHeight; j++) {
-                        p1.x = i;
-                        p1.y = j;
-                        p1 = matrix.transformPoint(p1);
-                        p2.x = i + 1;
-                        p2.y = j + 1;
-                        p2 = matrix.transformPoint(p2);
-                        var color = CPURenderingContext2D.sampleBox(p1.x + offsetX, p1.y + offsetY, p2.x + offsetX, p2.y + offsetY, sourceData);
-                        this.applyPixel32(canvasImageData, i, j, color);
-                    }
-                }
-            }
-            matrix.invert();
-        }
-        else {
-            for (var i = canvasOffsetX; i < canvasOffsetX + canvasImageWidth; i++) {
-                for (var j = canvasOffsetY; j < canvasOffsetY + canvasImageHeight; j++) {
-                    var color = CPURenderingContext2D.sample(i - canvasOffsetX + offsetX, j - canvasOffsetY + offsetY, sourceData);
-                    this.applyPixel32(canvasImageData, i, j, color);
-                }
-            }
-        }
-    };
-    CPURenderingContext2D.prototype.transform = function (m11, m12, m21, m22, dx, dy) {
-    };
-    CPURenderingContext2D.prototype.stroke = function () {
-    };
-    CPURenderingContext2D.prototype.strokeRect = function (x, y, w, h) {
-    };
-    CPURenderingContext2D.prototype.setLineDash = function (segments) {
-    };
-    CPURenderingContext2D.prototype.strokeText = function (text, x, y, maxWidth) {
-    };
-    CPURenderingContext2D.prototype.beginPath = function () {
-    };
-    CPURenderingContext2D.prototype.arcTo = function (x1, y1, x2, y2, radius) {
-    };
-    CPURenderingContext2D.prototype.createLinearGradient = function (x0, y0, x1, y1) {
-        return undefined;
-    };
-    CPURenderingContext2D.sampleBilinear = function (u, v, texture, texelSizeX, texelSizeY) {
-        if (texelSizeX === void 0) { texelSizeX = 1; }
-        if (texelSizeY === void 0) { texelSizeY = 1; }
-        var color00 = CPURenderingContext2D.sample(u, v, texture);
-        var color10 = CPURenderingContext2D.sample(u + texelSizeX, v, texture);
-        var color01 = CPURenderingContext2D.sample(u, v + texelSizeY, texture);
-        var color11 = CPURenderingContext2D.sample(u + texelSizeX, v + texelSizeY, texture);
-        var a = u;
-        a = a - Math.floor(a);
-        var interColor0 = CPURenderingContext2D.interpolateColor(color00, color10, a);
-        var interColor1 = CPURenderingContext2D.interpolateColor(color01, color11, a);
-        var b = v;
-        b = b - Math.floor(b);
-        return CPURenderingContext2D.interpolateColor(interColor0, interColor1, b);
-    };
-    CPURenderingContext2D.sample = function (u, v, imageData) {
-        u = Math.floor(u);
-        v = Math.floor(v);
-        var result = [0, 0, 0, 0];
-        if (u < 0 || u >= imageData.width || v < 0 || v >= imageData.height) {
-            return result;
-        }
-        var index = (u + v * imageData.width) * 4;
-        result[0] = imageData.data[index];
-        result[1] = imageData.data[index + 1];
-        result[2] = imageData.data[index + 2];
-        result[3] = imageData.data[index + 3];
-        return result;
-    };
-    CPURenderingContext2D.sampleBox = function (x0, y0, x1, y1, texture) {
-        var area = 0; // -- total area accumulated in pixels
-        var result = [0, 0, 0, 0];
-        var x;
-        var y;
-        var xsize;
-        var ysize;
-        var fromY = Math.floor(y0);
-        var toY = Math.ceil(y1);
-        fromY = Math.max(Math.min(fromY, texture.height - 1), 0);
-        toY = Math.max(Math.min(toY, texture.height - 1), 0);
-        for (y = fromY; y < toY; y++) {
-            ysize = 1;
-            if (y < y0) {
-                ysize = ysize * (1.0 - (y0 - y));
-            }
-            if (y > y1) {
-                ysize = ysize * (1.0 - (y - y1));
-            }
-            var fromX = Math.floor(x0);
-            var toX = Math.ceil(x1);
-            fromX = Math.max(Math.min(fromX, texture.width - 1), 0);
-            toX = Math.max(Math.min(toX, texture.width - 1), 0);
-            for (x = fromX; x < toX; x++) {
-                xsize = ysize;
-                var color = CPURenderingContext2D.sample(x, y, texture);
-                if (x < x0) {
-                    xsize = xsize * (1.0 - (x0 - x));
-                }
-                if (x > x1) {
-                    xsize = xsize * (1.0 - (x - x1));
-                }
-                result[0] += color[0] * xsize;
-                result[1] += color[1] * xsize;
-                result[2] += color[2] * xsize;
-                result[3] += color[3] * xsize;
-                area = area + xsize;
-            }
-        }
-        result[0] /= area;
-        result[1] /= area;
-        result[2] /= area;
-        result[3] /= area;
-        result[0] = result[0] & 0xFF;
-        result[1] = result[1] & 0xFF;
-        result[2] = result[2] & 0xFF;
-        result[3] = result[3] & 0xFF;
-        return result;
-    };
-    CPURenderingContext2D.interpolateColor = function (source, target, a) {
-        var result = [];
-        result[0] = source[0] + (target[0] - source[0]) * a;
-        result[1] = source[1] + (target[1] - source[1]) * a;
-        result[2] = source[2] + (target[2] - source[2]) * a;
-        result[3] = source[3] + (target[3] - source[3]) * a;
-        return result;
-    };
-    return CPURenderingContext2D;
-})();
-module.exports = CPURenderingContext2D;
-
-},{"awayjs-core/lib/data/BitmapImage2D":"awayjs-core/lib/data/BitmapImage2D","awayjs-core/lib/geom/Matrix":"awayjs-core/lib/geom/Matrix","awayjs-core/lib/geom/Point":"awayjs-core/lib/geom/Point"}],"awayjs-core/lib/data/IImageCanvas":[function(require,module,exports){
-
-},{}],"awayjs-core/lib/data/Image2D":[function(require,module,exports){
-var __extends = this.__extends || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    __.prototype = b.prototype;
-    d.prototype = new __();
-};
-var ImageBase = require("awayjs-core/lib/data/ImageBase");
-var Sampler2D = require("awayjs-core/lib/data/Sampler2D");
-var Rectangle = require("awayjs-core/lib/geom/Rectangle");
-var ImageUtils = require("awayjs-core/lib/utils/ImageUtils");
-var Image2D = (function (_super) {
-    __extends(Image2D, _super);
-    /**
-     *
-     */
-    function Image2D(width, height, powerOfTwo) {
-        if (powerOfTwo === void 0) { powerOfTwo = true; }
-        _super.call(this);
-        this._powerOfTwo = true;
-        this._rect = new Rectangle(0, 0, width, height);
-        this._powerOfTwo = powerOfTwo;
-        this._testDimensions();
-    }
-    Object.defineProperty(Image2D.prototype, "assetType", {
-        /**
-         *
-         * @returns {string}
-         */
-        get: function () {
-            return Image2D.assetType;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Image2D.prototype, "height", {
-        /**
-         * The height of the image in pixels.
-         */
-        get: function () {
-            return this._rect.height;
-        },
-        set: function (value) {
-            if (this._rect.height == value)
-                return;
-            this._setSize(this._rect.width, value);
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Image2D.prototype, "rect", {
-        /**
-         * The rectangle that defines the size and location of the bitmap image. The
-         * top and left of the rectangle are 0; the width and height are equal to the
-         * width and height in pixels of the BitmapData object.
-         */
-        get: function () {
-            return this._rect;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Image2D.prototype, "width", {
-        /**
-         * The width of the bitmap image in pixels.
-         */
-        get: function () {
-            return this._rect.width;
-        },
-        set: function (value) {
-            if (this._rect.width == value)
-                return;
-            this._setSize(value, this._rect.height);
-        },
-        enumerable: true,
-        configurable: true
-    });
-    /**
-     *
-     * @param width
-     * @param height
-     * @private
-     */
-    Image2D.prototype._setSize = function (width, height) {
-        if (this._rect.width != width || this._rect.height != height)
-            this.invalidateSize();
-        this._rect.width = width;
-        this._rect.height = height;
-        this._testDimensions();
-    };
-    /**
-     *
-     * @private
-     */
-    Image2D.prototype._testDimensions = function () {
-        if (this._powerOfTwo && (!ImageUtils.isDimensionValid(this._rect.width) || !ImageUtils.isDimensionValid(this._rect.height)))
-            throw new Error("Invalid dimension: Width and height must be power of 2 and cannot exceed 2048");
-    };
-    Object.defineProperty(Image2D.prototype, "powerOfTwo", {
-        /**
-         * Enable POT texture size validation
-         * @returns {boolean}
-         */
-        get: function () {
-            return this._powerOfTwo;
-        },
-        set: function (value) {
-            if (this._powerOfTwo == value)
-                return;
-            this._powerOfTwo = value;
-            this._testDimensions();
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Image2D.prototype.createSampler = function () {
-        return new Sampler2D();
-    };
-    Image2D.assetType = "[image Image2D]";
-    return Image2D;
-})(ImageBase);
-module.exports = Image2D;
-
-},{"awayjs-core/lib/data/ImageBase":"awayjs-core/lib/data/ImageBase","awayjs-core/lib/data/Sampler2D":"awayjs-core/lib/data/Sampler2D","awayjs-core/lib/geom/Rectangle":"awayjs-core/lib/geom/Rectangle","awayjs-core/lib/utils/ImageUtils":"awayjs-core/lib/utils/ImageUtils"}],"awayjs-core/lib/data/ImageBase":[function(require,module,exports){
-var __extends = this.__extends || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    __.prototype = b.prototype;
-    d.prototype = new __();
-};
-var AbstractMethodError = require("awayjs-core/lib/errors/AbstractMethodError");
-var AssetBase = require("awayjs-core/lib/library/AssetBase");
-var ImageBase = (function (_super) {
-    __extends(ImageBase, _super);
-    /**
-     *
-     */
-    function ImageBase() {
-        _super.call(this);
-        this._imageObject = new Array();
-        this._pFormat = "bgra";
-    }
-    /**
-     *
-     */
-    ImageBase.prototype.invalidateContent = function () {
-        var len = this._imageObject.length;
-        for (var i = 0; i < len; i++)
-            this._imageObject[i].invalidate();
-    };
-    /**
-     *
-     * @private
-     */
-    ImageBase.prototype.invalidateSize = function () {
-        while (this._imageObject.length)
-            this._imageObject[0].dispose();
-    };
-    /**
-     * @inheritDoc
-     */
-    ImageBase.prototype.dispose = function () {
-        while (this._imageObject.length)
-            this._imageObject[0].dispose();
-    };
-    ImageBase.prototype._iAddImageObject = function (ImageObject) {
-        this._imageObject.push(ImageObject);
-        return ImageObject;
-    };
-    ImageBase.prototype._iRemoveImageObject = function (ImageObject) {
-        this._imageObject.splice(this._imageObject.indexOf(ImageObject), 1);
-        return ImageObject;
-    };
-    Object.defineProperty(ImageBase.prototype, "format", {
-        /**
-         *
-         * @returns {string}
-         */
-        get: function () {
-            return this._pFormat;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    ImageBase.prototype.createSampler = function () {
-        throw new AbstractMethodError();
-    };
-    return ImageBase;
-})(AssetBase);
-module.exports = ImageBase;
-
-},{"awayjs-core/lib/errors/AbstractMethodError":"awayjs-core/lib/errors/AbstractMethodError","awayjs-core/lib/library/AssetBase":"awayjs-core/lib/library/AssetBase"}],"awayjs-core/lib/data/ImageCube":[function(require,module,exports){
-var __extends = this.__extends || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    __.prototype = b.prototype;
-    d.prototype = new __();
-};
-var ImageBase = require("awayjs-core/lib/data/ImageBase");
-var SamplerCube = require("awayjs-core/lib/data/SamplerCube");
-var ImageUtils = require("awayjs-core/lib/utils/ImageUtils");
-var ImageCube = (function (_super) {
-    __extends(ImageCube, _super);
-    /**
-     *
-     */
-    function ImageCube(size) {
-        _super.call(this);
-        this._size = size;
-        this._testDimensions();
-    }
-    Object.defineProperty(ImageCube.prototype, "assetType", {
-        /**
-         *
-         * @returns {string}
-         */
-        get: function () {
-            return ImageCube.assetType;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(ImageCube.prototype, "size", {
-        /**
-         * The size of the cube bitmap in pixels.
-         */
-        get: function () {
-            return this._size;
-        },
-        set: function (value) {
-            if (this._size == value)
-                return;
-            this._setSize(this._size);
-        },
-        enumerable: true,
-        configurable: true
-    });
-    /**
-     *
-     * @param width
-     * @param height
-     * @private
-     */
-    ImageCube.prototype._setSize = function (size) {
-        if (this._size != size)
-            this.invalidateSize();
-        this._size = size;
-        this._testDimensions();
-    };
-    /**
-     *
-     * @private
-     */
-    ImageCube.prototype._testDimensions = function () {
-        if (!ImageUtils.isDimensionValid(this._size))
-            throw new Error("Invalid dimension: Width and height must be power of 2 and cannot exceed 2048");
-    };
-    ImageCube.prototype.createSampler = function () {
-        return new SamplerCube();
-    };
-    ImageCube.assetType = "[image ImageCube]";
-    return ImageCube;
-})(ImageBase);
-module.exports = ImageCube;
-
-},{"awayjs-core/lib/data/ImageBase":"awayjs-core/lib/data/ImageBase","awayjs-core/lib/data/SamplerCube":"awayjs-core/lib/data/SamplerCube","awayjs-core/lib/utils/ImageUtils":"awayjs-core/lib/utils/ImageUtils"}],"awayjs-core/lib/data/ImageData":[function(require,module,exports){
-var ImageData = (function () {
-    function ImageData(width, height) {
-        this.width = width;
-        this.height = height;
-        this.data = new Uint8Array(width * height * 4);
-    }
-    return ImageData;
-})();
-module.exports = ImageData;
-
-},{}],"awayjs-core/lib/data/Sampler2D":[function(require,module,exports){
-var __extends = this.__extends || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    __.prototype = b.prototype;
-    d.prototype = new __();
-};
-var SamplerBase = require("awayjs-core/lib/data/SamplerBase");
-/**
- * The Sampler2D class represents display objects that represent bitmap images.
- * These can be images that you load with the <code>flash.Assets</code> or
- * <code>flash.display.Loader</code> classes, or they can be images that you
- * create with the <code>Sampler2D()</code> constructor.
- *
- * <p>The <code>Sampler2D()</code> constructor allows you to create a Sampler2D
- * object that contains a reference to a Image2D object. After you create a
- * Sampler2D object, use the <code>addChild()</code> or <code>addChildAt()</code>
- * method of the parent DisplayObjectContainer instance to place the bitmap on
- * the display list.</p>
- *
- * <p>A Sampler2D object can share its Image2D reference among several Sampler2D
- * objects, independent of translation or rotation properties. Because you can
- * create multiple Sampler2D objects that reference the same Image2D object,
- * multiple texture objects can use the same complex Image2D object without
- * incurring the memory overhead of a Image2D object for each texture
- * object instance.</p>
-
- */
-var Sampler2D = (function (_super) {
-    __extends(Sampler2D, _super);
-    /**
-     *
-     * @param image2D
-     * @param smoothing
-     */
-    function Sampler2D(repeat, smooth, mipmap) {
-        if (repeat === void 0) { repeat = false; }
-        if (smooth === void 0) { smooth = false; }
-        if (mipmap === void 0) { mipmap = false; }
-        _super.call(this, smooth, mipmap);
-        this._repeat = repeat;
-        this._updateRect();
-    }
-    Object.defineProperty(Sampler2D.prototype, "assetType", {
-        /**
-         *
-         * @returns {string}
-         */
-        get: function () {
-            return Sampler2D.assetType;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Sampler2D.prototype, "repeat", {
-        /**
-         * Controls whether or not the Sampler2D object is snapped to the nearest pixel.
-         * This value is ignored in the native and HTML5 targets.
-         * The PixelSnapping class includes possible values:
-         * <ul>
-         *   <li><code>PixelSnapping.NEVER</code> - No pixel snapping occurs.</li>
-         *   <li><code>PixelSnapping.ALWAYS</code> - The image is always snapped to
-         * the nearest pixel, independent of transformation.</li>
-         *   <li><code>PixelSnapping.AUTO</code> - The image is snapped to the
-         * nearest pixel if it is drawn with no rotation or skew and it is drawn at a
-         * scale factor of 99.9% to 100.1%. If these conditions are satisfied, the
-         * bitmap image is drawn at 100% scale, snapped to the nearest pixel.
-         * When targeting Flash Player, this value allows the image to be drawn as fast
-         * as possible using the internal vector renderer.</li>
-         * </ul>
-         */
-        //var pixelSnapping:PixelSnapping;
-        /**
-         * Controls whether or not the bitmap is smoothed when scaled. If
-         * <code>true</code>, the bitmap is smoothed when scaled. If
-         * <code>false</code>, the bitmap is not smoothed when scaled.
-         */
-        /**
-         *
-         */
-        get: function () {
-            return this._repeat;
-        },
-        set: function (value) {
-            if (this._repeat == value)
-                return;
-            this._repeat = value;
-            //TODO: update dependencies
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Sampler2D.prototype, "imageRect", {
-        /**
-         *
-         */
-        get: function () {
-            return this._imageRect;
-        },
-        set: function (value) {
-            if (this._imageRect == value)
-                return;
-            this._imageRect = value;
-            this._updateRect();
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Sampler2D.prototype, "frameRect", {
-        /**
-         *
-         */
-        get: function () {
-            return this._frameRect;
-        },
-        set: function (value) {
-            if (this._frameRect == value)
-                return;
-            this._frameRect = value;
-            this._updateRect();
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Sampler2D.prototype._updateRect = function () {
-    };
-    Sampler2D.assetType = "[asset Sampler2D]";
-    return Sampler2D;
-})(SamplerBase);
-module.exports = Sampler2D;
-
-},{"awayjs-core/lib/data/SamplerBase":"awayjs-core/lib/data/SamplerBase"}],"awayjs-core/lib/data/SamplerBase":[function(require,module,exports){
-var __extends = this.__extends || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    __.prototype = b.prototype;
-    d.prototype = new __();
-};
-var AssetBase = require("awayjs-core/lib/library/AssetBase");
-/**
- *
- */
-var SamplerBase = (function (_super) {
-    __extends(SamplerBase, _super);
-    /**
-     *
-     */
-    function SamplerBase(smooth, mipmap) {
-        if (smooth === void 0) { smooth = false; }
-        if (mipmap === void 0) { mipmap = false; }
-        _super.call(this);
-        this._smooth = smooth;
-        this._mipmap = mipmap;
-    }
-    Object.defineProperty(SamplerBase.prototype, "smooth", {
-        /**
-         *
-         */
-        get: function () {
-            return this._smooth;
-        },
-        set: function (value) {
-            if (this._smooth == value)
-                return;
-            this._smooth = value;
-            //TODO: update dependencies
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(SamplerBase.prototype, "mipmap", {
-        /**
-         *
-         */
-        get: function () {
-            return this._mipmap;
-        },
-        set: function (value) {
-            if (this._mipmap == value)
-                return;
-            this._mipmap = value;
-            //TODO: update dependencies
-        },
-        enumerable: true,
-        configurable: true
-    });
-    return SamplerBase;
-})(AssetBase);
-module.exports = SamplerBase;
-
-},{"awayjs-core/lib/library/AssetBase":"awayjs-core/lib/library/AssetBase"}],"awayjs-core/lib/data/SamplerCube":[function(require,module,exports){
-var __extends = this.__extends || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    __.prototype = b.prototype;
-    d.prototype = new __();
-};
-var SamplerBase = require("awayjs-core/lib/data/SamplerBase");
-/**
- * The Bitmap class represents display objects that represent bitmap images.
- * These can be images that you load with the <code>flash.Assets</code> or
- * <code>flash.display.Loader</code> classes, or they can be images that you
- * create with the <code>Bitmap()</code> constructor.
- *
- * <p>The <code>Bitmap()</code> constructor allows you to create a Bitmap
- * object that contains a reference to a BitmapData object. After you create a
- * Bitmap object, use the <code>addChild()</code> or <code>addChildAt()</code>
- * method of the parent DisplayObjectContainer instance to place the bitmap on
- * the display list.</p>
- *
- * <p>A Bitmap object can share its BitmapData reference among several Bitmap
- * objects, independent of translation or rotation properties. Because you can
- * create multiple Bitmap objects that reference the same BitmapData object,
- * multiple texture objects can use the same complex BitmapData object without
- * incurring the memory overhead of a BitmapData object for each texture
- * object instance.</p>
-
- */
-var SamplerCube = (function (_super) {
-    __extends(SamplerCube, _super);
-    /**
-     *
-     * @param bitmapData
-     * @param smoothing
-     */
-    function SamplerCube(smooth, mipmap) {
-        if (smooth === void 0) { smooth = false; }
-        if (mipmap === void 0) { mipmap = false; }
-        _super.call(this, smooth, mipmap);
-    }
-    Object.defineProperty(SamplerCube.prototype, "assetType", {
-        /**
-         *
-         * @returns {string}
-         */
-        get: function () {
-            return SamplerCube.assetType;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    SamplerCube.assetType = "[asset SamplerCube]";
-    return SamplerCube;
-})(SamplerBase);
-module.exports = SamplerCube;
-
-},{"awayjs-core/lib/data/SamplerBase":"awayjs-core/lib/data/SamplerBase"}],"awayjs-core/lib/data/SpecularImage2D":[function(require,module,exports){
-var __extends = this.__extends || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    __.prototype = b.prototype;
-    d.prototype = new __();
-};
-var BitmapImage2D = require("awayjs-core/lib/data/BitmapImage2D");
-var BitmapImageChannel = require("awayjs-core/lib/data/BitmapImageChannel");
-var Image2D = require("awayjs-core/lib/data/Image2D");
-var Point = require("awayjs-core/lib/geom/Point");
-/**
- *
- */
-var SpecularImage2D = (function (_super) {
-    __extends(SpecularImage2D, _super);
-    /**
-     *
-     */
-    function SpecularImage2D(specularSource, glossSource) {
-        if (specularSource === void 0) { specularSource = null; }
-        if (glossSource === void 0) { glossSource = null; }
-        _super.call(this, 1, 1);
-        this._specularSource = specularSource;
-        this._glossSource = glossSource;
-        this._output = new BitmapImage2D(1, 1, false, 0xffffff);
-        this._testSize();
-    }
-    Object.defineProperty(SpecularImage2D.prototype, "assetType", {
-        /**
-         *
-         * @returns {string}
-         */
-        get: function () {
-            return SpecularImage2D.assetType;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(SpecularImage2D.prototype, "specularSource", {
-        get: function () {
-            return this._specularSource;
-        },
-        set: function (value) {
-            if (this._specularSource == value)
-                return;
-            this._specularSource = value;
-            this.invalidateContent();
-            this._testSize();
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(SpecularImage2D.prototype, "glossSource", {
-        get: function () {
-            return this._glossSource;
-        },
-        set: function (value) {
-            if (this._glossSource == value)
-                return;
-            this._glossSource = value;
-            this.invalidateContent();
-            this._testSize();
-        },
-        enumerable: true,
-        configurable: true
-    });
-    /**
-     * Returns a new SpecularImage2D object that is a clone of the original instance
-     * with an exact copy of the contained bitmap.
-     *
-     * @return A new SpecularImage2D object that is identical to the original.
-     */
-    SpecularImage2D.prototype.clone = function () {
-        return new SpecularImage2D(this._specularSource, this._glossSource);
-    };
-    /**
-     * Frees memory that is used to store the SpecularImage2D object.
-     *
-     * <p>When the <code>dispose()</code> method is called on an image, the width
-     * and height of the image are set to 0. All subsequent calls to methods or
-     * properties of this SpecularImage2D instance fail, and an exception is thrown.
-     * </p>
-     *
-     * <p><code>SpecularImage2D.dispose()</code> releases the memory occupied by the
-     * actual bitmap data, immediately(a bitmap can consume up to 64 MB of
-     * memory). After using <code>SpecularImage2D.dispose()</code>, the SpecularImage2D
-     * object is no longer usable and an exception may be thrown if
-     * you call functions on the SpecularImage2D object. However,
-     * <code>SpecularImage2D.dispose()</code> does not garbage collect the SpecularImage2D
-     * object(approximately 128 bytes); the memory occupied by the actual
-     * SpecularImage2D object is released at the time the SpecularImage2D object is
-     * collected by the garbage collector.</p>
-     *
-     */
-    SpecularImage2D.prototype.dispose = function () {
-        _super.prototype.dispose.call(this);
-        this._rect = null;
-        this._output.dispose();
-    };
-    /**
-     *
-     * @returns {ImageData}
-     */
-    SpecularImage2D.prototype.getImageData = function () {
-        var origin = new Point();
-        this._output.fillRect(this._rect, 0xffffff);
-        if (this._glossSource)
-            this._output.copyChannel(this._glossSource, this._rect, origin, BitmapImageChannel.GREEN, BitmapImageChannel.GREEN);
-        if (this._specularSource)
-            this._output.copyChannel(this._specularSource, this._rect, origin, BitmapImageChannel.RED, BitmapImageChannel.RED);
-        return this._output.getImageData();
-    };
-    /**
-     *
-     * @returns {HTMLCanvasElement}
-     */
-    SpecularImage2D.prototype.getCanvas = function () {
-        return this._output.getCanvas();
-    };
-    /**
-     *
-     * @param width
-     * @param height
-     * @private
-     */
-    SpecularImage2D.prototype._setSize = function (width, height) {
-        _super.prototype._setSize.call(this, width, height);
-        this._output._setSize(width, height);
-    };
-    SpecularImage2D.prototype._testSize = function () {
-        var w, h;
-        if (this._specularSource) {
-            w = this._specularSource.width;
-            h = this._specularSource.height;
-        }
-        else if (this._glossSource) {
-            w = this._glossSource.width;
-            h = this._glossSource.height;
-        }
-        else {
-            w = 1;
-            h = 1;
-        }
-        if (w != this._output.width && h != this._output.height) {
-            this._output.dispose();
-            this._output = new BitmapImage2D(w, h, false, 0xffffff);
-        }
-        this._setSize(w, h);
-    };
-    SpecularImage2D.assetType = "[asset SpecularImage2D]";
-    return SpecularImage2D;
-})(Image2D);
-module.exports = SpecularImage2D;
-
-},{"awayjs-core/lib/data/BitmapImage2D":"awayjs-core/lib/data/BitmapImage2D","awayjs-core/lib/data/BitmapImageChannel":"awayjs-core/lib/data/BitmapImageChannel","awayjs-core/lib/data/Image2D":"awayjs-core/lib/data/Image2D","awayjs-core/lib/geom/Point":"awayjs-core/lib/geom/Point"}],"awayjs-core/lib/data/WaveAudio":[function(require,module,exports){
+},{"awayjs-core/lib/attributes/AttributesView":"awayjs-core/lib/attributes/AttributesView"}],"awayjs-core/lib/audio/WaveAudio":[function(require,module,exports){
 var __extends = this.__extends || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
@@ -3403,7 +790,7 @@ var __extends = this.__extends || function (d, b) {
     __.prototype = b.prototype;
     d.prototype = new __();
 };
-var Error = require("awayjs-core/lib/errors/Error");
+var ErrorBase = require("awayjs-core/lib/errors/ErrorBase");
 /**
  * AbstractMethodError is thrown when an abstract method is called. The method in question should be overridden
  * by a concrete subclass.
@@ -3421,17 +808,17 @@ var AbstractMethodError = (function (_super) {
         _super.call(this, message || "An abstract method was called! Either an instance of an abstract class was created, or an abstract method was not overridden by the subclass.", id);
     }
     return AbstractMethodError;
-})(Error);
+})(ErrorBase);
 module.exports = AbstractMethodError;
 
-},{"awayjs-core/lib/errors/Error":"awayjs-core/lib/errors/Error"}],"awayjs-core/lib/errors/ArgumentError":[function(require,module,exports){
+},{"awayjs-core/lib/errors/ErrorBase":"awayjs-core/lib/errors/ErrorBase"}],"awayjs-core/lib/errors/ArgumentError":[function(require,module,exports){
 var __extends = this.__extends || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
     __.prototype = b.prototype;
     d.prototype = new __();
 };
-var Error = require("awayjs-core/lib/errors/Error");
+var ErrorBase = require("awayjs-core/lib/errors/ErrorBase");
 /**
  * AbstractMethodError is thrown when an abstract method is called. The method in question should be overridden
  * by a concrete subclass.
@@ -3450,17 +837,17 @@ var ArgumentError = (function (_super) {
         _super.call(this, message || "ArgumentError", id);
     }
     return ArgumentError;
-})(Error);
+})(ErrorBase);
 module.exports = ArgumentError;
 
-},{"awayjs-core/lib/errors/Error":"awayjs-core/lib/errors/Error"}],"awayjs-core/lib/errors/DocumentError":[function(require,module,exports){
+},{"awayjs-core/lib/errors/ErrorBase":"awayjs-core/lib/errors/ErrorBase"}],"awayjs-core/lib/errors/DocumentError":[function(require,module,exports){
 var __extends = this.__extends || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
     __.prototype = b.prototype;
     d.prototype = new __();
 };
-var Error = require("awayjs-core/lib/errors/Error");
+var ErrorBase = require("awayjs-core/lib/errors/ErrorBase");
 var DocumentError = (function (_super) {
     __extends(DocumentError, _super);
     function DocumentError(message, id) {
@@ -3470,12 +857,12 @@ var DocumentError = (function (_super) {
     }
     DocumentError.DOCUMENT_DOES_NOT_EXIST = "documentDoesNotExist";
     return DocumentError;
-})(Error);
+})(ErrorBase);
 module.exports = DocumentError;
 
-},{"awayjs-core/lib/errors/Error":"awayjs-core/lib/errors/Error"}],"awayjs-core/lib/errors/Error":[function(require,module,exports){
-var Error = (function () {
-    function Error(message, id, _name) {
+},{"awayjs-core/lib/errors/ErrorBase":"awayjs-core/lib/errors/ErrorBase"}],"awayjs-core/lib/errors/ErrorBase":[function(require,module,exports){
+var ErrorBase = (function () {
+    function ErrorBase(message, id, _name) {
         if (message === void 0) { message = ''; }
         if (id === void 0) { id = 0; }
         if (_name === void 0) { _name = ''; }
@@ -3486,7 +873,7 @@ var Error = (function () {
         this._name = name;
         this._errorID = id;
     }
-    Object.defineProperty(Error.prototype, "message", {
+    Object.defineProperty(ErrorBase.prototype, "message", {
         /**
          *
          * @returns {string}
@@ -3504,7 +891,7 @@ var Error = (function () {
         enumerable: true,
         configurable: true
     });
-    Object.defineProperty(Error.prototype, "name", {
+    Object.defineProperty(ErrorBase.prototype, "name", {
         /**
          *
          * @returns {string}
@@ -3522,7 +909,7 @@ var Error = (function () {
         enumerable: true,
         configurable: true
     });
-    Object.defineProperty(Error.prototype, "errorID", {
+    Object.defineProperty(ErrorBase.prototype, "errorID", {
         /**
          *
          * @returns {number}
@@ -3533,9 +920,9 @@ var Error = (function () {
         enumerable: true,
         configurable: true
     });
-    return Error;
+    return ErrorBase;
 })();
-module.exports = Error;
+module.exports = ErrorBase;
 
 },{}],"awayjs-core/lib/errors/PartialImplementationError":[function(require,module,exports){
 var __extends = this.__extends || function (d, b) {
@@ -3544,7 +931,7 @@ var __extends = this.__extends || function (d, b) {
     __.prototype = b.prototype;
     d.prototype = new __();
 };
-var Error = require("awayjs-core/lib/errors/Error");
+var ErrorBase = require("awayjs-core/lib/errors/ErrorBase");
 /**
  * AbstractMethodError is thrown when an abstract method is called. The method in question should be overridden
  * by a concrete subclass.
@@ -3562,17 +949,17 @@ var PartialImplementationError = (function (_super) {
         _super.call(this, "PartialImplementationError - this function is in development. Required Dependency: " + dependency, id);
     }
     return PartialImplementationError;
-})(Error);
+})(ErrorBase);
 module.exports = PartialImplementationError;
 
-},{"awayjs-core/lib/errors/Error":"awayjs-core/lib/errors/Error"}],"awayjs-core/lib/errors/RangeError":[function(require,module,exports){
+},{"awayjs-core/lib/errors/ErrorBase":"awayjs-core/lib/errors/ErrorBase"}],"awayjs-core/lib/errors/RangeError":[function(require,module,exports){
 var __extends = this.__extends || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
     __.prototype = b.prototype;
     d.prototype = new __();
 };
-var Error = require("awayjs-core/lib/errors/Error");
+var ErrorBase = require("awayjs-core/lib/errors/ErrorBase");
 /**
  * RangeError is thrown when an index is accessed out of range of the number of
  * available indices on an Array.
@@ -3591,17 +978,17 @@ var RangeError = (function (_super) {
         _super.call(this, message || "RangeError", id);
     }
     return RangeError;
-})(Error);
+})(ErrorBase);
 module.exports = RangeError;
 
-},{"awayjs-core/lib/errors/Error":"awayjs-core/lib/errors/Error"}],"awayjs-core/lib/events/AssetEvent":[function(require,module,exports){
+},{"awayjs-core/lib/errors/ErrorBase":"awayjs-core/lib/errors/ErrorBase"}],"awayjs-core/lib/events/AssetEvent":[function(require,module,exports){
 var __extends = this.__extends || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
     __.prototype = b.prototype;
     d.prototype = new __();
 };
-var Event = require("awayjs-core/lib/events/Event");
+var EventBase = require("awayjs-core/lib/events/EventBase");
 /**
  * @class away.events.AssetEvent
  */
@@ -3611,11 +998,10 @@ var AssetEvent = (function (_super) {
      *
      */
     function AssetEvent(type, asset, prevName) {
-        if (asset === void 0) { asset = null; }
         if (prevName === void 0) { prevName = null; }
         _super.call(this, type);
         this._asset = asset;
-        this._prevName = prevName || (this._asset ? this._asset.name : null);
+        this._prevName = prevName || this._asset.name;
     }
     Object.defineProperty(AssetEvent.prototype, "asset", {
         /**
@@ -3627,7 +1013,7 @@ var AssetEvent = (function (_super) {
         enumerable: true,
         configurable: true
     });
-    Object.defineProperty(AssetEvent.prototype, "assetPrevName", {
+    Object.defineProperty(AssetEvent.prototype, "prevName", {
         /**
          *
          */
@@ -3641,29 +1027,73 @@ var AssetEvent = (function (_super) {
      *
      */
     AssetEvent.prototype.clone = function () {
-        return new AssetEvent(this.type, this.asset, this.assetPrevName);
+        return new AssetEvent(this.type, this._asset, this._prevName);
     };
     /**
-     *
+     * Dispatched when the content of an asset is invalidated
      */
-    AssetEvent.ASSET_COMPLETE = "assetComplete";
+    AssetEvent.INVALIDATE = "invalidate";
+    /**
+     * Dispatched when an asset is cleared
+     */
+    AssetEvent.CLEAR = "clear";
     /**
      *
      */
-    AssetEvent.ASSET_RENAME = 'assetRename';
+    AssetEvent.RENAME = 'rename';
+    /**
+     *
+     */
+    AssetEvent.ENTER_FRAME = 'enterFrame';
+    /**
+     *
+     */
+    AssetEvent.EXIT_FRAME = 'exitFrame';
     /**
      *
      */
     AssetEvent.ASSET_CONFLICT_RESOLVED = 'assetConflictResolved';
     /**
+     * Dispatched when the loading of an asset and all of its dependencies is complete.
+     */
+    AssetEvent.ASSET_COMPLETE = "assetComplete";
+    /**
      *
      */
     AssetEvent.TEXTURE_SIZE_ERROR = 'textureSizeError';
     return AssetEvent;
-})(Event);
+})(EventBase);
 module.exports = AssetEvent;
 
-},{"awayjs-core/lib/events/Event":"awayjs-core/lib/events/Event"}],"awayjs-core/lib/events/EventDispatcher":[function(require,module,exports){
+},{"awayjs-core/lib/events/EventBase":"awayjs-core/lib/events/EventBase"}],"awayjs-core/lib/events/EventBase":[function(require,module,exports){
+var EventBase = (function () {
+    function EventBase(type) {
+        /**
+         * Type of event
+         * @property type
+         * @type String
+         */
+        this.type = undefined;
+        /**
+         * Reference to target object
+         * @property target
+         * @type Object
+         */
+        this.target = undefined;
+        this.type = type;
+    }
+    /**
+     * Clones the current event.
+     * @return An exact duplicate of the current event.
+     */
+    EventBase.prototype.clone = function () {
+        return new EventBase(this.type);
+    };
+    return EventBase;
+})();
+module.exports = EventBase;
+
+},{}],"awayjs-core/lib/events/EventDispatcher":[function(require,module,exports){
 /**
  * Base class for dispatching events
 *
@@ -3750,92 +1180,16 @@ var EventDispatcher = (function () {
 })();
 module.exports = EventDispatcher;
 
-},{}],"awayjs-core/lib/events/Event":[function(require,module,exports){
-var Event = (function () {
-    function Event(type) {
-        /**
-         * Type of event
-         * @property type
-         * @type String
-         */
-        this.type = undefined;
-        /**
-         * Reference to target object
-         * @property target
-         * @type Object
-         */
-        this.target = undefined;
-        this.type = type;
-    }
-    /**
-     * Clones the current event.
-     * @return An exact duplicate of the current event.
-     */
-    Event.prototype.clone = function () {
-        return new Event(this.type);
-    };
-    Event.COMPLETE = 'complete';
-    Event.OPEN = 'open';
-    Event.ENTER_FRAME = 'enterFrame';
-    Event.EXIT_FRAME = 'exitFrame';
-    Event.RESIZE = "resize";
-    Event.ERROR = "error";
-    Event.CHANGE = "change";
-    return Event;
-})();
-module.exports = Event;
+},{}],"awayjs-core/lib/events/IEventDispatcher":[function(require,module,exports){
 
-},{}],"awayjs-core/lib/events/HTTPStatusEvent":[function(require,module,exports){
+},{}],"awayjs-core/lib/events/LoaderEvent":[function(require,module,exports){
 var __extends = this.__extends || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
     __.prototype = b.prototype;
     d.prototype = new __();
 };
-var Event = require("awayjs-core/lib/events/Event");
-/**
- * @class away.events.HTTPStatusEvent
- */
-var HTTPStatusEvent = (function (_super) {
-    __extends(HTTPStatusEvent, _super);
-    function HTTPStatusEvent(type, status) {
-        if (status === void 0) { status = null; }
-        _super.call(this, type);
-        this.status = status;
-    }
-    HTTPStatusEvent.HTTP_STATUS = "httpStatus";
-    return HTTPStatusEvent;
-})(Event);
-module.exports = HTTPStatusEvent;
-
-},{"awayjs-core/lib/events/Event":"awayjs-core/lib/events/Event"}],"awayjs-core/lib/events/IEventDispatcher":[function(require,module,exports){
-
-},{}],"awayjs-core/lib/events/IOErrorEvent":[function(require,module,exports){
-var __extends = this.__extends || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    __.prototype = b.prototype;
-    d.prototype = new __();
-};
-var Event = require("awayjs-core/lib/events/Event");
-var IOErrorEvent = (function (_super) {
-    __extends(IOErrorEvent, _super);
-    function IOErrorEvent(type) {
-        _super.call(this, type);
-    }
-    IOErrorEvent.IO_ERROR = "ioError";
-    return IOErrorEvent;
-})(Event);
-module.exports = IOErrorEvent;
-
-},{"awayjs-core/lib/events/Event":"awayjs-core/lib/events/Event"}],"awayjs-core/lib/events/LoaderEvent":[function(require,module,exports){
-var __extends = this.__extends || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    __.prototype = b.prototype;
-    d.prototype = new __();
-};
-var Event = require("awayjs-core/lib/events/Event");
+var EventBase = require("awayjs-core/lib/events/EventBase");
 var LoaderEvent = (function (_super) {
     __extends(LoaderEvent, _super);
     /**
@@ -3892,21 +1246,21 @@ var LoaderEvent = (function (_super) {
         return new LoaderEvent(this.type, this._url, this._content, this._assets);
     };
     /**
-     * Dispatched when a resource and all of its dependencies is retrieved.
+     * Dispatched when the loading of a session and all of its dependencies is complete.
      */
-    LoaderEvent.RESOURCE_COMPLETE = "resourceComplete";
+    LoaderEvent.LOAD_COMPLETE = "loadComplete";
     return LoaderEvent;
-})(Event);
+})(EventBase);
 module.exports = LoaderEvent;
 
-},{"awayjs-core/lib/events/Event":"awayjs-core/lib/events/Event"}],"awayjs-core/lib/events/ParserEvent":[function(require,module,exports){
+},{"awayjs-core/lib/events/EventBase":"awayjs-core/lib/events/EventBase"}],"awayjs-core/lib/events/ParserEvent":[function(require,module,exports){
 var __extends = this.__extends || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
     __.prototype = b.prototype;
     d.prototype = new __();
 };
-var Event = require("awayjs-core/lib/events/Event");
+var EventBase = require("awayjs-core/lib/events/EventBase");
 var ParserEvent = (function (_super) {
     __extends(ParserEvent, _super);
     function ParserEvent(type, message) {
@@ -3925,7 +1279,7 @@ var ParserEvent = (function (_super) {
         configurable: true
     });
     ParserEvent.prototype.clone = function () {
-        return new ParserEvent(this.type, this.message);
+        return new ParserEvent(this.type, this._message);
     };
     /**
      * Dispatched when parsing of an asset completed.
@@ -3943,35 +1297,17 @@ var ParserEvent = (function (_super) {
      */
     ParserEvent.READY_FOR_DEPENDENCIES = 'readyForDependencies';
     return ParserEvent;
-})(Event);
+})(EventBase);
 module.exports = ParserEvent;
 
-},{"awayjs-core/lib/events/Event":"awayjs-core/lib/events/Event"}],"awayjs-core/lib/events/ProgressEvent":[function(require,module,exports){
+},{"awayjs-core/lib/events/EventBase":"awayjs-core/lib/events/EventBase"}],"awayjs-core/lib/events/ProjectionEvent":[function(require,module,exports){
 var __extends = this.__extends || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
     __.prototype = b.prototype;
     d.prototype = new __();
 };
-var Event = require("awayjs-core/lib/events/Event");
-var ProgressEvent = (function (_super) {
-    __extends(ProgressEvent, _super);
-    function ProgressEvent(type) {
-        _super.call(this, type);
-    }
-    ProgressEvent.PROGRESS = "progress";
-    return ProgressEvent;
-})(Event);
-module.exports = ProgressEvent;
-
-},{"awayjs-core/lib/events/Event":"awayjs-core/lib/events/Event"}],"awayjs-core/lib/events/ProjectionEvent":[function(require,module,exports){
-var __extends = this.__extends || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    __.prototype = b.prototype;
-    d.prototype = new __();
-};
-var Event = require("awayjs-core/lib/events/Event");
+var EventBase = require("awayjs-core/lib/events/EventBase");
 var ProjectionEvent = (function (_super) {
     __extends(ProjectionEvent, _super);
     function ProjectionEvent(type, projection) {
@@ -3987,29 +1323,74 @@ var ProjectionEvent = (function (_super) {
     });
     ProjectionEvent.MATRIX_CHANGED = "matrixChanged";
     return ProjectionEvent;
-})(Event);
+})(EventBase);
 module.exports = ProjectionEvent;
 
-},{"awayjs-core/lib/events/Event":"awayjs-core/lib/events/Event"}],"awayjs-core/lib/events/TimerEvent":[function(require,module,exports){
+},{"awayjs-core/lib/events/EventBase":"awayjs-core/lib/events/EventBase"}],"awayjs-core/lib/events/TimerEvent":[function(require,module,exports){
 var __extends = this.__extends || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
     __.prototype = b.prototype;
     d.prototype = new __();
 };
-var Event = require("awayjs-core/lib/events/Event");
+var EventBase = require("awayjs-core/lib/events/EventBase");
 var TimerEvent = (function (_super) {
     __extends(TimerEvent, _super);
     function TimerEvent(type) {
         _super.call(this, type);
     }
+    /**
+     *
+     */
     TimerEvent.TIMER = "timer";
+    /**
+     *
+     */
     TimerEvent.TIMER_COMPLETE = "timerComplete";
     return TimerEvent;
-})(Event);
+})(EventBase);
 module.exports = TimerEvent;
 
-},{"awayjs-core/lib/events/Event":"awayjs-core/lib/events/Event"}],"awayjs-core/lib/geom/Box":[function(require,module,exports){
+},{"awayjs-core/lib/events/EventBase":"awayjs-core/lib/events/EventBase"}],"awayjs-core/lib/events/URLLoaderEvent":[function(require,module,exports){
+var __extends = this.__extends || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    __.prototype = b.prototype;
+    d.prototype = new __();
+};
+var EventBase = require("awayjs-core/lib/events/EventBase");
+var URLLoaderEvent = (function (_super) {
+    __extends(URLLoaderEvent, _super);
+    function URLLoaderEvent(type, urlLoader) {
+        _super.call(this, type);
+        this._urlLoader = urlLoader;
+    }
+    Object.defineProperty(URLLoaderEvent.prototype, "urlLoader", {
+        /**
+         *
+         */
+        get: function () {
+            return this._urlLoader;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    /**
+     *
+     */
+    URLLoaderEvent.prototype.clone = function () {
+        return new URLLoaderEvent(this.type, this._urlLoader);
+    };
+    URLLoaderEvent.HTTP_STATUS = "httpStatus";
+    URLLoaderEvent.LOAD_ERROR = "loadError";
+    URLLoaderEvent.LOAD_PROGRESS = "loadProgress";
+    URLLoaderEvent.LOAD_START = "loadStart";
+    URLLoaderEvent.LOAD_COMPLETE = "loadComplete";
+    return URLLoaderEvent;
+})(EventBase);
+module.exports = URLLoaderEvent;
+
+},{"awayjs-core/lib/events/EventBase":"awayjs-core/lib/events/EventBase"}],"awayjs-core/lib/geom/Box":[function(require,module,exports){
 var Vector3D = require("awayjs-core/lib/geom/Vector3D");
 /**
  * A Box object is an area defined by its position, as indicated by its
@@ -8385,7 +5766,2614 @@ var Vector3D = (function () {
 })();
 module.exports = Vector3D;
 
-},{}],"awayjs-core/lib/library/AssetBase":[function(require,module,exports){
+},{}],"awayjs-core/lib/image/BitmapImage2D":[function(require,module,exports){
+var __extends = this.__extends || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    __.prototype = b.prototype;
+    d.prototype = new __();
+};
+var Image2D = require("awayjs-core/lib/image/Image2D");
+var ColorUtils = require("awayjs-core/lib/utils/ColorUtils");
+var BitmapImageUtils = require("awayjs-core/lib/utils/BitmapImageUtils");
+var CPUCanvas = require('awayjs-core/lib/image/CPUCanvas');
+/**
+ * The BitmapImage2D class lets you work with the data(pixels) of a Bitmap
+ * object. You can use the methods of the BitmapImage2D class to create
+ * arbitrarily sized transparent or opaque bitmap images and manipulate them
+ * in various ways at runtime. You can also access the BitmapImage2D for a bitmap
+ * image that you load with the <code>flash.Assets</code> or
+ * <code>flash.display.Loader</code> classes.
+ *
+ * <p>This class lets you separate bitmap rendering operations from the
+ * internal display updating routines of flash. By manipulating a
+ * BitmapImage2D object directly, you can create complex images without incurring
+ * the per-frame overhead of constantly redrawing the content from vector
+ * data.</p>
+ *
+ * <p>The methods of the BitmapImage2D class support effects that are not
+ * available through the filters available to non-bitmap display objects.</p>
+ *
+ * <p>A BitmapImage2D object contains an array of pixel data. This data can
+ * represent either a fully opaque bitmap or a transparent bitmap that
+ * contains alpha channel data. Either type of BitmapImage2D object is stored as
+ * a buffer of 32-bit integers. Each 32-bit integer determines the properties
+ * of a single pixel in the bitmap.</p>
+ *
+ * <p>Each 32-bit integer is a combination of four 8-bit channel values(from
+ * 0 to 255) that describe the alpha transparency and the red, green, and blue
+ * (ARGB) values of the pixel.(For ARGB values, the most significant byte
+ * represents the alpha channel value, followed by red, green, and blue.)</p>
+ *
+ * <p>The four channels(alpha, red, green, and blue) are represented as
+ * numbers when you use them with the <code>BitmapImage2D.copyChannel()</code>
+ * method or the <code>DisplacementMapFilter.componentX</code> and
+ * <code>DisplacementMapFilter.componentY</code> properties, and these numbers
+ * are represented by the following constants in the BitmapImage2DChannel
+ * class:</p>
+ *
+ * <ul>
+ *   <li><code>BitmapImage2DChannel.ALPHA</code></li>
+ *   <li><code>BitmapImage2DChannel.RED</code></li>
+ *   <li><code>BitmapImage2DChannel.GREEN</code></li>
+ *   <li><code>BitmapImage2DChannel.BLUE</code></li>
+ * </ul>
+ *
+ * <p>You can attach BitmapImage2D objects to a Bitmap object by using the
+ * <code>bitmapData</code> property of the Bitmap object.</p>
+ *
+ * <p>You can use a BitmapImage2D object to fill a Graphics object by using the
+ * <code>Graphics.beginBitmapFill()</code> method.</p>
+ *
+ * <p>You can also use a BitmapImage2D object to perform batch tile rendering
+ * using the <code>flash.display.Tilesheet</code> class.</p>
+ *
+ * <p>In Flash Player 10, the maximum size for a BitmapImage2D object
+ * is 8,191 pixels in width or height, and the total number of pixels cannot
+ * exceed 16,777,215 pixels.(So, if a BitmapImage2D object is 8,191 pixels wide,
+ * it can only be 2,048 pixels high.) In Flash Player 9 and earlier, the limitation
+ * is 2,880 pixels in height and 2,880 in width.</p>
+ */
+var BitmapImage2D = (function (_super) {
+    __extends(BitmapImage2D, _super);
+    /**
+     * Creates a BitmapImage2D object with a specified width and height. If you
+     * specify a value for the <code>fillColor</code> parameter, every pixel in
+     * the bitmap is set to that color.
+     *
+     * <p>By default, the bitmap is created as transparent, unless you pass
+     * the value <code>false</code> for the transparent parameter. After you
+     * create an opaque bitmap, you cannot change it to a transparent bitmap.
+     * Every pixel in an opaque bitmap uses only 24 bits of color channel
+     * information. If you define the bitmap as transparent, every pixel uses 32
+     * bits of color channel information, including an alpha transparency
+     * channel.</p>
+     *
+     * @param width       The width of the bitmap image in pixels.
+     * @param height      The height of the bitmap image in pixels.
+     * @param transparent Specifies whether the bitmap image supports per-pixel
+     *                    transparency. The default value is <code>true</code>
+     *                    (transparent). To create a fully transparent bitmap,
+     *                    set the value of the <code>transparent</code>
+     *                    parameter to <code>true</code> and the value of the
+     *                    <code>fillColor</code> parameter to 0x00000000(or to
+     *                    0). Setting the <code>transparent</code> property to
+     *                    <code>false</code> can result in minor improvements
+     *                    in rendering performance.
+     * @param fillColor   A 32-bit ARGB color value that you use to fill the
+     *                    bitmap image area. The default value is
+     *                    0xFFFFFFFF(solid white).
+     */
+    function BitmapImage2D(width, height, transparent, fillColor, powerOfTwo) {
+        if (transparent === void 0) { transparent = true; }
+        if (fillColor === void 0) { fillColor = null; }
+        if (powerOfTwo === void 0) { powerOfTwo = true; }
+        _super.call(this, width, height, powerOfTwo);
+        this._locked = false;
+        this._transparent = transparent;
+        if (document) {
+            this._imageCanvas = document.createElement("canvas");
+        }
+        else {
+            this._imageCanvas = new CPUCanvas();
+        }
+        this._imageCanvas.width = width;
+        this._imageCanvas.height = height;
+        this._context = this._imageCanvas.getContext("2d");
+        if (fillColor != null)
+            this.fillRect(this._rect, fillColor);
+    }
+    Object.defineProperty(BitmapImage2D.prototype, "assetType", {
+        /**
+         *
+         * @returns {string}
+         */
+        get: function () {
+            return BitmapImage2D.assetType;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(BitmapImage2D.prototype, "transparent", {
+        /**
+         * Defines whether the bitmap image supports per-pixel transparency. You can
+         * set this value only when you construct a BitmapImage2D object by passing in
+         * <code>true</code> for the <code>transparent</code> parameter of the
+         * constructor. Then, after you create a BitmapImage2D object, you can check
+         * whether it supports per-pixel transparency by determining if the value of
+         * the <code>transparent</code> property is <code>true</code>.
+         */
+        get: function () {
+            return this._transparent;
+        },
+        set: function (value) {
+            this._transparent = value;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    /**
+     * Returns a new BitmapImage2D object that is a clone of the original instance
+     * with an exact copy of the contained bitmap.
+     *
+     * @return A new BitmapImage2D object that is identical to the original.
+     */
+    BitmapImage2D.prototype.clone = function () {
+        var t = new BitmapImage2D(this.width, this.height, this.transparent, null, this.powerOfTwo);
+        t.draw(this);
+        return t;
+    };
+    /**
+     * Adjusts the color values in a specified area of a bitmap image by using a
+     * <code>ColorTransform</code> object. If the rectangle matches the
+     * boundaries of the bitmap image, this method transforms the color values of
+     * the entire image.
+     *
+     * @param rect           A Rectangle object that defines the area of the
+     *                       image in which the ColorTransform object is applied.
+     * @param colorTransform A ColorTransform object that describes the color
+     *                       transformation values to apply.
+     */
+    BitmapImage2D.prototype.colorTransform = function (rect, colorTransform) {
+        if (!this._locked)
+            this._imageData = this._context.getImageData(0, 0, this._rect.width, this._rect.height);
+        var data = this._imageData.data;
+        var i /*uint*/, j /*uint*/, index /*uint*/;
+        for (i = 0; i < rect.width; ++i) {
+            for (j = 0; j < rect.height; ++j) {
+                index = (i + rect.x + (j + rect.y) * this.width) * 4;
+                data[index] = data[index] * colorTransform.redMultiplier + colorTransform.redOffset;
+                data[index + 1] = data[index + 1] * colorTransform.greenMultiplier + colorTransform.greenOffset;
+                data[index + 2] = data[index + 2] * colorTransform.blueMultiplier + colorTransform.blueOffset;
+                data[index + 3] = data[index + 3] * colorTransform.alphaMultiplier + colorTransform.alphaOffset;
+            }
+        }
+        if (!this._locked) {
+            this._context.putImageData(this._imageData, 0, 0);
+            this._imageData = null;
+        }
+        this.invalidate();
+    };
+    /**
+     * Transfers data from one channel of another BitmapImage2D object or the
+     * current BitmapImage2D object into a channel of the current BitmapImage2D object.
+     * All of the data in the other channels in the destination BitmapImage2D object
+     * are preserved.
+     *
+     * <p>The source channel value and destination channel value can be one of
+     * following values: </p>
+     *
+     * <ul>
+     *   <li><code>BitmapImage2DChannel.RED</code></li>
+     *   <li><code>BitmapImage2DChannel.GREEN</code></li>
+     *   <li><code>BitmapImage2DChannel.BLUE</code></li>
+     *   <li><code>BitmapImage2DChannel.ALPHA</code></li>
+     * </ul>
+     *
+     * @param sourceBitmapImage2D The input bitmap image to use. The source image
+     *                         can be a different BitmapImage2D object or it can
+     *                         refer to the current BitmapImage2D object.
+     * @param sourceRect       The source Rectangle object. To copy only channel
+     *                         data from a smaller area within the bitmap,
+     *                         specify a source rectangle that is smaller than
+     *                         the overall size of the BitmapImage2D object.
+     * @param destPoint        The destination Point object that represents the
+     *                         upper-left corner of the rectangular area where
+     *                         the new channel data is placed. To copy only
+     *                         channel data from one area to a different area in
+     *                         the destination image, specify a point other than
+     *                        (0,0).
+     * @param sourceChannel    The source channel. Use a value from the
+     *                         BitmapImage2DChannel class
+     *                        (<code>BitmapImage2DChannel.RED</code>,
+     *                         <code>BitmapImage2DChannel.BLUE</code>,
+     *                         <code>BitmapImage2DChannel.GREEN</code>,
+     *                         <code>BitmapImage2DChannel.ALPHA</code>).
+     * @param destChannel      The destination channel. Use a value from the
+     *                         BitmapImage2DChannel class
+     *                        (<code>BitmapImage2DChannel.RED</code>,
+     *                         <code>BitmapImage2DChannel.BLUE</code>,
+     *                         <code>BitmapImage2DChannel.GREEN</code>,
+     *                         <code>BitmapImage2DChannel.ALPHA</code>).
+     * @throws TypeError The sourceBitmapImage2D, sourceRect or destPoint are null.
+     */
+    BitmapImage2D.prototype.copyChannel = function (sourceBitmap, sourceRect, destPoint, sourceChannel, destChannel) {
+        var imageData = sourceBitmap.getImageData();
+        if (!this._locked)
+            this._imageData = this._context.getImageData(0, 0, this._rect.width, this._rect.height);
+        var sourceData = sourceBitmap.getImageData().data;
+        var destData = this._imageData.data;
+        var sourceOffset = Math.round(Math.log(sourceChannel) / Math.log(2));
+        var destOffset = Math.round(Math.log(destChannel) / Math.log(2));
+        var i /*uint*/, j /*uint*/, sourceIndex /*uint*/, destIndex /*uint*/;
+        for (i = 0; i < sourceRect.width; ++i) {
+            for (j = 0; j < sourceRect.height; ++j) {
+                sourceIndex = (i + sourceRect.x + (j + sourceRect.y) * sourceBitmap.width) * 4;
+                destIndex = (i + destPoint.x + (j + destPoint.y) * this.width) * 4;
+                destData[destIndex + destOffset] = sourceData[sourceIndex + sourceOffset];
+            }
+        }
+        if (!this._locked) {
+            this._context.putImageData(this._imageData, 0, 0);
+            this._imageData = null;
+        }
+        this.invalidate();
+    };
+    BitmapImage2D.prototype.copyPixels = function (source, sourceRect, destRect) {
+        if (source instanceof BitmapImage2D)
+            source = source.getCanvas();
+        if (this._locked) {
+            // If canvas is locked:
+            //
+            //      1) copy image data back to canvas
+            //      2) draw object
+            //      3) read _imageData back out
+            this._context.putImageData(this._imageData, 0, 0); // at coords 0,0
+            BitmapImageUtils._copyPixels(this._context, source, sourceRect, destRect);
+            this._imageData = this._context.getImageData(0, 0, this._rect.width, this._rect.height);
+        }
+        else {
+            BitmapImageUtils._copyPixels(this._context, source, sourceRect, destRect);
+        }
+        this.invalidate();
+    };
+    /**
+     * Frees memory that is used to store the BitmapImage2D object.
+     *
+     * <p>When the <code>dispose()</code> method is called on an image, the width
+     * and height of the image are set to 0. All subsequent calls to methods or
+     * properties of this BitmapImage2D instance fail, and an exception is thrown.
+     * </p>
+     *
+     * <p><code>BitmapImage2D.dispose()</code> releases the memory occupied by the
+     * actual bitmap data, immediately(a bitmap can consume up to 64 MB of
+     * memory). After using <code>BitmapImage2D.dispose()</code>, the BitmapImage2D
+     * object is no longer usable and an exception may be thrown if
+     * you call functions on the BitmapImage2D object. However,
+     * <code>BitmapImage2D.dispose()</code> does not garbage collect the BitmapImage2D
+     * object(approximately 128 bytes); the memory occupied by the actual
+     * BitmapImage2D object is released at the time the BitmapImage2D object is
+     * collected by the garbage collector.</p>
+     *
+     */
+    BitmapImage2D.prototype.dispose = function () {
+        _super.prototype.dispose.call(this);
+        this._context = null;
+        this._imageCanvas = null;
+        this._imageData = null;
+        this._rect = null;
+        this._transparent = null;
+        this._locked = null;
+    };
+    BitmapImage2D.prototype.draw = function (source, matrix, colorTransform, blendMode, clipRect, smoothing) {
+        if (source instanceof BitmapImage2D && source.getCanvas()) {
+            source = source.getCanvas();
+        }
+        if (this._locked) {
+            // If canvas is locked:
+            //
+            //      1) copy image data back to canvas
+            //      2) draw object
+            //      3) read _imageData back out
+            this._context.putImageData(this._imageData, 0, 0); // at coords 0,0
+            BitmapImageUtils._draw(this._context, source, matrix, colorTransform, blendMode, clipRect, smoothing);
+            this._imageData = this._context.getImageData(0, 0, this._rect.width, this._rect.height);
+        }
+        else {
+            BitmapImageUtils._draw(this._context, source, matrix, colorTransform, blendMode, clipRect, smoothing);
+        }
+        this.invalidate();
+    };
+    /**
+     * Fills a rectangular area of pixels with a specified ARGB color.
+     *
+     * @param rect  The rectangular area to fill.
+     * @param color The ARGB color value that fills the area. ARGB colors are
+     *              often specified in hexadecimal format; for example,
+     *              0xFF336699.
+     * @throws TypeError The rect is null.
+     */
+    BitmapImage2D.prototype.fillRect = function (rect, color) {
+        if (this._locked) {
+            // If canvas is locked:
+            //
+            //      1) copy image data back to canvas
+            //      2) apply fill
+            //      3) read _imageData back out
+            if (this._imageData)
+                this._context.putImageData(this._imageData, 0, 0); // at coords 0,0
+            BitmapImageUtils._fillRect(this._context, rect, color, this._transparent);
+            if (this._imageData)
+                this._imageData = this._context.getImageData(0, 0, this._rect.width, this._rect.height);
+        }
+        else {
+            BitmapImageUtils._fillRect(this._context, rect, color, this._transparent);
+        }
+        this.invalidate();
+    };
+    /**
+     * Returns an integer that represents an RGB pixel value from a BitmapImage2D
+     * object at a specific point(<i>x</i>, <i>y</i>). The
+     * <code>getPixel()</code> method returns an unmultiplied pixel value. No
+     * alpha information is returned.
+     *
+     * <p>All pixels in a BitmapImage2D object are stored as premultiplied color
+     * values. A premultiplied image pixel has the red, green, and blue color
+     * channel values already multiplied by the alpha data. For example, if the
+     * alpha value is 0, the values for the RGB channels are also 0, independent
+     * of their unmultiplied values. This loss of data can cause some problems
+     * when you perform operations. All BitmapImage2D methods take and return
+     * unmultiplied values. The internal pixel representation is converted from
+     * premultiplied to unmultiplied before it is returned as a value. During a
+     * set operation, the pixel value is premultiplied before the raw image pixel
+     * is set.</p>
+     *
+     * @param x The <i>x</i> position of the pixel.
+     * @param y The <i>y</i> position of the pixel.
+     * @return A number that represents an RGB pixel value. If the(<i>x</i>,
+     *         <i>y</i>) coordinates are outside the bounds of the image, the
+     *         method returns 0.
+     */
+    BitmapImage2D.prototype.getPixel = function (x, y) {
+        var r;
+        var g;
+        var b;
+        var a;
+        if (!this._locked) {
+            var pixelData = this._context.getImageData(x, y, 1, 1);
+            r = pixelData.data[0];
+            g = pixelData.data[1];
+            b = pixelData.data[2];
+            a = pixelData.data[3];
+        }
+        else {
+            var index = (x + y * this._imageData.width) * 4;
+            r = this._imageData.data[index + 0];
+            g = this._imageData.data[index + 1];
+            b = this._imageData.data[index + 2];
+            a = this._imageData.data[index + 3];
+        }
+        //returns black if fully transparent
+        if (!a)
+            return 0x0;
+        return (r << 16) | (g << 8) | b;
+    };
+    /**
+     * Returns an ARGB color value that contains alpha channel data and RGB data.
+     * This method is similar to the <code>getPixel()</code> method, which
+     * returns an RGB color without alpha channel data.
+     *
+     * <p>All pixels in a BitmapImage2D object are stored as premultiplied color
+     * values. A premultiplied image pixel has the red, green, and blue color
+     * channel values already multiplied by the alpha data. For example, if the
+     * alpha value is 0, the values for the RGB channels are also 0, independent
+     * of their unmultiplied values. This loss of data can cause some problems
+     * when you perform operations. All BitmapImage2D methods take and return
+     * unmultiplied values. The internal pixel representation is converted from
+     * premultiplied to unmultiplied before it is returned as a value. During a
+     * set operation, the pixel value is premultiplied before the raw image pixel
+     * is set.</p>
+     *
+     * @param x The <i>x</i> position of the pixel.
+     * @param y The <i>y</i> position of the pixel.
+     * @return A number representing an ARGB pixel value. If the(<i>x</i>,
+     *         <i>y</i>) coordinates are outside the bounds of the image, 0 is
+     *         returned.
+     */
+    BitmapImage2D.prototype.getPixel32 = function (x, y) {
+        var r;
+        var g;
+        var b;
+        var a;
+        if (!this._locked) {
+            var pixelData = this._context.getImageData(x, y, 1, 1);
+            r = pixelData.data[0];
+            g = pixelData.data[1];
+            b = pixelData.data[2];
+            a = pixelData.data[3];
+        }
+        else {
+            var index = (x + y * this._imageData.width) * 4;
+            r = this._imageData.data[index + 0];
+            g = this._imageData.data[index + 1];
+            b = this._imageData.data[index + 2];
+            a = this._imageData.data[index + 3];
+        }
+        return (a << 24) | (r << 16) | (g << 8) | b;
+    };
+    /**
+     * Locks an image so that any objects that reference the BitmapImage2D object,
+     * such as Bitmap objects, are not updated when this BitmapImage2D object
+     * changes. To improve performance, use this method along with the
+     * <code>unlock()</code> method before and after numerous calls to the
+     * <code>setPixel()</code> or <code>setPixel32()</code> method.
+     *
+     */
+    BitmapImage2D.prototype.lock = function () {
+        if (this._locked)
+            return;
+        this._locked = true;
+        this._imageData = this._context.getImageData(0, 0, this._rect.width, this._rect.height);
+    };
+    /**
+     * Converts an Array into a rectangular region of pixel data. For each pixel,
+     * an Array element is read and written into the BitmapImage2D pixel. The data
+     * in the Array is expected to be 32-bit ARGB pixel values.
+     *
+     * @param rect        Specifies the rectangular region of the BitmapImage2D
+     *                    object.
+     * @param inputArray  An Array that consists of 32-bit unmultiplied pixel
+     *                    values to be used in the rectangular region.
+     * @throws RangeError The vector array is not large enough to read all the
+     *                    pixel data.
+     */
+    BitmapImage2D.prototype.setArray = function (rect, inputArray) {
+        if (!this._locked)
+            this._imageData = this._context.getImageData(0, 0, this._rect.width, this._rect.height);
+        var i /*uint*/, j /*uint*/, index /*uint*/, argb /*uint*/;
+        for (i = 0; i < rect.width; ++i) {
+            for (j = 0; j < rect.height; ++j) {
+                argb = ColorUtils.float32ColorToARGB(inputArray[i + j * rect.width]);
+                index = (i + rect.x + (j + rect.y) * this._imageData.width) * 4;
+                this._imageData.data[index + 0] = argb[1];
+                this._imageData.data[index + 1] = argb[2];
+                this._imageData.data[index + 2] = argb[3];
+                this._imageData.data[index + 3] = argb[0];
+            }
+        }
+        if (!this._locked) {
+            this._context.putImageData(this._imageData, 0, 0);
+            this._imageData = null;
+        }
+        this.invalidate();
+    };
+    /**
+     * Sets a single pixel of a BitmapImage2D object. The current alpha channel
+     * value of the image pixel is preserved during this operation. The value of
+     * the RGB color parameter is treated as an unmultiplied color value.
+     *
+     * <p><b>Note:</b> To increase performance, when you use the
+     * <code>setPixel()</code> or <code>setPixel32()</code> method repeatedly,
+     * call the <code>lock()</code> method before you call the
+     * <code>setPixel()</code> or <code>setPixel32()</code> method, and then call
+     * the <code>unlock()</code> method when you have made all pixel changes.
+     * This process prevents objects that reference this BitmapImage2D instance from
+     * updating until you finish making the pixel changes.</p>
+     *
+     * @param x     The <i>x</i> position of the pixel whose value changes.
+     * @param y     The <i>y</i> position of the pixel whose value changes.
+     * @param color The resulting RGB color for the pixel.
+     */
+    BitmapImage2D.prototype.setPixel = function (x, y, color) {
+        var argb = ColorUtils.float32ColorToARGB(color);
+        if (!this._locked)
+            this._imageData = this._context.getImageData(0, 0, this._rect.width, this._rect.height);
+        var index = (x + y * this._imageData.width) * 4;
+        this._imageData.data[index + 0] = argb[1];
+        this._imageData.data[index + 1] = argb[2];
+        this._imageData.data[index + 2] = argb[3];
+        this._imageData.data[index + 3] = 255;
+        if (!this._locked) {
+            this._context.putImageData(this._imageData, 0, 0);
+            this._imageData = null;
+        }
+        this.invalidate();
+    };
+    /**
+     * Sets the color and alpha transparency values of a single pixel of a
+     * BitmapImage2D object. This method is similar to the <code>setPixel()</code>
+     * method; the main difference is that the <code>setPixel32()</code> method
+     * takes an ARGB color value that contains alpha channel information.
+     *
+     * <p>All pixels in a BitmapImage2D object are stored as premultiplied color
+     * values. A premultiplied image pixel has the red, green, and blue color
+     * channel values already multiplied by the alpha data. For example, if the
+     * alpha value is 0, the values for the RGB channels are also 0, independent
+     * of their unmultiplied values. This loss of data can cause some problems
+     * when you perform operations. All BitmapImage2D methods take and return
+     * unmultiplied values. The internal pixel representation is converted from
+     * premultiplied to unmultiplied before it is returned as a value. During a
+     * set operation, the pixel value is premultiplied before the raw image pixel
+     * is set.</p>
+     *
+     * <p><b>Note:</b> To increase performance, when you use the
+     * <code>setPixel()</code> or <code>setPixel32()</code> method repeatedly,
+     * call the <code>lock()</code> method before you call the
+     * <code>setPixel()</code> or <code>setPixel32()</code> method, and then call
+     * the <code>unlock()</code> method when you have made all pixel changes.
+     * This process prevents objects that reference this BitmapImage2D instance from
+     * updating until you finish making the pixel changes.</p>
+     *
+     * @param x     The <i>x</i> position of the pixel whose value changes.
+     * @param y     The <i>y</i> position of the pixel whose value changes.
+     * @param color The resulting ARGB color for the pixel. If the bitmap is
+     *              opaque(not transparent), the alpha transparency portion of
+     *              this color value is ignored.
+     */
+    BitmapImage2D.prototype.setPixel32 = function (x, y, color) {
+        var argb = ColorUtils.float32ColorToARGB(color);
+        if (!this._locked)
+            this._imageData = this._context.getImageData(0, 0, this._rect.width, this._rect.height);
+        var index = (x + y * this._imageData.width) * 4;
+        this._imageData.data[index + 0] = argb[1];
+        this._imageData.data[index + 1] = argb[2];
+        this._imageData.data[index + 2] = argb[3];
+        this._imageData.data[index + 3] = argb[0];
+        if (!this._locked) {
+            this._context.putImageData(this._imageData, 0, 0);
+            this._imageData = null;
+        }
+        this.invalidate();
+    };
+    /**
+     * Converts a byte array into a rectangular region of pixel data. For each
+     * pixel, the <code>ByteArray.readUnsignedInt()</code> method is called and
+     * the return value is written into the pixel. If the byte array ends before
+     * the full rectangle is written, the function returns. The data in the byte
+     * array is expected to be 32-bit ARGB pixel values. No seeking is performed
+     * on the byte array before or after the pixels are read.
+     *
+     * @param rect           Specifies the rectangular region of the BitmapImage2D
+     *                       object.
+     * @param inputByteArray A ByteArray object that consists of 32-bit
+     *                       unmultiplied pixel values to be used in the
+     *                       rectangular region.
+     * @throws EOFError  The <code>inputByteArray</code> object does not include
+     *                   enough data to fill the area of the <code>rect</code>
+     *                   rectangle. The method fills as many pixels as possible
+     *                   before throwing the exception.
+     * @throws TypeError The rect or inputByteArray are null.
+     */
+    BitmapImage2D.prototype.setPixels = function (rect, inputByteArray) {
+        if (!this._locked)
+            this._imageData = this._context.getImageData(0, 0, this._rect.width, this._rect.height);
+        inputByteArray.position = 0;
+        var i /*uint*/, j /*uint*/, index /*uint*/;
+        for (i = 0; i < rect.width; ++i) {
+            for (j = 0; j < rect.height; ++j) {
+                index = (i + rect.x + (j + rect.y) * this._imageData.width) * 4;
+                this._imageData.data[index + 0] = inputByteArray.readUnsignedInt();
+                this._imageData.data[index + 1] = inputByteArray.readUnsignedInt();
+                this._imageData.data[index + 2] = inputByteArray.readUnsignedInt();
+                this._imageData.data[index + 3] = inputByteArray.readUnsignedInt();
+            }
+        }
+        if (!this._locked) {
+            this._context.putImageData(this._imageData, 0, 0);
+            this._imageData = null;
+        }
+        this.invalidate();
+    };
+    /**
+     * Unlocks an image so that any objects that reference the BitmapImage2D object,
+     * such as Bitmap objects, are updated when this BitmapImage2D object changes.
+     * To improve performance, use this method along with the <code>lock()</code>
+     * method before and after numerous calls to the <code>setPixel()</code> or
+     * <code>setPixel32()</code> method.
+     *
+     * @param changeRect The area of the BitmapImage2D object that has changed. If
+     *                   you do not specify a value for this parameter, the
+     *                   entire area of the BitmapImage2D object is considered
+     *                   changed.
+     */
+    BitmapImage2D.prototype.unlock = function () {
+        if (!this._locked)
+            return;
+        this._locked = false;
+        this._context.putImageData(this._imageData, 0, 0); // at coords 0,0
+        this._imageData = null;
+    };
+    /**
+     *
+     * @returns {ImageData}
+     */
+    BitmapImage2D.prototype.getImageData = function () {
+        if (!this._locked)
+            return this._context.getImageData(0, 0, this._rect.width, this._rect.height);
+        return this._imageData;
+    };
+    /**
+     *
+     * @returns {HTMLCanvasElement}
+     */
+    BitmapImage2D.prototype.getCanvas = function () {
+        return this._imageCanvas;
+    };
+    /**
+     *
+     * @param width
+     * @param height
+     * @private
+     */
+    BitmapImage2D.prototype._setSize = function (width, height) {
+        if (this._locked)
+            this._context.putImageData(this._imageData, 0, 0);
+        if (this._imageCanvas) {
+            this._imageCanvas.width = width;
+            this._imageCanvas.height = height;
+        }
+        _super.prototype._setSize.call(this, width, height);
+        if (this._locked)
+            this._imageData = this._context.getImageData(0, 0, this._rect.width, this._rect.height);
+    };
+    BitmapImage2D.assetType = "[image BitmapImage2D]";
+    return BitmapImage2D;
+})(Image2D);
+module.exports = BitmapImage2D;
+
+},{"awayjs-core/lib/image/CPUCanvas":"awayjs-core/lib/image/CPUCanvas","awayjs-core/lib/image/Image2D":"awayjs-core/lib/image/Image2D","awayjs-core/lib/utils/BitmapImageUtils":"awayjs-core/lib/utils/BitmapImageUtils","awayjs-core/lib/utils/ColorUtils":"awayjs-core/lib/utils/ColorUtils"}],"awayjs-core/lib/image/BitmapImageChannel":[function(require,module,exports){
+var BitmapImageChannel = (function () {
+    function BitmapImageChannel() {
+    }
+    BitmapImageChannel.ALPHA = 8;
+    BitmapImageChannel.BLUE = 4;
+    BitmapImageChannel.GREEN = 2;
+    BitmapImageChannel.RED = 1;
+    return BitmapImageChannel;
+})();
+module.exports = BitmapImageChannel;
+
+},{}],"awayjs-core/lib/image/BitmapImageCube":[function(require,module,exports){
+var __extends = this.__extends || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    __.prototype = b.prototype;
+    d.prototype = new __();
+};
+var BitmapImage2D = require("awayjs-core/lib/image/BitmapImage2D");
+var ImageCube = require("awayjs-core/lib/image/ImageCube");
+var Rectangle = require("awayjs-core/lib/geom/Rectangle");
+var ColorUtils = require("awayjs-core/lib/utils/ColorUtils");
+var BitmapImageUtils = require("awayjs-core/lib/utils/BitmapImageUtils");
+/**
+ * The BitmapImage2D class lets you work with the data(pixels) of a Bitmap
+ * object. You can use the methods of the BitmapImage2D class to create
+ * arbitrarily sized transparent or opaque bitmap images and manipulate them
+ * in various ways at runtime. You can also access the BitmapImage2D for a bitmap
+ * image that you load with the <code>flash.Assets</code> or
+ * <code>flash.display.Loader</code> classes.
+ *
+ * <p>This class lets you separate bitmap rendering operations from the
+ * internal display updating routines of flash. By manipulating a
+ * BitmapImage2D object directly, you can create complex images without incurring
+ * the per-frame overhead of constantly redrawing the content from vector
+ * data.</p>
+ *
+ * <p>The methods of the BitmapImage2D class support effects that are not
+ * available through the filters available to non-bitmap display objects.</p>
+ *
+ * <p>A BitmapImage2D object contains an array of pixel data. This data can
+ * represent either a fully opaque bitmap or a transparent bitmap that
+ * contains alpha channel data. Either type of BitmapImage2D object is stored as
+ * a buffer of 32-bit integers. Each 32-bit integer determines the properties
+ * of a single pixel in the bitmap.</p>
+ *
+ * <p>Each 32-bit integer is a combination of four 8-bit channel values(from
+ * 0 to 255) that describe the alpha transparency and the red, green, and blue
+ * (ARGB) values of the pixel.(For ARGB values, the most significant byte
+ * represents the alpha channel value, followed by red, green, and blue.)</p>
+ *
+ * <p>The four channels(alpha, red, green, and blue) are represented as
+ * numbers when you use them with the <code>BitmapImage2D.copyChannel()</code>
+ * method or the <code>DisplacementMapFilter.componentX</code> and
+ * <code>DisplacementMapFilter.componentY</code> properties, and these numbers
+ * are represented by the following constants in the BitmapImage2DChannel
+ * class:</p>
+ *
+ * <ul>
+ *   <li><code>BitmapImage2DChannel.ALPHA</code></li>
+ *   <li><code>BitmapImage2DChannel.RED</code></li>
+ *   <li><code>BitmapImage2DChannel.GREEN</code></li>
+ *   <li><code>BitmapImage2DChannel.BLUE</code></li>
+ * </ul>
+ *
+ * <p>You can attach BitmapImage2D objects to a Bitmap object by using the
+ * <code>bitmapData</code> property of the Bitmap object.</p>
+ *
+ * <p>You can use a BitmapImage2D object to fill a Graphics object by using the
+ * <code>Graphics.beginBitmapFill()</code> method.</p>
+ *
+ * <p>You can also use a BitmapImage2D object to perform batch tile rendering
+ * using the <code>flash.display.Tilesheet</code> class.</p>
+ *
+ * <p>In Flash Player 10, the maximum size for a BitmapImage2D object
+ * is 8,191 pixels in width or height, and the total number of pixels cannot
+ * exceed 16,777,215 pixels.(So, if a BitmapImage2D object is 8,191 pixels wide,
+ * it can only be 2,048 pixels high.) In Flash Player 9 and earlier, the limitation
+ * is 2,880 pixels in height and 2,880 in width.</p>
+ */
+var BitmapImageCube = (function (_super) {
+    __extends(BitmapImageCube, _super);
+    /**
+     * Creates a BitmapImage2D object with a specified width and height. If you
+     * specify a value for the <code>fillColor</code> parameter, every pixel in
+     * the bitmap is set to that color.
+     *
+     * <p>By default, the bitmap is created as transparent, unless you pass
+     * the value <code>false</code> for the transparent parameter. After you
+     * create an opaque bitmap, you cannot change it to a transparent bitmap.
+     * Every pixel in an opaque bitmap uses only 24 bits of color channel
+     * information. If you define the bitmap as transparent, every pixel uses 32
+     * bits of color channel information, including an alpha transparency
+     * channel.</p>
+     *
+     * @param width       The width of the bitmap image in pixels.
+     * @param height      The height of the bitmap image in pixels.
+     * @param transparent Specifies whether the bitmap image supports per-pixel
+     *                    transparency. The default value is <code>true</code>
+     *                    (transparent). To create a fully transparent bitmap,
+     *                    set the value of the <code>transparent</code>
+     *                    parameter to <code>true</code> and the value of the
+     *                    <code>fillColor</code> parameter to 0x00000000(or to
+     *                    0). Setting the <code>transparent</code> property to
+     *                    <code>false</code> can result in minor improvements
+     *                    in rendering performance.
+     * @param fillColor   A 32-bit ARGB color value that you use to fill the
+     *                    bitmap image area. The default value is
+     *                    0xFFFFFFFF(solid white).
+     */
+    function BitmapImageCube(size, transparent, fillColor) {
+        if (transparent === void 0) { transparent = true; }
+        if (fillColor === void 0) { fillColor = null; }
+        _super.call(this, size);
+        this._imageCanvas = new Array(6);
+        this._context = new Array(6);
+        this._imageData = new Array(6);
+        this._locked = false;
+        this._transparent = transparent;
+        for (var i = 0; i < 6; i++) {
+            this._imageCanvas[i] = document.createElement("canvas");
+            this._imageCanvas[i].width = size;
+            this._imageCanvas[i].height = size;
+            this._context[i] = this._imageCanvas[i].getContext("2d");
+            if (fillColor != null)
+                this.fillRect(i, new Rectangle(0, 0, size, size), fillColor);
+        }
+    }
+    Object.defineProperty(BitmapImageCube.prototype, "assetType", {
+        /**
+         *
+         * @returns {string}
+         */
+        get: function () {
+            return BitmapImageCube.assetType;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(BitmapImageCube.prototype, "transparent", {
+        /**
+         * Defines whether the bitmap image supports per-pixel transparency. You can
+         * set this value only when you construct a BitmapImage2D object by passing in
+         * <code>true</code> for the <code>transparent</code> parameter of the
+         * constructor. Then, after you create a BitmapImage2D object, you can check
+         * whether it supports per-pixel transparency by determining if the value of
+         * the <code>transparent</code> property is <code>true</code>.
+         */
+        get: function () {
+            return this._transparent;
+        },
+        set: function (value) {
+            this._transparent = value;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    /**
+     * Returns a new BitmapImage2D object that is a clone of the original instance
+     * with an exact copy of the contained bitmap.
+     *
+     * @return A new BitmapImage2D object that is identical to the original.
+     */
+    BitmapImageCube.prototype.clone = function () {
+        var t = new BitmapImageCube(this._size, this.transparent);
+        for (var i = 0; i < 6; i++) {
+            t.draw(i, this.getCanvas(i));
+        }
+        return t;
+    };
+    /**
+     * Adjusts the color values in a specified area of a bitmap image by using a
+     * <code>ColorTransform</code> object. If the rectangle matches the
+     * boundaries of the bitmap image, this method transforms the color values of
+     * the entire image.
+     *
+     * @param rect           A Rectangle object that defines the area of the
+     *                       image in which the ColorTransform object is applied.
+     * @param colorTransform A ColorTransform object that describes the color
+     *                       transformation values to apply.
+     */
+    BitmapImageCube.prototype.colorTransform = function (side, rect, colorTransform) {
+        if (!this._locked)
+            this._imageData[side] = this._context[side].getImageData(0, 0, this._size, this._size);
+        var data = this._imageData[side].data;
+        var i /*uint*/, j /*uint*/, index /*uint*/;
+        for (i = 0; i < rect.width; ++i) {
+            for (j = 0; j < rect.height; ++j) {
+                index = (i + rect.x + (j + rect.y) * this._size) * 4;
+                data[index] = data[index] * colorTransform.redMultiplier + colorTransform.redOffset;
+                data[index + 1] = data[index + 1] * colorTransform.greenMultiplier + colorTransform.greenOffset;
+                data[index + 2] = data[index + 2] * colorTransform.blueMultiplier + colorTransform.blueOffset;
+                data[index + 3] = data[index + 3] * colorTransform.alphaMultiplier + colorTransform.alphaOffset;
+            }
+        }
+        if (!this._locked) {
+            this._context[side].putImageData(this._imageData[side], 0, 0);
+            this._imageData[side] = null;
+        }
+        this.invalidate();
+    };
+    /**
+     * Transfers data from one channel of another BitmapImage2D object or the
+     * current BitmapImage2D object into a channel of the current BitmapImage2D object.
+     * All of the data in the other channels in the destination BitmapImage2D object
+     * are preserved.
+     *
+     * <p>The source channel value and destination channel value can be one of
+     * following values: </p>
+     *
+     * <ul>
+     *   <li><code>BitmapImage2DChannel.RED</code></li>
+     *   <li><code>BitmapImage2DChannel.GREEN</code></li>
+     *   <li><code>BitmapImage2DChannel.BLUE</code></li>
+     *   <li><code>BitmapImage2DChannel.ALPHA</code></li>
+     * </ul>
+     *
+     * @param sourceBitmapImage2D The input bitmap image to use. The source image
+     *                         can be a different BitmapImage2D object or it can
+     *                         refer to the current BitmapImage2D object.
+     * @param sourceRect       The source Rectangle object. To copy only channel
+     *                         data from a smaller area within the bitmap,
+     *                         specify a source rectangle that is smaller than
+     *                         the overall size of the BitmapImage2D object.
+     * @param destPoint        The destination Point object that represents the
+     *                         upper-left corner of the rectangular area where
+     *                         the new channel data is placed. To copy only
+     *                         channel data from one area to a different area in
+     *                         the destination image, specify a point other than
+     *                        (0,0).
+     * @param sourceChannel    The source channel. Use a value from the
+     *                         BitmapImage2DChannel class
+     *                        (<code>BitmapImage2DChannel.RED</code>,
+     *                         <code>BitmapImage2DChannel.BLUE</code>,
+     *                         <code>BitmapImage2DChannel.GREEN</code>,
+     *                         <code>BitmapImage2DChannel.ALPHA</code>).
+     * @param destChannel      The destination channel. Use a value from the
+     *                         BitmapImage2DChannel class
+     *                        (<code>BitmapImage2DChannel.RED</code>,
+     *                         <code>BitmapImage2DChannel.BLUE</code>,
+     *                         <code>BitmapImage2DChannel.GREEN</code>,
+     *                         <code>BitmapImage2DChannel.ALPHA</code>).
+     * @throws TypeError The sourceBitmapImage2D, sourceRect or destPoint are null.
+     */
+    BitmapImageCube.prototype.copyChannel = function (side, sourceBitmap, sourceRect, destPoint, sourceChannel, destChannel) {
+        var imageData = sourceBitmap.getImageData();
+        if (!this._locked)
+            this._imageData[side] = this._context[side].getImageData(0, 0, this._size, this._size);
+        var sourceData = sourceBitmap.getImageData().data;
+        var destData = this._imageData[side].data;
+        var sourceOffset = Math.round(Math.log(sourceChannel) / Math.log(2));
+        var destOffset = Math.round(Math.log(destChannel) / Math.log(2));
+        var i /*uint*/, j /*uint*/, sourceIndex /*uint*/, destIndex /*uint*/;
+        for (i = 0; i < sourceRect.width; ++i) {
+            for (j = 0; j < sourceRect.height; ++j) {
+                sourceIndex = (i + sourceRect.x + (j + sourceRect.y) * sourceBitmap.width) * 4;
+                destIndex = (i + destPoint.x + (j + destPoint.y) * this._size) * 4;
+                destData[destIndex + destOffset] = sourceData[sourceIndex + sourceOffset];
+            }
+        }
+        if (!this._locked) {
+            this._context[side].putImageData(this._imageData[side], 0, 0);
+            this._imageData[side] = null;
+        }
+        this.invalidate();
+    };
+    BitmapImageCube.prototype.copyPixels = function (side, source, sourceRect, destRect) {
+        if (source instanceof BitmapImage2D)
+            source = source.getCanvas();
+        if (this._locked) {
+            // If canvas is locked:
+            //
+            //      1) copy image data back to canvas
+            //      2) draw object
+            //      3) read _imageData back out
+            this._context[side].putImageData(this._imageData[side], 0, 0); // at coords 0,0
+            BitmapImageUtils._copyPixels(this._context[side], source, sourceRect, destRect);
+            this._imageData[side] = this._context[side].getImageData(0, 0, this._size, this._size);
+        }
+        else {
+            BitmapImageUtils._copyPixels(this._context[side], source, sourceRect, destRect);
+        }
+        this.invalidate();
+    };
+    /**
+     * Frees memory that is used to store the BitmapImage2D object.
+     *
+     * <p>When the <code>dispose()</code> method is called on an image, the width
+     * and height of the image are set to 0. All subsequent calls to methods or
+     * properties of this BitmapImage2D instance fail, and an exception is thrown.
+     * </p>
+     *
+     * <p><code>BitmapImage2D.dispose()</code> releases the memory occupied by the
+     * actual bitmap data, immediately(a bitmap can consume up to 64 MB of
+     * memory). After using <code>BitmapImage2D.dispose()</code>, the BitmapImage2D
+     * object is no longer usable and an exception may be thrown if
+     * you call functions on the BitmapImage2D object. However,
+     * <code>BitmapImage2D.dispose()</code> does not garbage collect the BitmapImage2D
+     * object(approximately 128 bytes); the memory occupied by the actual
+     * BitmapImage2D object is released at the time the BitmapImage2D object is
+     * collected by the garbage collector.</p>
+     *
+     */
+    BitmapImageCube.prototype.dispose = function () {
+        _super.prototype.dispose.call(this);
+        for (var i = 0; i < 6; i++) {
+            this._context[i] = null;
+            this._imageCanvas[i] = null;
+            this._imageData[i] = null;
+        }
+        this._transparent = null;
+        this._locked = null;
+    };
+    BitmapImageCube.prototype.draw = function (side, source, matrix, colorTransform, blendMode, clipRect, smoothing) {
+        if (source instanceof BitmapImage2D)
+            source = source.getCanvas();
+        if (this._locked) {
+            // If canvas is locked:
+            //
+            //      1) copy image data back to canvas
+            //      2) draw object
+            //      3) read _imageData back out
+            this._context[side].putImageData(this._imageData[side], 0, 0); // at coords 0,0
+            BitmapImageUtils._draw(this._context[side], source, matrix, colorTransform, blendMode, clipRect, smoothing);
+            this._imageData[side] = this._context[side].getImageData(0, 0, this._size, this._size);
+        }
+        else {
+            BitmapImageUtils._draw(this._context[side], source, matrix, colorTransform, blendMode, clipRect, smoothing);
+        }
+        this.invalidate();
+    };
+    /**
+     * Fills a rectangular area of pixels with a specified ARGB color.
+     *
+     * @param rect  The rectangular area to fill.
+     * @param color The ARGB color value that fills the area. ARGB colors are
+     *              often specified in hexadecimal format; for example,
+     *              0xFF336699.
+     * @throws TypeError The rect is null.
+     */
+    BitmapImageCube.prototype.fillRect = function (side, rect, color) {
+        if (this._locked) {
+            // If canvas is locked:
+            //
+            //      1) copy image data back to canvas
+            //      2) apply fill
+            //      3) read _imageData back out
+            if (this._imageData[side])
+                this._context[side].putImageData(this._imageData[side], 0, 0); // at coords 0,0
+            BitmapImageUtils._fillRect(this._context[side], rect, color, this._transparent);
+            if (this._imageData[side])
+                this._imageData[side] = this._context[side].getImageData(0, 0, this._size, this._size);
+        }
+        else {
+            BitmapImageUtils._fillRect(this._context[side], rect, color, this._transparent);
+        }
+        this.invalidate();
+    };
+    /**
+     * Returns an integer that represents an RGB pixel value from a BitmapImage2D
+     * object at a specific point(<i>x</i>, <i>y</i>). The
+     * <code>getPixel()</code> method returns an unmultiplied pixel value. No
+     * alpha information is returned.
+     *
+     * <p>All pixels in a BitmapImage2D object are stored as premultiplied color
+     * values. A premultiplied image pixel has the red, green, and blue color
+     * channel values already multiplied by the alpha data. For example, if the
+     * alpha value is 0, the values for the RGB channels are also 0, independent
+     * of their unmultiplied values. This loss of data can cause some problems
+     * when you perform operations. All BitmapImage2D methods take and return
+     * unmultiplied values. The internal pixel representation is converted from
+     * premultiplied to unmultiplied before it is returned as a value. During a
+     * set operation, the pixel value is premultiplied before the raw image pixel
+     * is set.</p>
+     *
+     * @param x The <i>x</i> position of the pixel.
+     * @param y The <i>y</i> position of the pixel.
+     * @return A number that represents an RGB pixel value. If the(<i>x</i>,
+     *         <i>y</i>) coordinates are outside the bounds of the image, the
+     *         method returns 0.
+     */
+    BitmapImageCube.prototype.getPixel = function (side, x, y) {
+        var r;
+        var g;
+        var b;
+        var a;
+        if (!this._locked) {
+            var pixelData = this._context[side].getImageData(x, y, 1, 1);
+            r = pixelData.data[0];
+            g = pixelData.data[1];
+            b = pixelData.data[2];
+            a = pixelData.data[3];
+        }
+        else {
+            var index = (x + y * this._size) * 4;
+            r = this._imageData[side].data[index + 0];
+            g = this._imageData[side].data[index + 1];
+            b = this._imageData[side].data[index + 2];
+            a = this._imageData[side].data[index + 3];
+        }
+        //returns black if fully transparent
+        if (!a)
+            return 0x0;
+        return (r << 16) | (g << 8) | b;
+    };
+    /**
+     * Returns an ARGB color value that contains alpha channel data and RGB data.
+     * This method is similar to the <code>getPixel()</code> method, which
+     * returns an RGB color without alpha channel data.
+     *
+     * <p>All pixels in a BitmapImage2D object are stored as premultiplied color
+     * values. A premultiplied image pixel has the red, green, and blue color
+     * channel values already multiplied by the alpha data. For example, if the
+     * alpha value is 0, the values for the RGB channels are also 0, independent
+     * of their unmultiplied values. This loss of data can cause some problems
+     * when you perform operations. All BitmapImage2D methods take and return
+     * unmultiplied values. The internal pixel representation is converted from
+     * premultiplied to unmultiplied before it is returned as a value. During a
+     * set operation, the pixel value is premultiplied before the raw image pixel
+     * is set.</p>
+     *
+     * @param x The <i>x</i> position of the pixel.
+     * @param y The <i>y</i> position of the pixel.
+     * @return A number representing an ARGB pixel value. If the(<i>x</i>,
+     *         <i>y</i>) coordinates are outside the bounds of the image, 0 is
+     *         returned.
+     */
+    BitmapImageCube.prototype.getPixel32 = function (side, x, y) {
+        var r;
+        var g;
+        var b;
+        var a;
+        if (!this._locked) {
+            var pixelData = this._context[side].getImageData(x, y, 1, 1);
+            r = pixelData.data[0];
+            g = pixelData.data[1];
+            b = pixelData.data[2];
+            a = pixelData.data[3];
+        }
+        else {
+            var index = (x + y * this._size) * 4;
+            r = this._imageData[side].data[index + 0];
+            g = this._imageData[side].data[index + 1];
+            b = this._imageData[side].data[index + 2];
+            a = this._imageData[side].data[index + 3];
+        }
+        return (a << 24) | (r << 16) | (g << 8) | b;
+    };
+    /**
+     * Locks an image so that any objects that reference the BitmapImage2D object,
+     * such as Bitmap objects, are not updated when this BitmapImage2D object
+     * changes. To improve performance, use this method along with the
+     * <code>unlock()</code> method before and after numerous calls to the
+     * <code>setPixel()</code> or <code>setPixel32()</code> method.
+     *
+     */
+    BitmapImageCube.prototype.lock = function () {
+        if (this._locked)
+            return;
+        this._locked = true;
+        for (var i = 0; i < 6; i++)
+            this._imageData[i] = this._context[i].getImageData(0, 0, this._size, this._size);
+    };
+    /**
+     * Converts an Array into a rectangular region of pixel data. For each pixel,
+     * an Array element is read and written into the BitmapImage2D pixel. The data
+     * in the Array is expected to be 32-bit ARGB pixel values.
+     *
+     * @param rect        Specifies the rectangular region of the BitmapImage2D
+     *                    object.
+     * @param inputArray  An Array that consists of 32-bit unmultiplied pixel
+     *                    values to be used in the rectangular region.
+     * @throws RangeError The vector array is not large enough to read all the
+     *                    pixel data.
+     */
+    BitmapImageCube.prototype.setArray = function (side, rect, inputArray) {
+        if (!this._locked)
+            this._imageData[side] = this._context[side].getImageData(0, 0, this._size, this._size);
+        var i /*uint*/, j /*uint*/, index /*uint*/, argb /*uint*/;
+        for (i = 0; i < rect.width; ++i) {
+            for (j = 0; j < rect.height; ++j) {
+                argb = ColorUtils.float32ColorToARGB(inputArray[i + j * rect.width]);
+                index = (i + rect.x + (j + rect.y) * this._size) * 4;
+                this._imageData[side].data[index + 0] = argb[1];
+                this._imageData[side].data[index + 1] = argb[2];
+                this._imageData[side].data[index + 2] = argb[3];
+                this._imageData[side].data[index + 3] = argb[0];
+            }
+        }
+        if (!this._locked) {
+            this._context[side].putImageData(this._imageData[side], 0, 0);
+            this._imageData[side] = null;
+        }
+        this.invalidate();
+    };
+    /**
+     * Sets a single pixel of a BitmapImage2D object. The current alpha channel
+     * value of the image pixel is preserved during this operation. The value of
+     * the RGB color parameter is treated as an unmultiplied color value.
+     *
+     * <p><b>Note:</b> To increase performance, when you use the
+     * <code>setPixel()</code> or <code>setPixel32()</code> method repeatedly,
+     * call the <code>lock()</code> method before you call the
+     * <code>setPixel()</code> or <code>setPixel32()</code> method, and then call
+     * the <code>unlock()</code> method when you have made all pixel changes.
+     * This process prevents objects that reference this BitmapImage2D instance from
+     * updating until you finish making the pixel changes.</p>
+     *
+     * @param x     The <i>x</i> position of the pixel whose value changes.
+     * @param y     The <i>y</i> position of the pixel whose value changes.
+     * @param color The resulting RGB color for the pixel.
+     */
+    BitmapImageCube.prototype.setPixel = function (side, x, y, color) {
+        var argb = ColorUtils.float32ColorToARGB(color);
+        if (!this._locked)
+            this._imageData[side] = this._context[side].getImageData(0, 0, this._size, this._size);
+        var index = (x + y * this._size) * 4;
+        this._imageData[side].data[index + 0] = argb[1];
+        this._imageData[side].data[index + 1] = argb[2];
+        this._imageData[side].data[index + 2] = argb[3];
+        this._imageData[side].data[index + 3] = 255;
+        if (!this._locked) {
+            this._context[side].putImageData(this._imageData[side], 0, 0);
+            this._imageData = null;
+        }
+        this.invalidate();
+    };
+    /**
+     * Sets the color and alpha transparency values of a single pixel of a
+     * BitmapImage2D object. This method is similar to the <code>setPixel()</code>
+     * method; the main difference is that the <code>setPixel32()</code> method
+     * takes an ARGB color value that contains alpha channel information.
+     *
+     * <p>All pixels in a BitmapImage2D object are stored as premultiplied color
+     * values. A premultiplied image pixel has the red, green, and blue color
+     * channel values already multiplied by the alpha data. For example, if the
+     * alpha value is 0, the values for the RGB channels are also 0, independent
+     * of their unmultiplied values. This loss of data can cause some problems
+     * when you perform operations. All BitmapImage2D methods take and return
+     * unmultiplied values. The internal pixel representation is converted from
+     * premultiplied to unmultiplied before it is returned as a value. During a
+     * set operation, the pixel value is premultiplied before the raw image pixel
+     * is set.</p>
+     *
+     * <p><b>Note:</b> To increase performance, when you use the
+     * <code>setPixel()</code> or <code>setPixel32()</code> method repeatedly,
+     * call the <code>lock()</code> method before you call the
+     * <code>setPixel()</code> or <code>setPixel32()</code> method, and then call
+     * the <code>unlock()</code> method when you have made all pixel changes.
+     * This process prevents objects that reference this BitmapImage2D instance from
+     * updating until you finish making the pixel changes.</p>
+     *
+     * @param x     The <i>x</i> position of the pixel whose value changes.
+     * @param y     The <i>y</i> position of the pixel whose value changes.
+     * @param color The resulting ARGB color for the pixel. If the bitmap is
+     *              opaque(not transparent), the alpha transparency portion of
+     *              this color value is ignored.
+     */
+    BitmapImageCube.prototype.setPixel32 = function (side, x, y, color) {
+        var argb = ColorUtils.float32ColorToARGB(color);
+        if (!this._locked)
+            this._imageData[side] = this._context[side].getImageData(0, 0, this._size, this._size);
+        var index = (x + y * this._size) * 4;
+        this._imageData[side].data[index + 0] = argb[1];
+        this._imageData[side].data[index + 1] = argb[2];
+        this._imageData[side].data[index + 2] = argb[3];
+        this._imageData[side].data[index + 3] = argb[0];
+        if (!this._locked) {
+            this._context[side].putImageData(this._imageData[side], 0, 0);
+            this._imageData[side] = null;
+        }
+        this.invalidate();
+    };
+    /**
+     * Converts a byte array into a rectangular region of pixel data. For each
+     * pixel, the <code>ByteArray.readUnsignedInt()</code> method is called and
+     * the return value is written into the pixel. If the byte array ends before
+     * the full rectangle is written, the function returns. The data in the byte
+     * array is expected to be 32-bit ARGB pixel values. No seeking is performed
+     * on the byte array before or after the pixels are read.
+     *
+     * @param rect           Specifies the rectangular region of the BitmapImage2D
+     *                       object.
+     * @param inputByteArray A ByteArray object that consists of 32-bit
+     *                       unmultiplied pixel values to be used in the
+     *                       rectangular region.
+     * @throws EOFError  The <code>inputByteArray</code> object does not include
+     *                   enough data to fill the area of the <code>rect</code>
+     *                   rectangle. The method fills as many pixels as possible
+     *                   before throwing the exception.
+     * @throws TypeError The rect or inputByteArray are null.
+     */
+    BitmapImageCube.prototype.setPixels = function (side, rect, inputByteArray) {
+        if (!this._locked)
+            this._imageData[side] = this._context[side].getImageData(0, 0, this._size, this._size);
+        inputByteArray.position = 0;
+        var i /*uint*/, j /*uint*/, index /*uint*/;
+        for (i = 0; i < rect.width; ++i) {
+            for (j = 0; j < rect.height; ++j) {
+                index = (i + rect.x + (j + rect.y) * this._size) * 4;
+                this._imageData[side].data[index + 0] = inputByteArray.readUnsignedInt();
+                this._imageData[side].data[index + 1] = inputByteArray.readUnsignedInt();
+                this._imageData[side].data[index + 2] = inputByteArray.readUnsignedInt();
+                this._imageData[side].data[index + 3] = inputByteArray.readUnsignedInt();
+            }
+        }
+        if (!this._locked) {
+            this._context[side].putImageData(this._imageData[side], 0, 0);
+            this._imageData[side] = null;
+        }
+        this.invalidate();
+    };
+    /**
+     * Unlocks an image so that any objects that reference the BitmapImage2D object,
+     * such as Bitmap objects, are updated when this BitmapImage2D object changes.
+     * To improve performance, use this method along with the <code>lock()</code>
+     * method before and after numerous calls to the <code>setPixel()</code> or
+     * <code>setPixel32()</code> method.
+     *
+     * @param changeRect The area of the BitmapImage2D object that has changed. If
+     *                   you do not specify a value for this parameter, the
+     *                   entire area of the BitmapImage2D object is considered
+     *                   changed.
+     */
+    BitmapImageCube.prototype.unlock = function () {
+        if (!this._locked)
+            return;
+        this._locked = false;
+        for (var i = 0; i < 6; i++) {
+            this._context[i].putImageData(this._imageData[i], 0, 0); // at coords 0,0
+            this._imageData[i] = null;
+        }
+    };
+    /**
+     *
+     * @returns {ImageData}
+     */
+    BitmapImageCube.prototype.getImageData = function (side) {
+        if (!this._locked)
+            return this._context[side].getImageData(0, 0, this._size, this._size);
+        return this._imageData[side];
+    };
+    /**
+     *
+     * @returns {HTMLCanvasElement}
+     */
+    BitmapImageCube.prototype.getCanvas = function (side) {
+        return this._imageCanvas[side];
+    };
+    /**
+     *
+     * @param width
+     * @param height
+     * @private
+     */
+    BitmapImageCube.prototype._setSize = function (size) {
+        _super.prototype._setSize.call(this, size);
+        for (var i = 0; i < 6; i++) {
+            if (this._locked)
+                this._context[i].putImageData(this._imageData[i], 0, 0);
+            this._imageCanvas[i].width = size;
+            this._imageCanvas[i].height = size;
+            if (this._locked)
+                this._imageData[i] = this._context[i].getImageData(0, 0, this._size, this._size);
+        }
+    };
+    BitmapImageCube.assetType = "[image BitmapImageCube]";
+    BitmapImageCube.posX = 0;
+    BitmapImageCube.negX = 1;
+    BitmapImageCube.posY = 2;
+    BitmapImageCube.negY = 3;
+    BitmapImageCube.posZ = 4;
+    BitmapImageCube.negZ = 5;
+    return BitmapImageCube;
+})(ImageCube);
+module.exports = BitmapImageCube;
+
+},{"awayjs-core/lib/geom/Rectangle":"awayjs-core/lib/geom/Rectangle","awayjs-core/lib/image/BitmapImage2D":"awayjs-core/lib/image/BitmapImage2D","awayjs-core/lib/image/ImageCube":"awayjs-core/lib/image/ImageCube","awayjs-core/lib/utils/BitmapImageUtils":"awayjs-core/lib/utils/BitmapImageUtils","awayjs-core/lib/utils/ColorUtils":"awayjs-core/lib/utils/ColorUtils"}],"awayjs-core/lib/image/BlendMode":[function(require,module,exports){
+/**
+ * A class that provides constant values for visual blend mode effects. These
+ * constants are used in the following:
+ * <ul>
+ *   <li> The <code>blendMode</code> property of the
+ * flash.display.DisplayObject class.</li>
+ *   <li> The <code>blendMode</code> parameter of the <code>draw()</code>
+ * method of the flash.display.BitmapData class</li>
+ * </ul>
+ */
+var BlendMode = (function () {
+    function BlendMode() {
+    }
+    /**
+     * Adds the values of the constituent colors of the display object to the
+     * colors of its background, applying a ceiling of 0xFF. This setting is
+     * commonly used for animating a lightening dissolve between two objects.
+     *
+     * <p>For example, if the display object has a pixel with an RGB value of
+     * 0xAAA633, and the background pixel has an RGB value of 0xDD2200, the
+     * resulting RGB value for the displayed pixel is 0xFFC833(because 0xAA +
+     * 0xDD > 0xFF, 0xA6 + 0x22 = 0xC8, and 0x33 + 0x00 = 0x33).</p>
+     */
+    BlendMode.ADD = "add";
+    /**
+     * Applies the alpha value of each pixel of the display object to the
+     * background. This requires the <code>blendMode</code> property of the
+     * parent display object be set to
+     * <code>away.base.BlendMode.LAYER</code>.
+     *
+     * <p>Not supported under GPU rendering.</p>
+     */
+    BlendMode.ALPHA = "alpha";
+    /**
+     * Selects the darker of the constituent colors of the display object and the
+     * colors of the background(the colors with the smaller values). This
+     * setting is commonly used for superimposing type.
+     *
+     * <p>For example, if the display object has a pixel with an RGB value of
+     * 0xFFCC33, and the background pixel has an RGB value of 0xDDF800, the
+     * resulting RGB value for the displayed pixel is 0xDDCC00(because 0xFF >
+     * 0xDD, 0xCC < 0xF8, and 0x33 > 0x00 = 33).</p>
+     *
+     * <p>Not supported under GPU rendering.</p>
+     */
+    BlendMode.DARKEN = "darken";
+    /**
+     * Compares the constituent colors of the display object with the colors of
+     * its background, and subtracts the darker of the values of the two
+     * constituent colors from the lighter value. This setting is commonly used
+     * for more vibrant colors.
+     *
+     * <p>For example, if the display object has a pixel with an RGB value of
+     * 0xFFCC33, and the background pixel has an RGB value of 0xDDF800, the
+     * resulting RGB value for the displayed pixel is 0x222C33(because 0xFF -
+     * 0xDD = 0x22, 0xF8 - 0xCC = 0x2C, and 0x33 - 0x00 = 0x33).</p>
+     */
+    BlendMode.DIFFERENCE = "difference";
+    /**
+     * Erases the background based on the alpha value of the display object. This
+     * process requires that the <code>blendMode</code> property of the parent
+     * display object be set to <code>flash.display.BlendMode.LAYER</code>.
+     *
+     * <p>Not supported under GPU rendering.</p>
+     */
+    BlendMode.ERASE = "erase";
+    /**
+     * Adjusts the color of each pixel based on the darkness of the display
+     * object. If the display object is lighter than 50% gray, the display object
+     * and background colors are screened, which results in a lighter color. If
+     * the display object is darker than 50% gray, the colors are multiplied,
+     * which results in a darker color. This setting is commonly used for shading
+     * effects.
+     *
+     * <p>Not supported under GPU rendering.</p>
+     */
+    BlendMode.HARDLIGHT = "hardlight";
+    /**
+     * Inverts the background.
+     */
+    BlendMode.INVERT = "invert";
+    /**
+     * Forces the creation of a transparency group for the display object. This
+     * means that the display object is precomposed in a temporary buffer before
+     * it is processed further. The precomposition is done automatically if the
+     * display object is precached by means of bitmap caching or if the display
+     * object is a display object container that has at least one child object
+     * with a <code>blendMode</code> setting other than <code>"normal"</code>.
+     *
+     * <p>Not supported under GPU rendering.</p>
+     */
+    BlendMode.LAYER = "layer";
+    /**
+     * Selects the lighter of the constituent colors of the display object and
+     * the colors of the background(the colors with the larger values). This
+     * setting is commonly used for superimposing type.
+     *
+     * <p>For example, if the display object has a pixel with an RGB value of
+     * 0xFFCC33, and the background pixel has an RGB value of 0xDDF800, the
+     * resulting RGB value for the displayed pixel is 0xFFF833(because 0xFF >
+     * 0xDD, 0xCC < 0xF8, and 0x33 > 0x00 = 33).</p>
+     *
+     * <p>Not supported under GPU rendering.</p>
+     */
+    BlendMode.LIGHTEN = "lighten";
+    /**
+     * Multiplies the values of the display object constituent colors by the
+     * constituent colors of the background color, and normalizes by dividing by
+     * 0xFF, resulting in darker colors. This setting is commonly used for
+     * shadows and depth effects.
+     *
+     * <p>For example, if a constituent color(such as red) of one pixel in the
+     * display object and the corresponding color of the pixel in the background
+     * both have the value 0x88, the multiplied result is 0x4840. Dividing by
+     * 0xFF yields a value of 0x48 for that constituent color, which is a darker
+     * shade than the color of the display object or the color of the
+     * background.</p>
+     */
+    BlendMode.MULTIPLY = "multiply";
+    /**
+     * The display object appears in front of the background. Pixel values of the
+     * display object override the pixel values of the background. Where the
+     * display object is transparent, the background is visible.
+     */
+    BlendMode.NORMAL = "normal";
+    /**
+     * Adjusts the color of each pixel based on the darkness of the background.
+     * If the background is lighter than 50% gray, the display object and
+     * background colors are screened, which results in a lighter color. If the
+     * background is darker than 50% gray, the colors are multiplied, which
+     * results in a darker color. This setting is commonly used for shading
+     * effects.
+     *
+     * <p>Not supported under GPU rendering.</p>
+     */
+    BlendMode.OVERLAY = "overlay";
+    /**
+     * Multiplies the complement(inverse) of the display object color by the
+     * complement of the background color, resulting in a bleaching effect. This
+     * setting is commonly used for highlights or to remove black areas of the
+     * display object.
+     */
+    BlendMode.SCREEN = "screen";
+    /**
+     * Uses a shader to define the blend between objects.
+     *
+     * <p>Setting the <code>blendShader</code> property to a Shader instance
+     * automatically sets the display object's <code>blendMode</code> property to
+     * <code>BlendMode.SHADER</code>. If the <code>blendMode</code> property is
+     * set to <code>BlendMode.SHADER</code> without first setting the
+     * <code>blendShader</code> property, the <code>blendMode</code> property is
+     * set to <code>BlendMode.NORMAL</code> instead. If the
+     * <code>blendShader</code> property is set(which sets the
+     * <code>blendMode</code> property to <code>BlendMode.SHADER</code>), then
+     * later the value of the <code>blendMode</code> property is changed, the
+     * blend mode can be reset to use the blend shader simply by setting the
+     * <code>blendMode</code> property to <code>BlendMode.SHADER</code>. The
+     * <code>blendShader</code> property does not need to be set again except to
+     * change the shader that's used to define the blend mode.</p>
+     *
+     * <p>Not supported under GPU rendering.</p>
+     */
+    BlendMode.SHADER = "shader";
+    /**
+     * Subtracts the values of the constituent colors in the display object from
+     * the values of the background color, applying a floor of 0. This setting is
+     * commonly used for animating a darkening dissolve between two objects.
+     *
+     * <p>For example, if the display object has a pixel with an RGB value of
+     * 0xAA2233, and the background pixel has an RGB value of 0xDDA600, the
+     * resulting RGB value for the displayed pixel is 0x338400(because 0xDD -
+     * 0xAA = 0x33, 0xA6 - 0x22 = 0x84, and 0x00 - 0x33 < 0x00).</p>
+     */
+    BlendMode.SUBTRACT = "subtract";
+    return BlendMode;
+})();
+module.exports = BlendMode;
+
+},{}],"awayjs-core/lib/image/CPUCanvas":[function(require,module,exports){
+var CPURenderingContext2D = require('awayjs-core/lib/image/CPURenderingContext2D');
+var ImageData = require('awayjs-core/lib/image/ImageData');
+var CPUCanvas = (function () {
+    function CPUCanvas() {
+        this.width = 1;
+        this.height = 1;
+        this.reset();
+    }
+    CPUCanvas.prototype.getContext = function (contextId) {
+        return new CPURenderingContext2D(this);
+    };
+    CPUCanvas.prototype.reset = function () {
+        if (!this.imageData) {
+            this.imageData = new ImageData(this.width, this.height);
+        }
+        else {
+            this.imageData.width = this.width;
+            this.imageData.height = this.height;
+            if (this.imageData.data) {
+                this.imageData.data.length = 0;
+                this.imageData.data = null;
+            }
+            this.imageData.data = new Uint8Array(this.width * this.height * 4);
+        }
+        for (var i = 0; i < this.width * this.height * 4; i += 4) {
+            this.imageData.data[i] = 255;
+            this.imageData.data[i + 1] = 255;
+            this.imageData.data[i + 2] = 255;
+            this.imageData.data[i + 3] = 255;
+        }
+    };
+    CPUCanvas.prototype.getImageData = function () {
+        if (this.imageData.width != this.width || this.imageData.height != this.height) {
+            this.reset();
+        }
+        return this.imageData;
+    };
+    return CPUCanvas;
+})();
+module.exports = CPUCanvas;
+
+},{"awayjs-core/lib/image/CPURenderingContext2D":"awayjs-core/lib/image/CPURenderingContext2D","awayjs-core/lib/image/ImageData":"awayjs-core/lib/image/ImageData"}],"awayjs-core/lib/image/CPURenderingContext2D":[function(require,module,exports){
+var BitmapImage2D = require("awayjs-core/lib/image/BitmapImage2D");
+var Matrix = require("awayjs-core/lib/geom/Matrix");
+var Point = require("awayjs-core/lib/geom/Point");
+//TODO: implement all methods
+var CPURenderingContext2D = (function () {
+    function CPURenderingContext2D(cpuCanvas) {
+        this.point = new Point();
+        this.point2 = new Point();
+        this.cpuCanvas = cpuCanvas;
+    }
+    CPURenderingContext2D.prototype.restore = function () {
+        this.matrix = null;
+    };
+    CPURenderingContext2D.prototype.setTransform = function (m11, m12, m21, m22, dx, dy) {
+        this.matrix = new Matrix(m11, m12, m21, m22, dx, dy);
+    };
+    CPURenderingContext2D.prototype.save = function () {
+    };
+    CPURenderingContext2D.prototype.arc = function (x, y, radius, startAngle, endAngle, anticlockwise) {
+    };
+    CPURenderingContext2D.prototype.measureText = function (text) {
+        return undefined;
+    };
+    CPURenderingContext2D.prototype.isPointInPath = function (x, y, fillRule) {
+        return undefined;
+    };
+    CPURenderingContext2D.prototype.quadraticCurveTo = function (cpx, cpy, x, y) {
+    };
+    CPURenderingContext2D.prototype.putImageData = function (imagedata, dx, dy, dirtyX, dirtyY, dirtyWidth, dirtyHeight) {
+    };
+    CPURenderingContext2D.prototype.rotate = function (angle) {
+    };
+    CPURenderingContext2D.prototype.fillText = function (text, x, y, maxWidth) {
+    };
+    CPURenderingContext2D.prototype.translate = function (x, y) {
+    };
+    CPURenderingContext2D.prototype.scale = function (x, y) {
+    };
+    CPURenderingContext2D.prototype.createRadialGradient = function (x0, y0, r0, x1, y1, r1) {
+        return undefined;
+    };
+    CPURenderingContext2D.prototype.lineTo = function (x, y) {
+    };
+    CPURenderingContext2D.prototype.getLineDash = function () {
+        return undefined;
+    };
+    CPURenderingContext2D.prototype.fill = function (fillRule) {
+    };
+    CPURenderingContext2D.prototype.createImageData = function (imageDataOrSw, sh) {
+        return undefined;
+    };
+    CPURenderingContext2D.prototype.createPattern = function (image, repetition) {
+        return undefined;
+    };
+    CPURenderingContext2D.prototype.closePath = function () {
+    };
+    CPURenderingContext2D.prototype.rect = function (x, y, w, h) {
+    };
+    CPURenderingContext2D.prototype.clip = function (fillRule) {
+    };
+    CPURenderingContext2D.prototype.clearRect = function (x, y, w, h) {
+        var imageData = this.cpuCanvas.getImageData();
+        for (var i = x; i < x + w; i++) {
+            for (var j = y; j < y + h; j++) {
+                var index = (i + j * imageData.width) * 4;
+                imageData.data[index] = 0;
+                imageData.data[index + 1] = 0;
+                imageData.data[index + 2] = 0;
+                imageData.data[index + 3] = 0;
+            }
+        }
+    };
+    CPURenderingContext2D.prototype.moveTo = function (x, y) {
+    };
+    CPURenderingContext2D.prototype.getImageData = function (sx, sy, sw, sh) {
+        //var result:ImageData = new ImageData(sw, sh);
+        //var i:number = 0;
+        //
+        //for (i = 0; i < sw * sh * 4; i += 4) {
+        //    result.data[i] = 255;
+        //    result.data[i + 1] = 255;
+        //    result.data[i + 2] = 255;
+        //    result.data[i + 3] = 255;
+        //}
+        //
+        //var imageData:ImageData = this.cpuCanvas.getImageData();
+        //for (i = sx; i < sx + sw; i++) {
+        //    for (var j:number = sy; j < sy + sh; j++) {
+        //        this.copyPixel32(result, i - sx, i - sy, imageData, i, j);
+        //    }
+        //}
+        return this.cpuCanvas.getImageData();
+    };
+    CPURenderingContext2D.prototype.applyPixel32 = function (target, x, y, color) {
+        //todo: blending support
+        x = Math.floor(x);
+        y = Math.floor(y);
+        if (x < 0 || x >= target.width || y >= target.height || y < 0)
+            return;
+        var index = (x + y * target.width) * 4;
+        //var alpha:number = color[3] / 255;
+        target.data[index] += color[0];
+        target.data[index + 1] += color[1];
+        target.data[index + 2] += color[2];
+        target.data[index + 3] += color[3];
+        //target.data[index] = color[0];
+        //target.data[index + 1] = color[1];
+        //target.data[index + 2] = color[2];
+        //target.data[index + 3] = color[3];
+        target.data[index] = target.data[index] & 0xFF;
+        target.data[index + 1] = target.data[index + 1] & 0xFF;
+        target.data[index + 2] = target.data[index + 2] & 0xFF;
+        target.data[index + 3] = target.data[index + 3] & 0xFF;
+    };
+    CPURenderingContext2D.prototype.copyPixel32 = function (target, x, y, source, fromX, fromY) {
+        x = Math.floor(x);
+        y = Math.floor(y);
+        fromX = Math.floor(fromX);
+        fromY = Math.floor(fromY);
+        if (x < 0 || x >= target.width || y >= target.height || y < 0)
+            return;
+        if (fromX < 0 || fromX >= source.width || fromY >= source.height || fromY < 0)
+            return;
+        var index = (x + y * target.width) * 4;
+        var fromIndex = (fromX + fromY * source.width) * 4;
+        target.data[index] = source.data[fromIndex];
+        target.data[index + 1] = source.data[fromIndex + 1];
+        target.data[index + 2] = source.data[fromIndex + 2];
+        target.data[index + 3] = source.data[fromIndex + 3];
+    };
+    CPURenderingContext2D.prototype.fillRect = function (x, y, w, h) {
+        if (this.fillStyle) {
+            if (this.parsedFillStyle != this.fillStyle) {
+                var colorStrings = this.fillStyle.substring(5, this.fillStyle.lastIndexOf(")")).split(",");
+                this.parsedA = parseFloat(colorStrings[3]) * 255;
+                this.parsedR = parseInt(colorStrings[0]);
+                this.parsedG = parseInt(colorStrings[1]);
+                this.parsedB = parseInt(colorStrings[2]);
+                this.parsedFillStyle = this.fillStyle;
+            }
+            var imageData = this.cpuCanvas.getImageData();
+            for (var i = x; i < x + w; i++) {
+                for (var j = y; j < y + h; j++) {
+                    var index = (i + j * imageData.width) * 4;
+                    imageData.data[index] = this.parsedR;
+                    imageData.data[index + 1] = this.parsedG;
+                    imageData.data[index + 2] = this.parsedB;
+                    imageData.data[index + 3] = this.parsedA;
+                }
+            }
+        }
+    };
+    CPURenderingContext2D.prototype.bezierCurveTo = function (cp1x, cp1y, cp2x, cp2y, x, y) {
+    };
+    CPURenderingContext2D.prototype.drawImage = function (image, offsetX, offsetY, width, height, canvasOffsetX, canvasOffsetY, canvasImageWidth, canvasImageHeight) {
+        var b = image;
+        if (image.constructor.toString().indexOf("BitmapImage2D") > -1) {
+            var bitmap = b;
+            bitmap.lock();
+            this.drawBitmap(bitmap, offsetX, offsetY, width, height, canvasOffsetX, canvasOffsetY, canvasImageWidth, canvasImageHeight);
+            bitmap.unlock();
+        }
+        else if (image.constructor.toString().indexOf("HTMLImage") > -1) {
+            var htmlImage = image;
+            var htmlCanvas = document.createElement("canvas");
+            htmlCanvas.width = htmlImage.width;
+            htmlCanvas.height = htmlImage.height;
+            var htmlContext = htmlCanvas.getContext("2d");
+            htmlContext.drawImage(htmlImage, 0, 0);
+            var htmlImageData = htmlContext.getImageData(0, 0, htmlImage.width, htmlImage.height);
+            var resultBitmap = new BitmapImage2D(htmlImage.width, htmlImage.height, true, 0, false);
+            resultBitmap.getImageData().data = htmlImageData.data;
+            var passBitmap = resultBitmap;
+            this.drawImage(passBitmap, offsetX, offsetY, width, height, canvasOffsetX, canvasOffsetY, canvasImageWidth, canvasImageHeight);
+        }
+        else if (image.constructor.toString().indexOf("CPUCanvas") > -1) {
+            //
+            var canvas = b;
+            this.drawBitmap(canvas, offsetX, offsetY, width, height, canvasOffsetX, canvasOffsetY, canvasImageWidth, canvasImageHeight);
+        }
+    };
+    CPURenderingContext2D.prototype.drawBitmap = function (bitmap, offsetX, offsetY, width, height, canvasOffsetX, canvasOffsetY, canvasImageWidth, canvasImageHeight) {
+        if (!width || width == 0) {
+            width = bitmap.width;
+            height = bitmap.height;
+        }
+        if (!canvasOffsetX || canvasOffsetX == 0) {
+            canvasOffsetX = 0;
+            canvasOffsetY = 0;
+        }
+        if (!canvasImageWidth || canvasImageWidth == 0 || this.matrix) {
+            canvasImageWidth = width;
+            canvasImageHeight = height;
+        }
+        //console.log("CPURenderingContext2D:drawBitmap(width: " + width + " height: " + height + " canvasImageWidth: " + canvasImageWidth + " canvasImageHeight: " + canvasImageHeight);
+        var sourceData = bitmap.getImageData();
+        var canvasImageData = this.cpuCanvas.getImageData();
+        if (this.matrix || (canvasImageWidth != width || canvasImageHeight != height)) {
+            var matrix = this.matrix;
+            if (!matrix) {
+                matrix = new Matrix();
+                matrix.scale(canvasImageWidth / width, canvasImageHeight / height);
+            }
+            var scaleX = Math.sqrt(matrix.a * matrix.a + matrix.b * matrix.b);
+            var scaleY = Math.sqrt(matrix.c * matrix.c + matrix.d * matrix.d);
+            canvasImageWidth = width * scaleX;
+            canvasImageHeight = height * scaleY;
+            matrix.tx += canvasOffsetX;
+            matrix.ty += canvasOffsetY;
+            canvasOffsetX = Math.floor(matrix.tx);
+            canvasOffsetY = Math.floor(matrix.ty);
+            matrix.invert();
+            if (scaleX >= 1 || scaleY >= 1) {
+                var p = new Point();
+                for (var i = canvasOffsetX; i < canvasOffsetX + canvasImageWidth; i++) {
+                    for (var j = canvasOffsetY; j < canvasOffsetY + canvasImageHeight; j++) {
+                        p.x = i;
+                        p.y = j;
+                        p = matrix.transformPoint(p);
+                        var color = CPURenderingContext2D.sampleBilinear(p.x, p.y, sourceData);
+                        this.applyPixel32(canvasImageData, i, j, color);
+                    }
+                }
+            }
+            else {
+                //decimate
+                var p1 = this.point;
+                var p2 = this.point2;
+                for (var i = canvasOffsetX; i < canvasOffsetX + canvasImageWidth; i++) {
+                    for (var j = canvasOffsetY; j < canvasOffsetY + canvasImageHeight; j++) {
+                        p1.x = i;
+                        p1.y = j;
+                        p1 = matrix.transformPoint(p1);
+                        p2.x = i + 1;
+                        p2.y = j + 1;
+                        p2 = matrix.transformPoint(p2);
+                        var color = CPURenderingContext2D.sampleBox(p1.x + offsetX, p1.y + offsetY, p2.x + offsetX, p2.y + offsetY, sourceData);
+                        this.applyPixel32(canvasImageData, i, j, color);
+                    }
+                }
+            }
+            matrix.invert();
+        }
+        else {
+            for (var i = canvasOffsetX; i < canvasOffsetX + canvasImageWidth; i++) {
+                for (var j = canvasOffsetY; j < canvasOffsetY + canvasImageHeight; j++) {
+                    var color = CPURenderingContext2D.sample(i - canvasOffsetX + offsetX, j - canvasOffsetY + offsetY, sourceData);
+                    this.applyPixel32(canvasImageData, i, j, color);
+                }
+            }
+        }
+    };
+    CPURenderingContext2D.prototype.transform = function (m11, m12, m21, m22, dx, dy) {
+    };
+    CPURenderingContext2D.prototype.stroke = function () {
+    };
+    CPURenderingContext2D.prototype.strokeRect = function (x, y, w, h) {
+    };
+    CPURenderingContext2D.prototype.setLineDash = function (segments) {
+    };
+    CPURenderingContext2D.prototype.strokeText = function (text, x, y, maxWidth) {
+    };
+    CPURenderingContext2D.prototype.beginPath = function () {
+    };
+    CPURenderingContext2D.prototype.arcTo = function (x1, y1, x2, y2, radius) {
+    };
+    CPURenderingContext2D.prototype.createLinearGradient = function (x0, y0, x1, y1) {
+        return undefined;
+    };
+    CPURenderingContext2D.sampleBilinear = function (u, v, texture, texelSizeX, texelSizeY) {
+        if (texelSizeX === void 0) { texelSizeX = 1; }
+        if (texelSizeY === void 0) { texelSizeY = 1; }
+        var color00 = CPURenderingContext2D.sample(u, v, texture);
+        var color10 = CPURenderingContext2D.sample(u + texelSizeX, v, texture);
+        var color01 = CPURenderingContext2D.sample(u, v + texelSizeY, texture);
+        var color11 = CPURenderingContext2D.sample(u + texelSizeX, v + texelSizeY, texture);
+        var a = u;
+        a = a - Math.floor(a);
+        var interColor0 = CPURenderingContext2D.interpolateColor(color00, color10, a);
+        var interColor1 = CPURenderingContext2D.interpolateColor(color01, color11, a);
+        var b = v;
+        b = b - Math.floor(b);
+        return CPURenderingContext2D.interpolateColor(interColor0, interColor1, b);
+    };
+    CPURenderingContext2D.sample = function (u, v, imageData) {
+        u = Math.floor(u);
+        v = Math.floor(v);
+        var result = [0, 0, 0, 0];
+        if (u < 0 || u >= imageData.width || v < 0 || v >= imageData.height) {
+            return result;
+        }
+        var index = (u + v * imageData.width) * 4;
+        result[0] = imageData.data[index];
+        result[1] = imageData.data[index + 1];
+        result[2] = imageData.data[index + 2];
+        result[3] = imageData.data[index + 3];
+        return result;
+    };
+    CPURenderingContext2D.sampleBox = function (x0, y0, x1, y1, texture) {
+        var area = 0; // -- total area accumulated in pixels
+        var result = [0, 0, 0, 0];
+        var x;
+        var y;
+        var xsize;
+        var ysize;
+        var fromY = Math.floor(y0);
+        var toY = Math.ceil(y1);
+        fromY = Math.max(Math.min(fromY, texture.height - 1), 0);
+        toY = Math.max(Math.min(toY, texture.height - 1), 0);
+        for (y = fromY; y < toY; y++) {
+            ysize = 1;
+            if (y < y0) {
+                ysize = ysize * (1.0 - (y0 - y));
+            }
+            if (y > y1) {
+                ysize = ysize * (1.0 - (y - y1));
+            }
+            var fromX = Math.floor(x0);
+            var toX = Math.ceil(x1);
+            fromX = Math.max(Math.min(fromX, texture.width - 1), 0);
+            toX = Math.max(Math.min(toX, texture.width - 1), 0);
+            for (x = fromX; x < toX; x++) {
+                xsize = ysize;
+                var color = CPURenderingContext2D.sample(x, y, texture);
+                if (x < x0) {
+                    xsize = xsize * (1.0 - (x0 - x));
+                }
+                if (x > x1) {
+                    xsize = xsize * (1.0 - (x - x1));
+                }
+                result[0] += color[0] * xsize;
+                result[1] += color[1] * xsize;
+                result[2] += color[2] * xsize;
+                result[3] += color[3] * xsize;
+                area = area + xsize;
+            }
+        }
+        result[0] /= area;
+        result[1] /= area;
+        result[2] /= area;
+        result[3] /= area;
+        result[0] = result[0] & 0xFF;
+        result[1] = result[1] & 0xFF;
+        result[2] = result[2] & 0xFF;
+        result[3] = result[3] & 0xFF;
+        return result;
+    };
+    CPURenderingContext2D.interpolateColor = function (source, target, a) {
+        var result = [];
+        result[0] = source[0] + (target[0] - source[0]) * a;
+        result[1] = source[1] + (target[1] - source[1]) * a;
+        result[2] = source[2] + (target[2] - source[2]) * a;
+        result[3] = source[3] + (target[3] - source[3]) * a;
+        return result;
+    };
+    return CPURenderingContext2D;
+})();
+module.exports = CPURenderingContext2D;
+
+},{"awayjs-core/lib/geom/Matrix":"awayjs-core/lib/geom/Matrix","awayjs-core/lib/geom/Point":"awayjs-core/lib/geom/Point","awayjs-core/lib/image/BitmapImage2D":"awayjs-core/lib/image/BitmapImage2D"}],"awayjs-core/lib/image/IImageCanvas":[function(require,module,exports){
+
+},{}],"awayjs-core/lib/image/Image2D":[function(require,module,exports){
+var __extends = this.__extends || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    __.prototype = b.prototype;
+    d.prototype = new __();
+};
+var ImageBase = require("awayjs-core/lib/image/ImageBase");
+var Sampler2D = require("awayjs-core/lib/image/Sampler2D");
+var Rectangle = require("awayjs-core/lib/geom/Rectangle");
+var ImageUtils = require("awayjs-core/lib/utils/ImageUtils");
+var Image2D = (function (_super) {
+    __extends(Image2D, _super);
+    /**
+     *
+     */
+    function Image2D(width, height, powerOfTwo) {
+        if (powerOfTwo === void 0) { powerOfTwo = true; }
+        _super.call(this);
+        this._powerOfTwo = true;
+        this._rect = new Rectangle(0, 0, width, height);
+        this._powerOfTwo = powerOfTwo;
+        this._testDimensions();
+    }
+    Object.defineProperty(Image2D.prototype, "assetType", {
+        /**
+         *
+         * @returns {string}
+         */
+        get: function () {
+            return Image2D.assetType;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Image2D.prototype, "height", {
+        /**
+         * The height of the image in pixels.
+         */
+        get: function () {
+            return this._rect.height;
+        },
+        set: function (value) {
+            if (this._rect.height == value)
+                return;
+            this._setSize(this._rect.width, value);
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Image2D.prototype, "rect", {
+        /**
+         * The rectangle that defines the size and location of the bitmap image. The
+         * top and left of the rectangle are 0; the width and height are equal to the
+         * width and height in pixels of the BitmapData object.
+         */
+        get: function () {
+            return this._rect;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Image2D.prototype, "width", {
+        /**
+         * The width of the bitmap image in pixels.
+         */
+        get: function () {
+            return this._rect.width;
+        },
+        set: function (value) {
+            if (this._rect.width == value)
+                return;
+            this._setSize(value, this._rect.height);
+        },
+        enumerable: true,
+        configurable: true
+    });
+    /**
+     *
+     * @param width
+     * @param height
+     * @private
+     */
+    Image2D.prototype._setSize = function (width, height) {
+        if (this._rect.width != width || this._rect.height != height)
+            this.clear();
+        this._rect.width = width;
+        this._rect.height = height;
+        this._testDimensions();
+    };
+    /**
+     *
+     * @private
+     */
+    Image2D.prototype._testDimensions = function () {
+        if (this._powerOfTwo && (!ImageUtils.isDimensionValid(this._rect.width) || !ImageUtils.isDimensionValid(this._rect.height)))
+            throw new Error("Invalid dimension: Width and height must be power of 2 and cannot exceed 2048");
+    };
+    Object.defineProperty(Image2D.prototype, "powerOfTwo", {
+        /**
+         * Enable POT texture size validation
+         * @returns {boolean}
+         */
+        get: function () {
+            return this._powerOfTwo;
+        },
+        set: function (value) {
+            if (this._powerOfTwo == value)
+                return;
+            this._powerOfTwo = value;
+            this._testDimensions();
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Image2D.prototype.createSampler = function () {
+        return new Sampler2D();
+    };
+    Image2D.assetType = "[image Image2D]";
+    return Image2D;
+})(ImageBase);
+module.exports = Image2D;
+
+},{"awayjs-core/lib/geom/Rectangle":"awayjs-core/lib/geom/Rectangle","awayjs-core/lib/image/ImageBase":"awayjs-core/lib/image/ImageBase","awayjs-core/lib/image/Sampler2D":"awayjs-core/lib/image/Sampler2D","awayjs-core/lib/utils/ImageUtils":"awayjs-core/lib/utils/ImageUtils"}],"awayjs-core/lib/image/ImageBase":[function(require,module,exports){
+var __extends = this.__extends || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    __.prototype = b.prototype;
+    d.prototype = new __();
+};
+var AbstractMethodError = require("awayjs-core/lib/errors/AbstractMethodError");
+var AssetBase = require("awayjs-core/lib/library/AssetBase");
+var ImageBase = (function (_super) {
+    __extends(ImageBase, _super);
+    /**
+     *
+     */
+    function ImageBase() {
+        _super.call(this);
+        this._pFormat = "bgra";
+    }
+    Object.defineProperty(ImageBase.prototype, "format", {
+        /**
+         *
+         * @returns {string}
+         */
+        get: function () {
+            return this._pFormat;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    ImageBase.prototype.createSampler = function () {
+        throw new AbstractMethodError();
+    };
+    return ImageBase;
+})(AssetBase);
+module.exports = ImageBase;
+
+},{"awayjs-core/lib/errors/AbstractMethodError":"awayjs-core/lib/errors/AbstractMethodError","awayjs-core/lib/library/AssetBase":"awayjs-core/lib/library/AssetBase"}],"awayjs-core/lib/image/ImageCube":[function(require,module,exports){
+var __extends = this.__extends || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    __.prototype = b.prototype;
+    d.prototype = new __();
+};
+var ImageBase = require("awayjs-core/lib/image/ImageBase");
+var SamplerCube = require("awayjs-core/lib/image/SamplerCube");
+var ImageUtils = require("awayjs-core/lib/utils/ImageUtils");
+var ImageCube = (function (_super) {
+    __extends(ImageCube, _super);
+    /**
+     *
+     */
+    function ImageCube(size) {
+        _super.call(this);
+        this._size = size;
+        this._testDimensions();
+    }
+    Object.defineProperty(ImageCube.prototype, "assetType", {
+        /**
+         *
+         * @returns {string}
+         */
+        get: function () {
+            return ImageCube.assetType;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(ImageCube.prototype, "size", {
+        /**
+         * The size of the cube bitmap in pixels.
+         */
+        get: function () {
+            return this._size;
+        },
+        set: function (value) {
+            if (this._size == value)
+                return;
+            this._setSize(this._size);
+        },
+        enumerable: true,
+        configurable: true
+    });
+    /**
+     *
+     * @param width
+     * @param height
+     * @private
+     */
+    ImageCube.prototype._setSize = function (size) {
+        if (this._size != size)
+            this.clear();
+        this._size = size;
+        this._testDimensions();
+    };
+    /**
+     *
+     * @private
+     */
+    ImageCube.prototype._testDimensions = function () {
+        if (!ImageUtils.isDimensionValid(this._size))
+            throw new Error("Invalid dimension: Width and height must be power of 2 and cannot exceed 2048");
+    };
+    ImageCube.prototype.createSampler = function () {
+        return new SamplerCube();
+    };
+    ImageCube.assetType = "[image ImageCube]";
+    return ImageCube;
+})(ImageBase);
+module.exports = ImageCube;
+
+},{"awayjs-core/lib/image/ImageBase":"awayjs-core/lib/image/ImageBase","awayjs-core/lib/image/SamplerCube":"awayjs-core/lib/image/SamplerCube","awayjs-core/lib/utils/ImageUtils":"awayjs-core/lib/utils/ImageUtils"}],"awayjs-core/lib/image/ImageData":[function(require,module,exports){
+var ImageData = (function () {
+    function ImageData(width, height) {
+        this.width = width;
+        this.height = height;
+        this.data = new Uint8Array(width * height * 4);
+    }
+    return ImageData;
+})();
+module.exports = ImageData;
+
+},{}],"awayjs-core/lib/image/Sampler2D":[function(require,module,exports){
+var __extends = this.__extends || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    __.prototype = b.prototype;
+    d.prototype = new __();
+};
+var SamplerBase = require("awayjs-core/lib/image/SamplerBase");
+/**
+ * The Sampler2D class represents display objects that represent bitmap images.
+ * These can be images that you load with the <code>flash.Assets</code> or
+ * <code>flash.display.Loader</code> classes, or they can be images that you
+ * create with the <code>Sampler2D()</code> constructor.
+ *
+ * <p>The <code>Sampler2D()</code> constructor allows you to create a Sampler2D
+ * object that contains a reference to a Image2D object. After you create a
+ * Sampler2D object, use the <code>addChild()</code> or <code>addChildAt()</code>
+ * method of the parent DisplayObjectContainer instance to place the bitmap on
+ * the display list.</p>
+ *
+ * <p>A Sampler2D object can share its Image2D reference among several Sampler2D
+ * objects, independent of translation or rotation properties. Because you can
+ * create multiple Sampler2D objects that reference the same Image2D object,
+ * multiple texture objects can use the same complex Image2D object without
+ * incurring the memory overhead of a Image2D object for each texture
+ * object instance.</p>
+
+ */
+var Sampler2D = (function (_super) {
+    __extends(Sampler2D, _super);
+    /**
+     *
+     * @param image2D
+     * @param smoothing
+     */
+    function Sampler2D(repeat, smooth, mipmap) {
+        if (repeat === void 0) { repeat = false; }
+        if (smooth === void 0) { smooth = false; }
+        if (mipmap === void 0) { mipmap = false; }
+        _super.call(this, smooth, mipmap);
+        this._repeat = repeat;
+        this._updateRect();
+    }
+    Object.defineProperty(Sampler2D.prototype, "assetType", {
+        /**
+         *
+         * @returns {string}
+         */
+        get: function () {
+            return Sampler2D.assetType;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Sampler2D.prototype, "repeat", {
+        /**
+         * Controls whether or not the Sampler2D object is snapped to the nearest pixel.
+         * This value is ignored in the native and HTML5 targets.
+         * The PixelSnapping class includes possible values:
+         * <ul>
+         *   <li><code>PixelSnapping.NEVER</code> - No pixel snapping occurs.</li>
+         *   <li><code>PixelSnapping.ALWAYS</code> - The image is always snapped to
+         * the nearest pixel, independent of transformation.</li>
+         *   <li><code>PixelSnapping.AUTO</code> - The image is snapped to the
+         * nearest pixel if it is drawn with no rotation or skew and it is drawn at a
+         * scale factor of 99.9% to 100.1%. If these conditions are satisfied, the
+         * bitmap image is drawn at 100% scale, snapped to the nearest pixel.
+         * When targeting Flash Player, this value allows the image to be drawn as fast
+         * as possible using the internal vector renderer.</li>
+         * </ul>
+         */
+        //var pixelSnapping:PixelSnapping;
+        /**
+         * Controls whether or not the bitmap is smoothed when scaled. If
+         * <code>true</code>, the bitmap is smoothed when scaled. If
+         * <code>false</code>, the bitmap is not smoothed when scaled.
+         */
+        /**
+         *
+         */
+        get: function () {
+            return this._repeat;
+        },
+        set: function (value) {
+            if (this._repeat == value)
+                return;
+            this._repeat = value;
+            //TODO: update dependencies
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Sampler2D.prototype, "imageRect", {
+        /**
+         *
+         */
+        get: function () {
+            return this._imageRect;
+        },
+        set: function (value) {
+            if (this._imageRect == value)
+                return;
+            this._imageRect = value;
+            this._updateRect();
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Sampler2D.prototype, "frameRect", {
+        /**
+         *
+         */
+        get: function () {
+            return this._frameRect;
+        },
+        set: function (value) {
+            if (this._frameRect == value)
+                return;
+            this._frameRect = value;
+            this._updateRect();
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Sampler2D.prototype._updateRect = function () {
+    };
+    Sampler2D.assetType = "[asset Sampler2D]";
+    return Sampler2D;
+})(SamplerBase);
+module.exports = Sampler2D;
+
+},{"awayjs-core/lib/image/SamplerBase":"awayjs-core/lib/image/SamplerBase"}],"awayjs-core/lib/image/SamplerBase":[function(require,module,exports){
+var __extends = this.__extends || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    __.prototype = b.prototype;
+    d.prototype = new __();
+};
+var AssetBase = require("awayjs-core/lib/library/AssetBase");
+/**
+ *
+ */
+var SamplerBase = (function (_super) {
+    __extends(SamplerBase, _super);
+    /**
+     *
+     */
+    function SamplerBase(smooth, mipmap) {
+        if (smooth === void 0) { smooth = false; }
+        if (mipmap === void 0) { mipmap = false; }
+        _super.call(this);
+        this._smooth = smooth;
+        this._mipmap = mipmap;
+    }
+    Object.defineProperty(SamplerBase.prototype, "smooth", {
+        /**
+         *
+         */
+        get: function () {
+            return this._smooth;
+        },
+        set: function (value) {
+            if (this._smooth == value)
+                return;
+            this._smooth = value;
+            //TODO: update dependencies
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(SamplerBase.prototype, "mipmap", {
+        /**
+         *
+         */
+        get: function () {
+            return this._mipmap;
+        },
+        set: function (value) {
+            if (this._mipmap == value)
+                return;
+            this._mipmap = value;
+            //TODO: update dependencies
+        },
+        enumerable: true,
+        configurable: true
+    });
+    return SamplerBase;
+})(AssetBase);
+module.exports = SamplerBase;
+
+},{"awayjs-core/lib/library/AssetBase":"awayjs-core/lib/library/AssetBase"}],"awayjs-core/lib/image/SamplerCube":[function(require,module,exports){
+var __extends = this.__extends || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    __.prototype = b.prototype;
+    d.prototype = new __();
+};
+var SamplerBase = require("awayjs-core/lib/image/SamplerBase");
+/**
+ * The Bitmap class represents display objects that represent bitmap images.
+ * These can be images that you load with the <code>flash.Assets</code> or
+ * <code>flash.display.Loader</code> classes, or they can be images that you
+ * create with the <code>Bitmap()</code> constructor.
+ *
+ * <p>The <code>Bitmap()</code> constructor allows you to create a Bitmap
+ * object that contains a reference to a BitmapData object. After you create a
+ * Bitmap object, use the <code>addChild()</code> or <code>addChildAt()</code>
+ * method of the parent DisplayObjectContainer instance to place the bitmap on
+ * the display list.</p>
+ *
+ * <p>A Bitmap object can share its BitmapData reference among several Bitmap
+ * objects, independent of translation or rotation properties. Because you can
+ * create multiple Bitmap objects that reference the same BitmapData object,
+ * multiple texture objects can use the same complex BitmapData object without
+ * incurring the memory overhead of a BitmapData object for each texture
+ * object instance.</p>
+
+ */
+var SamplerCube = (function (_super) {
+    __extends(SamplerCube, _super);
+    /**
+     *
+     * @param bitmapData
+     * @param smoothing
+     */
+    function SamplerCube(smooth, mipmap) {
+        if (smooth === void 0) { smooth = false; }
+        if (mipmap === void 0) { mipmap = false; }
+        _super.call(this, smooth, mipmap);
+    }
+    Object.defineProperty(SamplerCube.prototype, "assetType", {
+        /**
+         *
+         * @returns {string}
+         */
+        get: function () {
+            return SamplerCube.assetType;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    SamplerCube.assetType = "[asset SamplerCube]";
+    return SamplerCube;
+})(SamplerBase);
+module.exports = SamplerCube;
+
+},{"awayjs-core/lib/image/SamplerBase":"awayjs-core/lib/image/SamplerBase"}],"awayjs-core/lib/image/SpecularImage2D":[function(require,module,exports){
+var __extends = this.__extends || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    __.prototype = b.prototype;
+    d.prototype = new __();
+};
+var BitmapImage2D = require("awayjs-core/lib/image/BitmapImage2D");
+var BitmapImageChannel = require("awayjs-core/lib/image/BitmapImageChannel");
+var Image2D = require("awayjs-core/lib/image/Image2D");
+var Point = require("awayjs-core/lib/geom/Point");
+/**
+ *
+ */
+var SpecularImage2D = (function (_super) {
+    __extends(SpecularImage2D, _super);
+    /**
+     *
+     */
+    function SpecularImage2D(specularSource, glossSource) {
+        if (specularSource === void 0) { specularSource = null; }
+        if (glossSource === void 0) { glossSource = null; }
+        _super.call(this, 1, 1);
+        this._specularSource = specularSource;
+        this._glossSource = glossSource;
+        this._output = new BitmapImage2D(1, 1, false, 0xffffff);
+        this._testSize();
+    }
+    Object.defineProperty(SpecularImage2D.prototype, "assetType", {
+        /**
+         *
+         * @returns {string}
+         */
+        get: function () {
+            return SpecularImage2D.assetType;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(SpecularImage2D.prototype, "specularSource", {
+        get: function () {
+            return this._specularSource;
+        },
+        set: function (value) {
+            if (this._specularSource == value)
+                return;
+            this._specularSource = value;
+            this.invalidate();
+            this._testSize();
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(SpecularImage2D.prototype, "glossSource", {
+        get: function () {
+            return this._glossSource;
+        },
+        set: function (value) {
+            if (this._glossSource == value)
+                return;
+            this._glossSource = value;
+            this.invalidate();
+            this._testSize();
+        },
+        enumerable: true,
+        configurable: true
+    });
+    /**
+     * Returns a new SpecularImage2D object that is a clone of the original instance
+     * with an exact copy of the contained bitmap.
+     *
+     * @return A new SpecularImage2D object that is identical to the original.
+     */
+    SpecularImage2D.prototype.clone = function () {
+        return new SpecularImage2D(this._specularSource, this._glossSource);
+    };
+    /**
+     * Frees memory that is used to store the SpecularImage2D object.
+     *
+     * <p>When the <code>dispose()</code> method is called on an image, the width
+     * and height of the image are set to 0. All subsequent calls to methods or
+     * properties of this SpecularImage2D instance fail, and an exception is thrown.
+     * </p>
+     *
+     * <p><code>SpecularImage2D.dispose()</code> releases the memory occupied by the
+     * actual bitmap data, immediately(a bitmap can consume up to 64 MB of
+     * memory). After using <code>SpecularImage2D.dispose()</code>, the SpecularImage2D
+     * object is no longer usable and an exception may be thrown if
+     * you call functions on the SpecularImage2D object. However,
+     * <code>SpecularImage2D.dispose()</code> does not garbage collect the SpecularImage2D
+     * object(approximately 128 bytes); the memory occupied by the actual
+     * SpecularImage2D object is released at the time the SpecularImage2D object is
+     * collected by the garbage collector.</p>
+     *
+     */
+    SpecularImage2D.prototype.dispose = function () {
+        _super.prototype.dispose.call(this);
+        this._rect = null;
+        this._output.dispose();
+    };
+    /**
+     *
+     * @returns {ImageData}
+     */
+    SpecularImage2D.prototype.getImageData = function () {
+        var origin = new Point();
+        this._output.fillRect(this._rect, 0xffffff);
+        if (this._glossSource)
+            this._output.copyChannel(this._glossSource, this._rect, origin, BitmapImageChannel.GREEN, BitmapImageChannel.GREEN);
+        if (this._specularSource)
+            this._output.copyChannel(this._specularSource, this._rect, origin, BitmapImageChannel.RED, BitmapImageChannel.RED);
+        return this._output.getImageData();
+    };
+    /**
+     *
+     * @returns {HTMLCanvasElement}
+     */
+    SpecularImage2D.prototype.getCanvas = function () {
+        return this._output.getCanvas();
+    };
+    /**
+     *
+     * @param width
+     * @param height
+     * @private
+     */
+    SpecularImage2D.prototype._setSize = function (width, height) {
+        _super.prototype._setSize.call(this, width, height);
+        this._output._setSize(width, height);
+    };
+    SpecularImage2D.prototype._testSize = function () {
+        var w, h;
+        if (this._specularSource) {
+            w = this._specularSource.width;
+            h = this._specularSource.height;
+        }
+        else if (this._glossSource) {
+            w = this._glossSource.width;
+            h = this._glossSource.height;
+        }
+        else {
+            w = 1;
+            h = 1;
+        }
+        if (w != this._output.width && h != this._output.height) {
+            this._output.dispose();
+            this._output = new BitmapImage2D(w, h, false, 0xffffff);
+        }
+        this._setSize(w, h);
+    };
+    SpecularImage2D.assetType = "[asset SpecularImage2D]";
+    return SpecularImage2D;
+})(Image2D);
+module.exports = SpecularImage2D;
+
+},{"awayjs-core/lib/geom/Point":"awayjs-core/lib/geom/Point","awayjs-core/lib/image/BitmapImage2D":"awayjs-core/lib/image/BitmapImage2D","awayjs-core/lib/image/BitmapImageChannel":"awayjs-core/lib/image/BitmapImageChannel","awayjs-core/lib/image/Image2D":"awayjs-core/lib/image/Image2D"}],"awayjs-core/lib/library/AbstractionBase":[function(require,module,exports){
+var __extends = this.__extends || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    __.prototype = b.prototype;
+    d.prototype = new __();
+};
+var AssetEvent = require("awayjs-core/lib/events/AssetEvent");
+var EventDispatcher = require("awayjs-core/lib/events/EventDispatcher");
+/**
+ *
+ * @class away.pool.AbstractionBase
+ */
+var AbstractionBase = (function (_super) {
+    __extends(AbstractionBase, _super);
+    function AbstractionBase(asset, pool) {
+        var _this = this;
+        _super.call(this);
+        this._invalid = true;
+        this._asset = asset;
+        this._pool = pool;
+        this._onClearDelegate = function (event) { return _this.onClear(event); };
+        this._onInvalidateDelegate = function (event) { return _this.onInvalidate(event); };
+        this._asset.addEventListener(AssetEvent.CLEAR, this._onClearDelegate);
+        this._asset.addEventListener(AssetEvent.INVALIDATE, this._onInvalidateDelegate);
+    }
+    /**
+     *
+     */
+    AbstractionBase.prototype.onClear = function (event) {
+        this._asset.removeEventListener(AssetEvent.CLEAR, this._onClearDelegate);
+        this._asset.removeEventListener(AssetEvent.INVALIDATE, this._onInvalidateDelegate);
+        this._pool.clearAbstraction(this._asset);
+        this._pool = null;
+        this._asset = null;
+    };
+    /**
+     *
+     */
+    AbstractionBase.prototype.onInvalidate = function (event) {
+        this._invalid = true;
+    };
+    return AbstractionBase;
+})(EventDispatcher);
+module.exports = AbstractionBase;
+
+},{"awayjs-core/lib/events/AssetEvent":"awayjs-core/lib/events/AssetEvent","awayjs-core/lib/events/EventDispatcher":"awayjs-core/lib/events/EventDispatcher"}],"awayjs-core/lib/library/AssetBase":[function(require,module,exports){
 var __extends = this.__extends || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
@@ -8450,17 +8438,25 @@ var AssetBase = (function (_super) {
             if (this._name == null)
                 this._name = 'null';
             this.updateFullPath();
-            //if (hasEventListener(AssetEvent.ASSET_RENAME))
-            this.dispatchEvent(new AssetEvent(AssetEvent.ASSET_RENAME, this, prev));
+            this.dispatchEvent(new AssetEvent(AssetEvent.RENAME, this, prev));
         },
         enumerable: true,
         configurable: true
     });
-    AssetBase.prototype.dispose = function () {
-        throw new AbstractMethodError();
+    /**
+     *
+     */
+    AssetBase.prototype.invalidate = function () {
+        this.dispatchEvent(new AssetEvent(AssetEvent.INVALIDATE, this));
     };
-    AssetBase.prototype._clearInterfaces = function () {
-        throw new AbstractMethodError();
+    /**
+     * @inheritDoc
+     */
+    AssetBase.prototype.dispose = function () {
+        this.dispatchEvent(new AssetEvent(AssetEvent.CLEAR, this));
+    };
+    AssetBase.prototype.clear = function () {
+        this.dispatchEvent(new AssetEvent(AssetEvent.CLEAR, this));
     };
     Object.defineProperty(AssetBase.prototype, "assetNamespace", {
         get: function () {
@@ -8508,13 +8504,13 @@ var __extends = this.__extends || function (d, b) {
     d.prototype = new __();
 };
 var AssetLibraryIterator = require("awayjs-core/lib/library/AssetLibraryIterator");
-var LoaderSession = require("awayjs-core/lib/library/LoaderSession");
+var Loader = require("awayjs-core/lib/library/Loader");
 var ConflictPrecedence = require("awayjs-core/lib/library/ConflictPrecedence");
 var ConflictStrategy = require("awayjs-core/lib/library/ConflictStrategy");
 var AssetBase = require("awayjs-core/lib/library/AssetBase");
-var Error = require("awayjs-core/lib/errors/Error");
+var ErrorBase = require("awayjs-core/lib/errors/ErrorBase");
 var AssetEvent = require("awayjs-core/lib/events/AssetEvent");
-var IOErrorEvent = require("awayjs-core/lib/events/IOErrorEvent");
+var URLLoaderEvent = require("awayjs-core/lib/events/URLLoaderEvent");
 var LoaderEvent = require("awayjs-core/lib/events/LoaderEvent");
 var EventDispatcher = require("awayjs-core/lib/events/EventDispatcher");
 var ParserEvent = require("awayjs-core/lib/events/ParserEvent");
@@ -8568,13 +8564,13 @@ var AssetLibraryBundle = (function (_super) {
      *
      */
     AssetLibraryBundle.prototype.enableParser = function (parserClass) {
-        LoaderSession.enableParser(parserClass);
+        Loader.enableParser(parserClass);
     };
     /**
      *
      */
     AssetLibraryBundle.prototype.enableParsers = function (parserClasses) {
-        LoaderSession.enableParsers(parserClasses);
+        Loader.enableParsers(parserClasses);
     };
     Object.defineProperty(AssetLibraryBundle.prototype, "conflictStrategy", {
         /**
@@ -8592,7 +8588,7 @@ var AssetLibraryBundle = (function (_super) {
         },
         set: function (val) {
             if (!val)
-                throw new Error('namingStrategy must not be null. To ignore naming, use AssetLibrary.IGNORE');
+                throw new ErrorBase('namingStrategy must not be null. To ignore naming, use AssetLibrary.IGNORE');
             this._strategy = val.create();
         },
         enumerable: true,
@@ -8646,14 +8642,14 @@ var AssetLibraryBundle = (function (_super) {
      * @param req The URLRequest object containing the URL of the file to be loaded.
      * @param context An optional context object providing additional parameters for loading
      * @param ns An optional namespace string under which the file is to be loaded, allowing the differentiation of two resources with identical assets
-     * @param parser An optional parser object for translating the loaded data into a usable resource. If not provided, LoaderSession will attempt to auto-detect the file type.
+     * @param parser An optional parser object for translating the loaded data into a usable resource. If not provided, Loader will attempt to auto-detect the file type.
      * @return A handle to the retrieved resource.
      */
     AssetLibraryBundle.prototype.load = function (req, context, ns, parser) {
         if (context === void 0) { context = null; }
         if (ns === void 0) { ns = null; }
         if (parser === void 0) { parser = null; }
-        this.getLoaderSession().load(req, context, ns, parser);
+        this.getLoader().load(req, context, ns, parser);
     };
     /**
      * Loads a resource from existing data in memory.
@@ -8661,19 +8657,19 @@ var AssetLibraryBundle = (function (_super) {
      * @param data The data object containing all resource information.
      * @param context An optional context object providing additional parameters for loading
      * @param ns An optional namespace string under which the file is to be loaded, allowing the differentiation of two resources with identical assets
-     * @param parser An optional parser object for translating the loaded data into a usable resource. If not provided, LoaderSession will attempt to auto-detect the file type.
+     * @param parser An optional parser object for translating the loaded data into a usable resource. If not provided, Loader will attempt to auto-detect the file type.
      * @return A handle to the retrieved resource.
      */
     AssetLibraryBundle.prototype.loadData = function (data, context, ns, parser) {
         if (context === void 0) { context = null; }
         if (ns === void 0) { ns = null; }
         if (parser === void 0) { parser = null; }
-        this.getLoaderSession().loadData(data, '', context, ns, parser);
+        this.getLoader().loadData(data, '', context, ns, parser);
     };
-    AssetLibraryBundle.prototype.getLoaderSession = function () {
-        var loader = new LoaderSession();
+    AssetLibraryBundle.prototype.getLoader = function () {
+        var loader = new Loader();
         this._loaderSessions.push(loader);
-        loader.addEventListener(LoaderEvent.RESOURCE_COMPLETE, this._onResourceCompleteDelegate);
+        loader.addEventListener(LoaderEvent.LOAD_COMPLETE, this._onResourceCompleteDelegate);
         loader.addEventListener(AssetEvent.TEXTURE_SIZE_ERROR, this._onTextureSizeErrorDelegate);
         loader.addEventListener(AssetEvent.ASSET_COMPLETE, this._onAssetCompleteDelegate);
         // Error are handled separately (see documentation for addErrorHandler)
@@ -8681,7 +8677,7 @@ var AssetLibraryBundle = (function (_super) {
         loader._iAddParseErrorHandler(this._onParseErrorDelegate);
         return loader;
     };
-    AssetLibraryBundle.prototype.disposeLoaderSession = function (loader) {
+    AssetLibraryBundle.prototype.disposeLoader = function (loader) {
         var _this = this;
         var index = this._loaderSessions.indexOf(loader);
         this._loaderSessions.splice(index, 1);
@@ -8729,7 +8725,7 @@ var AssetLibraryBundle = (function (_super) {
         if (!this._assetDictionary.hasOwnProperty(ns))
             this._assetDictionary[ns] = new Object();
         this._assetDictionary[ns][asset.name] = asset;
-        asset.addEventListener(AssetEvent.ASSET_RENAME, this._onAssetRenameDelegate);
+        asset.addEventListener(AssetEvent.RENAME, this._onAssetRenameDelegate);
         asset.addEventListener(AssetEvent.ASSET_CONFLICT_RESOLVED, this._onAssetConflictResolvedDelegate);
     };
     /**
@@ -8744,7 +8740,7 @@ var AssetLibraryBundle = (function (_super) {
         if (dispose === void 0) { dispose = true; }
         var idx;
         this.removeAssetFromDict(asset);
-        asset.removeEventListener(AssetEvent.ASSET_RENAME, this._onAssetRenameDelegate);
+        asset.removeEventListener(AssetEvent.RENAME, this._onAssetRenameDelegate);
         asset.removeEventListener(AssetEvent.ASSET_CONFLICT_RESOLVED, this._onAssetConflictResolvedDelegate);
         idx = this._assets.indexOf(asset);
         if (idx >= 0)
@@ -8869,7 +8865,7 @@ var AssetLibraryBundle = (function (_super) {
             }
         }
     };
-    AssetLibraryBundle.prototype.stopAllLoaderSessions = function () {
+    AssetLibraryBundle.prototype.stopAllLoaders = function () {
         var len = this._loaderSessions.length;
         for (var i = 0; i < len; i++)
             this.killloaderSession(this._loaderSessions[i]);
@@ -8891,7 +8887,7 @@ var AssetLibraryBundle = (function (_super) {
      * Called when a an error occurs during loading.
      */
     AssetLibraryBundle.prototype.onLoadError = function (event) {
-        if (this.hasEventListener(IOErrorEvent.IO_ERROR)) {
+        if (this.hasEventListener(URLLoaderEvent.LOAD_ERROR)) {
             this.dispatchEvent(event);
             return true;
         }
@@ -8926,7 +8922,7 @@ var AssetLibraryBundle = (function (_super) {
     AssetLibraryBundle.prototype.onResourceComplete = function (event) {
         var loader = event.target;
         this.dispatchEvent(event);
-        this.disposeLoaderSession(loader);
+        this.disposeLoader(loader);
     };
     AssetLibraryBundle.prototype.loaderSessionGC = function () {
         var loader;
@@ -8938,26 +8934,11 @@ var AssetLibraryBundle = (function (_super) {
         this._gcTimeoutIID = null;
     };
     AssetLibraryBundle.prototype.killloaderSession = function (loader) {
-        loader.removeEventListener(LoaderEvent.RESOURCE_COMPLETE, this._onResourceCompleteDelegate);
+        loader.removeEventListener(LoaderEvent.LOAD_COMPLETE, this._onResourceCompleteDelegate);
         loader.removeEventListener(AssetEvent.TEXTURE_SIZE_ERROR, this._onTextureSizeErrorDelegate);
         loader.removeEventListener(AssetEvent.ASSET_COMPLETE, this._onAssetCompleteDelegate);
         loader.stop();
     };
-    /**
-     * Called when unespected error occurs
-     */
-    /*
-     private onResourceError() : void
-     {
-     var msg:string = "Unexpected parser error";
-     if(hasEventListener(LoaderEvent.DEPENDENCY_ERROR)){
-     var re:LoaderEvent = new LoaderEvent(LoaderEvent.DEPENDENCY_ERROR, "");
-     dispatchEvent(re);
-     } else{
-     throw new Error(msg);
-     }
-     }
-     */
     AssetLibraryBundle.prototype.onAssetRename = function (event) {
         var asset = event.target; // TODO: was ev.currentTarget - watch this var
         var old = this.getAsset(asset.assetNamespace, asset.name);
@@ -8968,7 +8949,7 @@ var AssetLibraryBundle = (function (_super) {
             var dict = this._assetDictionary[event.asset.assetNamespace];
             if (dict == null)
                 return;
-            dict[event.assetPrevName] = null;
+            dict[event.prevName] = null;
             dict[event.asset.name] = event.asset;
         }
     };
@@ -8980,7 +8961,7 @@ var AssetLibraryBundle = (function (_super) {
 })(EventDispatcher);
 module.exports = AssetLibraryBundle;
 
-},{"awayjs-core/lib/errors/Error":"awayjs-core/lib/errors/Error","awayjs-core/lib/events/AssetEvent":"awayjs-core/lib/events/AssetEvent","awayjs-core/lib/events/EventDispatcher":"awayjs-core/lib/events/EventDispatcher","awayjs-core/lib/events/IOErrorEvent":"awayjs-core/lib/events/IOErrorEvent","awayjs-core/lib/events/LoaderEvent":"awayjs-core/lib/events/LoaderEvent","awayjs-core/lib/events/ParserEvent":"awayjs-core/lib/events/ParserEvent","awayjs-core/lib/library/AssetBase":"awayjs-core/lib/library/AssetBase","awayjs-core/lib/library/AssetLibraryIterator":"awayjs-core/lib/library/AssetLibraryIterator","awayjs-core/lib/library/ConflictPrecedence":"awayjs-core/lib/library/ConflictPrecedence","awayjs-core/lib/library/ConflictStrategy":"awayjs-core/lib/library/ConflictStrategy","awayjs-core/lib/library/LoaderSession":"awayjs-core/lib/library/LoaderSession"}],"awayjs-core/lib/library/AssetLibraryIterator":[function(require,module,exports){
+},{"awayjs-core/lib/errors/ErrorBase":"awayjs-core/lib/errors/ErrorBase","awayjs-core/lib/events/AssetEvent":"awayjs-core/lib/events/AssetEvent","awayjs-core/lib/events/EventDispatcher":"awayjs-core/lib/events/EventDispatcher","awayjs-core/lib/events/LoaderEvent":"awayjs-core/lib/events/LoaderEvent","awayjs-core/lib/events/ParserEvent":"awayjs-core/lib/events/ParserEvent","awayjs-core/lib/events/URLLoaderEvent":"awayjs-core/lib/events/URLLoaderEvent","awayjs-core/lib/library/AssetBase":"awayjs-core/lib/library/AssetBase","awayjs-core/lib/library/AssetLibraryIterator":"awayjs-core/lib/library/AssetLibraryIterator","awayjs-core/lib/library/ConflictPrecedence":"awayjs-core/lib/library/ConflictPrecedence","awayjs-core/lib/library/ConflictStrategy":"awayjs-core/lib/library/ConflictStrategy","awayjs-core/lib/library/Loader":"awayjs-core/lib/library/Loader"}],"awayjs-core/lib/library/AssetLibraryIterator":[function(require,module,exports){
 var AssetLibraryIterator = (function () {
     function AssetLibraryIterator(assets, assetTypeFilter, namespaceFilter, filterFunc) {
         this._assets = assets;
@@ -9045,7 +9026,7 @@ module.exports = AssetLibraryIterator;
 
 },{}],"awayjs-core/lib/library/AssetLibrary":[function(require,module,exports){
 var AssetLibraryBundle = require("awayjs-core/lib/library/AssetLibraryBundle");
-var LoaderSession = require("awayjs-core/lib/library/LoaderSession");
+var Loader = require("awayjs-core/lib/library/Loader");
 /**
  * AssetLibrary enforces a singleton pattern and is not intended to be instanced.
  * It's purpose is to allow access to the default library bundle through a set of static shortcut methods.
@@ -9076,13 +9057,13 @@ var AssetLibrary = (function () {
      *
      */
     AssetLibrary.enableParser = function (parserClass) {
-        LoaderSession.enableParser(parserClass);
+        Loader.enableParser(parserClass);
     };
     /**
      *
      */
     AssetLibrary.enableParsers = function (parserClasses) {
-        LoaderSession.enableParsers(parserClasses);
+        Loader.enableParsers(parserClasses);
     };
     Object.defineProperty(AssetLibrary, "conflictStrategy", {
         /**
@@ -9148,10 +9129,10 @@ var AssetLibrary = (function () {
         AssetLibrary.getBundle().loadData(data, context, ns, parser);
     };
     AssetLibrary.stopLoad = function () {
-        AssetLibrary.getBundle().stopAllLoaderSessions();
+        AssetLibrary.getBundle().stopAllLoaders();
     };
-    AssetLibrary.getLoaderSession = function () {
-        return AssetLibrary.getBundle().getLoaderSession();
+    AssetLibrary.getLoader = function () {
+        return AssetLibrary.getBundle().getLoader();
     };
     /**
      * Short-hand for getAsset() method on default asset library bundle.
@@ -9254,7 +9235,7 @@ var AssetLibrary = (function () {
 })();
 module.exports = AssetLibrary;
 
-},{"awayjs-core/lib/library/AssetLibraryBundle":"awayjs-core/lib/library/AssetLibraryBundle","awayjs-core/lib/library/LoaderSession":"awayjs-core/lib/library/LoaderSession"}],"awayjs-core/lib/library/ConflictPrecedence":[function(require,module,exports){
+},{"awayjs-core/lib/library/AssetLibraryBundle":"awayjs-core/lib/library/AssetLibraryBundle","awayjs-core/lib/library/Loader":"awayjs-core/lib/library/Loader"}],"awayjs-core/lib/library/ConflictPrecedence":[function(require,module,exports){
 /**
  * Enumaration class for precedence when resolving naming conflicts in the library.
  *
@@ -9388,14 +9369,14 @@ var __extends = this.__extends || function (d, b) {
     d.prototype = new __();
 };
 var ConflictStrategyBase = require("awayjs-core/lib/library/ConflictStrategyBase");
-var Error = require("awayjs-core/lib/errors/Error");
+var ErrorBase = require("awayjs-core/lib/errors/ErrorBase");
 var ErrorConflictStrategy = (function (_super) {
     __extends(ErrorConflictStrategy, _super);
     function ErrorConflictStrategy() {
         _super.call(this);
     }
     ErrorConflictStrategy.prototype.resolveConflict = function (changedAsset, oldAsset, assetsDictionary, precedence) {
-        throw new Error('Asset name collision while AssetLibrary.namingStrategy set to AssetLibrary.THROW_ERROR. Asset path: ' + changedAsset.assetFullPath);
+        throw new ErrorBase('Asset name collision while AssetLibrary.namingStrategy set to AssetLibrary.THROW_ERROR. Asset path: ' + changedAsset.assetFullPath);
     };
     ErrorConflictStrategy.prototype.create = function () {
         return new ErrorConflictStrategy();
@@ -9404,7 +9385,9 @@ var ErrorConflictStrategy = (function (_super) {
 })(ConflictStrategyBase);
 module.exports = ErrorConflictStrategy;
 
-},{"awayjs-core/lib/errors/Error":"awayjs-core/lib/errors/Error","awayjs-core/lib/library/ConflictStrategyBase":"awayjs-core/lib/library/ConflictStrategyBase"}],"awayjs-core/lib/library/IAssetClass":[function(require,module,exports){
+},{"awayjs-core/lib/errors/ErrorBase":"awayjs-core/lib/errors/ErrorBase","awayjs-core/lib/library/ConflictStrategyBase":"awayjs-core/lib/library/ConflictStrategyBase"}],"awayjs-core/lib/library/IAbstractionPool":[function(require,module,exports){
+
+},{}],"awayjs-core/lib/library/IAssetClass":[function(require,module,exports){
 
 },{}],"awayjs-core/lib/library/IAsset":[function(require,module,exports){
 
@@ -9467,8 +9450,6 @@ var IDUtil = (function () {
 })();
 module.exports = IDUtil;
 
-},{}],"awayjs-core/lib/library/IWrapperClass":[function(require,module,exports){
-
 },{}],"awayjs-core/lib/library/IgnoreConflictStrategy":[function(require,module,exports){
 var __extends = this.__extends || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -9496,11 +9477,11 @@ module.exports = IgnoreConflictStrategy;
 },{"awayjs-core/lib/library/ConflictStrategyBase":"awayjs-core/lib/library/ConflictStrategyBase"}],"awayjs-core/lib/library/LoaderContext":[function(require,module,exports){
 var LoaderContext = (function () {
     /**
-     * LoaderContext provides configuration for the LoaderSession load() and parse() operations.
+     * LoaderContext provides configuration for the Loader load() and parse() operations.
      * Use it to configure how (and if) dependencies are loaded, or to map dependency URLs to
      * embedded data.
      *
-     * @see away.loading.LoaderSession
+     * @see away.loading.Loader
      */
     function LoaderContext(includeDependencies, dependencyBaseUrl) {
         if (includeDependencies === void 0) { includeDependencies = true; }
@@ -9645,7 +9626,258 @@ var LoaderContext = (function () {
 })();
 module.exports = LoaderContext;
 
-},{}],"awayjs-core/lib/library/LoaderSession":[function(require,module,exports){
+},{}],"awayjs-core/lib/library/LoaderInfo":[function(require,module,exports){
+var __extends = this.__extends || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    __.prototype = b.prototype;
+    d.prototype = new __();
+};
+var EventDispatcher = require("awayjs-core/lib/events/EventDispatcher");
+/**
+ * The LoaderInfo class provides information about a loaded SWF file or a
+ * loaded image file(JPEG, GIF, or PNG). LoaderInfo objects are available for
+ * any display object. The information provided includes load progress, the
+ * URLs of the loader and loaded content, the number of bytes total for the
+ * media, and the nominal height and width of the media.
+ *
+ * <p>You can access LoaderInfo objects in two ways: </p>
+ *
+ * <ul>
+ *   <li>The <code>contentLoaderInfo</code> property of a flash.display.Loader
+ * object -  The <code>contentLoaderInfo</code> property is always available
+ * for any Loader object. For a Loader object that has not called the
+ * <code>load()</code> or <code>loadBytes()</code> method, or that has not
+ * sufficiently loaded, attempting to access many of the properties of the
+ * <code>contentLoaderInfo</code> property throws an error.</li>
+ *   <li>The <code>loaderInfo</code> property of a display object. </li>
+ * </ul>
+ *
+ * <p>The <code>contentLoaderInfo</code> property of a Loader object provides
+ * information about the content that the Loader object is loading, whereas
+ * the <code>loaderInfo</code> property of a DisplayObject provides
+ * information about the root SWF file for that display object. </p>
+ *
+ * <p>When you use a Loader object to load a display object(such as a SWF
+ * file or a bitmap), the <code>loaderInfo</code> property of the display
+ * object is the same as the <code>contentLoaderInfo</code> property of the
+ * Loader object(<code>DisplayObject.loaderInfo =
+ * Loader.contentLoaderInfo</code>). Because the instance of the main class of
+ * the SWF file has no Loader object, the <code>loaderInfo</code> property is
+ * the only way to access the LoaderInfo for the instance of the main class of
+ * the SWF file.</p>
+ *
+ * <p>The following diagram shows the different uses of the LoaderInfo
+ * object - for the instance of the main class of the SWF file, for the
+ * <code>contentLoaderInfo</code> property of a Loader object, and for the
+ * <code>loaderInfo</code> property of a loaded object:</p>
+ *
+ * <p>When a loading operation is not complete, some properties of the
+ * <code>contentLoaderInfo</code> property of a Loader object are not
+ * available. You can obtain some properties, such as
+ * <code>bytesLoaded</code>, <code>bytesTotal</code>, <code>url</code>,
+ * <code>loaderURL</code>, and <code>applicationDomain</code>. When the
+ * <code>loaderInfo</code> object dispatches the <code>init</code> event, you
+ * can access all properties of the <code>loaderInfo</code> object and the
+ * loaded image or SWF file.</p>
+ *
+ * <p><b>Note:</b> All properties of LoaderInfo objects are read-only.</p>
+ *
+ * <p>The <code>EventDispatcher.dispatchEvent()</code> method is not
+ * applicable to LoaderInfo objects. If you call <code>dispatchEvent()</code>
+ * on a LoaderInfo object, an IllegalOperationError exception is thrown.</p>
+ *
+ * @event complete   Dispatched when data has loaded successfully. In other
+ *                   words, it is dispatched when all the content has been
+ *                   downloaded and the loading has finished. The
+ *                   <code>complete</code> event is always dispatched after
+ *                   the <code>init</code> event. The <code>init</code> event
+ *                   is dispatched when the object is ready to access, though
+ *                   the content may still be downloading.
+ * @event httpStatus Dispatched when a network request is made over HTTP and
+ *                   an HTTP status code can be detected.
+ * @event init       Dispatched when the properties and methods of a loaded
+ *                   SWF file are accessible and ready for use. The content,
+ *                   however, can still be downloading. A LoaderInfo object
+ *                   dispatches the <code>init</code> event when the following
+ *                   conditions exist:
+ *                   <ul>
+ *                     <li>All properties and methods associated with the
+ *                   loaded object and those associated with the LoaderInfo
+ *                   object are accessible.</li>
+ *                     <li>The constructors for all child objects have
+ *                   completed.</li>
+ *                     <li>All ActionScript code in the first frame of the
+ *                   loaded SWF's main timeline has been executed.</li>
+ *                   </ul>
+ *
+ *                   <p>For example, an <code>Event.INIT</code> is dispatched
+ *                   when the first frame of a movie or animation is loaded.
+ *                   The movie is then accessible and can be added to the
+ *                   display list. The complete movie, however, can take
+ *                   longer to download. The <code>Event.COMPLETE</code> is
+ *                   only dispatched once the full movie is loaded.</p>
+ *
+ *                   <p>The <code>init</code> event always precedes the
+ *                   <code>complete</code> event.</p>
+ * @event ioError    Dispatched when an input or output error occurs that
+ *                   causes a load operation to fail.
+ * @event open       Dispatched when a load operation starts.
+ * @event progress   Dispatched when data is received as the download
+ *                   operation progresses.
+ * @event unload     Dispatched by a LoaderInfo object whenever a loaded
+ *                   object is removed by using the <code>unload()</code>
+ *                   method of the Loader object, or when a second load is
+ *                   performed by the same Loader object and the original
+ *                   content is removed prior to the load beginning.
+ */
+var LoaderInfo = (function (_super) {
+    __extends(LoaderInfo, _super);
+    function LoaderInfo() {
+        _super.apply(this, arguments);
+    }
+    Object.defineProperty(LoaderInfo.prototype, "bytes", {
+        /**
+         * The bytes associated with a LoaderInfo object.
+         *
+         * @throws SecurityError If the object accessing this API is prevented from
+         *                       accessing the loaded object due to security
+         *                       restrictions. This situation can occur, for
+         *                       instance, when a Loader object attempts to access
+         *                       the <code>contentLoaderInfo.content</code> property
+         *                       and it is not granted security permission to access
+         *                       the loaded content.
+         *
+         *                       <p>For more information related to security, see the
+         *                       Flash Player Developer Center Topic: <a
+         *                       href="http://www.adobe.com/go/devnet_security_en"
+         *                       scope="external">Security</a>.</p>
+         */
+        get: function () {
+            return this._bytes;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(LoaderInfo.prototype, "bytesLoaded", {
+        /**
+         * The number of bytes that are loaded for the media. When this number equals
+         * the value of <code>bytesTotal</code>, all of the bytes are loaded.
+         */
+        get: function () {
+            return this._bytesLoaded;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(LoaderInfo.prototype, "bytesTotal", {
+        /**
+         * The number of compressed bytes in the entire media file.
+         *
+         * <p>Before the first <code>progress</code> event is dispatched by this
+         * LoaderInfo object's corresponding Loader object, <code>bytesTotal</code>
+         * is 0. After the first <code>progress</code> event from the Loader object,
+         * <code>bytesTotal</code> reflects the actual number of bytes to be
+         * downloaded.</p>
+         */
+        get: function () {
+            return this._bytesTotal;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(LoaderInfo.prototype, "content", {
+        /**
+         * The loaded object associated with this LoaderInfo object.
+         *
+         * @throws SecurityError If the object accessing this API is prevented from
+         *                       accessing the loaded object due to security
+         *                       restrictions. This situation can occur, for
+         *                       instance, when a Loader object attempts to access
+         *                       the <code>contentLoaderInfo.content</code> property
+         *                       and it is not granted security permission to access
+         *                       the loaded content.
+         *
+         *                       <p>For more information related to security, see the
+         *                       Flash Player Developer Center Topic: <a
+         *                       href="http://www.adobe.com/go/devnet_security_en"
+         *                       scope="external">Security</a>.</p>
+         */
+        get: function () {
+            return this._content;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(LoaderInfo.prototype, "contentType", {
+        /**
+         * The MIME type of the loaded file. The value is <code>null</code> if not
+         * enough of the file has loaded in order to determine the type. The
+         * following list gives the possible values:
+         * <ul>
+         *   <li><code>"application/x-shockwave-flash"</code></li>
+         *   <li><code>"image/jpeg"</code></li>
+         *   <li><code>"image/gif"</code></li>
+         *   <li><code>"image/png"</code></li>
+         * </ul>
+         */
+        get: function () {
+            return this._contentType;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(LoaderInfo.prototype, "loader", {
+        /**
+         * The Loader object associated with this LoaderInfo object. If this
+         * LoaderInfo object is the <code>loaderInfo</code> property of the instance
+         * of the main class of the SWF file, no Loader object is associated.
+         *
+         * @throws SecurityError If the object accessing this API is prevented from
+         *                       accessing the Loader object because of security
+         *                       restrictions. This can occur, for instance, when a
+         *                       loaded SWF file attempts to access its
+         *                       <code>loaderInfo.loader</code> property and it is
+         *                       not granted security permission to access the
+         *                       loading SWF file.
+         *
+         *                       <p>For more information related to security, see the
+         *                       Flash Player Developer Center Topic: <a
+         *                       href="http://www.adobe.com/go/devnet_security_en"
+         *                       scope="external">Security</a>.</p>
+         */
+        get: function () {
+            return this._loader;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(LoaderInfo.prototype, "url", {
+        /**
+         * The URL of the media being loaded.
+         *
+         * <p>Before the first <code>progress</code> event is dispatched by this
+         * LoaderInfo object's corresponding Loader object, the value of the
+         * <code>url</code> property might reflect only the initial URL specified in
+         * the call to the <code>load()</code> method of the Loader object. After the
+         * first <code>progress</code> event, the <code>url</code> property reflects
+         * the media's final URL, after any redirects and relative URLs are
+         * resolved.</p>
+         *
+         * <p>In some cases, the value of the <code>url</code> property is truncated;
+         * see the <code>isURLInaccessible</code> property for details.</p>
+         */
+        get: function () {
+            return this._url;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    return LoaderInfo;
+})(EventDispatcher);
+module.exports = LoaderInfo;
+
+},{"awayjs-core/lib/events/EventDispatcher":"awayjs-core/lib/events/EventDispatcher"}],"awayjs-core/lib/library/Loader":[function(require,module,exports){
 var __extends = this.__extends || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
@@ -9654,11 +9886,9 @@ var __extends = this.__extends || function (d, b) {
 };
 var URLLoader = require("awayjs-core/lib/net/URLLoader");
 var URLLoaderDataFormat = require("awayjs-core/lib/net/URLLoaderDataFormat");
-var Error = require("awayjs-core/lib/errors/Error");
 var AssetEvent = require("awayjs-core/lib/events/AssetEvent");
-var Event = require("awayjs-core/lib/events/Event");
 var EventDispatcher = require("awayjs-core/lib/events/EventDispatcher");
-var IOErrorEvent = require("awayjs-core/lib/events/IOErrorEvent");
+var URLLoaderEvent = require("awayjs-core/lib/events/URLLoaderEvent");
 var LoaderEvent = require("awayjs-core/lib/events/LoaderEvent");
 var ParserEvent = require("awayjs-core/lib/events/ParserEvent");
 var Image2DParser = require("awayjs-core/lib/parsers/Image2DParser");
@@ -9705,22 +9935,22 @@ var WaveAudioParser = require("awayjs-core/lib/parsers/WaveAudioParser");
  */
 //[Event(name="textureSizeError", type="away3d.events.AssetEvent")]
 /**
- * LoaderSession can load any file format that away.supports (or for which a third-party parser
+ * Loader can load any file format that away.supports (or for which a third-party parser
  * has been plugged in) and it's dependencies. Events are dispatched when assets are encountered
  * and for when the resource (or it's dependencies) have been loaded.
  *
- * The LoaderSession will not make assets available in any other way than through the dispatched
+ * The Loader will not make assets available in any other way than through the dispatched
  * events. To store assets and make them available at any point from any module in an application,
  * use the AssetLibrary to load and manage assets.
  *
  * @see away.library.AssetLibrary
  */
-var LoaderSession = (function (_super) {
-    __extends(LoaderSession, _super);
+var Loader = (function (_super) {
+    __extends(Loader, _super);
     /**
      * Create a new ResourceLoadSession object.
      */
-    function LoaderSession(materialMode) {
+    function Loader(materialMode) {
         var _this = this;
         if (materialMode === void 0) { materialMode = 0; }
         _super.call(this);
@@ -9746,29 +9976,52 @@ var LoaderSession = (function (_super) {
      *
      * @see away.parsers.Parsers
      */
-    LoaderSession.enableParser = function (parser) {
-        if (LoaderSession._parsers.indexOf(parser) < 0)
-            LoaderSession._parsers.push(parser);
+    Loader.enableParser = function (parser) {
+        if (Loader._parsers.indexOf(parser) < 0)
+            Loader._parsers.push(parser);
     };
     /**
      * Enables a list of parsers.
      * When no specific parser is set for a loading/parsing opperation,
-     * LoaderSession can autoselect the correct parser to use.
+     * Loader can autoselect the correct parser to use.
      * A parser must have been enabled, to be considered when autoselecting the parser.
      *
      * @param parsers A Vector of parser classes to enable.
      * @see away.parsers.Parsers
      */
-    LoaderSession.enableParsers = function (parsers) {
+    Loader.enableParsers = function (parsers) {
         for (var c = 0; c < parsers.length; c++)
-            LoaderSession.enableParser(parsers[c]);
+            Loader.enableParser(parsers[c]);
     };
-    Object.defineProperty(LoaderSession.prototype, "baseDependency", {
+    Object.defineProperty(Loader.prototype, "baseDependency", {
         /**
          * Returns the base dependency of the loader
          */
         get: function () {
             return this._baseDependency;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Loader.prototype, "loaderInfo", {
+        /**
+         * Returns a LoaderInfo object corresponding to the object being loaded.
+         * LoaderInfo objects are shared between the Loader object and the loaded
+         * content object. The LoaderInfo object supplies loading progress
+         * information and statistics about the loaded file.
+         *
+         * <p>Events related to the load are dispatched by the LoaderInfo object
+         * referenced by the <code>contentLoaderInfo</code> property of the Loader
+         * object. The <code>contentLoaderInfo</code> property is set to a valid
+         * LoaderInfo object, even before the content is loaded, so that you can add
+         * event listeners to the object prior to the load.</p>
+         *
+         * <p>To detect uncaught errors that happen in a loaded SWF, use the
+         * <code>Loader.uncaughtErrorEvents</code> property, not the
+         * <code>Loader.contentLoaderInfo.uncaughtErrorEvents</code> property.</p>
+         */
+        get: function () {
+            return this._loaderInfo;
         },
         enumerable: true,
         configurable: true
@@ -9779,9 +10032,9 @@ var LoaderSession = (function (_super) {
      * @param req The URLRequest object containing the URL of the file to be loaded.
      * @param context An optional context object providing additional parameters for loading
      * @param ns An optional namespace string under which the file is to be loaded, allowing the differentiation of two resources with identical assets
-     * @param parser An optional parser object for translating the loaded data into a usable resource. If not provided, LoaderSession will attempt to auto-detect the file type.
+     * @param parser An optional parser object for translating the loaded data into a usable resource. If not provided, Loader will attempt to auto-detect the file type.
      */
-    LoaderSession.prototype.load = function (req, context, ns, parser) {
+    Loader.prototype.load = function (req, context, ns, parser) {
         if (context === void 0) { context = null; }
         if (ns === void 0) { ns = null; }
         if (parser === void 0) { parser = null; }
@@ -9797,9 +10050,9 @@ var LoaderSession = (function (_super) {
      * @param data The data object containing all resource information.
      * @param context An optional context object providing additional parameters for loading
      * @param ns An optional namespace string under which the file is to be loaded, allowing the differentiation of two resources with identical assets
-     * @param parser An optional parser object for translating the loaded data into a usable resource. If not provided, LoaderSession will attempt to auto-detect the file type.
+     * @param parser An optional parser object for translating the loaded data into a usable resource. If not provided, Loader will attempt to auto-detect the file type.
      */
-    LoaderSession.prototype.loadData = function (data, id, context, ns, parser) {
+    Loader.prototype.loadData = function (data, id, context, ns, parser) {
         if (context === void 0) { context = null; }
         if (ns === void 0) { ns = null; }
         if (parser === void 0) { parser = null; }
@@ -9814,7 +10067,7 @@ var LoaderSession = (function (_super) {
      * stack when complete and continues on the top set.
      * @param parser The parser that will translate the data into a usable resource.
      */
-    LoaderSession.prototype.retrieveNext = function (parser) {
+    Loader.prototype.retrieveNext = function (parser) {
         if (parser === void 0) { parser = null; }
         if (this._currentDependency.dependencies.length) {
             var next = this._currentDependency.dependencies.pop();
@@ -9833,14 +10086,14 @@ var LoaderSession = (function (_super) {
             this.retrieveNext(parser);
         }
         else {
-            this.dispatchEvent(new LoaderEvent(LoaderEvent.RESOURCE_COMPLETE, this._uri, this._baseDependency.parser.content, this._baseDependency.assets));
+            this.dispatchEvent(new LoaderEvent(LoaderEvent.LOAD_COMPLETE, this._uri, this._baseDependency.parser.content, this._baseDependency.assets));
         }
     };
     /**
      * Retrieves a single dependency.
      * @param parser The parser that will translate the data into a usable resource.
      */
-    LoaderSession.prototype.retrieveDependency = function (dependency) {
+    Loader.prototype.retrieveDependency = function (dependency) {
         var data;
         if (this._context && this._context.materialMode != 0)
             this._materialMode = this._context.materialMode;
@@ -9889,7 +10142,7 @@ var LoaderSession = (function (_super) {
             dependency._iLoader.load(dependency.request);
         }
     };
-    LoaderSession.prototype.joinUrl = function (base, end) {
+    Loader.prototype.joinUrl = function (base, end) {
         if (end.charAt(0) == '/' || end.charAt(0) == '\\')
             end = end.substr(1);
         if (end.charAt(0) == '.')
@@ -9900,7 +10153,7 @@ var LoaderSession = (function (_super) {
             base = base.substr(0, base.length - 1);
         return base.concat('/', end);
     };
-    LoaderSession.prototype.resolveDependencyUrl = function (dependency) {
+    Loader.prototype.resolveDependencyUrl = function (dependency) {
         var scheme_re;
         var base;
         var url = dependency.request.url;
@@ -9940,7 +10193,7 @@ var LoaderSession = (function (_super) {
             return this.joinUrl(base, url);
         }
     };
-    LoaderSession.prototype.retrieveParserDependencies = function () {
+    Loader.prototype.retrieveParserDependencies = function () {
         if (!this._currentDependency)
             return;
         var parserDependancies = this._currentDependency.parser.dependencies;
@@ -9953,7 +10206,7 @@ var LoaderSession = (function (_super) {
         this._stack.push(this._currentDependency);
         this.retrieveNext();
     };
-    LoaderSession.prototype.resolveParserDependencies = function () {
+    Loader.prototype.resolveParserDependencies = function () {
         this._currentDependency._iSuccess = true;
         // Retrieve any last dependencies remaining on this parser, or
         // if none exists, just move on.
@@ -9966,17 +10219,17 @@ var LoaderSession = (function (_super) {
      * Called when a single dependency loading failed, and pushes further dependencies onto the stack.
      * @param event
      */
-    LoaderSession.prototype.onLoadError = function (event) {
+    Loader.prototype.onLoadError = function (event) {
         var handled;
         var isDependency = (this._currentDependency != this._baseDependency);
-        var loader = event.target; //TODO: keep on eye on this one
+        var loader = event.urlLoader;
         this.removeEventListeners(loader);
-        if (this.hasEventListener(IOErrorEvent.IO_ERROR)) {
+        if (this.hasEventListener(URLLoaderEvent.LOAD_ERROR)) {
             this.dispatchEvent(event);
             handled = true;
         }
         else {
-            // TODO: Consider not doing this even when LoaderSession does have it's own LOAD_ERROR listener
+            // TODO: Consider not doing this even when Loader does have it's own LOAD_ERROR listener
             var i, len = this._errorHandlers.length;
             for (i = 0; i < len; i++)
                 if (!handled)
@@ -10004,7 +10257,7 @@ var LoaderSession = (function (_super) {
      * Called when a dependency parsing failed, and dispatches a <code>ParserEvent.PARSE_ERROR</code>
      * @param event
      */
-    LoaderSession.prototype.onParseError = function (event) {
+    Loader.prototype.onParseError = function (event) {
         var handled;
         var isDependency = (this._currentDependency != this._baseDependency);
         var loader = event.target;
@@ -10014,7 +10267,7 @@ var LoaderSession = (function (_super) {
             handled = true;
         }
         else {
-            // TODO: Consider not doing this even when LoaderSession does
+            // TODO: Consider not doing this even when Loader does
             // have it's own LOAD_ERROR listener
             var i, len = this._parseErrorHandlers.length;
             for (i = 0; i < len; i++)
@@ -10028,7 +10281,7 @@ var LoaderSession = (function (_super) {
             throw new Error(event.message);
         }
     };
-    LoaderSession.prototype.onAssetComplete = function (event) {
+    Loader.prototype.onAssetComplete = function (event) {
         // Add loaded asset to list of assets retrieved as part
         // of the current dependency. This list will be inspected
         // by the parent parser when dependency is resolved
@@ -10038,7 +10291,7 @@ var LoaderSession = (function (_super) {
         if (!this._currentDependency.suppresAssetEvents)
             this.dispatchEvent(event);
     };
-    LoaderSession.prototype.onReadyForDependencies = function (event) {
+    Loader.prototype.onReadyForDependencies = function (event) {
         var parser = event.target;
         if (this._context && !this._context.includeDependencies)
             parser._iResumeParsing();
@@ -10049,8 +10302,8 @@ var LoaderSession = (function (_super) {
      * Called when a single dependency was parsed, and pushes further dependencies onto the stack.
      * @param event
      */
-    LoaderSession.prototype.onLoadComplete = function (event) {
-        var loader = event.target;
+    Loader.prototype.onLoadComplete = function (event) {
+        var loader = event.urlLoader;
         this.removeEventListeners(loader);
         // Resolve this dependency
         this._currentDependency._iSetData(loader.data);
@@ -10065,7 +10318,7 @@ var LoaderSession = (function (_super) {
     /**
      * Called when parsing is complete.
      */
-    LoaderSession.prototype.onParseComplete = function (event) {
+    Loader.prototype.onParseComplete = function (event) {
         var parser = event.target;
         this.resolveParserDependencies(); //resolve in front of removing listeners to allow any remaining asset events to propagate
         parser.removeEventListener(ParserEvent.READY_FOR_DEPENDENCIES, this._onReadyForDependenciesDelegate);
@@ -10078,22 +10331,22 @@ var LoaderSession = (function (_super) {
      * Called when an image is too large or it's dimensions are not a power of 2
      * @param event
      */
-    LoaderSession.prototype.onTextureSizeError = function (event) {
+    Loader.prototype.onTextureSizeError = function (event) {
         event.asset.name = this._currentDependency.resolveName(event.asset);
         this.dispatchEvent(event);
     };
-    LoaderSession.prototype.addEventListeners = function (loader) {
-        loader.addEventListener(Event.COMPLETE, this._onLoadCompleteDelegate);
-        loader.addEventListener(IOErrorEvent.IO_ERROR, this._onLoadErrorDelegate);
+    Loader.prototype.addEventListeners = function (loader) {
+        loader.addEventListener(URLLoaderEvent.LOAD_COMPLETE, this._onLoadCompleteDelegate);
+        loader.addEventListener(URLLoaderEvent.LOAD_ERROR, this._onLoadErrorDelegate);
     };
-    LoaderSession.prototype.removeEventListeners = function (loader) {
-        loader.removeEventListener(Event.COMPLETE, this._onLoadCompleteDelegate);
-        loader.removeEventListener(IOErrorEvent.IO_ERROR, this._onLoadErrorDelegate);
+    Loader.prototype.removeEventListeners = function (loader) {
+        loader.removeEventListener(URLLoaderEvent.LOAD_COMPLETE, this._onLoadCompleteDelegate);
+        loader.removeEventListener(URLLoaderEvent.LOAD_ERROR, this._onLoadErrorDelegate);
     };
-    LoaderSession.prototype.stop = function () {
+    Loader.prototype.stop = function () {
         this.dispose();
     };
-    LoaderSession.prototype.dispose = function () {
+    Loader.prototype.dispose = function () {
         this._errorHandlers = null;
         this._parseErrorHandlers = null;
         this._context = null;
@@ -10105,19 +10358,19 @@ var LoaderSession = (function (_super) {
     /**
      * @private
      * This method is used by other loader classes (e.g. Loader3D and AssetLibraryBundle) to
-     * add error event listeners to the LoaderSession instance. This system is used instead of
+     * add error event listeners to the Loader instance. This system is used instead of
      * the regular EventDispatcher system so that the AssetLibrary error handler can be sure
      * that if hasEventListener() returns true, it's client code that's listening for the
      * event. Secondly, functions added as error handler through this custom method are
      * expected to return a boolean value indicating whether the event was handled (i.e.
      * whether they in turn had any client code listening for the event.) If no handlers
-     * return true, the LoaderSession knows that the event wasn't handled and will throw an RTE.
+     * return true, the Loader knows that the event wasn't handled and will throw an RTE.
      */
-    LoaderSession.prototype._iAddParseErrorHandler = function (handler) {
+    Loader.prototype._iAddParseErrorHandler = function (handler) {
         if (this._parseErrorHandlers.indexOf(handler) < 0)
             this._parseErrorHandlers.push(handler);
     };
-    LoaderSession.prototype._iAddErrorHandler = function (handler) {
+    Loader.prototype._iAddErrorHandler = function (handler) {
         if (this._errorHandlers.indexOf(handler) < 0)
             this._errorHandlers.push(handler);
     };
@@ -10127,11 +10380,11 @@ var LoaderSession = (function (_super) {
      * @param uri The url or id of the object to be parsed.
      * @return An instance of the guessed parser.
      */
-    LoaderSession.prototype.getParserFromData = function (data) {
-        var len = LoaderSession._parsers.length;
+    Loader.prototype.getParserFromData = function (data) {
+        var len = Loader._parsers.length;
         for (var i = len - 1; i >= 0; i--)
-            if (LoaderSession._parsers[i].supportsData(data))
-                return new LoaderSession._parsers[i]();
+            if (Loader._parsers[i].supportsData(data))
+                return new Loader._parsers[i]();
         return null;
     };
     /**
@@ -10139,7 +10392,7 @@ var LoaderSession = (function (_super) {
      *
      * @param The dependency to be parsed.
      */
-    LoaderSession.prototype.parseDependency = function (dependency) {
+    Loader.prototype.parseDependency = function (dependency) {
         var parser = dependency.parser;
         // If no parser has been defined, try to find one by letting
         // all plugged in parsers inspect the actual data.
@@ -10165,7 +10418,7 @@ var LoaderSession = (function (_super) {
                 handled = true;
             }
             else {
-                // TODO: Consider not doing this even when LoaderSession does
+                // TODO: Consider not doing this even when Loader does
                 // have it's own LOAD_ERROR listener
                 var i, len = this._parseErrorHandlers.length;
                 for (i = 0; i < len; i++)
@@ -10184,25 +10437,25 @@ var LoaderSession = (function (_super) {
      * Guesses the parser to be used based on the file extension.
      * @return An instance of the guessed parser.
      */
-    LoaderSession.prototype.getParserFromSuffix = function (url) {
+    Loader.prototype.getParserFromSuffix = function (url) {
         // Get rid of query string if any and extract extension
         var base = (url.indexOf('?') > 0) ? url.split('?')[0] : url;
         var fileExtension = base.substr(base.lastIndexOf('.') + 1).toLowerCase();
-        var len = LoaderSession._parsers.length;
+        var len = Loader._parsers.length;
         for (var i = len - 1; i >= 0; i--) {
-            var parserClass = LoaderSession._parsers[i];
+            var parserClass = Loader._parsers[i];
             if (parserClass.supportsType(fileExtension))
                 return new parserClass();
         }
         return null;
     };
     // Image parser only parser that is added by default, to save file size.
-    LoaderSession._parsers = new Array(Image2DParser, ImageCubeParser, TextureAtlasParser, WaveAudioParser);
-    return LoaderSession;
+    Loader._parsers = new Array(Image2DParser, ImageCubeParser, TextureAtlasParser, WaveAudioParser);
+    return Loader;
 })(EventDispatcher);
-module.exports = LoaderSession;
+module.exports = Loader;
 
-},{"awayjs-core/lib/errors/Error":"awayjs-core/lib/errors/Error","awayjs-core/lib/events/AssetEvent":"awayjs-core/lib/events/AssetEvent","awayjs-core/lib/events/Event":"awayjs-core/lib/events/Event","awayjs-core/lib/events/EventDispatcher":"awayjs-core/lib/events/EventDispatcher","awayjs-core/lib/events/IOErrorEvent":"awayjs-core/lib/events/IOErrorEvent","awayjs-core/lib/events/LoaderEvent":"awayjs-core/lib/events/LoaderEvent","awayjs-core/lib/events/ParserEvent":"awayjs-core/lib/events/ParserEvent","awayjs-core/lib/net/URLLoader":"awayjs-core/lib/net/URLLoader","awayjs-core/lib/net/URLLoaderDataFormat":"awayjs-core/lib/net/URLLoaderDataFormat","awayjs-core/lib/parsers/Image2DParser":"awayjs-core/lib/parsers/Image2DParser","awayjs-core/lib/parsers/ImageCubeParser":"awayjs-core/lib/parsers/ImageCubeParser","awayjs-core/lib/parsers/ResourceDependency":"awayjs-core/lib/parsers/ResourceDependency","awayjs-core/lib/parsers/TextureAtlasParser":"awayjs-core/lib/parsers/TextureAtlasParser","awayjs-core/lib/parsers/WaveAudioParser":"awayjs-core/lib/parsers/WaveAudioParser"}],"awayjs-core/lib/library/NumSuffixConflictStrategy":[function(require,module,exports){
+},{"awayjs-core/lib/events/AssetEvent":"awayjs-core/lib/events/AssetEvent","awayjs-core/lib/events/EventDispatcher":"awayjs-core/lib/events/EventDispatcher","awayjs-core/lib/events/LoaderEvent":"awayjs-core/lib/events/LoaderEvent","awayjs-core/lib/events/ParserEvent":"awayjs-core/lib/events/ParserEvent","awayjs-core/lib/events/URLLoaderEvent":"awayjs-core/lib/events/URLLoaderEvent","awayjs-core/lib/net/URLLoader":"awayjs-core/lib/net/URLLoader","awayjs-core/lib/net/URLLoaderDataFormat":"awayjs-core/lib/net/URLLoaderDataFormat","awayjs-core/lib/parsers/Image2DParser":"awayjs-core/lib/parsers/Image2DParser","awayjs-core/lib/parsers/ImageCubeParser":"awayjs-core/lib/parsers/ImageCubeParser","awayjs-core/lib/parsers/ResourceDependency":"awayjs-core/lib/parsers/ResourceDependency","awayjs-core/lib/parsers/TextureAtlasParser":"awayjs-core/lib/parsers/TextureAtlasParser","awayjs-core/lib/parsers/WaveAudioParser":"awayjs-core/lib/parsers/WaveAudioParser"}],"awayjs-core/lib/library/NumSuffixConflictStrategy":[function(require,module,exports){
 var __extends = this.__extends || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
@@ -10744,19 +10997,16 @@ var __extends = this.__extends || function (d, b) {
 var URLLoaderDataFormat = require("awayjs-core/lib/net/URLLoaderDataFormat");
 var URLRequestMethod = require("awayjs-core/lib/net/URLRequestMethod");
 var URLVariables = require("awayjs-core/lib/net/URLVariables");
-var AwayEvent = require("awayjs-core/lib/events/Event");
 var EventDispatcher = require("awayjs-core/lib/events/EventDispatcher");
-var HTTPStatusEvent = require("awayjs-core/lib/events/HTTPStatusEvent");
-var IOErrorEvent = require("awayjs-core/lib/events/IOErrorEvent");
-var AwayProgressEvent = require("awayjs-core/lib/events/ProgressEvent");
+var URLLoaderEvent = require("awayjs-core/lib/events/URLLoaderEvent");
 /**
  * The URLLoader is used to load a single file, as part of a resource.
  *
  * While URLLoader can be used directly, e.g. to create a third-party asset
- * management system, it's recommended to use any of the classes Loader3D, LoaderSession
+ * management system, it's recommended to use any of the classes Loader3D, Loader
  * and AssetLibrary instead in most cases.
  *
- * @see LoaderSession
+ * @see Loader
  * @see away.library.AssetLibrary
  */
 var URLLoader = (function (_super) {
@@ -10861,10 +11111,6 @@ var URLLoader = (function (_super) {
         if (this._XHR)
             this._XHR.abort();
         this.disposeXHR();
-        this._data = null;
-        this._dataFormat = null;
-        this._bytesLoaded = null;
-        this._bytesTotal = null;
     };
     /**
      *
@@ -10992,13 +11238,12 @@ var URLLoader = (function (_super) {
      */
     URLLoader.prototype.onReadyStateChange = function (event) {
         if (this._XHR.readyState == 4) {
-            if (this._XHR.status == 404) {
+            this._status = this._XHR.status;
+            if (this._status == 404) {
                 this._loadError = true;
-                if (!this._loadErrorEvent)
-                    this._loadErrorEvent = new IOErrorEvent(IOErrorEvent.IO_ERROR);
-                this.dispatchEvent(this._loadErrorEvent);
+                this.dispatchEvent(this._loadErrorEvent || (this._loadErrorEvent = new URLLoaderEvent(URLLoaderEvent.LOAD_ERROR, this)));
             }
-            this.dispatchEvent(new HTTPStatusEvent(HTTPStatusEvent.HTTP_STATUS, this._XHR.status));
+            this.dispatchEvent(this._statusEvent || (this._statusEvent = new URLLoaderEvent(URLLoaderEvent.HTTP_STATUS, this)));
         }
     };
     /**
@@ -11028,20 +11273,16 @@ var URLLoader = (function (_super) {
      * @param event
      */
     URLLoader.prototype.onProgress = function (event) {
-        if (!this._progressEvent)
-            this._progressEvent = new AwayProgressEvent(AwayProgressEvent.PROGRESS);
-        this._progressEvent.bytesTotal = event.total;
-        this._progressEvent.bytesLoaded = event.loaded;
-        this.dispatchEvent(this._progressEvent);
+        this._bytesTotal = event.total;
+        this._bytesLoaded = event.loaded;
+        this.dispatchEvent(this._progressEvent || (this._progressEvent = new URLLoaderEvent(URLLoaderEvent.LOAD_PROGRESS, this)));
     };
     /**
      * When the request starts.
      * @param event
      */
     URLLoader.prototype.onLoadStart = function (event) {
-        if (!this._loadStartEvent)
-            this._loadStartEvent = new AwayEvent(AwayEvent.OPEN);
-        this.dispatchEvent(this._loadStartEvent);
+        this.dispatchEvent(this._loadStartEvent || (this._loadStartEvent = new URLLoaderEvent(URLLoaderEvent.LOAD_START, this)));
     };
     /**
      * When the request has successfully completed.
@@ -11066,9 +11307,7 @@ var URLLoader = (function (_super) {
                 this._data = this._XHR.responseText;
                 break;
         }
-        if (!this._loadCompleteEvent)
-            this._loadCompleteEvent = new AwayEvent(AwayEvent.COMPLETE);
-        this.dispatchEvent(this._loadCompleteEvent);
+        this.dispatchEvent(this._loadCompleteEvent || (this._loadCompleteEvent = new URLLoaderEvent(URLLoaderEvent.LOAD_COMPLETE, this)));
     };
     /**
      * When the request has failed. ( due to network issues ).
@@ -11076,15 +11315,13 @@ var URLLoader = (function (_super) {
      */
     URLLoader.prototype.onLoadError = function (event) {
         this._loadError = true;
-        if (!this._loadErrorEvent)
-            this._loadErrorEvent = new IOErrorEvent(IOErrorEvent.IO_ERROR);
-        this.dispatchEvent(this._loadErrorEvent);
+        this.dispatchEvent(this._loadErrorEvent || (this._loadErrorEvent = new URLLoaderEvent(URLLoaderEvent.LOAD_ERROR, this)));
     };
     return URLLoader;
 })(EventDispatcher);
 module.exports = URLLoader;
 
-},{"awayjs-core/lib/events/Event":"awayjs-core/lib/events/Event","awayjs-core/lib/events/EventDispatcher":"awayjs-core/lib/events/EventDispatcher","awayjs-core/lib/events/HTTPStatusEvent":"awayjs-core/lib/events/HTTPStatusEvent","awayjs-core/lib/events/IOErrorEvent":"awayjs-core/lib/events/IOErrorEvent","awayjs-core/lib/events/ProgressEvent":"awayjs-core/lib/events/ProgressEvent","awayjs-core/lib/net/URLLoaderDataFormat":"awayjs-core/lib/net/URLLoaderDataFormat","awayjs-core/lib/net/URLRequestMethod":"awayjs-core/lib/net/URLRequestMethod","awayjs-core/lib/net/URLVariables":"awayjs-core/lib/net/URLVariables"}],"awayjs-core/lib/net/URLRequestMethod":[function(require,module,exports){
+},{"awayjs-core/lib/events/EventDispatcher":"awayjs-core/lib/events/EventDispatcher","awayjs-core/lib/events/URLLoaderEvent":"awayjs-core/lib/events/URLLoaderEvent","awayjs-core/lib/net/URLLoaderDataFormat":"awayjs-core/lib/net/URLLoaderDataFormat","awayjs-core/lib/net/URLRequestMethod":"awayjs-core/lib/net/URLRequestMethod","awayjs-core/lib/net/URLVariables":"awayjs-core/lib/net/URLVariables"}],"awayjs-core/lib/net/URLRequestMethod":[function(require,module,exports){
 var URLRequestMethod = (function () {
     function URLRequestMethod() {
     }
@@ -11357,7 +11594,7 @@ var __extends = this.__extends || function (d, b) {
     __.prototype = b.prototype;
     d.prototype = new __();
 };
-var BitmapImageCube = require("awayjs-core/lib/data/BitmapImageCube");
+var BitmapImageCube = require("awayjs-core/lib/image/BitmapImageCube");
 var URLLoaderDataFormat = require("awayjs-core/lib/net/URLLoaderDataFormat");
 var URLRequest = require("awayjs-core/lib/net/URLRequest");
 var ParserBase = require("awayjs-core/lib/parsers/ParserBase");
@@ -11475,7 +11712,7 @@ var ImageCubeParser = (function (_super) {
 })(ParserBase);
 module.exports = ImageCubeParser;
 
-},{"awayjs-core/lib/data/BitmapImageCube":"awayjs-core/lib/data/BitmapImageCube","awayjs-core/lib/net/URLLoaderDataFormat":"awayjs-core/lib/net/URLLoaderDataFormat","awayjs-core/lib/net/URLRequest":"awayjs-core/lib/net/URLRequest","awayjs-core/lib/parsers/ParserBase":"awayjs-core/lib/parsers/ParserBase"}],"awayjs-core/lib/parsers/ParserBase":[function(require,module,exports){
+},{"awayjs-core/lib/image/BitmapImageCube":"awayjs-core/lib/image/BitmapImageCube","awayjs-core/lib/net/URLLoaderDataFormat":"awayjs-core/lib/net/URLLoaderDataFormat","awayjs-core/lib/net/URLRequest":"awayjs-core/lib/net/URLRequest","awayjs-core/lib/parsers/ParserBase":"awayjs-core/lib/parsers/ParserBase"}],"awayjs-core/lib/parsers/ParserBase":[function(require,module,exports){
 var __extends = this.__extends || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
@@ -11496,7 +11733,7 @@ var getTimer = require("awayjs-core/lib/utils/getTimer");
  * <code>ParserBase</code> provides an abstract base class for objects that convert blocks of data to data structures
  * supported by away.
  *
- * If used by <code>LoaderSession</code> to automatically determine the parser type, two public static methods should
+ * If used by <code>Loader</code> to automatically determine the parser type, two public static methods should
  * be implemented, with the following signatures:
  *
  * <code>public static supportsType(extension : string) : boolean</code>
@@ -11509,7 +11746,7 @@ var getTimer = require("awayjs-core/lib/utils/getTimer");
  * create the object that will contain the parsed data. This allows <code>ResourceManager</code> to return an object
  * handle regardless of whether the object was loaded or not.
  *
- * @see LoaderSession
+ * @see Loader
  */
 var ParserBase = (function (_super) {
     __extends(ParserBase, _super);
@@ -11816,7 +12053,7 @@ var ParserDataFormat = (function () {
 module.exports = ParserDataFormat;
 
 },{}],"awayjs-core/lib/parsers/ParserUtils":[function(require,module,exports){
-var BitmapImage2D = require("awayjs-core/lib/data/BitmapImage2D");
+var BitmapImage2D = require("awayjs-core/lib/image/BitmapImage2D");
 var ByteArray = require("awayjs-core/lib/utils/ByteArray");
 var ParserUtils = (function () {
     function ParserUtils() {
@@ -11966,7 +12203,7 @@ var ParserUtils = (function () {
 })();
 module.exports = ParserUtils;
 
-},{"awayjs-core/lib/data/BitmapImage2D":"awayjs-core/lib/data/BitmapImage2D","awayjs-core/lib/utils/ByteArray":"awayjs-core/lib/utils/ByteArray"}],"awayjs-core/lib/parsers/ResourceDependency":[function(require,module,exports){
+},{"awayjs-core/lib/image/BitmapImage2D":"awayjs-core/lib/image/BitmapImage2D","awayjs-core/lib/utils/ByteArray":"awayjs-core/lib/utils/ByteArray"}],"awayjs-core/lib/parsers/ResourceDependency":[function(require,module,exports){
 /**
  * ResourceDependency represents the data required to load, parse and resolve additional files ("dependencies")
  * required by a parser, used by ResourceLoadSession.
@@ -12134,7 +12371,7 @@ var __extends = this.__extends || function (d, b) {
     __.prototype = b.prototype;
     d.prototype = new __();
 };
-var Sampler2D = require("awayjs-core/lib/data/Sampler2D");
+var Sampler2D = require("awayjs-core/lib/image/Sampler2D");
 var Rectangle = require("awayjs-core/lib/geom/Rectangle");
 var URLLoaderDataFormat = require("awayjs-core/lib/net/URLLoaderDataFormat");
 var URLRequest = require("awayjs-core/lib/net/URLRequest");
@@ -12275,14 +12512,14 @@ var TextureAtlasParserState = (function () {
 })();
 module.exports = TextureAtlasParser;
 
-},{"awayjs-core/lib/data/Sampler2D":"awayjs-core/lib/data/Sampler2D","awayjs-core/lib/geom/Rectangle":"awayjs-core/lib/geom/Rectangle","awayjs-core/lib/net/URLLoaderDataFormat":"awayjs-core/lib/net/URLLoaderDataFormat","awayjs-core/lib/net/URLRequest":"awayjs-core/lib/net/URLRequest","awayjs-core/lib/parsers/ParserBase":"awayjs-core/lib/parsers/ParserBase","awayjs-core/lib/parsers/ParserUtils":"awayjs-core/lib/parsers/ParserUtils","awayjs-core/lib/utils/XmlUtils":"awayjs-core/lib/utils/XmlUtils"}],"awayjs-core/lib/parsers/WaveAudioParser":[function(require,module,exports){
+},{"awayjs-core/lib/geom/Rectangle":"awayjs-core/lib/geom/Rectangle","awayjs-core/lib/image/Sampler2D":"awayjs-core/lib/image/Sampler2D","awayjs-core/lib/net/URLLoaderDataFormat":"awayjs-core/lib/net/URLLoaderDataFormat","awayjs-core/lib/net/URLRequest":"awayjs-core/lib/net/URLRequest","awayjs-core/lib/parsers/ParserBase":"awayjs-core/lib/parsers/ParserBase","awayjs-core/lib/parsers/ParserUtils":"awayjs-core/lib/parsers/ParserUtils","awayjs-core/lib/utils/XmlUtils":"awayjs-core/lib/utils/XmlUtils"}],"awayjs-core/lib/parsers/WaveAudioParser":[function(require,module,exports){
 var __extends = this.__extends || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
     __.prototype = b.prototype;
     d.prototype = new __();
 };
-var WaveAudio = require("awayjs-core/lib/data/WaveAudio");
+var WaveAudio = require("awayjs-core/lib/audio/WaveAudio");
 var URLLoaderDataFormat = require("awayjs-core/lib/net/URLLoaderDataFormat");
 var ParserBase = require("awayjs-core/lib/parsers/ParserBase");
 var ByteArray = require("awayjs-core/lib/utils/ByteArray");
@@ -12338,9 +12575,7 @@ var WaveAudioParser = (function (_super) {
 })(ParserBase);
 module.exports = WaveAudioParser;
 
-},{"awayjs-core/lib/data/WaveAudio":"awayjs-core/lib/data/WaveAudio","awayjs-core/lib/net/URLLoaderDataFormat":"awayjs-core/lib/net/URLLoaderDataFormat","awayjs-core/lib/parsers/ParserBase":"awayjs-core/lib/parsers/ParserBase","awayjs-core/lib/utils/ByteArray":"awayjs-core/lib/utils/ByteArray"}],"awayjs-core/lib/pool/IImageObject":[function(require,module,exports){
-
-},{}],"awayjs-core/lib/projections/CoordinateSystem":[function(require,module,exports){
+},{"awayjs-core/lib/audio/WaveAudio":"awayjs-core/lib/audio/WaveAudio","awayjs-core/lib/net/URLLoaderDataFormat":"awayjs-core/lib/net/URLLoaderDataFormat","awayjs-core/lib/parsers/ParserBase":"awayjs-core/lib/parsers/ParserBase","awayjs-core/lib/utils/ByteArray":"awayjs-core/lib/utils/ByteArray"}],"awayjs-core/lib/projections/CoordinateSystem":[function(require,module,exports){
 /**
  * Provides constant values for camera lens projection options use the the <code>coordinateSystem</code> property
  *
@@ -14688,7 +14923,7 @@ var ImageUtils = (function () {
 module.exports = ImageUtils;
 
 },{}],"awayjs-core/lib/utils/MipmapGenerator":[function(require,module,exports){
-var BitmapImage2D = require("awayjs-core/lib/data/BitmapImage2D");
+var BitmapImage2D = require("awayjs-core/lib/image/BitmapImage2D");
 var Matrix = require("awayjs-core/lib/geom/Matrix");
 var Rectangle = require("awayjs-core/lib/geom/Rectangle");
 var MipmapGenerator = (function () {
@@ -14919,7 +15154,7 @@ var BoxFilter = (function () {
 })();
 module.exports = MipmapGenerator;
 
-},{"awayjs-core/lib/data/BitmapImage2D":"awayjs-core/lib/data/BitmapImage2D","awayjs-core/lib/geom/Matrix":"awayjs-core/lib/geom/Matrix","awayjs-core/lib/geom/Rectangle":"awayjs-core/lib/geom/Rectangle"}],"awayjs-core/lib/utils/RequestAnimationFrame":[function(require,module,exports){
+},{"awayjs-core/lib/geom/Matrix":"awayjs-core/lib/geom/Matrix","awayjs-core/lib/geom/Rectangle":"awayjs-core/lib/geom/Rectangle","awayjs-core/lib/image/BitmapImage2D":"awayjs-core/lib/image/BitmapImage2D"}],"awayjs-core/lib/utils/RequestAnimationFrame":[function(require,module,exports){
 var getTimer = require("awayjs-core/lib/utils/getTimer");
 var RequestAnimationFrame = (function () {
     function RequestAnimationFrame(callback, callbackContext) {
@@ -15006,7 +15241,7 @@ var __extends = this.__extends || function (d, b) {
     __.prototype = b.prototype;
     d.prototype = new __();
 };
-var Error = require("awayjs-core/lib/errors/Error");
+var ErrorBase = require("awayjs-core/lib/errors/ErrorBase");
 var EventDispatcher = require("awayjs-core/lib/events/EventDispatcher");
 var TimerEvent = require("awayjs-core/lib/events/TimerEvent");
 var Timer = (function (_super) {
@@ -15020,7 +15255,7 @@ var Timer = (function (_super) {
         this._delay = delay;
         this._repeatCount = repeatCount;
         if (isNaN(delay) || delay < 0)
-            throw new Error("Delay is negative or not a number");
+            throw new ErrorBase("Delay is negative or not a number");
     }
     Object.defineProperty(Timer.prototype, "currentCount", {
         get: function () {
@@ -15090,7 +15325,7 @@ var Timer = (function (_super) {
 })(EventDispatcher);
 module.exports = Timer;
 
-},{"awayjs-core/lib/errors/Error":"awayjs-core/lib/errors/Error","awayjs-core/lib/events/EventDispatcher":"awayjs-core/lib/events/EventDispatcher","awayjs-core/lib/events/TimerEvent":"awayjs-core/lib/events/TimerEvent"}],"awayjs-core/lib/utils/XmlUtils":[function(require,module,exports){
+},{"awayjs-core/lib/errors/ErrorBase":"awayjs-core/lib/errors/ErrorBase","awayjs-core/lib/events/EventDispatcher":"awayjs-core/lib/events/EventDispatcher","awayjs-core/lib/events/TimerEvent":"awayjs-core/lib/events/TimerEvent"}],"awayjs-core/lib/utils/XmlUtils":[function(require,module,exports){
 var XmlUtils = (function () {
     function XmlUtils() {
     }
@@ -15180,10 +15415,6 @@ function getTimer() {
     return Date.now();
 }
 module.exports = getTimer;
-
-},{}],"awayjs-core/lib/vos/IAttributesBufferVO":[function(require,module,exports){
-
-},{}],"awayjs-core/lib/vos/IAttributesVO":[function(require,module,exports){
 
 },{}]},{},[])
 

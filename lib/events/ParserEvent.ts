@@ -1,6 +1,6 @@
-import Event					= require("awayjs-core/lib/events/Event");
+import EventBase				= require("awayjs-core/lib/events/EventBase");
 
-class ParserEvent extends Event
+class ParserEvent extends EventBase
 {
 	private _message:string;
 
@@ -41,9 +41,9 @@ class ParserEvent extends Event
 	}
 
 
-	public clone():Event
+	public clone():ParserEvent
 	{
-		return new ParserEvent(this.type, this.message);
+		return new ParserEvent(this.type, this._message);
 	}
 }
 

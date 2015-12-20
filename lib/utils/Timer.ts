@@ -1,4 +1,4 @@
-import Error					= require("awayjs-core/lib/errors/Error");
+import ErrorBase				= require("awayjs-core/lib/errors/ErrorBase");
 import EventDispatcher			= require("awayjs-core/lib/events/EventDispatcher");
 import TimerEvent				= require("awayjs-core/lib/events/TimerEvent");
 
@@ -18,7 +18,7 @@ class Timer extends EventDispatcher
 		this._repeatCount = repeatCount;
 
 		if (isNaN(delay) || delay < 0)
-			throw new Error("Delay is negative or not a number");
+			throw new ErrorBase("Delay is negative or not a number");
 	}
 
 	public get currentCount():number

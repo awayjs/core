@@ -14,11 +14,11 @@ class LoaderContext
 	private _overrideFullUrls:boolean;
 
 	/**
-	 * LoaderContext provides configuration for the LoaderSession load() and parse() operations.
+	 * LoaderContext provides configuration for the Loader load() and parse() operations.
 	 * Use it to configure how (and if) dependencies are loaded, or to map dependency URLs to
 	 * embedded data.
 	 *
-	 * @see away.loading.LoaderSession
+	 * @see away.loading.Loader
 	 */
 	constructor(includeDependencies:boolean = true, dependencyBaseUrl:string = null)
 	{

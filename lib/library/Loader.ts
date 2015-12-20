@@ -1,12 +1,11 @@
 import LoaderContext			= require("awayjs-core/lib/library/LoaderContext");
+import LoaderInfo				= require("awayjs-core/lib/library/LoaderInfo");
 import URLLoader				= require("awayjs-core/lib/net/URLLoader");
 import URLLoaderDataFormat		= require("awayjs-core/lib/net/URLLoaderDataFormat");
 import URLRequest				= require("awayjs-core/lib/net/URLRequest");
-import Error					= require("awayjs-core/lib/errors/Error");
 import AssetEvent				= require("awayjs-core/lib/events/AssetEvent");
-import Event					= require("awayjs-core/lib/events/Event");
 import EventDispatcher			= require("awayjs-core/lib/events/EventDispatcher");
-import IOErrorEvent				= require("awayjs-core/lib/events/IOErrorEvent");
+import URLLoaderEvent			= require("awayjs-core/lib/events/URLLoaderEvent");
 import LoaderEvent				= require("awayjs-core/lib/events/LoaderEvent");
 import ParserEvent				= require("awayjs-core/lib/events/ParserEvent");
 import Image2DParser			= require("awayjs-core/lib/parsers/Image2DParser");
@@ -67,24 +66,25 @@ import WaveAudioParser			= require("awayjs-core/lib/parsers/WaveAudioParser");
 //[Event(name="textureSizeError", type="away3d.events.AssetEvent")]
 
 /**
- * LoaderSession can load any file format that away.supports (or for which a third-party parser
+ * Loader can load any file format that away.supports (or for which a third-party parser
  * has been plugged in) and it's dependencies. Events are dispatched when assets are encountered
  * and for when the resource (or it's dependencies) have been loaded.
  *
- * The LoaderSession will not make assets available in any other way than through the dispatched
+ * The Loader will not make assets available in any other way than through the dispatched
  * events. To store assets and make them available at any point from any module in an application,
  * use the AssetLibrary to load and manage assets.
  *
  * @see away.library.AssetLibrary
  */
-class LoaderSession extends EventDispatcher
+class Loader extends EventDispatcher
 {
 	private _context:LoaderContext;
+	private _loaderInfo:LoaderInfo;
 	private _uri:string;
 	private _materialMode:number;
 
-	private _errorHandlers:Array<Function>;
-	private _parseErrorHandlers:Array<Function>;
+	private _errorHandlers:Array<(event:URLLoaderEvent) => boolean>;
+	private _parseErrorHandlers:Array<(event:ParserEvent) => boolean>;
 
 	private _stack:Array<ResourceDependency>;
 	private _baseDependency:ResourceDependency;
@@ -94,8 +94,8 @@ class LoaderSession extends EventDispatcher
 	private _onReadyForDependenciesDelegate:(event:ParserEvent) => void;
 	private _onParseCompleteDelegate:(event:ParserEvent) => void;
 	private _onParseErrorDelegate:(event:ParserEvent) => void;
-	private _onLoadCompleteDelegate:(event:Event) => void;
-	private _onLoadErrorDelegate:(event:IOErrorEvent) => void;
+	private _onLoadCompleteDelegate:(event:URLLoaderEvent) => void;
+	private _onLoadErrorDelegate:(event:URLLoaderEvent) => void;
 	private _onTextureSizeErrorDelegate:(event:AssetEvent) => void;
 	private _onAssetCompleteDelegate:(event:AssetEvent) => void;
 
@@ -114,14 +114,14 @@ class LoaderSession extends EventDispatcher
 	 */
 	public static enableParser(parser)
 	{
-		if (LoaderSession._parsers.indexOf(parser) < 0)
-			LoaderSession._parsers.push(parser);
+		if (Loader._parsers.indexOf(parser) < 0)
+			Loader._parsers.push(parser);
 	}
 
 	/**
 	 * Enables a list of parsers.
 	 * When no specific parser is set for a loading/parsing opperation,
-	 * LoaderSession can autoselect the correct parser to use.
+	 * Loader can autoselect the correct parser to use.
 	 * A parser must have been enabled, to be considered when autoselecting the parser.
 	 *
 	 * @param parsers A Vector of parser classes to enable.
@@ -130,7 +130,7 @@ class LoaderSession extends EventDispatcher
 	public static enableParsers(parsers:Array<Object>)
 	{
 		for (var c:number = 0; c < parsers.length; c++)
-			LoaderSession.enableParser(parsers[ c ]);
+			Loader.enableParser(parsers[ c ]);
 	}
 
 	/**
@@ -139,6 +139,27 @@ class LoaderSession extends EventDispatcher
 	public get baseDependency():ResourceDependency
 	{
 		return this._baseDependency;
+	}
+
+	/**
+	 * Returns a LoaderInfo object corresponding to the object being loaded.
+	 * LoaderInfo objects are shared between the Loader object and the loaded
+	 * content object. The LoaderInfo object supplies loading progress
+	 * information and statistics about the loaded file.
+	 *
+	 * <p>Events related to the load are dispatched by the LoaderInfo object
+	 * referenced by the <code>contentLoaderInfo</code> property of the Loader
+	 * object. The <code>contentLoaderInfo</code> property is set to a valid
+	 * LoaderInfo object, even before the content is loaded, so that you can add
+	 * event listeners to the object prior to the load.</p>
+	 *
+	 * <p>To detect uncaught errors that happen in a loaded SWF, use the
+	 * <code>Loader.uncaughtErrorEvents</code> property, not the
+	 * <code>Loader.contentLoaderInfo.uncaughtErrorEvents</code> property.</p>
+	 */
+	public get loaderInfo():LoaderInfo
+	{
+		return this._loaderInfo;
 	}
 
 	/**
@@ -151,14 +172,14 @@ class LoaderSession extends EventDispatcher
 		this._materialMode = materialMode;
 
 		this._stack = new Array<ResourceDependency>();
-		this._errorHandlers = new Array<Function>();
-		this._parseErrorHandlers = new Array<Function>();
+		this._errorHandlers = new Array<(event:URLLoaderEvent) => boolean>();
+		this._parseErrorHandlers = new Array<(event:ParserEvent) => boolean>();
 
 		this._onReadyForDependenciesDelegate = (event:ParserEvent) => this.onReadyForDependencies(event);
 		this._onParseCompleteDelegate = (event:ParserEvent) => this.onParseComplete(event);
 		this._onParseErrorDelegate = (event:ParserEvent) => this.onParseError(event);
-		this._onLoadCompleteDelegate = (event:Event) => this.onLoadComplete(event);
-		this._onLoadErrorDelegate = (event:IOErrorEvent) => this.onLoadError(event);
+		this._onLoadCompleteDelegate = (event:URLLoaderEvent) => this.onLoadComplete(event);
+		this._onLoadErrorDelegate = (event:URLLoaderEvent) => this.onLoadError(event);
 		this._onTextureSizeErrorDelegate = (event:AssetEvent) => this.onTextureSizeError(event);
 		this._onAssetCompleteDelegate = (event:AssetEvent) => this.onAssetComplete(event);
 	}
@@ -169,7 +190,7 @@ class LoaderSession extends EventDispatcher
 	 * @param req The URLRequest object containing the URL of the file to be loaded.
 	 * @param context An optional context object providing additional parameters for loading
 	 * @param ns An optional namespace string under which the file is to be loaded, allowing the differentiation of two resources with identical assets
-	 * @param parser An optional parser object for translating the loaded data into a usable resource. If not provided, LoaderSession will attempt to auto-detect the file type.
+	 * @param parser An optional parser object for translating the loaded data into a usable resource. If not provided, Loader will attempt to auto-detect the file type.
 	 */
 	public load(req:URLRequest, context:LoaderContext = null, ns:string = null, parser:ParserBase = null)
 	{
@@ -187,7 +208,7 @@ class LoaderSession extends EventDispatcher
 	 * @param data The data object containing all resource information.
 	 * @param context An optional context object providing additional parameters for loading
 	 * @param ns An optional namespace string under which the file is to be loaded, allowing the differentiation of two resources with identical assets
-	 * @param parser An optional parser object for translating the loaded data into a usable resource. If not provided, LoaderSession will attempt to auto-detect the file type.
+	 * @param parser An optional parser object for translating the loaded data into a usable resource. If not provided, Loader will attempt to auto-detect the file type.
 	 */
 	public loadData(data:any, id:string, context:LoaderContext = null, ns:string = null, parser:ParserBase = null)
 	{
@@ -230,7 +251,7 @@ class LoaderSession extends EventDispatcher
 			this.retrieveNext(parser);
 
 		} else {
-			this.dispatchEvent(new LoaderEvent(LoaderEvent.RESOURCE_COMPLETE, this._uri, this._baseDependency.parser.content, this._baseDependency.assets));
+			this.dispatchEvent(new LoaderEvent(LoaderEvent.LOAD_COMPLETE, this._uri, this._baseDependency.parser.content, this._baseDependency.assets));
 		}
 	}
 
@@ -401,23 +422,23 @@ class LoaderSession extends EventDispatcher
 	 * Called when a single dependency loading failed, and pushes further dependencies onto the stack.
 	 * @param event
 	 */
-	private onLoadError(event:IOErrorEvent)
+	private onLoadError(event:URLLoaderEvent)
 	{
 		var handled:boolean;
 		var isDependency:boolean = (this._currentDependency != this._baseDependency);
-		var loader:URLLoader = <URLLoader> event.target;//TODO: keep on eye on this one
+		var loader:URLLoader = event.urlLoader;
 
 		this.removeEventListeners(loader);
 
-		if (this.hasEventListener(IOErrorEvent.IO_ERROR )) {
+		if (this.hasEventListener(URLLoaderEvent.LOAD_ERROR)) {
 			this.dispatchEvent(event);
 			handled = true;
 		} else {
-			// TODO: Consider not doing this even when LoaderSession does have it's own LOAD_ERROR listener
+			// TODO: Consider not doing this even when Loader does have it's own LOAD_ERROR listener
 			var i:number, len:number = this._errorHandlers.length;
 			for (i = 0; i < len; i++)
 				if (!handled)
-					handled = <boolean> this._errorHandlers[i](event);
+					handled = this._errorHandlers[i](event);
 		}
 
 		if (handled) {
@@ -437,7 +458,7 @@ class LoaderSession extends EventDispatcher
 			}
 		} else {
 
-			// Error event was not handled by listeners directly on LoaderSession or
+			// Error event was not handled by listeners directly on Loader or
 			// on any of the subscribed loaders (in the list of error handlers.)
 			throw new Error();
 		}
@@ -461,19 +482,19 @@ class LoaderSession extends EventDispatcher
 			this.dispatchEvent(event);
 			handled = true;
 		} else {
-			// TODO: Consider not doing this even when LoaderSession does
+			// TODO: Consider not doing this even when Loader does
 			// have it's own LOAD_ERROR listener
 			var i:number, len:number = this._parseErrorHandlers.length;
 
 			for (i = 0; i < len; i++)
 				if (!handled)
-					handled = <boolean> this._parseErrorHandlers[i](event);
+					handled = this._parseErrorHandlers[i](event);
 		}
 
 		if (handled) {
 			this.retrieveNext();
 		} else {
-			// Error event was not handled by listeners directly on LoaderSession or
+			// Error event was not handled by listeners directly on Loader or
 			// on any of the subscribed loaders (in the list of error handlers.)
 			throw new Error(event.message);
 		}
@@ -507,9 +528,9 @@ class LoaderSession extends EventDispatcher
 	 * Called when a single dependency was parsed, and pushes further dependencies onto the stack.
 	 * @param event
 	 */
-	private onLoadComplete(event:Event)
+	private onLoadComplete(event:URLLoaderEvent)
 	{
-		var loader:URLLoader = <URLLoader> event.target;
+		var loader:URLLoader = event.urlLoader;
 
 		this.removeEventListeners(loader);
 
@@ -553,14 +574,14 @@ class LoaderSession extends EventDispatcher
 
 	private addEventListeners(loader:URLLoader)
 	{
-		loader.addEventListener(Event.COMPLETE, this._onLoadCompleteDelegate);
-		loader.addEventListener(IOErrorEvent.IO_ERROR, this._onLoadErrorDelegate);
+		loader.addEventListener(URLLoaderEvent.LOAD_COMPLETE, this._onLoadCompleteDelegate);
+		loader.addEventListener(URLLoaderEvent.LOAD_ERROR, this._onLoadErrorDelegate);
 	}
 
 	private removeEventListeners(loader:URLLoader)
 	{
-		loader.removeEventListener(Event.COMPLETE, this._onLoadCompleteDelegate);
-		loader.removeEventListener(IOErrorEvent.IO_ERROR, this._onLoadErrorDelegate);
+		loader.removeEventListener(URLLoaderEvent.LOAD_COMPLETE, this._onLoadCompleteDelegate);
+		loader.removeEventListener(URLLoaderEvent.LOAD_ERROR, this._onLoadErrorDelegate);
 	}
 
 	public stop()
@@ -585,13 +606,13 @@ class LoaderSession extends EventDispatcher
 	/**
 	 * @private
 	 * This method is used by other loader classes (e.g. Loader3D and AssetLibraryBundle) to
-	 * add error event listeners to the LoaderSession instance. This system is used instead of
+	 * add error event listeners to the Loader instance. This system is used instead of
 	 * the regular EventDispatcher system so that the AssetLibrary error handler can be sure
 	 * that if hasEventListener() returns true, it's client code that's listening for the
 	 * event. Secondly, functions added as error handler through this custom method are
 	 * expected to return a boolean value indicating whether the event was handled (i.e.
 	 * whether they in turn had any client code listening for the event.) If no handlers
-	 * return true, the LoaderSession knows that the event wasn't handled and will throw an RTE.
+	 * return true, the Loader knows that the event wasn't handled and will throw an RTE.
 	 */
 
 	public _iAddParseErrorHandler(handler)
@@ -615,12 +636,12 @@ class LoaderSession extends EventDispatcher
 	 */
 	private getParserFromData(data:any):ParserBase
 	{
-		var len:number = LoaderSession._parsers.length;
+		var len:number = Loader._parsers.length;
 
 		// go in reverse order to allow application override of default parser added in away.proper
 		for (var i:number = len - 1; i >= 0; i--)
-			if (LoaderSession._parsers[i].supportsData(data))
-				return new LoaderSession._parsers[i]();
+			if (Loader._parsers[i].supportsData(data))
+				return new Loader._parsers[i]();
 
 		return null;
 	}
@@ -662,7 +683,7 @@ class LoaderSession extends EventDispatcher
 				this.dispatchEvent(event);
 				handled = true;
 			} else {
-				// TODO: Consider not doing this even when LoaderSession does
+				// TODO: Consider not doing this even when Loader does
 				// have it's own LOAD_ERROR listener
 				var i:number, len:number = this._parseErrorHandlers.length;
 
@@ -674,7 +695,7 @@ class LoaderSession extends EventDispatcher
 			if (handled) {
 				this.retrieveNext();
 			} else {
-				// Error event was not handled by listeners directly on LoaderSession or
+				// Error event was not handled by listeners directly on Loader or
 				// on any of the subscribed loaders (in the list of error handlers.)
 				throw new Error(message);
 			}
@@ -691,11 +712,11 @@ class LoaderSession extends EventDispatcher
 		var base:string = (url.indexOf('?') > 0)? url.split('?')[0] : url;
 		var fileExtension:string = base.substr(base.lastIndexOf('.') + 1).toLowerCase();
 
-		var len:number = LoaderSession._parsers.length;
+		var len:number = Loader._parsers.length;
 
 		// go in reverse order to allow application override of default parser added in away.proper
 		for (var i:number = len - 1; i >= 0; i--) {
-			var parserClass:any = LoaderSession._parsers[i];
+			var parserClass:any = Loader._parsers[i];
 			if (parserClass.supportsType(fileExtension))
 				return new parserClass();
 		}
@@ -704,4 +725,4 @@ class LoaderSession extends EventDispatcher
 	}
 }
 
-export = LoaderSession;
+export = Loader;

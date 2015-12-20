@@ -2,25 +2,23 @@ import URLLoaderDataFormat			= require("awayjs-core/lib/net/URLLoaderDataFormat"
 import URLRequest					= require("awayjs-core/lib/net/URLRequest");
 import URLRequestMethod				= require("awayjs-core/lib/net/URLRequestMethod");
 import URLVariables					= require("awayjs-core/lib/net/URLVariables");
-import AwayEvent					= require("awayjs-core/lib/events/Event");
 import EventDispatcher				= require("awayjs-core/lib/events/EventDispatcher");
-import HTTPStatusEvent				= require("awayjs-core/lib/events/HTTPStatusEvent");
-import IOErrorEvent					= require("awayjs-core/lib/events/IOErrorEvent");
-import AwayProgressEvent			= require("awayjs-core/lib/events/ProgressEvent");
+import URLLoaderEvent				= require("awayjs-core/lib/events/URLLoaderEvent");
 
 /**
  * The URLLoader is used to load a single file, as part of a resource.
  *
  * While URLLoader can be used directly, e.g. to create a third-party asset
- * management system, it's recommended to use any of the classes Loader3D, LoaderSession
+ * management system, it's recommended to use any of the classes Loader3D, Loader
  * and AssetLibrary instead in most cases.
  *
- * @see LoaderSession
+ * @see Loader
  * @see away.library.AssetLibrary
  */
 class URLLoader extends EventDispatcher
 {
 	private _XHR:XMLHttpRequest;
+	private _status:number;
 	private _bytesLoaded:number = 0;
 	private _bytesTotal:number = 0;
 	private _dataFormat:string = URLLoaderDataFormat.TEXT;
@@ -29,10 +27,11 @@ class URLLoader extends EventDispatcher
 	private _request:URLRequest;
 	private _data:any;
 
-	private _loadStartEvent:AwayEvent;
-	private _loadErrorEvent:IOErrorEvent;
-	private _loadCompleteEvent:AwayEvent;
-	private _progressEvent:AwayProgressEvent;
+	private _loadStartEvent:URLLoaderEvent;
+	private _loadErrorEvent:URLLoaderEvent;
+	private _loadCompleteEvent:URLLoaderEvent;
+	private _progressEvent:URLLoaderEvent;
+	private _statusEvent:URLLoaderEvent;
 
 	/**
 	 * Creates a new URLLoader object.
@@ -123,6 +122,7 @@ class URLLoader extends EventDispatcher
 	public close():void
 	{
 		this._XHR.abort();
+
 		this.disposeXHR();
 	}
 
@@ -135,11 +135,6 @@ class URLLoader extends EventDispatcher
 			this._XHR.abort();
 
 		this.disposeXHR();
-
-		this._data = null;
-		this._dataFormat = null;
-		this._bytesLoaded = null;
-		this._bytesTotal = null;
 	}
 
 	/**
@@ -301,16 +296,14 @@ class URLLoader extends EventDispatcher
 	private onReadyStateChange(event:Event)
 	{
 		if (this._XHR.readyState == 4) {
-			if (this._XHR.status == 404) {
+			this._status = this._XHR.status;
+			if (this._status == 404) {
 				this._loadError = true;
 
-				if (!this._loadErrorEvent)
-					this._loadErrorEvent = new IOErrorEvent(IOErrorEvent.IO_ERROR);
-
-				this.dispatchEvent(this._loadErrorEvent);
+				this.dispatchEvent(this._loadErrorEvent || (this._loadErrorEvent = new URLLoaderEvent(URLLoaderEvent.LOAD_ERROR, this)));
 			}
 
-			this.dispatchEvent(new HTTPStatusEvent(HTTPStatusEvent.HTTP_STATUS, this._XHR.status));
+			this.dispatchEvent(this._statusEvent || (this._statusEvent = new URLLoaderEvent(URLLoaderEvent.HTTP_STATUS, this)));
 		}
 	}
 
@@ -348,13 +341,10 @@ class URLLoader extends EventDispatcher
 	 */
 	private onProgress(event:ProgressEvent)
 	{
-		if (!this._progressEvent)
-			this._progressEvent = new AwayProgressEvent(AwayProgressEvent.PROGRESS);
+		this._bytesTotal = event.total;
+		this._bytesLoaded = event.loaded;
 
-		this._progressEvent.bytesTotal = event.total;
-		this._progressEvent.bytesLoaded = event.loaded;
-
-		this.dispatchEvent(this._progressEvent);
+		this.dispatchEvent(this._progressEvent || (this._progressEvent = new URLLoaderEvent(URLLoaderEvent.LOAD_PROGRESS, this)));
 	}
 
 	/**
@@ -363,10 +353,7 @@ class URLLoader extends EventDispatcher
 	 */
 	private onLoadStart(event:ProgressEvent)
 	{
-		if (!this._loadStartEvent)
-			this._loadStartEvent = new AwayEvent(AwayEvent.OPEN);
-
-		this.dispatchEvent(this._loadStartEvent);
+		this.dispatchEvent(this._loadStartEvent || (this._loadStartEvent = new URLLoaderEvent(URLLoaderEvent.LOAD_START, this)));
 	}
 
 	/**
@@ -398,10 +385,7 @@ class URLLoader extends EventDispatcher
 				break;
 		}
 
-		if (!this._loadCompleteEvent)
-			this._loadCompleteEvent = new AwayEvent(AwayEvent.COMPLETE);
-
-		this.dispatchEvent(this._loadCompleteEvent);
+		this.dispatchEvent(this._loadCompleteEvent || (this._loadCompleteEvent = new URLLoaderEvent(URLLoaderEvent.LOAD_COMPLETE, this)));
 	}
 
 	/**
@@ -412,10 +396,7 @@ class URLLoader extends EventDispatcher
 	{
 		this._loadError = true;
 
-		if (!this._loadErrorEvent)
-			this._loadErrorEvent = new IOErrorEvent(IOErrorEvent.IO_ERROR);
-
-		this.dispatchEvent(this._loadErrorEvent);
+		this.dispatchEvent(this._loadErrorEvent || (this._loadErrorEvent  = new URLLoaderEvent(URLLoaderEvent.LOAD_ERROR, this)));
 	}
 }
 

@@ -1,5 +1,5 @@
-import SamplerBase				= require("awayjs-core/lib/data/SamplerBase");
-import Image2D					= require("awayjs-core/lib/data/Image2D");
+import SamplerBase				= require("awayjs-core/lib/image/SamplerBase");
+import Image2D					= require("awayjs-core/lib/image/Image2D");
 import Rectangle				= require("awayjs-core/lib/geom/Rectangle");
 import IAsset					= require("awayjs-core/lib/library/IAsset");
 

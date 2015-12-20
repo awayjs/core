@@ -1,10 +1,10 @@
-import Error					= require("awayjs-core/lib/errors/Error");
+import ErrorBase				= require("awayjs-core/lib/errors/ErrorBase");
 
 /**
  * AbstractMethodError is thrown when an abstract method is called. The method in question should be overridden
  * by a concrete subclass.
  */
-class PartialImplementationError extends Error
+class PartialImplementationError extends ErrorBase
 {
 	/**
 	 * Create a new AbstractMethodError.

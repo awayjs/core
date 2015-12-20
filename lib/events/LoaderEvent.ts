@@ -1,12 +1,12 @@
 import IAsset					= require("awayjs-core/lib/library/IAsset");
-import Event					= require("awayjs-core/lib/events/Event");
+import EventBase				= require("awayjs-core/lib/events/EventBase");
 
-class LoaderEvent extends Event
+class LoaderEvent extends EventBase
 {
 	/**
-	 * Dispatched when a resource and all of its dependencies is retrieved.
+	 * Dispatched when the loading of a session and all of its dependencies is complete.
 	 */
-	public static RESOURCE_COMPLETE:string = "resourceComplete";
+	public static LOAD_COMPLETE:string = "loadComplete";
 
 	private _url:string;
 	private _content:IAsset;
@@ -56,9 +56,9 @@ class LoaderEvent extends Event
 	 * Clones the current event.
 	 * @return An exact duplicate of the current event.
 	 */
-	public clone():Event
+	public clone():LoaderEvent
 	{
-		return <Event> new LoaderEvent(this.type, this._url, this._content, this._assets);
+		return new LoaderEvent(this.type, this._url, this._content, this._assets);
 	}
 }
 

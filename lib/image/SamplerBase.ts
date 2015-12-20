@@ -4,7 +4,7 @@ import AssetBase				= require("awayjs-core/lib/library/AssetBase");
 /**
  *
  */
-class SamplerBase extends AssetBase implements IAsset
+class SamplerBase extends AssetBase
 {
 	private _smooth:boolean;
 	private _mipmap:boolean;

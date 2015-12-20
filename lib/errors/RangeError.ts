@@ -1,10 +1,10 @@
-import Error					= require("awayjs-core/lib/errors/Error");
+import ErrorBase				= require("awayjs-core/lib/errors/ErrorBase");
 
 /**
  * RangeError is thrown when an index is accessed out of range of the number of
  * available indices on an Array.
  */
-class RangeError extends Error
+class RangeError extends ErrorBase
 {
 	/**
 	 * Create a new RangeError.

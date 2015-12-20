@@ -1,4 +1,4 @@
-class Error
+class ErrorBase
 {
 
 	private _errorID:number = 0;   //Contains the reference number associated with the specific error message.
@@ -20,9 +20,7 @@ class Error
 	 */
 	public get message():string
 	{
-
 		return this._messsage;
-
 	}
 
 	/**
@@ -31,9 +29,7 @@ class Error
 	 */
 	public set message(value:string)
 	{
-
 		this._messsage = value;
-
 	}
 
 	/**
@@ -71,4 +67,4 @@ class Error
 
 }
 
-export = Error;
+export = ErrorBase;

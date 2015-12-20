@@ -1,7 +1,7 @@
-import Event					= require("awayjs-core/lib/events/Event");
+import EventBase				= require("awayjs-core/lib/events/EventBase");
 import IProjection				= require("awayjs-core/lib/projections/IProjection");
 
-class ProjectionEvent extends Event
+class ProjectionEvent extends EventBase
 {
 	public static MATRIX_CHANGED:string = "matrixChanged";
 

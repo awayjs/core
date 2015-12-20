@@ -1,7 +1,8 @@
 import URLRequest				= require("awayjs-core/lib/net/URLRequest");
+import EventBase				= require("awayjs-core/lib/events/EventBase");
 import AssetLibraryBundle		= require("awayjs-core/lib/library/AssetLibraryBundle");
 import AssetLibraryIterator		= require("awayjs-core/lib/library/AssetLibraryIterator");
-import LoaderSession			= require("awayjs-core/lib/library/LoaderSession");
+import Loader			= require("awayjs-core/lib/library/Loader");
 import LoaderContext			= require("awayjs-core/lib/library/LoaderContext");
 import ConflictStrategyBase		= require("awayjs-core/lib/library/ConflictStrategyBase");
 import IAsset					= require("awayjs-core/lib/library/IAsset");
@@ -42,7 +43,7 @@ class AssetLibrary
 	 */
 	public static enableParser(parserClass)
 	{
-		LoaderSession.enableParser(parserClass);
+		Loader.enableParser(parserClass);
 	}
 
 	/**
@@ -50,7 +51,7 @@ class AssetLibrary
 	 */
 	public static enableParsers(parserClasses:Array<Object>)
 	{
-		LoaderSession.enableParsers(parserClasses);
+		Loader.enableParsers(parserClasses);
 	}
 
 	/**
@@ -115,12 +116,12 @@ class AssetLibrary
 
 	public static stopLoad()
 	{
-		AssetLibrary.getBundle().stopAllLoaderSessions();
+		AssetLibrary.getBundle().stopAllLoaders();
 	}
 
-	public static getLoaderSession():LoaderSession
+	public static getLoader():Loader
 	{
-		return AssetLibrary.getBundle().getLoaderSession();
+		return AssetLibrary.getBundle().getLoader();
 	}
 
 	/**
@@ -146,7 +147,7 @@ class AssetLibrary
 	/**
 	 * Short-hand for addEventListener() method on default asset library bundle.
 	 */
-	public static addEventListener(type:string, listener:Function)
+	public static addEventListener(type:string, listener:(event:EventBase) => void)
 	{
 		AssetLibrary.getBundle().addEventListener(type, listener);
 	}
@@ -154,7 +155,7 @@ class AssetLibrary
 	/**
 	 * Short-hand for removeEventListener() method on default asset library bundle.
 	 */
-	public static removeEventListener(type:string, listener:Function)
+	public static removeEventListener(type:string, listener:(event:EventBase) => void)
 	{
 		AssetLibrary.getBundle().removeEventListener(type, listener);
 	}

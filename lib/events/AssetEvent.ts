@@ -1,25 +1,45 @@
 import IAsset					= require("awayjs-core/lib/library/IAsset");
-import Event					= require("awayjs-core/lib/events/Event");
+import EventBase				= require("awayjs-core/lib/events/EventBase");
 
 /**
  * @class away.events.AssetEvent
  */
-class AssetEvent extends Event
+class AssetEvent extends EventBase
 {
 	/**
-	 *
+	 * Dispatched when the content of an asset is invalidated
 	 */
-	public static ASSET_COMPLETE:string = "assetComplete";
+	public static INVALIDATE:string = "invalidate";
+
+	/**
+	 * Dispatched when an asset is cleared
+	 */
+	public static CLEAR:string = "clear";
 
 	/**
 	 *
 	 */
-	public static ASSET_RENAME:string = 'assetRename';
+	public static RENAME:string = 'rename';
+
+	/**
+	 *
+	 */
+	public static ENTER_FRAME:string = 'enterFrame';
+
+	/**
+	 *
+	 */
+	public static EXIT_FRAME:string = 'exitFrame';
 
 	/**
 	 *
 	 */
 	public static ASSET_CONFLICT_RESOLVED:string = 'assetConflictResolved';
+
+	/**
+	 * Dispatched when the loading of an asset and all of its dependencies is complete.
+	 */
+	public static ASSET_COMPLETE:string = "assetComplete";
 
 	/**
 	 *
@@ -32,12 +52,12 @@ class AssetEvent extends Event
 	/**
 	 *
 	 */
-	constructor(type:string, asset:IAsset = null, prevName:string = null)
+	constructor(type:string, asset:IAsset, prevName:string = null)
 	{
 		super(type);
 
 		this._asset = asset;
-		this._prevName = prevName || (this._asset? this._asset.name : null);
+		this._prevName = prevName || this._asset.name;
 	}
 
 	/**
@@ -51,7 +71,7 @@ class AssetEvent extends Event
 	/**
 	 *
 	 */
-	public get assetPrevName():string
+	public get prevName():string
 	{
 		return this._prevName;
 	}
@@ -59,9 +79,9 @@ class AssetEvent extends Event
 	/**
 	 *
 	 */
-	public clone():Event
+	public clone():AssetEvent
 	{
-		return <Event> new AssetEvent(this.type, this.asset, this.assetPrevName);
+		return new AssetEvent(this.type, this._asset, this._prevName);
 	}
 }
 

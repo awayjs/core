@@ -38,6 +38,16 @@ interface IAsset extends IEventDispatcher
 	/**
 	 *
 	 */
+	invalidate();
+
+	/**
+	 *
+	 */
+	clear();
+
+	/**
+	 *
+	 */
 	dispose();
 
 	/**
@@ -53,8 +63,6 @@ interface IAsset extends IEventDispatcher
 	 * @param overrideOriginal
 	 */
 	resetAssetPath(name:string, ns:string, overrideOriginal?:boolean):void;
-
-	_clearInterfaces();
 }
 
 export = IAsset;

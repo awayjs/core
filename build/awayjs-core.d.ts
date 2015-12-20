@@ -1,11 +1,8 @@
 declare module "awayjs-core/lib/attributes/AttributesBuffer" {
 	import AttributesView = require("awayjs-core/lib/attributes/AttributesView");
-	import IAsset = require("awayjs-core/lib/library/IAsset");
 	import AssetBase = require("awayjs-core/lib/library/AssetBase");
-	import IAttributesBufferVO = require("awayjs-core/lib/vos/IAttributesBufferVO");
-	class AttributesBuffer extends AssetBase implements IAsset {
+	class AttributesBuffer extends AssetBase {
 	    static assetType: string;
-	    private _attributesBufferVO;
 	    private _count;
 	    private _stride;
 	    private _newStride;
@@ -31,22 +28,16 @@ declare module "awayjs-core/lib/attributes/AttributesBuffer" {
 	    /**
 	     *
 	     */
-	    invalidateContent(): void;
+	    invalidate(): void;
 	    /**
 	     *
 	     * @private
 	     */
-	    invalidateLength(): void;
+	    resize(): void;
 	    clone(): AttributesBuffer;
 	    getView(index: number): AttributesView;
-	    /**
-	     * @inheritDoc
-	     */
-	    dispose(): void;
 	    _setAttributes(viewIndex: number, arrayBufferView: ArrayBufferView, offset?: number): void;
 	    _getLocalArrayBuffer(viewIndex: number): ArrayBuffer;
-	    _iAddAttributesBufferVO(AttributesBufferVO: IAttributesBufferVO): IAttributesBufferVO;
-	    _iRemoveAttributesBufferVO(AttributesBufferVO: IAttributesBufferVO): IAttributesBufferVO;
 	    _addView(view: AttributesView): void;
 	    _removeView(view: AttributesView): void;
 	    _getOffset(viewIndex: number): number;
@@ -58,14 +49,12 @@ declare module "awayjs-core/lib/attributes/AttributesBuffer" {
 
 declare module "awayjs-core/lib/attributes/AttributesView" {
 	import AttributesBuffer = require("awayjs-core/lib/attributes/AttributesBuffer");
-	import IAsset = require("awayjs-core/lib/library/IAsset");
 	import AssetBase = require("awayjs-core/lib/library/AssetBase");
 	import IArrayBufferViewClass = require("awayjs-core/lib/utils/IArrayBufferViewClass");
-	class AttributesView extends AssetBase implements IAsset {
+	class AttributesView extends AssetBase {
 	    static assetType: string;
 	    /**
 	     *
-	     * @returns {string}
 	     */
 	    assetType: string;
 	    _cloneCache: AttributesView;
@@ -292,1662 +281,9 @@ declare module "awayjs-core/lib/attributes/Short3Attributes" {
 	
 }
 
-declare module "awayjs-core/lib/data/BitmapImage2D" {
-	import Image2D = require("awayjs-core/lib/data/Image2D");
-	import BlendMode = require("awayjs-core/lib/data/BlendMode");
-	import ColorTransform = require("awayjs-core/lib/geom/ColorTransform");
-	import Matrix = require("awayjs-core/lib/geom/Matrix");
-	import Rectangle = require("awayjs-core/lib/geom/Rectangle");
-	import Point = require("awayjs-core/lib/geom/Point");
-	import ByteArray = require("awayjs-core/lib/utils/ByteArray");
-	/**
-	 * The BitmapImage2D class lets you work with the data(pixels) of a Bitmap
-	 * object. You can use the methods of the BitmapImage2D class to create
-	 * arbitrarily sized transparent or opaque bitmap images and manipulate them
-	 * in various ways at runtime. You can also access the BitmapImage2D for a bitmap
-	 * image that you load with the <code>flash.Assets</code> or
-	 * <code>flash.display.Loader</code> classes.
-	 *
-	 * <p>This class lets you separate bitmap rendering operations from the
-	 * internal display updating routines of flash. By manipulating a
-	 * BitmapImage2D object directly, you can create complex images without incurring
-	 * the per-frame overhead of constantly redrawing the content from vector
-	 * data.</p>
-	 *
-	 * <p>The methods of the BitmapImage2D class support effects that are not
-	 * available through the filters available to non-bitmap display objects.</p>
-	 *
-	 * <p>A BitmapImage2D object contains an array of pixel data. This data can
-	 * represent either a fully opaque bitmap or a transparent bitmap that
-	 * contains alpha channel data. Either type of BitmapImage2D object is stored as
-	 * a buffer of 32-bit integers. Each 32-bit integer determines the properties
-	 * of a single pixel in the bitmap.</p>
-	 *
-	 * <p>Each 32-bit integer is a combination of four 8-bit channel values(from
-	 * 0 to 255) that describe the alpha transparency and the red, green, and blue
-	 * (ARGB) values of the pixel.(For ARGB values, the most significant byte
-	 * represents the alpha channel value, followed by red, green, and blue.)</p>
-	 *
-	 * <p>The four channels(alpha, red, green, and blue) are represented as
-	 * numbers when you use them with the <code>BitmapImage2D.copyChannel()</code>
-	 * method or the <code>DisplacementMapFilter.componentX</code> and
-	 * <code>DisplacementMapFilter.componentY</code> properties, and these numbers
-	 * are represented by the following constants in the BitmapImage2DChannel
-	 * class:</p>
-	 *
-	 * <ul>
-	 *   <li><code>BitmapImage2DChannel.ALPHA</code></li>
-	 *   <li><code>BitmapImage2DChannel.RED</code></li>
-	 *   <li><code>BitmapImage2DChannel.GREEN</code></li>
-	 *   <li><code>BitmapImage2DChannel.BLUE</code></li>
-	 * </ul>
-	 *
-	 * <p>You can attach BitmapImage2D objects to a Bitmap object by using the
-	 * <code>bitmapData</code> property of the Bitmap object.</p>
-	 *
-	 * <p>You can use a BitmapImage2D object to fill a Graphics object by using the
-	 * <code>Graphics.beginBitmapFill()</code> method.</p>
-	 *
-	 * <p>You can also use a BitmapImage2D object to perform batch tile rendering
-	 * using the <code>flash.display.Tilesheet</code> class.</p>
-	 *
-	 * <p>In Flash Player 10, the maximum size for a BitmapImage2D object
-	 * is 8,191 pixels in width or height, and the total number of pixels cannot
-	 * exceed 16,777,215 pixels.(So, if a BitmapImage2D object is 8,191 pixels wide,
-	 * it can only be 2,048 pixels high.) In Flash Player 9 and earlier, the limitation
-	 * is 2,880 pixels in height and 2,880 in width.</p>
-	 */
-	class BitmapImage2D extends Image2D {
-	    static assetType: string;
-	    private _imageCanvas;
-	    private _context;
-	    private _imageData;
-	    private _transparent;
-	    private _locked;
-	    /**
-	     *
-	     * @returns {string}
-	     */
-	    assetType: string;
-	    /**
-	     * Defines whether the bitmap image supports per-pixel transparency. You can
-	     * set this value only when you construct a BitmapImage2D object by passing in
-	     * <code>true</code> for the <code>transparent</code> parameter of the
-	     * constructor. Then, after you create a BitmapImage2D object, you can check
-	     * whether it supports per-pixel transparency by determining if the value of
-	     * the <code>transparent</code> property is <code>true</code>.
-	     */
-	    transparent: boolean;
-	    /**
-	     * Creates a BitmapImage2D object with a specified width and height. If you
-	     * specify a value for the <code>fillColor</code> parameter, every pixel in
-	     * the bitmap is set to that color.
-	     *
-	     * <p>By default, the bitmap is created as transparent, unless you pass
-	     * the value <code>false</code> for the transparent parameter. After you
-	     * create an opaque bitmap, you cannot change it to a transparent bitmap.
-	     * Every pixel in an opaque bitmap uses only 24 bits of color channel
-	     * information. If you define the bitmap as transparent, every pixel uses 32
-	     * bits of color channel information, including an alpha transparency
-	     * channel.</p>
-	     *
-	     * @param width       The width of the bitmap image in pixels.
-	     * @param height      The height of the bitmap image in pixels.
-	     * @param transparent Specifies whether the bitmap image supports per-pixel
-	     *                    transparency. The default value is <code>true</code>
-	     *                    (transparent). To create a fully transparent bitmap,
-	     *                    set the value of the <code>transparent</code>
-	     *                    parameter to <code>true</code> and the value of the
-	     *                    <code>fillColor</code> parameter to 0x00000000(or to
-	     *                    0). Setting the <code>transparent</code> property to
-	     *                    <code>false</code> can result in minor improvements
-	     *                    in rendering performance.
-	     * @param fillColor   A 32-bit ARGB color value that you use to fill the
-	     *                    bitmap image area. The default value is
-	     *                    0xFFFFFFFF(solid white).
-	     */
-	    constructor(width: number, height: number, transparent?: boolean, fillColor?: number, powerOfTwo?: boolean);
-	    /**
-	     * Returns a new BitmapImage2D object that is a clone of the original instance
-	     * with an exact copy of the contained bitmap.
-	     *
-	     * @return A new BitmapImage2D object that is identical to the original.
-	     */
-	    clone(): BitmapImage2D;
-	    /**
-	     * Adjusts the color values in a specified area of a bitmap image by using a
-	     * <code>ColorTransform</code> object. If the rectangle matches the
-	     * boundaries of the bitmap image, this method transforms the color values of
-	     * the entire image.
-	     *
-	     * @param rect           A Rectangle object that defines the area of the
-	     *                       image in which the ColorTransform object is applied.
-	     * @param colorTransform A ColorTransform object that describes the color
-	     *                       transformation values to apply.
-	     */
-	    colorTransform(rect: Rectangle, colorTransform: ColorTransform): void;
-	    /**
-	     * Transfers data from one channel of another BitmapImage2D object or the
-	     * current BitmapImage2D object into a channel of the current BitmapImage2D object.
-	     * All of the data in the other channels in the destination BitmapImage2D object
-	     * are preserved.
-	     *
-	     * <p>The source channel value and destination channel value can be one of
-	     * following values: </p>
-	     *
-	     * <ul>
-	     *   <li><code>BitmapImage2DChannel.RED</code></li>
-	     *   <li><code>BitmapImage2DChannel.GREEN</code></li>
-	     *   <li><code>BitmapImage2DChannel.BLUE</code></li>
-	     *   <li><code>BitmapImage2DChannel.ALPHA</code></li>
-	     * </ul>
-	     *
-	     * @param sourceBitmapImage2D The input bitmap image to use. The source image
-	     *                         can be a different BitmapImage2D object or it can
-	     *                         refer to the current BitmapImage2D object.
-	     * @param sourceRect       The source Rectangle object. To copy only channel
-	     *                         data from a smaller area within the bitmap,
-	     *                         specify a source rectangle that is smaller than
-	     *                         the overall size of the BitmapImage2D object.
-	     * @param destPoint        The destination Point object that represents the
-	     *                         upper-left corner of the rectangular area where
-	     *                         the new channel data is placed. To copy only
-	     *                         channel data from one area to a different area in
-	     *                         the destination image, specify a point other than
-	     *                        (0,0).
-	     * @param sourceChannel    The source channel. Use a value from the
-	     *                         BitmapImage2DChannel class
-	     *                        (<code>BitmapImage2DChannel.RED</code>,
-	     *                         <code>BitmapImage2DChannel.BLUE</code>,
-	     *                         <code>BitmapImage2DChannel.GREEN</code>,
-	     *                         <code>BitmapImage2DChannel.ALPHA</code>).
-	     * @param destChannel      The destination channel. Use a value from the
-	     *                         BitmapImage2DChannel class
-	     *                        (<code>BitmapImage2DChannel.RED</code>,
-	     *                         <code>BitmapImage2DChannel.BLUE</code>,
-	     *                         <code>BitmapImage2DChannel.GREEN</code>,
-	     *                         <code>BitmapImage2DChannel.ALPHA</code>).
-	     * @throws TypeError The sourceBitmapImage2D, sourceRect or destPoint are null.
-	     */
-	    copyChannel(sourceBitmap: BitmapImage2D, sourceRect: Rectangle, destPoint: Point, sourceChannel: number, destChannel: number): void;
-	    /**
-	     * Provides a fast routine to perform pixel manipulation between images with
-	     * no stretching, rotation, or color effects. This method copies a
-	     * rectangular area of a source image to a rectangular area of the same size
-	     * at the destination point of the destination BitmapImage2D object.
-	     *
-	     * <p>If you include the <code>alphaBitmap</code> and <code>alphaPoint</code>
-	     * parameters, you can use a secondary image as an alpha source for the
-	     * source image. If the source image has alpha data, both sets of alpha data
-	     * are used to composite pixels from the source image to the destination
-	     * image. The <code>alphaPoint</code> parameter is the point in the alpha
-	     * image that corresponds to the upper-left corner of the source rectangle.
-	     * Any pixels outside the intersection of the source image and alpha image
-	     * are not copied to the destination image.</p>
-	     *
-	     * <p>The <code>mergeAlpha</code> property controls whether or not the alpha
-	     * channel is used when a transparent image is copied onto another
-	     * transparent image. To copy pixels with the alpha channel data, set the
-	     * <code>mergeAlpha</code> property to <code>true</code>. By default, the
-	     * <code>mergeAlpha</code> property is <code>false</code>.</p>
-	     *
-	     * @param sourceBitmapImage2D The input bitmap image from which to copy pixels.
-	     *                         The source image can be a different BitmapImage2D
-	     *                         instance, or it can refer to the current
-	     *                         BitmapImage2D instance.
-	     * @param sourceRect       A rectangle that defines the area of the source
-	     *                         image to use as input.
-	     * @param destPoint        The destination point that represents the
-	     *                         upper-left corner of the rectangular area where
-	     *                         the new pixels are placed.
-	     * @param alphaBitmapImage2D  A secondary, alpha BitmapImage2D object source.
-	     * @param alphaPoint       The point in the alpha BitmapImage2D object source
-	     *                         that corresponds to the upper-left corner of the
-	     *                         <code>sourceRect</code> parameter.
-	     * @param mergeAlpha       To use the alpha channel, set the value to
-	     *                         <code>true</code>. To copy pixels with no alpha
-	     *                         channel, set the value to <code>false</code>.
-	     * @throws TypeError The sourceBitmapImage2D, sourceRect, destPoint are null.
-	     */
-	    copyPixels(source: BitmapImage2D, sourceRect: Rectangle, destRect: Rectangle): any;
-	    copyPixels(source: HTMLElement, sourceRect: Rectangle, destRect: Rectangle): any;
-	    /**
-	     * Frees memory that is used to store the BitmapImage2D object.
-	     *
-	     * <p>When the <code>dispose()</code> method is called on an image, the width
-	     * and height of the image are set to 0. All subsequent calls to methods or
-	     * properties of this BitmapImage2D instance fail, and an exception is thrown.
-	     * </p>
-	     *
-	     * <p><code>BitmapImage2D.dispose()</code> releases the memory occupied by the
-	     * actual bitmap data, immediately(a bitmap can consume up to 64 MB of
-	     * memory). After using <code>BitmapImage2D.dispose()</code>, the BitmapImage2D
-	     * object is no longer usable and an exception may be thrown if
-	     * you call functions on the BitmapImage2D object. However,
-	     * <code>BitmapImage2D.dispose()</code> does not garbage collect the BitmapImage2D
-	     * object(approximately 128 bytes); the memory occupied by the actual
-	     * BitmapImage2D object is released at the time the BitmapImage2D object is
-	     * collected by the garbage collector.</p>
-	     *
-	     */
-	    dispose(): void;
-	    /**
-	     * Draws the <code>source</code> display object onto the bitmap image, using
-	     * the NME software renderer. You can specify <code>matrix</code>,
-	     * <code>colorTransform</code>, <code>blendMode</code>, and a destination
-	     * <code>clipRect</code> parameter to control how the rendering performs.
-	     * Optionally, you can specify whether the bitmap should be smoothed when
-	     * scaled(this works only if the source object is a BitmapImage2D object).
-	     *
-	     * <p>The source display object does not use any of its applied
-	     * transformations for this call. It is treated as it exists in the library
-	     * or file, with no matrix transform, no color transform, and no blend mode.
-	     * To draw a display object(such as a movie clip) by using its own transform
-	     * properties, you can copy its <code>transform</code> property object to the
-	     * <code>transform</code> property of the Bitmap object that uses the
-	     * BitmapImage2D object.</p>
-	     *
-	     * @param source         The display object or BitmapImage2D object to draw to
-	     *                       the BitmapImage2D object.(The DisplayObject and
-	     *                       BitmapImage2D classes implement the IBitmapDrawable
-	     *                       interface.)
-	     * @param matrix         A Matrix object used to scale, rotate, or translate
-	     *                       the coordinates of the bitmap. If you do not want to
-	     *                       apply a matrix transformation to the image, set this
-	     *                       parameter to an identity matrix, created with the
-	     *                       default <code>new Matrix()</code> constructor, or
-	     *                       pass a <code>null</code> value.
-	     * @param colorTransform A ColorTransform object that you use to adjust the
-	     *                       color values of the bitmap. If no object is
-	     *                       supplied, the bitmap image's colors are not
-	     *                       transformed. If you must pass this parameter but you
-	     *                       do not want to transform the image, set this
-	     *                       parameter to a ColorTransform object created with
-	     *                       the default <code>new ColorTransform()</code>
-	     *                       constructor.
-	     * @param blendMode      A string value, from the flash.display.BlendMode
-	     *                       class, specifying the blend mode to be applied to
-	     *                       the resulting bitmap.
-	     * @param clipRect       A Rectangle object that defines the area of the
-	     *                       source object to draw. If you do not supply this
-	     *                       value, no clipping occurs and the entire source
-	     *                       object is drawn.
-	     * @param smoothing      A Boolean value that determines whether a BitmapImage2D
-	     *                       object is smoothed when scaled or rotated, due to a
-	     *                       scaling or rotation in the <code>matrix</code>
-	     *                       parameter. The <code>smoothing</code> parameter only
-	     *                       applies if the <code>source</code> parameter is a
-	     *                       BitmapImage2D object. With <code>smoothing</code> set
-	     *                       to <code>false</code>, the rotated or scaled
-	     *                       BitmapImage2D image can appear pixelated or jagged. For
-	     *                       example, the following two images use the same
-	     *                       BitmapImage2D object for the <code>source</code>
-	     *                       parameter, but the <code>smoothing</code> parameter
-	     *                       is set to <code>true</code> on the left and
-	     *                       <code>false</code> on the right:
-	     *
-	     *                       <p>Drawing a bitmap with <code>smoothing</code> set
-	     *                       to <code>true</code> takes longer than doing so with
-	     *                       <code>smoothing</code> set to
-	     *                       <code>false</code>.</p>
-	     * @throws ArgumentError The <code>source</code> parameter is not a
-	     *                       BitmapImage2D or DisplayObject object.
-	     * @throws ArgumentError The source is null or not a valid IBitmapDrawable
-	     *                       object.
-	     * @throws SecurityError The <code>source</code> object and(in the case of a
-	     *                       Sprite or MovieClip object) all of its child objects
-	     *                       do not come from the same domain as the caller, or
-	     *                       are not in a content that is accessible to the
-	     *                       caller by having called the
-	     *                       <code>Security.allowDomain()</code> method. This
-	     *                       restriction does not apply to AIR content in the
-	     *                       application security sandbox.
-	     */
-	    draw(source: BitmapImage2D, matrix?: Matrix, colorTransform?: ColorTransform, blendMode?: BlendMode, clipRect?: Rectangle, smoothing?: boolean): any;
-	    draw(source: HTMLElement, matrix?: Matrix, colorTransform?: ColorTransform, blendMode?: BlendMode, clipRect?: Rectangle, smoothing?: boolean): any;
-	    /**
-	     * Fills a rectangular area of pixels with a specified ARGB color.
-	     *
-	     * @param rect  The rectangular area to fill.
-	     * @param color The ARGB color value that fills the area. ARGB colors are
-	     *              often specified in hexadecimal format; for example,
-	     *              0xFF336699.
-	     * @throws TypeError The rect is null.
-	     */
-	    fillRect(rect: Rectangle, color: number): void;
-	    /**
-	     * Returns an integer that represents an RGB pixel value from a BitmapImage2D
-	     * object at a specific point(<i>x</i>, <i>y</i>). The
-	     * <code>getPixel()</code> method returns an unmultiplied pixel value. No
-	     * alpha information is returned.
-	     *
-	     * <p>All pixels in a BitmapImage2D object are stored as premultiplied color
-	     * values. A premultiplied image pixel has the red, green, and blue color
-	     * channel values already multiplied by the alpha data. For example, if the
-	     * alpha value is 0, the values for the RGB channels are also 0, independent
-	     * of their unmultiplied values. This loss of data can cause some problems
-	     * when you perform operations. All BitmapImage2D methods take and return
-	     * unmultiplied values. The internal pixel representation is converted from
-	     * premultiplied to unmultiplied before it is returned as a value. During a
-	     * set operation, the pixel value is premultiplied before the raw image pixel
-	     * is set.</p>
-	     *
-	     * @param x The <i>x</i> position of the pixel.
-	     * @param y The <i>y</i> position of the pixel.
-	     * @return A number that represents an RGB pixel value. If the(<i>x</i>,
-	     *         <i>y</i>) coordinates are outside the bounds of the image, the
-	     *         method returns 0.
-	     */
-	    getPixel(x: any, y: any): number;
-	    /**
-	     * Returns an ARGB color value that contains alpha channel data and RGB data.
-	     * This method is similar to the <code>getPixel()</code> method, which
-	     * returns an RGB color without alpha channel data.
-	     *
-	     * <p>All pixels in a BitmapImage2D object are stored as premultiplied color
-	     * values. A premultiplied image pixel has the red, green, and blue color
-	     * channel values already multiplied by the alpha data. For example, if the
-	     * alpha value is 0, the values for the RGB channels are also 0, independent
-	     * of their unmultiplied values. This loss of data can cause some problems
-	     * when you perform operations. All BitmapImage2D methods take and return
-	     * unmultiplied values. The internal pixel representation is converted from
-	     * premultiplied to unmultiplied before it is returned as a value. During a
-	     * set operation, the pixel value is premultiplied before the raw image pixel
-	     * is set.</p>
-	     *
-	     * @param x The <i>x</i> position of the pixel.
-	     * @param y The <i>y</i> position of the pixel.
-	     * @return A number representing an ARGB pixel value. If the(<i>x</i>,
-	     *         <i>y</i>) coordinates are outside the bounds of the image, 0 is
-	     *         returned.
-	     */
-	    getPixel32(x: any, y: any): number;
-	    /**
-	     * Locks an image so that any objects that reference the BitmapImage2D object,
-	     * such as Bitmap objects, are not updated when this BitmapImage2D object
-	     * changes. To improve performance, use this method along with the
-	     * <code>unlock()</code> method before and after numerous calls to the
-	     * <code>setPixel()</code> or <code>setPixel32()</code> method.
-	     *
-	     */
-	    lock(): void;
-	    /**
-	     * Converts an Array into a rectangular region of pixel data. For each pixel,
-	     * an Array element is read and written into the BitmapImage2D pixel. The data
-	     * in the Array is expected to be 32-bit ARGB pixel values.
-	     *
-	     * @param rect        Specifies the rectangular region of the BitmapImage2D
-	     *                    object.
-	     * @param inputArray  An Array that consists of 32-bit unmultiplied pixel
-	     *                    values to be used in the rectangular region.
-	     * @throws RangeError The vector array is not large enough to read all the
-	     *                    pixel data.
-	     */
-	    setArray(rect: Rectangle, inputArray: Array<number>): void;
-	    /**
-	     * Sets a single pixel of a BitmapImage2D object. The current alpha channel
-	     * value of the image pixel is preserved during this operation. The value of
-	     * the RGB color parameter is treated as an unmultiplied color value.
-	     *
-	     * <p><b>Note:</b> To increase performance, when you use the
-	     * <code>setPixel()</code> or <code>setPixel32()</code> method repeatedly,
-	     * call the <code>lock()</code> method before you call the
-	     * <code>setPixel()</code> or <code>setPixel32()</code> method, and then call
-	     * the <code>unlock()</code> method when you have made all pixel changes.
-	     * This process prevents objects that reference this BitmapImage2D instance from
-	     * updating until you finish making the pixel changes.</p>
-	     *
-	     * @param x     The <i>x</i> position of the pixel whose value changes.
-	     * @param y     The <i>y</i> position of the pixel whose value changes.
-	     * @param color The resulting RGB color for the pixel.
-	     */
-	    setPixel(x: number, y: number, color: number): void;
-	    /**
-	     * Sets the color and alpha transparency values of a single pixel of a
-	     * BitmapImage2D object. This method is similar to the <code>setPixel()</code>
-	     * method; the main difference is that the <code>setPixel32()</code> method
-	     * takes an ARGB color value that contains alpha channel information.
-	     *
-	     * <p>All pixels in a BitmapImage2D object are stored as premultiplied color
-	     * values. A premultiplied image pixel has the red, green, and blue color
-	     * channel values already multiplied by the alpha data. For example, if the
-	     * alpha value is 0, the values for the RGB channels are also 0, independent
-	     * of their unmultiplied values. This loss of data can cause some problems
-	     * when you perform operations. All BitmapImage2D methods take and return
-	     * unmultiplied values. The internal pixel representation is converted from
-	     * premultiplied to unmultiplied before it is returned as a value. During a
-	     * set operation, the pixel value is premultiplied before the raw image pixel
-	     * is set.</p>
-	     *
-	     * <p><b>Note:</b> To increase performance, when you use the
-	     * <code>setPixel()</code> or <code>setPixel32()</code> method repeatedly,
-	     * call the <code>lock()</code> method before you call the
-	     * <code>setPixel()</code> or <code>setPixel32()</code> method, and then call
-	     * the <code>unlock()</code> method when you have made all pixel changes.
-	     * This process prevents objects that reference this BitmapImage2D instance from
-	     * updating until you finish making the pixel changes.</p>
-	     *
-	     * @param x     The <i>x</i> position of the pixel whose value changes.
-	     * @param y     The <i>y</i> position of the pixel whose value changes.
-	     * @param color The resulting ARGB color for the pixel. If the bitmap is
-	     *              opaque(not transparent), the alpha transparency portion of
-	     *              this color value is ignored.
-	     */
-	    setPixel32(x: any, y: any, color: number): void;
-	    /**
-	     * Converts a byte array into a rectangular region of pixel data. For each
-	     * pixel, the <code>ByteArray.readUnsignedInt()</code> method is called and
-	     * the return value is written into the pixel. If the byte array ends before
-	     * the full rectangle is written, the function returns. The data in the byte
-	     * array is expected to be 32-bit ARGB pixel values. No seeking is performed
-	     * on the byte array before or after the pixels are read.
-	     *
-	     * @param rect           Specifies the rectangular region of the BitmapImage2D
-	     *                       object.
-	     * @param inputByteArray A ByteArray object that consists of 32-bit
-	     *                       unmultiplied pixel values to be used in the
-	     *                       rectangular region.
-	     * @throws EOFError  The <code>inputByteArray</code> object does not include
-	     *                   enough data to fill the area of the <code>rect</code>
-	     *                   rectangle. The method fills as many pixels as possible
-	     *                   before throwing the exception.
-	     * @throws TypeError The rect or inputByteArray are null.
-	     */
-	    setPixels(rect: Rectangle, inputByteArray: ByteArray): void;
-	    /**
-	     * Unlocks an image so that any objects that reference the BitmapImage2D object,
-	     * such as Bitmap objects, are updated when this BitmapImage2D object changes.
-	     * To improve performance, use this method along with the <code>lock()</code>
-	     * method before and after numerous calls to the <code>setPixel()</code> or
-	     * <code>setPixel32()</code> method.
-	     *
-	     * @param changeRect The area of the BitmapImage2D object that has changed. If
-	     *                   you do not specify a value for this parameter, the
-	     *                   entire area of the BitmapImage2D object is considered
-	     *                   changed.
-	     */
-	    unlock(): void;
-	    /**
-	     *
-	     * @returns {ImageData}
-	     */
-	    getImageData(): ImageData;
-	    /**
-	     *
-	     * @returns {HTMLCanvasElement}
-	     */
-	    getCanvas(): HTMLCanvasElement;
-	    /**
-	     *
-	     * @param width
-	     * @param height
-	     * @private
-	     */
-	    _setSize(width: number, height: number): void;
-	}
-	export = BitmapImage2D;
-	
-}
-
-declare module "awayjs-core/lib/data/BitmapImageChannel" {
-	class BitmapImageChannel {
-	    static ALPHA: number;
-	    static BLUE: number;
-	    static GREEN: number;
-	    static RED: number;
-	}
-	export = BitmapImageChannel;
-	
-}
-
-declare module "awayjs-core/lib/data/BitmapImageCube" {
-	import BitmapImage2D = require("awayjs-core/lib/data/BitmapImage2D");
-	import ImageCube = require("awayjs-core/lib/data/ImageCube");
-	import BlendMode = require("awayjs-core/lib/data/BlendMode");
-	import ColorTransform = require("awayjs-core/lib/geom/ColorTransform");
-	import Matrix = require("awayjs-core/lib/geom/Matrix");
-	import Rectangle = require("awayjs-core/lib/geom/Rectangle");
-	import Point = require("awayjs-core/lib/geom/Point");
-	import ByteArray = require("awayjs-core/lib/utils/ByteArray");
-	/**
-	 * The BitmapImage2D class lets you work with the data(pixels) of a Bitmap
-	 * object. You can use the methods of the BitmapImage2D class to create
-	 * arbitrarily sized transparent or opaque bitmap images and manipulate them
-	 * in various ways at runtime. You can also access the BitmapImage2D for a bitmap
-	 * image that you load with the <code>flash.Assets</code> or
-	 * <code>flash.display.Loader</code> classes.
-	 *
-	 * <p>This class lets you separate bitmap rendering operations from the
-	 * internal display updating routines of flash. By manipulating a
-	 * BitmapImage2D object directly, you can create complex images without incurring
-	 * the per-frame overhead of constantly redrawing the content from vector
-	 * data.</p>
-	 *
-	 * <p>The methods of the BitmapImage2D class support effects that are not
-	 * available through the filters available to non-bitmap display objects.</p>
-	 *
-	 * <p>A BitmapImage2D object contains an array of pixel data. This data can
-	 * represent either a fully opaque bitmap or a transparent bitmap that
-	 * contains alpha channel data. Either type of BitmapImage2D object is stored as
-	 * a buffer of 32-bit integers. Each 32-bit integer determines the properties
-	 * of a single pixel in the bitmap.</p>
-	 *
-	 * <p>Each 32-bit integer is a combination of four 8-bit channel values(from
-	 * 0 to 255) that describe the alpha transparency and the red, green, and blue
-	 * (ARGB) values of the pixel.(For ARGB values, the most significant byte
-	 * represents the alpha channel value, followed by red, green, and blue.)</p>
-	 *
-	 * <p>The four channels(alpha, red, green, and blue) are represented as
-	 * numbers when you use them with the <code>BitmapImage2D.copyChannel()</code>
-	 * method or the <code>DisplacementMapFilter.componentX</code> and
-	 * <code>DisplacementMapFilter.componentY</code> properties, and these numbers
-	 * are represented by the following constants in the BitmapImage2DChannel
-	 * class:</p>
-	 *
-	 * <ul>
-	 *   <li><code>BitmapImage2DChannel.ALPHA</code></li>
-	 *   <li><code>BitmapImage2DChannel.RED</code></li>
-	 *   <li><code>BitmapImage2DChannel.GREEN</code></li>
-	 *   <li><code>BitmapImage2DChannel.BLUE</code></li>
-	 * </ul>
-	 *
-	 * <p>You can attach BitmapImage2D objects to a Bitmap object by using the
-	 * <code>bitmapData</code> property of the Bitmap object.</p>
-	 *
-	 * <p>You can use a BitmapImage2D object to fill a Graphics object by using the
-	 * <code>Graphics.beginBitmapFill()</code> method.</p>
-	 *
-	 * <p>You can also use a BitmapImage2D object to perform batch tile rendering
-	 * using the <code>flash.display.Tilesheet</code> class.</p>
-	 *
-	 * <p>In Flash Player 10, the maximum size for a BitmapImage2D object
-	 * is 8,191 pixels in width or height, and the total number of pixels cannot
-	 * exceed 16,777,215 pixels.(So, if a BitmapImage2D object is 8,191 pixels wide,
-	 * it can only be 2,048 pixels high.) In Flash Player 9 and earlier, the limitation
-	 * is 2,880 pixels in height and 2,880 in width.</p>
-	 */
-	class BitmapImageCube extends ImageCube {
-	    static assetType: string;
-	    static posX: number;
-	    static negX: number;
-	    static posY: number;
-	    static negY: number;
-	    static posZ: number;
-	    static negZ: number;
-	    private _imageCanvas;
-	    private _context;
-	    private _imageData;
-	    private _transparent;
-	    private _locked;
-	    /**
-	     *
-	     * @returns {string}
-	     */
-	    assetType: string;
-	    /**
-	     * Defines whether the bitmap image supports per-pixel transparency. You can
-	     * set this value only when you construct a BitmapImage2D object by passing in
-	     * <code>true</code> for the <code>transparent</code> parameter of the
-	     * constructor. Then, after you create a BitmapImage2D object, you can check
-	     * whether it supports per-pixel transparency by determining if the value of
-	     * the <code>transparent</code> property is <code>true</code>.
-	     */
-	    transparent: boolean;
-	    /**
-	     * Creates a BitmapImage2D object with a specified width and height. If you
-	     * specify a value for the <code>fillColor</code> parameter, every pixel in
-	     * the bitmap is set to that color.
-	     *
-	     * <p>By default, the bitmap is created as transparent, unless you pass
-	     * the value <code>false</code> for the transparent parameter. After you
-	     * create an opaque bitmap, you cannot change it to a transparent bitmap.
-	     * Every pixel in an opaque bitmap uses only 24 bits of color channel
-	     * information. If you define the bitmap as transparent, every pixel uses 32
-	     * bits of color channel information, including an alpha transparency
-	     * channel.</p>
-	     *
-	     * @param width       The width of the bitmap image in pixels.
-	     * @param height      The height of the bitmap image in pixels.
-	     * @param transparent Specifies whether the bitmap image supports per-pixel
-	     *                    transparency. The default value is <code>true</code>
-	     *                    (transparent). To create a fully transparent bitmap,
-	     *                    set the value of the <code>transparent</code>
-	     *                    parameter to <code>true</code> and the value of the
-	     *                    <code>fillColor</code> parameter to 0x00000000(or to
-	     *                    0). Setting the <code>transparent</code> property to
-	     *                    <code>false</code> can result in minor improvements
-	     *                    in rendering performance.
-	     * @param fillColor   A 32-bit ARGB color value that you use to fill the
-	     *                    bitmap image area. The default value is
-	     *                    0xFFFFFFFF(solid white).
-	     */
-	    constructor(size: number, transparent?: boolean, fillColor?: number);
-	    /**
-	     * Returns a new BitmapImage2D object that is a clone of the original instance
-	     * with an exact copy of the contained bitmap.
-	     *
-	     * @return A new BitmapImage2D object that is identical to the original.
-	     */
-	    clone(): BitmapImageCube;
-	    /**
-	     * Adjusts the color values in a specified area of a bitmap image by using a
-	     * <code>ColorTransform</code> object. If the rectangle matches the
-	     * boundaries of the bitmap image, this method transforms the color values of
-	     * the entire image.
-	     *
-	     * @param rect           A Rectangle object that defines the area of the
-	     *                       image in which the ColorTransform object is applied.
-	     * @param colorTransform A ColorTransform object that describes the color
-	     *                       transformation values to apply.
-	     */
-	    colorTransform(side: number, rect: Rectangle, colorTransform: ColorTransform): void;
-	    /**
-	     * Transfers data from one channel of another BitmapImage2D object or the
-	     * current BitmapImage2D object into a channel of the current BitmapImage2D object.
-	     * All of the data in the other channels in the destination BitmapImage2D object
-	     * are preserved.
-	     *
-	     * <p>The source channel value and destination channel value can be one of
-	     * following values: </p>
-	     *
-	     * <ul>
-	     *   <li><code>BitmapImage2DChannel.RED</code></li>
-	     *   <li><code>BitmapImage2DChannel.GREEN</code></li>
-	     *   <li><code>BitmapImage2DChannel.BLUE</code></li>
-	     *   <li><code>BitmapImage2DChannel.ALPHA</code></li>
-	     * </ul>
-	     *
-	     * @param sourceBitmapImage2D The input bitmap image to use. The source image
-	     *                         can be a different BitmapImage2D object or it can
-	     *                         refer to the current BitmapImage2D object.
-	     * @param sourceRect       The source Rectangle object. To copy only channel
-	     *                         data from a smaller area within the bitmap,
-	     *                         specify a source rectangle that is smaller than
-	     *                         the overall size of the BitmapImage2D object.
-	     * @param destPoint        The destination Point object that represents the
-	     *                         upper-left corner of the rectangular area where
-	     *                         the new channel data is placed. To copy only
-	     *                         channel data from one area to a different area in
-	     *                         the destination image, specify a point other than
-	     *                        (0,0).
-	     * @param sourceChannel    The source channel. Use a value from the
-	     *                         BitmapImage2DChannel class
-	     *                        (<code>BitmapImage2DChannel.RED</code>,
-	     *                         <code>BitmapImage2DChannel.BLUE</code>,
-	     *                         <code>BitmapImage2DChannel.GREEN</code>,
-	     *                         <code>BitmapImage2DChannel.ALPHA</code>).
-	     * @param destChannel      The destination channel. Use a value from the
-	     *                         BitmapImage2DChannel class
-	     *                        (<code>BitmapImage2DChannel.RED</code>,
-	     *                         <code>BitmapImage2DChannel.BLUE</code>,
-	     *                         <code>BitmapImage2DChannel.GREEN</code>,
-	     *                         <code>BitmapImage2DChannel.ALPHA</code>).
-	     * @throws TypeError The sourceBitmapImage2D, sourceRect or destPoint are null.
-	     */
-	    copyChannel(side: number, sourceBitmap: BitmapImage2D, sourceRect: Rectangle, destPoint: Point, sourceChannel: number, destChannel: number): void;
-	    /**
-	     * Provides a fast routine to perform pixel manipulation between images with
-	     * no stretching, rotation, or color effects. This method copies a
-	     * rectangular area of a source image to a rectangular area of the same size
-	     * at the destination point of the destination BitmapImage2D object.
-	     *
-	     * <p>If you include the <code>alphaBitmap</code> and <code>alphaPoint</code>
-	     * parameters, you can use a secondary image as an alpha source for the
-	     * source image. If the source image has alpha data, both sets of alpha data
-	     * are used to composite pixels from the source image to the destination
-	     * image. The <code>alphaPoint</code> parameter is the point in the alpha
-	     * image that corresponds to the upper-left corner of the source rectangle.
-	     * Any pixels outside the intersection of the source image and alpha image
-	     * are not copied to the destination image.</p>
-	     *
-	     * <p>The <code>mergeAlpha</code> property controls whether or not the alpha
-	     * channel is used when a transparent image is copied onto another
-	     * transparent image. To copy pixels with the alpha channel data, set the
-	     * <code>mergeAlpha</code> property to <code>true</code>. By default, the
-	     * <code>mergeAlpha</code> property is <code>false</code>.</p>
-	     *
-	     * @param sourceBitmapImage2D The input bitmap image from which to copy pixels.
-	     *                         The source image can be a different BitmapImage2D
-	     *                         instance, or it can refer to the current
-	     *                         BitmapImage2D instance.
-	     * @param sourceRect       A rectangle that defines the area of the source
-	     *                         image to use as input.
-	     * @param destPoint        The destination point that represents the
-	     *                         upper-left corner of the rectangular area where
-	     *                         the new pixels are placed.
-	     * @param alphaBitmapImage2D  A secondary, alpha BitmapImage2D object source.
-	     * @param alphaPoint       The point in the alpha BitmapImage2D object source
-	     *                         that corresponds to the upper-left corner of the
-	     *                         <code>sourceRect</code> parameter.
-	     * @param mergeAlpha       To use the alpha channel, set the value to
-	     *                         <code>true</code>. To copy pixels with no alpha
-	     *                         channel, set the value to <code>false</code>.
-	     * @throws TypeError The sourceBitmapImage2D, sourceRect, destPoint are null.
-	     */
-	    copyPixels(side: number, source: BitmapImage2D, sourceRect: Rectangle, destRect: Rectangle): any;
-	    copyPixels(side: number, source: HTMLImageElement, sourceRect: Rectangle, destRect: Rectangle): any;
-	    /**
-	     * Frees memory that is used to store the BitmapImage2D object.
-	     *
-	     * <p>When the <code>dispose()</code> method is called on an image, the width
-	     * and height of the image are set to 0. All subsequent calls to methods or
-	     * properties of this BitmapImage2D instance fail, and an exception is thrown.
-	     * </p>
-	     *
-	     * <p><code>BitmapImage2D.dispose()</code> releases the memory occupied by the
-	     * actual bitmap data, immediately(a bitmap can consume up to 64 MB of
-	     * memory). After using <code>BitmapImage2D.dispose()</code>, the BitmapImage2D
-	     * object is no longer usable and an exception may be thrown if
-	     * you call functions on the BitmapImage2D object. However,
-	     * <code>BitmapImage2D.dispose()</code> does not garbage collect the BitmapImage2D
-	     * object(approximately 128 bytes); the memory occupied by the actual
-	     * BitmapImage2D object is released at the time the BitmapImage2D object is
-	     * collected by the garbage collector.</p>
-	     *
-	     */
-	    dispose(): void;
-	    /**
-	     * Draws the <code>source</code> display object onto the bitmap image, using
-	     * the NME software renderer. You can specify <code>matrix</code>,
-	     * <code>colorTransform</code>, <code>blendMode</code>, and a destination
-	     * <code>clipRect</code> parameter to control how the rendering performs.
-	     * Optionally, you can specify whether the bitmap should be smoothed when
-	     * scaled(this works only if the source object is a BitmapImage2D object).
-	     *
-	     * <p>The source display object does not use any of its applied
-	     * transformations for this call. It is treated as it exists in the library
-	     * or file, with no matrix transform, no color transform, and no blend mode.
-	     * To draw a display object(such as a movie clip) by using its own transform
-	     * properties, you can copy its <code>transform</code> property object to the
-	     * <code>transform</code> property of the Bitmap object that uses the
-	     * BitmapImage2D object.</p>
-	     *
-	     * @param source         The display object or BitmapImage2D object to draw to
-	     *                       the BitmapImage2D object.(The DisplayObject and
-	     *                       BitmapImage2D classes implement the IBitmapDrawable
-	     *                       interface.)
-	     * @param matrix         A Matrix object used to scale, rotate, or translate
-	     *                       the coordinates of the bitmap. If you do not want to
-	     *                       apply a matrix transformation to the image, set this
-	     *                       parameter to an identity matrix, created with the
-	     *                       default <code>new Matrix()</code> constructor, or
-	     *                       pass a <code>null</code> value.
-	     * @param colorTransform A ColorTransform object that you use to adjust the
-	     *                       color values of the bitmap. If no object is
-	     *                       supplied, the bitmap image's colors are not
-	     *                       transformed. If you must pass this parameter but you
-	     *                       do not want to transform the image, set this
-	     *                       parameter to a ColorTransform object created with
-	     *                       the default <code>new ColorTransform()</code>
-	     *                       constructor.
-	     * @param blendMode      A string value, from the flash.display.BlendMode
-	     *                       class, specifying the blend mode to be applied to
-	     *                       the resulting bitmap.
-	     * @param clipRect       A Rectangle object that defines the area of the
-	     *                       source object to draw. If you do not supply this
-	     *                       value, no clipping occurs and the entire source
-	     *                       object is drawn.
-	     * @param smoothing      A Boolean value that determines whether a BitmapImage2D
-	     *                       object is smoothed when scaled or rotated, due to a
-	     *                       scaling or rotation in the <code>matrix</code>
-	     *                       parameter. The <code>smoothing</code> parameter only
-	     *                       applies if the <code>source</code> parameter is a
-	     *                       BitmapImage2D object. With <code>smoothing</code> set
-	     *                       to <code>false</code>, the rotated or scaled
-	     *                       BitmapImage2D image can appear pixelated or jagged. For
-	     *                       example, the following two images use the same
-	     *                       BitmapImage2D object for the <code>source</code>
-	     *                       parameter, but the <code>smoothing</code> parameter
-	     *                       is set to <code>true</code> on the left and
-	     *                       <code>false</code> on the right:
-	     *
-	     *                       <p>Drawing a bitmap with <code>smoothing</code> set
-	     *                       to <code>true</code> takes longer than doing so with
-	     *                       <code>smoothing</code> set to
-	     *                       <code>false</code>.</p>
-	     * @throws ArgumentError The <code>source</code> parameter is not a
-	     *                       BitmapImage2D or DisplayObject object.
-	     * @throws ArgumentError The source is null or not a valid IBitmapDrawable
-	     *                       object.
-	     * @throws SecurityError The <code>source</code> object and(in the case of a
-	     *                       Sprite or MovieClip object) all of its child objects
-	     *                       do not come from the same domain as the caller, or
-	     *                       are not in a content that is accessible to the
-	     *                       caller by having called the
-	     *                       <code>Security.allowDomain()</code> method. This
-	     *                       restriction does not apply to AIR content in the
-	     *                       application security sandbox.
-	     */
-	    draw(side: number, source: BitmapImage2D, matrix?: Matrix, colorTransform?: ColorTransform, blendMode?: BlendMode, clipRect?: Rectangle, smoothing?: boolean): any;
-	    draw(side: number, source: HTMLElement, matrix?: Matrix, colorTransform?: ColorTransform, blendMode?: BlendMode, clipRect?: Rectangle, smoothing?: boolean): any;
-	    /**
-	     * Fills a rectangular area of pixels with a specified ARGB color.
-	     *
-	     * @param rect  The rectangular area to fill.
-	     * @param color The ARGB color value that fills the area. ARGB colors are
-	     *              often specified in hexadecimal format; for example,
-	     *              0xFF336699.
-	     * @throws TypeError The rect is null.
-	     */
-	    fillRect(side: number, rect: Rectangle, color: number): void;
-	    /**
-	     * Returns an integer that represents an RGB pixel value from a BitmapImage2D
-	     * object at a specific point(<i>x</i>, <i>y</i>). The
-	     * <code>getPixel()</code> method returns an unmultiplied pixel value. No
-	     * alpha information is returned.
-	     *
-	     * <p>All pixels in a BitmapImage2D object are stored as premultiplied color
-	     * values. A premultiplied image pixel has the red, green, and blue color
-	     * channel values already multiplied by the alpha data. For example, if the
-	     * alpha value is 0, the values for the RGB channels are also 0, independent
-	     * of their unmultiplied values. This loss of data can cause some problems
-	     * when you perform operations. All BitmapImage2D methods take and return
-	     * unmultiplied values. The internal pixel representation is converted from
-	     * premultiplied to unmultiplied before it is returned as a value. During a
-	     * set operation, the pixel value is premultiplied before the raw image pixel
-	     * is set.</p>
-	     *
-	     * @param x The <i>x</i> position of the pixel.
-	     * @param y The <i>y</i> position of the pixel.
-	     * @return A number that represents an RGB pixel value. If the(<i>x</i>,
-	     *         <i>y</i>) coordinates are outside the bounds of the image, the
-	     *         method returns 0.
-	     */
-	    getPixel(side: number, x: number, y: number): number;
-	    /**
-	     * Returns an ARGB color value that contains alpha channel data and RGB data.
-	     * This method is similar to the <code>getPixel()</code> method, which
-	     * returns an RGB color without alpha channel data.
-	     *
-	     * <p>All pixels in a BitmapImage2D object are stored as premultiplied color
-	     * values. A premultiplied image pixel has the red, green, and blue color
-	     * channel values already multiplied by the alpha data. For example, if the
-	     * alpha value is 0, the values for the RGB channels are also 0, independent
-	     * of their unmultiplied values. This loss of data can cause some problems
-	     * when you perform operations. All BitmapImage2D methods take and return
-	     * unmultiplied values. The internal pixel representation is converted from
-	     * premultiplied to unmultiplied before it is returned as a value. During a
-	     * set operation, the pixel value is premultiplied before the raw image pixel
-	     * is set.</p>
-	     *
-	     * @param x The <i>x</i> position of the pixel.
-	     * @param y The <i>y</i> position of the pixel.
-	     * @return A number representing an ARGB pixel value. If the(<i>x</i>,
-	     *         <i>y</i>) coordinates are outside the bounds of the image, 0 is
-	     *         returned.
-	     */
-	    getPixel32(side: number, x: any, y: any): number;
-	    /**
-	     * Locks an image so that any objects that reference the BitmapImage2D object,
-	     * such as Bitmap objects, are not updated when this BitmapImage2D object
-	     * changes. To improve performance, use this method along with the
-	     * <code>unlock()</code> method before and after numerous calls to the
-	     * <code>setPixel()</code> or <code>setPixel32()</code> method.
-	     *
-	     */
-	    lock(): void;
-	    /**
-	     * Converts an Array into a rectangular region of pixel data. For each pixel,
-	     * an Array element is read and written into the BitmapImage2D pixel. The data
-	     * in the Array is expected to be 32-bit ARGB pixel values.
-	     *
-	     * @param rect        Specifies the rectangular region of the BitmapImage2D
-	     *                    object.
-	     * @param inputArray  An Array that consists of 32-bit unmultiplied pixel
-	     *                    values to be used in the rectangular region.
-	     * @throws RangeError The vector array is not large enough to read all the
-	     *                    pixel data.
-	     */
-	    setArray(side: number, rect: Rectangle, inputArray: Array<number>): void;
-	    /**
-	     * Sets a single pixel of a BitmapImage2D object. The current alpha channel
-	     * value of the image pixel is preserved during this operation. The value of
-	     * the RGB color parameter is treated as an unmultiplied color value.
-	     *
-	     * <p><b>Note:</b> To increase performance, when you use the
-	     * <code>setPixel()</code> or <code>setPixel32()</code> method repeatedly,
-	     * call the <code>lock()</code> method before you call the
-	     * <code>setPixel()</code> or <code>setPixel32()</code> method, and then call
-	     * the <code>unlock()</code> method when you have made all pixel changes.
-	     * This process prevents objects that reference this BitmapImage2D instance from
-	     * updating until you finish making the pixel changes.</p>
-	     *
-	     * @param x     The <i>x</i> position of the pixel whose value changes.
-	     * @param y     The <i>y</i> position of the pixel whose value changes.
-	     * @param color The resulting RGB color for the pixel.
-	     */
-	    setPixel(side: number, x: number, y: number, color: number): void;
-	    /**
-	     * Sets the color and alpha transparency values of a single pixel of a
-	     * BitmapImage2D object. This method is similar to the <code>setPixel()</code>
-	     * method; the main difference is that the <code>setPixel32()</code> method
-	     * takes an ARGB color value that contains alpha channel information.
-	     *
-	     * <p>All pixels in a BitmapImage2D object are stored as premultiplied color
-	     * values. A premultiplied image pixel has the red, green, and blue color
-	     * channel values already multiplied by the alpha data. For example, if the
-	     * alpha value is 0, the values for the RGB channels are also 0, independent
-	     * of their unmultiplied values. This loss of data can cause some problems
-	     * when you perform operations. All BitmapImage2D methods take and return
-	     * unmultiplied values. The internal pixel representation is converted from
-	     * premultiplied to unmultiplied before it is returned as a value. During a
-	     * set operation, the pixel value is premultiplied before the raw image pixel
-	     * is set.</p>
-	     *
-	     * <p><b>Note:</b> To increase performance, when you use the
-	     * <code>setPixel()</code> or <code>setPixel32()</code> method repeatedly,
-	     * call the <code>lock()</code> method before you call the
-	     * <code>setPixel()</code> or <code>setPixel32()</code> method, and then call
-	     * the <code>unlock()</code> method when you have made all pixel changes.
-	     * This process prevents objects that reference this BitmapImage2D instance from
-	     * updating until you finish making the pixel changes.</p>
-	     *
-	     * @param x     The <i>x</i> position of the pixel whose value changes.
-	     * @param y     The <i>y</i> position of the pixel whose value changes.
-	     * @param color The resulting ARGB color for the pixel. If the bitmap is
-	     *              opaque(not transparent), the alpha transparency portion of
-	     *              this color value is ignored.
-	     */
-	    setPixel32(side: number, x: any, y: any, color: number): void;
-	    /**
-	     * Converts a byte array into a rectangular region of pixel data. For each
-	     * pixel, the <code>ByteArray.readUnsignedInt()</code> method is called and
-	     * the return value is written into the pixel. If the byte array ends before
-	     * the full rectangle is written, the function returns. The data in the byte
-	     * array is expected to be 32-bit ARGB pixel values. No seeking is performed
-	     * on the byte array before or after the pixels are read.
-	     *
-	     * @param rect           Specifies the rectangular region of the BitmapImage2D
-	     *                       object.
-	     * @param inputByteArray A ByteArray object that consists of 32-bit
-	     *                       unmultiplied pixel values to be used in the
-	     *                       rectangular region.
-	     * @throws EOFError  The <code>inputByteArray</code> object does not include
-	     *                   enough data to fill the area of the <code>rect</code>
-	     *                   rectangle. The method fills as many pixels as possible
-	     *                   before throwing the exception.
-	     * @throws TypeError The rect or inputByteArray are null.
-	     */
-	    setPixels(side: number, rect: Rectangle, inputByteArray: ByteArray): void;
-	    /**
-	     * Unlocks an image so that any objects that reference the BitmapImage2D object,
-	     * such as Bitmap objects, are updated when this BitmapImage2D object changes.
-	     * To improve performance, use this method along with the <code>lock()</code>
-	     * method before and after numerous calls to the <code>setPixel()</code> or
-	     * <code>setPixel32()</code> method.
-	     *
-	     * @param changeRect The area of the BitmapImage2D object that has changed. If
-	     *                   you do not specify a value for this parameter, the
-	     *                   entire area of the BitmapImage2D object is considered
-	     *                   changed.
-	     */
-	    unlock(): void;
-	    /**
-	     *
-	     * @returns {ImageData}
-	     */
-	    getImageData(side: number): ImageData;
-	    /**
-	     *
-	     * @returns {HTMLCanvasElement}
-	     */
-	    getCanvas(side: number): HTMLCanvasElement;
-	    /**
-	     *
-	     * @param width
-	     * @param height
-	     * @private
-	     */
-	    _setSize(size: number): void;
-	}
-	export = BitmapImageCube;
-	
-}
-
-declare module "awayjs-core/lib/data/BlendMode" {
-	/**
-	 * A class that provides constant values for visual blend mode effects. These
-	 * constants are used in the following:
-	 * <ul>
-	 *   <li> The <code>blendMode</code> property of the
-	 * flash.display.DisplayObject class.</li>
-	 *   <li> The <code>blendMode</code> parameter of the <code>draw()</code>
-	 * method of the flash.display.BitmapData class</li>
-	 * </ul>
-	 */
-	class BlendMode {
-	    /**
-	     * Adds the values of the constituent colors of the display object to the
-	     * colors of its background, applying a ceiling of 0xFF. This setting is
-	     * commonly used for animating a lightening dissolve between two objects.
-	     *
-	     * <p>For example, if the display object has a pixel with an RGB value of
-	     * 0xAAA633, and the background pixel has an RGB value of 0xDD2200, the
-	     * resulting RGB value for the displayed pixel is 0xFFC833(because 0xAA +
-	     * 0xDD > 0xFF, 0xA6 + 0x22 = 0xC8, and 0x33 + 0x00 = 0x33).</p>
-	     */
-	    static ADD: string;
-	    /**
-	     * Applies the alpha value of each pixel of the display object to the
-	     * background. This requires the <code>blendMode</code> property of the
-	     * parent display object be set to
-	     * <code>away.base.BlendMode.LAYER</code>.
-	     *
-	     * <p>Not supported under GPU rendering.</p>
-	     */
-	    static ALPHA: string;
-	    /**
-	     * Selects the darker of the constituent colors of the display object and the
-	     * colors of the background(the colors with the smaller values). This
-	     * setting is commonly used for superimposing type.
-	     *
-	     * <p>For example, if the display object has a pixel with an RGB value of
-	     * 0xFFCC33, and the background pixel has an RGB value of 0xDDF800, the
-	     * resulting RGB value for the displayed pixel is 0xDDCC00(because 0xFF >
-	     * 0xDD, 0xCC < 0xF8, and 0x33 > 0x00 = 33).</p>
-	     *
-	     * <p>Not supported under GPU rendering.</p>
-	     */
-	    static DARKEN: string;
-	    /**
-	     * Compares the constituent colors of the display object with the colors of
-	     * its background, and subtracts the darker of the values of the two
-	     * constituent colors from the lighter value. This setting is commonly used
-	     * for more vibrant colors.
-	     *
-	     * <p>For example, if the display object has a pixel with an RGB value of
-	     * 0xFFCC33, and the background pixel has an RGB value of 0xDDF800, the
-	     * resulting RGB value for the displayed pixel is 0x222C33(because 0xFF -
-	     * 0xDD = 0x22, 0xF8 - 0xCC = 0x2C, and 0x33 - 0x00 = 0x33).</p>
-	     */
-	    static DIFFERENCE: string;
-	    /**
-	     * Erases the background based on the alpha value of the display object. This
-	     * process requires that the <code>blendMode</code> property of the parent
-	     * display object be set to <code>flash.display.BlendMode.LAYER</code>.
-	     *
-	     * <p>Not supported under GPU rendering.</p>
-	     */
-	    static ERASE: string;
-	    /**
-	     * Adjusts the color of each pixel based on the darkness of the display
-	     * object. If the display object is lighter than 50% gray, the display object
-	     * and background colors are screened, which results in a lighter color. If
-	     * the display object is darker than 50% gray, the colors are multiplied,
-	     * which results in a darker color. This setting is commonly used for shading
-	     * effects.
-	     *
-	     * <p>Not supported under GPU rendering.</p>
-	     */
-	    static HARDLIGHT: string;
-	    /**
-	     * Inverts the background.
-	     */
-	    static INVERT: string;
-	    /**
-	     * Forces the creation of a transparency group for the display object. This
-	     * means that the display object is precomposed in a temporary buffer before
-	     * it is processed further. The precomposition is done automatically if the
-	     * display object is precached by means of bitmap caching or if the display
-	     * object is a display object container that has at least one child object
-	     * with a <code>blendMode</code> setting other than <code>"normal"</code>.
-	     *
-	     * <p>Not supported under GPU rendering.</p>
-	     */
-	    static LAYER: string;
-	    /**
-	     * Selects the lighter of the constituent colors of the display object and
-	     * the colors of the background(the colors with the larger values). This
-	     * setting is commonly used for superimposing type.
-	     *
-	     * <p>For example, if the display object has a pixel with an RGB value of
-	     * 0xFFCC33, and the background pixel has an RGB value of 0xDDF800, the
-	     * resulting RGB value for the displayed pixel is 0xFFF833(because 0xFF >
-	     * 0xDD, 0xCC < 0xF8, and 0x33 > 0x00 = 33).</p>
-	     *
-	     * <p>Not supported under GPU rendering.</p>
-	     */
-	    static LIGHTEN: string;
-	    /**
-	     * Multiplies the values of the display object constituent colors by the
-	     * constituent colors of the background color, and normalizes by dividing by
-	     * 0xFF, resulting in darker colors. This setting is commonly used for
-	     * shadows and depth effects.
-	     *
-	     * <p>For example, if a constituent color(such as red) of one pixel in the
-	     * display object and the corresponding color of the pixel in the background
-	     * both have the value 0x88, the multiplied result is 0x4840. Dividing by
-	     * 0xFF yields a value of 0x48 for that constituent color, which is a darker
-	     * shade than the color of the display object or the color of the
-	     * background.</p>
-	     */
-	    static MULTIPLY: string;
-	    /**
-	     * The display object appears in front of the background. Pixel values of the
-	     * display object override the pixel values of the background. Where the
-	     * display object is transparent, the background is visible.
-	     */
-	    static NORMAL: string;
-	    /**
-	     * Adjusts the color of each pixel based on the darkness of the background.
-	     * If the background is lighter than 50% gray, the display object and
-	     * background colors are screened, which results in a lighter color. If the
-	     * background is darker than 50% gray, the colors are multiplied, which
-	     * results in a darker color. This setting is commonly used for shading
-	     * effects.
-	     *
-	     * <p>Not supported under GPU rendering.</p>
-	     */
-	    static OVERLAY: string;
-	    /**
-	     * Multiplies the complement(inverse) of the display object color by the
-	     * complement of the background color, resulting in a bleaching effect. This
-	     * setting is commonly used for highlights or to remove black areas of the
-	     * display object.
-	     */
-	    static SCREEN: string;
-	    /**
-	     * Uses a shader to define the blend between objects.
-	     *
-	     * <p>Setting the <code>blendShader</code> property to a Shader instance
-	     * automatically sets the display object's <code>blendMode</code> property to
-	     * <code>BlendMode.SHADER</code>. If the <code>blendMode</code> property is
-	     * set to <code>BlendMode.SHADER</code> without first setting the
-	     * <code>blendShader</code> property, the <code>blendMode</code> property is
-	     * set to <code>BlendMode.NORMAL</code> instead. If the
-	     * <code>blendShader</code> property is set(which sets the
-	     * <code>blendMode</code> property to <code>BlendMode.SHADER</code>), then
-	     * later the value of the <code>blendMode</code> property is changed, the
-	     * blend mode can be reset to use the blend shader simply by setting the
-	     * <code>blendMode</code> property to <code>BlendMode.SHADER</code>. The
-	     * <code>blendShader</code> property does not need to be set again except to
-	     * change the shader that's used to define the blend mode.</p>
-	     *
-	     * <p>Not supported under GPU rendering.</p>
-	     */
-	    static SHADER: string;
-	    /**
-	     * Subtracts the values of the constituent colors in the display object from
-	     * the values of the background color, applying a floor of 0. This setting is
-	     * commonly used for animating a darkening dissolve between two objects.
-	     *
-	     * <p>For example, if the display object has a pixel with an RGB value of
-	     * 0xAA2233, and the background pixel has an RGB value of 0xDDA600, the
-	     * resulting RGB value for the displayed pixel is 0x338400(because 0xDD -
-	     * 0xAA = 0x33, 0xA6 - 0x22 = 0x84, and 0x00 - 0x33 < 0x00).</p>
-	     */
-	    static SUBTRACT: string;
-	}
-	export = BlendMode;
-	
-}
-
-declare module "awayjs-core/lib/data/CPUCanvas" {
-	import IImageCanvas = require("awayjs-core/lib/data/IImageCanvas");
-	import ImageData = require('awayjs-core/lib/data/ImageData');
-	class CPUCanvas implements IImageCanvas {
-	    width: number;
-	    height: number;
-	    private imageData;
-	    getContext(contextId: string): CanvasRenderingContext2D;
-	    constructor();
-	    reset(): void;
-	    getImageData(): ImageData;
-	}
-	export = CPUCanvas;
-	
-}
-
-declare module "awayjs-core/lib/data/CPURenderingContext2D" {
-	import ImageData = require('awayjs-core/lib/data/ImageData');
-	import CPUCanvas = require('awayjs-core/lib/data/CPUCanvas');
-	class CPURenderingContext2D implements CanvasRenderingContext2D {
-	    miterLimit: number;
-	    font: string;
-	    globalCompositeOperation: string;
-	    msFillRule: string;
-	    lineCap: string;
-	    msImageSmoothingEnabled: boolean;
-	    lineDashOffset: number;
-	    shadowColor: string;
-	    lineJoin: string;
-	    shadowOffsetX: number;
-	    lineWidth: number;
-	    canvas: HTMLCanvasElement;
-	    strokeStyle: any;
-	    globalAlpha: number;
-	    shadowOffsetY: number;
-	    fillStyle: any;
-	    shadowBlur: number;
-	    textAlign: string;
-	    textBaseline: string;
-	    cpuCanvas: CPUCanvas;
-	    private matrix;
-	    constructor(cpuCanvas: CPUCanvas);
-	    restore(): void;
-	    setTransform(m11: number, m12: number, m21: number, m22: number, dx: number, dy: number): void;
-	    save(): void;
-	    arc(x: number, y: number, radius: number, startAngle: number, endAngle: number, anticlockwise: boolean): void;
-	    measureText(text: string): TextMetrics;
-	    isPointInPath(x: number, y: number, fillRule: string): boolean;
-	    quadraticCurveTo(cpx: number, cpy: number, x: number, y: number): void;
-	    putImageData(imagedata: ImageData, dx: number, dy: number, dirtyX: number, dirtyY: number, dirtyWidth: number, dirtyHeight: number): void;
-	    rotate(angle: number): void;
-	    fillText(text: string, x: number, y: number, maxWidth: number): void;
-	    translate(x: number, y: number): void;
-	    scale(x: number, y: number): void;
-	    createRadialGradient(x0: number, y0: number, r0: number, x1: number, y1: number, r1: number): CanvasGradient;
-	    lineTo(x: number, y: number): void;
-	    getLineDash(): number[];
-	    fill(fillRule: string): void;
-	    createImageData(imageDataOrSw: any, sh: number): ImageData;
-	    createPattern(image: HTMLElement, repetition: string): CanvasPattern;
-	    closePath(): void;
-	    rect(x: number, y: number, w: number, h: number): void;
-	    clip(fillRule: string): void;
-	    clearRect(x: number, y: number, w: number, h: number): void;
-	    moveTo(x: number, y: number): void;
-	    getImageData(sx: number, sy: number, sw: number, sh: number): ImageData;
-	    private point;
-	    private point2;
-	    private applyPixel32(target, x, y, color);
-	    private copyPixel32(target, x, y, source, fromX, fromY);
-	    private parsedFillStyle;
-	    private parsedA;
-	    private parsedR;
-	    private parsedG;
-	    private parsedB;
-	    fillRect(x: number, y: number, w: number, h: number): void;
-	    bezierCurveTo(cp1x: number, cp1y: number, cp2x: number, cp2y: number, x: number, y: number): void;
-	    drawImage(image: HTMLElement, offsetX: number, offsetY: number, width: number, height: number, canvasOffsetX: number, canvasOffsetY: number, canvasImageWidth: number, canvasImageHeight: number): void;
-	    private drawBitmap(bitmap, offsetX, offsetY, width, height, canvasOffsetX, canvasOffsetY, canvasImageWidth, canvasImageHeight);
-	    transform(m11: number, m12: number, m21: number, m22: number, dx: number, dy: number): void;
-	    stroke(): void;
-	    strokeRect(x: number, y: number, w: number, h: number): void;
-	    setLineDash(segments: number[]): void;
-	    strokeText(text: string, x: number, y: number, maxWidth: number): void;
-	    beginPath(): void;
-	    arcTo(x1: number, y1: number, x2: number, y2: number, radius: number): void;
-	    createLinearGradient(x0: number, y0: number, x1: number, y1: number): CanvasGradient;
-	    private static sampleBilinear(u, v, texture, texelSizeX?, texelSizeY?);
-	    private static sample(u, v, imageData);
-	    private static sampleBox(x0, y0, x1, y1, texture);
-	    private static interpolateColor(source, target, a);
-	}
-	export = CPURenderingContext2D;
-	
-}
-
-declare module "awayjs-core/lib/data/IImageCanvas" {
-	interface IImageCanvas {
-	    width: number;
-	    height: number;
-	    getContext(contextId: string): CanvasRenderingContext2D;
-	}
-	export = IImageCanvas;
-	
-}
-
-declare module "awayjs-core/lib/data/Image2D" {
-	import ImageBase = require("awayjs-core/lib/data/ImageBase");
-	import Sampler2D = require("awayjs-core/lib/data/Sampler2D");
-	import Rectangle = require("awayjs-core/lib/geom/Rectangle");
-	class Image2D extends ImageBase {
-	    static assetType: string;
-	    _rect: Rectangle;
-	    private _powerOfTwo;
-	    /**
-	     *
-	     * @returns {string}
-	     */
-	    assetType: string;
-	    /**
-	     * The height of the image in pixels.
-	     */
-	    height: number;
-	    /**
-	     * The rectangle that defines the size and location of the bitmap image. The
-	     * top and left of the rectangle are 0; the width and height are equal to the
-	     * width and height in pixels of the BitmapData object.
-	     */
-	    rect: Rectangle;
-	    /**
-	     * The width of the bitmap image in pixels.
-	     */
-	    width: number;
-	    /**
-	     *
-	     */
-	    constructor(width: number, height: number, powerOfTwo?: boolean);
-	    /**
-	     *
-	     * @param width
-	     * @param height
-	     * @private
-	     */
-	    _setSize(width: number, height: number): void;
-	    /**
-	     *
-	     * @private
-	     */
-	    private _testDimensions();
-	    /**
-	     * Enable POT texture size validation
-	     * @returns {boolean}
-	     */
-	    powerOfTwo: boolean;
-	    createSampler(): Sampler2D;
-	}
-	export = Image2D;
-	
-}
-
-declare module "awayjs-core/lib/data/ImageBase" {
-	import SamplerBase = require("awayjs-core/lib/data/SamplerBase");
-	import IAsset = require("awayjs-core/lib/library/IAsset");
+declare module "awayjs-core/lib/audio/WaveAudio" {
 	import AssetBase = require("awayjs-core/lib/library/AssetBase");
-	import IImageObject = require("awayjs-core/lib/pool/IImageObject");
-	class ImageBase extends AssetBase implements IAsset {
-	    private _imageObject;
-	    _pFormat: string;
-	    /**
-	     *
-	     */
-	    constructor();
-	    /**
-	     *
-	     */
-	    invalidateContent(): void;
-	    /**
-	     *
-	     * @private
-	     */
-	    invalidateSize(): void;
-	    /**
-	     * @inheritDoc
-	     */
-	    dispose(): void;
-	    _iAddImageObject(ImageObject: IImageObject): IImageObject;
-	    _iRemoveImageObject(ImageObject: IImageObject): IImageObject;
-	    /**
-	     *
-	     * @returns {string}
-	     */
-	    format: string;
-	    createSampler(): SamplerBase;
-	}
-	export = ImageBase;
-	
-}
-
-declare module "awayjs-core/lib/data/ImageCube" {
-	import ImageBase = require("awayjs-core/lib/data/ImageBase");
-	import SamplerCube = require("awayjs-core/lib/data/SamplerCube");
-	class ImageCube extends ImageBase {
-	    static assetType: string;
-	    _size: number;
-	    /**
-	     *
-	     * @returns {string}
-	     */
-	    assetType: string;
-	    /**
-	     * The size of the cube bitmap in pixels.
-	     */
-	    size: number;
-	    /**
-	     *
-	     */
-	    constructor(size: number);
-	    /**
-	     *
-	     * @param width
-	     * @param height
-	     * @private
-	     */
-	    _setSize(size: number): void;
-	    /**
-	     *
-	     * @private
-	     */
-	    private _testDimensions();
-	    createSampler(): SamplerCube;
-	}
-	export = ImageCube;
-	
-}
-
-declare module "awayjs-core/lib/data/ImageData" {
-	class ImageData {
-	    width: number;
-	    data: any;
-	    height: number;
-	    constructor(width: number, height: number);
-	}
-	export = ImageData;
-	
-}
-
-declare module "awayjs-core/lib/data/Sampler2D" {
-	import SamplerBase = require("awayjs-core/lib/data/SamplerBase");
-	import Rectangle = require("awayjs-core/lib/geom/Rectangle");
-	/**
-	 * The Sampler2D class represents display objects that represent bitmap images.
-	 * These can be images that you load with the <code>flash.Assets</code> or
-	 * <code>flash.display.Loader</code> classes, or they can be images that you
-	 * create with the <code>Sampler2D()</code> constructor.
-	 *
-	 * <p>The <code>Sampler2D()</code> constructor allows you to create a Sampler2D
-	 * object that contains a reference to a Image2D object. After you create a
-	 * Sampler2D object, use the <code>addChild()</code> or <code>addChildAt()</code>
-	 * method of the parent DisplayObjectContainer instance to place the bitmap on
-	 * the display list.</p>
-	 *
-	 * <p>A Sampler2D object can share its Image2D reference among several Sampler2D
-	 * objects, independent of translation or rotation properties. Because you can
-	 * create multiple Sampler2D objects that reference the same Image2D object,
-	 * multiple texture objects can use the same complex Image2D object without
-	 * incurring the memory overhead of a Image2D object for each texture
-	 * object instance.</p>
-	
-	 */
-	class Sampler2D extends SamplerBase {
-	    static assetType: string;
-	    private _imageRect;
-	    private _frameRect;
-	    private _repeat;
-	    /**
-	     *
-	     * @returns {string}
-	     */
-	    assetType: string;
-	    /**
-	     * Controls whether or not the Sampler2D object is snapped to the nearest pixel.
-	     * This value is ignored in the native and HTML5 targets.
-	     * The PixelSnapping class includes possible values:
-	     * <ul>
-	     *   <li><code>PixelSnapping.NEVER</code> - No pixel snapping occurs.</li>
-	     *   <li><code>PixelSnapping.ALWAYS</code> - The image is always snapped to
-	     * the nearest pixel, independent of transformation.</li>
-	     *   <li><code>PixelSnapping.AUTO</code> - The image is snapped to the
-	     * nearest pixel if it is drawn with no rotation or skew and it is drawn at a
-	     * scale factor of 99.9% to 100.1%. If these conditions are satisfied, the
-	     * bitmap image is drawn at 100% scale, snapped to the nearest pixel.
-	     * When targeting Flash Player, this value allows the image to be drawn as fast
-	     * as possible using the internal vector renderer.</li>
-	     * </ul>
-	     */
-	    /**
-	     * Controls whether or not the bitmap is smoothed when scaled. If
-	     * <code>true</code>, the bitmap is smoothed when scaled. If
-	     * <code>false</code>, the bitmap is not smoothed when scaled.
-	     */
-	    /**
-	     *
-	     */
-	    repeat: boolean;
-	    /**
-	     *
-	     */
-	    imageRect: Rectangle;
-	    /**
-	     *
-	     */
-	    frameRect: Rectangle;
-	    /**
-	     *
-	     * @param image2D
-	     * @param smoothing
-	     */
-	    constructor(repeat?: boolean, smooth?: boolean, mipmap?: boolean);
-	    private _updateRect();
-	}
-	export = Sampler2D;
-	
-}
-
-declare module "awayjs-core/lib/data/SamplerBase" {
-	import IAsset = require("awayjs-core/lib/library/IAsset");
-	import AssetBase = require("awayjs-core/lib/library/AssetBase");
-	/**
-	 *
-	 */
-	class SamplerBase extends AssetBase implements IAsset {
-	    private _smooth;
-	    private _mipmap;
-	    /**
-	     *
-	     */
-	    smooth: boolean;
-	    /**
-	     *
-	     */
-	    mipmap: boolean;
-	    /**
-	     *
-	     */
-	    constructor(smooth?: boolean, mipmap?: boolean);
-	}
-	export = SamplerBase;
-	
-}
-
-declare module "awayjs-core/lib/data/SamplerCube" {
-	import SamplerBase = require("awayjs-core/lib/data/SamplerBase");
-	/**
-	 * The Bitmap class represents display objects that represent bitmap images.
-	 * These can be images that you load with the <code>flash.Assets</code> or
-	 * <code>flash.display.Loader</code> classes, or they can be images that you
-	 * create with the <code>Bitmap()</code> constructor.
-	 *
-	 * <p>The <code>Bitmap()</code> constructor allows you to create a Bitmap
-	 * object that contains a reference to a BitmapData object. After you create a
-	 * Bitmap object, use the <code>addChild()</code> or <code>addChildAt()</code>
-	 * method of the parent DisplayObjectContainer instance to place the bitmap on
-	 * the display list.</p>
-	 *
-	 * <p>A Bitmap object can share its BitmapData reference among several Bitmap
-	 * objects, independent of translation or rotation properties. Because you can
-	 * create multiple Bitmap objects that reference the same BitmapData object,
-	 * multiple texture objects can use the same complex BitmapData object without
-	 * incurring the memory overhead of a BitmapData object for each texture
-	 * object instance.</p>
-	
-	 */
-	class SamplerCube extends SamplerBase {
-	    static assetType: string;
-	    /**
-	     *
-	     * @returns {string}
-	     */
-	    assetType: string;
-	    /**
-	     *
-	     * @param bitmapData
-	     * @param smoothing
-	     */
-	    constructor(smooth?: boolean, mipmap?: boolean);
-	}
-	export = SamplerCube;
-	
-}
-
-declare module "awayjs-core/lib/data/SpecularImage2D" {
-	import BitmapImage2D = require("awayjs-core/lib/data/BitmapImage2D");
-	import Image2D = require("awayjs-core/lib/data/Image2D");
-	/**
-	 *
-	 */
-	class SpecularImage2D extends Image2D {
-	    static assetType: string;
-	    private _specularSource;
-	    private _glossSource;
-	    private _output;
-	    /**
-	     *
-	     * @returns {string}
-	     */
-	    assetType: string;
-	    specularSource: BitmapImage2D;
-	    glossSource: BitmapImage2D;
-	    /**
-	     *
-	     */
-	    constructor(specularSource?: BitmapImage2D, glossSource?: BitmapImage2D);
-	    /**
-	     * Returns a new SpecularImage2D object that is a clone of the original instance
-	     * with an exact copy of the contained bitmap.
-	     *
-	     * @return A new SpecularImage2D object that is identical to the original.
-	     */
-	    clone(): SpecularImage2D;
-	    /**
-	     * Frees memory that is used to store the SpecularImage2D object.
-	     *
-	     * <p>When the <code>dispose()</code> method is called on an image, the width
-	     * and height of the image are set to 0. All subsequent calls to methods or
-	     * properties of this SpecularImage2D instance fail, and an exception is thrown.
-	     * </p>
-	     *
-	     * <p><code>SpecularImage2D.dispose()</code> releases the memory occupied by the
-	     * actual bitmap data, immediately(a bitmap can consume up to 64 MB of
-	     * memory). After using <code>SpecularImage2D.dispose()</code>, the SpecularImage2D
-	     * object is no longer usable and an exception may be thrown if
-	     * you call functions on the SpecularImage2D object. However,
-	     * <code>SpecularImage2D.dispose()</code> does not garbage collect the SpecularImage2D
-	     * object(approximately 128 bytes); the memory occupied by the actual
-	     * SpecularImage2D object is released at the time the SpecularImage2D object is
-	     * collected by the garbage collector.</p>
-	     *
-	     */
-	    dispose(): void;
-	    /**
-	     *
-	     * @returns {ImageData}
-	     */
-	    getImageData(): ImageData;
-	    /**
-	     *
-	     * @returns {HTMLCanvasElement}
-	     */
-	    getCanvas(): HTMLCanvasElement;
-	    /**
-	     *
-	     * @param width
-	     * @param height
-	     * @private
-	     */
-	    _setSize(width: number, height: number): void;
-	    private _testSize();
-	}
-	export = SpecularImage2D;
-	
-}
-
-declare module "awayjs-core/lib/data/WaveAudio" {
-	import IAsset = require("awayjs-core/lib/library/IAsset");
-	import AssetBase = require("awayjs-core/lib/library/AssetBase");
-	class WaveAudio extends AssetBase implements IAsset {
+	class WaveAudio extends AssetBase {
 	    static assetType: string;
 	    private _audioChannel;
 	    private _volume;
@@ -1974,12 +310,12 @@ declare module "awayjs-core/lib/data/WaveAudio" {
 }
 
 declare module "awayjs-core/lib/errors/AbstractMethodError" {
-	import Error = require("awayjs-core/lib/errors/Error");
+	import ErrorBase = require("awayjs-core/lib/errors/ErrorBase");
 	/**
 	 * AbstractMethodError is thrown when an abstract method is called. The method in question should be overridden
 	 * by a concrete subclass.
 	 */
-	class AbstractMethodError extends Error {
+	class AbstractMethodError extends ErrorBase {
 	    /**
 	     * Create a new AbstractMethodError.
 	     * @param message An optional message to override the default error message.
@@ -1992,12 +328,12 @@ declare module "awayjs-core/lib/errors/AbstractMethodError" {
 }
 
 declare module "awayjs-core/lib/errors/ArgumentError" {
-	import Error = require("awayjs-core/lib/errors/Error");
+	import ErrorBase = require("awayjs-core/lib/errors/ErrorBase");
 	/**
 	 * AbstractMethodError is thrown when an abstract method is called. The method in question should be overridden
 	 * by a concrete subclass.
 	 */
-	class ArgumentError extends Error {
+	class ArgumentError extends ErrorBase {
 	    /**
 	     * Create a new ArgumentError.
 	     *
@@ -2011,8 +347,8 @@ declare module "awayjs-core/lib/errors/ArgumentError" {
 }
 
 declare module "awayjs-core/lib/errors/DocumentError" {
-	import Error = require("awayjs-core/lib/errors/Error");
-	class DocumentError extends Error {
+	import ErrorBase = require("awayjs-core/lib/errors/ErrorBase");
+	class DocumentError extends ErrorBase {
 	    static DOCUMENT_DOES_NOT_EXIST: string;
 	    constructor(message?: string, id?: number);
 	}
@@ -2020,8 +356,8 @@ declare module "awayjs-core/lib/errors/DocumentError" {
 	
 }
 
-declare module "awayjs-core/lib/errors/Error" {
-	class Error {
+declare module "awayjs-core/lib/errors/ErrorBase" {
+	class ErrorBase {
 	    private _errorID;
 	    private _messsage;
 	    private _name;
@@ -2050,17 +386,17 @@ declare module "awayjs-core/lib/errors/Error" {
 	     */
 	    errorID: number;
 	}
-	export = Error;
+	export = ErrorBase;
 	
 }
 
 declare module "awayjs-core/lib/errors/PartialImplementationError" {
-	import Error = require("awayjs-core/lib/errors/Error");
+	import ErrorBase = require("awayjs-core/lib/errors/ErrorBase");
 	/**
 	 * AbstractMethodError is thrown when an abstract method is called. The method in question should be overridden
 	 * by a concrete subclass.
 	 */
-	class PartialImplementationError extends Error {
+	class PartialImplementationError extends ErrorBase {
 	    /**
 	     * Create a new AbstractMethodError.
 	     * @param message An optional message to override the default error message.
@@ -2073,12 +409,12 @@ declare module "awayjs-core/lib/errors/PartialImplementationError" {
 }
 
 declare module "awayjs-core/lib/errors/RangeError" {
-	import Error = require("awayjs-core/lib/errors/Error");
+	import ErrorBase = require("awayjs-core/lib/errors/ErrorBase");
 	/**
 	 * RangeError is thrown when an index is accessed out of range of the number of
 	 * available indices on an Array.
 	 */
-	class RangeError extends Error {
+	class RangeError extends ErrorBase {
 	    /**
 	     * Create a new RangeError.
 	     *
@@ -2093,23 +429,39 @@ declare module "awayjs-core/lib/errors/RangeError" {
 
 declare module "awayjs-core/lib/events/AssetEvent" {
 	import IAsset = require("awayjs-core/lib/library/IAsset");
-	import Event = require("awayjs-core/lib/events/Event");
+	import EventBase = require("awayjs-core/lib/events/EventBase");
 	/**
 	 * @class away.events.AssetEvent
 	 */
-	class AssetEvent extends Event {
+	class AssetEvent extends EventBase {
+	    /**
+	     * Dispatched when the content of an asset is invalidated
+	     */
+	    static INVALIDATE: string;
+	    /**
+	     * Dispatched when an asset is cleared
+	     */
+	    static CLEAR: string;
 	    /**
 	     *
 	     */
-	    static ASSET_COMPLETE: string;
+	    static RENAME: string;
 	    /**
 	     *
 	     */
-	    static ASSET_RENAME: string;
+	    static ENTER_FRAME: string;
+	    /**
+	     *
+	     */
+	    static EXIT_FRAME: string;
 	    /**
 	     *
 	     */
 	    static ASSET_CONFLICT_RESOLVED: string;
+	    /**
+	     * Dispatched when the loading of an asset and all of its dependencies is complete.
+	     */
+	    static ASSET_COMPLETE: string;
 	    /**
 	     *
 	     */
@@ -2119,7 +471,7 @@ declare module "awayjs-core/lib/events/AssetEvent" {
 	    /**
 	     *
 	     */
-	    constructor(type: string, asset?: IAsset, prevName?: string);
+	    constructor(type: string, asset: IAsset, prevName?: string);
 	    /**
 	     *
 	     */
@@ -2127,25 +479,18 @@ declare module "awayjs-core/lib/events/AssetEvent" {
 	    /**
 	     *
 	     */
-	    assetPrevName: string;
+	    prevName: string;
 	    /**
 	     *
 	     */
-	    clone(): Event;
+	    clone(): AssetEvent;
 	}
 	export = AssetEvent;
 	
 }
 
-declare module "awayjs-core/lib/events/Event" {
-	class Event {
-	    static COMPLETE: string;
-	    static OPEN: string;
-	    static ENTER_FRAME: string;
-	    static EXIT_FRAME: string;
-	    static RESIZE: string;
-	    static ERROR: string;
-	    static CHANGE: string;
+declare module "awayjs-core/lib/events/EventBase" {
+	class EventBase {
 	    /**
 	     * Type of event
 	     * @property type
@@ -2163,14 +508,14 @@ declare module "awayjs-core/lib/events/Event" {
 	     * Clones the current event.
 	     * @return An exact duplicate of the current event.
 	     */
-	    clone(): Event;
+	    clone(): EventBase;
 	}
-	export = Event;
+	export = EventBase;
 	
 }
 
 declare module "awayjs-core/lib/events/EventDispatcher" {
-	import Event = require("awayjs-core/lib/events/Event");
+	import EventBase = require("awayjs-core/lib/events/EventBase");
 	/**
 	 * Base class for dispatching events
 	*
@@ -2187,20 +532,20 @@ declare module "awayjs-core/lib/events/EventDispatcher" {
 	     * @param {String} Name of event to add a listener for
 	     * @param {Function} Callback function
 	     */
-	    addEventListener(type: string, listener: Function): void;
+	    addEventListener(type: string, listener: (event: EventBase) => void): void;
 	    /**
 	     * Remove an event listener
 	     * @method removeEventListener
 	     * @param {String} Name of event to remove a listener for
 	     * @param {Function} Callback function
 	     */
-	    removeEventListener(type: string, listener: Function): void;
+	    removeEventListener(type: string, listener: (event: EventBase) => void): void;
 	    /**
 	     * Dispatch an event
 	     * @method dispatchEvent
 	     * @param {Event} Event to dispatch
 	     */
-	    dispatchEvent(event: Event): void;
+	    dispatchEvent(event: EventBase): void;
 	    /**
 	     * get Event Listener Index in array. Returns -1 if no listener is added
 	     * @method getEventListenerIndex
@@ -2214,28 +559,14 @@ declare module "awayjs-core/lib/events/EventDispatcher" {
 	     * @param {String} Name of event to remove a listener for
 	     * @param {Function} Callback function
 	     */
-	    hasEventListener(type: string, listener?: Function): boolean;
+	    hasEventListener(type: string, listener?: (event: EventBase) => void): boolean;
 	}
 	export = EventDispatcher;
 	
 }
 
-declare module "awayjs-core/lib/events/HTTPStatusEvent" {
-	import Event = require("awayjs-core/lib/events/Event");
-	/**
-	 * @class away.events.HTTPStatusEvent
-	 */
-	class HTTPStatusEvent extends Event {
-	    static HTTP_STATUS: string;
-	    status: number;
-	    constructor(type: string, status?: number);
-	}
-	export = HTTPStatusEvent;
-	
-}
-
 declare module "awayjs-core/lib/events/IEventDispatcher" {
-	import Event = require("awayjs-core/lib/events/Event");
+	import EventBase = require("awayjs-core/lib/events/EventBase");
 	/**
 	 * Base interface for dispatching events
 	 *
@@ -2249,20 +580,20 @@ declare module "awayjs-core/lib/events/IEventDispatcher" {
 	     * @param {String} Name of event to add a listener for
 	     * @param {Function} Callback function
 	     */
-	    addEventListener(type: string, listener: Function): any;
+	    addEventListener(type: string, listener: (event: EventBase) => void): any;
 	    /**
 	     * Remove an event listener
 	     * @method removeEventListener
 	     * @param {String} Name of event to remove a listener for
 	     * @param {Function} Callback function
 	     */
-	    removeEventListener(type: string, listener: Function): any;
+	    removeEventListener(type: string, listener: (event: EventBase) => void): any;
 	    /**
 	     * Dispatch an event
 	     * @method dispatchEvent
 	     * @param {Event} Event to dispatch
 	     */
-	    dispatchEvent(event: Event): any;
+	    dispatchEvent(event: EventBase): any;
 	    /**
 	     * check if an object has an event listener assigned to it
 	     * @method hasListener
@@ -2270,30 +601,20 @@ declare module "awayjs-core/lib/events/IEventDispatcher" {
 	     * @param {Function} Callback function
 	     * @param {Object} Target object listener is added to
 	     */
-	    hasEventListener(type: string, listener?: Function): boolean;
+	    hasEventListener(type: string, listener?: (event: EventBase) => void): boolean;
 	}
 	export = IEventDispatcher;
 	
 }
 
-declare module "awayjs-core/lib/events/IOErrorEvent" {
-	import Event = require("awayjs-core/lib/events/Event");
-	class IOErrorEvent extends Event {
-	    static IO_ERROR: string;
-	    constructor(type: string);
-	}
-	export = IOErrorEvent;
-	
-}
-
 declare module "awayjs-core/lib/events/LoaderEvent" {
 	import IAsset = require("awayjs-core/lib/library/IAsset");
-	import Event = require("awayjs-core/lib/events/Event");
-	class LoaderEvent extends Event {
+	import EventBase = require("awayjs-core/lib/events/EventBase");
+	class LoaderEvent extends EventBase {
 	    /**
-	     * Dispatched when a resource and all of its dependencies is retrieved.
+	     * Dispatched when the loading of a session and all of its dependencies is complete.
 	     */
-	    static RESOURCE_COMPLETE: string;
+	    static LOAD_COMPLETE: string;
 	    private _url;
 	    private _content;
 	    private _assets;
@@ -2321,15 +642,15 @@ declare module "awayjs-core/lib/events/LoaderEvent" {
 	     * Clones the current event.
 	     * @return An exact duplicate of the current event.
 	     */
-	    clone(): Event;
+	    clone(): LoaderEvent;
 	}
 	export = LoaderEvent;
 	
 }
 
 declare module "awayjs-core/lib/events/ParserEvent" {
-	import Event = require("awayjs-core/lib/events/Event");
-	class ParserEvent extends Event {
+	import EventBase = require("awayjs-core/lib/events/EventBase");
+	class ParserEvent extends EventBase {
 	    private _message;
 	    /**
 	     * Dispatched when parsing of an asset completed.
@@ -2351,28 +672,16 @@ declare module "awayjs-core/lib/events/ParserEvent" {
 	     * Additional human-readable message. Usually supplied for ParserEvent.PARSE_ERROR events.
 	     */
 	    message: string;
-	    clone(): Event;
+	    clone(): ParserEvent;
 	}
 	export = ParserEvent;
 	
 }
 
-declare module "awayjs-core/lib/events/ProgressEvent" {
-	import Event = require("awayjs-core/lib/events/Event");
-	class ProgressEvent extends Event {
-	    static PROGRESS: string;
-	    bytesLoaded: number;
-	    bytesTotal: number;
-	    constructor(type: string);
-	}
-	export = ProgressEvent;
-	
-}
-
 declare module "awayjs-core/lib/events/ProjectionEvent" {
-	import Event = require("awayjs-core/lib/events/Event");
+	import EventBase = require("awayjs-core/lib/events/EventBase");
 	import IProjection = require("awayjs-core/lib/projections/IProjection");
-	class ProjectionEvent extends Event {
+	class ProjectionEvent extends EventBase {
 	    static MATRIX_CHANGED: string;
 	    private _projection;
 	    constructor(type: string, projection: IProjection);
@@ -2383,13 +692,43 @@ declare module "awayjs-core/lib/events/ProjectionEvent" {
 }
 
 declare module "awayjs-core/lib/events/TimerEvent" {
-	import Event = require("awayjs-core/lib/events/Event");
-	class TimerEvent extends Event {
+	import EventBase = require("awayjs-core/lib/events/EventBase");
+	class TimerEvent extends EventBase {
+	    /**
+	     *
+	     */
 	    static TIMER: string;
+	    /**
+	     *
+	     */
 	    static TIMER_COMPLETE: string;
 	    constructor(type: string);
 	}
 	export = TimerEvent;
+	
+}
+
+declare module "awayjs-core/lib/events/URLLoaderEvent" {
+	import URLLoader = require("awayjs-core/lib/net/URLLoader");
+	import EventBase = require("awayjs-core/lib/events/EventBase");
+	class URLLoaderEvent extends EventBase {
+	    static HTTP_STATUS: string;
+	    static LOAD_ERROR: string;
+	    static LOAD_PROGRESS: string;
+	    static LOAD_START: string;
+	    static LOAD_COMPLETE: string;
+	    private _urlLoader;
+	    constructor(type: string, urlLoader: URLLoader);
+	    /**
+	     *
+	     */
+	    urlLoader: URLLoader;
+	    /**
+	     *
+	     */
+	    clone(): URLLoaderEvent;
+	}
+	export = URLLoaderEvent;
 	
 }
 
@@ -4744,10 +3083,1673 @@ declare module "awayjs-core/lib/geom/Vector3D" {
 	
 }
 
+declare module "awayjs-core/lib/image/BitmapImage2D" {
+	import Image2D = require("awayjs-core/lib/image/Image2D");
+	import BlendMode = require("awayjs-core/lib/image/BlendMode");
+	import ColorTransform = require("awayjs-core/lib/geom/ColorTransform");
+	import Matrix = require("awayjs-core/lib/geom/Matrix");
+	import Rectangle = require("awayjs-core/lib/geom/Rectangle");
+	import Point = require("awayjs-core/lib/geom/Point");
+	import ByteArray = require("awayjs-core/lib/utils/ByteArray");
+	/**
+	 * The BitmapImage2D class lets you work with the data(pixels) of a Bitmap
+	 * object. You can use the methods of the BitmapImage2D class to create
+	 * arbitrarily sized transparent or opaque bitmap images and manipulate them
+	 * in various ways at runtime. You can also access the BitmapImage2D for a bitmap
+	 * image that you load with the <code>flash.Assets</code> or
+	 * <code>flash.display.Loader</code> classes.
+	 *
+	 * <p>This class lets you separate bitmap rendering operations from the
+	 * internal display updating routines of flash. By manipulating a
+	 * BitmapImage2D object directly, you can create complex images without incurring
+	 * the per-frame overhead of constantly redrawing the content from vector
+	 * data.</p>
+	 *
+	 * <p>The methods of the BitmapImage2D class support effects that are not
+	 * available through the filters available to non-bitmap display objects.</p>
+	 *
+	 * <p>A BitmapImage2D object contains an array of pixel data. This data can
+	 * represent either a fully opaque bitmap or a transparent bitmap that
+	 * contains alpha channel data. Either type of BitmapImage2D object is stored as
+	 * a buffer of 32-bit integers. Each 32-bit integer determines the properties
+	 * of a single pixel in the bitmap.</p>
+	 *
+	 * <p>Each 32-bit integer is a combination of four 8-bit channel values(from
+	 * 0 to 255) that describe the alpha transparency and the red, green, and blue
+	 * (ARGB) values of the pixel.(For ARGB values, the most significant byte
+	 * represents the alpha channel value, followed by red, green, and blue.)</p>
+	 *
+	 * <p>The four channels(alpha, red, green, and blue) are represented as
+	 * numbers when you use them with the <code>BitmapImage2D.copyChannel()</code>
+	 * method or the <code>DisplacementMapFilter.componentX</code> and
+	 * <code>DisplacementMapFilter.componentY</code> properties, and these numbers
+	 * are represented by the following constants in the BitmapImage2DChannel
+	 * class:</p>
+	 *
+	 * <ul>
+	 *   <li><code>BitmapImage2DChannel.ALPHA</code></li>
+	 *   <li><code>BitmapImage2DChannel.RED</code></li>
+	 *   <li><code>BitmapImage2DChannel.GREEN</code></li>
+	 *   <li><code>BitmapImage2DChannel.BLUE</code></li>
+	 * </ul>
+	 *
+	 * <p>You can attach BitmapImage2D objects to a Bitmap object by using the
+	 * <code>bitmapData</code> property of the Bitmap object.</p>
+	 *
+	 * <p>You can use a BitmapImage2D object to fill a Graphics object by using the
+	 * <code>Graphics.beginBitmapFill()</code> method.</p>
+	 *
+	 * <p>You can also use a BitmapImage2D object to perform batch tile rendering
+	 * using the <code>flash.display.Tilesheet</code> class.</p>
+	 *
+	 * <p>In Flash Player 10, the maximum size for a BitmapImage2D object
+	 * is 8,191 pixels in width or height, and the total number of pixels cannot
+	 * exceed 16,777,215 pixels.(So, if a BitmapImage2D object is 8,191 pixels wide,
+	 * it can only be 2,048 pixels high.) In Flash Player 9 and earlier, the limitation
+	 * is 2,880 pixels in height and 2,880 in width.</p>
+	 */
+	class BitmapImage2D extends Image2D {
+	    static assetType: string;
+	    private _imageCanvas;
+	    private _context;
+	    private _imageData;
+	    private _transparent;
+	    private _locked;
+	    /**
+	     *
+	     * @returns {string}
+	     */
+	    assetType: string;
+	    /**
+	     * Defines whether the bitmap image supports per-pixel transparency. You can
+	     * set this value only when you construct a BitmapImage2D object by passing in
+	     * <code>true</code> for the <code>transparent</code> parameter of the
+	     * constructor. Then, after you create a BitmapImage2D object, you can check
+	     * whether it supports per-pixel transparency by determining if the value of
+	     * the <code>transparent</code> property is <code>true</code>.
+	     */
+	    transparent: boolean;
+	    /**
+	     * Creates a BitmapImage2D object with a specified width and height. If you
+	     * specify a value for the <code>fillColor</code> parameter, every pixel in
+	     * the bitmap is set to that color.
+	     *
+	     * <p>By default, the bitmap is created as transparent, unless you pass
+	     * the value <code>false</code> for the transparent parameter. After you
+	     * create an opaque bitmap, you cannot change it to a transparent bitmap.
+	     * Every pixel in an opaque bitmap uses only 24 bits of color channel
+	     * information. If you define the bitmap as transparent, every pixel uses 32
+	     * bits of color channel information, including an alpha transparency
+	     * channel.</p>
+	     *
+	     * @param width       The width of the bitmap image in pixels.
+	     * @param height      The height of the bitmap image in pixels.
+	     * @param transparent Specifies whether the bitmap image supports per-pixel
+	     *                    transparency. The default value is <code>true</code>
+	     *                    (transparent). To create a fully transparent bitmap,
+	     *                    set the value of the <code>transparent</code>
+	     *                    parameter to <code>true</code> and the value of the
+	     *                    <code>fillColor</code> parameter to 0x00000000(or to
+	     *                    0). Setting the <code>transparent</code> property to
+	     *                    <code>false</code> can result in minor improvements
+	     *                    in rendering performance.
+	     * @param fillColor   A 32-bit ARGB color value that you use to fill the
+	     *                    bitmap image area. The default value is
+	     *                    0xFFFFFFFF(solid white).
+	     */
+	    constructor(width: number, height: number, transparent?: boolean, fillColor?: number, powerOfTwo?: boolean);
+	    /**
+	     * Returns a new BitmapImage2D object that is a clone of the original instance
+	     * with an exact copy of the contained bitmap.
+	     *
+	     * @return A new BitmapImage2D object that is identical to the original.
+	     */
+	    clone(): BitmapImage2D;
+	    /**
+	     * Adjusts the color values in a specified area of a bitmap image by using a
+	     * <code>ColorTransform</code> object. If the rectangle matches the
+	     * boundaries of the bitmap image, this method transforms the color values of
+	     * the entire image.
+	     *
+	     * @param rect           A Rectangle object that defines the area of the
+	     *                       image in which the ColorTransform object is applied.
+	     * @param colorTransform A ColorTransform object that describes the color
+	     *                       transformation values to apply.
+	     */
+	    colorTransform(rect: Rectangle, colorTransform: ColorTransform): void;
+	    /**
+	     * Transfers data from one channel of another BitmapImage2D object or the
+	     * current BitmapImage2D object into a channel of the current BitmapImage2D object.
+	     * All of the data in the other channels in the destination BitmapImage2D object
+	     * are preserved.
+	     *
+	     * <p>The source channel value and destination channel value can be one of
+	     * following values: </p>
+	     *
+	     * <ul>
+	     *   <li><code>BitmapImage2DChannel.RED</code></li>
+	     *   <li><code>BitmapImage2DChannel.GREEN</code></li>
+	     *   <li><code>BitmapImage2DChannel.BLUE</code></li>
+	     *   <li><code>BitmapImage2DChannel.ALPHA</code></li>
+	     * </ul>
+	     *
+	     * @param sourceBitmapImage2D The input bitmap image to use. The source image
+	     *                         can be a different BitmapImage2D object or it can
+	     *                         refer to the current BitmapImage2D object.
+	     * @param sourceRect       The source Rectangle object. To copy only channel
+	     *                         data from a smaller area within the bitmap,
+	     *                         specify a source rectangle that is smaller than
+	     *                         the overall size of the BitmapImage2D object.
+	     * @param destPoint        The destination Point object that represents the
+	     *                         upper-left corner of the rectangular area where
+	     *                         the new channel data is placed. To copy only
+	     *                         channel data from one area to a different area in
+	     *                         the destination image, specify a point other than
+	     *                        (0,0).
+	     * @param sourceChannel    The source channel. Use a value from the
+	     *                         BitmapImage2DChannel class
+	     *                        (<code>BitmapImage2DChannel.RED</code>,
+	     *                         <code>BitmapImage2DChannel.BLUE</code>,
+	     *                         <code>BitmapImage2DChannel.GREEN</code>,
+	     *                         <code>BitmapImage2DChannel.ALPHA</code>).
+	     * @param destChannel      The destination channel. Use a value from the
+	     *                         BitmapImage2DChannel class
+	     *                        (<code>BitmapImage2DChannel.RED</code>,
+	     *                         <code>BitmapImage2DChannel.BLUE</code>,
+	     *                         <code>BitmapImage2DChannel.GREEN</code>,
+	     *                         <code>BitmapImage2DChannel.ALPHA</code>).
+	     * @throws TypeError The sourceBitmapImage2D, sourceRect or destPoint are null.
+	     */
+	    copyChannel(sourceBitmap: BitmapImage2D, sourceRect: Rectangle, destPoint: Point, sourceChannel: number, destChannel: number): void;
+	    /**
+	     * Provides a fast routine to perform pixel manipulation between images with
+	     * no stretching, rotation, or color effects. This method copies a
+	     * rectangular area of a source image to a rectangular area of the same size
+	     * at the destination point of the destination BitmapImage2D object.
+	     *
+	     * <p>If you include the <code>alphaBitmap</code> and <code>alphaPoint</code>
+	     * parameters, you can use a secondary image as an alpha source for the
+	     * source image. If the source image has alpha data, both sets of alpha data
+	     * are used to composite pixels from the source image to the destination
+	     * image. The <code>alphaPoint</code> parameter is the point in the alpha
+	     * image that corresponds to the upper-left corner of the source rectangle.
+	     * Any pixels outside the intersection of the source image and alpha image
+	     * are not copied to the destination image.</p>
+	     *
+	     * <p>The <code>mergeAlpha</code> property controls whether or not the alpha
+	     * channel is used when a transparent image is copied onto another
+	     * transparent image. To copy pixels with the alpha channel data, set the
+	     * <code>mergeAlpha</code> property to <code>true</code>. By default, the
+	     * <code>mergeAlpha</code> property is <code>false</code>.</p>
+	     *
+	     * @param sourceBitmapImage2D The input bitmap image from which to copy pixels.
+	     *                         The source image can be a different BitmapImage2D
+	     *                         instance, or it can refer to the current
+	     *                         BitmapImage2D instance.
+	     * @param sourceRect       A rectangle that defines the area of the source
+	     *                         image to use as input.
+	     * @param destPoint        The destination point that represents the
+	     *                         upper-left corner of the rectangular area where
+	     *                         the new pixels are placed.
+	     * @param alphaBitmapImage2D  A secondary, alpha BitmapImage2D object source.
+	     * @param alphaPoint       The point in the alpha BitmapImage2D object source
+	     *                         that corresponds to the upper-left corner of the
+	     *                         <code>sourceRect</code> parameter.
+	     * @param mergeAlpha       To use the alpha channel, set the value to
+	     *                         <code>true</code>. To copy pixels with no alpha
+	     *                         channel, set the value to <code>false</code>.
+	     * @throws TypeError The sourceBitmapImage2D, sourceRect, destPoint are null.
+	     */
+	    copyPixels(source: BitmapImage2D, sourceRect: Rectangle, destRect: Rectangle): any;
+	    copyPixels(source: HTMLElement, sourceRect: Rectangle, destRect: Rectangle): any;
+	    /**
+	     * Frees memory that is used to store the BitmapImage2D object.
+	     *
+	     * <p>When the <code>dispose()</code> method is called on an image, the width
+	     * and height of the image are set to 0. All subsequent calls to methods or
+	     * properties of this BitmapImage2D instance fail, and an exception is thrown.
+	     * </p>
+	     *
+	     * <p><code>BitmapImage2D.dispose()</code> releases the memory occupied by the
+	     * actual bitmap data, immediately(a bitmap can consume up to 64 MB of
+	     * memory). After using <code>BitmapImage2D.dispose()</code>, the BitmapImage2D
+	     * object is no longer usable and an exception may be thrown if
+	     * you call functions on the BitmapImage2D object. However,
+	     * <code>BitmapImage2D.dispose()</code> does not garbage collect the BitmapImage2D
+	     * object(approximately 128 bytes); the memory occupied by the actual
+	     * BitmapImage2D object is released at the time the BitmapImage2D object is
+	     * collected by the garbage collector.</p>
+	     *
+	     */
+	    dispose(): void;
+	    /**
+	     * Draws the <code>source</code> display object onto the bitmap image, using
+	     * the NME software renderer. You can specify <code>matrix</code>,
+	     * <code>colorTransform</code>, <code>blendMode</code>, and a destination
+	     * <code>clipRect</code> parameter to control how the rendering performs.
+	     * Optionally, you can specify whether the bitmap should be smoothed when
+	     * scaled(this works only if the source object is a BitmapImage2D object).
+	     *
+	     * <p>The source display object does not use any of its applied
+	     * transformations for this call. It is treated as it exists in the library
+	     * or file, with no matrix transform, no color transform, and no blend mode.
+	     * To draw a display object(such as a movie clip) by using its own transform
+	     * properties, you can copy its <code>transform</code> property object to the
+	     * <code>transform</code> property of the Bitmap object that uses the
+	     * BitmapImage2D object.</p>
+	     *
+	     * @param source         The display object or BitmapImage2D object to draw to
+	     *                       the BitmapImage2D object.(The DisplayObject and
+	     *                       BitmapImage2D classes implement the IBitmapDrawable
+	     *                       interface.)
+	     * @param matrix         A Matrix object used to scale, rotate, or translate
+	     *                       the coordinates of the bitmap. If you do not want to
+	     *                       apply a matrix transformation to the image, set this
+	     *                       parameter to an identity matrix, created with the
+	     *                       default <code>new Matrix()</code> constructor, or
+	     *                       pass a <code>null</code> value.
+	     * @param colorTransform A ColorTransform object that you use to adjust the
+	     *                       color values of the bitmap. If no object is
+	     *                       supplied, the bitmap image's colors are not
+	     *                       transformed. If you must pass this parameter but you
+	     *                       do not want to transform the image, set this
+	     *                       parameter to a ColorTransform object created with
+	     *                       the default <code>new ColorTransform()</code>
+	     *                       constructor.
+	     * @param blendMode      A string value, from the flash.display.BlendMode
+	     *                       class, specifying the blend mode to be applied to
+	     *                       the resulting bitmap.
+	     * @param clipRect       A Rectangle object that defines the area of the
+	     *                       source object to draw. If you do not supply this
+	     *                       value, no clipping occurs and the entire source
+	     *                       object is drawn.
+	     * @param smoothing      A Boolean value that determines whether a BitmapImage2D
+	     *                       object is smoothed when scaled or rotated, due to a
+	     *                       scaling or rotation in the <code>matrix</code>
+	     *                       parameter. The <code>smoothing</code> parameter only
+	     *                       applies if the <code>source</code> parameter is a
+	     *                       BitmapImage2D object. With <code>smoothing</code> set
+	     *                       to <code>false</code>, the rotated or scaled
+	     *                       BitmapImage2D image can appear pixelated or jagged. For
+	     *                       example, the following two images use the same
+	     *                       BitmapImage2D object for the <code>source</code>
+	     *                       parameter, but the <code>smoothing</code> parameter
+	     *                       is set to <code>true</code> on the left and
+	     *                       <code>false</code> on the right:
+	     *
+	     *                       <p>Drawing a bitmap with <code>smoothing</code> set
+	     *                       to <code>true</code> takes longer than doing so with
+	     *                       <code>smoothing</code> set to
+	     *                       <code>false</code>.</p>
+	     * @throws ArgumentError The <code>source</code> parameter is not a
+	     *                       BitmapImage2D or DisplayObject object.
+	     * @throws ArgumentError The source is null or not a valid IBitmapDrawable
+	     *                       object.
+	     * @throws SecurityError The <code>source</code> object and(in the case of a
+	     *                       Sprite or MovieClip object) all of its child objects
+	     *                       do not come from the same domain as the caller, or
+	     *                       are not in a content that is accessible to the
+	     *                       caller by having called the
+	     *                       <code>Security.allowDomain()</code> method. This
+	     *                       restriction does not apply to AIR content in the
+	     *                       application security sandbox.
+	     */
+	    draw(source: BitmapImage2D, matrix?: Matrix, colorTransform?: ColorTransform, blendMode?: BlendMode, clipRect?: Rectangle, smoothing?: boolean): any;
+	    draw(source: HTMLElement, matrix?: Matrix, colorTransform?: ColorTransform, blendMode?: BlendMode, clipRect?: Rectangle, smoothing?: boolean): any;
+	    /**
+	     * Fills a rectangular area of pixels with a specified ARGB color.
+	     *
+	     * @param rect  The rectangular area to fill.
+	     * @param color The ARGB color value that fills the area. ARGB colors are
+	     *              often specified in hexadecimal format; for example,
+	     *              0xFF336699.
+	     * @throws TypeError The rect is null.
+	     */
+	    fillRect(rect: Rectangle, color: number): void;
+	    /**
+	     * Returns an integer that represents an RGB pixel value from a BitmapImage2D
+	     * object at a specific point(<i>x</i>, <i>y</i>). The
+	     * <code>getPixel()</code> method returns an unmultiplied pixel value. No
+	     * alpha information is returned.
+	     *
+	     * <p>All pixels in a BitmapImage2D object are stored as premultiplied color
+	     * values. A premultiplied image pixel has the red, green, and blue color
+	     * channel values already multiplied by the alpha data. For example, if the
+	     * alpha value is 0, the values for the RGB channels are also 0, independent
+	     * of their unmultiplied values. This loss of data can cause some problems
+	     * when you perform operations. All BitmapImage2D methods take and return
+	     * unmultiplied values. The internal pixel representation is converted from
+	     * premultiplied to unmultiplied before it is returned as a value. During a
+	     * set operation, the pixel value is premultiplied before the raw image pixel
+	     * is set.</p>
+	     *
+	     * @param x The <i>x</i> position of the pixel.
+	     * @param y The <i>y</i> position of the pixel.
+	     * @return A number that represents an RGB pixel value. If the(<i>x</i>,
+	     *         <i>y</i>) coordinates are outside the bounds of the image, the
+	     *         method returns 0.
+	     */
+	    getPixel(x: any, y: any): number;
+	    /**
+	     * Returns an ARGB color value that contains alpha channel data and RGB data.
+	     * This method is similar to the <code>getPixel()</code> method, which
+	     * returns an RGB color without alpha channel data.
+	     *
+	     * <p>All pixels in a BitmapImage2D object are stored as premultiplied color
+	     * values. A premultiplied image pixel has the red, green, and blue color
+	     * channel values already multiplied by the alpha data. For example, if the
+	     * alpha value is 0, the values for the RGB channels are also 0, independent
+	     * of their unmultiplied values. This loss of data can cause some problems
+	     * when you perform operations. All BitmapImage2D methods take and return
+	     * unmultiplied values. The internal pixel representation is converted from
+	     * premultiplied to unmultiplied before it is returned as a value. During a
+	     * set operation, the pixel value is premultiplied before the raw image pixel
+	     * is set.</p>
+	     *
+	     * @param x The <i>x</i> position of the pixel.
+	     * @param y The <i>y</i> position of the pixel.
+	     * @return A number representing an ARGB pixel value. If the(<i>x</i>,
+	     *         <i>y</i>) coordinates are outside the bounds of the image, 0 is
+	     *         returned.
+	     */
+	    getPixel32(x: any, y: any): number;
+	    /**
+	     * Locks an image so that any objects that reference the BitmapImage2D object,
+	     * such as Bitmap objects, are not updated when this BitmapImage2D object
+	     * changes. To improve performance, use this method along with the
+	     * <code>unlock()</code> method before and after numerous calls to the
+	     * <code>setPixel()</code> or <code>setPixel32()</code> method.
+	     *
+	     */
+	    lock(): void;
+	    /**
+	     * Converts an Array into a rectangular region of pixel data. For each pixel,
+	     * an Array element is read and written into the BitmapImage2D pixel. The data
+	     * in the Array is expected to be 32-bit ARGB pixel values.
+	     *
+	     * @param rect        Specifies the rectangular region of the BitmapImage2D
+	     *                    object.
+	     * @param inputArray  An Array that consists of 32-bit unmultiplied pixel
+	     *                    values to be used in the rectangular region.
+	     * @throws RangeError The vector array is not large enough to read all the
+	     *                    pixel data.
+	     */
+	    setArray(rect: Rectangle, inputArray: Array<number>): void;
+	    /**
+	     * Sets a single pixel of a BitmapImage2D object. The current alpha channel
+	     * value of the image pixel is preserved during this operation. The value of
+	     * the RGB color parameter is treated as an unmultiplied color value.
+	     *
+	     * <p><b>Note:</b> To increase performance, when you use the
+	     * <code>setPixel()</code> or <code>setPixel32()</code> method repeatedly,
+	     * call the <code>lock()</code> method before you call the
+	     * <code>setPixel()</code> or <code>setPixel32()</code> method, and then call
+	     * the <code>unlock()</code> method when you have made all pixel changes.
+	     * This process prevents objects that reference this BitmapImage2D instance from
+	     * updating until you finish making the pixel changes.</p>
+	     *
+	     * @param x     The <i>x</i> position of the pixel whose value changes.
+	     * @param y     The <i>y</i> position of the pixel whose value changes.
+	     * @param color The resulting RGB color for the pixel.
+	     */
+	    setPixel(x: number, y: number, color: number): void;
+	    /**
+	     * Sets the color and alpha transparency values of a single pixel of a
+	     * BitmapImage2D object. This method is similar to the <code>setPixel()</code>
+	     * method; the main difference is that the <code>setPixel32()</code> method
+	     * takes an ARGB color value that contains alpha channel information.
+	     *
+	     * <p>All pixels in a BitmapImage2D object are stored as premultiplied color
+	     * values. A premultiplied image pixel has the red, green, and blue color
+	     * channel values already multiplied by the alpha data. For example, if the
+	     * alpha value is 0, the values for the RGB channels are also 0, independent
+	     * of their unmultiplied values. This loss of data can cause some problems
+	     * when you perform operations. All BitmapImage2D methods take and return
+	     * unmultiplied values. The internal pixel representation is converted from
+	     * premultiplied to unmultiplied before it is returned as a value. During a
+	     * set operation, the pixel value is premultiplied before the raw image pixel
+	     * is set.</p>
+	     *
+	     * <p><b>Note:</b> To increase performance, when you use the
+	     * <code>setPixel()</code> or <code>setPixel32()</code> method repeatedly,
+	     * call the <code>lock()</code> method before you call the
+	     * <code>setPixel()</code> or <code>setPixel32()</code> method, and then call
+	     * the <code>unlock()</code> method when you have made all pixel changes.
+	     * This process prevents objects that reference this BitmapImage2D instance from
+	     * updating until you finish making the pixel changes.</p>
+	     *
+	     * @param x     The <i>x</i> position of the pixel whose value changes.
+	     * @param y     The <i>y</i> position of the pixel whose value changes.
+	     * @param color The resulting ARGB color for the pixel. If the bitmap is
+	     *              opaque(not transparent), the alpha transparency portion of
+	     *              this color value is ignored.
+	     */
+	    setPixel32(x: any, y: any, color: number): void;
+	    /**
+	     * Converts a byte array into a rectangular region of pixel data. For each
+	     * pixel, the <code>ByteArray.readUnsignedInt()</code> method is called and
+	     * the return value is written into the pixel. If the byte array ends before
+	     * the full rectangle is written, the function returns. The data in the byte
+	     * array is expected to be 32-bit ARGB pixel values. No seeking is performed
+	     * on the byte array before or after the pixels are read.
+	     *
+	     * @param rect           Specifies the rectangular region of the BitmapImage2D
+	     *                       object.
+	     * @param inputByteArray A ByteArray object that consists of 32-bit
+	     *                       unmultiplied pixel values to be used in the
+	     *                       rectangular region.
+	     * @throws EOFError  The <code>inputByteArray</code> object does not include
+	     *                   enough data to fill the area of the <code>rect</code>
+	     *                   rectangle. The method fills as many pixels as possible
+	     *                   before throwing the exception.
+	     * @throws TypeError The rect or inputByteArray are null.
+	     */
+	    setPixels(rect: Rectangle, inputByteArray: ByteArray): void;
+	    /**
+	     * Unlocks an image so that any objects that reference the BitmapImage2D object,
+	     * such as Bitmap objects, are updated when this BitmapImage2D object changes.
+	     * To improve performance, use this method along with the <code>lock()</code>
+	     * method before and after numerous calls to the <code>setPixel()</code> or
+	     * <code>setPixel32()</code> method.
+	     *
+	     * @param changeRect The area of the BitmapImage2D object that has changed. If
+	     *                   you do not specify a value for this parameter, the
+	     *                   entire area of the BitmapImage2D object is considered
+	     *                   changed.
+	     */
+	    unlock(): void;
+	    /**
+	     *
+	     * @returns {ImageData}
+	     */
+	    getImageData(): ImageData;
+	    /**
+	     *
+	     * @returns {HTMLCanvasElement}
+	     */
+	    getCanvas(): HTMLCanvasElement;
+	    /**
+	     *
+	     * @param width
+	     * @param height
+	     * @private
+	     */
+	    _setSize(width: number, height: number): void;
+	}
+	export = BitmapImage2D;
+	
+}
+
+declare module "awayjs-core/lib/image/BitmapImageChannel" {
+	class BitmapImageChannel {
+	    static ALPHA: number;
+	    static BLUE: number;
+	    static GREEN: number;
+	    static RED: number;
+	}
+	export = BitmapImageChannel;
+	
+}
+
+declare module "awayjs-core/lib/image/BitmapImageCube" {
+	import BitmapImage2D = require("awayjs-core/lib/image/BitmapImage2D");
+	import ImageCube = require("awayjs-core/lib/image/ImageCube");
+	import BlendMode = require("awayjs-core/lib/image/BlendMode");
+	import ColorTransform = require("awayjs-core/lib/geom/ColorTransform");
+	import Matrix = require("awayjs-core/lib/geom/Matrix");
+	import Rectangle = require("awayjs-core/lib/geom/Rectangle");
+	import Point = require("awayjs-core/lib/geom/Point");
+	import ByteArray = require("awayjs-core/lib/utils/ByteArray");
+	/**
+	 * The BitmapImage2D class lets you work with the data(pixels) of a Bitmap
+	 * object. You can use the methods of the BitmapImage2D class to create
+	 * arbitrarily sized transparent or opaque bitmap images and manipulate them
+	 * in various ways at runtime. You can also access the BitmapImage2D for a bitmap
+	 * image that you load with the <code>flash.Assets</code> or
+	 * <code>flash.display.Loader</code> classes.
+	 *
+	 * <p>This class lets you separate bitmap rendering operations from the
+	 * internal display updating routines of flash. By manipulating a
+	 * BitmapImage2D object directly, you can create complex images without incurring
+	 * the per-frame overhead of constantly redrawing the content from vector
+	 * data.</p>
+	 *
+	 * <p>The methods of the BitmapImage2D class support effects that are not
+	 * available through the filters available to non-bitmap display objects.</p>
+	 *
+	 * <p>A BitmapImage2D object contains an array of pixel data. This data can
+	 * represent either a fully opaque bitmap or a transparent bitmap that
+	 * contains alpha channel data. Either type of BitmapImage2D object is stored as
+	 * a buffer of 32-bit integers. Each 32-bit integer determines the properties
+	 * of a single pixel in the bitmap.</p>
+	 *
+	 * <p>Each 32-bit integer is a combination of four 8-bit channel values(from
+	 * 0 to 255) that describe the alpha transparency and the red, green, and blue
+	 * (ARGB) values of the pixel.(For ARGB values, the most significant byte
+	 * represents the alpha channel value, followed by red, green, and blue.)</p>
+	 *
+	 * <p>The four channels(alpha, red, green, and blue) are represented as
+	 * numbers when you use them with the <code>BitmapImage2D.copyChannel()</code>
+	 * method or the <code>DisplacementMapFilter.componentX</code> and
+	 * <code>DisplacementMapFilter.componentY</code> properties, and these numbers
+	 * are represented by the following constants in the BitmapImage2DChannel
+	 * class:</p>
+	 *
+	 * <ul>
+	 *   <li><code>BitmapImage2DChannel.ALPHA</code></li>
+	 *   <li><code>BitmapImage2DChannel.RED</code></li>
+	 *   <li><code>BitmapImage2DChannel.GREEN</code></li>
+	 *   <li><code>BitmapImage2DChannel.BLUE</code></li>
+	 * </ul>
+	 *
+	 * <p>You can attach BitmapImage2D objects to a Bitmap object by using the
+	 * <code>bitmapData</code> property of the Bitmap object.</p>
+	 *
+	 * <p>You can use a BitmapImage2D object to fill a Graphics object by using the
+	 * <code>Graphics.beginBitmapFill()</code> method.</p>
+	 *
+	 * <p>You can also use a BitmapImage2D object to perform batch tile rendering
+	 * using the <code>flash.display.Tilesheet</code> class.</p>
+	 *
+	 * <p>In Flash Player 10, the maximum size for a BitmapImage2D object
+	 * is 8,191 pixels in width or height, and the total number of pixels cannot
+	 * exceed 16,777,215 pixels.(So, if a BitmapImage2D object is 8,191 pixels wide,
+	 * it can only be 2,048 pixels high.) In Flash Player 9 and earlier, the limitation
+	 * is 2,880 pixels in height and 2,880 in width.</p>
+	 */
+	class BitmapImageCube extends ImageCube {
+	    static assetType: string;
+	    static posX: number;
+	    static negX: number;
+	    static posY: number;
+	    static negY: number;
+	    static posZ: number;
+	    static negZ: number;
+	    private _imageCanvas;
+	    private _context;
+	    private _imageData;
+	    private _transparent;
+	    private _locked;
+	    /**
+	     *
+	     * @returns {string}
+	     */
+	    assetType: string;
+	    /**
+	     * Defines whether the bitmap image supports per-pixel transparency. You can
+	     * set this value only when you construct a BitmapImage2D object by passing in
+	     * <code>true</code> for the <code>transparent</code> parameter of the
+	     * constructor. Then, after you create a BitmapImage2D object, you can check
+	     * whether it supports per-pixel transparency by determining if the value of
+	     * the <code>transparent</code> property is <code>true</code>.
+	     */
+	    transparent: boolean;
+	    /**
+	     * Creates a BitmapImage2D object with a specified width and height. If you
+	     * specify a value for the <code>fillColor</code> parameter, every pixel in
+	     * the bitmap is set to that color.
+	     *
+	     * <p>By default, the bitmap is created as transparent, unless you pass
+	     * the value <code>false</code> for the transparent parameter. After you
+	     * create an opaque bitmap, you cannot change it to a transparent bitmap.
+	     * Every pixel in an opaque bitmap uses only 24 bits of color channel
+	     * information. If you define the bitmap as transparent, every pixel uses 32
+	     * bits of color channel information, including an alpha transparency
+	     * channel.</p>
+	     *
+	     * @param width       The width of the bitmap image in pixels.
+	     * @param height      The height of the bitmap image in pixels.
+	     * @param transparent Specifies whether the bitmap image supports per-pixel
+	     *                    transparency. The default value is <code>true</code>
+	     *                    (transparent). To create a fully transparent bitmap,
+	     *                    set the value of the <code>transparent</code>
+	     *                    parameter to <code>true</code> and the value of the
+	     *                    <code>fillColor</code> parameter to 0x00000000(or to
+	     *                    0). Setting the <code>transparent</code> property to
+	     *                    <code>false</code> can result in minor improvements
+	     *                    in rendering performance.
+	     * @param fillColor   A 32-bit ARGB color value that you use to fill the
+	     *                    bitmap image area. The default value is
+	     *                    0xFFFFFFFF(solid white).
+	     */
+	    constructor(size: number, transparent?: boolean, fillColor?: number);
+	    /**
+	     * Returns a new BitmapImage2D object that is a clone of the original instance
+	     * with an exact copy of the contained bitmap.
+	     *
+	     * @return A new BitmapImage2D object that is identical to the original.
+	     */
+	    clone(): BitmapImageCube;
+	    /**
+	     * Adjusts the color values in a specified area of a bitmap image by using a
+	     * <code>ColorTransform</code> object. If the rectangle matches the
+	     * boundaries of the bitmap image, this method transforms the color values of
+	     * the entire image.
+	     *
+	     * @param rect           A Rectangle object that defines the area of the
+	     *                       image in which the ColorTransform object is applied.
+	     * @param colorTransform A ColorTransform object that describes the color
+	     *                       transformation values to apply.
+	     */
+	    colorTransform(side: number, rect: Rectangle, colorTransform: ColorTransform): void;
+	    /**
+	     * Transfers data from one channel of another BitmapImage2D object or the
+	     * current BitmapImage2D object into a channel of the current BitmapImage2D object.
+	     * All of the data in the other channels in the destination BitmapImage2D object
+	     * are preserved.
+	     *
+	     * <p>The source channel value and destination channel value can be one of
+	     * following values: </p>
+	     *
+	     * <ul>
+	     *   <li><code>BitmapImage2DChannel.RED</code></li>
+	     *   <li><code>BitmapImage2DChannel.GREEN</code></li>
+	     *   <li><code>BitmapImage2DChannel.BLUE</code></li>
+	     *   <li><code>BitmapImage2DChannel.ALPHA</code></li>
+	     * </ul>
+	     *
+	     * @param sourceBitmapImage2D The input bitmap image to use. The source image
+	     *                         can be a different BitmapImage2D object or it can
+	     *                         refer to the current BitmapImage2D object.
+	     * @param sourceRect       The source Rectangle object. To copy only channel
+	     *                         data from a smaller area within the bitmap,
+	     *                         specify a source rectangle that is smaller than
+	     *                         the overall size of the BitmapImage2D object.
+	     * @param destPoint        The destination Point object that represents the
+	     *                         upper-left corner of the rectangular area where
+	     *                         the new channel data is placed. To copy only
+	     *                         channel data from one area to a different area in
+	     *                         the destination image, specify a point other than
+	     *                        (0,0).
+	     * @param sourceChannel    The source channel. Use a value from the
+	     *                         BitmapImage2DChannel class
+	     *                        (<code>BitmapImage2DChannel.RED</code>,
+	     *                         <code>BitmapImage2DChannel.BLUE</code>,
+	     *                         <code>BitmapImage2DChannel.GREEN</code>,
+	     *                         <code>BitmapImage2DChannel.ALPHA</code>).
+	     * @param destChannel      The destination channel. Use a value from the
+	     *                         BitmapImage2DChannel class
+	     *                        (<code>BitmapImage2DChannel.RED</code>,
+	     *                         <code>BitmapImage2DChannel.BLUE</code>,
+	     *                         <code>BitmapImage2DChannel.GREEN</code>,
+	     *                         <code>BitmapImage2DChannel.ALPHA</code>).
+	     * @throws TypeError The sourceBitmapImage2D, sourceRect or destPoint are null.
+	     */
+	    copyChannel(side: number, sourceBitmap: BitmapImage2D, sourceRect: Rectangle, destPoint: Point, sourceChannel: number, destChannel: number): void;
+	    /**
+	     * Provides a fast routine to perform pixel manipulation between images with
+	     * no stretching, rotation, or color effects. This method copies a
+	     * rectangular area of a source image to a rectangular area of the same size
+	     * at the destination point of the destination BitmapImage2D object.
+	     *
+	     * <p>If you include the <code>alphaBitmap</code> and <code>alphaPoint</code>
+	     * parameters, you can use a secondary image as an alpha source for the
+	     * source image. If the source image has alpha data, both sets of alpha data
+	     * are used to composite pixels from the source image to the destination
+	     * image. The <code>alphaPoint</code> parameter is the point in the alpha
+	     * image that corresponds to the upper-left corner of the source rectangle.
+	     * Any pixels outside the intersection of the source image and alpha image
+	     * are not copied to the destination image.</p>
+	     *
+	     * <p>The <code>mergeAlpha</code> property controls whether or not the alpha
+	     * channel is used when a transparent image is copied onto another
+	     * transparent image. To copy pixels with the alpha channel data, set the
+	     * <code>mergeAlpha</code> property to <code>true</code>. By default, the
+	     * <code>mergeAlpha</code> property is <code>false</code>.</p>
+	     *
+	     * @param sourceBitmapImage2D The input bitmap image from which to copy pixels.
+	     *                         The source image can be a different BitmapImage2D
+	     *                         instance, or it can refer to the current
+	     *                         BitmapImage2D instance.
+	     * @param sourceRect       A rectangle that defines the area of the source
+	     *                         image to use as input.
+	     * @param destPoint        The destination point that represents the
+	     *                         upper-left corner of the rectangular area where
+	     *                         the new pixels are placed.
+	     * @param alphaBitmapImage2D  A secondary, alpha BitmapImage2D object source.
+	     * @param alphaPoint       The point in the alpha BitmapImage2D object source
+	     *                         that corresponds to the upper-left corner of the
+	     *                         <code>sourceRect</code> parameter.
+	     * @param mergeAlpha       To use the alpha channel, set the value to
+	     *                         <code>true</code>. To copy pixels with no alpha
+	     *                         channel, set the value to <code>false</code>.
+	     * @throws TypeError The sourceBitmapImage2D, sourceRect, destPoint are null.
+	     */
+	    copyPixels(side: number, source: BitmapImage2D, sourceRect: Rectangle, destRect: Rectangle): any;
+	    copyPixels(side: number, source: HTMLImageElement, sourceRect: Rectangle, destRect: Rectangle): any;
+	    /**
+	     * Frees memory that is used to store the BitmapImage2D object.
+	     *
+	     * <p>When the <code>dispose()</code> method is called on an image, the width
+	     * and height of the image are set to 0. All subsequent calls to methods or
+	     * properties of this BitmapImage2D instance fail, and an exception is thrown.
+	     * </p>
+	     *
+	     * <p><code>BitmapImage2D.dispose()</code> releases the memory occupied by the
+	     * actual bitmap data, immediately(a bitmap can consume up to 64 MB of
+	     * memory). After using <code>BitmapImage2D.dispose()</code>, the BitmapImage2D
+	     * object is no longer usable and an exception may be thrown if
+	     * you call functions on the BitmapImage2D object. However,
+	     * <code>BitmapImage2D.dispose()</code> does not garbage collect the BitmapImage2D
+	     * object(approximately 128 bytes); the memory occupied by the actual
+	     * BitmapImage2D object is released at the time the BitmapImage2D object is
+	     * collected by the garbage collector.</p>
+	     *
+	     */
+	    dispose(): void;
+	    /**
+	     * Draws the <code>source</code> display object onto the bitmap image, using
+	     * the NME software renderer. You can specify <code>matrix</code>,
+	     * <code>colorTransform</code>, <code>blendMode</code>, and a destination
+	     * <code>clipRect</code> parameter to control how the rendering performs.
+	     * Optionally, you can specify whether the bitmap should be smoothed when
+	     * scaled(this works only if the source object is a BitmapImage2D object).
+	     *
+	     * <p>The source display object does not use any of its applied
+	     * transformations for this call. It is treated as it exists in the library
+	     * or file, with no matrix transform, no color transform, and no blend mode.
+	     * To draw a display object(such as a movie clip) by using its own transform
+	     * properties, you can copy its <code>transform</code> property object to the
+	     * <code>transform</code> property of the Bitmap object that uses the
+	     * BitmapImage2D object.</p>
+	     *
+	     * @param source         The display object or BitmapImage2D object to draw to
+	     *                       the BitmapImage2D object.(The DisplayObject and
+	     *                       BitmapImage2D classes implement the IBitmapDrawable
+	     *                       interface.)
+	     * @param matrix         A Matrix object used to scale, rotate, or translate
+	     *                       the coordinates of the bitmap. If you do not want to
+	     *                       apply a matrix transformation to the image, set this
+	     *                       parameter to an identity matrix, created with the
+	     *                       default <code>new Matrix()</code> constructor, or
+	     *                       pass a <code>null</code> value.
+	     * @param colorTransform A ColorTransform object that you use to adjust the
+	     *                       color values of the bitmap. If no object is
+	     *                       supplied, the bitmap image's colors are not
+	     *                       transformed. If you must pass this parameter but you
+	     *                       do not want to transform the image, set this
+	     *                       parameter to a ColorTransform object created with
+	     *                       the default <code>new ColorTransform()</code>
+	     *                       constructor.
+	     * @param blendMode      A string value, from the flash.display.BlendMode
+	     *                       class, specifying the blend mode to be applied to
+	     *                       the resulting bitmap.
+	     * @param clipRect       A Rectangle object that defines the area of the
+	     *                       source object to draw. If you do not supply this
+	     *                       value, no clipping occurs and the entire source
+	     *                       object is drawn.
+	     * @param smoothing      A Boolean value that determines whether a BitmapImage2D
+	     *                       object is smoothed when scaled or rotated, due to a
+	     *                       scaling or rotation in the <code>matrix</code>
+	     *                       parameter. The <code>smoothing</code> parameter only
+	     *                       applies if the <code>source</code> parameter is a
+	     *                       BitmapImage2D object. With <code>smoothing</code> set
+	     *                       to <code>false</code>, the rotated or scaled
+	     *                       BitmapImage2D image can appear pixelated or jagged. For
+	     *                       example, the following two images use the same
+	     *                       BitmapImage2D object for the <code>source</code>
+	     *                       parameter, but the <code>smoothing</code> parameter
+	     *                       is set to <code>true</code> on the left and
+	     *                       <code>false</code> on the right:
+	     *
+	     *                       <p>Drawing a bitmap with <code>smoothing</code> set
+	     *                       to <code>true</code> takes longer than doing so with
+	     *                       <code>smoothing</code> set to
+	     *                       <code>false</code>.</p>
+	     * @throws ArgumentError The <code>source</code> parameter is not a
+	     *                       BitmapImage2D or DisplayObject object.
+	     * @throws ArgumentError The source is null or not a valid IBitmapDrawable
+	     *                       object.
+	     * @throws SecurityError The <code>source</code> object and(in the case of a
+	     *                       Sprite or MovieClip object) all of its child objects
+	     *                       do not come from the same domain as the caller, or
+	     *                       are not in a content that is accessible to the
+	     *                       caller by having called the
+	     *                       <code>Security.allowDomain()</code> method. This
+	     *                       restriction does not apply to AIR content in the
+	     *                       application security sandbox.
+	     */
+	    draw(side: number, source: BitmapImage2D, matrix?: Matrix, colorTransform?: ColorTransform, blendMode?: BlendMode, clipRect?: Rectangle, smoothing?: boolean): any;
+	    draw(side: number, source: HTMLElement, matrix?: Matrix, colorTransform?: ColorTransform, blendMode?: BlendMode, clipRect?: Rectangle, smoothing?: boolean): any;
+	    /**
+	     * Fills a rectangular area of pixels with a specified ARGB color.
+	     *
+	     * @param rect  The rectangular area to fill.
+	     * @param color The ARGB color value that fills the area. ARGB colors are
+	     *              often specified in hexadecimal format; for example,
+	     *              0xFF336699.
+	     * @throws TypeError The rect is null.
+	     */
+	    fillRect(side: number, rect: Rectangle, color: number): void;
+	    /**
+	     * Returns an integer that represents an RGB pixel value from a BitmapImage2D
+	     * object at a specific point(<i>x</i>, <i>y</i>). The
+	     * <code>getPixel()</code> method returns an unmultiplied pixel value. No
+	     * alpha information is returned.
+	     *
+	     * <p>All pixels in a BitmapImage2D object are stored as premultiplied color
+	     * values. A premultiplied image pixel has the red, green, and blue color
+	     * channel values already multiplied by the alpha data. For example, if the
+	     * alpha value is 0, the values for the RGB channels are also 0, independent
+	     * of their unmultiplied values. This loss of data can cause some problems
+	     * when you perform operations. All BitmapImage2D methods take and return
+	     * unmultiplied values. The internal pixel representation is converted from
+	     * premultiplied to unmultiplied before it is returned as a value. During a
+	     * set operation, the pixel value is premultiplied before the raw image pixel
+	     * is set.</p>
+	     *
+	     * @param x The <i>x</i> position of the pixel.
+	     * @param y The <i>y</i> position of the pixel.
+	     * @return A number that represents an RGB pixel value. If the(<i>x</i>,
+	     *         <i>y</i>) coordinates are outside the bounds of the image, the
+	     *         method returns 0.
+	     */
+	    getPixel(side: number, x: number, y: number): number;
+	    /**
+	     * Returns an ARGB color value that contains alpha channel data and RGB data.
+	     * This method is similar to the <code>getPixel()</code> method, which
+	     * returns an RGB color without alpha channel data.
+	     *
+	     * <p>All pixels in a BitmapImage2D object are stored as premultiplied color
+	     * values. A premultiplied image pixel has the red, green, and blue color
+	     * channel values already multiplied by the alpha data. For example, if the
+	     * alpha value is 0, the values for the RGB channels are also 0, independent
+	     * of their unmultiplied values. This loss of data can cause some problems
+	     * when you perform operations. All BitmapImage2D methods take and return
+	     * unmultiplied values. The internal pixel representation is converted from
+	     * premultiplied to unmultiplied before it is returned as a value. During a
+	     * set operation, the pixel value is premultiplied before the raw image pixel
+	     * is set.</p>
+	     *
+	     * @param x The <i>x</i> position of the pixel.
+	     * @param y The <i>y</i> position of the pixel.
+	     * @return A number representing an ARGB pixel value. If the(<i>x</i>,
+	     *         <i>y</i>) coordinates are outside the bounds of the image, 0 is
+	     *         returned.
+	     */
+	    getPixel32(side: number, x: any, y: any): number;
+	    /**
+	     * Locks an image so that any objects that reference the BitmapImage2D object,
+	     * such as Bitmap objects, are not updated when this BitmapImage2D object
+	     * changes. To improve performance, use this method along with the
+	     * <code>unlock()</code> method before and after numerous calls to the
+	     * <code>setPixel()</code> or <code>setPixel32()</code> method.
+	     *
+	     */
+	    lock(): void;
+	    /**
+	     * Converts an Array into a rectangular region of pixel data. For each pixel,
+	     * an Array element is read and written into the BitmapImage2D pixel. The data
+	     * in the Array is expected to be 32-bit ARGB pixel values.
+	     *
+	     * @param rect        Specifies the rectangular region of the BitmapImage2D
+	     *                    object.
+	     * @param inputArray  An Array that consists of 32-bit unmultiplied pixel
+	     *                    values to be used in the rectangular region.
+	     * @throws RangeError The vector array is not large enough to read all the
+	     *                    pixel data.
+	     */
+	    setArray(side: number, rect: Rectangle, inputArray: Array<number>): void;
+	    /**
+	     * Sets a single pixel of a BitmapImage2D object. The current alpha channel
+	     * value of the image pixel is preserved during this operation. The value of
+	     * the RGB color parameter is treated as an unmultiplied color value.
+	     *
+	     * <p><b>Note:</b> To increase performance, when you use the
+	     * <code>setPixel()</code> or <code>setPixel32()</code> method repeatedly,
+	     * call the <code>lock()</code> method before you call the
+	     * <code>setPixel()</code> or <code>setPixel32()</code> method, and then call
+	     * the <code>unlock()</code> method when you have made all pixel changes.
+	     * This process prevents objects that reference this BitmapImage2D instance from
+	     * updating until you finish making the pixel changes.</p>
+	     *
+	     * @param x     The <i>x</i> position of the pixel whose value changes.
+	     * @param y     The <i>y</i> position of the pixel whose value changes.
+	     * @param color The resulting RGB color for the pixel.
+	     */
+	    setPixel(side: number, x: number, y: number, color: number): void;
+	    /**
+	     * Sets the color and alpha transparency values of a single pixel of a
+	     * BitmapImage2D object. This method is similar to the <code>setPixel()</code>
+	     * method; the main difference is that the <code>setPixel32()</code> method
+	     * takes an ARGB color value that contains alpha channel information.
+	     *
+	     * <p>All pixels in a BitmapImage2D object are stored as premultiplied color
+	     * values. A premultiplied image pixel has the red, green, and blue color
+	     * channel values already multiplied by the alpha data. For example, if the
+	     * alpha value is 0, the values for the RGB channels are also 0, independent
+	     * of their unmultiplied values. This loss of data can cause some problems
+	     * when you perform operations. All BitmapImage2D methods take and return
+	     * unmultiplied values. The internal pixel representation is converted from
+	     * premultiplied to unmultiplied before it is returned as a value. During a
+	     * set operation, the pixel value is premultiplied before the raw image pixel
+	     * is set.</p>
+	     *
+	     * <p><b>Note:</b> To increase performance, when you use the
+	     * <code>setPixel()</code> or <code>setPixel32()</code> method repeatedly,
+	     * call the <code>lock()</code> method before you call the
+	     * <code>setPixel()</code> or <code>setPixel32()</code> method, and then call
+	     * the <code>unlock()</code> method when you have made all pixel changes.
+	     * This process prevents objects that reference this BitmapImage2D instance from
+	     * updating until you finish making the pixel changes.</p>
+	     *
+	     * @param x     The <i>x</i> position of the pixel whose value changes.
+	     * @param y     The <i>y</i> position of the pixel whose value changes.
+	     * @param color The resulting ARGB color for the pixel. If the bitmap is
+	     *              opaque(not transparent), the alpha transparency portion of
+	     *              this color value is ignored.
+	     */
+	    setPixel32(side: number, x: any, y: any, color: number): void;
+	    /**
+	     * Converts a byte array into a rectangular region of pixel data. For each
+	     * pixel, the <code>ByteArray.readUnsignedInt()</code> method is called and
+	     * the return value is written into the pixel. If the byte array ends before
+	     * the full rectangle is written, the function returns. The data in the byte
+	     * array is expected to be 32-bit ARGB pixel values. No seeking is performed
+	     * on the byte array before or after the pixels are read.
+	     *
+	     * @param rect           Specifies the rectangular region of the BitmapImage2D
+	     *                       object.
+	     * @param inputByteArray A ByteArray object that consists of 32-bit
+	     *                       unmultiplied pixel values to be used in the
+	     *                       rectangular region.
+	     * @throws EOFError  The <code>inputByteArray</code> object does not include
+	     *                   enough data to fill the area of the <code>rect</code>
+	     *                   rectangle. The method fills as many pixels as possible
+	     *                   before throwing the exception.
+	     * @throws TypeError The rect or inputByteArray are null.
+	     */
+	    setPixels(side: number, rect: Rectangle, inputByteArray: ByteArray): void;
+	    /**
+	     * Unlocks an image so that any objects that reference the BitmapImage2D object,
+	     * such as Bitmap objects, are updated when this BitmapImage2D object changes.
+	     * To improve performance, use this method along with the <code>lock()</code>
+	     * method before and after numerous calls to the <code>setPixel()</code> or
+	     * <code>setPixel32()</code> method.
+	     *
+	     * @param changeRect The area of the BitmapImage2D object that has changed. If
+	     *                   you do not specify a value for this parameter, the
+	     *                   entire area of the BitmapImage2D object is considered
+	     *                   changed.
+	     */
+	    unlock(): void;
+	    /**
+	     *
+	     * @returns {ImageData}
+	     */
+	    getImageData(side: number): ImageData;
+	    /**
+	     *
+	     * @returns {HTMLCanvasElement}
+	     */
+	    getCanvas(side: number): HTMLCanvasElement;
+	    /**
+	     *
+	     * @param width
+	     * @param height
+	     * @private
+	     */
+	    _setSize(size: number): void;
+	}
+	export = BitmapImageCube;
+	
+}
+
+declare module "awayjs-core/lib/image/BlendMode" {
+	/**
+	 * A class that provides constant values for visual blend mode effects. These
+	 * constants are used in the following:
+	 * <ul>
+	 *   <li> The <code>blendMode</code> property of the
+	 * flash.display.DisplayObject class.</li>
+	 *   <li> The <code>blendMode</code> parameter of the <code>draw()</code>
+	 * method of the flash.display.BitmapData class</li>
+	 * </ul>
+	 */
+	class BlendMode {
+	    /**
+	     * Adds the values of the constituent colors of the display object to the
+	     * colors of its background, applying a ceiling of 0xFF. This setting is
+	     * commonly used for animating a lightening dissolve between two objects.
+	     *
+	     * <p>For example, if the display object has a pixel with an RGB value of
+	     * 0xAAA633, and the background pixel has an RGB value of 0xDD2200, the
+	     * resulting RGB value for the displayed pixel is 0xFFC833(because 0xAA +
+	     * 0xDD > 0xFF, 0xA6 + 0x22 = 0xC8, and 0x33 + 0x00 = 0x33).</p>
+	     */
+	    static ADD: string;
+	    /**
+	     * Applies the alpha value of each pixel of the display object to the
+	     * background. This requires the <code>blendMode</code> property of the
+	     * parent display object be set to
+	     * <code>away.base.BlendMode.LAYER</code>.
+	     *
+	     * <p>Not supported under GPU rendering.</p>
+	     */
+	    static ALPHA: string;
+	    /**
+	     * Selects the darker of the constituent colors of the display object and the
+	     * colors of the background(the colors with the smaller values). This
+	     * setting is commonly used for superimposing type.
+	     *
+	     * <p>For example, if the display object has a pixel with an RGB value of
+	     * 0xFFCC33, and the background pixel has an RGB value of 0xDDF800, the
+	     * resulting RGB value for the displayed pixel is 0xDDCC00(because 0xFF >
+	     * 0xDD, 0xCC < 0xF8, and 0x33 > 0x00 = 33).</p>
+	     *
+	     * <p>Not supported under GPU rendering.</p>
+	     */
+	    static DARKEN: string;
+	    /**
+	     * Compares the constituent colors of the display object with the colors of
+	     * its background, and subtracts the darker of the values of the two
+	     * constituent colors from the lighter value. This setting is commonly used
+	     * for more vibrant colors.
+	     *
+	     * <p>For example, if the display object has a pixel with an RGB value of
+	     * 0xFFCC33, and the background pixel has an RGB value of 0xDDF800, the
+	     * resulting RGB value for the displayed pixel is 0x222C33(because 0xFF -
+	     * 0xDD = 0x22, 0xF8 - 0xCC = 0x2C, and 0x33 - 0x00 = 0x33).</p>
+	     */
+	    static DIFFERENCE: string;
+	    /**
+	     * Erases the background based on the alpha value of the display object. This
+	     * process requires that the <code>blendMode</code> property of the parent
+	     * display object be set to <code>flash.display.BlendMode.LAYER</code>.
+	     *
+	     * <p>Not supported under GPU rendering.</p>
+	     */
+	    static ERASE: string;
+	    /**
+	     * Adjusts the color of each pixel based on the darkness of the display
+	     * object. If the display object is lighter than 50% gray, the display object
+	     * and background colors are screened, which results in a lighter color. If
+	     * the display object is darker than 50% gray, the colors are multiplied,
+	     * which results in a darker color. This setting is commonly used for shading
+	     * effects.
+	     *
+	     * <p>Not supported under GPU rendering.</p>
+	     */
+	    static HARDLIGHT: string;
+	    /**
+	     * Inverts the background.
+	     */
+	    static INVERT: string;
+	    /**
+	     * Forces the creation of a transparency group for the display object. This
+	     * means that the display object is precomposed in a temporary buffer before
+	     * it is processed further. The precomposition is done automatically if the
+	     * display object is precached by means of bitmap caching or if the display
+	     * object is a display object container that has at least one child object
+	     * with a <code>blendMode</code> setting other than <code>"normal"</code>.
+	     *
+	     * <p>Not supported under GPU rendering.</p>
+	     */
+	    static LAYER: string;
+	    /**
+	     * Selects the lighter of the constituent colors of the display object and
+	     * the colors of the background(the colors with the larger values). This
+	     * setting is commonly used for superimposing type.
+	     *
+	     * <p>For example, if the display object has a pixel with an RGB value of
+	     * 0xFFCC33, and the background pixel has an RGB value of 0xDDF800, the
+	     * resulting RGB value for the displayed pixel is 0xFFF833(because 0xFF >
+	     * 0xDD, 0xCC < 0xF8, and 0x33 > 0x00 = 33).</p>
+	     *
+	     * <p>Not supported under GPU rendering.</p>
+	     */
+	    static LIGHTEN: string;
+	    /**
+	     * Multiplies the values of the display object constituent colors by the
+	     * constituent colors of the background color, and normalizes by dividing by
+	     * 0xFF, resulting in darker colors. This setting is commonly used for
+	     * shadows and depth effects.
+	     *
+	     * <p>For example, if a constituent color(such as red) of one pixel in the
+	     * display object and the corresponding color of the pixel in the background
+	     * both have the value 0x88, the multiplied result is 0x4840. Dividing by
+	     * 0xFF yields a value of 0x48 for that constituent color, which is a darker
+	     * shade than the color of the display object or the color of the
+	     * background.</p>
+	     */
+	    static MULTIPLY: string;
+	    /**
+	     * The display object appears in front of the background. Pixel values of the
+	     * display object override the pixel values of the background. Where the
+	     * display object is transparent, the background is visible.
+	     */
+	    static NORMAL: string;
+	    /**
+	     * Adjusts the color of each pixel based on the darkness of the background.
+	     * If the background is lighter than 50% gray, the display object and
+	     * background colors are screened, which results in a lighter color. If the
+	     * background is darker than 50% gray, the colors are multiplied, which
+	     * results in a darker color. This setting is commonly used for shading
+	     * effects.
+	     *
+	     * <p>Not supported under GPU rendering.</p>
+	     */
+	    static OVERLAY: string;
+	    /**
+	     * Multiplies the complement(inverse) of the display object color by the
+	     * complement of the background color, resulting in a bleaching effect. This
+	     * setting is commonly used for highlights or to remove black areas of the
+	     * display object.
+	     */
+	    static SCREEN: string;
+	    /**
+	     * Uses a shader to define the blend between objects.
+	     *
+	     * <p>Setting the <code>blendShader</code> property to a Shader instance
+	     * automatically sets the display object's <code>blendMode</code> property to
+	     * <code>BlendMode.SHADER</code>. If the <code>blendMode</code> property is
+	     * set to <code>BlendMode.SHADER</code> without first setting the
+	     * <code>blendShader</code> property, the <code>blendMode</code> property is
+	     * set to <code>BlendMode.NORMAL</code> instead. If the
+	     * <code>blendShader</code> property is set(which sets the
+	     * <code>blendMode</code> property to <code>BlendMode.SHADER</code>), then
+	     * later the value of the <code>blendMode</code> property is changed, the
+	     * blend mode can be reset to use the blend shader simply by setting the
+	     * <code>blendMode</code> property to <code>BlendMode.SHADER</code>. The
+	     * <code>blendShader</code> property does not need to be set again except to
+	     * change the shader that's used to define the blend mode.</p>
+	     *
+	     * <p>Not supported under GPU rendering.</p>
+	     */
+	    static SHADER: string;
+	    /**
+	     * Subtracts the values of the constituent colors in the display object from
+	     * the values of the background color, applying a floor of 0. This setting is
+	     * commonly used for animating a darkening dissolve between two objects.
+	     *
+	     * <p>For example, if the display object has a pixel with an RGB value of
+	     * 0xAA2233, and the background pixel has an RGB value of 0xDDA600, the
+	     * resulting RGB value for the displayed pixel is 0x338400(because 0xDD -
+	     * 0xAA = 0x33, 0xA6 - 0x22 = 0x84, and 0x00 - 0x33 < 0x00).</p>
+	     */
+	    static SUBTRACT: string;
+	}
+	export = BlendMode;
+	
+}
+
+declare module "awayjs-core/lib/image/CPUCanvas" {
+	import IImageCanvas = require("awayjs-core/lib/image/IImageCanvas");
+	import ImageData = require('awayjs-core/lib/image/ImageData');
+	class CPUCanvas implements IImageCanvas {
+	    width: number;
+	    height: number;
+	    private imageData;
+	    getContext(contextId: string): CanvasRenderingContext2D;
+	    constructor();
+	    reset(): void;
+	    getImageData(): ImageData;
+	}
+	export = CPUCanvas;
+	
+}
+
+declare module "awayjs-core/lib/image/CPURenderingContext2D" {
+	import ImageData = require('awayjs-core/lib/image/ImageData');
+	import CPUCanvas = require('awayjs-core/lib/image/CPUCanvas');
+	class CPURenderingContext2D implements CanvasRenderingContext2D {
+	    miterLimit: number;
+	    font: string;
+	    globalCompositeOperation: string;
+	    msFillRule: string;
+	    lineCap: string;
+	    msImageSmoothingEnabled: boolean;
+	    lineDashOffset: number;
+	    shadowColor: string;
+	    lineJoin: string;
+	    shadowOffsetX: number;
+	    lineWidth: number;
+	    canvas: HTMLCanvasElement;
+	    strokeStyle: any;
+	    globalAlpha: number;
+	    shadowOffsetY: number;
+	    fillStyle: any;
+	    shadowBlur: number;
+	    textAlign: string;
+	    textBaseline: string;
+	    cpuCanvas: CPUCanvas;
+	    private matrix;
+	    constructor(cpuCanvas: CPUCanvas);
+	    restore(): void;
+	    setTransform(m11: number, m12: number, m21: number, m22: number, dx: number, dy: number): void;
+	    save(): void;
+	    arc(x: number, y: number, radius: number, startAngle: number, endAngle: number, anticlockwise: boolean): void;
+	    measureText(text: string): TextMetrics;
+	    isPointInPath(x: number, y: number, fillRule: string): boolean;
+	    quadraticCurveTo(cpx: number, cpy: number, x: number, y: number): void;
+	    putImageData(imagedata: ImageData, dx: number, dy: number, dirtyX: number, dirtyY: number, dirtyWidth: number, dirtyHeight: number): void;
+	    rotate(angle: number): void;
+	    fillText(text: string, x: number, y: number, maxWidth: number): void;
+	    translate(x: number, y: number): void;
+	    scale(x: number, y: number): void;
+	    createRadialGradient(x0: number, y0: number, r0: number, x1: number, y1: number, r1: number): CanvasGradient;
+	    lineTo(x: number, y: number): void;
+	    getLineDash(): number[];
+	    fill(fillRule: string): void;
+	    createImageData(imageDataOrSw: any, sh: number): ImageData;
+	    createPattern(image: HTMLElement, repetition: string): CanvasPattern;
+	    closePath(): void;
+	    rect(x: number, y: number, w: number, h: number): void;
+	    clip(fillRule: string): void;
+	    clearRect(x: number, y: number, w: number, h: number): void;
+	    moveTo(x: number, y: number): void;
+	    getImageData(sx: number, sy: number, sw: number, sh: number): ImageData;
+	    private point;
+	    private point2;
+	    private applyPixel32(target, x, y, color);
+	    private copyPixel32(target, x, y, source, fromX, fromY);
+	    private parsedFillStyle;
+	    private parsedA;
+	    private parsedR;
+	    private parsedG;
+	    private parsedB;
+	    fillRect(x: number, y: number, w: number, h: number): void;
+	    bezierCurveTo(cp1x: number, cp1y: number, cp2x: number, cp2y: number, x: number, y: number): void;
+	    drawImage(image: HTMLElement, offsetX: number, offsetY: number, width: number, height: number, canvasOffsetX: number, canvasOffsetY: number, canvasImageWidth: number, canvasImageHeight: number): void;
+	    private drawBitmap(bitmap, offsetX, offsetY, width, height, canvasOffsetX, canvasOffsetY, canvasImageWidth, canvasImageHeight);
+	    transform(m11: number, m12: number, m21: number, m22: number, dx: number, dy: number): void;
+	    stroke(): void;
+	    strokeRect(x: number, y: number, w: number, h: number): void;
+	    setLineDash(segments: number[]): void;
+	    strokeText(text: string, x: number, y: number, maxWidth: number): void;
+	    beginPath(): void;
+	    arcTo(x1: number, y1: number, x2: number, y2: number, radius: number): void;
+	    createLinearGradient(x0: number, y0: number, x1: number, y1: number): CanvasGradient;
+	    private static sampleBilinear(u, v, texture, texelSizeX?, texelSizeY?);
+	    private static sample(u, v, imageData);
+	    private static sampleBox(x0, y0, x1, y1, texture);
+	    private static interpolateColor(source, target, a);
+	}
+	export = CPURenderingContext2D;
+	
+}
+
+declare module "awayjs-core/lib/image/IImageCanvas" {
+	interface IImageCanvas {
+	    width: number;
+	    height: number;
+	    getContext(contextId: string): CanvasRenderingContext2D;
+	}
+	export = IImageCanvas;
+	
+}
+
+declare module "awayjs-core/lib/image/Image2D" {
+	import ImageBase = require("awayjs-core/lib/image/ImageBase");
+	import Sampler2D = require("awayjs-core/lib/image/Sampler2D");
+	import Rectangle = require("awayjs-core/lib/geom/Rectangle");
+	class Image2D extends ImageBase {
+	    static assetType: string;
+	    _rect: Rectangle;
+	    private _powerOfTwo;
+	    /**
+	     *
+	     * @returns {string}
+	     */
+	    assetType: string;
+	    /**
+	     * The height of the image in pixels.
+	     */
+	    height: number;
+	    /**
+	     * The rectangle that defines the size and location of the bitmap image. The
+	     * top and left of the rectangle are 0; the width and height are equal to the
+	     * width and height in pixels of the BitmapData object.
+	     */
+	    rect: Rectangle;
+	    /**
+	     * The width of the bitmap image in pixels.
+	     */
+	    width: number;
+	    /**
+	     *
+	     */
+	    constructor(width: number, height: number, powerOfTwo?: boolean);
+	    /**
+	     *
+	     * @param width
+	     * @param height
+	     * @private
+	     */
+	    _setSize(width: number, height: number): void;
+	    /**
+	     *
+	     * @private
+	     */
+	    private _testDimensions();
+	    /**
+	     * Enable POT texture size validation
+	     * @returns {boolean}
+	     */
+	    powerOfTwo: boolean;
+	    createSampler(): Sampler2D;
+	}
+	export = Image2D;
+	
+}
+
+declare module "awayjs-core/lib/image/ImageBase" {
+	import SamplerBase = require("awayjs-core/lib/image/SamplerBase");
+	import AssetBase = require("awayjs-core/lib/library/AssetBase");
+	class ImageBase extends AssetBase {
+	    _pFormat: string;
+	    /**
+	     *
+	     */
+	    constructor();
+	    /**
+	     *
+	     * @returns {string}
+	     */
+	    format: string;
+	    createSampler(): SamplerBase;
+	}
+	export = ImageBase;
+	
+}
+
+declare module "awayjs-core/lib/image/ImageCube" {
+	import ImageBase = require("awayjs-core/lib/image/ImageBase");
+	import SamplerCube = require("awayjs-core/lib/image/SamplerCube");
+	class ImageCube extends ImageBase {
+	    static assetType: string;
+	    _size: number;
+	    /**
+	     *
+	     * @returns {string}
+	     */
+	    assetType: string;
+	    /**
+	     * The size of the cube bitmap in pixels.
+	     */
+	    size: number;
+	    /**
+	     *
+	     */
+	    constructor(size: number);
+	    /**
+	     *
+	     * @param width
+	     * @param height
+	     * @private
+	     */
+	    _setSize(size: number): void;
+	    /**
+	     *
+	     * @private
+	     */
+	    private _testDimensions();
+	    createSampler(): SamplerCube;
+	}
+	export = ImageCube;
+	
+}
+
+declare module "awayjs-core/lib/image/ImageData" {
+	class ImageData {
+	    width: number;
+	    data: any;
+	    height: number;
+	    constructor(width: number, height: number);
+	}
+	export = ImageData;
+	
+}
+
+declare module "awayjs-core/lib/image/Sampler2D" {
+	import SamplerBase = require("awayjs-core/lib/image/SamplerBase");
+	import Rectangle = require("awayjs-core/lib/geom/Rectangle");
+	/**
+	 * The Sampler2D class represents display objects that represent bitmap images.
+	 * These can be images that you load with the <code>flash.Assets</code> or
+	 * <code>flash.display.Loader</code> classes, or they can be images that you
+	 * create with the <code>Sampler2D()</code> constructor.
+	 *
+	 * <p>The <code>Sampler2D()</code> constructor allows you to create a Sampler2D
+	 * object that contains a reference to a Image2D object. After you create a
+	 * Sampler2D object, use the <code>addChild()</code> or <code>addChildAt()</code>
+	 * method of the parent DisplayObjectContainer instance to place the bitmap on
+	 * the display list.</p>
+	 *
+	 * <p>A Sampler2D object can share its Image2D reference among several Sampler2D
+	 * objects, independent of translation or rotation properties. Because you can
+	 * create multiple Sampler2D objects that reference the same Image2D object,
+	 * multiple texture objects can use the same complex Image2D object without
+	 * incurring the memory overhead of a Image2D object for each texture
+	 * object instance.</p>
+	
+	 */
+	class Sampler2D extends SamplerBase {
+	    static assetType: string;
+	    private _imageRect;
+	    private _frameRect;
+	    private _repeat;
+	    /**
+	     *
+	     * @returns {string}
+	     */
+	    assetType: string;
+	    /**
+	     * Controls whether or not the Sampler2D object is snapped to the nearest pixel.
+	     * This value is ignored in the native and HTML5 targets.
+	     * The PixelSnapping class includes possible values:
+	     * <ul>
+	     *   <li><code>PixelSnapping.NEVER</code> - No pixel snapping occurs.</li>
+	     *   <li><code>PixelSnapping.ALWAYS</code> - The image is always snapped to
+	     * the nearest pixel, independent of transformation.</li>
+	     *   <li><code>PixelSnapping.AUTO</code> - The image is snapped to the
+	     * nearest pixel if it is drawn with no rotation or skew and it is drawn at a
+	     * scale factor of 99.9% to 100.1%. If these conditions are satisfied, the
+	     * bitmap image is drawn at 100% scale, snapped to the nearest pixel.
+	     * When targeting Flash Player, this value allows the image to be drawn as fast
+	     * as possible using the internal vector renderer.</li>
+	     * </ul>
+	     */
+	    /**
+	     * Controls whether or not the bitmap is smoothed when scaled. If
+	     * <code>true</code>, the bitmap is smoothed when scaled. If
+	     * <code>false</code>, the bitmap is not smoothed when scaled.
+	     */
+	    /**
+	     *
+	     */
+	    repeat: boolean;
+	    /**
+	     *
+	     */
+	    imageRect: Rectangle;
+	    /**
+	     *
+	     */
+	    frameRect: Rectangle;
+	    /**
+	     *
+	     * @param image2D
+	     * @param smoothing
+	     */
+	    constructor(repeat?: boolean, smooth?: boolean, mipmap?: boolean);
+	    private _updateRect();
+	}
+	export = Sampler2D;
+	
+}
+
+declare module "awayjs-core/lib/image/SamplerBase" {
+	import AssetBase = require("awayjs-core/lib/library/AssetBase");
+	/**
+	 *
+	 */
+	class SamplerBase extends AssetBase {
+	    private _smooth;
+	    private _mipmap;
+	    /**
+	     *
+	     */
+	    smooth: boolean;
+	    /**
+	     *
+	     */
+	    mipmap: boolean;
+	    /**
+	     *
+	     */
+	    constructor(smooth?: boolean, mipmap?: boolean);
+	}
+	export = SamplerBase;
+	
+}
+
+declare module "awayjs-core/lib/image/SamplerCube" {
+	import SamplerBase = require("awayjs-core/lib/image/SamplerBase");
+	/**
+	 * The Bitmap class represents display objects that represent bitmap images.
+	 * These can be images that you load with the <code>flash.Assets</code> or
+	 * <code>flash.display.Loader</code> classes, or they can be images that you
+	 * create with the <code>Bitmap()</code> constructor.
+	 *
+	 * <p>The <code>Bitmap()</code> constructor allows you to create a Bitmap
+	 * object that contains a reference to a BitmapData object. After you create a
+	 * Bitmap object, use the <code>addChild()</code> or <code>addChildAt()</code>
+	 * method of the parent DisplayObjectContainer instance to place the bitmap on
+	 * the display list.</p>
+	 *
+	 * <p>A Bitmap object can share its BitmapData reference among several Bitmap
+	 * objects, independent of translation or rotation properties. Because you can
+	 * create multiple Bitmap objects that reference the same BitmapData object,
+	 * multiple texture objects can use the same complex BitmapData object without
+	 * incurring the memory overhead of a BitmapData object for each texture
+	 * object instance.</p>
+	
+	 */
+	class SamplerCube extends SamplerBase {
+	    static assetType: string;
+	    /**
+	     *
+	     * @returns {string}
+	     */
+	    assetType: string;
+	    /**
+	     *
+	     * @param bitmapData
+	     * @param smoothing
+	     */
+	    constructor(smooth?: boolean, mipmap?: boolean);
+	}
+	export = SamplerCube;
+	
+}
+
+declare module "awayjs-core/lib/image/SpecularImage2D" {
+	import BitmapImage2D = require("awayjs-core/lib/image/BitmapImage2D");
+	import Image2D = require("awayjs-core/lib/image/Image2D");
+	/**
+	 *
+	 */
+	class SpecularImage2D extends Image2D {
+	    static assetType: string;
+	    private _specularSource;
+	    private _glossSource;
+	    private _output;
+	    /**
+	     *
+	     * @returns {string}
+	     */
+	    assetType: string;
+	    specularSource: BitmapImage2D;
+	    glossSource: BitmapImage2D;
+	    /**
+	     *
+	     */
+	    constructor(specularSource?: BitmapImage2D, glossSource?: BitmapImage2D);
+	    /**
+	     * Returns a new SpecularImage2D object that is a clone of the original instance
+	     * with an exact copy of the contained bitmap.
+	     *
+	     * @return A new SpecularImage2D object that is identical to the original.
+	     */
+	    clone(): SpecularImage2D;
+	    /**
+	     * Frees memory that is used to store the SpecularImage2D object.
+	     *
+	     * <p>When the <code>dispose()</code> method is called on an image, the width
+	     * and height of the image are set to 0. All subsequent calls to methods or
+	     * properties of this SpecularImage2D instance fail, and an exception is thrown.
+	     * </p>
+	     *
+	     * <p><code>SpecularImage2D.dispose()</code> releases the memory occupied by the
+	     * actual bitmap data, immediately(a bitmap can consume up to 64 MB of
+	     * memory). After using <code>SpecularImage2D.dispose()</code>, the SpecularImage2D
+	     * object is no longer usable and an exception may be thrown if
+	     * you call functions on the SpecularImage2D object. However,
+	     * <code>SpecularImage2D.dispose()</code> does not garbage collect the SpecularImage2D
+	     * object(approximately 128 bytes); the memory occupied by the actual
+	     * SpecularImage2D object is released at the time the SpecularImage2D object is
+	     * collected by the garbage collector.</p>
+	     *
+	     */
+	    dispose(): void;
+	    /**
+	     *
+	     * @returns {ImageData}
+	     */
+	    getImageData(): ImageData;
+	    /**
+	     *
+	     * @returns {HTMLCanvasElement}
+	     */
+	    getCanvas(): HTMLCanvasElement;
+	    /**
+	     *
+	     * @param width
+	     * @param height
+	     * @private
+	     */
+	    _setSize(width: number, height: number): void;
+	    private _testSize();
+	}
+	export = SpecularImage2D;
+	
+}
+
+declare module "awayjs-core/lib/library/AbstractionBase" {
+	import AssetEvent = require("awayjs-core/lib/events/AssetEvent");
+	import EventDispatcher = require("awayjs-core/lib/events/EventDispatcher");
+	import IAbstractionPool = require("awayjs-core/lib/library/IAbstractionPool");
+	import IAsset = require("awayjs-core/lib/library/IAsset");
+	/**
+	 *
+	 * @class away.pool.AbstractionBase
+	 */
+	class AbstractionBase extends EventDispatcher {
+	    private _onClearDelegate;
+	    private _onInvalidateDelegate;
+	    _pool: IAbstractionPool;
+	    _asset: IAsset;
+	    _invalid: boolean;
+	    constructor(asset: IAsset, pool: IAbstractionPool);
+	    /**
+	     *
+	     */
+	    onClear(event: AssetEvent): void;
+	    /**
+	     *
+	     */
+	    onInvalidate(event: AssetEvent): void;
+	}
+	export = AbstractionBase;
+	
+}
+
 declare module "awayjs-core/lib/library/AssetBase" {
+	import IAsset = require("awayjs-core/lib/library/IAsset");
 	import IAssetClass = require("awayjs-core/lib/library/IAssetClass");
 	import EventDispatcher = require("awayjs-core/lib/events/EventDispatcher");
-	class AssetBase extends EventDispatcher {
+	class AssetBase extends EventDispatcher implements IAsset {
 	    static ID_COUNT: number;
 	    private _originalName;
 	    private _namespace;
@@ -4771,8 +4773,15 @@ declare module "awayjs-core/lib/library/AssetBase" {
 	     */
 	    id: number;
 	    name: string;
+	    /**
+	     *
+	     */
+	    invalidate(): void;
+	    /**
+	     * @inheritDoc
+	     */
 	    dispose(): void;
-	    _clearInterfaces(): void;
+	    clear(): void;
 	    assetNamespace: string;
 	    assetFullPath: Array<string>;
 	    assetPathEquals(name: string, ns: string): boolean;
@@ -4786,9 +4795,10 @@ declare module "awayjs-core/lib/library/AssetBase" {
 
 declare module "awayjs-core/lib/library/AssetLibrary" {
 	import URLRequest = require("awayjs-core/lib/net/URLRequest");
+	import EventBase = require("awayjs-core/lib/events/EventBase");
 	import AssetLibraryBundle = require("awayjs-core/lib/library/AssetLibraryBundle");
 	import AssetLibraryIterator = require("awayjs-core/lib/library/AssetLibraryIterator");
-	import LoaderSession = require("awayjs-core/lib/library/LoaderSession");
+	import Loader = require("awayjs-core/lib/library/Loader");
 	import LoaderContext = require("awayjs-core/lib/library/LoaderContext");
 	import ConflictStrategyBase = require("awayjs-core/lib/library/ConflictStrategyBase");
 	import IAsset = require("awayjs-core/lib/library/IAsset");
@@ -4853,7 +4863,7 @@ declare module "awayjs-core/lib/library/AssetLibrary" {
 	     */
 	    static loadData(data: any, context?: LoaderContext, ns?: string, parser?: ParserBase): void;
 	    static stopLoad(): void;
-	    static getLoaderSession(): LoaderSession;
+	    static getLoader(): Loader;
 	    /**
 	     * Short-hand for getAsset() method on default asset library bundle.
 	     *
@@ -4869,11 +4879,11 @@ declare module "awayjs-core/lib/library/AssetLibrary" {
 	    /**
 	     * Short-hand for addEventListener() method on default asset library bundle.
 	     */
-	    static addEventListener(type: string, listener: Function): void;
+	    static addEventListener(type: string, listener: (event: EventBase) => void): void;
 	    /**
 	     * Short-hand for removeEventListener() method on default asset library bundle.
 	     */
-	    static removeEventListener(type: string, listener: Function): void;
+	    static removeEventListener(type: string, listener: (event: EventBase) => void): void;
 	    /**
 	     * Short-hand for hasEventListener() method on default asset library bundle.
 	
@@ -4934,7 +4944,7 @@ declare module "awayjs-core/lib/library/AssetLibrary" {
 declare module "awayjs-core/lib/library/AssetLibraryBundle" {
 	import URLRequest = require("awayjs-core/lib/net/URLRequest");
 	import AssetLibraryIterator = require("awayjs-core/lib/library/AssetLibraryIterator");
-	import LoaderSession = require("awayjs-core/lib/library/LoaderSession");
+	import Loader = require("awayjs-core/lib/library/Loader");
 	import LoaderContext = require("awayjs-core/lib/library/LoaderContext");
 	import ConflictStrategyBase = require("awayjs-core/lib/library/ConflictStrategyBase");
 	import IAsset = require("awayjs-core/lib/library/IAsset");
@@ -5031,7 +5041,7 @@ declare module "awayjs-core/lib/library/AssetLibraryBundle" {
 	     * @param req The URLRequest object containing the URL of the file to be loaded.
 	     * @param context An optional context object providing additional parameters for loading
 	     * @param ns An optional namespace string under which the file is to be loaded, allowing the differentiation of two resources with identical assets
-	     * @param parser An optional parser object for translating the loaded data into a usable resource. If not provided, LoaderSession will attempt to auto-detect the file type.
+	     * @param parser An optional parser object for translating the loaded data into a usable resource. If not provided, Loader will attempt to auto-detect the file type.
 	     * @return A handle to the retrieved resource.
 	     */
 	    load(req: URLRequest, context?: LoaderContext, ns?: string, parser?: ParserBase): void;
@@ -5041,12 +5051,12 @@ declare module "awayjs-core/lib/library/AssetLibraryBundle" {
 	     * @param data The data object containing all resource information.
 	     * @param context An optional context object providing additional parameters for loading
 	     * @param ns An optional namespace string under which the file is to be loaded, allowing the differentiation of two resources with identical assets
-	     * @param parser An optional parser object for translating the loaded data into a usable resource. If not provided, LoaderSession will attempt to auto-detect the file type.
+	     * @param parser An optional parser object for translating the loaded data into a usable resource. If not provided, Loader will attempt to auto-detect the file type.
 	     * @return A handle to the retrieved resource.
 	     */
 	    loadData(data: any, context?: LoaderContext, ns?: string, parser?: ParserBase): void;
-	    getLoaderSession(): LoaderSession;
-	    disposeLoaderSession(loader: LoaderSession): void;
+	    getLoader(): Loader;
+	    disposeLoader(loader: Loader): void;
 	    /**
 	     *
 	     */
@@ -5096,7 +5106,7 @@ declare module "awayjs-core/lib/library/AssetLibraryBundle" {
 	     */
 	    removeNamespaceAssets(ns?: string, dispose?: boolean): void;
 	    private removeAssetFromDict(asset, autoRemoveEmptyNamespace?);
-	    stopAllLoaderSessions(): void;
+	    stopAllLoaders(): void;
 	    private rehashAssetDict();
 	    /**
 	     * Called when a an error occurs during loading.
@@ -5114,9 +5124,6 @@ declare module "awayjs-core/lib/library/AssetLibraryBundle" {
 	    private onResourceComplete(event);
 	    private loaderSessionGC();
 	    private killloaderSession(loader);
-	    /**
-	     * Called when unespected error occurs
-	     */
 	    private onAssetRename(event);
 	    private onAssetConflictResolved(event);
 	}
@@ -5259,6 +5266,16 @@ declare module "awayjs-core/lib/library/ErrorConflictStrategy" {
 	
 }
 
+declare module "awayjs-core/lib/library/IAbstractionPool" {
+	import IAsset = require("awayjs-core/lib/library/IAsset");
+	interface IAbstractionPool {
+	    getAbstraction(asset: IAsset): any;
+	    clearAbstraction(asset: IAsset): any;
+	}
+	export = IAbstractionPool;
+	
+}
+
 declare module "awayjs-core/lib/library/IAsset" {
 	import IEventDispatcher = require("awayjs-core/lib/events/IEventDispatcher");
 	interface IAsset extends IEventDispatcher {
@@ -5291,6 +5308,14 @@ declare module "awayjs-core/lib/library/IAsset" {
 	    /**
 	     *
 	     */
+	    invalidate(): any;
+	    /**
+	     *
+	     */
+	    clear(): any;
+	    /**
+	     *
+	     */
 	    dispose(): any;
 	    /**
 	     *
@@ -5304,7 +5329,6 @@ declare module "awayjs-core/lib/library/IAsset" {
 	     * @param overrideOriginal
 	     */
 	    resetAssetPath(name: string, ns: string, overrideOriginal?: boolean): void;
-	    _clearInterfaces(): any;
 	}
 	export = IAsset;
 	
@@ -5349,15 +5373,6 @@ declare module "awayjs-core/lib/library/IDUtil" {
 	
 }
 
-declare module "awayjs-core/lib/library/IWrapperClass" {
-	import IAssetClass = require("awayjs-core/lib/library/IAssetClass");
-	interface IWrapperClass {
-	    assetClass: IAssetClass;
-	}
-	export = IWrapperClass;
-	
-}
-
 declare module "awayjs-core/lib/library/IgnoreConflictStrategy" {
 	import ConflictStrategyBase = require("awayjs-core/lib/library/ConflictStrategyBase");
 	import IAsset = require("awayjs-core/lib/library/IAsset");
@@ -5367,6 +5382,220 @@ declare module "awayjs-core/lib/library/IgnoreConflictStrategy" {
 	    create(): ConflictStrategyBase;
 	}
 	export = IgnoreConflictStrategy;
+	
+}
+
+declare module "awayjs-core/lib/library/Loader" {
+	import LoaderContext = require("awayjs-core/lib/library/LoaderContext");
+	import LoaderInfo = require("awayjs-core/lib/library/LoaderInfo");
+	import URLRequest = require("awayjs-core/lib/net/URLRequest");
+	import EventDispatcher = require("awayjs-core/lib/events/EventDispatcher");
+	import ParserBase = require("awayjs-core/lib/parsers/ParserBase");
+	import ResourceDependency = require("awayjs-core/lib/parsers/ResourceDependency");
+	/**
+	 * Dispatched when any asset finishes parsing. Also see specific events for each
+	 * individual asset type (meshes, materials et c.)
+	 *
+	 * @eventType away.events.AssetEvent
+	 */
+	/**
+	 * Dispatched when a full resource (including dependencies) finishes loading.
+	 *
+	 * @eventType away.events.LoaderEvent
+	 */
+	/**
+	 * Dispatched when a single dependency (which may be the main file of a resource)
+	 * finishes loading.
+	 *
+	 * @eventType away.events.LoaderEvent
+	 */
+	/**
+	 * Dispatched when an error occurs during loading. I
+	 *
+	 * @eventType away.events.LoaderEvent
+	 */
+	/**
+	 * Dispatched when an error occurs during parsing.
+	 *
+	 * @eventType away.events.ParserEvent
+	 */
+	/**
+	 * Dispatched when an image asset dimensions are not a power of 2
+	 *
+	 * @eventType away.events.AssetEvent
+	 */
+	/**
+	 * Loader can load any file format that away.supports (or for which a third-party parser
+	 * has been plugged in) and it's dependencies. Events are dispatched when assets are encountered
+	 * and for when the resource (or it's dependencies) have been loaded.
+	 *
+	 * The Loader will not make assets available in any other way than through the dispatched
+	 * events. To store assets and make them available at any point from any module in an application,
+	 * use the AssetLibrary to load and manage assets.
+	 *
+	 * @see away.library.AssetLibrary
+	 */
+	class Loader extends EventDispatcher {
+	    private _context;
+	    private _loaderInfo;
+	    private _uri;
+	    private _materialMode;
+	    private _errorHandlers;
+	    private _parseErrorHandlers;
+	    private _stack;
+	    private _baseDependency;
+	    private _currentDependency;
+	    private _namespace;
+	    private _onReadyForDependenciesDelegate;
+	    private _onParseCompleteDelegate;
+	    private _onParseErrorDelegate;
+	    private _onLoadCompleteDelegate;
+	    private _onLoadErrorDelegate;
+	    private _onTextureSizeErrorDelegate;
+	    private _onAssetCompleteDelegate;
+	    private static _parsers;
+	    /**
+	     * Enables a specific parser.
+	     * When no specific parser is set for a loading/parsing opperation,
+	     * loader3d can autoselect the correct parser to use.
+	     * A parser must have been enabled, to be considered when autoselecting the parser.
+	     *
+	     * @param parser The parser class to enable.
+	     *
+	     * @see away.parsers.Parsers
+	     */
+	    static enableParser(parser: any): void;
+	    /**
+	     * Enables a list of parsers.
+	     * When no specific parser is set for a loading/parsing opperation,
+	     * Loader can autoselect the correct parser to use.
+	     * A parser must have been enabled, to be considered when autoselecting the parser.
+	     *
+	     * @param parsers A Vector of parser classes to enable.
+	     * @see away.parsers.Parsers
+	     */
+	    static enableParsers(parsers: Array<Object>): void;
+	    /**
+	     * Returns the base dependency of the loader
+	     */
+	    baseDependency: ResourceDependency;
+	    /**
+	     * Returns a LoaderInfo object corresponding to the object being loaded.
+	     * LoaderInfo objects are shared between the Loader object and the loaded
+	     * content object. The LoaderInfo object supplies loading progress
+	     * information and statistics about the loaded file.
+	     *
+	     * <p>Events related to the load are dispatched by the LoaderInfo object
+	     * referenced by the <code>contentLoaderInfo</code> property of the Loader
+	     * object. The <code>contentLoaderInfo</code> property is set to a valid
+	     * LoaderInfo object, even before the content is loaded, so that you can add
+	     * event listeners to the object prior to the load.</p>
+	     *
+	     * <p>To detect uncaught errors that happen in a loaded SWF, use the
+	     * <code>Loader.uncaughtErrorEvents</code> property, not the
+	     * <code>Loader.contentLoaderInfo.uncaughtErrorEvents</code> property.</p>
+	     */
+	    loaderInfo: LoaderInfo;
+	    /**
+	     * Create a new ResourceLoadSession object.
+	     */
+	    constructor(materialMode?: number);
+	    /**
+	     * Loads a file and (optionally) all of its dependencies.
+	     *
+	     * @param req The URLRequest object containing the URL of the file to be loaded.
+	     * @param context An optional context object providing additional parameters for loading
+	     * @param ns An optional namespace string under which the file is to be loaded, allowing the differentiation of two resources with identical assets
+	     * @param parser An optional parser object for translating the loaded data into a usable resource. If not provided, Loader will attempt to auto-detect the file type.
+	     */
+	    load(req: URLRequest, context?: LoaderContext, ns?: string, parser?: ParserBase): void;
+	    /**
+	     * Loads a resource from already loaded data.
+	     *
+	     * @param data The data object containing all resource information.
+	     * @param context An optional context object providing additional parameters for loading
+	     * @param ns An optional namespace string under which the file is to be loaded, allowing the differentiation of two resources with identical assets
+	     * @param parser An optional parser object for translating the loaded data into a usable resource. If not provided, Loader will attempt to auto-detect the file type.
+	     */
+	    loadData(data: any, id: string, context?: LoaderContext, ns?: string, parser?: ParserBase): void;
+	    /**
+	     * Recursively retrieves the next to-be-loaded and parsed dependency on the stack, or pops the list off the
+	     * stack when complete and continues on the top set.
+	     * @param parser The parser that will translate the data into a usable resource.
+	     */
+	    private retrieveNext(parser?);
+	    /**
+	     * Retrieves a single dependency.
+	     * @param parser The parser that will translate the data into a usable resource.
+	     */
+	    private retrieveDependency(dependency);
+	    private joinUrl(base, end);
+	    private resolveDependencyUrl(dependency);
+	    private retrieveParserDependencies();
+	    private resolveParserDependencies();
+	    /**
+	     * Called when a single dependency loading failed, and pushes further dependencies onto the stack.
+	     * @param event
+	     */
+	    private onLoadError(event);
+	    /**
+	     * Called when a dependency parsing failed, and dispatches a <code>ParserEvent.PARSE_ERROR</code>
+	     * @param event
+	     */
+	    private onParseError(event);
+	    private onAssetComplete(event);
+	    private onReadyForDependencies(event);
+	    /**
+	     * Called when a single dependency was parsed, and pushes further dependencies onto the stack.
+	     * @param event
+	     */
+	    private onLoadComplete(event);
+	    /**
+	     * Called when parsing is complete.
+	     */
+	    private onParseComplete(event);
+	    /**
+	     * Called when an image is too large or it's dimensions are not a power of 2
+	     * @param event
+	     */
+	    private onTextureSizeError(event);
+	    private addEventListeners(loader);
+	    private removeEventListeners(loader);
+	    stop(): void;
+	    private dispose();
+	    /**
+	     * @private
+	     * This method is used by other loader classes (e.g. Loader3D and AssetLibraryBundle) to
+	     * add error event listeners to the Loader instance. This system is used instead of
+	     * the regular EventDispatcher system so that the AssetLibrary error handler can be sure
+	     * that if hasEventListener() returns true, it's client code that's listening for the
+	     * event. Secondly, functions added as error handler through this custom method are
+	     * expected to return a boolean value indicating whether the event was handled (i.e.
+	     * whether they in turn had any client code listening for the event.) If no handlers
+	     * return true, the Loader knows that the event wasn't handled and will throw an RTE.
+	     */
+	    _iAddParseErrorHandler(handler: any): void;
+	    _iAddErrorHandler(handler: any): void;
+	    /**
+	     * Guesses the parser to be used based on the file contents.
+	     * @param data The data to be parsed.
+	     * @param uri The url or id of the object to be parsed.
+	     * @return An instance of the guessed parser.
+	     */
+	    private getParserFromData(data);
+	    /**
+	     * Initiates parsing of the loaded dependency.
+	     *
+	     * @param The dependency to be parsed.
+	     */
+	    private parseDependency(dependency);
+	    /**
+	     * Guesses the parser to be used based on the file extension.
+	     * @return An instance of the guessed parser.
+	     */
+	    private getParserFromSuffix(url);
+	}
+	export = Loader;
 	
 }
 
@@ -5383,11 +5612,11 @@ declare module "awayjs-core/lib/library/LoaderContext" {
 	    private _overrideAbsPath;
 	    private _overrideFullUrls;
 	    /**
-	     * LoaderContext provides configuration for the LoaderSession load() and parse() operations.
+	     * LoaderContext provides configuration for the Loader load() and parse() operations.
 	     * Use it to configure how (and if) dependencies are loaded, or to map dependency URLs to
 	     * embedded data.
 	     *
-	     * @see away.loading.LoaderSession
+	     * @see away.loading.Loader
 	     */
 	    constructor(includeDependencies?: boolean, dependencyBaseUrl?: string);
 	    /**
@@ -5465,198 +5694,213 @@ declare module "awayjs-core/lib/library/LoaderContext" {
 	
 }
 
-declare module "awayjs-core/lib/library/LoaderSession" {
-	import LoaderContext = require("awayjs-core/lib/library/LoaderContext");
-	import URLRequest = require("awayjs-core/lib/net/URLRequest");
+declare module "awayjs-core/lib/library/LoaderInfo" {
 	import EventDispatcher = require("awayjs-core/lib/events/EventDispatcher");
-	import ParserBase = require("awayjs-core/lib/parsers/ParserBase");
-	import ResourceDependency = require("awayjs-core/lib/parsers/ResourceDependency");
+	import Loader = require("awayjs-core/lib/library/Loader");
+	import AssetBase = require("awayjs-core/lib/library/AssetBase");
+	import ByteArray = require("awayjs-core/lib/utils/ByteArray");
 	/**
-	 * Dispatched when any asset finishes parsing. Also see specific events for each
-	 * individual asset type (meshes, materials et c.)
+	 * The LoaderInfo class provides information about a loaded SWF file or a
+	 * loaded image file(JPEG, GIF, or PNG). LoaderInfo objects are available for
+	 * any display object. The information provided includes load progress, the
+	 * URLs of the loader and loaded content, the number of bytes total for the
+	 * media, and the nominal height and width of the media.
 	 *
-	 * @eventType away.events.AssetEvent
+	 * <p>You can access LoaderInfo objects in two ways: </p>
+	 *
+	 * <ul>
+	 *   <li>The <code>contentLoaderInfo</code> property of a flash.display.Loader
+	 * object -  The <code>contentLoaderInfo</code> property is always available
+	 * for any Loader object. For a Loader object that has not called the
+	 * <code>load()</code> or <code>loadBytes()</code> method, or that has not
+	 * sufficiently loaded, attempting to access many of the properties of the
+	 * <code>contentLoaderInfo</code> property throws an error.</li>
+	 *   <li>The <code>loaderInfo</code> property of a display object. </li>
+	 * </ul>
+	 *
+	 * <p>The <code>contentLoaderInfo</code> property of a Loader object provides
+	 * information about the content that the Loader object is loading, whereas
+	 * the <code>loaderInfo</code> property of a DisplayObject provides
+	 * information about the root SWF file for that display object. </p>
+	 *
+	 * <p>When you use a Loader object to load a display object(such as a SWF
+	 * file or a bitmap), the <code>loaderInfo</code> property of the display
+	 * object is the same as the <code>contentLoaderInfo</code> property of the
+	 * Loader object(<code>DisplayObject.loaderInfo =
+	 * Loader.contentLoaderInfo</code>). Because the instance of the main class of
+	 * the SWF file has no Loader object, the <code>loaderInfo</code> property is
+	 * the only way to access the LoaderInfo for the instance of the main class of
+	 * the SWF file.</p>
+	 *
+	 * <p>The following diagram shows the different uses of the LoaderInfo
+	 * object - for the instance of the main class of the SWF file, for the
+	 * <code>contentLoaderInfo</code> property of a Loader object, and for the
+	 * <code>loaderInfo</code> property of a loaded object:</p>
+	 *
+	 * <p>When a loading operation is not complete, some properties of the
+	 * <code>contentLoaderInfo</code> property of a Loader object are not
+	 * available. You can obtain some properties, such as
+	 * <code>bytesLoaded</code>, <code>bytesTotal</code>, <code>url</code>,
+	 * <code>loaderURL</code>, and <code>applicationDomain</code>. When the
+	 * <code>loaderInfo</code> object dispatches the <code>init</code> event, you
+	 * can access all properties of the <code>loaderInfo</code> object and the
+	 * loaded image or SWF file.</p>
+	 *
+	 * <p><b>Note:</b> All properties of LoaderInfo objects are read-only.</p>
+	 *
+	 * <p>The <code>EventDispatcher.dispatchEvent()</code> method is not
+	 * applicable to LoaderInfo objects. If you call <code>dispatchEvent()</code>
+	 * on a LoaderInfo object, an IllegalOperationError exception is thrown.</p>
+	 *
+	 * @event complete   Dispatched when data has loaded successfully. In other
+	 *                   words, it is dispatched when all the content has been
+	 *                   downloaded and the loading has finished. The
+	 *                   <code>complete</code> event is always dispatched after
+	 *                   the <code>init</code> event. The <code>init</code> event
+	 *                   is dispatched when the object is ready to access, though
+	 *                   the content may still be downloading.
+	 * @event httpStatus Dispatched when a network request is made over HTTP and
+	 *                   an HTTP status code can be detected.
+	 * @event init       Dispatched when the properties and methods of a loaded
+	 *                   SWF file are accessible and ready for use. The content,
+	 *                   however, can still be downloading. A LoaderInfo object
+	 *                   dispatches the <code>init</code> event when the following
+	 *                   conditions exist:
+	 *                   <ul>
+	 *                     <li>All properties and methods associated with the
+	 *                   loaded object and those associated with the LoaderInfo
+	 *                   object are accessible.</li>
+	 *                     <li>The constructors for all child objects have
+	 *                   completed.</li>
+	 *                     <li>All ActionScript code in the first frame of the
+	 *                   loaded SWF's main timeline has been executed.</li>
+	 *                   </ul>
+	 *
+	 *                   <p>For example, an <code>Event.INIT</code> is dispatched
+	 *                   when the first frame of a movie or animation is loaded.
+	 *                   The movie is then accessible and can be added to the
+	 *                   display list. The complete movie, however, can take
+	 *                   longer to download. The <code>Event.COMPLETE</code> is
+	 *                   only dispatched once the full movie is loaded.</p>
+	 *
+	 *                   <p>The <code>init</code> event always precedes the
+	 *                   <code>complete</code> event.</p>
+	 * @event ioError    Dispatched when an input or output error occurs that
+	 *                   causes a load operation to fail.
+	 * @event open       Dispatched when a load operation starts.
+	 * @event progress   Dispatched when data is received as the download
+	 *                   operation progresses.
+	 * @event unload     Dispatched by a LoaderInfo object whenever a loaded
+	 *                   object is removed by using the <code>unload()</code>
+	 *                   method of the Loader object, or when a second load is
+	 *                   performed by the same Loader object and the original
+	 *                   content is removed prior to the load beginning.
 	 */
-	/**
-	 * Dispatched when a full resource (including dependencies) finishes loading.
-	 *
-	 * @eventType away.events.LoaderEvent
-	 */
-	/**
-	 * Dispatched when a single dependency (which may be the main file of a resource)
-	 * finishes loading.
-	 *
-	 * @eventType away.events.LoaderEvent
-	 */
-	/**
-	 * Dispatched when an error occurs during loading. I
-	 *
-	 * @eventType away.events.LoaderEvent
-	 */
-	/**
-	 * Dispatched when an error occurs during parsing.
-	 *
-	 * @eventType away.events.ParserEvent
-	 */
-	/**
-	 * Dispatched when an image asset dimensions are not a power of 2
-	 *
-	 * @eventType away.events.AssetEvent
-	 */
-	/**
-	 * LoaderSession can load any file format that away.supports (or for which a third-party parser
-	 * has been plugged in) and it's dependencies. Events are dispatched when assets are encountered
-	 * and for when the resource (or it's dependencies) have been loaded.
-	 *
-	 * The LoaderSession will not make assets available in any other way than through the dispatched
-	 * events. To store assets and make them available at any point from any module in an application,
-	 * use the AssetLibrary to load and manage assets.
-	 *
-	 * @see away.library.AssetLibrary
-	 */
-	class LoaderSession extends EventDispatcher {
-	    private _context;
-	    private _uri;
-	    private _materialMode;
-	    private _errorHandlers;
-	    private _parseErrorHandlers;
-	    private _stack;
-	    private _baseDependency;
-	    private _currentDependency;
-	    private _namespace;
-	    private _onReadyForDependenciesDelegate;
-	    private _onParseCompleteDelegate;
-	    private _onParseErrorDelegate;
-	    private _onLoadCompleteDelegate;
-	    private _onLoadErrorDelegate;
-	    private _onTextureSizeErrorDelegate;
-	    private _onAssetCompleteDelegate;
-	    private static _parsers;
+	class LoaderInfo extends EventDispatcher {
+	    private _bytes;
+	    private _bytesLoaded;
+	    private _bytesTotal;
+	    private _content;
+	    private _contentType;
+	    private _loader;
+	    private _url;
 	    /**
-	     * Enables a specific parser.
-	     * When no specific parser is set for a loading/parsing opperation,
-	     * loader3d can autoselect the correct parser to use.
-	     * A parser must have been enabled, to be considered when autoselecting the parser.
+	     * The bytes associated with a LoaderInfo object.
 	     *
-	     * @param parser The parser class to enable.
+	     * @throws SecurityError If the object accessing this API is prevented from
+	     *                       accessing the loaded object due to security
+	     *                       restrictions. This situation can occur, for
+	     *                       instance, when a Loader object attempts to access
+	     *                       the <code>contentLoaderInfo.content</code> property
+	     *                       and it is not granted security permission to access
+	     *                       the loaded content.
 	     *
-	     * @see away.parsers.Parsers
+	     *                       <p>For more information related to security, see the
+	     *                       Flash Player Developer Center Topic: <a
+	     *                       href="http://www.adobe.com/go/devnet_security_en"
+	     *                       scope="external">Security</a>.</p>
 	     */
-	    static enableParser(parser: any): void;
+	    bytes: ByteArray;
 	    /**
-	     * Enables a list of parsers.
-	     * When no specific parser is set for a loading/parsing opperation,
-	     * LoaderSession can autoselect the correct parser to use.
-	     * A parser must have been enabled, to be considered when autoselecting the parser.
+	     * The number of bytes that are loaded for the media. When this number equals
+	     * the value of <code>bytesTotal</code>, all of the bytes are loaded.
+	     */
+	    bytesLoaded: number;
+	    /**
+	     * The number of compressed bytes in the entire media file.
 	     *
-	     * @param parsers A Vector of parser classes to enable.
-	     * @see away.parsers.Parsers
+	     * <p>Before the first <code>progress</code> event is dispatched by this
+	     * LoaderInfo object's corresponding Loader object, <code>bytesTotal</code>
+	     * is 0. After the first <code>progress</code> event from the Loader object,
+	     * <code>bytesTotal</code> reflects the actual number of bytes to be
+	     * downloaded.</p>
 	     */
-	    static enableParsers(parsers: Array<Object>): void;
+	    bytesTotal: number;
 	    /**
-	     * Returns the base dependency of the loader
-	     */
-	    baseDependency: ResourceDependency;
-	    /**
-	     * Create a new ResourceLoadSession object.
-	     */
-	    constructor(materialMode?: number);
-	    /**
-	     * Loads a file and (optionally) all of its dependencies.
+	     * The loaded object associated with this LoaderInfo object.
 	     *
-	     * @param req The URLRequest object containing the URL of the file to be loaded.
-	     * @param context An optional context object providing additional parameters for loading
-	     * @param ns An optional namespace string under which the file is to be loaded, allowing the differentiation of two resources with identical assets
-	     * @param parser An optional parser object for translating the loaded data into a usable resource. If not provided, LoaderSession will attempt to auto-detect the file type.
-	     */
-	    load(req: URLRequest, context?: LoaderContext, ns?: string, parser?: ParserBase): void;
-	    /**
-	     * Loads a resource from already loaded data.
+	     * @throws SecurityError If the object accessing this API is prevented from
+	     *                       accessing the loaded object due to security
+	     *                       restrictions. This situation can occur, for
+	     *                       instance, when a Loader object attempts to access
+	     *                       the <code>contentLoaderInfo.content</code> property
+	     *                       and it is not granted security permission to access
+	     *                       the loaded content.
 	     *
-	     * @param data The data object containing all resource information.
-	     * @param context An optional context object providing additional parameters for loading
-	     * @param ns An optional namespace string under which the file is to be loaded, allowing the differentiation of two resources with identical assets
-	     * @param parser An optional parser object for translating the loaded data into a usable resource. If not provided, LoaderSession will attempt to auto-detect the file type.
+	     *                       <p>For more information related to security, see the
+	     *                       Flash Player Developer Center Topic: <a
+	     *                       href="http://www.adobe.com/go/devnet_security_en"
+	     *                       scope="external">Security</a>.</p>
 	     */
-	    loadData(data: any, id: string, context?: LoaderContext, ns?: string, parser?: ParserBase): void;
+	    content: AssetBase;
 	    /**
-	     * Recursively retrieves the next to-be-loaded and parsed dependency on the stack, or pops the list off the
-	     * stack when complete and continues on the top set.
-	     * @param parser The parser that will translate the data into a usable resource.
+	     * The MIME type of the loaded file. The value is <code>null</code> if not
+	     * enough of the file has loaded in order to determine the type. The
+	     * following list gives the possible values:
+	     * <ul>
+	     *   <li><code>"application/x-shockwave-flash"</code></li>
+	     *   <li><code>"image/jpeg"</code></li>
+	     *   <li><code>"image/gif"</code></li>
+	     *   <li><code>"image/png"</code></li>
+	     * </ul>
 	     */
-	    private retrieveNext(parser?);
+	    contentType: string;
 	    /**
-	     * Retrieves a single dependency.
-	     * @param parser The parser that will translate the data into a usable resource.
-	     */
-	    private retrieveDependency(dependency);
-	    private joinUrl(base, end);
-	    private resolveDependencyUrl(dependency);
-	    private retrieveParserDependencies();
-	    private resolveParserDependencies();
-	    /**
-	     * Called when a single dependency loading failed, and pushes further dependencies onto the stack.
-	     * @param event
-	     */
-	    private onLoadError(event);
-	    /**
-	     * Called when a dependency parsing failed, and dispatches a <code>ParserEvent.PARSE_ERROR</code>
-	     * @param event
-	     */
-	    private onParseError(event);
-	    private onAssetComplete(event);
-	    private onReadyForDependencies(event);
-	    /**
-	     * Called when a single dependency was parsed, and pushes further dependencies onto the stack.
-	     * @param event
-	     */
-	    private onLoadComplete(event);
-	    /**
-	     * Called when parsing is complete.
-	     */
-	    private onParseComplete(event);
-	    /**
-	     * Called when an image is too large or it's dimensions are not a power of 2
-	     * @param event
-	     */
-	    private onTextureSizeError(event);
-	    private addEventListeners(loader);
-	    private removeEventListeners(loader);
-	    stop(): void;
-	    private dispose();
-	    /**
-	     * @private
-	     * This method is used by other loader classes (e.g. Loader3D and AssetLibraryBundle) to
-	     * add error event listeners to the LoaderSession instance. This system is used instead of
-	     * the regular EventDispatcher system so that the AssetLibrary error handler can be sure
-	     * that if hasEventListener() returns true, it's client code that's listening for the
-	     * event. Secondly, functions added as error handler through this custom method are
-	     * expected to return a boolean value indicating whether the event was handled (i.e.
-	     * whether they in turn had any client code listening for the event.) If no handlers
-	     * return true, the LoaderSession knows that the event wasn't handled and will throw an RTE.
-	     */
-	    _iAddParseErrorHandler(handler: any): void;
-	    _iAddErrorHandler(handler: any): void;
-	    /**
-	     * Guesses the parser to be used based on the file contents.
-	     * @param data The data to be parsed.
-	     * @param uri The url or id of the object to be parsed.
-	     * @return An instance of the guessed parser.
-	     */
-	    private getParserFromData(data);
-	    /**
-	     * Initiates parsing of the loaded dependency.
+	     * The Loader object associated with this LoaderInfo object. If this
+	     * LoaderInfo object is the <code>loaderInfo</code> property of the instance
+	     * of the main class of the SWF file, no Loader object is associated.
 	     *
-	     * @param The dependency to be parsed.
+	     * @throws SecurityError If the object accessing this API is prevented from
+	     *                       accessing the Loader object because of security
+	     *                       restrictions. This can occur, for instance, when a
+	     *                       loaded SWF file attempts to access its
+	     *                       <code>loaderInfo.loader</code> property and it is
+	     *                       not granted security permission to access the
+	     *                       loading SWF file.
+	     *
+	     *                       <p>For more information related to security, see the
+	     *                       Flash Player Developer Center Topic: <a
+	     *                       href="http://www.adobe.com/go/devnet_security_en"
+	     *                       scope="external">Security</a>.</p>
 	     */
-	    private parseDependency(dependency);
+	    loader: Loader;
 	    /**
-	     * Guesses the parser to be used based on the file extension.
-	     * @return An instance of the guessed parser.
+	     * The URL of the media being loaded.
+	     *
+	     * <p>Before the first <code>progress</code> event is dispatched by this
+	     * LoaderInfo object's corresponding Loader object, the value of the
+	     * <code>url</code> property might reflect only the initial URL specified in
+	     * the call to the <code>load()</code> method of the Loader object. After the
+	     * first <code>progress</code> event, the <code>url</code> property reflects
+	     * the media's final URL, after any redirects and relative URLs are
+	     * resolved.</p>
+	     *
+	     * <p>In some cases, the value of the <code>url</code> property is truncated;
+	     * see the <code>isURLInaccessible</code> property for details.</p>
 	     */
-	    private getParserFromSuffix(url);
+	    url: string;
 	}
-	export = LoaderSession;
+	export = LoaderInfo;
 	
 }
 
@@ -5855,14 +6099,15 @@ declare module "awayjs-core/lib/net/URLLoader" {
 	 * The URLLoader is used to load a single file, as part of a resource.
 	 *
 	 * While URLLoader can be used directly, e.g. to create a third-party asset
-	 * management system, it's recommended to use any of the classes Loader3D, LoaderSession
+	 * management system, it's recommended to use any of the classes Loader3D, Loader
 	 * and AssetLibrary instead in most cases.
 	 *
-	 * @see LoaderSession
+	 * @see Loader
 	 * @see away.library.AssetLibrary
 	 */
 	class URLLoader extends EventDispatcher {
 	    private _XHR;
+	    private _status;
 	    private _bytesLoaded;
 	    private _bytesTotal;
 	    private _dataFormat;
@@ -5873,6 +6118,7 @@ declare module "awayjs-core/lib/net/URLLoader" {
 	    private _loadErrorEvent;
 	    private _loadCompleteEvent;
 	    private _progressEvent;
+	    private _statusEvent;
 	    /**
 	     * Creates a new URLLoader object.
 	     */
@@ -6225,7 +6471,7 @@ declare module "awayjs-core/lib/parsers/ImageCubeParser" {
 }
 
 declare module "awayjs-core/lib/parsers/ParserBase" {
-	import BitmapImage2D = require("awayjs-core/lib/data/BitmapImage2D");
+	import BitmapImage2D = require("awayjs-core/lib/image/BitmapImage2D");
 	import IAsset = require("awayjs-core/lib/library/IAsset");
 	import URLRequest = require("awayjs-core/lib/net/URLRequest");
 	import EventDispatcher = require("awayjs-core/lib/events/EventDispatcher");
@@ -6236,7 +6482,7 @@ declare module "awayjs-core/lib/parsers/ParserBase" {
 	 * <code>ParserBase</code> provides an abstract base class for objects that convert blocks of data to data structures
 	 * supported by away.
 	 *
-	 * If used by <code>LoaderSession</code> to automatically determine the parser type, two public static methods should
+	 * If used by <code>Loader</code> to automatically determine the parser type, two public static methods should
 	 * be implemented, with the following signatures:
 	 *
 	 * <code>public static supportsType(extension : string) : boolean</code>
@@ -6249,7 +6495,7 @@ declare module "awayjs-core/lib/parsers/ParserBase" {
 	 * create the object that will contain the parsed data. This allows <code>ResourceManager</code> to return an object
 	 * handle regardless of whether the object was loaded or not.
 	 *
-	 * @see LoaderSession
+	 * @see Loader
 	 */
 	class ParserBase extends EventDispatcher {
 	    _isParsing: boolean;
@@ -6407,7 +6653,7 @@ declare module "awayjs-core/lib/parsers/ParserDataFormat" {
 }
 
 declare module "awayjs-core/lib/parsers/ParserUtils" {
-	import BitmapImage2D = require("awayjs-core/lib/data/BitmapImage2D");
+	import BitmapImage2D = require("awayjs-core/lib/image/BitmapImage2D");
 	import ByteArray = require("awayjs-core/lib/utils/ByteArray");
 	class ParserUtils {
 	    static arrayBufferToBase64(data: ArrayBuffer, mimeType: string): string;
@@ -6627,27 +6873,6 @@ declare module "awayjs-core/lib/parsers/WaveAudioParser" {
 	    private static parseFileType(ba);
 	}
 	export = WaveAudioParser;
-	
-}
-
-declare module "awayjs-core/lib/pool/IImageObject" {
-	/**
-	 * IImageObject is an interface for classes that are used in the rendering pipeline to render the
-	 * contents of a texture
-	 *
-	 * @class away.pool.IImageObject
-	 */
-	interface IImageObject {
-	    /**
-	     *
-	     */
-	    dispose(): any;
-	    /**
-	     *
-	     */
-	    invalidate(): any;
-	}
-	export = IImageObject;
 	
 }
 
@@ -7685,7 +7910,7 @@ declare module "awayjs-core/lib/ui/Keyboard" {
 }
 
 declare module "awayjs-core/lib/utils/BitmapImageUtils" {
-	import BlendMode = require("awayjs-core/lib/data/BlendMode");
+	import BlendMode = require("awayjs-core/lib/image/BlendMode");
 	import ColorTransform = require("awayjs-core/lib/geom/ColorTransform");
 	import Matrix = require("awayjs-core/lib/geom/Matrix");
 	import Rectangle = require("awayjs-core/lib/geom/Rectangle");
@@ -7856,7 +8081,7 @@ declare module "awayjs-core/lib/utils/IArrayBufferViewClass" {
 }
 
 declare module "awayjs-core/lib/utils/ImageUtils" {
-	import Image2D = require("awayjs-core/lib/data/Image2D");
+	import Image2D = require("awayjs-core/lib/image/Image2D");
 	class ImageUtils {
 	    private static MAX_SIZE;
 	    static isImage2DValid(image2D: Image2D): boolean;
@@ -7870,7 +8095,7 @@ declare module "awayjs-core/lib/utils/ImageUtils" {
 }
 
 declare module "awayjs-core/lib/utils/MipmapGenerator" {
-	import BitmapImage2D = require("awayjs-core/lib/data/BitmapImage2D");
+	import BitmapImage2D = require("awayjs-core/lib/image/BitmapImage2D");
 	class MipmapGenerator {
 	    private static _mipMaps;
 	    private static _mipMapUses;
@@ -7979,48 +8204,6 @@ declare module "awayjs-core/lib/utils/getTimer" {
 	 */
 	function getTimer(): number;
 	export = getTimer;
-	
-}
-
-declare module "awayjs-core/lib/vos/IAttributesBufferVO" {
-	/**
-	 * IAttributesBufferVO is an interface for classes that are used in the rendering pipeline to render the
-	 * contents of a texture
-	 *
-	 * @class away.pool.IAttributesBufferVO
-	 */
-	interface IAttributesBufferVO {
-	    /**
-	     *
-	     */
-	    dispose(): any;
-	    /**
-	     *
-	     */
-	    invalidate(): any;
-	}
-	export = IAttributesBufferVO;
-	
-}
-
-declare module "awayjs-core/lib/vos/IAttributesVO" {
-	/**
-	 * IAttributesVO is an interface for classes that are used in the rendering pipeline to render the
-	 * contents of a texture
-	 *
-	 * @class away.pool.IAttributesVO
-	 */
-	interface IAttributesVO {
-	    /**
-	     *
-	     */
-	    dispose(): any;
-	    /**
-	     *
-	     */
-	    invalidate(): any;
-	}
-	export = IAttributesVO;
 	
 }
 

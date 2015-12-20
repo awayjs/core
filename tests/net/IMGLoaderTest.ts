@@ -1,8 +1,7 @@
 import URLLoader			= require("awayjs-core/lib/net/URLLoader");
 import URLLoaderDataFormat	= require("awayjs-core/lib/net/URLLoaderDataFormat");
 import URLRequest			= require("awayjs-core/lib/net/URLRequest");
-import Event				= require("awayjs-core/lib/events/Event");
-import IOErrorEvent			= require("awayjs-core/lib/events/IOErrorEvent");
+import URLLoaderEvent		= require("awayjs-core/lib/events/URLLoaderEvent");
 import ParserUtils			= require("awayjs-core/lib/parsers/ParserUtils");
 
 class IMGLoaderTest
@@ -21,8 +20,8 @@ class IMGLoaderTest
 		
 		this.pngLoader = new URLLoader();
 		this.pngLoader.dataFormat = URLLoaderDataFormat.BLOB;
-		this.pngLoader.addEventListener(Event.COMPLETE , (event:Event) => this.pngLoaderComplete(event));
-		this.pngLoader.addEventListener(IOErrorEvent.IO_ERROR , (event:IOErrorEvent) => this.ioError(event));
+		this.pngLoader.addEventListener(URLLoaderEvent.LOAD_COMPLETE, (event:URLLoaderEvent) => this.pngLoaderComplete(event));
+		this.pngLoader.addEventListener(URLLoaderEvent.LOAD_ERROR, (event:URLLoaderEvent) => this.ioError(event));
 		this.pngLoader.load(new URLRequest('assets/2.png'));
 
 		//-----------------------------------------------------------------------------------------------
@@ -31,8 +30,8 @@ class IMGLoaderTest
 		
 		this.jpgLoader = new URLLoader();
 		this.jpgLoader.dataFormat = URLLoaderDataFormat.BLOB;
-		this.jpgLoader.addEventListener(Event.COMPLETE , (event:Event) => this.jpgLoaderComplete(event));
-		this.jpgLoader.addEventListener(IOErrorEvent.IO_ERROR , (event:IOErrorEvent) => this.ioError(event));
+		this.jpgLoader.addEventListener(URLLoaderEvent.LOAD_COMPLETE, (event:URLLoaderEvent) => this.jpgLoaderComplete(event));
+		this.jpgLoader.addEventListener(URLLoaderEvent.LOAD_ERROR, (event:URLLoaderEvent) => this.ioError(event));
 		this.jpgLoader.load(new URLRequest('assets/1.jpg'));
 
 		//-----------------------------------------------------------------------------------------------
@@ -41,8 +40,8 @@ class IMGLoaderTest
 		
 		this.noAnImageLoader = new URLLoader();
 		this.noAnImageLoader.dataFormat = URLLoaderDataFormat.BLOB;
-		this.noAnImageLoader.addEventListener(Event.COMPLETE , (event:Event) => this.noAnImageLoaderComplete(event));
-		this.noAnImageLoader.addEventListener(IOErrorEvent.IO_ERROR , (event:IOErrorEvent) => this.ioError(event));
+		this.noAnImageLoader.addEventListener(URLLoaderEvent.LOAD_COMPLETE, (event:URLLoaderEvent) => this.noAnImageLoaderComplete(event));
+		this.noAnImageLoader.addEventListener(URLLoaderEvent.LOAD_ERROR, (event:URLLoaderEvent) => this.ioError(event));
 		this.noAnImageLoader.load(new URLRequest('assets/data.txt'));
 
 		//-----------------------------------------------------------------------------------------------
@@ -51,52 +50,52 @@ class IMGLoaderTest
 		
 		this.wrongURLLoader = new URLLoader();
 		this.wrongURLLoader.dataFormat = URLLoaderDataFormat.BLOB;
-		this.wrongURLLoader.addEventListener(Event.COMPLETE , (event:Event) => this.wrongURLLoaderComplete(event));
-		this.wrongURLLoader.addEventListener(IOErrorEvent.IO_ERROR , (event:IOErrorEvent) => this.ioError(event));
+		this.wrongURLLoader.addEventListener(URLLoaderEvent.LOAD_COMPLETE, (event:URLLoaderEvent) => this.wrongURLLoaderComplete(event));
+		this.wrongURLLoader.addEventListener(URLLoaderEvent.LOAD_ERROR, (event:URLLoaderEvent) => this.ioError(event));
 		this.wrongURLLoader.load(new URLRequest('assets/iDontExist.png'));
 	}
 
-	private pngLoaderComplete(e:Event)
+	private pngLoaderComplete(e:URLLoaderEvent)
 	{
 		this.logSuccessfullLoad(e);
 		
-		var imgLoader:URLLoader = <URLLoader> e.target;
+		var imgLoader:URLLoader = e.target;
 		document.body.appendChild(ParserUtils.blobToImage(imgLoader.data));
 	}
 
-	private jpgLoaderComplete(e:Event)
+	private jpgLoaderComplete(e:URLLoaderEvent)
 	{
 		this.logSuccessfullLoad(e);
 
-		var imgLoader:URLLoader = <URLLoader> e.target;
+		var imgLoader:URLLoader = e.target;
 		document.body.appendChild(ParserUtils.blobToImage(imgLoader.data));
 	}
 
-	private noAnImageLoaderComplete(e:Event)
+	private noAnImageLoaderComplete(e:URLLoaderEvent)
 	{
 		this.logSuccessfullLoad(e);
 	}
 
-	private wrongURLLoaderComplete(e:Event)
+	private wrongURLLoaderComplete(e:URLLoaderEvent)
 	{
 		this.logSuccessfullLoad(e);
 	}
 
-	private logSuccessfullLoad(event:Event)
+	private logSuccessfullLoad(event:URLLoaderEvent)
 	{
-		var imgLoader:URLLoader = <URLLoader> event.target;
+		var imgLoader:URLLoader = event.target;
 		console.log('IMG.Event.Complete', imgLoader.url);
 	}
 
-	private ioError(event:IOErrorEvent)
+	private ioError(event:URLLoaderEvent)
 	{
-		var imgLoader:URLLoader = <URLLoader> event.target;
+		var imgLoader:URLLoader = event.target;
 		console.log('ioError', imgLoader.url);
 	}
 
-	private abortError(event:Event)
+	private abortError(event:URLLoaderEvent)
 	{
-		var imgLoader:URLLoader = <URLLoader> event.target;
+		var imgLoader:URLLoader = event.target;
 		console.log('abortError', imgLoader.url);
 	}
 }

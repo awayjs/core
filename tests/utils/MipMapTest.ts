@@ -1,10 +1,10 @@
-import BitmapImage2D		= require("awayjs-core/lib/data/BitmapImage2D");
+import BitmapImage2D		= require("awayjs-core/lib/image/BitmapImage2D");
 import Matrix				= require("awayjs-core/lib/geom/Matrix");
 import Rectangle			= require("awayjs-core/lib/geom/Rectangle");
 import URLLoader			= require("awayjs-core/lib/net/URLLoader");
 import URLLoaderDataFormat	= require("awayjs-core/lib/net/URLLoaderDataFormat");
 import URLRequest			= require("awayjs-core/lib/net/URLRequest");
-import Event				= require("awayjs-core/lib/events/Event");
+import URLLoaderEvent		= require("awayjs-core/lib/events/URLLoaderEvent");
 import ParserUtils			= require("awayjs-core/lib/parsers/ParserUtils");
 import ImageUtils			= require("awayjs-core/lib/utils/ImageUtils");
 
@@ -28,12 +28,12 @@ class MipMapTest
 		this.mipLoader  = new URLLoader();
 		this.mipLoader.dataFormat = URLLoaderDataFormat.BLOB;
 		this.mipLoader.load( mipUrlRequest );
-		this.mipLoader.addEventListener( Event.COMPLETE , (event:Event) => this.mipImgLoaded(event) );
+		this.mipLoader.addEventListener( URLLoaderEvent.LOAD_COMPLETE , (event:URLLoaderEvent) => this.mipImgLoaded(event) );
 
 		document.onmousedown = ( e ) => this.onMouseDown( e );
 	}
 
-	private mipImgLoaded(event:Event)
+	private mipImgLoaded(event:URLLoaderEvent)
 	{
 		var loader  : URLLoader        = <URLLoader > event.target;
 		var image : HTMLImageElement = ParserUtils.blobToImage(loader.data);

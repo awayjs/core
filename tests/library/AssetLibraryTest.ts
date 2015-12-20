@@ -1,9 +1,9 @@
-import BitmapImage2D		= require("awayjs-core/lib/data/BitmapImage2D");
+import BitmapImage2D		= require("awayjs-core/lib/image/BitmapImage2D");
 import AssetEvent			= require("awayjs-core/lib/events/AssetEvent");
 import LoaderEvent			= require("awayjs-core/lib/events/LoaderEvent");
 import ParserEvent			= require("awayjs-core/lib/events/ParserEvent");
 import AssetLibrary			= require("awayjs-core/lib/library/AssetLibrary");
-import LoaderSession			= require("awayjs-core/lib/library/LoaderSession");
+import Loader				= require("awayjs-core/lib/library/Loader");
 import IAsset				= require("awayjs-core/lib/library/IAsset");
 import URLRequest			= require("awayjs-core/lib/net/URLRequest");
 import ParserBase			= require("awayjs-core/lib/parsers/ParserBase");
@@ -17,22 +17,22 @@ class AssetLibraryTest
 	
 	constructor()
 	{
-		var session:LoaderSession;
+		var session:Loader;
 		
 		AssetLibrary.enableParser(JSONTextureParser);
 
-		session = AssetLibrary.getLoaderSession();
-		session.addEventListener( LoaderEvent.RESOURCE_COMPLETE , (event:LoaderEvent) => this.onResourceComplete(event) );
+		session = AssetLibrary.getLoader();
+		session.addEventListener( LoaderEvent.LOAD_COMPLETE , (event:LoaderEvent) => this.onResourceComplete(event) );
 		session.addEventListener(AssetEvent.ASSET_COMPLETE , (event:AssetEvent) => this.onAssetComplete(event) );
 		session.load(new URLRequest('assets/JSNParserTest.json') );
 
-		session = AssetLibrary.getLoaderSession();
-		session.addEventListener( LoaderEvent.RESOURCE_COMPLETE , (event:LoaderEvent) => this.onResourceComplete(event) );
+		session = AssetLibrary.getLoader();
+		session.addEventListener( LoaderEvent.LOAD_COMPLETE , (event:LoaderEvent) => this.onResourceComplete(event) );
 		session.addEventListener(AssetEvent.ASSET_COMPLETE , (event:AssetEvent) => this.onAssetComplete(event) );
 		session.load(new URLRequest('assets/1024x1024.png') );
 
-		session = AssetLibrary.getLoaderSession();
-		session.addEventListener( LoaderEvent.RESOURCE_COMPLETE , (event:LoaderEvent) => this.onResourceComplete(event) );
+		session = AssetLibrary.getLoader();
+		session.addEventListener( LoaderEvent.LOAD_COMPLETE , (event:LoaderEvent) => this.onResourceComplete(event) );
 		session.addEventListener(AssetEvent.ASSET_COMPLETE , (event:AssetEvent) => this.onAssetComplete(event) );
 		session.load(new URLRequest('assets/atlas.xml') );
 	}
@@ -59,7 +59,7 @@ class AssetLibraryTest
 	public onResourceComplete(event:LoaderEvent)
 	{
 
-		var loader : LoaderSession = <LoaderSession> event.target;
+		var loader : Loader = <Loader> event.target;
 
 		console.log( '------------------------------------------------------------------------------');
 		console.log( 'LoaderEvent.RESOURCE_COMPLETE' , event  );

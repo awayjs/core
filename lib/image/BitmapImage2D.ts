@@ -1,5 +1,5 @@
-import Image2D					= require("awayjs-core/lib/data/Image2D");
-import BlendMode				= require("awayjs-core/lib/data/BlendMode");
+import Image2D					= require("awayjs-core/lib/image/Image2D");
+import BlendMode				= require("awayjs-core/lib/image/BlendMode");
 import ColorTransform			= require("awayjs-core/lib/geom/ColorTransform");
 import Matrix					= require("awayjs-core/lib/geom/Matrix");
 import Rectangle				= require("awayjs-core/lib/geom/Rectangle");
@@ -8,8 +8,8 @@ import ByteArray				= require("awayjs-core/lib/utils/ByteArray");
 import ColorUtils				= require("awayjs-core/lib/utils/ColorUtils");
 import BitmapImageUtils			= require("awayjs-core/lib/utils/BitmapImageUtils");
 import ImageUtils				= require("awayjs-core/lib/utils/ImageUtils");
-import IImageCanvas				= require("awayjs-core/lib/data/IImageCanvas");
-import CPUCanvas = require('awayjs-core/lib/data/CPUCanvas');
+import IImageCanvas				= require("awayjs-core/lib/image/IImageCanvas");
+import CPUCanvas = require('awayjs-core/lib/image/CPUCanvas');
 /**
  * The BitmapImage2D class lets you work with the data(pixels) of a Bitmap
  * object. You can use the methods of the BitmapImage2D class to create
@@ -198,7 +198,7 @@ class BitmapImage2D extends Image2D
 			this._imageData = null;
 		}
 
-		this.invalidateContent();
+		this.invalidate();
 	}
 
 	/**
@@ -272,7 +272,7 @@ class BitmapImage2D extends Image2D
 			this._imageData = null;
 		}
 
-		this.invalidateContent();
+		this.invalidate();
 	}
 
 	/**
@@ -337,7 +337,7 @@ class BitmapImage2D extends Image2D
 			BitmapImageUtils._copyPixels(this._context, source, sourceRect, destRect);
 		}
 
-		this.invalidateContent();
+		this.invalidate();
 	}
 
 	/**
@@ -466,7 +466,7 @@ class BitmapImage2D extends Image2D
 			BitmapImageUtils._draw(this._context, source, matrix, colorTransform, blendMode, clipRect, smoothing);
 		}
 
-		this.invalidateContent();
+		this.invalidate();
 	}
 
 	/**
@@ -499,7 +499,7 @@ class BitmapImage2D extends Image2D
 			BitmapImageUtils._fillRect(this._context, rect, color, this._transparent);
 		}
 
-		this.invalidateContent();
+		this.invalidate();
 	}
 
 	/**
@@ -657,7 +657,7 @@ class BitmapImage2D extends Image2D
 			this._imageData = null;
 		}
 
-		this.invalidateContent();
+		this.invalidate();
 	}
 
 	/**
@@ -696,7 +696,7 @@ class BitmapImage2D extends Image2D
 			this._imageData = null;
 		}
 
-		this.invalidateContent();
+		this.invalidate();
 	}
 
 	/**
@@ -749,7 +749,7 @@ class BitmapImage2D extends Image2D
 			this._imageData = null;
 		}
 
-		this.invalidateContent();
+		this.invalidate();
 	}
 
 	/**
@@ -794,7 +794,7 @@ class BitmapImage2D extends Image2D
 			this._imageData = null;
 		}
 
-		this.invalidateContent();
+		this.invalidate();
 	}
 
 	/**

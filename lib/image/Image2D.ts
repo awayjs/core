@@ -1,5 +1,5 @@
-import ImageBase				= require("awayjs-core/lib/data/ImageBase");
-import Sampler2D				= require("awayjs-core/lib/data/Sampler2D");
+import ImageBase				= require("awayjs-core/lib/image/ImageBase");
+import Sampler2D				= require("awayjs-core/lib/image/Sampler2D");
 import Rectangle				= require("awayjs-core/lib/geom/Rectangle");
 import ImageUtils				= require("awayjs-core/lib/utils/ImageUtils");
 
@@ -83,7 +83,7 @@ class Image2D extends ImageBase
 	public _setSize(width:number, height:number)
 	{
 		if (this._rect.width != width || this._rect.height != height)
-			this.invalidateSize();
+			this.clear();
 
 		this._rect.width = width;
 		this._rect.height = height;

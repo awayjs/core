@@ -1,6 +1,6 @@
-import IImageCanvas                = require("awayjs-core/lib/data/IImageCanvas");
-import CPURenderingContext2D = require('awayjs-core/lib/data/CPURenderingContext2D');
-import ImageData = require('awayjs-core/lib/data/ImageData');
+import IImageCanvas                = require("awayjs-core/lib/image/IImageCanvas");
+import CPURenderingContext2D = require('awayjs-core/lib/image/CPURenderingContext2D');
+import ImageData = require('awayjs-core/lib/image/ImageData');
 
 class CPUCanvas implements IImageCanvas {
     public width:number = 1;

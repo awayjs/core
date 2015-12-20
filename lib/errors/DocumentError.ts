@@ -1,6 +1,6 @@
-import Error					= require("awayjs-core/lib/errors/Error");
+import ErrorBase				= require("awayjs-core/lib/errors/ErrorBase");
 
-class DocumentError extends Error
+class DocumentError extends ErrorBase
 {
 	public static DOCUMENT_DOES_NOT_EXIST:string = "documentDoesNotExist";
 

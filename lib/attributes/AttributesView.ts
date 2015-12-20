@@ -3,13 +3,12 @@ import IAsset					= require("awayjs-core/lib/library/IAsset");
 import AssetBase				= require("awayjs-core/lib/library/AssetBase");
 import IArrayBufferViewClass	= require("awayjs-core/lib/utils/IArrayBufferViewClass");
 
-class AttributesView extends AssetBase implements IAsset
+class AttributesView extends AssetBase
 {
 	public static assetType:string = "[attributes AttributesView]";
 
 	/**
 	 *
-	 * @returns {string}
 	 */
 	public get assetType():string
 	{

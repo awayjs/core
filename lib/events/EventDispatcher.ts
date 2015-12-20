@@ -1,4 +1,4 @@
-import Event						= require("awayjs-core/lib/events/Event");
+import EventBase					= require("awayjs-core/lib/events/EventBase");
 
 /**
  * Base class for dispatching events
@@ -8,7 +8,7 @@ import Event						= require("awayjs-core/lib/events/Event");
 */
 class EventDispatcher
 {
-	private listeners:Array<Array<Function>> = new Array<Array<Function>>();
+	private listeners:Array<Array<(event:EventBase) => void>> = new Array<Array<(event:EventBase) => void>>();
 	private target:any;
 
 	constructor(target:any = null)
@@ -22,13 +22,13 @@ class EventDispatcher
 	 * @param {String} Name of event to add a listener for
 	 * @param {Function} Callback function
 	 */
-	public addEventListener(type:string, listener:Function)
+	public addEventListener(type:string, listener:(event:EventBase) => void)
 	{
-		if (this.listeners[ type ] === undefined)
-			this.listeners[ type ] = new Array<Function>();
+		if (this.listeners[type] === undefined)
+			this.listeners[type] = new Array<(event:EventBase) => void>();
 
 		if (this.getEventListenerIndex(type, listener) === -1)
-			this.listeners[ type ].push(listener);
+			this.listeners[type].push(listener);
 	}
 
 	/**
@@ -37,12 +37,12 @@ class EventDispatcher
 	 * @param {String} Name of event to remove a listener for
 	 * @param {Function} Callback function
 	 */
-	public removeEventListener(type:string, listener:Function)
+	public removeEventListener(type:string, listener:(event:EventBase) => void)
 	{
 		var index:number = this.getEventListenerIndex(type, listener);
 
 		if (index !== -1)
-			this.listeners[ type ].splice(index, 1);
+			this.listeners[type].splice(index, 1);
 	}
 
 	/**
@@ -50,9 +50,9 @@ class EventDispatcher
 	 * @method dispatchEvent
 	 * @param {Event} Event to dispatch
 	 */
-	public dispatchEvent(event:Event)
+	public dispatchEvent(event:EventBase)
 	{
-		var listenerArray:Array<Function> = this.listeners[ event.type ];
+		var listenerArray:Array<(event:EventBase) => void> = this.listeners[event.type];
 
 		if (listenerArray !== undefined) {
 			var l:number = listenerArray.length;
@@ -70,10 +70,10 @@ class EventDispatcher
 	 * @param {String} Name of event to remove a listener for
 	 * @param {Function} Callback function
 	 */
-	private getEventListenerIndex(type:string, listener:Function):number
+	private getEventListenerIndex(type:string, listener:(event:EventBase) => void):number
 	{
-		if (this.listeners[ type ] !== undefined) {
-			var a:Array<Function> = this.listeners[ type ];
+		if (this.listeners[type] !== undefined) {
+			var a:Array<(event:EventBase) => void> = this.listeners[type];
 			var l:number = a.length;
 
 			for (var i:number = 0; i < l; i++)
@@ -90,13 +90,13 @@ class EventDispatcher
 	 * @param {String} Name of event to remove a listener for
 	 * @param {Function} Callback function
 	 */
-	public hasEventListener(type:string, listener?:Function):boolean
+	public hasEventListener(type:string, listener?:(event:EventBase) => void):boolean
 	{
 		if (listener != null) {
 			return ( this.getEventListenerIndex(type, listener) !== -1 );
 		} else {
-			if (this.listeners[ type ] !== undefined)
-				return ( this.listeners[ type ].length > 0 );
+			if (this.listeners[type] !== undefined)
+				return ( this.listeners[type].length > 0 );
 
 			return false;
 		}

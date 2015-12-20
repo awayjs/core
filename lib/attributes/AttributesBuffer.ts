@@ -1,13 +1,12 @@
 import AttributesView			= require("awayjs-core/lib/attributes/AttributesView");
+import AssetEvent				= require("awayjs-core/lib/events/AssetEvent");
 import IAsset					= require("awayjs-core/lib/library/IAsset");
 import AssetBase				= require("awayjs-core/lib/library/AssetBase");
-import IAttributesBufferVO		= require("awayjs-core/lib/vos/IAttributesBufferVO");
 
-class AttributesBuffer extends AssetBase implements IAsset
+class AttributesBuffer extends AssetBase
 {
 	public static assetType:string = "[assets AttributesBuffer]";
-
-	private _attributesBufferVO:Array<IAttributesBufferVO> = new Array<IAttributesBufferVO>();
+	
 	private _count:number = 0;
 	private _stride:number = 0;
 	private _newStride:number = 0;
@@ -43,7 +42,7 @@ class AttributesBuffer extends AssetBase implements IAsset
 
 		this._newStride = value;
 
-		this.invalidateLength();
+		this.resize();
 	}
 	
 	public get count():number
@@ -58,7 +57,7 @@ class AttributesBuffer extends AssetBase implements IAsset
 		
 		this._count = value;
 		
-		this.invalidateLength();
+		this.resize();
 	}
 
 
@@ -111,14 +110,12 @@ class AttributesBuffer extends AssetBase implements IAsset
 	/**
 	 *
 	 */
-	public invalidateContent():void
+	public invalidate():void
 	{
 		if (this._contentDirty)
 			return;
 
-		var len:number = this._attributesBufferVO.length;
-		for (var i:number = 0; i < len; i++)
-			this._attributesBufferVO[i].invalidate();
+		super.invalidate();
 
 		this._contentDirty = true;
 	}
@@ -127,13 +124,12 @@ class AttributesBuffer extends AssetBase implements IAsset
 	 *
 	 * @private
 	 */
-	public invalidateLength():void
+	public resize():void
 	{
 		if (this._lengthDirty)
 			return;
 
-		for (var i:number = this._attributesBufferVO.length - 1; i >= 0; i--)
-			this._attributesBufferVO[i].dispose();
+		this.clear();
 
 		this._lengthDirty = true;
 
@@ -164,15 +160,6 @@ class AttributesBuffer extends AssetBase implements IAsset
 		return null;
 	}
 
-	/**
-	 * @inheritDoc
-	 */
-	public dispose()
-	{
-		while (this._attributesBufferVO.length)
-			this._attributesBufferVO[0].dispose();
-	}
-
 	public _setAttributes(viewIndex:number, arrayBufferView:ArrayBufferView, offset:number = 0)
 	{
 		var array:Uint8Array = (arrayBufferView instanceof Uint8Array)? <Uint8Array> arrayBufferView : new Uint8Array(arrayBufferView.buffer);
@@ -197,7 +184,7 @@ class AttributesBuffer extends AssetBase implements IAsset
 				this._bufferView.set(array.subarray(i*vLength, (i+1)*vLength), (i+offset)*this._stride + vOffset);
 		}
 
-		this.invalidateContent();
+		this.invalidate();
 	}
 
 	public _getLocalArrayBuffer(viewIndex:number):ArrayBuffer
@@ -222,20 +209,6 @@ class AttributesBuffer extends AssetBase implements IAsset
 		return localBuffer;
 	}
 
-	public _iAddAttributesBufferVO(AttributesBufferVO:IAttributesBufferVO):IAttributesBufferVO
-	{
-		this._attributesBufferVO.push(AttributesBufferVO);
-
-		return AttributesBufferVO;
-	}
-
-	public _iRemoveAttributesBufferVO(AttributesBufferVO:IAttributesBufferVO):IAttributesBufferVO
-	{
-		this._attributesBufferVO.splice(this._attributesBufferVO.indexOf(AttributesBufferVO), 1);
-
-		return AttributesBufferVO;
-	}
-
 	public _addView(view:AttributesView)
 	{
 		var viewVO:ViewVO = new ViewVO(view);
@@ -247,7 +220,7 @@ class AttributesBuffer extends AssetBase implements IAsset
 
 		if (this._newStride < viewVO.offset + viewVO.length) {
 			this._newStride = viewVO.offset + viewVO.length;
-			this.invalidateLength();
+			this.resize();
 		}
 
 		view._index = len;
@@ -269,7 +242,7 @@ class AttributesBuffer extends AssetBase implements IAsset
 
 		this._newStride = viewVO.offset + viewVO.length;
 
-		this.invalidateLength();
+		this.resize();
 	}
 
 	public _getOffset(viewIndex:number):number

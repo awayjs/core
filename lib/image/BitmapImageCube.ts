@@ -1,6 +1,6 @@
-import BitmapImage2D			= require("awayjs-core/lib/data/BitmapImage2D");
-import ImageCube				= require("awayjs-core/lib/data/ImageCube");
-import BlendMode				= require("awayjs-core/lib/data/BlendMode");
+import BitmapImage2D			= require("awayjs-core/lib/image/BitmapImage2D");
+import ImageCube				= require("awayjs-core/lib/image/ImageCube");
+import BlendMode				= require("awayjs-core/lib/image/BlendMode");
 import ColorTransform			= require("awayjs-core/lib/geom/ColorTransform");
 import Matrix					= require("awayjs-core/lib/geom/Matrix");
 import Rectangle				= require("awayjs-core/lib/geom/Rectangle");
@@ -207,7 +207,7 @@ class BitmapImageCube extends ImageCube
 			this._imageData[side] = null;
 		}
 
-		this.invalidateContent();
+		this.invalidate();
 	}
 
 	/**
@@ -281,7 +281,7 @@ class BitmapImageCube extends ImageCube
 			this._imageData[side] = null;
 		}
 
-		this.invalidateContent();
+		this.invalidate();
 	}
 
 	/**
@@ -346,7 +346,7 @@ class BitmapImageCube extends ImageCube
 			BitmapImageUtils._copyPixels(this._context[side], source, sourceRect, destRect);
 		}
 
-		this.invalidateContent();
+		this.invalidate();
 	}
 
 	/**
@@ -476,7 +476,7 @@ class BitmapImageCube extends ImageCube
 			BitmapImageUtils._draw(this._context[side], source, matrix, colorTransform, blendMode, clipRect, smoothing);
 		}
 
-		this.invalidateContent();
+		this.invalidate();
 	}
 
 	/**
@@ -509,7 +509,7 @@ class BitmapImageCube extends ImageCube
 			BitmapImageUtils._fillRect(this._context[side], rect, color, this._transparent);
 		}
 
-		this.invalidateContent();
+		this.invalidate();
 	}
 
 	/**
@@ -669,7 +669,7 @@ class BitmapImageCube extends ImageCube
 			this._imageData[side] = null;
 		}
 
-		this.invalidateContent();
+		this.invalidate();
 	}
 
 	/**
@@ -708,7 +708,7 @@ class BitmapImageCube extends ImageCube
 			this._imageData = null;
 		}
 
-		this.invalidateContent();
+		this.invalidate();
 	}
 
 	/**
@@ -761,7 +761,7 @@ class BitmapImageCube extends ImageCube
 			this._imageData[side] = null;
 		}
 
-		this.invalidateContent();
+		this.invalidate();
 	}
 
 	/**
@@ -806,7 +806,7 @@ class BitmapImageCube extends ImageCube
 			this._imageData[side] = null;
 		}
 
-		this.invalidateContent();
+		this.invalidate();
 	}
 
 	/**

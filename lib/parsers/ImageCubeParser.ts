@@ -1,5 +1,5 @@
-import BitmapImage2D			= require("awayjs-core/lib/data/BitmapImage2D");
-import BitmapImageCube			= require("awayjs-core/lib/data/BitmapImageCube");
+import BitmapImage2D			= require("awayjs-core/lib/image/BitmapImage2D");
+import BitmapImageCube			= require("awayjs-core/lib/image/BitmapImageCube");
 import IAsset					= require("awayjs-core/lib/library/IAsset");
 import URLLoaderDataFormat		= require("awayjs-core/lib/net/URLLoaderDataFormat");
 import URLRequest				= require("awayjs-core/lib/net/URLRequest");

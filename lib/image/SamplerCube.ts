@@ -1,5 +1,5 @@
-import SamplerBase				= require("awayjs-core/lib/data/SamplerBase");
-import ImageCube				= require("awayjs-core/lib/data/ImageCube");
+import SamplerBase				= require("awayjs-core/lib/image/SamplerBase");
+import ImageCube				= require("awayjs-core/lib/image/ImageCube");
 
 /**
  * The Bitmap class represents display objects that represent bitmap images.

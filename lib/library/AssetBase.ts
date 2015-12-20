@@ -4,7 +4,7 @@ import AbstractMethodError		= require("awayjs-core/lib/errors/AbstractMethodErro
 import AssetEvent				= require("awayjs-core/lib/events/AssetEvent");
 import EventDispatcher			= require("awayjs-core/lib/events/EventDispatcher");
 
-class AssetBase extends EventDispatcher
+class AssetBase extends EventDispatcher implements IAsset
 {
 	public static ID_COUNT:number = 0;
 
@@ -74,19 +74,28 @@ class AssetBase extends EventDispatcher
 
 		this.updateFullPath();
 
-		//if (hasEventListener(AssetEvent.ASSET_RENAME))
-		this.dispatchEvent(new AssetEvent(AssetEvent.ASSET_RENAME, <IAsset> this, prev));
-
+		this.dispatchEvent(new AssetEvent(AssetEvent.RENAME, this, prev));
 	}
 
+	/**
+	 *
+	 */
+	public invalidate():void
+	{
+		this.dispatchEvent(new AssetEvent(AssetEvent.INVALIDATE, this));
+	}
+
+	/**
+	 * @inheritDoc
+	 */
 	public dispose()
 	{
-		throw new AbstractMethodError();
+		this.dispatchEvent(new AssetEvent(AssetEvent.CLEAR, this));
 	}
 
-	public _clearInterfaces()
+	public clear()
 	{
-		throw new AbstractMethodError();
+		this.dispatchEvent(new AssetEvent(AssetEvent.CLEAR, this));
 	}
 
 	public get assetNamespace():string

@@ -1,6 +1,6 @@
-import ImageData = require('awayjs-core/lib/data/ImageData');
-import CPUCanvas = require('awayjs-core/lib/data/CPUCanvas');
-import BitmapImage2D = require("awayjs-core/lib/data/BitmapImage2D");
+import ImageData = require('awayjs-core/lib/image/ImageData');
+import CPUCanvas = require('awayjs-core/lib/image/CPUCanvas');
+import BitmapImage2D = require("awayjs-core/lib/image/BitmapImage2D");
 import Matrix = require("awayjs-core/lib/geom/Matrix");
 import Point = require("awayjs-core/lib/geom/Point");
 

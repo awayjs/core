@@ -1,5 +1,5 @@
-import ImageBase				= require("awayjs-core/lib/data/ImageBase");
-import SamplerCube				= require("awayjs-core/lib/data/SamplerCube");
+import ImageBase				= require("awayjs-core/lib/image/ImageBase");
+import SamplerCube				= require("awayjs-core/lib/image/SamplerCube");
 import ImageUtils				= require("awayjs-core/lib/utils/ImageUtils");
 
 class ImageCube extends ImageBase
@@ -54,7 +54,7 @@ class ImageCube extends ImageBase
 	public _setSize(size:number)
 	{
 		if (this._size != size)
-			this.invalidateSize();
+			this.clear();
 
 		this._size = size;
 

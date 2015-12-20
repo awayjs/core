@@ -1,4 +1,4 @@
-import WaveAudio				= require("awayjs-core/lib/data/WaveAudio");
+import WaveAudio				= require("awayjs-core/lib/audio/WaveAudio");
 import IAsset					= require("awayjs-core/lib/library/IAsset");
 import URLLoaderDataFormat		= require("awayjs-core/lib/net/URLLoaderDataFormat");
 import ParserBase				= require("awayjs-core/lib/parsers/ParserBase");

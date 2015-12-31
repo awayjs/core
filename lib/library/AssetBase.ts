@@ -90,7 +90,7 @@ class AssetBase extends EventDispatcher implements IAsset
 	 */
 	public dispose()
 	{
-		this.dispatchEvent(new AssetEvent(AssetEvent.CLEAR, this));
+		this.dispatchEvent(new AssetEvent(AssetEvent.DISPOSE, this));
 	}
 
 	public clear()

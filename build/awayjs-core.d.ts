@@ -439,6 +439,10 @@ declare module "awayjs-core/lib/events/AssetEvent" {
 	     */
 	    static INVALIDATE: string;
 	    /**
+	     * Dispatched when an asset is diposed
+	     */
+	    static DISPOSE: string;
+	    /**
 	     * Dispatched when an asset is cleared
 	     */
 	    static CLEAR: string;

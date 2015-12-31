@@ -1034,6 +1034,10 @@ var AssetEvent = (function (_super) {
      */
     AssetEvent.INVALIDATE = "invalidate";
     /**
+     * Dispatched when an asset is diposed
+     */
+    AssetEvent.DISPOSE = "dispose";
+    /**
      * Dispatched when an asset is cleared
      */
     AssetEvent.CLEAR = "clear";
@@ -8453,7 +8457,7 @@ var AssetBase = (function (_super) {
      * @inheritDoc
      */
     AssetBase.prototype.dispose = function () {
-        this.dispatchEvent(new AssetEvent(AssetEvent.CLEAR, this));
+        this.dispatchEvent(new AssetEvent(AssetEvent.DISPOSE, this));
     };
     AssetBase.prototype.clear = function () {
         this.dispatchEvent(new AssetEvent(AssetEvent.CLEAR, this));

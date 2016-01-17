@@ -2524,6 +2524,7 @@ module.exports = Matrix3DUtils;
 
 },{"awayjs-core/lib/geom/Matrix3D":"awayjs-core/lib/geom/Matrix3D","awayjs-core/lib/geom/Vector3D":"awayjs-core/lib/geom/Vector3D"}],"awayjs-core/lib/geom/Matrix3D":[function(require,module,exports){
 var Box = require("awayjs-core/lib/geom/Box");
+var MathConsts = require("awayjs-core/lib/geom/MathConsts");
 var Orientation3D = require("awayjs-core/lib/geom/Orientation3D");
 var Vector3D = require("awayjs-core/lib/geom/Vector3D");
 var ArgumentError = require("awayjs-core/lib/errors/ArgumentError");
@@ -2540,6 +2541,8 @@ var Matrix3D = (function () {
          * object must be invertible. If a non-invertible matrix is needed, create a subclass of the Matrix3D object.</p>
          */
         this.rawData = new Float32Array(16);
+        this._position = new Vector3D();
+        this._positionDirty = true;
         if (v != null && v.length == 16) {
             this.copyRawDataFrom(v);
         }
@@ -2600,6 +2603,7 @@ var Matrix3D = (function () {
         this.rawData[13] = m141 * m212 + m142 * m222 + m143 * m232 + m144 * m242;
         this.rawData[14] = m141 * m213 + m142 * m223 + m143 * m233 + m144 * m243;
         this.rawData[15] = m141 * m214 + m142 * m224 + m143 * m234 + m144 * m244;
+        this._positionDirty = true;
     };
     /**
      * Appends an incremental rotation to a Matrix3D object.
@@ -2664,6 +2668,7 @@ var Matrix3D = (function () {
         this.rawData[12] += x;
         this.rawData[13] += y;
         this.rawData[14] += z;
+        this._positionDirty = true;
     };
     /**
      * Returns a new Matrix3D object that is an exact copy of the current Matrix3D object.
@@ -2847,14 +2852,10 @@ var Matrix3D = (function () {
         if (orientationStyle === void 0) { orientationStyle = "eulerAngles"; }
         var q;
         if (this._components == null)
-            this._components = [new Vector3D(), new Vector3D(), new Vector3D(), new Vector3D()];
+            this._components = [null, new Vector3D(), new Vector3D(), new Vector3D()];
         var colX = new Vector3D(this.rawData[0], this.rawData[1], this.rawData[2]);
         var colY = new Vector3D(this.rawData[4], this.rawData[5], this.rawData[6]);
         var colZ = new Vector3D(this.rawData[8], this.rawData[9], this.rawData[10]);
-        var pos = this._components[0];
-        pos.x = this.rawData[12];
-        pos.y = this.rawData[13];
-        pos.z = this.rawData[14];
         var scale = this._components[3];
         var skew = this._components[2];
         //compute X scale factor and normalise colX
@@ -2934,6 +2935,7 @@ var Matrix3D = (function () {
                 }
                 break;
         }
+        this._components[0] = this.position;
         return this._components;
     };
     /**
@@ -2973,6 +2975,7 @@ var Matrix3D = (function () {
         this.rawData[13] = 0;
         this.rawData[14] = 0;
         this.rawData[15] = 1;
+        this._positionDirty = true;
     };
     /**
      * [static] Interpolates the translation, rotation, and scale transformation of one matrix toward those of the target matrix.
@@ -3031,6 +3034,7 @@ var Matrix3D = (function () {
             this.rawData[14] = -d * (m11 * (m22 * m43 - m42 * m23) - m21 * (m12 * m43 - m42 * m13) + m41 * (m12 * m23 - m22 * m13));
             this.rawData[15] = d * (m11 * (m22 * m33 - m32 * m23) - m21 * (m12 * m33 - m32 * m13) + m31 * (m12 * m23 - m22 * m13));
         }
+        this._positionDirty = true;
         return invertable;
     };
     /* TODO implement pointAt
@@ -3090,6 +3094,7 @@ var Matrix3D = (function () {
         this.rawData[13] = m141 * m212 + m142 * m222 + m143 * m232 + m144 * m242;
         this.rawData[14] = m141 * m213 + m142 * m223 + m143 * m233 + m144 * m243;
         this.rawData[15] = m141 * m214 + m142 * m224 + m143 * m234 + m144 * m244;
+        this._positionDirty = true;
     };
     /**
      * Prepends an incremental rotation to a Matrix3D object.
@@ -3158,7 +3163,7 @@ var Matrix3D = (function () {
      * Sets the transformation matrix's translation, rotation, and scale settings.
      */
     Matrix3D.prototype.recompose = function (components) {
-        var pos = (components[0]) ? components[0] : this.position;
+        var pos = components[0] || this.position;
         this.identity();
         var scale = components[3];
         if (scale && (scale.x != 1 || scale.y != 1 || scale.z != 1))
@@ -3230,7 +3235,11 @@ var Matrix3D = (function () {
                 this.append(Matrix3D.tempMatrix);
             }
         }
-        this.position = pos;
+        this.rawData[12] = pos.x;
+        this.rawData[13] = pos.y;
+        this.rawData[14] = pos.z;
+        if (components[0])
+            this._positionDirty = true;
         this.rawData[15] = 1;
         return true;
     };
@@ -3300,11 +3309,12 @@ var Matrix3D = (function () {
         this.rawData[12] = raw[3];
         this.rawData[13] = raw[7];
         this.rawData[14] = raw[11];
+        this._positionDirty = true;
     };
     Matrix3D.getAxisRotation = function (x, y, z, degrees) {
         // internal class use by rotations which have been tested
         var m = new Matrix3D();
-        var rad = degrees * (Math.PI / 180);
+        var rad = degrees * MathConsts.DEGREES_TO_RADIANS;
         var c = Math.cos(rad);
         var s = Math.sin(rad);
         var t = 1 - c;
@@ -3342,21 +3352,20 @@ var Matrix3D = (function () {
          * transformation's frame of reference.
          */
         get: function () {
-            if (this._position == null)
-                this._position = new Vector3D();
-            this._position.x = this.rawData[12];
-            this._position.y = this.rawData[13];
-            this._position.z = this.rawData[14];
+            if (this._positionDirty) {
+                this._positionDirty = false;
+                this._position.x = this.rawData[12];
+                this._position.y = this.rawData[13];
+                this._position.z = this.rawData[14];
+            }
             return this._position;
-        },
-        set: function (value) {
-            this.rawData[12] = value.x;
-            this.rawData[13] = value.y;
-            this.rawData[14] = value.z;
         },
         enumerable: true,
         configurable: true
     });
+    Matrix3D.prototype.invalidatePosition = function () {
+        this._positionDirty = true;
+    };
     Matrix3D.prototype.toFixed = function (decimalPlace) {
         var magnitude = Math.pow(10, decimalPlace);
         return "matrix3d(" + Math.round(this.rawData[0] * magnitude) / magnitude + "," + Math.round(this.rawData[1] * magnitude) / magnitude + "," + Math.round(this.rawData[2] * magnitude) / magnitude + "," + Math.round(this.rawData[3] * magnitude) / magnitude + "," + Math.round(this.rawData[4] * magnitude) / magnitude + "," + Math.round(this.rawData[5] * magnitude) / magnitude + "," + Math.round(this.rawData[6] * magnitude) / magnitude + "," + Math.round(this.rawData[7] * magnitude) / magnitude + "," + Math.round(this.rawData[8] * magnitude) / magnitude + "," + Math.round(this.rawData[9] * magnitude) / magnitude + "," + Math.round(this.rawData[10] * magnitude) / magnitude + "," + Math.round(this.rawData[11] * magnitude) / magnitude + "," + Math.round(this.rawData[12] * magnitude) / magnitude + "," + Math.round(this.rawData[13] * magnitude) / magnitude + "," + Math.round(this.rawData[14] * magnitude) / magnitude + "," + Math.round(this.rawData[15] * magnitude) / magnitude + ")";
@@ -3370,7 +3379,7 @@ var Matrix3D = (function () {
 })();
 module.exports = Matrix3D;
 
-},{"awayjs-core/lib/errors/ArgumentError":"awayjs-core/lib/errors/ArgumentError","awayjs-core/lib/geom/Box":"awayjs-core/lib/geom/Box","awayjs-core/lib/geom/Orientation3D":"awayjs-core/lib/geom/Orientation3D","awayjs-core/lib/geom/Vector3D":"awayjs-core/lib/geom/Vector3D"}],"awayjs-core/lib/geom/Matrix":[function(require,module,exports){
+},{"awayjs-core/lib/errors/ArgumentError":"awayjs-core/lib/errors/ArgumentError","awayjs-core/lib/geom/Box":"awayjs-core/lib/geom/Box","awayjs-core/lib/geom/MathConsts":"awayjs-core/lib/geom/MathConsts","awayjs-core/lib/geom/Orientation3D":"awayjs-core/lib/geom/Orientation3D","awayjs-core/lib/geom/Vector3D":"awayjs-core/lib/geom/Vector3D"}],"awayjs-core/lib/geom/Matrix":[function(require,module,exports){
 var Point = require("awayjs-core/lib/geom/Point");
 var ArgumentError = require("awayjs-core/lib/errors/ArgumentError");
 /**
@@ -7694,7 +7703,6 @@ var __extends = this.__extends || function (d, b) {
     d.prototype = new __();
 };
 var ImageBase = require("awayjs-core/lib/image/ImageBase");
-var Sampler2D = require("awayjs-core/lib/image/Sampler2D");
 var Rectangle = require("awayjs-core/lib/geom/Rectangle");
 var ImageUtils = require("awayjs-core/lib/utils/ImageUtils");
 var Image2D = (function (_super) {
@@ -7801,22 +7809,18 @@ var Image2D = (function (_super) {
         enumerable: true,
         configurable: true
     });
-    Image2D.prototype.createSampler = function () {
-        return new Sampler2D();
-    };
     Image2D.assetType = "[image Image2D]";
     return Image2D;
 })(ImageBase);
 module.exports = Image2D;
 
-},{"awayjs-core/lib/geom/Rectangle":"awayjs-core/lib/geom/Rectangle","awayjs-core/lib/image/ImageBase":"awayjs-core/lib/image/ImageBase","awayjs-core/lib/image/Sampler2D":"awayjs-core/lib/image/Sampler2D","awayjs-core/lib/utils/ImageUtils":"awayjs-core/lib/utils/ImageUtils"}],"awayjs-core/lib/image/ImageBase":[function(require,module,exports){
+},{"awayjs-core/lib/geom/Rectangle":"awayjs-core/lib/geom/Rectangle","awayjs-core/lib/image/ImageBase":"awayjs-core/lib/image/ImageBase","awayjs-core/lib/utils/ImageUtils":"awayjs-core/lib/utils/ImageUtils"}],"awayjs-core/lib/image/ImageBase":[function(require,module,exports){
 var __extends = this.__extends || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
     __.prototype = b.prototype;
     d.prototype = new __();
 };
-var AbstractMethodError = require("awayjs-core/lib/errors/AbstractMethodError");
 var AssetBase = require("awayjs-core/lib/library/AssetBase");
 var ImageBase = (function (_super) {
     __extends(ImageBase, _super);
@@ -7838,14 +7842,11 @@ var ImageBase = (function (_super) {
         enumerable: true,
         configurable: true
     });
-    ImageBase.prototype.createSampler = function () {
-        throw new AbstractMethodError();
-    };
     return ImageBase;
 })(AssetBase);
 module.exports = ImageBase;
 
-},{"awayjs-core/lib/errors/AbstractMethodError":"awayjs-core/lib/errors/AbstractMethodError","awayjs-core/lib/library/AssetBase":"awayjs-core/lib/library/AssetBase"}],"awayjs-core/lib/image/ImageCube":[function(require,module,exports){
+},{"awayjs-core/lib/library/AssetBase":"awayjs-core/lib/library/AssetBase"}],"awayjs-core/lib/image/ImageCube":[function(require,module,exports){
 var __extends = this.__extends || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
@@ -7853,7 +7854,6 @@ var __extends = this.__extends || function (d, b) {
     d.prototype = new __();
 };
 var ImageBase = require("awayjs-core/lib/image/ImageBase");
-var SamplerCube = require("awayjs-core/lib/image/SamplerCube");
 var ImageUtils = require("awayjs-core/lib/utils/ImageUtils");
 var ImageCube = (function (_super) {
     __extends(ImageCube, _super);
@@ -7911,15 +7911,12 @@ var ImageCube = (function (_super) {
         if (!ImageUtils.isDimensionValid(this._size))
             throw new Error("Invalid dimension: Width and height must be power of 2 and cannot exceed 2048");
     };
-    ImageCube.prototype.createSampler = function () {
-        return new SamplerCube();
-    };
     ImageCube.assetType = "[image ImageCube]";
     return ImageCube;
 })(ImageBase);
 module.exports = ImageCube;
 
-},{"awayjs-core/lib/image/ImageBase":"awayjs-core/lib/image/ImageBase","awayjs-core/lib/image/SamplerCube":"awayjs-core/lib/image/SamplerCube","awayjs-core/lib/utils/ImageUtils":"awayjs-core/lib/utils/ImageUtils"}],"awayjs-core/lib/image/ImageData":[function(require,module,exports){
+},{"awayjs-core/lib/image/ImageBase":"awayjs-core/lib/image/ImageBase","awayjs-core/lib/utils/ImageUtils":"awayjs-core/lib/utils/ImageUtils"}],"awayjs-core/lib/image/ImageData":[function(require,module,exports){
 var ImageData = (function () {
     function ImageData(width, height) {
         this.width = width;
@@ -11472,7 +11469,6 @@ var URLLoaderDataFormat = require("awayjs-core/lib/net/URLLoaderDataFormat");
 var ParserBase = require("awayjs-core/lib/parsers/ParserBase");
 var ParserUtils = require("awayjs-core/lib/parsers/ParserUtils");
 var ByteArray = require("awayjs-core/lib/utils/ByteArray");
-var ImageUtils = require("awayjs-core/lib/utils/ImageUtils");
 /**
  * Image2DParser provides a "parser" for natively supported image types (jpg, png). While it simply loads bytes into
  * a loader object, it wraps it in a BitmapDataResource so resource management can happen consistently without
@@ -11536,20 +11532,15 @@ var Image2DParser = (function (_super) {
             return ParserBase.MORE_TO_PARSE;
         }
         else if (this._htmlImageElement) {
-            if (ImageUtils.isHTMLImageElementValid(this._htmlImageElement)) {
-                asset = ParserUtils.imageToBitmapImage2D(this._htmlImageElement);
-                this._pFinalizeAsset(asset, this._iFileName);
-            }
+            //if (ImageUtils.isHTMLImageElementValid(this._htmlImageElement)) {
+            asset = ParserUtils.imageToBitmapImage2D(this._htmlImageElement, false);
+            this._pFinalizeAsset(asset, this._iFileName);
         }
         else if (this.data instanceof HTMLImageElement) {
             var htmlImageElement = this.data;
-            if (ImageUtils.isHTMLImageElementValid(htmlImageElement)) {
-                asset = ParserUtils.imageToBitmapImage2D(htmlImageElement);
-                this._pFinalizeAsset(asset, this._iFileName);
-            }
-            else {
-                sizeError = true;
-            }
+            //if (ImageUtils.isHTMLImageElementValid(htmlImageElement)) {
+            asset = ParserUtils.imageToBitmapImage2D(htmlImageElement, false);
+            this._pFinalizeAsset(asset, this._iFileName);
         }
         else if (this.data instanceof ByteArray) {
             var ba = this.data;
@@ -11560,17 +11551,13 @@ var Image2DParser = (function (_super) {
                 this._loadingImage = true;
                 return ParserBase.MORE_TO_PARSE;
             }
-            if (ImageUtils.isHTMLImageElementValid(this._htmlImageElement)) {
-                asset = ParserUtils.imageToBitmapImage2D(this._htmlImageElement);
-                this._pFinalizeAsset(asset, this._iFileName);
-            }
-            else {
-                sizeError = true;
-            }
+            //if (ImageUtils.isHTMLImageElementValid(this._htmlImageElement)) {
+            asset = ParserUtils.imageToBitmapImage2D(this._htmlImageElement, false);
+            this._pFinalizeAsset(asset, this._iFileName);
         }
         else if (this.data instanceof ArrayBuffer) {
             this._htmlImageElement = ParserUtils.arrayBufferToImage(this.data);
-            asset = ParserUtils.imageToBitmapImage2D(this._htmlImageElement);
+            asset = ParserUtils.imageToBitmapImage2D(this._htmlImageElement, false);
             this._pFinalizeAsset(asset, this._iFileName);
         }
         else if (this.data instanceof Blob) {
@@ -11591,7 +11578,7 @@ var Image2DParser = (function (_super) {
 })(ParserBase);
 module.exports = Image2DParser;
 
-},{"awayjs-core/lib/net/URLLoaderDataFormat":"awayjs-core/lib/net/URLLoaderDataFormat","awayjs-core/lib/parsers/ParserBase":"awayjs-core/lib/parsers/ParserBase","awayjs-core/lib/parsers/ParserUtils":"awayjs-core/lib/parsers/ParserUtils","awayjs-core/lib/utils/ByteArray":"awayjs-core/lib/utils/ByteArray","awayjs-core/lib/utils/ImageUtils":"awayjs-core/lib/utils/ImageUtils"}],"awayjs-core/lib/parsers/ImageCubeParser":[function(require,module,exports){
+},{"awayjs-core/lib/net/URLLoaderDataFormat":"awayjs-core/lib/net/URLLoaderDataFormat","awayjs-core/lib/parsers/ParserBase":"awayjs-core/lib/parsers/ParserBase","awayjs-core/lib/parsers/ParserUtils":"awayjs-core/lib/parsers/ParserUtils","awayjs-core/lib/utils/ByteArray":"awayjs-core/lib/utils/ByteArray"}],"awayjs-core/lib/parsers/ImageCubeParser":[function(require,module,exports){
 var __extends = this.__extends || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
@@ -14900,15 +14887,16 @@ var ImageUtils = (function () {
     ImageUtils.isImage2DValid = function (image2D) {
         if (image2D == null)
             return true;
-        return ImageUtils.isDimensionValid(image2D.width) && ImageUtils.isDimensionValid(image2D.height);
+        return ImageUtils.isDimensionValid(image2D.width, image2D.powerOfTwo) && ImageUtils.isDimensionValid(image2D.height, image2D.powerOfTwo);
     };
     ImageUtils.isHTMLImageElementValid = function (image) {
         if (image == null)
             return true;
         return ImageUtils.isDimensionValid(image.width) && ImageUtils.isDimensionValid(image.height);
     };
-    ImageUtils.isDimensionValid = function (d) {
-        return d >= 1 && d <= ImageUtils.MAX_SIZE && ImageUtils.isPowerOfTwo(d);
+    ImageUtils.isDimensionValid = function (d, powerOfTwo) {
+        if (powerOfTwo === void 0) { powerOfTwo = true; }
+        return d >= 1 && d <= ImageUtils.MAX_SIZE && (!powerOfTwo || ImageUtils.isPowerOfTwo(d));
     };
     ImageUtils.isPowerOfTwo = function (value) {
         return value ? ((value & -value) == value) : false;

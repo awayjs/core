@@ -114,11 +114,6 @@ class Image2D extends ImageBase
 		this._powerOfTwo = value;
 		this._testDimensions();
 	}
-
-	public createSampler():Sampler2D
-	{
-		return new Sampler2D();
-	}
 }
 
 export = Image2D;

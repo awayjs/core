@@ -24,11 +24,6 @@ class ImageBase extends AssetBase
 	{
 		return this._pFormat;
 	}
-
-	public createSampler():SamplerBase
-	{
-		throw new AbstractMethodError();
-	}
 }
 
 export = ImageBase;

@@ -93,19 +93,19 @@ class Image2DParser extends ParserBase
 		if (this._loadingImage) {
 			return ParserBase.MORE_TO_PARSE;
 		} else if (this._htmlImageElement) {
-			if (ImageUtils.isHTMLImageElementValid(this._htmlImageElement)) {
-				asset = ParserUtils.imageToBitmapImage2D(this._htmlImageElement);
+			//if (ImageUtils.isHTMLImageElementValid(this._htmlImageElement)) {
+				asset = ParserUtils.imageToBitmapImage2D(this._htmlImageElement, false);
 				this._pFinalizeAsset(<IAsset> asset, this._iFileName);
-			}
+			//}
 		} else if (this.data instanceof HTMLImageElement) {// Parse HTMLImageElement
 			var htmlImageElement:HTMLImageElement = <HTMLImageElement> this.data;
-			if (ImageUtils.isHTMLImageElementValid(htmlImageElement)) {
+			//if (ImageUtils.isHTMLImageElementValid(htmlImageElement)) {
 
-				asset = ParserUtils.imageToBitmapImage2D(htmlImageElement);
+				asset = ParserUtils.imageToBitmapImage2D(htmlImageElement, false);
 				this._pFinalizeAsset(<IAsset> asset, this._iFileName);
-			} else {
-				sizeError = true;
-			}
+			//} else {
+			//	sizeError = true;
+			//}
 
 		} else if (this.data instanceof ByteArray) { // Parse a ByteArray
 
@@ -120,19 +120,19 @@ class Image2DParser extends ParserBase
 				return ParserBase.MORE_TO_PARSE;
 			}
 
-			if (ImageUtils.isHTMLImageElementValid(this._htmlImageElement)) {
-				asset = ParserUtils.imageToBitmapImage2D(this._htmlImageElement);
+			//if (ImageUtils.isHTMLImageElementValid(this._htmlImageElement)) {
+				asset = ParserUtils.imageToBitmapImage2D(this._htmlImageElement, false);
 				this._pFinalizeAsset(<IAsset> asset, this._iFileName);
-			} else {
-				sizeError = true;
-
-			}
+			//} else {
+			//	sizeError = true;
+			//
+			//}
 
 		} else if (this.data instanceof ArrayBuffer) {// Parse an ArrayBuffer
 
 			this._htmlImageElement = ParserUtils.arrayBufferToImage(this.data);
 
-			asset = ParserUtils.imageToBitmapImage2D(this._htmlImageElement);
+			asset = ParserUtils.imageToBitmapImage2D(this._htmlImageElement, false);
 			this._pFinalizeAsset(<IAsset> asset, this._iFileName);
 
 		} else if (this.data instanceof Blob) { // Parse a Blob

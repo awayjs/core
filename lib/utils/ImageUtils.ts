@@ -9,7 +9,7 @@ class ImageUtils
 		if (image2D == null)
 			return true;
 
-		return ImageUtils.isDimensionValid(image2D.width) && ImageUtils.isDimensionValid(image2D.height);
+		return ImageUtils.isDimensionValid(image2D.width, image2D.powerOfTwo) && ImageUtils.isDimensionValid(image2D.height, image2D.powerOfTwo);
 	}
 
 	public static isHTMLImageElementValid(image:HTMLImageElement):boolean
@@ -20,9 +20,9 @@ class ImageUtils
 		return ImageUtils.isDimensionValid(image.width) && ImageUtils.isDimensionValid(image.height);
 	}
 
-	public static isDimensionValid(d:number):boolean
+	public static isDimensionValid(d:number, powerOfTwo:boolean = true):boolean
 	{
-		return d >= 1 && d <= ImageUtils.MAX_SIZE && ImageUtils.isPowerOfTwo(d);
+		return d >= 1 && d <= ImageUtils.MAX_SIZE && (!powerOfTwo || ImageUtils.isPowerOfTwo(d));
 	}
 
 	public static isPowerOfTwo(value:number):boolean

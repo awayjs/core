@@ -1,8 +1,9 @@
-import Box						= require("awayjs-core/lib/geom/Box");
-import Orientation3D			= require("awayjs-core/lib/geom/Orientation3D");
-import Quaternion				= require("awayjs-core/lib/geom/Quaternion");
-import Vector3D					= require("awayjs-core/lib/geom/Vector3D");
-import ArgumentError			= require("awayjs-core/lib/errors/ArgumentError");
+import Box							= require("awayjs-core/lib/geom/Box");
+import MathConsts					= require("awayjs-core/lib/geom/MathConsts");
+import Orientation3D				= require("awayjs-core/lib/geom/Orientation3D");
+import Quaternion					= require("awayjs-core/lib/geom/Quaternion");
+import Vector3D						= require("awayjs-core/lib/geom/Vector3D");
+import ArgumentError				= require("awayjs-core/lib/errors/ArgumentError");
 
 class Matrix3D
 {
@@ -17,7 +18,8 @@ class Matrix3D
 	private static tempMatrix:Matrix3D = new Matrix3D();
 	private static tempRawData:Float32Array = Matrix3D.tempMatrix.rawData;
 
-	private _position:Vector3D;
+	private _position:Vector3D = new Vector3D();
+	private _positionDirty:boolean = true;
 
 	private _components:Array<Vector3D>;
 
@@ -92,6 +94,8 @@ class Matrix3D
 		this.rawData[13] = m141*m212 + m142*m222 + m143*m232 + m144*m242;
 		this.rawData[14] = m141*m213 + m142*m223 + m143*m233 + m144*m243;
 		this.rawData[15] = m141*m214 + m142*m224 + m143*m234 + m144*m244;
+
+		this._positionDirty = true;
 	}
 
 	/**
@@ -173,6 +177,8 @@ class Matrix3D
 		this.rawData[12] += x;
 		this.rawData[13] += y;
 		this.rawData[14] += z;
+
+		this._positionDirty = true;
 	}
 
 	/**
@@ -376,16 +382,11 @@ class Matrix3D
 		var q:Quaternion;
 
 		if (this._components == null)
-			this._components = [new Vector3D(), new Vector3D(), new Vector3D(), new Vector3D()];
+			this._components = [null, new Vector3D(), new Vector3D(), new Vector3D()];
 
 		var colX:Vector3D = new Vector3D(this.rawData[0], this.rawData[1], this.rawData[2]);
 		var colY:Vector3D = new Vector3D(this.rawData[4], this.rawData[5], this.rawData[6]);
 		var colZ:Vector3D = new Vector3D(this.rawData[8], this.rawData[9], this.rawData[10]);
-
-		var pos:Vector3D = this._components[0];
-		pos.x = this.rawData[12];
-		pos.y = this.rawData[13];
-		pos.z = this.rawData[14];
 
 		var scale:Vector3D = this._components[3];
 		var skew:Vector3D = this._components[2];
@@ -485,6 +486,8 @@ class Matrix3D
 				break;
 		}
 
+		this._components[0] = this.position;
+
 		return this._components;
 	}
 
@@ -530,6 +533,8 @@ class Matrix3D
 		this.rawData[13] = 0;
 		this.rawData[14] = 0;
 		this.rawData[15] = 1;
+
+		this._positionDirty = true;
 	}
 
 	/**
@@ -597,6 +602,9 @@ class Matrix3D
 			this.rawData[14] = -d*(m11*(m22*m43 - m42*m23) - m21*(m12*m43 - m42*m13) + m41*(m12*m23 - m22*m13));
 			this.rawData[15] = d*(m11*(m22*m33 - m32*m23) - m21*(m12*m33 - m32*m13) + m31*(m12*m23 - m22*m13));
 		}
+
+		this._positionDirty = true;
+
 		return invertable;
 	}
 
@@ -664,6 +672,8 @@ class Matrix3D
 		this.rawData[13] = m141*m212 + m142*m222 + m143*m232 + m144*m242;
 		this.rawData[14] = m141*m213 + m142*m223 + m143*m233 + m144*m243;
 		this.rawData[15] = m141*m214 + m142*m224 + m143*m234 + m144*m244;
+
+		this._positionDirty = true;
 	}
 
 	/**
@@ -752,7 +762,7 @@ class Matrix3D
 	 */
 	public recompose(components:Vector3D[]):boolean
 	{
-		var pos:Vector3D = (components[0])? components[0] : this.position;
+		var pos:Vector3D = components[0] || this.position;
 
 		this.identity();
 		var scale:Vector3D = components[3];
@@ -841,7 +851,13 @@ class Matrix3D
 			}
 		}
 
-		this.position = pos;
+		this.rawData[12] = pos.x;
+		this.rawData[13] = pos.y;
+		this.rawData[14] = pos.z;
+
+		if (components[0])
+			this._positionDirty = true;
+
 		this.rawData[15] = 1;
 
 		return true;
@@ -929,6 +945,8 @@ class Matrix3D
 		this.rawData[12] = raw[3];
 		this.rawData[13] = raw[7];
 		this.rawData[14] = raw[11];
+
+		this._positionDirty = true;
 	}
 
 	static getAxisRotation(x:number, y:number, z:number, degrees:number):Matrix3D
@@ -938,7 +956,7 @@ class Matrix3D
 
 		var m:Matrix3D = new Matrix3D();
 
-		var rad = degrees*( Math.PI/180 );
+		var rad = degrees*MathConsts.DEGREES_TO_RADIANS;
 		var c:number = Math.cos(rad);
 		var s:number = Math.sin(rad);
 		var t:number = 1 - c;
@@ -978,21 +996,19 @@ class Matrix3D
 	 */
 	public get position():Vector3D
 	{
-		if (this._position == null)
-			this._position = new Vector3D();
-
-		this._position.x = this.rawData[12];
-		this._position.y = this.rawData[13];
-		this._position.z = this.rawData[14];
+		if (this._positionDirty) {
+			this._positionDirty = false;
+			this._position.x = this.rawData[12];
+			this._position.y = this.rawData[13];
+			this._position.z = this.rawData[14];
+		}
 
 		return this._position;
 	}
 
-	public set position(value:Vector3D)
+	public invalidatePosition()
 	{
-		this.rawData[12] = value.x;
-		this.rawData[13] = value.y;
-		this.rawData[14] = value.z;
+		this._positionDirty = true;
 	}
 
 	public toFixed(decimalPlace:number):string

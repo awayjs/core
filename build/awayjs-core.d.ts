@@ -1617,6 +1617,7 @@ declare module "awayjs-core/lib/geom/Matrix3D" {
 	    private static tempMatrix;
 	    private static tempRawData;
 	    private _position;
+	    private _positionDirty;
 	    private _components;
 	    /**
 	     * Creates a Matrix3D object.
@@ -1737,6 +1738,7 @@ declare module "awayjs-core/lib/geom/Matrix3D" {
 	     * transformation's frame of reference.
 	     */
 	    position: Vector3D;
+	    invalidatePosition(): void;
 	    toFixed(decimalPlace: number): string;
 	    toString(): string;
 	}
@@ -4385,7 +4387,6 @@ declare module "awayjs-core/lib/image/IImageCanvas" {
 
 declare module "awayjs-core/lib/image/Image2D" {
 	import ImageBase = require("awayjs-core/lib/image/ImageBase");
-	import Sampler2D = require("awayjs-core/lib/image/Sampler2D");
 	import Rectangle = require("awayjs-core/lib/geom/Rectangle");
 	class Image2D extends ImageBase {
 	    static assetType: string;
@@ -4431,14 +4432,12 @@ declare module "awayjs-core/lib/image/Image2D" {
 	     * @returns {boolean}
 	     */
 	    powerOfTwo: boolean;
-	    createSampler(): Sampler2D;
 	}
 	export = Image2D;
 	
 }
 
 declare module "awayjs-core/lib/image/ImageBase" {
-	import SamplerBase = require("awayjs-core/lib/image/SamplerBase");
 	import AssetBase = require("awayjs-core/lib/library/AssetBase");
 	class ImageBase extends AssetBase {
 	    _pFormat: string;
@@ -4451,7 +4450,6 @@ declare module "awayjs-core/lib/image/ImageBase" {
 	     * @returns {string}
 	     */
 	    format: string;
-	    createSampler(): SamplerBase;
 	}
 	export = ImageBase;
 	
@@ -4459,7 +4457,6 @@ declare module "awayjs-core/lib/image/ImageBase" {
 
 declare module "awayjs-core/lib/image/ImageCube" {
 	import ImageBase = require("awayjs-core/lib/image/ImageBase");
-	import SamplerCube = require("awayjs-core/lib/image/SamplerCube");
 	class ImageCube extends ImageBase {
 	    static assetType: string;
 	    _size: number;
@@ -4488,7 +4485,6 @@ declare module "awayjs-core/lib/image/ImageCube" {
 	     * @private
 	     */
 	    private _testDimensions();
-	    createSampler(): SamplerCube;
 	}
 	export = ImageCube;
 	
@@ -8090,7 +8086,7 @@ declare module "awayjs-core/lib/utils/ImageUtils" {
 	    private static MAX_SIZE;
 	    static isImage2DValid(image2D: Image2D): boolean;
 	    static isHTMLImageElementValid(image: HTMLImageElement): boolean;
-	    static isDimensionValid(d: number): boolean;
+	    static isDimensionValid(d: number, powerOfTwo?: boolean): boolean;
 	    static isPowerOfTwo(value: number): boolean;
 	    static getBestPowerOf2(value: number): number;
 	}

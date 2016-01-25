@@ -515,8 +515,8 @@ class Box
 		var py:number = position.y - centerY;
 		var pz:number = position.z - centerZ;
 
-		var vx:number = direction.x
-		var vy:number = direction.y
+		var vx:number = direction.x;
+		var vy:number = direction.y;
 		var vz:number = direction.z;
 
 		var ix:number;

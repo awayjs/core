@@ -527,7 +527,7 @@ declare module "awayjs-core/lib/events/EventDispatcher" {
 	*
 	*/
 	class EventDispatcher {
-	    private listeners;
+	    private listenerObjects;
 	    private target;
 	    constructor(target?: any);
 	    /**
@@ -550,13 +550,6 @@ declare module "awayjs-core/lib/events/EventDispatcher" {
 	     * @param {Event} Event to dispatch
 	     */
 	    dispatchEvent(event: EventBase): void;
-	    /**
-	     * get Event Listener Index in array. Returns -1 if no listener is added
-	     * @method getEventListenerIndex
-	     * @param {String} Name of event to remove a listener for
-	     * @param {Function} Callback function
-	     */
-	    private getEventListenerIndex(type, listener);
 	    /**
 	     * check if an object has an event listener assigned to it
 	     * @method hasListener

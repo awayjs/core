@@ -2675,50 +2675,6 @@ declare module "awayjs-core/lib/geom/Sphere" {
 	
 }
 
-declare module "awayjs-core/lib/geom/UVTransform" {
-	import Matrix = require("awayjs-core/lib/geom/Matrix");
-	class UVTransform {
-	    private _uvMatrix;
-	    private _uvMatrixDirty;
-	    private _rotation;
-	    private _scaleU;
-	    private _scaleV;
-	    private _offsetU;
-	    private _offsetV;
-	    /**
-	     *
-	     */
-	    offsetU: number;
-	    /**
-	     *
-	     */
-	    offsetV: number;
-	    /**
-	     *
-	     */
-	    rotation: number;
-	    /**
-	     *
-	     */
-	    scaleU: number;
-	    /**
-	     *
-	     */
-	    scaleV: number;
-	    /**
-	     *
-	     */
-	    matrix: Matrix;
-	    constructor();
-	    /**
-	     * @private
-	     */
-	    private updateUVMatrix();
-	}
-	export = UVTransform;
-	
-}
-
 declare module "awayjs-core/lib/geom/Vector3D" {
 	/**
 	 * The Vector3D class represents a point or a location in the three-dimensional

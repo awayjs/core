@@ -153,6 +153,9 @@ class AttributesView extends AssetBase
 	 */
 	public dispose()
 	{
+		if (!this._attributesBuffer)
+			return;
+
 		this._attributesBuffer._removeView(this);
 		this._attributesBuffer = null;
 		this._localArrayBuffer = null;

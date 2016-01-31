@@ -373,6 +373,8 @@ var AttributesView = (function (_super) {
      * @inheritDoc
      */
     AttributesView.prototype.dispose = function () {
+        if (!this._attributesBuffer)
+            return;
         this._attributesBuffer._removeView(this);
         this._attributesBuffer = null;
         this._localArrayBuffer = null;

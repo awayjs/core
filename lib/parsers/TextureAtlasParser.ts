@@ -137,7 +137,7 @@ class TextureAtlasParser extends ParserBase
 					width = XmlUtils.readAttributeValue(element, "width");
 					height = XmlUtils.readAttributeValue(element, "height");
 					if (x || y || width || height)
-						sampler.imageRect = new Rectangle(parseInt(x), parseInt(y), parseInt(width), parseInt(height));
+						sampler.imageRect = new Rectangle(parseInt(x)/this._imageData.width, parseInt(y)/this._imageData.height, parseInt(width)/this._imageData.width, parseInt(height)/this._imageData.height);
 
 					//setup frame rect
 					x = XmlUtils.readAttributeValue(element, "frameX");

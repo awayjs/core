@@ -1061,6 +1061,7 @@ declare module "awayjs-core/lib/geom/Box" {
 	     *
 	     */
 	    setEmpty(): void;
+	    setBoundIdentity(): void;
 	    /**
 	     * Sets the members of Box to the specified values
 	     *
@@ -1095,7 +1096,7 @@ declare module "awayjs-core/lib/geom/Box" {
 	     * @param toUnion A Box object to add to this Box object.
 	     * @return A new Box object that is the union of the two boxes.
 	     */
-	    union(toUnion: Box): Box;
+	    union(toUnion: Box, target?: Box): Box;
 	}
 	export = Box;
 	
@@ -5217,8 +5218,9 @@ declare module "awayjs-core/lib/library/ErrorConflictStrategy" {
 
 declare module "awayjs-core/lib/library/IAbstractionPool" {
 	import IAsset = require("awayjs-core/lib/library/IAsset");
+	import AbstractionBase = require("awayjs-core/lib/library/AbstractionBase");
 	interface IAbstractionPool {
-	    getAbstraction(asset: IAsset): any;
+	    getAbstraction(asset: IAsset): AbstractionBase;
 	    clearAbstraction(asset: IAsset): any;
 	}
 	export = IAbstractionPool;

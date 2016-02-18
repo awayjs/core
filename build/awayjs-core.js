@@ -2019,6 +2019,14 @@ var Box = (function () {
         this.height = 0;
         this.depth = 0;
     };
+    Box.prototype.setBoundIdentity = function () {
+        this.x = Number.MAX_VALUE / 2;
+        this.y = Number.MAX_VALUE / 2;
+        this.z = Number.MAX_VALUE / 2;
+        this.width = -Number.MAX_VALUE;
+        this.height = -Number.MAX_VALUE;
+        this.depth = -Number.MAX_VALUE;
+    };
     /**
      * Sets the members of Box to the specified values
      *
@@ -2062,45 +2070,47 @@ var Box = (function () {
      * @param toUnion A Box object to add to this Box object.
      * @return A new Box object that is the union of the two boxes.
      */
-    Box.prototype.union = function (toUnion) {
-        var u = new Box();
+    Box.prototype.union = function (toUnion, target) {
+        if (target === void 0) { target = null; }
+        if (target == null)
+            target = new Box();
         if (this.x < toUnion.x) {
-            u.x = this.x;
-            u.width = toUnion.x - this.x + toUnion.width;
-            if (u.width < this.width)
-                u.width = this.width;
+            target.x = this.x;
+            target.width = toUnion.x - this.x + toUnion.width;
+            if (target.width < this.width)
+                target.width = this.width;
         }
         else {
-            u.x = toUnion.x;
-            u.width = this.x - toUnion.x + this.width;
-            if (u.width < toUnion.width)
-                u.width = toUnion.width;
+            target.x = toUnion.x;
+            target.width = this.x - toUnion.x + this.width;
+            if (target.width < toUnion.width)
+                target.width = toUnion.width;
         }
         if (this.y < toUnion.y) {
-            u.y = this.y;
-            u.height = toUnion.y - this.y + toUnion.height;
-            if (u.height < this.height)
-                u.height = this.height;
+            target.y = this.y;
+            target.height = toUnion.y - this.y + toUnion.height;
+            if (target.height < this.height)
+                target.height = this.height;
         }
         else {
-            u.y = toUnion.y;
-            u.height = this.y - toUnion.y + this.height;
-            if (u.height < toUnion.height)
-                u.height = toUnion.height;
+            target.y = toUnion.y;
+            target.height = this.y - toUnion.y + this.height;
+            if (target.height < toUnion.height)
+                target.height = toUnion.height;
         }
         if (this.z < toUnion.z) {
-            u.z = this.z;
-            u.depth = toUnion.z - this.z + toUnion.depth;
-            if (u.depth < this.depth)
-                u.depth = this.depth;
+            target.z = this.z;
+            target.depth = toUnion.z - this.z + toUnion.depth;
+            if (target.depth < this.depth)
+                target.depth = this.depth;
         }
         else {
-            u.z = toUnion.z;
-            u.depth = this.z - toUnion.z + this.depth;
-            if (u.depth < toUnion.depth)
-                u.depth = toUnion.depth;
+            target.z = toUnion.z;
+            target.depth = this.z - toUnion.z + this.depth;
+            if (target.depth < toUnion.depth)
+                target.depth = toUnion.depth;
         }
-        return u;
+        return target;
     };
     return Box;
 })();
@@ -12379,7 +12389,7 @@ var TextureAtlasParser = (function (_super) {
                     width = XmlUtils.readAttributeValue(element, "width");
                     height = XmlUtils.readAttributeValue(element, "height");
                     if (x || y || width || height)
-                        sampler.imageRect = new Rectangle(parseInt(x), parseInt(y), parseInt(width), parseInt(height));
+                        sampler.imageRect = new Rectangle(parseInt(x) / this._imageData.width, parseInt(y) / this._imageData.height, parseInt(width) / this._imageData.width, parseInt(height) / this._imageData.height);
                     //setup frame rect
                     x = XmlUtils.readAttributeValue(element, "frameX");
                     y = XmlUtils.readAttributeValue(element, "frameY");

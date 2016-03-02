@@ -1652,7 +1652,11 @@ declare module "awayjs-core/lib/geom/Matrix3D" {
 	    /**
 	     * Copies all of the matrix data from the source Matrix3D object into the calling Matrix3D object.
 	     */
-	    copyFrom(sourceMatrix3D: Matrix3D): void;
+	    copyFrom(source: Matrix3D): void;
+	    /**
+	     * Copies this Matrix3D object into a destination Matrix3D object.
+	     */
+	    copyTo(target: Matrix3D): void;
 	    copyRawDataFrom(vector: Float32Array, index?: number, transpose?: boolean): void;
 	    copyRawDataTo(vector: Float32Array, index?: number, transpose?: boolean): void;
 	    /**
@@ -1663,10 +1667,6 @@ declare module "awayjs-core/lib/geom/Matrix3D" {
 	     * Copies specific row of the calling Matrix3D object into the Vector3D object.
 	     */
 	    copyRowTo(row: number, vector3D: Vector3D): void;
-	    /**
-	     * Copies this Matrix3D object into a destination Matrix3D object.
-	     */
-	    copyToMatrix3D(dest: Matrix3D): void;
 	    /**
 	     * Returns the transformation matrix's translation, rotation, and scale settings as a Vector of three Vector3D objects.
 	     */

@@ -2345,10 +2345,8 @@ var Matrix3DUtils = (function () {
      */
     Matrix3DUtils.getForward = function (m, v) {
         if (v === void 0) { v = null; }
-        //v ||= new Vector3D(0.0, 0.0, 0.0);
-        if (v === null) {
+        if (v === null)
             v = new Vector3D(0.0, 0.0, 0.0);
-        }
         m.copyColumnTo(2, v);
         v.normalize();
         return v;
@@ -2360,11 +2358,9 @@ var Matrix3DUtils = (function () {
      * @return            The up vector
      */
     Matrix3DUtils.getUp = function (m, v) {
-        //v ||= new Vector3D(0.0, 0.0, 0.0);
         if (v === void 0) { v = null; }
-        if (v === null) {
+        if (v === null)
             v = new Vector3D(0.0, 0.0, 0.0);
-        }
         m.copyColumnTo(1, v);
         v.normalize();
         return v;
@@ -2780,11 +2776,20 @@ var Matrix3D = (function () {
     /**
      * Copies all of the matrix data from the source Matrix3D object into the calling Matrix3D object.
      */
-    Matrix3D.prototype.copyFrom = function (sourceMatrix3D) {
-        var sourceRaw = sourceMatrix3D.rawData;
+    Matrix3D.prototype.copyFrom = function (source) {
+        var sourceRaw = source.rawData;
         var len = sourceRaw.length;
         for (var c = 0; c < len; c++)
             this.rawData[c] = sourceRaw[c];
+    };
+    /**
+     * Copies this Matrix3D object into a destination Matrix3D object.
+     */
+    Matrix3D.prototype.copyTo = function (target) {
+        var targetRaw = target.rawData;
+        var len = this.rawData.length;
+        for (var c = 0; c < len; c++)
+            targetRaw[c] = this.rawData[c];
     };
     Matrix3D.prototype.copyRawDataFrom = function (vector, index, transpose) {
         if (index === void 0) { index = 0; }
@@ -2873,12 +2878,6 @@ var Matrix3D = (function () {
             default:
                 throw new ArgumentError("ArgumentError, Row " + row + " out of bounds [0, ..., 3]");
         }
-    };
-    /**
-     * Copies this Matrix3D object into a destination Matrix3D object.
-     */
-    Matrix3D.prototype.copyToMatrix3D = function (dest) {
-        this.copyRawDataTo(dest.rawData);
     };
     /**
      * Returns the transformation matrix's translation, rotation, and scale settings as a Vector of three Vector3D objects.

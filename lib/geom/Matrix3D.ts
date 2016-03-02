@@ -262,12 +262,23 @@ class Matrix3D
 	/**
 	 * Copies all of the matrix data from the source Matrix3D object into the calling Matrix3D object.
 	 */
-	public copyFrom(sourceMatrix3D:Matrix3D)
+	public copyFrom(source:Matrix3D)
 	{
-		var sourceRaw:Float32Array = sourceMatrix3D.rawData;
+		var sourceRaw:Float32Array = source.rawData;
 		var len:number = sourceRaw.length;
 		for (var c:number = 0; c < len; c++)
 			this.rawData[c] = sourceRaw[c];
+	}
+
+	/**
+	 * Copies this Matrix3D object into a destination Matrix3D object.
+	 */
+	public copyTo(target:Matrix3D)
+	{
+		var targetRaw:Float32Array = target.rawData;
+		var len:number = this.rawData.length;
+		for (var c:number = 0; c < len; c++)
+			targetRaw[c] = this.rawData[c];
 	}
 
 	public copyRawDataFrom(vector:Float32Array, index:number = 0, transpose:boolean = false):void
@@ -364,14 +375,6 @@ class Matrix3D
 			default:
 				throw new ArgumentError("ArgumentError, Row " + row + " out of bounds [0, ..., 3]");
 		}
-	}
-
-	/**
-	 * Copies this Matrix3D object into a destination Matrix3D object.
-	 */
-	public copyToMatrix3D(dest:Matrix3D)
-	{
-		this.copyRawDataTo(dest.rawData);
 	}
 
 	/**

@@ -69,12 +69,8 @@ class Matrix3DUtils
 	 */
 	public static getForward(m:Matrix3D, v:Vector3D = null):Vector3D
 	{
-		//v ||= new Vector3D(0.0, 0.0, 0.0);
-		if (v === null) {
-
+		if (v === null)
 			v = new Vector3D(0.0, 0.0, 0.0);
-
-		}
 
 		m.copyColumnTo(2, v);
 		v.normalize();
@@ -90,13 +86,8 @@ class Matrix3DUtils
 	 */
 	public static getUp(m:Matrix3D, v:Vector3D = null):Vector3D
 	{
-		//v ||= new Vector3D(0.0, 0.0, 0.0);
-
-		if (v === null) {
-
+		if (v === null)
 			v = new Vector3D(0.0, 0.0, 0.0);
-
-		}
 
 		m.copyColumnTo(1, v);
 		v.normalize();

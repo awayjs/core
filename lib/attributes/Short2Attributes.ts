@@ -22,7 +22,7 @@ class Short2Attributes extends AttributesView
 	constructor(attributesBuffer?:AttributesBuffer, unsigned?:boolean);
 	constructor(attributesBufferLength?:any, unsigned:boolean = true)
 	{
-		super(unsigned? Uint16Array : Int16Array, 2, attributesBufferLength)
+		super(unsigned? Uint16Array : Int16Array, 2, attributesBufferLength, unsigned)
 	}
 
 	public set(array:Array<number>, offset?:number);

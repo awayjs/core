@@ -20,6 +20,7 @@ class AttributesView extends AssetBase
 	public _bufferDirty:boolean;
 	private _size:number;
 	private _dimensions:number;
+	private _unsigned:boolean;
 
 	public _index:number;
 	public _arrayClass:IArrayBufferViewClass;
@@ -74,6 +75,11 @@ class AttributesView extends AssetBase
 		this._attributesBuffer._addView(this);
 	}
 
+	public get unsigned():boolean
+	{
+		return this._unsigned;
+	}
+
 	public get count():number
 	{
 		return this._attributesBuffer.count;
@@ -97,9 +103,9 @@ class AttributesView extends AssetBase
 	/**
 	 *
 	 */
-	constructor(arrayClass:IArrayBufferViewClass, dimensions:number, count?:number);
-	constructor(arrayClass:IArrayBufferViewClass, dimensions:number, attributesBuffer?:AttributesBuffer);
-	constructor(arrayClass:IArrayBufferViewClass, dimensions:number, attributesBufferCount:any = 0)
+	constructor(arrayClass:IArrayBufferViewClass, dimensions:number, count?:number, unsigned?:boolean);
+	constructor(arrayClass:IArrayBufferViewClass, dimensions:number, attributesBuffer?:AttributesBuffer, unsigned?:boolean);
+	constructor(arrayClass:IArrayBufferViewClass, dimensions:number, attributesBufferCount:any = 0, unsigned:boolean = false)
 	{
 		super();
 
@@ -109,6 +115,8 @@ class AttributesView extends AssetBase
 		this._attributesBuffer = (attributesBufferCount instanceof AttributesBuffer)? <AttributesBuffer> attributesBufferCount : new AttributesBuffer(this._dimensions*this._size, attributesBufferCount);
 
 		this._attributesBuffer._addView(this);
+
+		this._unsigned = unsigned;
 	}
 
 	public set(array:Array<number>, offset?:number);

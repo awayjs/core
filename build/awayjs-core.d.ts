@@ -62,6 +62,7 @@ declare module "awayjs-core/lib/attributes/AttributesView" {
 	    _bufferDirty: boolean;
 	    private _size;
 	    private _dimensions;
+	    private _unsigned;
 	    _index: number;
 	    _arrayClass: IArrayBufferViewClass;
 	    _localArrayBuffer: ArrayBuffer;
@@ -77,14 +78,15 @@ declare module "awayjs-core/lib/attributes/AttributesView" {
 	     * @returns {number}
 	     */
 	    dimensions: number;
+	    unsigned: boolean;
 	    count: number;
 	    offset: number;
 	    length: number;
 	    /**
 	     *
 	     */
-	    constructor(arrayClass: IArrayBufferViewClass, dimensions: number, count?: number);
-	    constructor(arrayClass: IArrayBufferViewClass, dimensions: number, attributesBuffer?: AttributesBuffer);
+	    constructor(arrayClass: IArrayBufferViewClass, dimensions: number, count?: number, unsigned?: boolean);
+	    constructor(arrayClass: IArrayBufferViewClass, dimensions: number, attributesBuffer?: AttributesBuffer, unsigned?: boolean);
 	    set(array: Array<number>, offset?: number): any;
 	    set(arrayBufferView: ArrayBufferView, offset?: number): any;
 	    get(count: number, offset?: number): ArrayBufferView;
@@ -96,6 +98,87 @@ declare module "awayjs-core/lib/attributes/AttributesView" {
 	    dispose(): void;
 	}
 	export = AttributesView;
+	
+}
+
+declare module "awayjs-core/lib/attributes/Byte1Attributes" {
+	import AttributesBuffer = require("awayjs-core/lib/attributes/AttributesBuffer");
+	import AttributesView = require("awayjs-core/lib/attributes/AttributesView");
+	class Byte1Attributes extends AttributesView {
+	    static assetType: string;
+	    /**
+	     *
+	     * @returns {string}
+	     */
+	    assetType: string;
+	    /**
+	     *
+	     */
+	    constructor(length?: number, unsigned?: boolean);
+	    constructor(attributesBuffer?: AttributesBuffer, unsigned?: boolean);
+	    set(array: Array<number>, offset?: number): any;
+	    set(typedArray: Uint8Array, offset?: number): any;
+	    set(typedArray: Int8Array, offset?: number): any;
+	    get(count: number, offset?: number): Uint8Array;
+	    get(count: number, offset?: number): Int8Array;
+	    _internalClone(attributesBuffer: AttributesBuffer): Byte1Attributes;
+	    clone(attributesBuffer?: AttributesBuffer): Byte1Attributes;
+	}
+	export = Byte1Attributes;
+	
+}
+
+declare module "awayjs-core/lib/attributes/Byte2Attributes" {
+	import AttributesBuffer = require("awayjs-core/lib/attributes/AttributesBuffer");
+	import AttributesView = require("awayjs-core/lib/attributes/AttributesView");
+	class Byte2Attributes extends AttributesView {
+	    static assetType: string;
+	    /**
+	     *
+	     * @returns {string}
+	     */
+	    assetType: string;
+	    /**
+	     *
+	     */
+	    constructor(length?: number, unsigned?: boolean);
+	    constructor(attributesBuffer?: AttributesBuffer, unsigned?: boolean);
+	    set(array: Array<number>, offset?: number): any;
+	    set(typedArray: Uint8Array, offset?: number): any;
+	    set(typedArray: Int8Array, offset?: number): any;
+	    get(count: number, offset?: number): Uint8Array;
+	    get(count: number, offset?: number): Int8Array;
+	    _internalClone(attributesBuffer: AttributesBuffer): Byte2Attributes;
+	    clone(attributesBuffer?: AttributesBuffer): Byte2Attributes;
+	}
+	export = Byte2Attributes;
+	
+}
+
+declare module "awayjs-core/lib/attributes/Byte3Attributes" {
+	import AttributesBuffer = require("awayjs-core/lib/attributes/AttributesBuffer");
+	import AttributesView = require("awayjs-core/lib/attributes/AttributesView");
+	class Byte3Attributes extends AttributesView {
+	    static assetType: string;
+	    /**
+	     *
+	     * @returns {string}
+	     */
+	    assetType: string;
+	    /**
+	     *
+	     */
+	    constructor(length?: number, unsigned?: boolean);
+	    constructor(attributesBuffer?: AttributesBuffer, unsigned?: boolean);
+	    set(array: Array<number>, offset?: number): any;
+	    set(typedArray: Uint8Array, offset?: number): any;
+	    set(typedArray: Int8Array, offset?: number): any;
+	    get(count: number, offset?: number): Uint8Array;
+	    get(count: number, offset?: number): Int8Array;
+	    _internalClone(attributesBuffer: AttributesBuffer): Byte3Attributes;
+	    clone(attributesBuffer?: AttributesBuffer): Byte3Attributes;
+	}
+	export = Byte3Attributes;
 	
 }
 

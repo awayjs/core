@@ -14547,7 +14547,7 @@ var ByteArray = (function (_super) {
         if (maxlength === void 0) { maxlength = 4; }
         _super.call(this);
         this._mode = "Typed array";
-        this.maxlength = Math.max((maxlength + 255) & (~255), 4);
+        this.maxlength = maxlength < 4 ? 4 : maxlength;
         this.arraybytes = new ArrayBuffer(this.maxlength);
         this.unalignedarraybytestemp = new ArrayBuffer(16);
     }

@@ -10,7 +10,7 @@ class ByteArray extends ByteArrayBase
 	{
 		super();
 		this._mode = "Typed array";
-		this.maxlength = maxlength < 4? 4 : maxlength;
+		this.maxlength = Math.max((maxlength + 255) & (~255), 4);
 		this.arraybytes = new ArrayBuffer(this.maxlength);
 		this.unalignedarraybytestemp = new ArrayBuffer(16);
 	}

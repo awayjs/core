@@ -36,4 +36,4 @@ class ColorUtils
 	}
 }
 
-export = ColorUtils;
+export default ColorUtils;

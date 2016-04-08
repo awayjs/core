@@ -187,4 +187,4 @@ class BlendMode
 	public static SUBTRACT:string = "subtract";
 }
 
-export = BlendMode;
+export default BlendMode;

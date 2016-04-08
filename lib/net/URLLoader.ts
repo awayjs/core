@@ -1,9 +1,9 @@
-import URLLoaderDataFormat			= require("awayjs-core/lib/net/URLLoaderDataFormat");
-import URLRequest					= require("awayjs-core/lib/net/URLRequest");
-import URLRequestMethod				= require("awayjs-core/lib/net/URLRequestMethod");
-import URLVariables					= require("awayjs-core/lib/net/URLVariables");
-import EventDispatcher				= require("awayjs-core/lib/events/EventDispatcher");
-import URLLoaderEvent				= require("awayjs-core/lib/events/URLLoaderEvent");
+import URLLoaderDataFormat			from "awayjs-core/lib/net/URLLoaderDataFormat";
+import URLRequest					from "awayjs-core/lib/net/URLRequest";
+import URLRequestMethod				from "awayjs-core/lib/net/URLRequestMethod";
+import URLVariables					from "awayjs-core/lib/net/URLVariables";
+import EventDispatcher				from "awayjs-core/lib/events/EventDispatcher";
+import URLLoaderEvent				from "awayjs-core/lib/events/URLLoaderEvent";
 
 /**
  * The URLLoader is used to load a single file, as part of a resource.
@@ -400,4 +400,4 @@ class URLLoader extends EventDispatcher
 	}
 }
 
-export = URLLoader;
+export default URLLoader;

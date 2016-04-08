@@ -1,4 +1,4 @@
-import ByteArrayBase			= require("awayjs-core/lib/utils/ByteArrayBase");
+import ByteArrayBase			from "awayjs-core/lib/utils/ByteArrayBase";
 
 class ByteArray extends ByteArrayBase
 {
@@ -303,4 +303,4 @@ class ByteArray extends ByteArrayBase
 	}
 }
 
-export = ByteArray;
+export default ByteArray;

@@ -96,4 +96,4 @@ class IDUtil
 
 }
 
-export = IDUtil;
+export default IDUtil;

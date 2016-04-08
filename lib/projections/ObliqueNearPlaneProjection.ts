@@ -1,9 +1,9 @@
-import Matrix3D					= require("awayjs-core/lib/geom/Matrix3D");
-import Plane3D					= require("awayjs-core/lib/geom/Plane3D");
-import Vector3D					= require("awayjs-core/lib/geom/Vector3D");
-import ProjectionEvent			= require("awayjs-core/lib/events/ProjectionEvent");
-import IProjection				= require("awayjs-core/lib/projections/IProjection");
-import ProjectionBase			= require("awayjs-core/lib/projections/ProjectionBase");
+import Matrix3D					from "awayjs-core/lib/geom/Matrix3D";
+import Plane3D					from "awayjs-core/lib/geom/Plane3D";
+import Vector3D					from "awayjs-core/lib/geom/Vector3D";
+import ProjectionEvent			from "awayjs-core/lib/events/ProjectionEvent";
+import IProjection				from "awayjs-core/lib/projections/IProjection";
+import ProjectionBase			from "awayjs-core/lib/projections/ProjectionBase";
 
 class ObliqueNearPlaneProjection extends ProjectionBase
 {
@@ -113,4 +113,4 @@ class ObliqueNearPlaneProjection extends ProjectionBase
 	}
 }
 
-export = ObliqueNearPlaneProjection;
+export default ObliqueNearPlaneProjection;

@@ -1,19 +1,15 @@
-import LoaderContext			= require("awayjs-core/lib/library/LoaderContext");
-import LoaderInfo				= require("awayjs-core/lib/library/LoaderInfo");
-import URLLoader				= require("awayjs-core/lib/net/URLLoader");
-import URLLoaderDataFormat		= require("awayjs-core/lib/net/URLLoaderDataFormat");
-import URLRequest				= require("awayjs-core/lib/net/URLRequest");
-import AssetEvent				= require("awayjs-core/lib/events/AssetEvent");
-import EventDispatcher			= require("awayjs-core/lib/events/EventDispatcher");
-import URLLoaderEvent			= require("awayjs-core/lib/events/URLLoaderEvent");
-import LoaderEvent				= require("awayjs-core/lib/events/LoaderEvent");
-import ParserEvent				= require("awayjs-core/lib/events/ParserEvent");
-import Image2DParser			= require("awayjs-core/lib/parsers/Image2DParser");
-import ImageCubeParser			= require("awayjs-core/lib/parsers/ImageCubeParser");
-import TextureAtlasParser		= require("awayjs-core/lib/parsers/TextureAtlasParser");
-import ParserBase				= require("awayjs-core/lib/parsers/ParserBase");
-import ResourceDependency		= require("awayjs-core/lib/parsers/ResourceDependency");
-import WaveAudioParser			= require("awayjs-core/lib/parsers/WaveAudioParser");
+import LoaderContext			from "awayjs-core/lib/library/LoaderContext";
+import LoaderInfo				from "awayjs-core/lib/library/LoaderInfo";
+import URLLoader				from "awayjs-core/lib/net/URLLoader";
+import URLLoaderDataFormat		from "awayjs-core/lib/net/URLLoaderDataFormat";
+import URLRequest				from "awayjs-core/lib/net/URLRequest";
+import AssetEvent				from "awayjs-core/lib/events/AssetEvent";
+import EventDispatcher			from "awayjs-core/lib/events/EventDispatcher";
+import URLLoaderEvent			from "awayjs-core/lib/events/URLLoaderEvent";
+import LoaderEvent				from "awayjs-core/lib/events/LoaderEvent";
+import ParserEvent				from "awayjs-core/lib/events/ParserEvent";
+import ParserBase				from "awayjs-core/lib/parsers/ParserBase";
+import ResourceDependency		from "awayjs-core/lib/parsers/ResourceDependency";
 
 
 
@@ -100,7 +96,7 @@ class Loader extends EventDispatcher
 	private _onAssetCompleteDelegate:(event:AssetEvent) => void;
 
 	// Image parser only parser that is added by default, to save file size.
-	private static _parsers:Array<any> = new Array<any>(Image2DParser, ImageCubeParser, TextureAtlasParser, WaveAudioParser);
+	private static _parsers:Array<any> = new Array<any>();
 
 	/**
 	 * Enables a specific parser.
@@ -725,4 +721,4 @@ class Loader extends EventDispatcher
 	}
 }
 
-export = Loader;
+export default Loader;

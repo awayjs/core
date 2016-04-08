@@ -1,7 +1,7 @@
-import EventDispatcher			= require("awayjs-core/lib/events/EventDispatcher");
-import Loader					= require("awayjs-core/lib/library/Loader");
-import AssetBase				= require("awayjs-core/lib/library/AssetBase");
-import ByteArray				= require("awayjs-core/lib/utils/ByteArray");
+import EventDispatcher			from "awayjs-core/lib/events/EventDispatcher";
+import Loader					from "awayjs-core/lib/library/Loader";
+import AssetBase				from "awayjs-core/lib/library/AssetBase";
+import ByteArray				from "awayjs-core/lib/utils/ByteArray";
 
 /**
  * The LoaderInfo class provides information about a loaded SWF file or a
@@ -233,4 +233,4 @@ class LoaderInfo extends EventDispatcher
 	}
 }
 
-export = LoaderInfo;
+export default LoaderInfo;

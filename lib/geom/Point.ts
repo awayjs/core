@@ -211,4 +211,4 @@ class Point
 	}
 }
 
-export = Point;
+export default Point;

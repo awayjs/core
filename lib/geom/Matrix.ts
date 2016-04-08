@@ -1,6 +1,6 @@
-import Point					= require("awayjs-core/lib/geom/Point");
-import Vector3D					= require("awayjs-core/lib/geom/Vector3D");
-import ArgumentError			= require("awayjs-core/lib/errors/ArgumentError");
+import Point					from "awayjs-core/lib/geom/Point";
+import Vector3D					from "awayjs-core/lib/geom/Vector3D";
+import ArgumentError			from "awayjs-core/lib/errors/ArgumentError";
 
 /**
  * The Matrix class represents a transformation matrix that determines how to
@@ -573,4 +573,4 @@ class Matrix
 	}
 }
 
-export = Matrix;
+export default Matrix;

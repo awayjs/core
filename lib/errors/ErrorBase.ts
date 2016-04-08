@@ -67,4 +67,4 @@ class ErrorBase
 
 }
 
-export = ErrorBase;
+export default ErrorBase;

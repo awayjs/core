@@ -1,6 +1,6 @@
-import Matrix3D					= require("awayjs-core/lib/geom/Matrix3D");
-import Vector3D					= require("awayjs-core/lib/geom/Vector3D");
-import IEventDispatcher			= require("awayjs-core/lib/events/IEventDispatcher");
+import Matrix3D					from "awayjs-core/lib/geom/Matrix3D";
+import Vector3D					from "awayjs-core/lib/geom/Vector3D";
+import IEventDispatcher			from "awayjs-core/lib/events/IEventDispatcher";
 
 /**
  * IMaterialOwner provides an interface for objects that can use materials.
@@ -34,4 +34,4 @@ interface IProjection extends IEventDispatcher
 	_iUpdateViewport(x:number, y:number, width:number, height:number);
 }
 
-export = IProjection;
+export default IProjection;

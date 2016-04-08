@@ -1,5 +1,5 @@
-import IAsset						= require("awayjs-core/lib/library/IAsset");
-import AbstractionBase				= require("awayjs-core/lib/library/AbstractionBase");
+import IAsset						from "awayjs-core/lib/library/IAsset";
+import AbstractionBase				from "awayjs-core/lib/library/AbstractionBase";
 
 interface IAbstractionPool
 {
@@ -7,4 +7,4 @@ interface IAbstractionPool
 	clearAbstraction(asset:IAsset);
 }
 
-export = IAbstractionPool;
+export default IAbstractionPool;

@@ -169,4 +169,4 @@ class LoaderContext
 	}
 }
 
-export = LoaderContext;
+export default LoaderContext;

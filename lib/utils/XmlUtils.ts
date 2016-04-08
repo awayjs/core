@@ -57,7 +57,7 @@ class XmlUtils {
 		}
 		var attribute:Attr = attrs.getNamedItem(attrName);
 		if(!attribute) {
-			//console.log("XmlUltils - readAttributeValue() - name: " + attrName + ", attribute does not exist.");
+			//console.log("XmlUltils - readAttributeValue() - name: " + attrName + ", attribute does not exist.";
 			return "";
 		}
 		//console.log("XmlUltils - readAttributeValue() - name: " + attrName + ", value: " + attribute.value);
@@ -81,7 +81,7 @@ class XmlUtils {
 		return attribute != null;
 	}
 }
-export = XmlUtils;
+export default XmlUtils;
 
 
 

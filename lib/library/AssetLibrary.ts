@@ -1,12 +1,12 @@
-import URLRequest				= require("awayjs-core/lib/net/URLRequest");
-import EventBase				= require("awayjs-core/lib/events/EventBase");
-import AssetLibraryBundle		= require("awayjs-core/lib/library/AssetLibraryBundle");
-import AssetLibraryIterator		= require("awayjs-core/lib/library/AssetLibraryIterator");
-import Loader			= require("awayjs-core/lib/library/Loader");
-import LoaderContext			= require("awayjs-core/lib/library/LoaderContext");
-import ConflictStrategyBase		= require("awayjs-core/lib/library/ConflictStrategyBase");
-import IAsset					= require("awayjs-core/lib/library/IAsset");
-import ParserBase				= require("awayjs-core/lib/parsers/ParserBase");
+import URLRequest				from "awayjs-core/lib/net/URLRequest";
+import EventBase				from "awayjs-core/lib/events/EventBase";
+import AssetLibraryBundle		from "awayjs-core/lib/library/AssetLibraryBundle";
+import AssetLibraryIterator		from "awayjs-core/lib/library/AssetLibraryIterator";
+import Loader					from "awayjs-core/lib/library/Loader";
+import LoaderContext			from "awayjs-core/lib/library/LoaderContext";
+import ConflictStrategyBase		from "awayjs-core/lib/library/ConflictStrategyBase";
+import IAsset					from "awayjs-core/lib/library/IAsset";
+import ParserBase				from "awayjs-core/lib/parsers/ParserBase";
 
 /**
  * AssetLibrary enforces a singleton pattern and is not intended to be instanced.
@@ -234,4 +234,4 @@ class AssetLibrary
 	}
 }
 
-export = AssetLibrary;
+export default AssetLibrary;

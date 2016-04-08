@@ -1,6 +1,6 @@
-import ConflictStrategyBase		= require("awayjs-core/lib/library/ConflictStrategyBase");
-import IAsset					= require("awayjs-core/lib/library/IAsset");
-import ErrorBase				= require("awayjs-core/lib/errors/ErrorBase");
+import ConflictStrategyBase		from "awayjs-core/lib/library/ConflictStrategyBase";
+import IAsset					from "awayjs-core/lib/library/IAsset";
+import ErrorBase				from "awayjs-core/lib/errors/ErrorBase";
 
 class ErrorConflictStrategy extends ConflictStrategyBase
 {
@@ -20,4 +20,4 @@ class ErrorConflictStrategy extends ConflictStrategyBase
 	}
 }
 
-export = ErrorConflictStrategy;
+export default ErrorConflictStrategy;

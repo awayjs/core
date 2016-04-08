@@ -1,9 +1,9 @@
-import Box							= require("awayjs-core/lib/geom/Box");
-import MathConsts					= require("awayjs-core/lib/geom/MathConsts");
-import Orientation3D				= require("awayjs-core/lib/geom/Orientation3D");
-import Quaternion					= require("awayjs-core/lib/geom/Quaternion");
-import Vector3D						= require("awayjs-core/lib/geom/Vector3D");
-import ArgumentError				= require("awayjs-core/lib/errors/ArgumentError");
+import Box							from "awayjs-core/lib/geom/Box";
+import MathConsts					from "awayjs-core/lib/geom/MathConsts";
+import Orientation3D				from "awayjs-core/lib/geom/Orientation3D";
+import Quaternion					from "awayjs-core/lib/geom/Quaternion";
+import Vector3D						from "awayjs-core/lib/geom/Vector3D";
+import ArgumentError				from "awayjs-core/lib/errors/ArgumentError";
 
 class Matrix3D
 {
@@ -1026,4 +1026,4 @@ class Matrix3D
 	}
 }
 
-export = Matrix3D;
+export default Matrix3D;

@@ -1,6 +1,5 @@
-import AttributesBuffer			= require("awayjs-core/lib/attributes/AttributesBuffer");
-import AttributesView			= require("awayjs-core/lib/attributes/AttributesView");
-import IArrayBufferViewClass	= require("awayjs-core/lib/utils/IArrayBufferViewClass");
+import AttributesBuffer			from "awayjs-core/lib/attributes/AttributesBuffer";
+import AttributesView			from "awayjs-core/lib/attributes/AttributesView";
 
 class Float1Attributes extends AttributesView
 {
@@ -48,4 +47,4 @@ class Float1Attributes extends AttributesView
 	}
 }
 
-export = Float1Attributes;
+export default Float1Attributes;

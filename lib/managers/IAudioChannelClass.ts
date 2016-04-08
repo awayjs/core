@@ -1,4 +1,4 @@
-import IAudioChannel			= require("awayjs-core/lib/managers/IAudioChannel");
+import IAudioChannel			from "awayjs-core/lib/managers/IAudioChannel";
 
 interface IAudioChannelClass
 {
@@ -12,4 +12,4 @@ interface IAudioChannelClass
 	new():IAudioChannel;
 }
 
-export = IAudioChannelClass;
+export default IAudioChannelClass;

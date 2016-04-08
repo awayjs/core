@@ -1,7 +1,7 @@
-import Matrix3DUtils			= require("awayjs-core/lib/geom/Matrix3DUtils");
-import Vector3D					= require("awayjs-core/lib/geom/Vector3D");
-import CoordinateSystem			= require("awayjs-core/lib/projections/CoordinateSystem");
-import ProjectionBase			= require("awayjs-core/lib/projections/ProjectionBase");
+import Matrix3DUtils			from "awayjs-core/lib/geom/Matrix3DUtils";
+import Vector3D					from "awayjs-core/lib/geom/Vector3D";
+import CoordinateSystem			from "awayjs-core/lib/projections/CoordinateSystem";
+import ProjectionBase			from "awayjs-core/lib/projections/ProjectionBase";
 
 class PerspectiveProjection extends ProjectionBase
 {
@@ -229,4 +229,4 @@ class PerspectiveProjection extends ProjectionBase
 	}
 }
 
-export = PerspectiveProjection;
+export default PerspectiveProjection;

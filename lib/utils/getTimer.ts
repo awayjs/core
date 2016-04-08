@@ -11,4 +11,4 @@ function getTimer():number
 	return Date.now();
 }
 
-export = getTimer;
+export default getTimer;

@@ -20,4 +20,4 @@ class ParserDataFormat
 
 }
 
-export = ParserDataFormat;
+export default ParserDataFormat;

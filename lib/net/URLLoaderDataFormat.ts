@@ -31,4 +31,4 @@ class URLLoaderDataFormat
 	public static BINARY:string = "binary";
 }
 
-export = URLLoaderDataFormat;
+export default URLLoaderDataFormat;

@@ -1,7 +1,7 @@
-import BitmapImage2D			= require("awayjs-core/lib/image/BitmapImage2D");
-import BitmapImageChannel		= require("awayjs-core/lib/image/BitmapImageChannel");
-import Image2D					= require("awayjs-core/lib/image/Image2D");
-import Point					= require("awayjs-core/lib/geom/Point");
+import BitmapImage2D			from "awayjs-core/lib/image/BitmapImage2D";
+import BitmapImageChannel		from "awayjs-core/lib/image/BitmapImageChannel";
+import Image2D					from "awayjs-core/lib/image/Image2D";
+import Point					from "awayjs-core/lib/geom/Point";
 
 /**
  *
@@ -177,4 +177,4 @@ class SpecularImage2D extends Image2D
 	}
 }
 
-export = SpecularImage2D;
+export default SpecularImage2D;

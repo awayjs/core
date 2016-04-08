@@ -68,4 +68,4 @@ class URLVariables
 	}
 }
 
-export = URLVariables;
+export default URLVariables;

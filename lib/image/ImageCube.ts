@@ -1,6 +1,6 @@
-import ImageBase				= require("awayjs-core/lib/image/ImageBase");
-import SamplerCube				= require("awayjs-core/lib/image/SamplerCube");
-import ImageUtils				= require("awayjs-core/lib/utils/ImageUtils");
+import ImageBase				from "awayjs-core/lib/image/ImageBase";
+import SamplerCube				from "awayjs-core/lib/image/SamplerCube";
+import ImageUtils				from "awayjs-core/lib/utils/ImageUtils";
 
 class ImageCube extends ImageBase
 {
@@ -72,4 +72,4 @@ class ImageCube extends ImageBase
 	}
 }
 
-export = ImageCube;
+export default ImageCube;

@@ -1,9 +1,9 @@
-import WaveAudio				= require("awayjs-core/lib/audio/WaveAudio");
-import IAsset					= require("awayjs-core/lib/library/IAsset");
-import URLLoaderDataFormat		= require("awayjs-core/lib/net/URLLoaderDataFormat");
-import ParserBase				= require("awayjs-core/lib/parsers/ParserBase");
-import ParserUtils				= require("awayjs-core/lib/parsers/ParserUtils");
-import ByteArray				= require("awayjs-core/lib/utils/ByteArray");
+import WaveAudio				from "awayjs-core/lib/audio/WaveAudio";
+import IAsset					from "awayjs-core/lib/library/IAsset";
+import URLLoaderDataFormat		from "awayjs-core/lib/net/URLLoaderDataFormat";
+import ParserBase				from "awayjs-core/lib/parsers/ParserBase";
+import ParserUtils				from "awayjs-core/lib/parsers/ParserUtils";
+import ByteArray				from "awayjs-core/lib/utils/ByteArray";
 
 class WaveAudioParser extends ParserBase
 {
@@ -76,4 +76,4 @@ class WaveAudioParser extends ParserBase
 	}
 }
 
-export = WaveAudioParser;
+export default WaveAudioParser;

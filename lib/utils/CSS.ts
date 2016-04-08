@@ -75,4 +75,4 @@ class CSS
 	}
 }
 
-export = CSS;
+export default CSS;

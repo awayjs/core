@@ -1,4 +1,4 @@
-import EventBase					= require("awayjs-core/lib/events/EventBase");
+import EventBase					from "awayjs-core/lib/events/EventBase";
 
 /**
  * Base class for dispatching events
@@ -138,4 +138,4 @@ class ListenerObject
 		return -1;
 	}
 }
-export = EventDispatcher;
+export default EventDispatcher;

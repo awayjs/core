@@ -5,4 +5,4 @@ class CrossDomainPolicy
 	public static USE_CREDENTIALS:string = 'use-credentials';
 }
 
-export = CrossDomainPolicy;
+export default CrossDomainPolicy;

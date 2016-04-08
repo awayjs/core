@@ -1,6 +1,5 @@
-import AttributesBuffer			= require("awayjs-core/lib/attributes/AttributesBuffer");
-import AttributesView			= require("awayjs-core/lib/attributes/AttributesView");
-import IArrayBufferViewClass	= require("awayjs-core/lib/utils/IArrayBufferViewClass");
+import AttributesBuffer			from "awayjs-core/lib/attributes/AttributesBuffer";
+import AttributesView			from "awayjs-core/lib/attributes/AttributesView";
 
 class Byte4Attributes extends AttributesView
 {
@@ -52,4 +51,4 @@ class Byte4Attributes extends AttributesView
 	}
 }
 
-export = Byte4Attributes;
+export default Byte4Attributes;

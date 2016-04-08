@@ -1,6 +1,6 @@
-import ErrorBase				= require("awayjs-core/lib/errors/ErrorBase");
-import EventDispatcher			= require("awayjs-core/lib/events/EventDispatcher");
-import TimerEvent				= require("awayjs-core/lib/events/TimerEvent");
+import ErrorBase				from "awayjs-core/lib/errors/ErrorBase";
+import EventDispatcher			from "awayjs-core/lib/events/EventDispatcher";
+import TimerEvent				from "awayjs-core/lib/events/TimerEvent";
 
 class Timer extends EventDispatcher
 {
@@ -93,4 +93,4 @@ class Timer extends EventDispatcher
 	}
 }
 
-export = Timer;
+export default Timer;

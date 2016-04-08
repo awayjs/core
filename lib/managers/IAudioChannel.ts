@@ -19,4 +19,4 @@ interface IAudioChannel
 	stop();
 }
 
-export = IAudioChannel;
+export default IAudioChannel;

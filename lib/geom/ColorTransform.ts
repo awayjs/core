@@ -1,4 +1,4 @@
-import ColorUtils			= require("awayjs-core/lib/utils/ColorUtils");
+import ColorUtils			from "awayjs-core/lib/utils/ColorUtils";
 
 /**
  * The ColorTransform class lets you adjust the color values in a display
@@ -208,4 +208,4 @@ class ColorTransform
     }
 }
 
-export = ColorTransform;
+export default ColorTransform;

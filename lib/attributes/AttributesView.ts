@@ -1,7 +1,6 @@
-import AttributesBuffer			= require("awayjs-core/lib/attributes/AttributesBuffer");
-import IAsset					= require("awayjs-core/lib/library/IAsset");
-import AssetBase				= require("awayjs-core/lib/library/AssetBase");
-import IArrayBufferViewClass	= require("awayjs-core/lib/utils/IArrayBufferViewClass");
+import AttributesBuffer			from "awayjs-core/lib/attributes/AttributesBuffer";
+import AssetBase				from "awayjs-core/lib/library/AssetBase";
+import IArrayBufferViewClass	from "awayjs-core/lib/utils/IArrayBufferViewClass";
 
 class AttributesView extends AssetBase
 {
@@ -170,4 +169,4 @@ class AttributesView extends AssetBase
 	}
 }
 
-export = AttributesView;
+export default AttributesView;

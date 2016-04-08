@@ -1,5 +1,5 @@
-import PerspectiveProjection	= require("awayjs-core/lib/projections/PerspectiveProjection");
-import ProjectionBase			= require("awayjs-core/lib/projections/ProjectionBase");
+import PerspectiveProjection	from "awayjs-core/lib/projections/PerspectiveProjection";
+import ProjectionBase			from "awayjs-core/lib/projections/ProjectionBase";
 
 class FreeMatrixProjection extends ProjectionBase
 {
@@ -47,4 +47,4 @@ class FreeMatrixProjection extends ProjectionBase
 	}
 }
 
-export = FreeMatrixProjection;
+export default FreeMatrixProjection;

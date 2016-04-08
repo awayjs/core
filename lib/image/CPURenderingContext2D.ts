@@ -1,8 +1,8 @@
-import ImageData = require('awayjs-core/lib/image/ImageData');
-import CPUCanvas = require('awayjs-core/lib/image/CPUCanvas');
-import BitmapImage2D = require("awayjs-core/lib/image/BitmapImage2D");
-import Matrix = require("awayjs-core/lib/geom/Matrix");
-import Point = require("awayjs-core/lib/geom/Point");
+import ImageData from "awayjs-core/lib/image/ImageData";
+import CPUCanvas from "awayjs-core/lib/image/CPUCanvas";
+import BitmapImage2D from "awayjs-core/lib/image/BitmapImage2D";
+import Matrix from "awayjs-core/lib/geom/Matrix";
+import Point from "awayjs-core/lib/geom/Point";
 
 //TODO: implement all methods
 class CPURenderingContext2D implements CanvasRenderingContext2D {
@@ -483,4 +483,4 @@ class CPURenderingContext2D implements CanvasRenderingContext2D {
     }
 
 }
-export = CPURenderingContext2D;
+export default CPURenderingContext2D;

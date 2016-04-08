@@ -1,8 +1,8 @@
-import BlendMode				= require("awayjs-core/lib/image/BlendMode");
-import ColorTransform			= require("awayjs-core/lib/geom/ColorTransform");
-import Matrix					= require("awayjs-core/lib/geom/Matrix");
-import Rectangle				= require("awayjs-core/lib/geom/Rectangle");
-import ColorUtils				= require("awayjs-core/lib/utils/ColorUtils");
+import BlendMode				from "awayjs-core/lib/image/BlendMode";
+import ColorTransform			from "awayjs-core/lib/geom/ColorTransform";
+import Matrix					from "awayjs-core/lib/geom/Matrix";
+import Rectangle				from "awayjs-core/lib/geom/Rectangle";
+import ColorUtils				from "awayjs-core/lib/utils/ColorUtils";
 
 class BitmapImageUtils
 {
@@ -22,7 +22,7 @@ class BitmapImageUtils
 		}
 	}
 
-	public static _copyPixels(context:CanvasRenderingContext2D, bmpd:HTMLElement, sourceRect:Rectangle, destRect:Rectangle)
+	public static _copyPixels(context:CanvasRenderingContext2D, bmpd:HTMLImageElement | HTMLCanvasElement | HTMLVideoElement, sourceRect:Rectangle, destRect:Rectangle)
 	{
 		context.drawImage(bmpd, sourceRect.x, sourceRect.y, sourceRect.width, sourceRect.height, destRect.x, destRect.y, destRect.width, destRect.height);
 	}
@@ -43,4 +43,4 @@ class BitmapImageUtils
 	}
 }
 
-export = BitmapImageUtils;
+export default BitmapImageUtils;

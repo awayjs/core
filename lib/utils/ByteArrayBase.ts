@@ -1,4 +1,4 @@
-import AbstractMethodError		= require("awayjs-core/lib/errors/AbstractMethodError");
+import AbstractMethodError		from "awayjs-core/lib/errors/AbstractMethodError";
 
 class ByteArrayBase
 {
@@ -180,4 +180,4 @@ class ByteArrayBase
 	}
 }
 
-export = ByteArrayBase;
+export default ByteArrayBase;

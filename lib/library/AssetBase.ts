@@ -1,8 +1,8 @@
-import IAsset					= require("awayjs-core/lib/library/IAsset");
-import IAssetClass				= require("awayjs-core/lib/library/IAssetClass");
-import AbstractMethodError		= require("awayjs-core/lib/errors/AbstractMethodError");
-import AssetEvent				= require("awayjs-core/lib/events/AssetEvent");
-import EventDispatcher			= require("awayjs-core/lib/events/EventDispatcher");
+import IAsset					from "awayjs-core/lib/library/IAsset";
+import IAssetClass				from "awayjs-core/lib/library/IAssetClass";
+import AbstractMethodError		from "awayjs-core/lib/errors/AbstractMethodError";
+import AssetEvent				from "awayjs-core/lib/events/AssetEvent";
+import EventDispatcher			from "awayjs-core/lib/events/EventDispatcher";
 
 class AssetBase extends EventDispatcher implements IAsset
 {
@@ -137,4 +137,4 @@ class AssetBase extends EventDispatcher implements IAsset
 	}
 }
 
-export = AssetBase;
+export default AssetBase;

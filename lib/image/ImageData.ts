@@ -9,4 +9,4 @@ class ImageData {
         this.data = new Uint8Array(width*height*4);
     }
 }
-export = ImageData;
+export default ImageData;

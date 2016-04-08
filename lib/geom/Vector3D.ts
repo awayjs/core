@@ -485,4 +485,4 @@ class Vector3D
 	}
 }
 
-export = Vector3D;
+export default Vector3D;

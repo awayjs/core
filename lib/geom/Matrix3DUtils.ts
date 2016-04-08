@@ -1,7 +1,7 @@
-import Quaternion				= require("awayjs-core/lib/geom/Quaternion");
-import Matrix3D					= require("awayjs-core/lib/geom/Matrix3D");
-import Plane3D					= require("awayjs-core/lib/geom/Plane3D");
-import Vector3D					= require("awayjs-core/lib/geom/Vector3D");
+import Quaternion				from "awayjs-core/lib/geom/Quaternion";
+import Matrix3D					from "awayjs-core/lib/geom/Matrix3D";
+import Plane3D					from "awayjs-core/lib/geom/Plane3D";
+import Vector3D					from "awayjs-core/lib/geom/Vector3D";
 
 
 /**
@@ -305,4 +305,4 @@ class Matrix3DUtils
 	}
 }
 
-export = Matrix3DUtils;
+export default Matrix3DUtils;

@@ -1,10 +1,10 @@
-import Matrix3D					= require("awayjs-core/lib/geom/Matrix3D");
-import Rectangle				= require("awayjs-core/lib/geom/Rectangle");
-import Vector3D					= require("awayjs-core/lib/geom/Vector3D");
-import EventDispatcher			= require("awayjs-core/lib/events/EventDispatcher");
-import ProjectionEvent			= require("awayjs-core/lib/events/ProjectionEvent");
-import AbstractMethodError		= require("awayjs-core/lib/errors/AbstractMethodError");
-import IProjection				= require("awayjs-core/lib/projections/IProjection");
+import Matrix3D					from "awayjs-core/lib/geom/Matrix3D";
+import Rectangle				from "awayjs-core/lib/geom/Rectangle";
+import Vector3D					from "awayjs-core/lib/geom/Vector3D";
+import EventDispatcher			from "awayjs-core/lib/events/EventDispatcher";
+import ProjectionEvent			from "awayjs-core/lib/events/ProjectionEvent";
+import AbstractMethodError		from "awayjs-core/lib/errors/AbstractMethodError";
+import IProjection				from "awayjs-core/lib/projections/IProjection";
 
 class ProjectionBase extends EventDispatcher implements IProjection
 {
@@ -209,4 +209,4 @@ class ProjectionBase extends EventDispatcher implements IProjection
 	}
 }
 
-export = ProjectionBase;
+export default ProjectionBase;

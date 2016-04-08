@@ -1,14 +1,13 @@
-import BitmapImage2D			= require("awayjs-core/lib/image/BitmapImage2D");
-import ImageCube				= require("awayjs-core/lib/image/ImageCube");
-import BlendMode				= require("awayjs-core/lib/image/BlendMode");
-import ColorTransform			= require("awayjs-core/lib/geom/ColorTransform");
-import Matrix					= require("awayjs-core/lib/geom/Matrix");
-import Rectangle				= require("awayjs-core/lib/geom/Rectangle");
-import Point					= require("awayjs-core/lib/geom/Point");
-import ByteArray				= require("awayjs-core/lib/utils/ByteArray");
-import ColorUtils				= require("awayjs-core/lib/utils/ColorUtils");
-import ImageUtils				= require("awayjs-core/lib/utils/ImageUtils");
-import BitmapImageUtils			= require("awayjs-core/lib/utils/BitmapImageUtils");
+import BitmapImage2D			from "awayjs-core/lib/image/BitmapImage2D";
+import ImageCube				from "awayjs-core/lib/image/ImageCube";
+import BlendMode				from "awayjs-core/lib/image/BlendMode";
+import ColorTransform			from "awayjs-core/lib/geom/ColorTransform";
+import Matrix					from "awayjs-core/lib/geom/Matrix";
+import Rectangle				from "awayjs-core/lib/geom/Rectangle";
+import Point					from "awayjs-core/lib/geom/Point";
+import ByteArray				from "awayjs-core/lib/utils/ByteArray";
+import ColorUtils				from "awayjs-core/lib/utils/ColorUtils";
+import BitmapImageUtils			from "awayjs-core/lib/utils/BitmapImageUtils";
 
 /**
  * The BitmapImage2D class lets you work with the data(pixels) of a Bitmap
@@ -188,7 +187,7 @@ class BitmapImageCube extends ImageCube
 		if (!this._locked)
 			this._imageData[side] = this._context[side].getImageData(0, 0, this._size, this._size);
 
-		var data:Array<number> = this._imageData[side].data;
+		var data:Uint8ClampedArray = this._imageData[side].data;
 
 		var i:number /*uint*/, j:number /*uint*/, index:number /*uint*/;
 		for (i = 0; i < rect.width; ++i) {
@@ -260,8 +259,8 @@ class BitmapImageCube extends ImageCube
 		if (!this._locked)
 			this._imageData[side] = this._context[side].getImageData(0, 0, this._size, this._size);
 
-		var sourceData:Array<number> = sourceBitmap.getImageData().data;
-		var destData:Array<number> = this._imageData[side].data;
+		var sourceData:Uint8ClampedArray = sourceBitmap.getImageData().data;
+		var destData:Uint8ClampedArray = this._imageData[side].data;
 
 		var sourceOffset:number = Math.round(Math.log(sourceChannel)/Math.log(2));
 		var destOffset:number = Math.round(Math.log(destChannel)/Math.log(2));
@@ -878,4 +877,4 @@ class BitmapImageCube extends ImageCube
 	}
 }
 
-export = BitmapImageCube;
+export default BitmapImageCube;

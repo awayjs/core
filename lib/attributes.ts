@@ -1,0 +1,12 @@
+export {default as AttributesView}					from "awayjs-core/lib/attributes/AttributesView";
+export {default as AttributesBuffer}				from "awayjs-core/lib/attributes/AttributesBuffer";
+export {default as Byte1Attributes}					from "awayjs-core/lib/attributes/Byte1Attributes";
+export {default as Byte2Attributes}					from "awayjs-core/lib/attributes/Byte2Attributes";
+export {default as Byte3Attributes}					from "awayjs-core/lib/attributes/Byte3Attributes";
+export {default as Byte4Attributes}					from "awayjs-core/lib/attributes/Byte4Attributes";
+export {default as Float1Attributes}				from "awayjs-core/lib/attributes/Float1Attributes";
+export {default as Float2Attributes}				from "awayjs-core/lib/attributes/Float2Attributes";
+export {default as Float3Attributes}				from "awayjs-core/lib/attributes/Float3Attributes";
+export {default as Float4Attributes}				from "awayjs-core/lib/attributes/Float4Attributes";
+export {default as Short2Attributes}				from "awayjs-core/lib/attributes/Short2Attributes";
+export {default as Short3Attributes}				from "awayjs-core/lib/attributes/Short3Attributes";

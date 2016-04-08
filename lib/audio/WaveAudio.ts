@@ -1,12 +1,12 @@
-import IAudioChannel				= require("awayjs-core/lib/managers/IAudioChannel");
-import AudioManager				= require("awayjs-core/lib/managers/AudioManager");
-import ColorTransform			= require("awayjs-core/lib/geom/ColorTransform");
-import Matrix					= require("awayjs-core/lib/geom/Matrix");
-import Rectangle				= require("awayjs-core/lib/geom/Rectangle");
-import IAsset					= require("awayjs-core/lib/library/IAsset");
-import AssetBase				= require("awayjs-core/lib/library/AssetBase");
-import ParserUtils				= require("awayjs-core/lib/parsers/ParserUtils");
-import ColorUtils				= require("awayjs-core/lib/utils/ColorUtils");
+import IAudioChannel				from "awayjs-core/lib/managers/IAudioChannel";
+import AudioManager				from "awayjs-core/lib/managers/AudioManager";
+import ColorTransform			from "awayjs-core/lib/geom/ColorTransform";
+import Matrix					from "awayjs-core/lib/geom/Matrix";
+import Rectangle				from "awayjs-core/lib/geom/Rectangle";
+import IAsset					from "awayjs-core/lib/library/IAsset";
+import AssetBase				from "awayjs-core/lib/library/AssetBase";
+import ParserUtils				from "awayjs-core/lib/parsers/ParserUtils";
+import ColorUtils				from "awayjs-core/lib/utils/ColorUtils";
 
 // TODO: Audio should probably be an interface containing play/stop/seek functionality
 class WaveAudio extends AssetBase
@@ -102,4 +102,4 @@ class WaveAudio extends AssetBase
 	}
 }
 
-export = WaveAudio;
+export default WaveAudio;

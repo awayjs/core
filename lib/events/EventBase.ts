@@ -29,4 +29,4 @@ class EventBase
 	}
 }
 
-export = EventBase;
+export default EventBase;

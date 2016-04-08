@@ -22,4 +22,4 @@ class ConflictPrecedence
 	public static FAVOR_NEW:string = 'favorNew';
 }
 
-export = ConflictPrecedence;
+export default ConflictPrecedence;

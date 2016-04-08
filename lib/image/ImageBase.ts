@@ -1,8 +1,8 @@
-import SamplerBase					= require("awayjs-core/lib/image/SamplerBase");
-import AbstractMethodError			= require("awayjs-core/lib/errors/AbstractMethodError");
-import AssetEvent					= require("awayjs-core/lib/events/AssetEvent");
-import IAsset						= require("awayjs-core/lib/library/IAsset");
-import AssetBase					= require("awayjs-core/lib/library/AssetBase");
+import SamplerBase					from "awayjs-core/lib/image/SamplerBase";
+import AbstractMethodError			from "awayjs-core/lib/errors/AbstractMethodError";
+import AssetEvent					from "awayjs-core/lib/events/AssetEvent";
+import IAsset						from "awayjs-core/lib/library/IAsset";
+import AssetBase					from "awayjs-core/lib/library/AssetBase";
 
 class ImageBase extends AssetBase
 {
@@ -26,4 +26,4 @@ class ImageBase extends AssetBase
 	}
 }
 
-export = ImageBase;
+export default ImageBase;

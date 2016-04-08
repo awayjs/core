@@ -166,4 +166,4 @@ class WebAudioChannel
 	}
 }
 
-export = WebAudioChannel;
+export default WebAudioChannel;

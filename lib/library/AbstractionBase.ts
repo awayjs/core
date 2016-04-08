@@ -1,7 +1,7 @@
-import AssetEvent					= require("awayjs-core/lib/events/AssetEvent");
-import EventDispatcher				= require("awayjs-core/lib/events/EventDispatcher");
-import IAbstractionPool				= require("awayjs-core/lib/library/IAbstractionPool");
-import IAsset						= require("awayjs-core/lib/library/IAsset");
+import AssetEvent					from "awayjs-core/lib/events/AssetEvent";
+import EventDispatcher				from "awayjs-core/lib/events/EventDispatcher";
+import IAbstractionPool				from "awayjs-core/lib/library/IAbstractionPool";
+import IAsset						from "awayjs-core/lib/library/IAsset";
 
 /**
  *
@@ -54,4 +54,4 @@ class AbstractionBase extends EventDispatcher
 	}
 }
 
-export = AbstractionBase;
+export default AbstractionBase;

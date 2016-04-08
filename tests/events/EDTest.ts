@@ -1,5 +1,5 @@
-import AssetEvent				= require("awayjs-core/lib/events/AssetEvent");
-import EventDispatcher			= require("awayjs-core/lib/events/EventDispatcher");
+import AssetEvent				from "awayjs-core/lib/events/AssetEvent";
+import EventDispatcher			from "awayjs-core/lib/events/EventDispatcher";
 
 class EDTest extends EventDispatcher
 {

@@ -1,6 +1,6 @@
-import TimerEvent				= require("awayjs-core/lib/events/TimerEvent");
-import getTimer					= require("awayjs-core/lib/utils/getTimer");
-import Timer					= require("awayjs-core/lib/utils/Timer");
+import TimerEvent				from "awayjs-core/lib/events/TimerEvent";
+import getTimer					from "awayjs-core/lib/utils/getTimer";
+import Timer					from "awayjs-core/lib/utils/Timer";
 
 /**
  * 

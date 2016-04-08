@@ -1,5 +1,5 @@
-import IAsset					= require("awayjs-core/lib/library/IAsset");
-import EventBase				= require("awayjs-core/lib/events/EventBase");
+import IAsset					from "awayjs-core/lib/library/IAsset";
+import EventBase				from "awayjs-core/lib/events/EventBase";
 
 class LoaderEvent extends EventBase
 {
@@ -62,4 +62,4 @@ class LoaderEvent extends EventBase
 	}
 }
 
-export = LoaderEvent;
+export default LoaderEvent;

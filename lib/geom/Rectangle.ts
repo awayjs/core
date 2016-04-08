@@ -1,4 +1,4 @@
-import Point					= require("awayjs-core/lib/geom/Point");
+import Point					from "awayjs-core/lib/geom/Point";
 
 /**
  * A Rectangle object is an area defined by its position, as indicated by its
@@ -532,4 +532,4 @@ class Rectangle
 	}
 }
 
-export = Rectangle;
+export default Rectangle;

@@ -1,7 +1,7 @@
-import ConflictPrecedence		= require("awayjs-core/lib/library/ConflictPrecedence");
-import IAsset					= require("awayjs-core/lib/library/IAsset");
-import AbstractMethodError		= require("awayjs-core/lib/errors/AbstractMethodError");
-import AssetEvent				= require("awayjs-core/lib/events/AssetEvent");
+import ConflictPrecedence		from "awayjs-core/lib/library/ConflictPrecedence";
+import IAsset					from "awayjs-core/lib/library/IAsset";
+import AbstractMethodError		from "awayjs-core/lib/errors/AbstractMethodError";
+import AssetEvent				from "awayjs-core/lib/events/AssetEvent";
 
 /**
  * Abstract base class for naming conflict resolution classes. Extend this to create a
@@ -69,4 +69,4 @@ class ConflictStrategyBase
 	}
 }
 
-export = ConflictStrategyBase;
+export default ConflictStrategyBase;

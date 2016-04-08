@@ -52,4 +52,4 @@ class PoissonLookup
 	}
 }
 
-export = PoissonLookup;
+export default PoissonLookup;

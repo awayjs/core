@@ -14,4 +14,4 @@ class MathConsts
 	public static DEGREES_TO_RADIANS:number = Math.PI/180;
 }
 
-export = MathConsts;
+export default MathConsts;

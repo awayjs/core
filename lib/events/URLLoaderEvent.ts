@@ -1,5 +1,5 @@
-import URLLoader				= require("awayjs-core/lib/net/URLLoader");
-import EventBase				= require("awayjs-core/lib/events/EventBase");
+import URLLoader				from "awayjs-core/lib/net/URLLoader";
+import EventBase				from "awayjs-core/lib/events/EventBase";
 
 class URLLoaderEvent extends EventBase
 {
@@ -40,4 +40,4 @@ class URLLoaderEvent extends EventBase
 	}
 }
 
-export = URLLoaderEvent;
+export default URLLoaderEvent;

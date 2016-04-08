@@ -1023,4 +1023,4 @@ class Keyboard
 
 }
 
-export = Keyboard;
+export default Keyboard;

@@ -1,5 +1,5 @@
-import ConflictStrategyBase		= require("awayjs-core/lib/library/ConflictStrategyBase");
-import IAsset					= require("awayjs-core/lib/library/IAsset");
+import ConflictStrategyBase		from "awayjs-core/lib/library/ConflictStrategyBase";
+import IAsset					from "awayjs-core/lib/library/IAsset";
 
 class IgnoreConflictStrategy extends ConflictStrategyBase
 {
@@ -20,4 +20,4 @@ class IgnoreConflictStrategy extends ConflictStrategyBase
 	}
 }
 
-export = IgnoreConflictStrategy;
+export default IgnoreConflictStrategy;

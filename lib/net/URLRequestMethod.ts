@@ -12,4 +12,4 @@ class URLRequestMethod
 	public static GET:string = 'GET';
 }
 
-export = URLRequestMethod;
+export default URLRequestMethod;

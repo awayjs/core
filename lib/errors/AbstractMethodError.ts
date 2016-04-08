@@ -1,4 +1,4 @@
-import ErrorBase				= require("awayjs-core/lib/errors/ErrorBase");
+import ErrorBase				from "awayjs-core/lib/errors/ErrorBase";
 
 /**
  * AbstractMethodError is thrown when an abstract method is called. The method in question should be overridden
@@ -17,4 +17,4 @@ class AbstractMethodError extends ErrorBase
 	}
 }
 
-export = AbstractMethodError;
+export default AbstractMethodError;

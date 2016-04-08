@@ -1,5 +1,5 @@
-import EventBase				= require("awayjs-core/lib/events/EventBase");
-import IProjection				= require("awayjs-core/lib/projections/IProjection");
+import EventBase				from "awayjs-core/lib/events/EventBase";
+import IProjection				from "awayjs-core/lib/projections/IProjection";
 
 class ProjectionEvent extends EventBase
 {
@@ -19,4 +19,4 @@ class ProjectionEvent extends EventBase
 	}
 }
 
-export = ProjectionEvent;
+export default ProjectionEvent;

@@ -1,13 +1,13 @@
-import Sampler2D				= require("awayjs-core/lib/image/Sampler2D");
-import BitmapImage2D			= require("awayjs-core/lib/image/BitmapImage2D");
-import Rectangle				= require("awayjs-core/lib/geom/Rectangle");
-import IAsset					= require("awayjs-core/lib/library/IAsset");
-import URLLoaderDataFormat		= require("awayjs-core/lib/net/URLLoaderDataFormat");
-import URLRequest				= require("awayjs-core/lib/net/URLRequest");
-import ParserBase				= require("awayjs-core/lib/parsers/ParserBase");
-import ParserUtils				= require("awayjs-core/lib/parsers/ParserUtils");
-import ResourceDependency		= require("awayjs-core/lib/parsers/ResourceDependency");
-import XmlUtils					= require("awayjs-core/lib/utils/XmlUtils");
+import Sampler2D				from "awayjs-core/lib/image/Sampler2D";
+import BitmapImage2D			from "awayjs-core/lib/image/BitmapImage2D";
+import Rectangle				from "awayjs-core/lib/geom/Rectangle";
+import IAsset					from "awayjs-core/lib/library/IAsset";
+import URLLoaderDataFormat		from "awayjs-core/lib/net/URLLoaderDataFormat";
+import URLRequest				from "awayjs-core/lib/net/URLRequest";
+import ParserBase				from "awayjs-core/lib/parsers/ParserBase";
+import ParserUtils				from "awayjs-core/lib/parsers/ParserUtils";
+import ResourceDependency		from "awayjs-core/lib/parsers/ResourceDependency";
+import XmlUtils					from "awayjs-core/lib/utils/XmlUtils";
 
 /**
  * TextureAtlasParser provides a "parser" for natively supported image types (jpg, png). While it simply loads bytes into
@@ -60,8 +60,6 @@ class TextureAtlasParser extends ParserBase
 		} catch (e) {
 			return false;
 		}
-
-		return false;
 	}
 
 	/**
@@ -162,7 +160,7 @@ class TextureAtlasParser extends ParserBase
 	}
 }
 
-export = TextureAtlasParser;
+export default TextureAtlasParser;
 
 class TextureAtlasParserState {
 	public static PARSE_XML:number = 0;

@@ -6,4 +6,4 @@ class BitmapImageChannel
 	public static RED:number /*uint*/ = 1;
 }
 
-export = BitmapImageChannel;
+export default BitmapImageChannel;

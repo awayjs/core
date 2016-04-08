@@ -1,20 +1,20 @@
-import URLRequest				= require("awayjs-core/lib/net/URLRequest");
-import AssetLibrary				= require("awayjs-core/lib/library/AssetLibrary");
-import AssetLibraryIterator		= require("awayjs-core/lib/library/AssetLibraryIterator");
-import Loader			= require("awayjs-core/lib/library/Loader");
-import LoaderContext			= require("awayjs-core/lib/library/LoaderContext");
-import ConflictPrecedence		= require("awayjs-core/lib/library/ConflictPrecedence");
-import ConflictStrategy			= require("awayjs-core/lib/library/ConflictStrategy");
-import ConflictStrategyBase		= require("awayjs-core/lib/library/ConflictStrategyBase");
-import AssetBase				= require("awayjs-core/lib/library/AssetBase");
-import IAsset					= require("awayjs-core/lib/library/IAsset");
-import ErrorBase				= require("awayjs-core/lib/errors/ErrorBase");
-import AssetEvent				= require("awayjs-core/lib/events/AssetEvent");
-import URLLoaderEvent			= require("awayjs-core/lib/events/URLLoaderEvent");
-import LoaderEvent		= require("awayjs-core/lib/events/LoaderEvent");
-import EventDispatcher			= require("awayjs-core/lib/events/EventDispatcher");
-import ParserEvent				= require("awayjs-core/lib/events/ParserEvent");
-import ParserBase				= require("awayjs-core/lib/parsers/ParserBase");
+import URLRequest				from "awayjs-core/lib/net/URLRequest";
+import AssetLibrary				from "awayjs-core/lib/library/AssetLibrary";
+import AssetLibraryIterator		from "awayjs-core/lib/library/AssetLibraryIterator";
+import Loader					from "awayjs-core/lib/library/Loader";
+import LoaderContext			from "awayjs-core/lib/library/LoaderContext";
+import ConflictPrecedence		from "awayjs-core/lib/library/ConflictPrecedence";
+import ConflictStrategy			from "awayjs-core/lib/library/ConflictStrategy";
+import ConflictStrategyBase		from "awayjs-core/lib/library/ConflictStrategyBase";
+import AssetBase				from "awayjs-core/lib/library/AssetBase";
+import IAsset					from "awayjs-core/lib/library/IAsset";
+import ErrorBase				from "awayjs-core/lib/errors/ErrorBase";
+import AssetEvent				from "awayjs-core/lib/events/AssetEvent";
+import URLLoaderEvent			from "awayjs-core/lib/events/URLLoaderEvent";
+import LoaderEvent				from "awayjs-core/lib/events/LoaderEvent";
+import EventDispatcher			from "awayjs-core/lib/events/EventDispatcher";
+import ParserEvent				from "awayjs-core/lib/events/ParserEvent";
+import ParserBase				from "awayjs-core/lib/parsers/ParserBase";
 
 /**
  * AssetLibraryBundle enforces a multiton pattern and is not intended to be instanced directly.
@@ -569,4 +569,4 @@ class AssetLibraryBundle extends EventDispatcher
 	}
 }
 
-export = AssetLibraryBundle;
+export default AssetLibraryBundle;

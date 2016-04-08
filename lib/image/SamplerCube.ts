@@ -1,5 +1,5 @@
-import SamplerBase				= require("awayjs-core/lib/image/SamplerBase");
-import ImageCube				= require("awayjs-core/lib/image/ImageCube");
+import SamplerBase				from "awayjs-core/lib/image/SamplerBase";
+import ImageCube				from "awayjs-core/lib/image/ImageCube";
 
 /**
  * The Bitmap class represents display objects that represent bitmap images.
@@ -45,4 +45,4 @@ class SamplerCube extends SamplerBase
 	}
 }
 
-export = SamplerCube;
+export default SamplerCube;

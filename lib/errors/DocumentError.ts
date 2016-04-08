@@ -1,4 +1,4 @@
-import ErrorBase				= require("awayjs-core/lib/errors/ErrorBase");
+import ErrorBase				from "awayjs-core/lib/errors/ErrorBase";
 
 class DocumentError extends ErrorBase
 {
@@ -10,4 +10,4 @@ class DocumentError extends ErrorBase
 	}
 }
 
-export = DocumentError;
+export default DocumentError;

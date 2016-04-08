@@ -1,5 +1,5 @@
-import ConflictStrategyBase		= require("awayjs-core/lib/library/ConflictStrategyBase");
-import IAsset					= require("awayjs-core/lib/library/IAsset");
+import ConflictStrategyBase		from "awayjs-core/lib/library/ConflictStrategyBase";
+import IAsset					from "awayjs-core/lib/library/IAsset";
 
 class NumSuffixConflictStrategy extends ConflictStrategyBase
 {
@@ -67,4 +67,4 @@ class NumSuffixConflictStrategy extends ConflictStrategyBase
 	}
 }
 
-export = NumSuffixConflictStrategy;
+export default NumSuffixConflictStrategy;

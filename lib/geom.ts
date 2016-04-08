@@ -1,0 +1,15 @@
+export {default as Box}								from "awayjs-core/lib/geom/Box";
+export {default as ColorTransform}					from "awayjs-core/lib/geom/ColorTransform";
+export {default as MathConsts}						from "awayjs-core/lib/geom/MathConsts";
+export {default as Matrix}							from "awayjs-core/lib/geom/Matrix";
+export {default as Matrix3D}						from "awayjs-core/lib/geom/Matrix3D";
+export {default as Matrix3DUtils}					from "awayjs-core/lib/geom/Matrix3DUtils";
+export {default as Orientation3D}					from "awayjs-core/lib/geom/Orientation3D";
+export {default as Plane3D}							from "awayjs-core/lib/geom/Plane3D";
+export {default as PlaneClassification}				from "awayjs-core/lib/geom/PlaneClassification";
+export {default as Point}							from "awayjs-core/lib/geom/Point";
+export {default as PoissonLookup}					from "awayjs-core/lib/geom/PoissonLookup";
+export {default as Quaternion}						from "awayjs-core/lib/geom/Quaternion";
+export {default as Rectangle}						from "awayjs-core/lib/geom/Rectangle";
+export {default as Sphere}							from "awayjs-core/lib/geom/Sphere";
+export {default as Vector3D}						from "awayjs-core/lib/geom/Vector3D";

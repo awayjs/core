@@ -10,4 +10,4 @@ class PlaneClassification
 
 }
 
-export = PlaneClassification;
+export default PlaneClassification;

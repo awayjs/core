@@ -1,7 +1,7 @@
-import ConflictStrategyBase			= require("awayjs-core/lib/library/ConflictStrategyBase");
-import ErrorConflictStrategy		= require("awayjs-core/lib/library/ErrorConflictStrategy");
-import IgnoreConflictStrategy		= require("awayjs-core/lib/library/IgnoreConflictStrategy");
-import NumSuffixConflictStrategy	= require("awayjs-core/lib/library/NumSuffixConflictStrategy");
+import ConflictStrategyBase			from "awayjs-core/lib/library/ConflictStrategyBase";
+import ErrorConflictStrategy		from "awayjs-core/lib/library/ErrorConflictStrategy";
+import IgnoreConflictStrategy		from "awayjs-core/lib/library/IgnoreConflictStrategy";
+import NumSuffixConflictStrategy	from "awayjs-core/lib/library/NumSuffixConflictStrategy";
 
 /**
  * Enumeration class for bundled conflict strategies. Set one of these values (or an
@@ -42,4 +42,4 @@ class ConflictStrategy
 	}
 }
 
-export = ConflictStrategy;
+export default ConflictStrategy;

@@ -1,0 +1,15 @@
+export {default as BitmapImage2D}					from "awayjs-core/lib/image/BitmapImage2D";
+export {default as BitmapImageChannel}				from "awayjs-core/lib/image/BitmapImageChannel";
+export {default as BitmapImageCube}					from "awayjs-core/lib/image/BitmapImageCube";
+export {default as BlendMode}						from "awayjs-core/lib/image/BlendMode";
+export {default as CPUCanvas}						from "awayjs-core/lib/image/CPUCanvas";
+export {default as CPURenderingContext2D}			from "awayjs-core/lib/image/CPURenderingContext2D";
+export {default as IImageCanvas}					from "awayjs-core/lib/image/IImageCanvas";
+export {default as Image2D}							from "awayjs-core/lib/image/Image2D";
+export {default as ImageBase}						from "awayjs-core/lib/image/ImageBase";
+export {default as ImageCube}						from "awayjs-core/lib/image/ImageCube";
+export {default as ImageData}						from "awayjs-core/lib/image/ImageData";
+export {default as Sampler2D}						from "awayjs-core/lib/image/Sampler2D";
+export {default as SamplerBase}						from "awayjs-core/lib/image/SamplerBase";
+export {default as SamplerCube}						from "awayjs-core/lib/image/SamplerCube";
+export {default as SpecularImage2D}					from "awayjs-core/lib/image/SpecularImage2D";

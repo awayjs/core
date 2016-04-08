@@ -1,4 +1,4 @@
-import EventBase				= require("awayjs-core/lib/events/EventBase");
+import EventBase				from "awayjs-core/lib/events/EventBase";
 
 /**
  * Base interface for dispatching events
@@ -41,4 +41,4 @@ interface IEventDispatcher
 	hasEventListener(type:string, listener?:(event:EventBase) => void) : boolean;
 }
 
-export = IEventDispatcher;
+export default IEventDispatcher;

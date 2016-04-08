@@ -16,4 +16,4 @@ class CoordinateSystem
 	public static RIGHT_HANDED:string = "rightHanded";
 }
 
-export = CoordinateSystem;
+export default CoordinateSystem;

@@ -1,4 +1,4 @@
-import getTimer					= require("awayjs-core/lib/utils/getTimer");
+import getTimer					from "awayjs-core/lib/utils/getTimer";
 
 class RequestAnimationFrame
 {
@@ -101,4 +101,4 @@ class RequestAnimationFrame
 
 }
 
-export = RequestAnimationFrame;
+export default RequestAnimationFrame;

@@ -22,4 +22,4 @@ class Orientation3D
 	public static QUATERNION:string = "quaternion";
 }
 
-export = Orientation3D;
+export default Orientation3D;

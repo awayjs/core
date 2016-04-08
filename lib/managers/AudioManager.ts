@@ -1,7 +1,7 @@
-import StreamingAudioChannel	= require("awayjs-core/lib/managers/StreamingAudioChannel");
-import WebAudioChannel			= require("awayjs-core/lib/managers/WebAudioChannel");
-import IAudioChannel			= require("awayjs-core/lib/managers/IAudioChannel");
-import IAudioChannelClass		= require("awayjs-core/lib/managers/IAudioChannelClass");
+import StreamingAudioChannel	from "awayjs-core/lib/managers/StreamingAudioChannel";
+import WebAudioChannel			from "awayjs-core/lib/managers/WebAudioChannel";
+import IAudioChannel			from "awayjs-core/lib/managers/IAudioChannel";
+import IAudioChannelClass		from "awayjs-core/lib/managers/IAudioChannelClass";
 
 class AudioManager
 {
@@ -37,4 +37,4 @@ class AudioManager
 
 }
 
-export = AudioManager;
+export default AudioManager;

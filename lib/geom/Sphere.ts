@@ -1,5 +1,5 @@
-import PlaneClassification	= require("awayjs-core/lib/geom/PlaneClassification");
-import Vector3D				= require("awayjs-core/lib/geom/Vector3D");
+import PlaneClassification	from "awayjs-core/lib/geom/PlaneClassification";
+import Vector3D				from "awayjs-core/lib/geom/Vector3D";
 
 class Sphere
 {
@@ -81,4 +81,4 @@ class Sphere
 	}
 }
 
-export = Sphere;
+export default Sphere;

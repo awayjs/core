@@ -1,8 +1,8 @@
-import IAsset					= require("awayjs-core/lib/library/IAsset");
+import IAsset					from "awayjs-core/lib/library/IAsset";
 
 interface IAssetClass
 {
 	assetType:string;
 }
 
-export = IAssetClass;
+export default IAssetClass;

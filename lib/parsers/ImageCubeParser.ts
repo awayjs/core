@@ -1,10 +1,10 @@
-import BitmapImage2D			= require("awayjs-core/lib/image/BitmapImage2D");
-import BitmapImageCube			= require("awayjs-core/lib/image/BitmapImageCube");
-import IAsset					= require("awayjs-core/lib/library/IAsset");
-import URLLoaderDataFormat		= require("awayjs-core/lib/net/URLLoaderDataFormat");
-import URLRequest				= require("awayjs-core/lib/net/URLRequest");
-import ParserBase				= require("awayjs-core/lib/parsers/ParserBase");
-import ResourceDependency		= require("awayjs-core/lib/parsers/ResourceDependency");
+import BitmapImage2D			from "awayjs-core/lib/image/BitmapImage2D";
+import BitmapImageCube			from "awayjs-core/lib/image/BitmapImageCube";
+import IAsset					from "awayjs-core/lib/library/IAsset";
+import URLLoaderDataFormat		from "awayjs-core/lib/net/URLLoaderDataFormat";
+import URLRequest				from "awayjs-core/lib/net/URLRequest";
+import ParserBase				from "awayjs-core/lib/parsers/ParserBase";
+import ResourceDependency		from "awayjs-core/lib/parsers/ResourceDependency";
 
 /**
  * ImageCubeParser provides a "parser" for natively supported image types (jpg, png). While it simply loads bytes into
@@ -54,15 +54,13 @@ class ImageCubeParser extends ParserBase
 		try {
 			var obj = JSON.parse(data);
 
-			if (obj) {
+			if (obj)
 				return true;
-			}
+
 			return false;
 		} catch (e) {
 			return false;
 		}
-
-		return false;
 	}
 
 	/**
@@ -159,4 +157,4 @@ class ImageCubeParser extends ParserBase
 
 }
 
-export = ImageCubeParser;
+export default ImageCubeParser;

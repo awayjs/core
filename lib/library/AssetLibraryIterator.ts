@@ -1,4 +1,4 @@
-import IAsset					= require("awayjs-core/lib/library/IAsset");
+import IAsset					from "awayjs-core/lib/library/IAsset";
 
 class AssetLibraryIterator
 {
@@ -104,4 +104,4 @@ class AssetLibraryIterator
 	}
 }
 
-export = AssetLibraryIterator;
+export default AssetLibraryIterator;

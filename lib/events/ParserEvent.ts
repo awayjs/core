@@ -1,4 +1,4 @@
-import EventBase				= require("awayjs-core/lib/events/EventBase");
+import EventBase				from "awayjs-core/lib/events/EventBase";
 
 class ParserEvent extends EventBase
 {
@@ -47,4 +47,4 @@ class ParserEvent extends EventBase
 	}
 }
 
-export = ParserEvent;
+export default ParserEvent;

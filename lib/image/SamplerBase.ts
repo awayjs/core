@@ -1,5 +1,5 @@
-import IAsset					= require("awayjs-core/lib/library/IAsset");
-import AssetBase				= require("awayjs-core/lib/library/AssetBase");
+import IAsset					from "awayjs-core/lib/library/IAsset";
+import AssetBase				from "awayjs-core/lib/library/AssetBase";
 
 /**
  *
@@ -55,4 +55,4 @@ class SamplerBase extends AssetBase
 	}
 }
 
-export = SamplerBase;
+export default SamplerBase;

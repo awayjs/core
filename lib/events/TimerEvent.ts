@@ -1,4 +1,4 @@
-import EventBase				= require("awayjs-core/lib/events/EventBase");
+import EventBase				from "awayjs-core/lib/events/EventBase";
 
 class TimerEvent extends EventBase
 {
@@ -19,4 +19,4 @@ class TimerEvent extends EventBase
 	}
 }
 
-export = TimerEvent
+export default TimerEvent

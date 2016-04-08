@@ -1,4 +1,4 @@
-import Vector3D					= require("awayjs-core/lib/geom/Vector3D");
+import Vector3D					from "awayjs-core/lib/geom/Vector3D";
 
 /**
  * A Box object is an area defined by its position, as indicated by its
@@ -814,4 +814,4 @@ class Box
 	}
 }
 
-export = Box;
+export default Box;

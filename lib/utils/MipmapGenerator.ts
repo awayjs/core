@@ -1,7 +1,7 @@
-import BitmapImage2D            = require("awayjs-core/lib/image/BitmapImage2D");
-import CPUCanvas            = require("awayjs-core/lib/image/CPUCanvas");
-import Matrix                    = require("awayjs-core/lib/geom/Matrix");
-import Rectangle                = require("awayjs-core/lib/geom/Rectangle");
+import BitmapImage2D            from "awayjs-core/lib/image/BitmapImage2D";
+import CPUCanvas            from "awayjs-core/lib/image/CPUCanvas";
+import Matrix                    from "awayjs-core/lib/geom/Matrix";
+import Rectangle                from "awayjs-core/lib/geom/Rectangle";
 
 class MipmapGenerator {
     private static _mipMaps = [];
@@ -277,4 +277,4 @@ class BoxFilter {
         else return 0.0;
     }
 }
-export = MipmapGenerator;
+export default MipmapGenerator;

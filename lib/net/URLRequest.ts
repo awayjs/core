@@ -1,4 +1,4 @@
-import URLRequestMethod				= require("awayjs-core/lib/net/URLRequestMethod");
+import URLRequestMethod				from "awayjs-core/lib/net/URLRequestMethod";
 
 class URLRequest
 {
@@ -71,4 +71,4 @@ class URLRequest
 	}
 }
 
-export = URLRequest;
+export default URLRequest;

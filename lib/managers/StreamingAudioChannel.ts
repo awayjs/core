@@ -184,4 +184,4 @@ class StreamingAudioChannel
 	}
 }
 
-export = StreamingAudioChannel;
+export default StreamingAudioChannel;

@@ -1,17 +1,17 @@
-import BitmapImage2D			= require("awayjs-core/lib/image/BitmapImage2D");
-import IAsset					= require("awayjs-core/lib/library/IAsset");
-import URLRequest				= require("awayjs-core/lib/net/URLRequest");
-import AbstractMethodError		= require("awayjs-core/lib/errors/AbstractMethodError");
-import AssetEvent				= require("awayjs-core/lib/events/AssetEvent");
-import EventDispatcher			= require("awayjs-core/lib/events/EventDispatcher");
-import ParserEvent				= require("awayjs-core/lib/events/ParserEvent");
-import TimerEvent				= require("awayjs-core/lib/events/TimerEvent");
-import ParserUtils				= require("awayjs-core/lib/parsers/ParserUtils");
-import ResourceDependency		= require("awayjs-core/lib/parsers/ResourceDependency");
-import ByteArray				= require("awayjs-core/lib/utils/ByteArray");
-import ImageUtils				= require("awayjs-core/lib/utils/ImageUtils");
-import Timer					= require("awayjs-core/lib/utils/Timer");
-import getTimer					= require("awayjs-core/lib/utils/getTimer");
+import BitmapImage2D			from "awayjs-core/lib/image/BitmapImage2D";
+import IAsset					from "awayjs-core/lib/library/IAsset";
+import URLRequest				from "awayjs-core/lib/net/URLRequest";
+import AbstractMethodError		from "awayjs-core/lib/errors/AbstractMethodError";
+import AssetEvent				from "awayjs-core/lib/events/AssetEvent";
+import EventDispatcher			from "awayjs-core/lib/events/EventDispatcher";
+import ParserEvent				from "awayjs-core/lib/events/ParserEvent";
+import TimerEvent				from "awayjs-core/lib/events/TimerEvent";
+import ParserUtils				from "awayjs-core/lib/parsers/ParserUtils";
+import ResourceDependency		from "awayjs-core/lib/parsers/ResourceDependency";
+import ByteArray				from "awayjs-core/lib/utils/ByteArray";
+import ImageUtils				from "awayjs-core/lib/utils/ImageUtils";
+import Timer					from "awayjs-core/lib/utils/Timer";
+import getTimer					from "awayjs-core/lib/utils/getTimer";
 
 /**
  * <code>ParserBase</code> provides an abstract base class for objects that convert blocks of data to data structures
@@ -372,4 +372,4 @@ class ParserBase extends EventDispatcher
 
 }
 
-export = ParserBase;
+export default ParserBase;

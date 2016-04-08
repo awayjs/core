@@ -1,0 +1,9 @@
+export {default as AssetEvent}						from "awayjs-core/lib/events/AssetEvent";
+export {default as EventBase}						from "awayjs-core/lib/events/EventBase";
+export {default as EventDispatcher}					from "awayjs-core/lib/events/EventDispatcher";
+export {default as IEventDispatcher}				from "awayjs-core/lib/events/IEventDispatcher";
+export {default as LoaderEvent}						from "awayjs-core/lib/events/LoaderEvent";
+export {default as ParserEvent}						from "awayjs-core/lib/events/ParserEvent";
+export {default as ProjectionEvent}					from "awayjs-core/lib/events/ProjectionEvent";
+export {default as TimerEvent}						from "awayjs-core/lib/events/TimerEvent";
+export {default as URLLoaderEvent}					from "awayjs-core/lib/events/URLLoaderEvent";

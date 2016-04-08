@@ -1,7 +1,7 @@
-import ImageBase				= require("awayjs-core/lib/image/ImageBase");
-import Sampler2D				= require("awayjs-core/lib/image/Sampler2D");
-import Rectangle				= require("awayjs-core/lib/geom/Rectangle");
-import ImageUtils				= require("awayjs-core/lib/utils/ImageUtils");
+import ImageBase				from "awayjs-core/lib/image/ImageBase";
+import Sampler2D				from "awayjs-core/lib/image/Sampler2D";
+import Rectangle				from "awayjs-core/lib/geom/Rectangle";
+import ImageUtils				from "awayjs-core/lib/utils/ImageUtils";
 
 class Image2D extends ImageBase
 {
@@ -116,4 +116,4 @@ class Image2D extends ImageBase
 	}
 }
 
-export = Image2D;
+export default Image2D;

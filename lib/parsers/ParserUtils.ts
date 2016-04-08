@@ -1,6 +1,6 @@
-import BitmapImage2D			= require("awayjs-core/lib/image/BitmapImage2D");
-import WaveAudio				= require("awayjs-core/lib/audio/WaveAudio");
-import ByteArray				= require("awayjs-core/lib/utils/ByteArray");
+import BitmapImage2D			from "awayjs-core/lib/image/BitmapImage2D";
+import WaveAudio				from "awayjs-core/lib/audio/WaveAudio";
+import ByteArray				from "awayjs-core/lib/utils/ByteArray";
 
 class ParserUtils
 {
@@ -173,4 +173,4 @@ class ParserUtils
 	}
 }
 
-export = ParserUtils;
+export default ParserUtils;

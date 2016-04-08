@@ -1,15 +1,14 @@
-import Image2D					= require("awayjs-core/lib/image/Image2D");
-import BlendMode				= require("awayjs-core/lib/image/BlendMode");
-import ColorTransform			= require("awayjs-core/lib/geom/ColorTransform");
-import Matrix					= require("awayjs-core/lib/geom/Matrix");
-import Rectangle				= require("awayjs-core/lib/geom/Rectangle");
-import Point					= require("awayjs-core/lib/geom/Point");
-import ByteArray				= require("awayjs-core/lib/utils/ByteArray");
-import ColorUtils				= require("awayjs-core/lib/utils/ColorUtils");
-import BitmapImageUtils			= require("awayjs-core/lib/utils/BitmapImageUtils");
-import ImageUtils				= require("awayjs-core/lib/utils/ImageUtils");
-import IImageCanvas				= require("awayjs-core/lib/image/IImageCanvas");
-import CPUCanvas = require('awayjs-core/lib/image/CPUCanvas');
+import Image2D					from "awayjs-core/lib/image/Image2D";
+import BlendMode				from "awayjs-core/lib/image/BlendMode";
+import ColorTransform			from "awayjs-core/lib/geom/ColorTransform";
+import Matrix					from "awayjs-core/lib/geom/Matrix";
+import Rectangle				from "awayjs-core/lib/geom/Rectangle";
+import Point					from "awayjs-core/lib/geom/Point";
+import ByteArray				from "awayjs-core/lib/utils/ByteArray";
+import ColorUtils				from "awayjs-core/lib/utils/ColorUtils";
+import BitmapImageUtils			from "awayjs-core/lib/utils/BitmapImageUtils";
+import IImageCanvas				from "awayjs-core/lib/image/IImageCanvas";
+import CPUCanvas				from "awayjs-core/lib/image/CPUCanvas";
 /**
  * The BitmapImage2D class lets you work with the data(pixels) of a Bitmap
  * object. You can use the methods of the BitmapImage2D class to create
@@ -138,7 +137,7 @@ class BitmapImage2D extends Image2D
 
 		this._transparent = transparent;
 		if(document) {
-			this._imageCanvas = <HTMLCanvasElement> document.createElement("canvas");
+			this._imageCanvas = <IImageCanvas> document.createElement("canvas");
 		}else {
 			this._imageCanvas = new CPUCanvas();
 		}
@@ -179,7 +178,7 @@ class BitmapImage2D extends Image2D
 		if (!this._locked)
 			this._imageData = this._context.getImageData(0, 0, this._rect.width, this._rect.height);
 
-		var data:Array<number> = this._imageData.data;
+		var data:Uint8ClampedArray = this._imageData.data;
 
 		var i:number /*uint*/, j:number /*uint*/, index:number /*uint*/;
 		for (i = 0; i < rect.width; ++i) {
@@ -251,8 +250,8 @@ class BitmapImage2D extends Image2D
 		if (!this._locked)
 			this._imageData = this._context.getImageData(0, 0, this._rect.width, this._rect.height);
 
-		var sourceData:Array<number> = sourceBitmap.getImageData().data;
-		var destData:Array<number> = this._imageData.data;
+		var sourceData:Uint8ClampedArray = sourceBitmap.getImageData().data;
+		var destData:Uint8ClampedArray = this._imageData.data;
 
 		var sourceOffset:number = Math.round(Math.log(sourceChannel)/Math.log(2));
 		var destOffset:number = Math.round(Math.log(destChannel)/Math.log(2));
@@ -864,4 +863,4 @@ class BitmapImage2D extends Image2D
 	}
 }
 
-export = BitmapImage2D;
+export default BitmapImage2D;

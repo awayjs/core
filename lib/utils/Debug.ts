@@ -1,4 +1,4 @@
-import PartialImplementationError	= require("awayjs-core/lib/errors/PartialImplementationError");
+import PartialImplementationError	from "awayjs-core/lib/errors/PartialImplementationError";
 
 /**
  *
@@ -53,4 +53,4 @@ class Debug
 	}
 }
 
-export = Debug;
+export default Debug;

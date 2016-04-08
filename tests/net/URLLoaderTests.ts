@@ -1,9 +1,9 @@
-import URLLoader			= require("awayjs-core/lib/net/URLLoader");
-import URLLoaderDataFormat	= require("awayjs-core/lib/net/URLLoaderDataFormat");
-import URLRequest			= require("awayjs-core/lib/net/URLRequest");
-import URLRequestMethod		= require("awayjs-core/lib/net/URLRequestMethod");
-import URLVariables			= require("awayjs-core/lib/net/URLVariables");
-import URLLoaderEvent		= require("awayjs-core/lib/events/URLLoaderEvent");
+import URLLoader			from "awayjs-core/lib/net/URLLoader";
+import URLLoaderDataFormat	from "awayjs-core/lib/net/URLLoaderDataFormat";
+import URLRequest			from "awayjs-core/lib/net/URLRequest";
+import URLRequestMethod		from "awayjs-core/lib/net/URLRequestMethod";
+import URLVariables			from "awayjs-core/lib/net/URLVariables";
+import URLLoaderEvent		from "awayjs-core/lib/events/URLLoaderEvent";
 
 /**
  * 

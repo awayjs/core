@@ -1,4 +1,4 @@
-import ByteArray			= require("awayjs-core/lib/utils/ByteArray");
+import ByteArray			from "awayjs-core/lib/utils/ByteArray";
 
 /**
  * 

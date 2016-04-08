@@ -1,13 +1,12 @@
-import BitmapImage2D		= require("awayjs-core/lib/image/BitmapImage2D");
-import AssetEvent			= require("awayjs-core/lib/events/AssetEvent");
-import LoaderEvent			= require("awayjs-core/lib/events/LoaderEvent");
-import ParserEvent			= require("awayjs-core/lib/events/ParserEvent");
-import Loader				= require("awayjs-core/lib/library/Loader");
-import IAsset				= require("awayjs-core/lib/library/IAsset");
-import URLRequest			= require("awayjs-core/lib/net/URLRequest");
-import ParserBase			= require("awayjs-core/lib/parsers/ParserBase");
-import ParserDataFormat		= require("awayjs-core/lib/parsers/ParserDataFormat");
-import ResourceDependency	= require("awayjs-core/lib/parsers/ResourceDependency");
+import BitmapImage2D		from "awayjs-core/lib/image/BitmapImage2D";
+import AssetEvent			from "awayjs-core/lib/events/AssetEvent";
+import ParserEvent			from "awayjs-core/lib/events/ParserEvent";
+import Loader				from "awayjs-core/lib/library/Loader";
+import IAsset				from "awayjs-core/lib/library/IAsset";
+import URLRequest			from "awayjs-core/lib/net/URLRequest";
+import ParserBase			from "awayjs-core/lib/parsers/ParserBase";
+import ParserDataFormat		from "awayjs-core/lib/parsers/ParserDataFormat";
+import ResourceDependency	from "awayjs-core/lib/parsers/ResourceDependency";
 
 class LoaderTest
 {

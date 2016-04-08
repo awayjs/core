@@ -1,4 +1,4 @@
-import RequestAnimationFrame	= require("awayjs-core/lib/utils/RequestAnimationFrame");
+import RequestAnimationFrame	from "awayjs-core/lib/utils/RequestAnimationFrame";
 
 class RequestAnimationFrameTest
 {

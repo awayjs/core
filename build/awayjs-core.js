@@ -7552,6 +7552,8 @@ var CPURenderingContext2D = (function () {
     CPURenderingContext2D.prototype.createRadialGradient = function (x0, y0, r0, x1, y1, r1) {
         return undefined;
     };
+    CPURenderingContext2D.prototype.ellipse = function (x, y, radiusX, radiusY, rotation, startAngle, endAngle, anticlockwise) {
+    };
     CPURenderingContext2D.prototype.lineTo = function (x, y) {
     };
     CPURenderingContext2D.prototype.getLineDash = function () {

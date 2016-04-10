@@ -1,5 +1,5 @@
-import IAsset						from "awayjs-core/lib/library/IAsset";
-import AbstractionBase				from "awayjs-core/lib/library/AbstractionBase";
+import IAsset						from "../library/IAsset";
+import AbstractionBase				from "../library/AbstractionBase";
 
 interface IAbstractionPool
 {

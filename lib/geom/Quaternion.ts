@@ -1,7 +1,7 @@
-import Matrix3DUtils		from "awayjs-core/lib/geom/Matrix3DUtils";
-import Orientation3D		from "awayjs-core/lib/geom/Orientation3D";
-import Matrix3D				from "awayjs-core/lib/geom/Matrix3D";
-import Vector3D				from "awayjs-core/lib/geom/Vector3D";
+import Matrix3DUtils		from "../geom/Matrix3DUtils";
+import Orientation3D		from "../geom/Orientation3D";
+import Matrix3D				from "../geom/Matrix3D";
+import Vector3D				from "../geom/Vector3D";
 
 /**
  * A Quaternion object which can be used to represent rotations.

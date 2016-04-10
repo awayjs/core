@@ -1,4 +1,4 @@
-import ByteArrayBase			from "awayjs-core/lib/utils/ByteArrayBase";
+import ByteArrayBase			from "../utils/ByteArrayBase";
 
 class ByteArrayBuffer extends ByteArrayBase
 {

@@ -1,6 +1,6 @@
-import AttributesBuffer			from "awayjs-core/lib/attributes/AttributesBuffer";
-import AssetBase				from "awayjs-core/lib/library/AssetBase";
-import IArrayBufferViewClass	from "awayjs-core/lib/utils/IArrayBufferViewClass";
+import AttributesBuffer			from "../attributes/AttributesBuffer";
+import AssetBase				from "../library/AssetBase";
+import IArrayBufferViewClass	from "../utils/IArrayBufferViewClass";
 
 class AttributesView extends AssetBase
 {

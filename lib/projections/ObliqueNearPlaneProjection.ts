@@ -1,9 +1,9 @@
-import Matrix3D					from "awayjs-core/lib/geom/Matrix3D";
-import Plane3D					from "awayjs-core/lib/geom/Plane3D";
-import Vector3D					from "awayjs-core/lib/geom/Vector3D";
-import ProjectionEvent			from "awayjs-core/lib/events/ProjectionEvent";
-import IProjection				from "awayjs-core/lib/projections/IProjection";
-import ProjectionBase			from "awayjs-core/lib/projections/ProjectionBase";
+import Matrix3D					from "../geom/Matrix3D";
+import Plane3D					from "../geom/Plane3D";
+import Vector3D					from "../geom/Vector3D";
+import ProjectionEvent			from "../events/ProjectionEvent";
+import IProjection				from "../projections/IProjection";
+import ProjectionBase			from "../projections/ProjectionBase";
 
 class ObliqueNearPlaneProjection extends ProjectionBase
 {

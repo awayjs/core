@@ -1,13 +1,13 @@
-import Sampler2D				from "awayjs-core/lib/image/Sampler2D";
-import BitmapImage2D			from "awayjs-core/lib/image/BitmapImage2D";
-import Rectangle				from "awayjs-core/lib/geom/Rectangle";
-import IAsset					from "awayjs-core/lib/library/IAsset";
-import URLLoaderDataFormat		from "awayjs-core/lib/net/URLLoaderDataFormat";
-import URLRequest				from "awayjs-core/lib/net/URLRequest";
-import ParserBase				from "awayjs-core/lib/parsers/ParserBase";
-import ParserUtils				from "awayjs-core/lib/parsers/ParserUtils";
-import ResourceDependency		from "awayjs-core/lib/parsers/ResourceDependency";
-import XmlUtils					from "awayjs-core/lib/utils/XmlUtils";
+import Sampler2D				from "../image/Sampler2D";
+import BitmapImage2D			from "../image/BitmapImage2D";
+import Rectangle				from "../geom/Rectangle";
+import IAsset					from "../library/IAsset";
+import URLLoaderDataFormat		from "../net/URLLoaderDataFormat";
+import URLRequest				from "../net/URLRequest";
+import ParserBase				from "../parsers/ParserBase";
+import ParserUtils				from "../parsers/ParserUtils";
+import ResourceDependency		from "../parsers/ResourceDependency";
+import XmlUtils					from "../utils/XmlUtils";
 
 /**
  * TextureAtlasParser provides a "parser" for natively supported image types (jpg, png). While it simply loads bytes into

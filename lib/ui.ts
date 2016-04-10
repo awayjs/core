@@ -1,1 +1,1 @@
-export {default as Keyboard}						from "awayjs-core/lib/ui/Keyboard";
+export {default as Keyboard}						from "./ui/Keyboard";

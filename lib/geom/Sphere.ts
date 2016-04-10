@@ -1,5 +1,5 @@
-import PlaneClassification	from "awayjs-core/lib/geom/PlaneClassification";
-import Vector3D				from "awayjs-core/lib/geom/Vector3D";
+import PlaneClassification	from "../geom/PlaneClassification";
+import Vector3D				from "../geom/Vector3D";
 
 class Sphere
 {

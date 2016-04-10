@@ -1,7 +1,7 @@
-import Quaternion				from "awayjs-core/lib/geom/Quaternion";
-import Matrix3D					from "awayjs-core/lib/geom/Matrix3D";
-import Plane3D					from "awayjs-core/lib/geom/Plane3D";
-import Vector3D					from "awayjs-core/lib/geom/Vector3D";
+import Quaternion				from "../geom/Quaternion";
+import Matrix3D					from "../geom/Matrix3D";
+import Plane3D					from "../geom/Plane3D";
+import Vector3D					from "../geom/Vector3D";
 
 
 /**

@@ -1,5 +1,5 @@
-import EventBase				from "awayjs-core/lib/events/EventBase";
-import IProjection				from "awayjs-core/lib/projections/IProjection";
+import EventBase				from "../events/EventBase";
+import IProjection				from "../projections/IProjection";
 
 class ProjectionEvent extends EventBase
 {

@@ -1,7 +1,7 @@
-import SamplerBase				from "awayjs-core/lib/image/SamplerBase";
-import Image2D					from "awayjs-core/lib/image/Image2D";
-import Rectangle				from "awayjs-core/lib/geom/Rectangle";
-import IAsset					from "awayjs-core/lib/library/IAsset";
+import SamplerBase				from "../image/SamplerBase";
+import Image2D					from "../image/Image2D";
+import Rectangle				from "../geom/Rectangle";
+import IAsset					from "../library/IAsset";
 
 /**
  * The Sampler2D class represents display objects that represent bitmap images.

@@ -1,1 +1,1 @@
-export {default as WaveAudio}						from "awayjs-core/lib/audio/WaveAudio";
+export {default as WaveAudio}						from "./audio/WaveAudio";

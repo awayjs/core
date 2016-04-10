@@ -1,15 +1,15 @@
-import LoaderContext			from "awayjs-core/lib/library/LoaderContext";
-import LoaderInfo				from "awayjs-core/lib/library/LoaderInfo";
-import URLLoader				from "awayjs-core/lib/net/URLLoader";
-import URLLoaderDataFormat		from "awayjs-core/lib/net/URLLoaderDataFormat";
-import URLRequest				from "awayjs-core/lib/net/URLRequest";
-import AssetEvent				from "awayjs-core/lib/events/AssetEvent";
-import EventDispatcher			from "awayjs-core/lib/events/EventDispatcher";
-import URLLoaderEvent			from "awayjs-core/lib/events/URLLoaderEvent";
-import LoaderEvent				from "awayjs-core/lib/events/LoaderEvent";
-import ParserEvent				from "awayjs-core/lib/events/ParserEvent";
-import ParserBase				from "awayjs-core/lib/parsers/ParserBase";
-import ResourceDependency		from "awayjs-core/lib/parsers/ResourceDependency";
+import LoaderContext			from "../library/LoaderContext";
+import LoaderInfo				from "../library/LoaderInfo";
+import URLLoader				from "../net/URLLoader";
+import URLLoaderDataFormat		from "../net/URLLoaderDataFormat";
+import URLRequest				from "../net/URLRequest";
+import AssetEvent				from "../events/AssetEvent";
+import EventDispatcher			from "../events/EventDispatcher";
+import URLLoaderEvent			from "../events/URLLoaderEvent";
+import LoaderEvent				from "../events/LoaderEvent";
+import ParserEvent				from "../events/ParserEvent";
+import ParserBase				from "../parsers/ParserBase";
+import ResourceDependency		from "../parsers/ResourceDependency";
 
 
 

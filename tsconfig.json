@@ -2,7 +2,7 @@
   "compilerOptions": {
     "target": "ES5",
     "module": "commonjs",
-    "moduleResolution": "classic",
+    "moduleResolution": "node",
     "sourceMap": true
   },
   "files": [

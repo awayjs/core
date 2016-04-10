@@ -1,4 +1,4 @@
-import IAsset					from "awayjs-core/lib/library/IAsset";
+import IAsset					from "../library/IAsset";
 
 interface IAssetClass
 {

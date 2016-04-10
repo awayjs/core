@@ -1,6 +1,6 @@
-import Matrix3D					from "awayjs-core/lib/geom/Matrix3D";
-import Vector3D					from "awayjs-core/lib/geom/Vector3D";
-import IEventDispatcher			from "awayjs-core/lib/events/IEventDispatcher";
+import Matrix3D					from "../geom/Matrix3D";
+import Vector3D					from "../geom/Vector3D";
+import IEventDispatcher			from "../events/IEventDispatcher";
 
 /**
  * IMaterialOwner provides an interface for objects that can use materials.

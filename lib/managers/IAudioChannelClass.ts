@@ -1,4 +1,4 @@
-import IAudioChannel			from "awayjs-core/lib/managers/IAudioChannel";
+import IAudioChannel			from "../managers/IAudioChannel";
 
 interface IAudioChannelClass
 {

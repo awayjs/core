@@ -1,7 +1,7 @@
-import BitmapImage2D			from "awayjs-core/lib/image/BitmapImage2D";
-import BitmapImageChannel		from "awayjs-core/lib/image/BitmapImageChannel";
-import Image2D					from "awayjs-core/lib/image/Image2D";
-import Point					from "awayjs-core/lib/geom/Point";
+import BitmapImage2D			from "../image/BitmapImage2D";
+import BitmapImageChannel		from "../image/BitmapImageChannel";
+import Image2D					from "../image/Image2D";
+import Point					from "../geom/Point";
 
 /**
  *

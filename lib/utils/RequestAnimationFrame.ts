@@ -1,4 +1,4 @@
-import getTimer					from "awayjs-core/lib/utils/getTimer";
+import getTimer					from "../utils/getTimer";
 
 class RequestAnimationFrame
 {

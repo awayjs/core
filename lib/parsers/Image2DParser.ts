@@ -1,9 +1,9 @@
-import BitmapImage2D			from "awayjs-core/lib/image/BitmapImage2D";
-import IAsset					from "awayjs-core/lib/library/IAsset";
-import URLLoaderDataFormat		from "awayjs-core/lib/net/URLLoaderDataFormat";
-import ParserBase				from "awayjs-core/lib/parsers/ParserBase";
-import ParserUtils				from "awayjs-core/lib/parsers/ParserUtils";
-import ByteArray				from "awayjs-core/lib/utils/ByteArray";
+import BitmapImage2D			from "../image/BitmapImage2D";
+import IAsset					from "../library/IAsset";
+import URLLoaderDataFormat		from "../net/URLLoaderDataFormat";
+import ParserBase				from "../parsers/ParserBase";
+import ParserUtils				from "../parsers/ParserUtils";
+import ByteArray				from "../utils/ByteArray";
 
 /**
  * Image2DParser provides a "parser" for natively supported image types (jpg, png). While it simply loads bytes into

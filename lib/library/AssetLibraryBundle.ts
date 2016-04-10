@@ -1,20 +1,20 @@
-import URLRequest				from "awayjs-core/lib/net/URLRequest";
-import AssetLibrary				from "awayjs-core/lib/library/AssetLibrary";
-import AssetLibraryIterator		from "awayjs-core/lib/library/AssetLibraryIterator";
-import Loader					from "awayjs-core/lib/library/Loader";
-import LoaderContext			from "awayjs-core/lib/library/LoaderContext";
-import ConflictPrecedence		from "awayjs-core/lib/library/ConflictPrecedence";
-import ConflictStrategy			from "awayjs-core/lib/library/ConflictStrategy";
-import ConflictStrategyBase		from "awayjs-core/lib/library/ConflictStrategyBase";
-import AssetBase				from "awayjs-core/lib/library/AssetBase";
-import IAsset					from "awayjs-core/lib/library/IAsset";
-import ErrorBase				from "awayjs-core/lib/errors/ErrorBase";
-import AssetEvent				from "awayjs-core/lib/events/AssetEvent";
-import URLLoaderEvent			from "awayjs-core/lib/events/URLLoaderEvent";
-import LoaderEvent				from "awayjs-core/lib/events/LoaderEvent";
-import EventDispatcher			from "awayjs-core/lib/events/EventDispatcher";
-import ParserEvent				from "awayjs-core/lib/events/ParserEvent";
-import ParserBase				from "awayjs-core/lib/parsers/ParserBase";
+import URLRequest				from "../net/URLRequest";
+import AssetLibrary				from "../library/AssetLibrary";
+import AssetLibraryIterator		from "../library/AssetLibraryIterator";
+import Loader					from "../library/Loader";
+import LoaderContext			from "../library/LoaderContext";
+import ConflictPrecedence		from "../library/ConflictPrecedence";
+import ConflictStrategy			from "../library/ConflictStrategy";
+import ConflictStrategyBase		from "../library/ConflictStrategyBase";
+import AssetBase				from "../library/AssetBase";
+import IAsset					from "../library/IAsset";
+import ErrorBase				from "../errors/ErrorBase";
+import AssetEvent				from "../events/AssetEvent";
+import URLLoaderEvent			from "../events/URLLoaderEvent";
+import LoaderEvent				from "../events/LoaderEvent";
+import EventDispatcher			from "../events/EventDispatcher";
+import ParserEvent				from "../events/ParserEvent";
+import ParserBase				from "../parsers/ParserBase";
 
 /**
  * AssetLibraryBundle enforces a multiton pattern and is not intended to be instanced directly.

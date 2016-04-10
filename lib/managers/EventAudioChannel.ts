@@ -1,4 +1,4 @@
-import ParserUtils				from "awayjs-core/lib/parsers/ParserUtils";
+import ParserUtils				from "../parsers/ParserUtils";
 
 class EventAudioChannel
 {

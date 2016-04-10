@@ -1,7 +1,7 @@
-import ConflictPrecedence		from "awayjs-core/lib/library/ConflictPrecedence";
-import IAsset					from "awayjs-core/lib/library/IAsset";
-import AbstractMethodError		from "awayjs-core/lib/errors/AbstractMethodError";
-import AssetEvent				from "awayjs-core/lib/events/AssetEvent";
+import ConflictPrecedence		from "../library/ConflictPrecedence";
+import IAsset					from "../library/IAsset";
+import AbstractMethodError		from "../errors/AbstractMethodError";
+import AssetEvent				from "../events/AssetEvent";
 
 /**
  * Abstract base class for naming conflict resolution classes. Extend this to create a

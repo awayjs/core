@@ -1,13 +1,13 @@
-import BitmapImage2D			from "awayjs-core/lib/image/BitmapImage2D";
-import ImageCube				from "awayjs-core/lib/image/ImageCube";
-import BlendMode				from "awayjs-core/lib/image/BlendMode";
-import ColorTransform			from "awayjs-core/lib/geom/ColorTransform";
-import Matrix					from "awayjs-core/lib/geom/Matrix";
-import Rectangle				from "awayjs-core/lib/geom/Rectangle";
-import Point					from "awayjs-core/lib/geom/Point";
-import ByteArray				from "awayjs-core/lib/utils/ByteArray";
-import ColorUtils				from "awayjs-core/lib/utils/ColorUtils";
-import BitmapImageUtils			from "awayjs-core/lib/utils/BitmapImageUtils";
+import BitmapImage2D			from "../image/BitmapImage2D";
+import ImageCube				from "../image/ImageCube";
+import BlendMode				from "../image/BlendMode";
+import ColorTransform			from "../geom/ColorTransform";
+import Matrix					from "../geom/Matrix";
+import Rectangle				from "../geom/Rectangle";
+import Point					from "../geom/Point";
+import ByteArray				from "../utils/ByteArray";
+import ColorUtils				from "../utils/ColorUtils";
+import BitmapImageUtils			from "../utils/BitmapImageUtils";
 
 /**
  * The BitmapImage2D class lets you work with the data(pixels) of a Bitmap

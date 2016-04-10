@@ -1,6 +1,6 @@
-import ImageBase				from "awayjs-core/lib/image/ImageBase";
-import SamplerCube				from "awayjs-core/lib/image/SamplerCube";
-import ImageUtils				from "awayjs-core/lib/utils/ImageUtils";
+import ImageBase				from "../image/ImageBase";
+import SamplerCube				from "../image/SamplerCube";
+import ImageUtils				from "../utils/ImageUtils";
 
 class ImageCube extends ImageBase
 {

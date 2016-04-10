@@ -1,9 +1,9 @@
-import WaveAudio				from "awayjs-core/lib/audio/WaveAudio";
-import IAsset					from "awayjs-core/lib/library/IAsset";
-import URLLoaderDataFormat		from "awayjs-core/lib/net/URLLoaderDataFormat";
-import ParserBase				from "awayjs-core/lib/parsers/ParserBase";
-import ParserUtils				from "awayjs-core/lib/parsers/ParserUtils";
-import ByteArray				from "awayjs-core/lib/utils/ByteArray";
+import WaveAudio				from "../audio/WaveAudio";
+import IAsset					from "../library/IAsset";
+import URLLoaderDataFormat		from "../net/URLLoaderDataFormat";
+import ParserBase				from "../parsers/ParserBase";
+import ParserUtils				from "../parsers/ParserUtils";
+import ByteArray				from "../utils/ByteArray";
 
 class WaveAudioParser extends ParserBase
 {

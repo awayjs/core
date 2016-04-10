@@ -1,5 +1,5 @@
-import SamplerBase				from "awayjs-core/lib/image/SamplerBase";
-import ImageCube				from "awayjs-core/lib/image/ImageCube";
+import SamplerBase				from "../image/SamplerBase";
+import ImageCube				from "../image/ImageCube";
 
 /**
  * The Bitmap class represents display objects that represent bitmap images.

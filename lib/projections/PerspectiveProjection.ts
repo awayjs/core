@@ -1,7 +1,7 @@
-import Matrix3DUtils			from "awayjs-core/lib/geom/Matrix3DUtils";
-import Vector3D					from "awayjs-core/lib/geom/Vector3D";
-import CoordinateSystem			from "awayjs-core/lib/projections/CoordinateSystem";
-import ProjectionBase			from "awayjs-core/lib/projections/ProjectionBase";
+import Matrix3DUtils			from "../geom/Matrix3DUtils";
+import Vector3D					from "../geom/Vector3D";
+import CoordinateSystem			from "../projections/CoordinateSystem";
+import ProjectionBase			from "../projections/ProjectionBase";
 
 class PerspectiveProjection extends ProjectionBase
 {

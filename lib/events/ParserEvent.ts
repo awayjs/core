@@ -1,4 +1,4 @@
-import EventBase				from "awayjs-core/lib/events/EventBase";
+import EventBase				from "../events/EventBase";
 
 class ParserEvent extends EventBase
 {

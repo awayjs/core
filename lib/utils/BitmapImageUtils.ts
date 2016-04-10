@@ -1,8 +1,8 @@
-import BlendMode				from "awayjs-core/lib/image/BlendMode";
-import ColorTransform			from "awayjs-core/lib/geom/ColorTransform";
-import Matrix					from "awayjs-core/lib/geom/Matrix";
-import Rectangle				from "awayjs-core/lib/geom/Rectangle";
-import ColorUtils				from "awayjs-core/lib/utils/ColorUtils";
+import BlendMode				from "../image/BlendMode";
+import ColorTransform			from "../geom/ColorTransform";
+import Matrix					from "../geom/Matrix";
+import Rectangle				from "../geom/Rectangle";
+import ColorUtils				from "../utils/ColorUtils";
 
 class BitmapImageUtils
 {

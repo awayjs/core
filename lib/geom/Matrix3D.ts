@@ -1,9 +1,9 @@
-import Box							from "awayjs-core/lib/geom/Box";
-import MathConsts					from "awayjs-core/lib/geom/MathConsts";
-import Orientation3D				from "awayjs-core/lib/geom/Orientation3D";
-import Quaternion					from "awayjs-core/lib/geom/Quaternion";
-import Vector3D						from "awayjs-core/lib/geom/Vector3D";
-import ArgumentError				from "awayjs-core/lib/errors/ArgumentError";
+import Box							from "../geom/Box";
+import MathConsts					from "../geom/MathConsts";
+import Orientation3D				from "../geom/Orientation3D";
+import Quaternion					from "../geom/Quaternion";
+import Vector3D						from "../geom/Vector3D";
+import ArgumentError				from "../errors/ArgumentError";
 
 class Matrix3D
 {

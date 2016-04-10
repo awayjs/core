@@ -1,4 +1,4 @@
-import IEventDispatcher			from "awayjs-core/lib/events/IEventDispatcher";
+import IEventDispatcher			from "../events/IEventDispatcher";
 
 interface IAsset extends IEventDispatcher
 {

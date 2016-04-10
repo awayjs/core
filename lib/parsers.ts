@@ -1,8 +1,8 @@
-export {default as Image2DParser}					from "awayjs-core/lib/parsers/Image2DParser";
-export {default as ImageCubeParser}					from "awayjs-core/lib/parsers/ImageCubeParser";
-export {default as ParserBase}						from "awayjs-core/lib/parsers/ParserBase";
-export {default as ParserDataFormat}				from "awayjs-core/lib/parsers/ParserDataFormat";
-export {default as ParserUtils}						from "awayjs-core/lib/parsers/ParserUtils";
-export {default as ResourceDependency}				from "awayjs-core/lib/parsers/ResourceDependency";
-export {default as TextureAtlasParser}				from "awayjs-core/lib/parsers/TextureAtlasParser";
-export {default as WaveAudioParser}					from "awayjs-core/lib/parsers/WaveAudioParser";
+export {default as Image2DParser}					from "./parsers/Image2DParser";
+export {default as ImageCubeParser}					from "./parsers/ImageCubeParser";
+export {default as ParserBase}						from "./parsers/ParserBase";
+export {default as ParserDataFormat}				from "./parsers/ParserDataFormat";
+export {default as ParserUtils}						from "./parsers/ParserUtils";
+export {default as ResourceDependency}				from "./parsers/ResourceDependency";
+export {default as TextureAtlasParser}				from "./parsers/TextureAtlasParser";
+export {default as WaveAudioParser}					from "./parsers/WaveAudioParser";

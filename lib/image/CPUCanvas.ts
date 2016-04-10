@@ -11,7 +11,7 @@ class CPUCanvas implements IImageCanvas {
 	getContext(contextId: "2d"): CanvasRenderingContext2D;
 	getContext(contextId: "experimental-webgl"): WebGLRenderingContext;
 	getContext(contextId: string, ...args: any[]): CanvasRenderingContext2D | WebGLRenderingContext;
-	getContext(contextId: string, ...args: any[]): CanvasRenderingContext2D | WebGLRenderingContext
+	getContext(contextId: string, ...args: any[]): any
 	{
 		return new CPURenderingContext2D(this);
 	}

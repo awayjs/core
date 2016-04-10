@@ -75,7 +75,7 @@ class ParserUtils
 	 */
 	public static blobToImage(data:Blob):HTMLImageElement
 	{
-		var URLObj:URL = window['URL'] || window['webkitURL'];
+		var URLObj = window['URL'] || window['webkitURL'];
 		var src = URLObj.createObjectURL(data);
 		var img:HTMLImageElement = <HTMLImageElement> new Image();
 		img.src = src;
@@ -92,7 +92,7 @@ class ParserUtils
 	 */
 	public static blobToAudio(data:Blob):HTMLAudioElement
 	{
-		var URLObj:URL = window['URL'] || window['webkitURL'];
+		var URLObj = window['URL'] || window['webkitURL'];
 		var src = URLObj.createObjectURL(data);
 		var img:HTMLAudioElement = <HTMLAudioElement> new Audio();
 		img.src = src;

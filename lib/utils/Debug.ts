@@ -1,4 +1,4 @@
-import PartialImplementationError	from "awayjs-core/lib/errors/PartialImplementationError";
+import PartialImplementationError	from "../errors/PartialImplementationError";
 
 /**
  *

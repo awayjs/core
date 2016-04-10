@@ -1,17 +1,17 @@
-import BitmapImage2D			from "awayjs-core/lib/image/BitmapImage2D";
-import IAsset					from "awayjs-core/lib/library/IAsset";
-import URLRequest				from "awayjs-core/lib/net/URLRequest";
-import AbstractMethodError		from "awayjs-core/lib/errors/AbstractMethodError";
-import AssetEvent				from "awayjs-core/lib/events/AssetEvent";
-import EventDispatcher			from "awayjs-core/lib/events/EventDispatcher";
-import ParserEvent				from "awayjs-core/lib/events/ParserEvent";
-import TimerEvent				from "awayjs-core/lib/events/TimerEvent";
-import ParserUtils				from "awayjs-core/lib/parsers/ParserUtils";
-import ResourceDependency		from "awayjs-core/lib/parsers/ResourceDependency";
-import ByteArray				from "awayjs-core/lib/utils/ByteArray";
-import ImageUtils				from "awayjs-core/lib/utils/ImageUtils";
-import Timer					from "awayjs-core/lib/utils/Timer";
-import getTimer					from "awayjs-core/lib/utils/getTimer";
+import BitmapImage2D			from "../image/BitmapImage2D";
+import IAsset					from "../library/IAsset";
+import URLRequest				from "../net/URLRequest";
+import AbstractMethodError		from "../errors/AbstractMethodError";
+import AssetEvent				from "../events/AssetEvent";
+import EventDispatcher			from "../events/EventDispatcher";
+import ParserEvent				from "../events/ParserEvent";
+import TimerEvent				from "../events/TimerEvent";
+import ParserUtils				from "../parsers/ParserUtils";
+import ResourceDependency		from "../parsers/ResourceDependency";
+import ByteArray				from "../utils/ByteArray";
+import ImageUtils				from "../utils/ImageUtils";
+import Timer					from "../utils/Timer";
+import getTimer					from "../utils/getTimer";
 
 /**
  * <code>ParserBase</code> provides an abstract base class for objects that convert blocks of data to data structures

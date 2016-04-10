@@ -1,4 +1,4 @@
-import ErrorBase				from "awayjs-core/lib/errors/ErrorBase";
+import ErrorBase				from "../errors/ErrorBase";
 
 /**
  * AbstractMethodError is thrown when an abstract method is called. The method in question should be overridden

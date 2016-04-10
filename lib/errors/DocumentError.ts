@@ -1,4 +1,4 @@
-import ErrorBase				from "awayjs-core/lib/errors/ErrorBase";
+import ErrorBase				from "../errors/ErrorBase";
 
 class DocumentError extends ErrorBase
 {

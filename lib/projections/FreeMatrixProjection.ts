@@ -1,5 +1,5 @@
-import PerspectiveProjection	from "awayjs-core/lib/projections/PerspectiveProjection";
-import ProjectionBase			from "awayjs-core/lib/projections/ProjectionBase";
+import PerspectiveProjection	from "../projections/PerspectiveProjection";
+import ProjectionBase			from "../projections/ProjectionBase";
 
 class FreeMatrixProjection extends ProjectionBase
 {

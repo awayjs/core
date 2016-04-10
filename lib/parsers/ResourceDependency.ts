@@ -1,7 +1,7 @@
-﻿import IAsset					from "awayjs-core/lib/library/IAsset";
-import URLLoader				from "awayjs-core/lib/net/URLLoader";
-import URLRequest				from "awayjs-core/lib/net/URLRequest";
-import ParserBase				from "awayjs-core/lib/parsers/ParserBase";
+﻿import IAsset					from "../library/IAsset";
+import URLLoader				from "../net/URLLoader";
+import URLRequest				from "../net/URLRequest";
+import ParserBase				from "../parsers/ParserBase";
 
 /**
  * ResourceDependency represents the data required to load, parse and resolve additional files ("dependencies")

@@ -1,5 +1,5 @@
-import AttributesBuffer			from "awayjs-core/lib/attributes/AttributesBuffer";
-import AttributesView			from "awayjs-core/lib/attributes/AttributesView";
+import AttributesBuffer			from "../attributes/AttributesBuffer";
+import AttributesView			from "../attributes/AttributesView";
 
 class Float3Attributes extends AttributesView
 {

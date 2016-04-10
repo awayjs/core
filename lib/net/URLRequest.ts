@@ -1,4 +1,4 @@
-import URLRequestMethod				from "awayjs-core/lib/net/URLRequestMethod";
+import URLRequestMethod				from "../net/URLRequestMethod";
 
 class URLRequest
 {

@@ -1,7 +1,7 @@
-import AssetEvent					from "awayjs-core/lib/events/AssetEvent";
-import EventDispatcher				from "awayjs-core/lib/events/EventDispatcher";
-import IAbstractionPool				from "awayjs-core/lib/library/IAbstractionPool";
-import IAsset						from "awayjs-core/lib/library/IAsset";
+import AssetEvent					from "../events/AssetEvent";
+import EventDispatcher				from "../events/EventDispatcher";
+import IAbstractionPool				from "../library/IAbstractionPool";
+import IAsset						from "../library/IAsset";
 
 /**
  *

@@ -1,4 +1,4 @@
-import Image2D						from "awayjs-core/lib/image/Image2D";
+import Image2D						from "../image/Image2D";
 
 class ImageUtils
 {

@@ -1,6 +1,6 @@
-import Matrix3DUtils			from "awayjs-core/lib/geom/Matrix3DUtils";
-import Vector3D					from "awayjs-core/lib/geom/Vector3D";
-import ProjectionBase			from "awayjs-core/lib/projections/ProjectionBase";
+import Matrix3DUtils			from "../geom/Matrix3DUtils";
+import Vector3D					from "../geom/Vector3D";
+import ProjectionBase			from "../projections/ProjectionBase";
 
 class OrthographicProjection extends ProjectionBase
 {

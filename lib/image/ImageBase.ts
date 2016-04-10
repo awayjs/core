@@ -1,8 +1,8 @@
-import SamplerBase					from "awayjs-core/lib/image/SamplerBase";
-import AbstractMethodError			from "awayjs-core/lib/errors/AbstractMethodError";
-import AssetEvent					from "awayjs-core/lib/events/AssetEvent";
-import IAsset						from "awayjs-core/lib/library/IAsset";
-import AssetBase					from "awayjs-core/lib/library/AssetBase";
+import SamplerBase					from "../image/SamplerBase";
+import AbstractMethodError			from "../errors/AbstractMethodError";
+import AssetEvent					from "../events/AssetEvent";
+import IAsset						from "../library/IAsset";
+import AssetBase					from "../library/AssetBase";
 
 class ImageBase extends AssetBase
 {

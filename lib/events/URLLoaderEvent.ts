@@ -1,5 +1,5 @@
-import URLLoader				from "awayjs-core/lib/net/URLLoader";
-import EventBase				from "awayjs-core/lib/events/EventBase";
+import URLLoader				from "../net/URLLoader";
+import EventBase				from "../events/EventBase";
 
 class URLLoaderEvent extends EventBase
 {

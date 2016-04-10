@@ -1,7 +1,7 @@
-import StreamingAudioChannel	from "awayjs-core/lib/managers/StreamingAudioChannel";
-import WebAudioChannel			from "awayjs-core/lib/managers/WebAudioChannel";
-import IAudioChannel			from "awayjs-core/lib/managers/IAudioChannel";
-import IAudioChannelClass		from "awayjs-core/lib/managers/IAudioChannelClass";
+import StreamingAudioChannel	from "../managers/StreamingAudioChannel";
+import WebAudioChannel			from "../managers/WebAudioChannel";
+import IAudioChannel			from "../managers/IAudioChannel";
+import IAudioChannelClass		from "../managers/IAudioChannelClass";
 
 class AudioManager
 {

@@ -1,7 +1,7 @@
-import BitmapImage2D            from "awayjs-core/lib/image/BitmapImage2D";
-import CPUCanvas            from "awayjs-core/lib/image/CPUCanvas";
-import Matrix                    from "awayjs-core/lib/geom/Matrix";
-import Rectangle                from "awayjs-core/lib/geom/Rectangle";
+import BitmapImage2D            from "../image/BitmapImage2D";
+import CPUCanvas            from "../image/CPUCanvas";
+import Matrix                    from "../geom/Matrix";
+import Rectangle                from "../geom/Rectangle";
 
 class MipmapGenerator {
     private static _mipMaps = [];

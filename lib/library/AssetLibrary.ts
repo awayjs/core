@@ -1,12 +1,12 @@
-import URLRequest				from "awayjs-core/lib/net/URLRequest";
-import EventBase				from "awayjs-core/lib/events/EventBase";
-import AssetLibraryBundle		from "awayjs-core/lib/library/AssetLibraryBundle";
-import AssetLibraryIterator		from "awayjs-core/lib/library/AssetLibraryIterator";
-import Loader					from "awayjs-core/lib/library/Loader";
-import LoaderContext			from "awayjs-core/lib/library/LoaderContext";
-import ConflictStrategyBase		from "awayjs-core/lib/library/ConflictStrategyBase";
-import IAsset					from "awayjs-core/lib/library/IAsset";
-import ParserBase				from "awayjs-core/lib/parsers/ParserBase";
+import URLRequest				from "../net/URLRequest";
+import EventBase				from "../events/EventBase";
+import AssetLibraryBundle		from "../library/AssetLibraryBundle";
+import AssetLibraryIterator		from "../library/AssetLibraryIterator";
+import Loader					from "../library/Loader";
+import LoaderContext			from "../library/LoaderContext";
+import ConflictStrategyBase		from "../library/ConflictStrategyBase";
+import IAsset					from "../library/IAsset";
+import ParserBase				from "../parsers/ParserBase";
 
 /**
  * AssetLibrary enforces a singleton pattern and is not intended to be instanced.

@@ -1,7 +1,7 @@
-import ImageBase				from "awayjs-core/lib/image/ImageBase";
-import Sampler2D				from "awayjs-core/lib/image/Sampler2D";
-import Rectangle				from "awayjs-core/lib/geom/Rectangle";
-import ImageUtils				from "awayjs-core/lib/utils/ImageUtils";
+import ImageBase				from "../image/ImageBase";
+import Sampler2D				from "../image/Sampler2D";
+import Rectangle				from "../geom/Rectangle";
+import ImageUtils				from "../utils/ImageUtils";
 
 class Image2D extends ImageBase
 {

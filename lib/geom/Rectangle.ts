@@ -1,4 +1,4 @@
-import Point					from "awayjs-core/lib/geom/Point";
+import Point					from "../geom/Point";
 
 /**
  * A Rectangle object is an area defined by its position, as indicated by its

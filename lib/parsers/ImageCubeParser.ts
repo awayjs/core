@@ -1,10 +1,10 @@
-import BitmapImage2D			from "awayjs-core/lib/image/BitmapImage2D";
-import BitmapImageCube			from "awayjs-core/lib/image/BitmapImageCube";
-import IAsset					from "awayjs-core/lib/library/IAsset";
-import URLLoaderDataFormat		from "awayjs-core/lib/net/URLLoaderDataFormat";
-import URLRequest				from "awayjs-core/lib/net/URLRequest";
-import ParserBase				from "awayjs-core/lib/parsers/ParserBase";
-import ResourceDependency		from "awayjs-core/lib/parsers/ResourceDependency";
+import BitmapImage2D			from "../image/BitmapImage2D";
+import BitmapImageCube			from "../image/BitmapImageCube";
+import IAsset					from "../library/IAsset";
+import URLLoaderDataFormat		from "../net/URLLoaderDataFormat";
+import URLRequest				from "../net/URLRequest";
+import ParserBase				from "../parsers/ParserBase";
+import ResourceDependency		from "../parsers/ResourceDependency";
 
 /**
  * ImageCubeParser provides a "parser" for natively supported image types (jpg, png). While it simply loads bytes into

@@ -1,6 +1,6 @@
-import Point					from "awayjs-core/lib/geom/Point";
-import Vector3D					from "awayjs-core/lib/geom/Vector3D";
-import ArgumentError			from "awayjs-core/lib/errors/ArgumentError";
+import Point					from "../geom/Point";
+import Vector3D					from "../geom/Vector3D";
+import ArgumentError			from "../errors/ArgumentError";
 
 /**
  * The Matrix class represents a transformation matrix that determines how to

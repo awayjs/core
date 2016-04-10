@@ -1,6 +1,6 @@
-import ConflictStrategyBase		from "awayjs-core/lib/library/ConflictStrategyBase";
-import IAsset					from "awayjs-core/lib/library/IAsset";
-import ErrorBase				from "awayjs-core/lib/errors/ErrorBase";
+import ConflictStrategyBase		from "../library/ConflictStrategyBase";
+import IAsset					from "../library/IAsset";
+import ErrorBase				from "../errors/ErrorBase";
 
 class ErrorConflictStrategy extends ConflictStrategyBase
 {

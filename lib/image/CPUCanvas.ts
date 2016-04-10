@@ -1,6 +1,6 @@
-import IImageCanvas                 from "awayjs-core/lib/image/IImageCanvas";
-import CPURenderingContext2D        from "awayjs-core/lib/image/CPURenderingContext2D";
-import ImageData                    from "awayjs-core/lib/image/ImageData";
+import IImageCanvas                 from "../image/IImageCanvas";
+import CPURenderingContext2D        from "../image/CPURenderingContext2D";
+import ImageData                    from "../image/ImageData";
 
 class CPUCanvas implements IImageCanvas {
 	public width:number = 1;

@@ -1,5 +1,5 @@
-import IAsset					from "awayjs-core/lib/library/IAsset";
-import EventBase				from "awayjs-core/lib/events/EventBase";
+import IAsset					from "../library/IAsset";
+import EventBase				from "../events/EventBase";
 
 class LoaderEvent extends EventBase
 {

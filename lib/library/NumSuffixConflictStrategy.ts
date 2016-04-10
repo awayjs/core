@@ -1,5 +1,5 @@
-import ConflictStrategyBase		from "awayjs-core/lib/library/ConflictStrategyBase";
-import IAsset					from "awayjs-core/lib/library/IAsset";
+import ConflictStrategyBase		from "../library/ConflictStrategyBase";
+import IAsset					from "../library/IAsset";
 
 class NumSuffixConflictStrategy extends ConflictStrategyBase
 {

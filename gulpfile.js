@@ -13,6 +13,7 @@ var livereload = require('gulp-livereload');
 
 var typescript = require('gulp-typescript');
 //var ts = require('typescript');
+var Builder = require('systemjs-builder');
 
 var shell = require('gulp-shell');
 var git = require('gulp-git');
@@ -192,4 +193,12 @@ gulp.task('compile', function() {
     return tsResult.js
         //.pipe(sourcemaps.write({sourceRoot: '../'}))
         .pipe(gulp.dest('./lib'));
+});
+
+gulp.task('bundle', function(callback) {
+    var builder = new Builder('../', './system.config.js');
+    
+    builder.bundle('./index.ts', './dist/awayjs-core.js').then(function() {
+        callback();
+    })
 });

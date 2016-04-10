@@ -78,6 +78,11 @@ class CPURenderingContext2D implements CanvasRenderingContext2D {
         return undefined;
     }
 
+    public ellipse(x: number, y: number, radiusX: number, radiusY: number, rotation: number, startAngle: number, endAngle: number, anticlockwise?: boolean): void
+    {
+
+    }
+
     public lineTo(x:number, y:number):void {
     }
 

@@ -15799,8 +15799,7 @@ var XmlUtils = (function () {
         return attribute.value;
     };
     XmlUtils.writeAttributeValue = function (node, attrName, attrValue) {
-        var attribute = new Attr();
-        attribute.name = attrName;
+        var attribute = document.createAttribute(attrName);
         attribute.value = attrValue;
         attribute = node.attributes.setNamedItem(attribute);
         console.log("XmlUltils - writeAttributeValue() - name: " + attribute.name + ", value: " + attribute.value);

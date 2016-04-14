@@ -131,8 +131,6 @@ class JSONTextureParser extends ParserBase
 		} catch ( e ) {
 			return false;
 		}
-
-		return false;
 	}
 
 	/**
@@ -208,12 +206,10 @@ class JSONTextureParser extends ParserBase
 			case this.STATE_PARSE_DATA:
 				this.parseJson();
 				return ParserBase.MORE_TO_PARSE;
-				break;
 			case this.STATE_LOAD_IMAGES:
 				break;
 			case this.STATE_COMPLETE:
 				return ParserBase.PARSING_DONE;
-				break;
 		}
 
 		return ParserBase.MORE_TO_PARSE;

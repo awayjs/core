@@ -65,8 +65,7 @@ class XmlUtils {
 	}
 
 	public static writeAttributeValue(node:Node, attrName:string, attrValue:string) {
-		var attribute:Attr = new Attr();
-		attribute.name = attrName;
+		var attribute:Attr = document.createAttribute(attrName);
 		attribute.value = attrValue;
 		attribute = node.attributes.setNamedItem(attribute);
 		console.log("XmlUltils - writeAttributeValue() - name: " + attribute.name + ", value: " + attribute.value);

@@ -7,7 +7,7 @@ class Timer extends EventDispatcher
 	private _delay:number;
 	private _repeatCount:number = 0;
 	private _currentCount:number = 0;
-	private _iid:number;
+	private _iid;
 	private _running:boolean = false;
 
 	constructor(delay:number, repeatCount:number = 0)

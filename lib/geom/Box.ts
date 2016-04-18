@@ -765,49 +765,40 @@ class Box
 	 */
 	public union(toUnion:Box, target:Box = null):Box
 	{
+		var width:number;
+		var height:number;
+		var depth:number;
 		if (target == null)
 			target = new Box();
 
 		if (this.x < toUnion.x) {
 			target.x = this.x;
-			target.width = toUnion.x - this.x + toUnion.width;
-
-			if (target.width < this.width)
-				target.width = this.width;
+			width = toUnion.x - this.x + toUnion.width;
+			target.width = (width < this.width)? this.width : width;
 		} else {
 			target.x = toUnion.x;
-			target.width = this.x - toUnion.x + this.width;
-
-			if (target.width < toUnion.width)
-				target.width = toUnion.width;
+			width = this.x - toUnion.x + this.width;
+			target.width = (width < toUnion.width)? toUnion.width : width;
 		}
 
 		if (this.y < toUnion.y) {
 			target.y = this.y;
-			target.height = toUnion.y - this.y + toUnion.height;
-
-			if (target.height < this.height)
-				target.height = this.height;
+			height = toUnion.y - this.y + toUnion.height;
+			target.height = (height < this.height)? this.height : height;
 		} else {
 			target.y = toUnion.y;
-			target.height = this.y - toUnion.y + this.height;
-
-			if (target.height < toUnion.height)
-				target.height = toUnion.height;
+			height = this.y - toUnion.y + this.height;
+			target.height = (height < toUnion.height)? toUnion.height : height;
 		}
 
 		if (this.z < toUnion.z) {
 			target.z = this.z;
-			target.depth = toUnion.z - this.z + toUnion.depth;
-
-			if (target.depth < this.depth)
-				target.depth = this.depth;
+			depth = toUnion.z - this.z + toUnion.depth;
+			target.depth = (depth < this.depth)? this.depth : depth;
 		} else {
 			target.z = toUnion.z;
-			target.depth = this.z - toUnion.z + this.depth;
-
-			if (target.depth < toUnion.depth)
-				target.depth = toUnion.depth;
+			depth = this.z - toUnion.z + this.depth;
+			target.depth = (depth < toUnion.depth)? toUnion.depth : depth;
 		}
 
 		return target;

@@ -32,7 +32,7 @@ class AssetLibraryBundle extends EventDispatcher
 	private _assetDictionary:Object;
 	private _assetDictDirty:boolean;
 	private _loaderSessionsGarbage:Array<Loader> = new Array<Loader>();
-	private _gcTimeoutIID:number;
+	private _gcTimeoutIID;
 
 	private _onAssetRenameDelegate:(event:AssetEvent) => void;
 	private _onAssetConflictResolvedDelegate:(event:AssetEvent) => void;

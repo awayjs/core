@@ -7483,7 +7483,7 @@ var CPUCanvas = (function () {
             this.imageData.width = this.width;
             this.imageData.height = this.height;
             if (this.imageData.data) {
-                this.imageData.data.length = 0;
+                //this.imageData.data.length = 0;
                 this.imageData.data = null;
             }
             this.imageData.data = new Uint8Array(this.width * this.height * 4);

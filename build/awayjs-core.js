@@ -153,7 +153,7 @@ var AttributesBuffer = (function (_super) {
     };
     AttributesBuffer.prototype.clone = function () {
         var attributesBuffer = new AttributesBuffer(this._stride, this._count);
-        attributesBuffer.bufferView.set(this.bufferView);
+        attributesBuffer.bufferView = new Uint8Array(this.bufferView.buffer);
         var len = this._viewVOs.length;
         for (var i = 0; i < len; i++)
             this._viewVOs[i].view._internalClone(attributesBuffer);
@@ -400,7 +400,7 @@ var AttributesView = (function (_super) {
         return new (this._arrayClass)(this._localArrayBuffer, offset * len, count * this._dimensions);
     };
     AttributesView.prototype._internalClone = function (attributesBuffer) {
-        return (this._cloneCache = new AttributesView(this._arrayClass, this._dimensions, attributesBuffer));
+        return (this._cloneCache = new AttributesView(this._arrayClass, this._dimensions, attributesBuffer, this._unsigned));
     };
     AttributesView.prototype.clone = function (attributesBuffer) {
         if (attributesBuffer === void 0) { attributesBuffer = null; }

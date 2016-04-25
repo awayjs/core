@@ -141,7 +141,7 @@ class AttributesBuffer extends AssetBase
 	public clone():AttributesBuffer
 	{
 		var attributesBuffer:AttributesBuffer = new AttributesBuffer(this._stride, this._count);
-		attributesBuffer.bufferView.set(this.bufferView);
+		attributesBuffer.bufferView = new Uint8Array(this.bufferView.buffer);
 
 		var len:number = this._viewVOs.length;
 		for (var i:number = 0; i < len; i++)

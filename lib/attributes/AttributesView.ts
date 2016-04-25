@@ -138,7 +138,7 @@ class AttributesView extends AssetBase
 
 	public _internalClone(attributesBuffer:AttributesBuffer):AttributesView
 	{
-		return (this._cloneCache = new AttributesView(this._arrayClass, this._dimensions, attributesBuffer));
+		return (this._cloneCache = new AttributesView(this._arrayClass, this._dimensions, attributesBuffer, this._unsigned));
 	}
 
 	public clone(attributesBuffer:AttributesBuffer = null):AttributesView

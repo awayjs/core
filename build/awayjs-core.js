@@ -2353,33 +2353,33 @@ var Box = (function () {
         if (target == null)
             target = new Box();
         if (this.x < toUnion.x) {
-            target.x = this.x;
             width = toUnion.x - this.x + toUnion.width;
+            target.x = this.x;
             target.width = (width < this.width) ? this.width : width;
         }
         else {
-            target.x = toUnion.x;
             width = this.x - toUnion.x + this.width;
+            target.x = toUnion.x;
             target.width = (width < toUnion.width) ? toUnion.width : width;
         }
         if (this.y < toUnion.y) {
-            target.y = this.y;
             height = toUnion.y - this.y + toUnion.height;
+            target.y = this.y;
             target.height = (height < this.height) ? this.height : height;
         }
         else {
-            target.y = toUnion.y;
             height = this.y - toUnion.y + this.height;
+            target.y = toUnion.y;
             target.height = (height < toUnion.height) ? toUnion.height : height;
         }
         if (this.z < toUnion.z) {
-            target.z = this.z;
             depth = toUnion.z - this.z + toUnion.depth;
+            target.z = this.z;
             target.depth = (depth < this.depth) ? this.depth : depth;
         }
         else {
-            target.z = toUnion.z;
             depth = this.z - toUnion.z + this.depth;
+            target.z = toUnion.z;
             target.depth = (depth < toUnion.depth) ? toUnion.depth : depth;
         }
         return target;

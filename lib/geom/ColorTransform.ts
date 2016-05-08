@@ -206,6 +206,11 @@ class ColorTransform
         this.blueMultiplier *= ct.blueMultiplier;
         this.alphaMultiplier *= ct.alphaMultiplier;
     }
+	
+	public _isRenderable():boolean
+	{
+		return Boolean(this.alphaMultiplier) || this.alphaOffset > 0;
+	}
 }
 
 export default ColorTransform;

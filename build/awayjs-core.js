@@ -2540,6 +2540,9 @@ var ColorTransform = (function () {
         this.blueMultiplier *= ct.blueMultiplier;
         this.alphaMultiplier *= ct.alphaMultiplier;
     };
+    ColorTransform.prototype._isRenderable = function () {
+        return Boolean(this.alphaMultiplier) || this.alphaOffset > 0;
+    };
     return ColorTransform;
 }());
 Object.defineProperty(exports, "__esModule", { value: true });

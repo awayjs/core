@@ -1,5 +1,6 @@
 # Build and Release Folders
 node_modules/
+jspm_packages/
 
 # Dev files
 npm-debug.log

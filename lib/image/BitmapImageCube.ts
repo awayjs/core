@@ -189,7 +189,7 @@ class BitmapImageCube extends ImageCube
 
 		var data:Uint8ClampedArray = this._imageData[side].data;
 
-		var i:number /*uint*/, j:number /*uint*/, index:number /*uint*/;
+		var i:number, j:number, index:number;
 		for (i = 0; i < rect.width; ++i) {
 			for (j = 0; j < rect.height; ++j) {
 				index = (i + rect.x + (j + rect.y)*this._size)*4;
@@ -265,7 +265,7 @@ class BitmapImageCube extends ImageCube
 		var sourceOffset:number = Math.round(Math.log(sourceChannel)/Math.log(2));
 		var destOffset:number = Math.round(Math.log(destChannel)/Math.log(2));
 
-		var i:number /*uint*/, j:number /*uint*/, sourceIndex:number /*uint*/, destIndex:number /*uint*/;
+		var i:number, j:number, sourceIndex:number, destIndex:number;
 		for (i = 0; i < sourceRect.width; ++i) {
 			for (j = 0; j < sourceRect.height; ++j) {
 				sourceIndex = (i + sourceRect.x + (j + sourceRect.y)*sourceBitmap.width)*4;
@@ -650,7 +650,7 @@ class BitmapImageCube extends ImageCube
 		if (!this._locked)
 			this._imageData[side] = this._context[side].getImageData(0, 0, this._size, this._size);
 
-		var i:number /*uint*/, j:number /*uint*/, index:number /*uint*/, argb:number[] /*uint*/;
+		var i:number, j:number, index:number, argb:number[];
 		for (i = 0; i < rect.width; ++i) {
 			for (j = 0; j < rect.height; ++j) {
 				argb = ColorUtils.float32ColorToARGB(inputArray[i + j*rect.width]);
@@ -788,7 +788,7 @@ class BitmapImageCube extends ImageCube
 			this._imageData[side] = this._context[side].getImageData(0, 0, this._size, this._size);
 
 		inputByteArray.position = 0;
-		var i:number /*uint*/, j:number /*uint*/, index:number /*uint*/;
+		var i:number, j:number, index:number;
 		for (i = 0; i < rect.width; ++i) {
 			for (j = 0; j < rect.height; ++j) {
 				index = (i + rect.x + (j + rect.y)*this._size)*4;

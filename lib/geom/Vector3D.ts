@@ -215,9 +215,16 @@ class Vector3D
 	 *          Vector3D object and the Vector3D object specified as the
 	 *          parameter.
 	 */
-	public crossProduct(a:Vector3D):Vector3D
+	public crossProduct(a:Vector3D, t:Vector3D = null):Vector3D
 	{
-		return new Vector3D(this.y*a.z - this.z*a.y, this.z*a.x - this.x*a.z, this.x*a.y - this.y*a.x, 1);
+		if (t == null)
+			t = new Vector3D();
+
+		t.x = this.y*a.z - this.z*a.y;
+		t.y = this.z*a.x - this.x*a.z;
+		t.z = this.x*a.y - this.y*a.x;
+
+		return t;
 	}
 
 	/**

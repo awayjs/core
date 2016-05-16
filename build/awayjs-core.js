@@ -5651,8 +5651,14 @@ var Vector3D = (function () {
      *          Vector3D object and the Vector3D object specified as the
      *          parameter.
      */
-    Vector3D.prototype.crossProduct = function (a) {
-        return new Vector3D(this.y * a.z - this.z * a.y, this.z * a.x - this.x * a.z, this.x * a.y - this.y * a.x, 1);
+    Vector3D.prototype.crossProduct = function (a, t) {
+        if (t === void 0) { t = null; }
+        if (t == null)
+            t = new Vector3D();
+        t.x = this.y * a.z - this.z * a.y;
+        t.y = this.z * a.x - this.x * a.z;
+        t.z = this.x * a.y - this.y * a.x;
+        return t;
     };
     /**
      * Decrements the value of the x, y, and z elements of the current
@@ -6089,6 +6095,12 @@ var BitmapImage2D = (function (_super) {
         enumerable: true,
         configurable: true
     });
+    BitmapImage2D.prototype.invalidate = function () {
+        if (!this._imageDataDirty) {
+            this._imageDataDirty = true;
+            _super.prototype.invalidate.call(this);
+        }
+    };
     /**
      * Returns a new BitmapImage2D object that is a clone of the original instance
      * with an exact copy of the contained bitmap.
@@ -6112,10 +6124,10 @@ var BitmapImage2D = (function (_super) {
      *                       transformation values to apply.
      */
     BitmapImage2D.prototype.colorTransform = function (rect, colorTransform) {
-        if (!this._locked)
+        if (!this._imageData)
             this._imageData = this._context.getImageData(0, 0, this._rect.width, this._rect.height);
         var data = this._imageData.data;
-        var i /*uint*/, j /*uint*/, index;
+        var i, j, index;
         for (i = 0; i < rect.width; ++i) {
             for (j = 0; j < rect.height; ++j) {
                 index = (i + rect.x + (j + rect.y) * this.width) * 4;
@@ -6125,10 +6137,8 @@ var BitmapImage2D = (function (_super) {
                 data[index + 3] = data[index + 3] * colorTransform.alphaMultiplier + colorTransform.alphaOffset;
             }
         }
-        if (!this._locked) {
+        if (!this._locked)
             this._context.putImageData(this._imageData, 0, 0);
-            this._imageData = null;
-        }
         this.invalidate();
     };
     /**
@@ -6176,13 +6186,13 @@ var BitmapImage2D = (function (_super) {
      */
     BitmapImage2D.prototype.copyChannel = function (sourceBitmap, sourceRect, destPoint, sourceChannel, destChannel) {
         var imageData = sourceBitmap.getImageData();
-        if (!this._locked)
+        if (!this._imageData)
             this._imageData = this._context.getImageData(0, 0, this._rect.width, this._rect.height);
         var sourceData = sourceBitmap.getImageData().data;
         var destData = this._imageData.data;
         var sourceOffset = Math.round(Math.log(sourceChannel) / Math.log(2));
         var destOffset = Math.round(Math.log(destChannel) / Math.log(2));
-        var i /*uint*/, j /*uint*/, sourceIndex /*uint*/, destIndex;
+        var i, j, sourceIndex, destIndex;
         for (i = 0; i < sourceRect.width; ++i) {
             for (j = 0; j < sourceRect.height; ++j) {
                 sourceIndex = (i + sourceRect.x + (j + sourceRect.y) * sourceBitmap.width) * 4;
@@ -6190,28 +6200,17 @@ var BitmapImage2D = (function (_super) {
                 destData[destIndex + destOffset] = sourceData[sourceIndex + sourceOffset];
             }
         }
-        if (!this._locked) {
+        if (!this._locked)
             this._context.putImageData(this._imageData, 0, 0);
-            this._imageData = null;
-        }
         this.invalidate();
     };
     BitmapImage2D.prototype.copyPixels = function (source, sourceRect, destRect) {
         if (source instanceof BitmapImage2D)
             source = source.getCanvas();
-        if (this._locked) {
-            // If canvas is locked:
-            //
-            //      1) copy image data back to canvas
-            //      2) draw object
-            //      3) read _imageData back out
+        if (this._locked && this._imageData)
             this._context.putImageData(this._imageData, 0, 0); // at coords 0,0
-            BitmapImageUtils_1.default._copyPixels(this._context, source, sourceRect, destRect);
-            this._imageData = this._context.getImageData(0, 0, this._rect.width, this._rect.height);
-        }
-        else {
-            BitmapImageUtils_1.default._copyPixels(this._context, source, sourceRect, destRect);
-        }
+        BitmapImageUtils_1.default._copyPixels(this._context, source, sourceRect, destRect);
+        this._imageData = null;
         this.invalidate();
     };
     /**
@@ -6243,22 +6242,12 @@ var BitmapImage2D = (function (_super) {
         this._locked = null;
     };
     BitmapImage2D.prototype.draw = function (source, matrix, colorTransform, blendMode, clipRect, smoothing) {
-        if (source instanceof BitmapImage2D && source.getCanvas()) {
+        if (source instanceof BitmapImage2D && source.getCanvas())
             source = source.getCanvas();
-        }
-        if (this._locked) {
-            // If canvas is locked:
-            //
-            //      1) copy image data back to canvas
-            //      2) draw object
-            //      3) read _imageData back out
+        if (this._locked && this._imageData)
             this._context.putImageData(this._imageData, 0, 0); // at coords 0,0
-            BitmapImageUtils_1.default._draw(this._context, source, matrix, colorTransform, blendMode, clipRect, smoothing);
-            this._imageData = this._context.getImageData(0, 0, this._rect.width, this._rect.height);
-        }
-        else {
-            BitmapImageUtils_1.default._draw(this._context, source, matrix, colorTransform, blendMode, clipRect, smoothing);
-        }
+        BitmapImageUtils_1.default._draw(this._context, source, matrix, colorTransform, blendMode, clipRect, smoothing);
+        this._imageData = null;
         this.invalidate();
     };
     /**
@@ -6271,21 +6260,10 @@ var BitmapImage2D = (function (_super) {
      * @throws TypeError The rect is null.
      */
     BitmapImage2D.prototype.fillRect = function (rect, color) {
-        if (this._locked) {
-            // If canvas is locked:
-            //
-            //      1) copy image data back to canvas
-            //      2) apply fill
-            //      3) read _imageData back out
-            if (this._imageData)
-                this._context.putImageData(this._imageData, 0, 0); // at coords 0,0
-            BitmapImageUtils_1.default._fillRect(this._context, rect, color, this._transparent);
-            if (this._imageData)
-                this._imageData = this._context.getImageData(0, 0, this._rect.width, this._rect.height);
-        }
-        else {
-            BitmapImageUtils_1.default._fillRect(this._context, rect, color, this._transparent);
-        }
+        if (this._locked && this._imageData)
+            this._context.putImageData(this._imageData, 0, 0); // at coords 0,0
+        BitmapImageUtils_1.default._fillRect(this._context, rect, color, this._transparent);
+        this._imageData = null;
         this.invalidate();
     };
     /**
@@ -6324,6 +6302,8 @@ var BitmapImage2D = (function (_super) {
             a = pixelData.data[3];
         }
         else {
+            if (!this._imageData)
+                this._imageData = this._context.getImageData(0, 0, this._rect.width, this._rect.height);
             var index = (x + y * this._imageData.width) * 4;
             r = this._imageData.data[index + 0];
             g = this._imageData.data[index + 1];
@@ -6370,6 +6350,8 @@ var BitmapImage2D = (function (_super) {
             a = pixelData.data[3];
         }
         else {
+            if (!this._imageData)
+                this._imageData = this._context.getImageData(0, 0, this._rect.width, this._rect.height);
             var index = (x + y * this._imageData.width) * 4;
             r = this._imageData.data[index + 0];
             g = this._imageData.data[index + 1];
@@ -6377,6 +6359,25 @@ var BitmapImage2D = (function (_super) {
             a = this._imageData.data[index + 3];
         }
         return (a << 24) | (r << 16) | (g << 8) | b;
+    };
+    BitmapImage2D.prototype.getPixelData = function (x, y, imagePixel) {
+        if (!this._imageData)
+            this._imageData = this._context.getImageData(0, 0, this._rect.width, this._rect.height);
+        var index = (x + y * this._imageData.width) * 4;
+        imagePixel[0] = this._imageData.data[index + 0];
+        imagePixel[1] = this._imageData.data[index + 1];
+        imagePixel[2] = this._imageData.data[index + 2];
+        imagePixel[3] = this._imageData.data[index + 3];
+    };
+    BitmapImage2D.prototype.setPixelData = function (x, y, imagePixel) {
+        if (!this._imageData)
+            this._imageData = this._context.getImageData(0, 0, this._rect.width, this._rect.height);
+        var index = (x + y * this._imageData.width) * 4;
+        this._imageData.data[index + 0] = imagePixel[0];
+        this._imageData.data[index + 1] = imagePixel[1];
+        this._imageData.data[index + 2] = imagePixel[2];
+        this._imageData.data[index + 3] = imagePixel[3];
+        this.invalidate();
     };
     /**
      * Locks an image so that any objects that reference the BitmapImage2D object,
@@ -6390,7 +6391,6 @@ var BitmapImage2D = (function (_super) {
         if (this._locked)
             return;
         this._locked = true;
-        this._imageData = this._context.getImageData(0, 0, this._rect.width, this._rect.height);
     };
     /**
      * Converts an Array into a rectangular region of pixel data. For each pixel,
@@ -6405,9 +6405,9 @@ var BitmapImage2D = (function (_super) {
      *                    pixel data.
      */
     BitmapImage2D.prototype.setArray = function (rect, inputArray) {
-        if (!this._locked)
+        if (!this._imageData)
             this._imageData = this._context.getImageData(0, 0, this._rect.width, this._rect.height);
-        var i /*uint*/, j /*uint*/, index /*uint*/, argb;
+        var i, j, index, argb;
         for (i = 0; i < rect.width; ++i) {
             for (j = 0; j < rect.height; ++j) {
                 argb = ColorUtils_1.default.float32ColorToARGB(inputArray[i + j * rect.width]);
@@ -6418,10 +6418,8 @@ var BitmapImage2D = (function (_super) {
                 this._imageData.data[index + 3] = argb[0];
             }
         }
-        if (!this._locked) {
+        if (!this._locked)
             this._context.putImageData(this._imageData, 0, 0);
-            this._imageData = null;
-        }
         this.invalidate();
     };
     /**
@@ -6443,17 +6441,15 @@ var BitmapImage2D = (function (_super) {
      */
     BitmapImage2D.prototype.setPixel = function (x, y, color) {
         var argb = ColorUtils_1.default.float32ColorToARGB(color);
-        if (!this._locked)
+        if (!this._imageData)
             this._imageData = this._context.getImageData(0, 0, this._rect.width, this._rect.height);
         var index = (x + y * this._imageData.width) * 4;
         this._imageData.data[index + 0] = argb[1];
         this._imageData.data[index + 1] = argb[2];
         this._imageData.data[index + 2] = argb[3];
-        this._imageData.data[index + 3] = 255;
-        if (!this._locked) {
+        this._imageData.data[index + 3] = 0xFF;
+        if (!this._locked)
             this._context.putImageData(this._imageData, 0, 0);
-            this._imageData = null;
-        }
         this.invalidate();
     };
     /**
@@ -6489,17 +6485,15 @@ var BitmapImage2D = (function (_super) {
      */
     BitmapImage2D.prototype.setPixel32 = function (x, y, color) {
         var argb = ColorUtils_1.default.float32ColorToARGB(color);
-        if (!this._locked)
+        if (!this._imageData)
             this._imageData = this._context.getImageData(0, 0, this._rect.width, this._rect.height);
         var index = (x + y * this._imageData.width) * 4;
         this._imageData.data[index + 0] = argb[1];
         this._imageData.data[index + 1] = argb[2];
         this._imageData.data[index + 2] = argb[3];
         this._imageData.data[index + 3] = argb[0];
-        if (!this._locked) {
+        if (!this._locked)
             this._context.putImageData(this._imageData, 0, 0);
-            this._imageData = null;
-        }
         this.invalidate();
     };
     /**
@@ -6521,24 +6515,15 @@ var BitmapImage2D = (function (_super) {
      *                   before throwing the exception.
      * @throws TypeError The rect or inputByteArray are null.
      */
-    BitmapImage2D.prototype.setPixels = function (rect, inputByteArray) {
-        if (!this._locked)
+    BitmapImage2D.prototype.setPixels = function (rect, input) {
+        if (!this._imageData)
             this._imageData = this._context.getImageData(0, 0, this._rect.width, this._rect.height);
-        inputByteArray.position = 0;
-        var i /*uint*/, j /*uint*/, index;
-        for (i = 0; i < rect.width; ++i) {
-            for (j = 0; j < rect.height; ++j) {
-                index = (i + rect.x + (j + rect.y) * this._imageData.width) * 4;
-                this._imageData.data[index + 0] = inputByteArray.readUnsignedInt();
-                this._imageData.data[index + 1] = inputByteArray.readUnsignedInt();
-                this._imageData.data[index + 2] = inputByteArray.readUnsignedInt();
-                this._imageData.data[index + 3] = inputByteArray.readUnsignedInt();
-            }
-        }
-        if (!this._locked) {
+        var i;
+        var w = this._imageData.width;
+        for (i = 0; i < rect.height; ++i)
+            this._imageData.data.set(input.subarray(i * w * 4, (i + 1) * w * 4), (rect.x + (i + rect.y) * w) * 4);
+        if (!this._locked)
             this._context.putImageData(this._imageData, 0, 0);
-            this._imageData = null;
-        }
         this.invalidate();
     };
     /**
@@ -6557,16 +6542,16 @@ var BitmapImage2D = (function (_super) {
         if (!this._locked)
             return;
         this._locked = false;
-        this._context.putImageData(this._imageData, 0, 0); // at coords 0,0
-        this._imageData = null;
+        if (this._imageData)
+            this._context.putImageData(this._imageData, 0, 0); // at coords 0,0
     };
     /**
      *
      * @returns {ImageData}
      */
     BitmapImage2D.prototype.getImageData = function () {
-        if (!this._locked)
-            return this._context.getImageData(0, 0, this._rect.width, this._rect.height);
+        if (!this._imageData)
+            this._imageData = this._context.getImageData(0, 0, this._rect.width, this._rect.height);
         return this._imageData;
     };
     /**
@@ -6787,7 +6772,7 @@ var BitmapImageCube = (function (_super) {
         if (!this._locked)
             this._imageData[side] = this._context[side].getImageData(0, 0, this._size, this._size);
         var data = this._imageData[side].data;
-        var i /*uint*/, j /*uint*/, index;
+        var i, j, index;
         for (i = 0; i < rect.width; ++i) {
             for (j = 0; j < rect.height; ++j) {
                 index = (i + rect.x + (j + rect.y) * this._size) * 4;
@@ -6854,7 +6839,7 @@ var BitmapImageCube = (function (_super) {
         var destData = this._imageData[side].data;
         var sourceOffset = Math.round(Math.log(sourceChannel) / Math.log(2));
         var destOffset = Math.round(Math.log(destChannel) / Math.log(2));
-        var i /*uint*/, j /*uint*/, sourceIndex /*uint*/, destIndex;
+        var i, j, sourceIndex, destIndex;
         for (i = 0; i < sourceRect.width; ++i) {
             for (j = 0; j < sourceRect.height; ++j) {
                 sourceIndex = (i + sourceRect.x + (j + sourceRect.y) * sourceBitmap.width) * 4;
@@ -7080,7 +7065,7 @@ var BitmapImageCube = (function (_super) {
     BitmapImageCube.prototype.setArray = function (side, rect, inputArray) {
         if (!this._locked)
             this._imageData[side] = this._context[side].getImageData(0, 0, this._size, this._size);
-        var i /*uint*/, j /*uint*/, index /*uint*/, argb;
+        var i, j, index, argb;
         for (i = 0; i < rect.width; ++i) {
             for (j = 0; j < rect.height; ++j) {
                 argb = ColorUtils_1.default.float32ColorToARGB(inputArray[i + j * rect.width]);
@@ -7198,7 +7183,7 @@ var BitmapImageCube = (function (_super) {
         if (!this._locked)
             this._imageData[side] = this._context[side].getImageData(0, 0, this._size, this._size);
         inputByteArray.position = 0;
-        var i /*uint*/, j /*uint*/, index;
+        var i, j, index;
         for (i = 0; i < rect.width; ++i) {
             for (j = 0; j < rect.height; ++j) {
                 index = (i + rect.x + (j + rect.y) * this._size) * 4;

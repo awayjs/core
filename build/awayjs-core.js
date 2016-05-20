@@ -263,7 +263,8 @@ var AttributesBuffer = (function (_super) {
     };
     AttributesBuffer.assetType = "[assets AttributesBuffer]";
     return AttributesBuffer;
-}(AssetBase_1.default));
+}(AssetBase_1.AssetBase));
+exports.AttributesBuffer = AttributesBuffer;
 var ViewVO = (function () {
     function ViewVO(view) {
         this.view = view;
@@ -277,8 +278,6 @@ var ViewVO = (function () {
     };
     return ViewVO;
 }());
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = AttributesBuffer;
 
 },{"../library/AssetBase":"awayjs-core/lib/library/AssetBase"}],"awayjs-core/lib/attributes/AttributesView":[function(require,module,exports){
 "use strict";
@@ -298,7 +297,7 @@ var AttributesView = (function (_super) {
         this._arrayClass = arrayClass;
         this._size = arrayClass.BYTES_PER_ELEMENT;
         this._dimensions = dimensions;
-        this._attributesBuffer = (attributesBufferCount instanceof AttributesBuffer_1.default) ? attributesBufferCount : new AttributesBuffer_1.default(this._dimensions * this._size, attributesBufferCount);
+        this._attributesBuffer = (attributesBufferCount instanceof AttributesBuffer_1.AttributesBuffer) ? attributesBufferCount : new AttributesBuffer_1.AttributesBuffer(this._dimensions * this._size, attributesBufferCount);
         this._attributesBuffer._addView(this);
         this._unsigned = unsigned;
     }
@@ -424,9 +423,8 @@ var AttributesView = (function (_super) {
     };
     AttributesView.assetType = "[attributes AttributesView]";
     return AttributesView;
-}(AssetBase_1.default));
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = AttributesView;
+}(AssetBase_1.AssetBase));
+exports.AttributesView = AttributesView;
 
 },{"../attributes/AttributesBuffer":"awayjs-core/lib/attributes/AttributesBuffer","../library/AssetBase":"awayjs-core/lib/library/AssetBase"}],"awayjs-core/lib/attributes/Byte1Attributes":[function(require,module,exports){
 "use strict";
@@ -470,9 +468,8 @@ var Byte1Attributes = (function (_super) {
     };
     Byte1Attributes.assetType = "[attributes Byte1Attributes]";
     return Byte1Attributes;
-}(AttributesView_1.default));
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = Byte1Attributes;
+}(AttributesView_1.AttributesView));
+exports.Byte1Attributes = Byte1Attributes;
 
 },{"../attributes/AttributesView":"awayjs-core/lib/attributes/AttributesView"}],"awayjs-core/lib/attributes/Byte2Attributes":[function(require,module,exports){
 "use strict";
@@ -516,9 +513,8 @@ var Byte2Attributes = (function (_super) {
     };
     Byte2Attributes.assetType = "[attributes Byte2Attributes]";
     return Byte2Attributes;
-}(AttributesView_1.default));
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = Byte2Attributes;
+}(AttributesView_1.AttributesView));
+exports.Byte2Attributes = Byte2Attributes;
 
 },{"../attributes/AttributesView":"awayjs-core/lib/attributes/AttributesView"}],"awayjs-core/lib/attributes/Byte3Attributes":[function(require,module,exports){
 "use strict";
@@ -562,9 +558,8 @@ var Byte3Attributes = (function (_super) {
     };
     Byte3Attributes.assetType = "[attributes Byte3Attributes]";
     return Byte3Attributes;
-}(AttributesView_1.default));
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = Byte3Attributes;
+}(AttributesView_1.AttributesView));
+exports.Byte3Attributes = Byte3Attributes;
 
 },{"../attributes/AttributesView":"awayjs-core/lib/attributes/AttributesView"}],"awayjs-core/lib/attributes/Byte4Attributes":[function(require,module,exports){
 "use strict";
@@ -608,9 +603,8 @@ var Byte4Attributes = (function (_super) {
     };
     Byte4Attributes.assetType = "[attributes Byte4Attributes]";
     return Byte4Attributes;
-}(AttributesView_1.default));
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = Byte4Attributes;
+}(AttributesView_1.AttributesView));
+exports.Byte4Attributes = Byte4Attributes;
 
 },{"../attributes/AttributesView":"awayjs-core/lib/attributes/AttributesView"}],"awayjs-core/lib/attributes/Float1Attributes":[function(require,module,exports){
 "use strict";
@@ -653,9 +647,8 @@ var Float1Attributes = (function (_super) {
     };
     Float1Attributes.assetType = "[attributes Float1Attributes]";
     return Float1Attributes;
-}(AttributesView_1.default));
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = Float1Attributes;
+}(AttributesView_1.AttributesView));
+exports.Float1Attributes = Float1Attributes;
 
 },{"../attributes/AttributesView":"awayjs-core/lib/attributes/AttributesView"}],"awayjs-core/lib/attributes/Float2Attributes":[function(require,module,exports){
 "use strict";
@@ -698,9 +691,8 @@ var Float2Attributes = (function (_super) {
     };
     Float2Attributes.assetType = "[attributes Float2Attributes]";
     return Float2Attributes;
-}(AttributesView_1.default));
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = Float2Attributes;
+}(AttributesView_1.AttributesView));
+exports.Float2Attributes = Float2Attributes;
 
 },{"../attributes/AttributesView":"awayjs-core/lib/attributes/AttributesView"}],"awayjs-core/lib/attributes/Float3Attributes":[function(require,module,exports){
 "use strict";
@@ -743,9 +735,8 @@ var Float3Attributes = (function (_super) {
     };
     Float3Attributes.assetType = "[attributes Float3Attributes]";
     return Float3Attributes;
-}(AttributesView_1.default));
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = Float3Attributes;
+}(AttributesView_1.AttributesView));
+exports.Float3Attributes = Float3Attributes;
 
 },{"../attributes/AttributesView":"awayjs-core/lib/attributes/AttributesView"}],"awayjs-core/lib/attributes/Float4Attributes":[function(require,module,exports){
 "use strict";
@@ -788,9 +779,8 @@ var Float4Attributes = (function (_super) {
     };
     Float4Attributes.assetType = "[attributes Float4Attributes]";
     return Float4Attributes;
-}(AttributesView_1.default));
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = Float4Attributes;
+}(AttributesView_1.AttributesView));
+exports.Float4Attributes = Float4Attributes;
 
 },{"../attributes/AttributesView":"awayjs-core/lib/attributes/AttributesView"}],"awayjs-core/lib/attributes/Short2Attributes":[function(require,module,exports){
 "use strict";
@@ -834,9 +824,8 @@ var Short2Attributes = (function (_super) {
     };
     Short2Attributes.assetType = "[attributes Short2Attributes]";
     return Short2Attributes;
-}(AttributesView_1.default));
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = Short2Attributes;
+}(AttributesView_1.AttributesView));
+exports.Short2Attributes = Short2Attributes;
 
 },{"../attributes/AttributesView":"awayjs-core/lib/attributes/AttributesView"}],"awayjs-core/lib/attributes/Short3Attributes":[function(require,module,exports){
 "use strict";
@@ -880,36 +869,35 @@ var Short3Attributes = (function (_super) {
     };
     Short3Attributes.assetType = "[attributes Short3Attributes]";
     return Short3Attributes;
-}(AttributesView_1.default));
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = Short3Attributes;
+}(AttributesView_1.AttributesView));
+exports.Short3Attributes = Short3Attributes;
 
 },{"../attributes/AttributesView":"awayjs-core/lib/attributes/AttributesView"}],"awayjs-core/lib/attributes":[function(require,module,exports){
 "use strict";
 var AttributesView_1 = require("./attributes/AttributesView");
-exports.AttributesView = AttributesView_1.default;
+exports.AttributesView = AttributesView_1.AttributesView;
 var AttributesBuffer_1 = require("./attributes/AttributesBuffer");
-exports.AttributesBuffer = AttributesBuffer_1.default;
+exports.AttributesBuffer = AttributesBuffer_1.AttributesBuffer;
 var Byte1Attributes_1 = require("./attributes/Byte1Attributes");
-exports.Byte1Attributes = Byte1Attributes_1.default;
+exports.Byte1Attributes = Byte1Attributes_1.Byte1Attributes;
 var Byte2Attributes_1 = require("./attributes/Byte2Attributes");
-exports.Byte2Attributes = Byte2Attributes_1.default;
+exports.Byte2Attributes = Byte2Attributes_1.Byte2Attributes;
 var Byte3Attributes_1 = require("./attributes/Byte3Attributes");
-exports.Byte3Attributes = Byte3Attributes_1.default;
+exports.Byte3Attributes = Byte3Attributes_1.Byte3Attributes;
 var Byte4Attributes_1 = require("./attributes/Byte4Attributes");
-exports.Byte4Attributes = Byte4Attributes_1.default;
+exports.Byte4Attributes = Byte4Attributes_1.Byte4Attributes;
 var Float1Attributes_1 = require("./attributes/Float1Attributes");
-exports.Float1Attributes = Float1Attributes_1.default;
+exports.Float1Attributes = Float1Attributes_1.Float1Attributes;
 var Float2Attributes_1 = require("./attributes/Float2Attributes");
-exports.Float2Attributes = Float2Attributes_1.default;
+exports.Float2Attributes = Float2Attributes_1.Float2Attributes;
 var Float3Attributes_1 = require("./attributes/Float3Attributes");
-exports.Float3Attributes = Float3Attributes_1.default;
+exports.Float3Attributes = Float3Attributes_1.Float3Attributes;
 var Float4Attributes_1 = require("./attributes/Float4Attributes");
-exports.Float4Attributes = Float4Attributes_1.default;
+exports.Float4Attributes = Float4Attributes_1.Float4Attributes;
 var Short2Attributes_1 = require("./attributes/Short2Attributes");
-exports.Short2Attributes = Short2Attributes_1.default;
+exports.Short2Attributes = Short2Attributes_1.Short2Attributes;
 var Short3Attributes_1 = require("./attributes/Short3Attributes");
-exports.Short3Attributes = Short3Attributes_1.default;
+exports.Short3Attributes = Short3Attributes_1.Short3Attributes;
 
 },{"./attributes/AttributesBuffer":"awayjs-core/lib/attributes/AttributesBuffer","./attributes/AttributesView":"awayjs-core/lib/attributes/AttributesView","./attributes/Byte1Attributes":"awayjs-core/lib/attributes/Byte1Attributes","./attributes/Byte2Attributes":"awayjs-core/lib/attributes/Byte2Attributes","./attributes/Byte3Attributes":"awayjs-core/lib/attributes/Byte3Attributes","./attributes/Byte4Attributes":"awayjs-core/lib/attributes/Byte4Attributes","./attributes/Float1Attributes":"awayjs-core/lib/attributes/Float1Attributes","./attributes/Float2Attributes":"awayjs-core/lib/attributes/Float2Attributes","./attributes/Float3Attributes":"awayjs-core/lib/attributes/Float3Attributes","./attributes/Float4Attributes":"awayjs-core/lib/attributes/Float4Attributes","./attributes/Short2Attributes":"awayjs-core/lib/attributes/Short2Attributes","./attributes/Short3Attributes":"awayjs-core/lib/attributes/Short3Attributes"}],"awayjs-core/lib/audio/WaveAudio":[function(require,module,exports){
 "use strict";
@@ -979,7 +967,7 @@ var WaveAudio = (function (_super) {
     };
     WaveAudio.prototype.play = function (offset, loop) {
         if (loop === void 0) { loop = false; }
-        this._audioChannel = AudioManager_1.default.getChannel(this._buffer.byteLength);
+        this._audioChannel = AudioManager_1.AudioManager.getChannel(this._buffer.byteLength);
         if (this._audioChannel) {
             this._audioChannel.volume = this._volume;
             this._audioChannel.play(this._buffer, offset, loop, this.id);
@@ -998,14 +986,13 @@ var WaveAudio = (function (_super) {
     };
     WaveAudio.assetType = "[asset WaveAudio]";
     return WaveAudio;
-}(AssetBase_1.default));
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = WaveAudio;
+}(AssetBase_1.AssetBase));
+exports.WaveAudio = WaveAudio;
 
 },{"../library/AssetBase":"awayjs-core/lib/library/AssetBase","../managers/AudioManager":"awayjs-core/lib/managers/AudioManager"}],"awayjs-core/lib/audio":[function(require,module,exports){
 "use strict";
 var WaveAudio_1 = require("./audio/WaveAudio");
-exports.WaveAudio = WaveAudio_1.default;
+exports.WaveAudio = WaveAudio_1.WaveAudio;
 
 },{"./audio/WaveAudio":"awayjs-core/lib/audio/WaveAudio"}],"awayjs-core/lib/errors/AbstractMethodError":[function(require,module,exports){
 "use strict";
@@ -1029,12 +1016,11 @@ var AbstractMethodError = (function (_super) {
     function AbstractMethodError(message, id) {
         if (message === void 0) { message = null; }
         if (id === void 0) { id = 0; }
-        _super.call(this, message || "An abstract method was called! Either an instance of an abstract class was created, or an abstract method was not overridden by the subclass.", id);
+        _super.call(this, message || "An abstract method was called! Either an instance of an abstract export class was created, or an abstract method was not overridden by the subclass.", id);
     }
     return AbstractMethodError;
-}(ErrorBase_1.default));
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = AbstractMethodError;
+}(ErrorBase_1.ErrorBase));
+exports.AbstractMethodError = AbstractMethodError;
 
 },{"../errors/ErrorBase":"awayjs-core/lib/errors/ErrorBase"}],"awayjs-core/lib/errors/ArgumentError":[function(require,module,exports){
 "use strict";
@@ -1062,9 +1048,8 @@ var ArgumentError = (function (_super) {
         _super.call(this, message || "ArgumentError", id);
     }
     return ArgumentError;
-}(ErrorBase_1.default));
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = ArgumentError;
+}(ErrorBase_1.ErrorBase));
+exports.ArgumentError = ArgumentError;
 
 },{"../errors/ErrorBase":"awayjs-core/lib/errors/ErrorBase"}],"awayjs-core/lib/errors/DocumentError":[function(require,module,exports){
 "use strict";
@@ -1083,9 +1068,8 @@ var DocumentError = (function (_super) {
     }
     DocumentError.DOCUMENT_DOES_NOT_EXIST = "documentDoesNotExist";
     return DocumentError;
-}(ErrorBase_1.default));
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = DocumentError;
+}(ErrorBase_1.ErrorBase));
+exports.DocumentError = DocumentError;
 
 },{"../errors/ErrorBase":"awayjs-core/lib/errors/ErrorBase"}],"awayjs-core/lib/errors/ErrorBase":[function(require,module,exports){
 "use strict";
@@ -1150,8 +1134,7 @@ var ErrorBase = (function () {
     });
     return ErrorBase;
 }());
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = ErrorBase;
+exports.ErrorBase = ErrorBase;
 
 },{}],"awayjs-core/lib/errors/PartialImplementationError":[function(require,module,exports){
 "use strict";
@@ -1178,9 +1161,8 @@ var PartialImplementationError = (function (_super) {
         _super.call(this, "PartialImplementationError - this function is in development. Required Dependency: " + dependency, id);
     }
     return PartialImplementationError;
-}(ErrorBase_1.default));
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = PartialImplementationError;
+}(ErrorBase_1.ErrorBase));
+exports.PartialImplementationError = PartialImplementationError;
 
 },{"../errors/ErrorBase":"awayjs-core/lib/errors/ErrorBase"}],"awayjs-core/lib/errors/RangeError":[function(require,module,exports){
 "use strict";
@@ -1208,24 +1190,23 @@ var RangeError = (function (_super) {
         _super.call(this, message || "RangeError", id);
     }
     return RangeError;
-}(ErrorBase_1.default));
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = RangeError;
+}(ErrorBase_1.ErrorBase));
+exports.RangeError = RangeError;
 
 },{"../errors/ErrorBase":"awayjs-core/lib/errors/ErrorBase"}],"awayjs-core/lib/errors":[function(require,module,exports){
 "use strict";
 var AbstractMethodError_1 = require("./errors/AbstractMethodError");
-exports.AbstractMethodError = AbstractMethodError_1.default;
+exports.AbstractMethodError = AbstractMethodError_1.AbstractMethodError;
 var ArgumentError_1 = require("./errors/ArgumentError");
-exports.ArgumentError = ArgumentError_1.default;
+exports.ArgumentError = ArgumentError_1.ArgumentError;
 var DocumentError_1 = require("./errors/DocumentError");
-exports.DocumentError = DocumentError_1.default;
+exports.DocumentError = DocumentError_1.DocumentError;
 var ErrorBase_1 = require("./errors/ErrorBase");
-exports.ErrorBase = ErrorBase_1.default;
+exports.ErrorBase = ErrorBase_1.ErrorBase;
 var PartialImplementationError_1 = require("./errors/PartialImplementationError");
-exports.PartialImplementationError = PartialImplementationError_1.default;
+exports.PartialImplementationError = PartialImplementationError_1.PartialImplementationError;
 var RangeError_1 = require("./errors/RangeError");
-exports.RangeError = RangeError_1.default;
+exports.RangeError = RangeError_1.RangeError;
 
 },{"./errors/AbstractMethodError":"awayjs-core/lib/errors/AbstractMethodError","./errors/ArgumentError":"awayjs-core/lib/errors/ArgumentError","./errors/DocumentError":"awayjs-core/lib/errors/DocumentError","./errors/ErrorBase":"awayjs-core/lib/errors/ErrorBase","./errors/PartialImplementationError":"awayjs-core/lib/errors/PartialImplementationError","./errors/RangeError":"awayjs-core/lib/errors/RangeError"}],"awayjs-core/lib/events/AssetEvent":[function(require,module,exports){
 "use strict";
@@ -1236,7 +1217,7 @@ var __extends = (this && this.__extends) || function (d, b) {
 };
 var EventBase_1 = require("../events/EventBase");
 /**
- * @class away.events.AssetEvent
+ * @export class away.events.AssetEvent
  */
 var AssetEvent = (function (_super) {
     __extends(AssetEvent, _super);
@@ -1312,9 +1293,8 @@ var AssetEvent = (function (_super) {
      */
     AssetEvent.TEXTURE_SIZE_ERROR = 'textureSizeError';
     return AssetEvent;
-}(EventBase_1.default));
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = AssetEvent;
+}(EventBase_1.EventBase));
+exports.AssetEvent = AssetEvent;
 
 },{"../events/EventBase":"awayjs-core/lib/events/EventBase"}],"awayjs-core/lib/events/EventBase":[function(require,module,exports){
 "use strict";
@@ -1343,15 +1323,14 @@ var EventBase = (function () {
     };
     return EventBase;
 }());
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = EventBase;
+exports.EventBase = EventBase;
 
 },{}],"awayjs-core/lib/events/EventDispatcher":[function(require,module,exports){
 "use strict";
 /**
- * Base class for dispatching events
+ * Base export class for dispatching events
 *
-* @class away.events.EventDispatcher
+* @export class away.events.EventDispatcher
 *
 */
 var EventDispatcher = (function () {
@@ -1413,6 +1392,7 @@ var EventDispatcher = (function () {
     };
     return EventDispatcher;
 }());
+exports.EventDispatcher = EventDispatcher;
 var ListenerObject = (function () {
     function ListenerObject() {
         this.index = 0;
@@ -1455,6 +1435,7 @@ var ListenerObject = (function () {
     };
     return ListenerObject;
 }());
+exports.ListenerObject = ListenerObject;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = EventDispatcher;
 
@@ -1529,9 +1510,8 @@ var LoaderEvent = (function (_super) {
      */
     LoaderEvent.LOAD_COMPLETE = "loadComplete";
     return LoaderEvent;
-}(EventBase_1.default));
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = LoaderEvent;
+}(EventBase_1.EventBase));
+exports.LoaderEvent = LoaderEvent;
 
 },{"../events/EventBase":"awayjs-core/lib/events/EventBase"}],"awayjs-core/lib/events/ParserEvent":[function(require,module,exports){
 "use strict";
@@ -1577,9 +1557,8 @@ var ParserEvent = (function (_super) {
      */
     ParserEvent.READY_FOR_DEPENDENCIES = 'readyForDependencies';
     return ParserEvent;
-}(EventBase_1.default));
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = ParserEvent;
+}(EventBase_1.EventBase));
+exports.ParserEvent = ParserEvent;
 
 },{"../events/EventBase":"awayjs-core/lib/events/EventBase"}],"awayjs-core/lib/events/ProjectionEvent":[function(require,module,exports){
 "use strict";
@@ -1604,9 +1583,8 @@ var ProjectionEvent = (function (_super) {
     });
     ProjectionEvent.MATRIX_CHANGED = "matrixChanged";
     return ProjectionEvent;
-}(EventBase_1.default));
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = ProjectionEvent;
+}(EventBase_1.EventBase));
+exports.ProjectionEvent = ProjectionEvent;
 
 },{"../events/EventBase":"awayjs-core/lib/events/EventBase"}],"awayjs-core/lib/events/TimerEvent":[function(require,module,exports){
 "use strict";
@@ -1630,7 +1608,8 @@ var TimerEvent = (function (_super) {
      */
     TimerEvent.TIMER_COMPLETE = "timerComplete";
     return TimerEvent;
-}(EventBase_1.default));
+}(EventBase_1.EventBase));
+exports.TimerEvent = TimerEvent;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = TimerEvent;
 
@@ -1670,28 +1649,27 @@ var URLLoaderEvent = (function (_super) {
     URLLoaderEvent.LOAD_START = "loadStart";
     URLLoaderEvent.LOAD_COMPLETE = "loadComplete";
     return URLLoaderEvent;
-}(EventBase_1.default));
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = URLLoaderEvent;
+}(EventBase_1.EventBase));
+exports.URLLoaderEvent = URLLoaderEvent;
 
 },{"../events/EventBase":"awayjs-core/lib/events/EventBase"}],"awayjs-core/lib/events":[function(require,module,exports){
 "use strict";
 var AssetEvent_1 = require("./events/AssetEvent");
-exports.AssetEvent = AssetEvent_1.default;
+exports.AssetEvent = AssetEvent_1.AssetEvent;
 var EventBase_1 = require("./events/EventBase");
-exports.EventBase = EventBase_1.default;
+exports.EventBase = EventBase_1.EventBase;
 var EventDispatcher_1 = require("./events/EventDispatcher");
-exports.EventDispatcher = EventDispatcher_1.default;
+exports.EventDispatcher = EventDispatcher_1.EventDispatcher;
 var LoaderEvent_1 = require("./events/LoaderEvent");
-exports.LoaderEvent = LoaderEvent_1.default;
+exports.LoaderEvent = LoaderEvent_1.LoaderEvent;
 var ParserEvent_1 = require("./events/ParserEvent");
-exports.ParserEvent = ParserEvent_1.default;
+exports.ParserEvent = ParserEvent_1.ParserEvent;
 var ProjectionEvent_1 = require("./events/ProjectionEvent");
-exports.ProjectionEvent = ProjectionEvent_1.default;
+exports.ProjectionEvent = ProjectionEvent_1.ProjectionEvent;
 var TimerEvent_1 = require("./events/TimerEvent");
-exports.TimerEvent = TimerEvent_1.default;
+exports.TimerEvent = TimerEvent_1.TimerEvent;
 var URLLoaderEvent_1 = require("./events/URLLoaderEvent");
-exports.URLLoaderEvent = URLLoaderEvent_1.default;
+exports.URLLoaderEvent = URLLoaderEvent_1.URLLoaderEvent;
 
 },{"./events/AssetEvent":"awayjs-core/lib/events/AssetEvent","./events/EventBase":"awayjs-core/lib/events/EventBase","./events/EventDispatcher":"awayjs-core/lib/events/EventDispatcher","./events/LoaderEvent":"awayjs-core/lib/events/LoaderEvent","./events/ParserEvent":"awayjs-core/lib/events/ParserEvent","./events/ProjectionEvent":"awayjs-core/lib/events/ProjectionEvent","./events/TimerEvent":"awayjs-core/lib/events/TimerEvent","./events/URLLoaderEvent":"awayjs-core/lib/events/URLLoaderEvent"}],"awayjs-core/lib/geom/Box":[function(require,module,exports){
 "use strict";
@@ -1703,7 +1681,7 @@ var Vector3D_1 = require("../geom/Vector3D");
  *
  *
  * <p>The <code>x</code>, <code>y</code>, <code>z</code>, <code>width</code>,
- * <code>height</code> <code>depth</code> properties of the Box class are
+ * <code>height</code> <code>depth</code> properties of the Box export class are
  * independent of each other; changing the value of one property has no effect
  * on the others. However, the <code>right</code>, <code>bottom</code> and
  * <code>back</code> properties are integrally related to those six
@@ -1721,7 +1699,7 @@ var Vector3D_1 = require("../geom/Vector3D");
  * <p>You can use the <code>new Box()</code> constructor to create a
  * Box object.</p>
  *
- * <p><b>Note:</b> The Box class does not define a cubic Shape
+ * <p><b>Note:</b> The Box export class does not define a cubic Shape
  * display object.
  */
 var Box = (function () {
@@ -1790,7 +1768,7 @@ var Box = (function () {
          */
         get: function () {
             if (this._bottomRightBack == null)
-                this._bottomRightBack = new Vector3D_1.default();
+                this._bottomRightBack = new Vector3D_1.Vector3D();
             this._bottomRightBack.x = this.x + this.width;
             this._bottomRightBack.y = this.y + this.height;
             this._bottomRightBack.z = this.z + this.depth;
@@ -1863,7 +1841,7 @@ var Box = (function () {
          */
         get: function () {
             if (this._size == null)
-                this._size = new Vector3D_1.default();
+                this._size = new Vector3D_1.Vector3D();
             this._size.x = this.width;
             this._size.y = this.height;
             this._size.z = this.depth;
@@ -1900,7 +1878,7 @@ var Box = (function () {
          */
         get: function () {
             if (this._topLeftFront == null)
-                this._topLeftFront = new Vector3D_1.default();
+                this._topLeftFront = new Vector3D_1.Vector3D();
             this._topLeftFront.x = this.x;
             this._topLeftFront.y = this.y;
             this._topLeftFront.z = this.z;
@@ -2222,7 +2200,7 @@ var Box = (function () {
         if (target === void 0) { target = null; }
         var p;
         if (target == null)
-            target = new Vector3D_1.default();
+            target = new Vector3D_1.Vector3D();
         p = point.x;
         if (p < this.x)
             p = this.x;
@@ -2386,14 +2364,13 @@ var Box = (function () {
     };
     return Box;
 }());
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = Box;
+exports.Box = Box;
 
 },{"../geom/Vector3D":"awayjs-core/lib/geom/Vector3D"}],"awayjs-core/lib/geom/ColorTransform":[function(require,module,exports){
 "use strict";
 var ColorUtils_1 = require("../utils/ColorUtils");
 /**
- * The ColorTransform class lets you adjust the color values in a display
+ * The ColorTransform export class lets you adjust the color values in a display
  * object. The color adjustment or <i>color transformation</i> can be applied
  * to all four channels: red, green, blue, and alpha transparency.
  *
@@ -2493,7 +2470,7 @@ var ColorTransform = (function () {
             return ((this.redOffset << 16) | (this.greenOffset << 8) | this.blueOffset);
         },
         set: function (value) {
-            var argb = ColorUtils_1.default.float32ColorToARGB(value);
+            var argb = ColorUtils_1.ColorUtils.float32ColorToARGB(value);
             this.redOffset = argb[1]; //(value >> 16) & 0xFF;
             this.greenOffset = argb[2]; //(value >> 8) & 0xFF;
             this.blueOffset = argb[3]; //value & 0xFF;
@@ -2545,8 +2522,7 @@ var ColorTransform = (function () {
     };
     return ColorTransform;
 }());
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = ColorTransform;
+exports.ColorTransform = ColorTransform;
 
 },{"../utils/ColorUtils":"awayjs-core/lib/utils/ColorUtils"}],"awayjs-core/lib/geom/MathConsts":[function(require,module,exports){
 "use strict";
@@ -2566,8 +2542,7 @@ var MathConsts = (function () {
     MathConsts.DEGREES_TO_RADIANS = Math.PI / 180;
     return MathConsts;
 }());
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = MathConsts;
+exports.MathConsts = MathConsts;
 
 },{}],"awayjs-core/lib/geom/Matrix3DUtils":[function(require,module,exports){
 "use strict";
@@ -2616,7 +2591,7 @@ var Matrix3DUtils = (function () {
             return m;
         }
         else
-            return new Matrix3D_1.default(raw);
+            return new Matrix3D_1.Matrix3D(raw);
     };
     /**
      * Returns a normalised <code>Vector3D</code> object representing the forward vector of the given matrix.
@@ -2627,7 +2602,7 @@ var Matrix3DUtils = (function () {
     Matrix3DUtils.getForward = function (m, v) {
         if (v === void 0) { v = null; }
         if (v === null)
-            v = new Vector3D_1.default(0.0, 0.0, 0.0);
+            v = new Vector3D_1.Vector3D(0.0, 0.0, 0.0);
         m.copyColumnTo(2, v);
         v.normalize();
         return v;
@@ -2641,7 +2616,7 @@ var Matrix3DUtils = (function () {
     Matrix3DUtils.getUp = function (m, v) {
         if (v === void 0) { v = null; }
         if (v === null)
-            v = new Vector3D_1.default(0.0, 0.0, 0.0);
+            v = new Vector3D_1.Vector3D(0.0, 0.0, 0.0);
         m.copyColumnTo(1, v);
         v.normalize();
         return v;
@@ -2656,7 +2631,7 @@ var Matrix3DUtils = (function () {
         if (v === void 0) { v = null; }
         //v ||= new Vector3D(0.0, 0.0, 0.0);
         if (v === null) {
-            v = new Vector3D_1.default(0.0, 0.0, 0.0);
+            v = new Vector3D_1.Vector3D(0.0, 0.0, 0.0);
         }
         m.copyColumnTo(0, v);
         v.normalize();
@@ -2707,7 +2682,7 @@ var Matrix3DUtils = (function () {
     Matrix3DUtils.reflection = function (plane, target) {
         if (target === void 0) { target = null; }
         if (target === null)
-            target = new Matrix3D_1.default();
+            target = new Matrix3D_1.Matrix3D();
         var a = plane.a, b = plane.b, c = plane.c, d = plane.d;
         var rawData = Matrix3DUtils.RAW_DATA_CONTAINER;
         var ab2 = -2 * a * b;
@@ -2736,7 +2711,7 @@ var Matrix3DUtils = (function () {
     Matrix3DUtils.transformVector = function (matrix, vector, result) {
         if (result === void 0) { result = null; }
         if (!result)
-            result = new Vector3D_1.default();
+            result = new Vector3D_1.Vector3D();
         var raw = Matrix3DUtils.RAW_DATA_CONTAINER;
         matrix.copyRawDataTo(raw);
         var a = raw[0];
@@ -2767,7 +2742,7 @@ var Matrix3DUtils = (function () {
     Matrix3DUtils.deltaTransformVector = function (matrix, vector, result) {
         if (result === void 0) { result = null; }
         if (!result)
-            result = new Vector3D_1.default();
+            result = new Vector3D_1.Vector3D();
         var raw = Matrix3DUtils.RAW_DATA_CONTAINER;
         matrix.copyRawDataTo(raw);
         var a = raw[0];
@@ -2794,7 +2769,7 @@ var Matrix3DUtils = (function () {
     Matrix3DUtils.getTranslation = function (transform, result) {
         if (result === void 0) { result = null; }
         if (!result)
-            result = new Vector3D_1.default();
+            result = new Vector3D_1.Vector3D();
         transform.copyColumnTo(3, result);
         return result;
     };
@@ -2829,11 +2804,10 @@ var Matrix3DUtils = (function () {
      */
     Matrix3DUtils.RAW_DATA_CONTAINER = new Float32Array(16);
     //public static RAW_DATA_CONTAINER:number[] = new Array<number>(16);
-    Matrix3DUtils.CALCULATION_MATRIX = new Matrix3D_1.default();
+    Matrix3DUtils.CALCULATION_MATRIX = new Matrix3D_1.Matrix3D();
     return Matrix3DUtils;
 }());
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = Matrix3DUtils;
+exports.Matrix3DUtils = Matrix3DUtils;
 
 },{"../geom/Matrix3D":"awayjs-core/lib/geom/Matrix3D","../geom/Vector3D":"awayjs-core/lib/geom/Vector3D"}],"awayjs-core/lib/geom/Matrix3D":[function(require,module,exports){
 "use strict";
@@ -2852,10 +2826,10 @@ var Matrix3D = (function () {
          * A Vector of 16 Numbers, where every four elements is a column of a 4x4 matrix.
          *
          * <p>An exception is thrown if the rawData property is set to a matrix that is not invertible. The Matrix3D
-         * object must be invertible. If a non-invertible matrix is needed, create a subclass of the Matrix3D object.</p>
+         * object must be invertible. If a non-invertible matrix is needed, create a subexport class of the Matrix3D object.</p>
          */
         this.rawData = new Float32Array(16);
-        this._position = new Vector3D_1.default();
+        this._position = new Vector3D_1.Vector3D();
         this._positionDirty = true;
         if (v != null && v.length == 16) {
             this.copyRawDataFrom(v);
@@ -3020,7 +2994,7 @@ var Matrix3D = (function () {
                 this.rawData[15] = vector3D.w;
                 break;
             default:
-                throw new ArgumentError_1.default("ArgumentError, Column " + column + " out of bounds [0, ..., 3]");
+                throw new ArgumentError_1.ArgumentError("ArgumentError, Column " + column + " out of bounds [0, ..., 3]");
         }
     };
     /**
@@ -3053,7 +3027,7 @@ var Matrix3D = (function () {
                 vector3D.w = this.rawData[15];
                 break;
             default:
-                throw new ArgumentError_1.default("ArgumentError, Column " + column + " out of bounds [0, ..., 3]");
+                throw new ArgumentError_1.ArgumentError("ArgumentError, Column " + column + " out of bounds [0, ..., 3]");
         }
     };
     /**
@@ -3126,7 +3100,7 @@ var Matrix3D = (function () {
                 this.rawData[15] = vector3D.w;
                 break;
             default:
-                throw new ArgumentError_1.default("ArgumentError, Row " + row + " out of bounds [0, ..., 3]");
+                throw new ArgumentError_1.ArgumentError("ArgumentError, Row " + row + " out of bounds [0, ..., 3]");
         }
     };
     /**
@@ -3159,7 +3133,7 @@ var Matrix3D = (function () {
                 vector3D.w = this.rawData[15];
                 break;
             default:
-                throw new ArgumentError_1.default("ArgumentError, Row " + row + " out of bounds [0, ..., 3]");
+                throw new ArgumentError_1.ArgumentError("ArgumentError, Row " + row + " out of bounds [0, ..., 3]");
         }
     };
     /**
@@ -3169,10 +3143,10 @@ var Matrix3D = (function () {
         if (orientationStyle === void 0) { orientationStyle = "eulerAngles"; }
         var q;
         if (this._components == null)
-            this._components = [null, new Vector3D_1.default(), new Vector3D_1.default(), new Vector3D_1.default()];
-        var colX = new Vector3D_1.default(this.rawData[0], this.rawData[1], this.rawData[2]);
-        var colY = new Vector3D_1.default(this.rawData[4], this.rawData[5], this.rawData[6]);
-        var colZ = new Vector3D_1.default(this.rawData[8], this.rawData[9], this.rawData[10]);
+            this._components = [null, new Vector3D_1.Vector3D(), new Vector3D_1.Vector3D(), new Vector3D_1.Vector3D()];
+        var colX = new Vector3D_1.Vector3D(this.rawData[0], this.rawData[1], this.rawData[2]);
+        var colY = new Vector3D_1.Vector3D(this.rawData[4], this.rawData[5], this.rawData[6]);
+        var colZ = new Vector3D_1.Vector3D(this.rawData[8], this.rawData[9], this.rawData[10]);
         var scale = this._components[3];
         var skew = this._components[2];
         //compute X scale factor and normalise colX
@@ -3180,16 +3154,16 @@ var Matrix3D = (function () {
         colX.scaleBy(1 / scale.x);
         //compute XY shear factor and make colY orthogonal to colX
         skew.x = colX.dotProduct(colY);
-        colY = Vector3D_1.default.combine(colY, colX, 1, -skew.x);
+        colY = Vector3D_1.Vector3D.combine(colY, colX, 1, -skew.x);
         //compute Y scale factor and normalise colY
         scale.y = colY.length;
         colY.scaleBy(1 / scale.y);
         skew.x /= scale.y;
         //compute XZ and YZ shears and make colZ orthogonal to colX and colY
         skew.y = colX.dotProduct(colZ);
-        colZ = Vector3D_1.default.combine(colZ, colX, 1, -skew.y);
+        colZ = Vector3D_1.Vector3D.combine(colZ, colX, 1, -skew.y);
         skew.z = colY.dotProduct(colZ);
-        colZ = Vector3D_1.default.combine(colZ, colY, 1, -skew.z);
+        colZ = Vector3D_1.Vector3D.combine(colZ, colY, 1, -skew.z);
         //compute Z scale and normalise colZ
         scale.z = colZ.length;
         colZ.scaleBy(1 / scale.z);
@@ -3205,14 +3179,14 @@ var Matrix3D = (function () {
         }
         var rot = this._components[1];
         switch (orientationStyle) {
-            case Orientation3D_1.default.AXIS_ANGLE:
+            case Orientation3D_1.Orientation3D.AXIS_ANGLE:
                 rot.w = Math.acos((colX.x + colY.y + colZ.z - 1) / 2);
                 var len = Math.sqrt((colY.z - colZ.y) * (colY.z - colZ.y) + (colZ.x - colX.z) * (colZ.x - colX.z) + (colX.y - colY.x) * (colX.y - colY.x));
                 rot.x = (colY.z - colZ.y) / len;
                 rot.y = (colZ.x - colX.z) / len;
                 rot.z = (colX.y - colY.x) / len;
                 break;
-            case Orientation3D_1.default.QUATERNION:
+            case Orientation3D_1.Orientation3D.QUATERNION:
                 var tr = colX.x + colY.y + colZ.z;
                 if (tr > 0) {
                     rot.w = Math.sqrt(1 + tr) / 2;
@@ -3239,7 +3213,7 @@ var Matrix3D = (function () {
                     rot.w = (colX.y - colY.x) / (4 * rot.z);
                 }
                 break;
-            case Orientation3D_1.default.EULER_ANGLES:
+            case Orientation3D_1.Orientation3D.EULER_ANGLES:
                 rot.y = Math.asin(-colX.z);
                 //var cos:number = Math.cos(rot.y);
                 if (colX.z != 1 && colX.z != -1) {
@@ -3265,7 +3239,7 @@ var Matrix3D = (function () {
         var y = v.y;
         var z = v.z;
         if (!t)
-            t = new Vector3D_1.default();
+            t = new Vector3D_1.Vector3D();
         t.x = x * this.rawData[0] + y * this.rawData[4] + z * this.rawData[8];
         t.y = x * this.rawData[1] + y * this.rawData[5] + z * this.rawData[9];
         t.z = x * this.rawData[2] + y * this.rawData[6] + z * this.rawData[10];
@@ -3563,12 +3537,12 @@ var Matrix3D = (function () {
     Matrix3D.prototype.transformVector = function (v, t) {
         if (t === void 0) { t = null; }
         if (v == null)
-            return t || new Vector3D_1.default();
+            return t || new Vector3D_1.Vector3D();
         var x = v.x;
         var y = v.y;
         var z = v.z;
         if (!t)
-            t = new Vector3D_1.default();
+            t = new Vector3D_1.Vector3D();
         t.x = x * this.rawData[0] + y * this.rawData[4] + z * this.rawData[8] + this.rawData[12];
         t.y = x * this.rawData[1] + y * this.rawData[5] + z * this.rawData[9] + this.rawData[13];
         t.z = x * this.rawData[2] + y * this.rawData[6] + z * this.rawData[10] + this.rawData[14];
@@ -3578,14 +3552,14 @@ var Matrix3D = (function () {
     Matrix3D.prototype.transformBox = function (b, t) {
         if (t === void 0) { t = null; }
         if (b == null)
-            return t || new Box_1.default();
+            return t || new Box_1.Box();
         var minX, minY, minZ;
         var maxX, maxY, maxZ;
         maxX = b.width + (minX = b.x);
         maxY = b.height + (minY = b.y);
         maxZ = b.depth + (minZ = b.z);
         if (!t)
-            t = new Box_1.default();
+            t = new Box_1.Box();
         //TODO: take account of shear
         t.width = maxX * this.rawData[0] + maxY * this.rawData[4] + maxZ * this.rawData[8] + this.rawData[12] - (t.x = minX * this.rawData[0] + minY * this.rawData[4] + minZ * this.rawData[8] + this.rawData[12]);
         t.height = maxX * this.rawData[1] + maxY * this.rawData[5] + maxZ * this.rawData[9] + this.rawData[13] - (t.y = minX * this.rawData[1] + minY * this.rawData[5] + minZ * this.rawData[9] + this.rawData[13]);
@@ -3629,9 +3603,9 @@ var Matrix3D = (function () {
         this._positionDirty = true;
     };
     Matrix3D.getAxisRotation = function (x, y, z, degrees) {
-        // internal class use by rotations which have been tested
+        // internal export class use by rotations which have been tested
         var m = new Matrix3D();
-        var rad = degrees * MathConsts_1.default.DEGREES_TO_RADIANS;
+        var rad = degrees * MathConsts_1.MathConsts.DEGREES_TO_RADIANS;
         var c = Math.cos(rad);
         var s = Math.sin(rad);
         var t = 1 - c;
@@ -3694,15 +3668,14 @@ var Matrix3D = (function () {
     Matrix3D.tempRawData = Matrix3D.tempMatrix.rawData;
     return Matrix3D;
 }());
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = Matrix3D;
+exports.Matrix3D = Matrix3D;
 
 },{"../errors/ArgumentError":"awayjs-core/lib/errors/ArgumentError","../geom/Box":"awayjs-core/lib/geom/Box","../geom/MathConsts":"awayjs-core/lib/geom/MathConsts","../geom/Orientation3D":"awayjs-core/lib/geom/Orientation3D","../geom/Vector3D":"awayjs-core/lib/geom/Vector3D"}],"awayjs-core/lib/geom/Matrix":[function(require,module,exports){
 "use strict";
 var Point_1 = require("../geom/Point");
 var ArgumentError_1 = require("../errors/ArgumentError");
 /**
- * The Matrix class represents a transformation matrix that determines how to
+ * The Matrix export class represents a transformation matrix that determines how to
  * map points from one coordinate space to another. You can perform various
  * graphical transformations on a display object by setting the properties of
  * a Matrix object, applying that Matrix object to the <code>matrix</code>
@@ -3733,7 +3706,7 @@ var ArgumentError_1 = require("../errors/ArgumentError");
  *
  * <p>In traditional transformation matrixes, the <code>u</code>,
  * <code>v</code>, and <code>w</code> properties provide extra capabilities.
- * The Matrix class can only operate in two-dimensional space, so it always
+ * The Matrix export class can only operate in two-dimensional space, so it always
  * assumes that the property values <code>u</code> and <code>v</code> are 0.0,
  * and that the property value <code>w</code> is 1.0. The effective values of
  * the matrix are as follows:</p>
@@ -3742,7 +3715,7 @@ var ArgumentError_1 = require("../errors/ArgumentError");
  * Matrix object: <code>a</code>, <code>b</code>, <code>c</code>,
  * <code>d</code>, <code>tx</code>, and <code>ty</code>.</p>
  *
- * <p>The Matrix class supports the four major types of transformations:
+ * <p>The Matrix export class supports the four major types of transformations:
  * translation, scaling, rotation, and skewing. You can set three of these
  * transformations by using specialized methods, as described in the following
  * table: </p>
@@ -3865,7 +3838,7 @@ var Matrix = (function () {
      */
     Matrix.prototype.copyColumnTo = function (column, vector3D) {
         if (column > 2) {
-            throw new ArgumentError_1.default("ArgumentError, Column " + column + " out of bounds [0, ..., 2]");
+            throw new ArgumentError_1.ArgumentError("ArgumentError, Column " + column + " out of bounds [0, ..., 2]");
         }
         else if (column == 0) {
             vector3D.x = this.a;
@@ -3905,7 +3878,7 @@ var Matrix = (function () {
      */
     Matrix.prototype.copyRowFrom = function (row, vector3D) {
         if (row > 2) {
-            throw new ArgumentError_1.default("ArgumentError, Row " + row + " out of bounds [0, ..., 2]");
+            throw new ArgumentError_1.ArgumentError("ArgumentError, Row " + row + " out of bounds [0, ..., 2]");
         }
         else if (row == 0) {
             this.a = vector3D.x;
@@ -3929,7 +3902,7 @@ var Matrix = (function () {
      */
     Matrix.prototype.copyRowTo = function (row, vector3D) {
         if (row > 2) {
-            throw new ArgumentError_1.default("ArgumentError, Row " + row + " out of bounds [0, ..., 2]");
+            throw new ArgumentError_1.ArgumentError("ArgumentError, Row " + row + " out of bounds [0, ..., 2]");
         }
         else if (row == 0) {
             vector3D.x = this.a;
@@ -4039,7 +4012,7 @@ var Matrix = (function () {
      * @return The point resulting from applying the matrix transformation.
      */
     Matrix.prototype.deltaTransformPoint = function (point) {
-        return new Point_1.default(point.x * this.a + point.y * this.c, point.x * this.b + point.y * this.d);
+        return new Point_1.Point(point.x * this.a + point.y * this.c, point.x * this.b + point.y * this.d);
     };
     /**
      * Sets each matrix property to a value that causes a null transformation. An
@@ -4191,7 +4164,7 @@ var Matrix = (function () {
      * @return The point resulting from applying the Matrix transformation.
      */
     Matrix.prototype.transformPoint = function (point) {
-        return new Point_1.default(point.x * this.a + point.y * this.c + this.tx, point.x * this.b + point.y * this.d + this.ty);
+        return new Point_1.Point(point.x * this.a + point.y * this.c + this.tx, point.x * this.b + point.y * this.d + this.ty);
     };
     /**
      * Translates the matrix along the <i>x</i> and <i>y</i> axes, as specified
@@ -4207,8 +4180,7 @@ var Matrix = (function () {
     };
     return Matrix;
 }());
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = Matrix;
+exports.Matrix = Matrix;
 
 },{"../errors/ArgumentError":"awayjs-core/lib/errors/ArgumentError","../geom/Point":"awayjs-core/lib/geom/Point"}],"awayjs-core/lib/geom/Orientation3D":[function(require,module,exports){
 "use strict";
@@ -4235,8 +4207,7 @@ var Orientation3D = (function () {
     Orientation3D.QUATERNION = "quaternion";
     return Orientation3D;
 }());
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = Orientation3D;
+exports.Orientation3D = Orientation3D;
 
 },{}],"awayjs-core/lib/geom/Plane3D":[function(require,module,exports){
 "use strict";
@@ -4361,7 +4332,7 @@ var Plane3D = (function () {
         if (epsilon === void 0) { epsilon = 0.01; }
         // check NaN
         if (this.d != this.d)
-            return PlaneClassification_1.default.FRONT;
+            return PlaneClassification_1.PlaneClassification.FRONT;
         var len;
         if (this._iAlignment == Plane3D.ALIGN_YZ_AXIS)
             len = this.a * p.x - this.d;
@@ -4372,11 +4343,11 @@ var Plane3D = (function () {
         else
             len = this.a * p.x + this.b * p.y + this.c * p.z - this.d;
         if (len < -epsilon)
-            return PlaneClassification_1.default.BACK;
+            return PlaneClassification_1.PlaneClassification.BACK;
         else if (len > epsilon)
-            return PlaneClassification_1.default.FRONT;
+            return PlaneClassification_1.PlaneClassification.FRONT;
         else
-            return PlaneClassification_1.default.INTERSECT;
+            return PlaneClassification_1.PlaneClassification.INTERSECT;
     };
     Plane3D.prototype.toString = function () {
         return "Plane3D [a:" + this.a + ", b:" + this.b + ", c:" + this.c + ", d:" + this.d + "]";
@@ -4388,8 +4359,7 @@ var Plane3D = (function () {
     Plane3D.ALIGN_XZ_AXIS = 3;
     return Plane3D;
 }());
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = Plane3D;
+exports.Plane3D = Plane3D;
 
 },{"../geom/PlaneClassification":"awayjs-core/lib/geom/PlaneClassification"}],"awayjs-core/lib/geom/PlaneClassification":[function(require,module,exports){
 "use strict";
@@ -4404,8 +4374,7 @@ var PlaneClassification = (function () {
     PlaneClassification.INTERSECT = 2;
     return PlaneClassification;
 }());
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = PlaneClassification;
+exports.PlaneClassification = PlaneClassification;
 
 },{}],"awayjs-core/lib/geom/Point":[function(require,module,exports){
 "use strict";
@@ -4589,8 +4558,7 @@ var Point = (function () {
     };
     return Point;
 }());
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = Point;
+exports.Point = Point;
 
 },{}],"awayjs-core/lib/geom/PoissonLookup":[function(require,module,exports){
 "use strict";
@@ -4642,8 +4610,7 @@ var PoissonLookup = (function () {
     };
     return PoissonLookup;
 }());
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = PoissonLookup;
+exports.PoissonLookup = PoissonLookup;
 
 },{}],"awayjs-core/lib/geom/Quaternion":[function(require,module,exports){
 "use strict";
@@ -4837,7 +4804,7 @@ var Quaternion = (function () {
         if (target === void 0) { target = null; }
         //target ||= new Vector3D();
         if (target === null) {
-            target = new Vector3D_1.default();
+            target = new Vector3D_1.Vector3D();
         }
         target.x = Math.atan2(2 * (this.w * this.x + this.y * this.z), 1 - 2 * (this.x * this.x + this.y * this.y));
         target.y = Math.asin(2 * (this.w * this.y - this.z * this.x));
@@ -4870,7 +4837,7 @@ var Quaternion = (function () {
      */
     Quaternion.prototype.toMatrix3D = function (target) {
         if (target === void 0) { target = null; }
-        var rawData = Matrix3DUtils_1.default.RAW_DATA_CONTAINER;
+        var rawData = Matrix3DUtils_1.Matrix3DUtils.RAW_DATA_CONTAINER;
         var xy2 = 2.0 * this.x * this.y, xz2 = 2.0 * this.x * this.z, xw2 = 2.0 * this.x * this.w;
         var yz2 = 2.0 * this.y * this.z, yw2 = 2.0 * this.y * this.w, zw2 = 2.0 * this.z * this.w;
         var xx = this.x * this.x, yy = this.y * this.y, zz = this.z * this.z, ww = this.w * this.w;
@@ -4891,7 +4858,7 @@ var Quaternion = (function () {
         rawData[11] = 0;
         rawData[15] = 1;
         if (!target)
-            return new Matrix3D_1.default(rawData);
+            return new Matrix3D_1.Matrix3D(rawData);
         else
             target.copyRawDataFrom(rawData);
         return target;
@@ -4901,7 +4868,7 @@ var Quaternion = (function () {
      * @param matrix The Matrix3D out of which the rotation will be extracted.
      */
     Quaternion.prototype.fromMatrix = function (matrix) {
-        var v = matrix.decompose(Orientation3D_1.default.QUATERNION)[1];
+        var v = matrix.decompose(Orientation3D_1.Orientation3D.QUATERNION)[1];
         this.x = v.x;
         this.y = v.y;
         this.z = v.z;
@@ -4951,7 +4918,7 @@ var Quaternion = (function () {
         var x2 = vector.x, y2 = vector.y, z2 = vector.z;
         //target ||= new Vector3D();
         if (target === null) {
-            target = new Vector3D_1.default();
+            target = new Vector3D_1.Vector3D();
         }
         // p*q'
         w1 = -this.x * x2 - this.y * y2 - this.z * z2;
@@ -4975,8 +4942,7 @@ var Quaternion = (function () {
     };
     return Quaternion;
 }());
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = Quaternion;
+exports.Quaternion = Quaternion;
 
 },{"../geom/Matrix3D":"awayjs-core/lib/geom/Matrix3D","../geom/Matrix3DUtils":"awayjs-core/lib/geom/Matrix3DUtils","../geom/Orientation3D":"awayjs-core/lib/geom/Orientation3D","../geom/Vector3D":"awayjs-core/lib/geom/Vector3D"}],"awayjs-core/lib/geom/Rectangle":[function(require,module,exports){
 "use strict";
@@ -4987,7 +4953,7 @@ var Point_1 = require("../geom/Point");
  *
  *
  * <p>The <code>x</code>, <code>y</code>, <code>width</code>, and
- * <code>height</code> properties of the Rectangle class are independent of
+ * <code>height</code> properties of the Rectangle export class are independent of
  * each other; changing the value of one property has no effect on the others.
  * However, the <code>right</code> and <code>bottom</code> properties are
  * integrally related to those four properties. For example, if you change the
@@ -5021,7 +4987,7 @@ var Point_1 = require("../geom/Point");
  * <p>You can use the <code>new Rectangle()</code> constructor to create a
  * Rectangle object.</p>
  *
- * <p><b>Note:</b> The Rectangle class does not define a rectangular Shape
+ * <p><b>Note:</b> The Rectangle export class does not define a rectangular Shape
  * display object. To draw a rectangular Shape object onscreen, use the
  * <code>drawRect()</code> method of the Graphics class.</p>
  */
@@ -5068,7 +5034,7 @@ var Rectangle = (function () {
          */
         get: function () {
             if (this._bottomRight == null)
-                this._bottomRight = new Point_1.default();
+                this._bottomRight = new Point_1.Point();
             this._bottomRight.x = this.x + this.width;
             this._bottomRight.y = this.y + this.height;
             return this._bottomRight;
@@ -5110,7 +5076,7 @@ var Rectangle = (function () {
          */
         get: function () {
             if (this._size == null)
-                this._size = new Point_1.default();
+                this._size = new Point_1.Point();
             this._size.x = this.width;
             this._size.y = this.height;
             return this._size;
@@ -5142,7 +5108,7 @@ var Rectangle = (function () {
          */
         get: function () {
             if (this._topLeft == null)
-                this._topLeft = new Point_1.default();
+                this._topLeft = new Point_1.Point();
             this._topLeft.x = this.x;
             this._topLeft.y = this.y;
             return this._topLeft;
@@ -5437,8 +5403,7 @@ var Rectangle = (function () {
     };
     return Rectangle;
 }());
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = Rectangle;
+exports.Rectangle = Rectangle;
 
 },{"../geom/Point":"awayjs-core/lib/geom/Point"}],"awayjs-core/lib/geom/Sphere":[function(require,module,exports){
 "use strict";
@@ -5492,13 +5457,12 @@ var Sphere = (function () {
     };
     return Sphere;
 }());
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = Sphere;
+exports.Sphere = Sphere;
 
 },{}],"awayjs-core/lib/geom/Vector3D":[function(require,module,exports){
 "use strict";
 /**
- * The Vector3D class represents a point or a location in the three-dimensional
+ * The Vector3D export class represents a point or a location in the three-dimensional
  * space using the Cartesian coordinates x, y, and z. As in a two-dimensional
  * space, the x property represents the horizontal axis and the y property
  * represents the vertical axis. In three-dimensional space, the z property
@@ -5512,7 +5476,7 @@ exports.default = Sphere;
  * moves away from the viewer's eye. The origin point (0,0,0) of the global
  * space is the upper-left corner of the stage.
  *
- * <p>The Vector3D class can also represent a direction, an arrow pointing from
+ * <p>The Vector3D export class can also represent a direction, an arrow pointing from
  * the origin of the coordinates, such as (0,0,0), to an endpoint; or a
  * floating-point component of an RGB (Red, Green, Blue) color model.</p>
  *
@@ -5679,7 +5643,7 @@ var Vector3D = (function () {
     /**
      * Returns the distance between two Vector3D objects. The
      * <code>distance()</code> method is a static method. You can use it
-     * directly as a method of the Vector3D class to get the Euclidean
+     * directly as a method of the Vector3D export class to get the Euclidean
      * distance between two three-dimensional points.
      *
      * @param pt1 A Vector3D object as the first three-dimensional point.
@@ -5913,41 +5877,40 @@ var Vector3D = (function () {
     Vector3D.Z_AXIS = new Vector3D(0, 0, 1);
     return Vector3D;
 }());
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = Vector3D;
+exports.Vector3D = Vector3D;
 
 },{}],"awayjs-core/lib/geom":[function(require,module,exports){
 "use strict";
 var Box_1 = require("./geom/Box");
-exports.Box = Box_1.default;
+exports.Box = Box_1.Box;
 var ColorTransform_1 = require("./geom/ColorTransform");
-exports.ColorTransform = ColorTransform_1.default;
+exports.ColorTransform = ColorTransform_1.ColorTransform;
 var MathConsts_1 = require("./geom/MathConsts");
-exports.MathConsts = MathConsts_1.default;
+exports.MathConsts = MathConsts_1.MathConsts;
 var Matrix_1 = require("./geom/Matrix");
-exports.Matrix = Matrix_1.default;
+exports.Matrix = Matrix_1.Matrix;
 var Matrix3D_1 = require("./geom/Matrix3D");
-exports.Matrix3D = Matrix3D_1.default;
+exports.Matrix3D = Matrix3D_1.Matrix3D;
 var Matrix3DUtils_1 = require("./geom/Matrix3DUtils");
-exports.Matrix3DUtils = Matrix3DUtils_1.default;
+exports.Matrix3DUtils = Matrix3DUtils_1.Matrix3DUtils;
 var Orientation3D_1 = require("./geom/Orientation3D");
-exports.Orientation3D = Orientation3D_1.default;
+exports.Orientation3D = Orientation3D_1.Orientation3D;
 var Plane3D_1 = require("./geom/Plane3D");
-exports.Plane3D = Plane3D_1.default;
+exports.Plane3D = Plane3D_1.Plane3D;
 var PlaneClassification_1 = require("./geom/PlaneClassification");
-exports.PlaneClassification = PlaneClassification_1.default;
+exports.PlaneClassification = PlaneClassification_1.PlaneClassification;
 var Point_1 = require("./geom/Point");
-exports.Point = Point_1.default;
+exports.Point = Point_1.Point;
 var PoissonLookup_1 = require("./geom/PoissonLookup");
-exports.PoissonLookup = PoissonLookup_1.default;
+exports.PoissonLookup = PoissonLookup_1.PoissonLookup;
 var Quaternion_1 = require("./geom/Quaternion");
-exports.Quaternion = Quaternion_1.default;
+exports.Quaternion = Quaternion_1.Quaternion;
 var Rectangle_1 = require("./geom/Rectangle");
-exports.Rectangle = Rectangle_1.default;
+exports.Rectangle = Rectangle_1.Rectangle;
 var Sphere_1 = require("./geom/Sphere");
-exports.Sphere = Sphere_1.default;
+exports.Sphere = Sphere_1.Sphere;
 var Vector3D_1 = require("./geom/Vector3D");
-exports.Vector3D = Vector3D_1.default;
+exports.Vector3D = Vector3D_1.Vector3D;
 
 },{"./geom/Box":"awayjs-core/lib/geom/Box","./geom/ColorTransform":"awayjs-core/lib/geom/ColorTransform","./geom/MathConsts":"awayjs-core/lib/geom/MathConsts","./geom/Matrix":"awayjs-core/lib/geom/Matrix","./geom/Matrix3D":"awayjs-core/lib/geom/Matrix3D","./geom/Matrix3DUtils":"awayjs-core/lib/geom/Matrix3DUtils","./geom/Orientation3D":"awayjs-core/lib/geom/Orientation3D","./geom/Plane3D":"awayjs-core/lib/geom/Plane3D","./geom/PlaneClassification":"awayjs-core/lib/geom/PlaneClassification","./geom/Point":"awayjs-core/lib/geom/Point","./geom/PoissonLookup":"awayjs-core/lib/geom/PoissonLookup","./geom/Quaternion":"awayjs-core/lib/geom/Quaternion","./geom/Rectangle":"awayjs-core/lib/geom/Rectangle","./geom/Sphere":"awayjs-core/lib/geom/Sphere","./geom/Vector3D":"awayjs-core/lib/geom/Vector3D"}],"awayjs-core/lib/image/BitmapImage2D":[function(require,module,exports){
 "use strict";
@@ -5961,20 +5924,20 @@ var ColorUtils_1 = require("../utils/ColorUtils");
 var BitmapImageUtils_1 = require("../utils/BitmapImageUtils");
 var CPUCanvas_1 = require("../image/CPUCanvas");
 /**
- * The BitmapImage2D class lets you work with the data(pixels) of a Bitmap
- * object. You can use the methods of the BitmapImage2D class to create
+ * The BitmapImage2D export class lets you work with the data(pixels) of a Bitmap
+ * object. You can use the methods of the BitmapImage2D export class to create
  * arbitrarily sized transparent or opaque bitmap images and manipulate them
  * in various ways at runtime. You can also access the BitmapImage2D for a bitmap
  * image that you load with the <code>flash.Assets</code> or
  * <code>flash.display.Loader</code> classes.
  *
- * <p>This class lets you separate bitmap rendering operations from the
+ * <p>This export class lets you separate bitmap rendering operations from the
  * internal display updating routines of flash. By manipulating a
  * BitmapImage2D object directly, you can create complex images without incurring
  * the per-frame overhead of constantly redrawing the content from vector
  * data.</p>
  *
- * <p>The methods of the BitmapImage2D class support effects that are not
+ * <p>The methods of the BitmapImage2D export class support effects that are not
  * available through the filters available to non-bitmap display objects.</p>
  *
  * <p>A BitmapImage2D object contains an array of pixel data. This data can
@@ -6058,7 +6021,7 @@ var BitmapImage2D = (function (_super) {
             this._imageCanvas = document.createElement("canvas");
         }
         else {
-            this._imageCanvas = new CPUCanvas_1.default();
+            this._imageCanvas = new CPUCanvas_1.CPUCanvas();
         }
         this._imageCanvas.width = width;
         this._imageCanvas.height = height;
@@ -6209,7 +6172,7 @@ var BitmapImage2D = (function (_super) {
             source = source.getCanvas();
         if (this._locked && this._imageData)
             this._context.putImageData(this._imageData, 0, 0); // at coords 0,0
-        BitmapImageUtils_1.default._copyPixels(this._context, source, sourceRect, destRect);
+        BitmapImageUtils_1.BitmapImageUtils._copyPixels(this._context, source, sourceRect, destRect);
         this._imageData = null;
         this.invalidate();
     };
@@ -6246,7 +6209,7 @@ var BitmapImage2D = (function (_super) {
             source = source.getCanvas();
         if (this._locked && this._imageData)
             this._context.putImageData(this._imageData, 0, 0); // at coords 0,0
-        BitmapImageUtils_1.default._draw(this._context, source, matrix, colorTransform, blendMode, clipRect, smoothing);
+        BitmapImageUtils_1.BitmapImageUtils._draw(this._context, source, matrix, colorTransform, blendMode, clipRect, smoothing);
         this._imageData = null;
         this.invalidate();
     };
@@ -6262,7 +6225,7 @@ var BitmapImage2D = (function (_super) {
     BitmapImage2D.prototype.fillRect = function (rect, color) {
         if (this._locked && this._imageData)
             this._context.putImageData(this._imageData, 0, 0); // at coords 0,0
-        BitmapImageUtils_1.default._fillRect(this._context, rect, color, this._transparent);
+        BitmapImageUtils_1.BitmapImageUtils._fillRect(this._context, rect, color, this._transparent);
         this._imageData = null;
         this.invalidate();
     };
@@ -6410,7 +6373,7 @@ var BitmapImage2D = (function (_super) {
         var i, j, index, argb;
         for (i = 0; i < rect.width; ++i) {
             for (j = 0; j < rect.height; ++j) {
-                argb = ColorUtils_1.default.float32ColorToARGB(inputArray[i + j * rect.width]);
+                argb = ColorUtils_1.ColorUtils.float32ColorToARGB(inputArray[i + j * rect.width]);
                 index = (i + rect.x + (j + rect.y) * this._imageData.width) * 4;
                 this._imageData.data[index + 0] = argb[1];
                 this._imageData.data[index + 1] = argb[2];
@@ -6440,7 +6403,7 @@ var BitmapImage2D = (function (_super) {
      * @param color The resulting RGB color for the pixel.
      */
     BitmapImage2D.prototype.setPixel = function (x, y, color) {
-        var argb = ColorUtils_1.default.float32ColorToARGB(color);
+        var argb = ColorUtils_1.ColorUtils.float32ColorToARGB(color);
         if (!this._imageData)
             this._imageData = this._context.getImageData(0, 0, this._rect.width, this._rect.height);
         var index = (x + y * this._imageData.width) * 4;
@@ -6484,7 +6447,7 @@ var BitmapImage2D = (function (_super) {
      *              this color value is ignored.
      */
     BitmapImage2D.prototype.setPixel32 = function (x, y, color) {
-        var argb = ColorUtils_1.default.float32ColorToARGB(color);
+        var argb = ColorUtils_1.ColorUtils.float32ColorToARGB(color);
         if (!this._imageData)
             this._imageData = this._context.getImageData(0, 0, this._rect.width, this._rect.height);
         var index = (x + y * this._imageData.width) * 4;
@@ -6580,9 +6543,8 @@ var BitmapImage2D = (function (_super) {
     };
     BitmapImage2D.assetType = "[image BitmapImage2D]";
     return BitmapImage2D;
-}(Image2D_1.default));
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = BitmapImage2D;
+}(Image2D_1.Image2D));
+exports.BitmapImage2D = BitmapImage2D;
 
 },{"../image/CPUCanvas":"awayjs-core/lib/image/CPUCanvas","../image/Image2D":"awayjs-core/lib/image/Image2D","../utils/BitmapImageUtils":"awayjs-core/lib/utils/BitmapImageUtils","../utils/ColorUtils":"awayjs-core/lib/utils/ColorUtils"}],"awayjs-core/lib/image/BitmapImageChannel":[function(require,module,exports){
 "use strict";
@@ -6595,8 +6557,7 @@ var BitmapImageChannel = (function () {
     BitmapImageChannel.RED = 1;
     return BitmapImageChannel;
 }());
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = BitmapImageChannel;
+exports.BitmapImageChannel = BitmapImageChannel;
 
 },{}],"awayjs-core/lib/image/BitmapImageCube":[function(require,module,exports){
 "use strict";
@@ -6611,20 +6572,20 @@ var Rectangle_1 = require("../geom/Rectangle");
 var ColorUtils_1 = require("../utils/ColorUtils");
 var BitmapImageUtils_1 = require("../utils/BitmapImageUtils");
 /**
- * The BitmapImage2D class lets you work with the data(pixels) of a Bitmap
- * object. You can use the methods of the BitmapImage2D class to create
+ * The BitmapImage2D export class lets you work with the data(pixels) of a Bitmap
+ * object. You can use the methods of the BitmapImage2D export class to create
  * arbitrarily sized transparent or opaque bitmap images and manipulate them
  * in various ways at runtime. You can also access the BitmapImage2D for a bitmap
  * image that you load with the <code>flash.Assets</code> or
  * <code>flash.display.Loader</code> classes.
  *
- * <p>This class lets you separate bitmap rendering operations from the
+ * <p>This export class lets you separate bitmap rendering operations from the
  * internal display updating routines of flash. By manipulating a
  * BitmapImage2D object directly, you can create complex images without incurring
  * the per-frame overhead of constantly redrawing the content from vector
  * data.</p>
  *
- * <p>The methods of the BitmapImage2D class support effects that are not
+ * <p>The methods of the BitmapImage2D export class support effects that are not
  * available through the filters available to non-bitmap display objects.</p>
  *
  * <p>A BitmapImage2D object contains an array of pixel data. This data can
@@ -6712,7 +6673,7 @@ var BitmapImageCube = (function (_super) {
             this._imageCanvas[i].height = size;
             this._context[i] = this._imageCanvas[i].getContext("2d");
             if (fillColor != null)
-                this.fillRect(i, new Rectangle_1.default(0, 0, size, size), fillColor);
+                this.fillRect(i, new Rectangle_1.Rectangle(0, 0, size, size), fillColor);
         }
     }
     Object.defineProperty(BitmapImageCube.prototype, "assetType", {
@@ -6854,7 +6815,7 @@ var BitmapImageCube = (function (_super) {
         this.invalidate();
     };
     BitmapImageCube.prototype.copyPixels = function (side, source, sourceRect, destRect) {
-        if (source instanceof BitmapImage2D_1.default)
+        if (source instanceof BitmapImage2D_1.BitmapImage2D)
             source = source.getCanvas();
         if (this._locked) {
             // If canvas is locked:
@@ -6863,11 +6824,11 @@ var BitmapImageCube = (function (_super) {
             //      2) draw object
             //      3) read _imageData back out
             this._context[side].putImageData(this._imageData[side], 0, 0); // at coords 0,0
-            BitmapImageUtils_1.default._copyPixels(this._context[side], source, sourceRect, destRect);
+            BitmapImageUtils_1.BitmapImageUtils._copyPixels(this._context[side], source, sourceRect, destRect);
             this._imageData[side] = this._context[side].getImageData(0, 0, this._size, this._size);
         }
         else {
-            BitmapImageUtils_1.default._copyPixels(this._context[side], source, sourceRect, destRect);
+            BitmapImageUtils_1.BitmapImageUtils._copyPixels(this._context[side], source, sourceRect, destRect);
         }
         this.invalidate();
     };
@@ -6901,7 +6862,7 @@ var BitmapImageCube = (function (_super) {
         this._locked = null;
     };
     BitmapImageCube.prototype.draw = function (side, source, matrix, colorTransform, blendMode, clipRect, smoothing) {
-        if (source instanceof BitmapImage2D_1.default)
+        if (source instanceof BitmapImage2D_1.BitmapImage2D)
             source = source.getCanvas();
         if (this._locked) {
             // If canvas is locked:
@@ -6910,11 +6871,11 @@ var BitmapImageCube = (function (_super) {
             //      2) draw object
             //      3) read _imageData back out
             this._context[side].putImageData(this._imageData[side], 0, 0); // at coords 0,0
-            BitmapImageUtils_1.default._draw(this._context[side], source, matrix, colorTransform, blendMode, clipRect, smoothing);
+            BitmapImageUtils_1.BitmapImageUtils._draw(this._context[side], source, matrix, colorTransform, blendMode, clipRect, smoothing);
             this._imageData[side] = this._context[side].getImageData(0, 0, this._size, this._size);
         }
         else {
-            BitmapImageUtils_1.default._draw(this._context[side], source, matrix, colorTransform, blendMode, clipRect, smoothing);
+            BitmapImageUtils_1.BitmapImageUtils._draw(this._context[side], source, matrix, colorTransform, blendMode, clipRect, smoothing);
         }
         this.invalidate();
     };
@@ -6936,12 +6897,12 @@ var BitmapImageCube = (function (_super) {
             //      3) read _imageData back out
             if (this._imageData[side])
                 this._context[side].putImageData(this._imageData[side], 0, 0); // at coords 0,0
-            BitmapImageUtils_1.default._fillRect(this._context[side], rect, color, this._transparent);
+            BitmapImageUtils_1.BitmapImageUtils._fillRect(this._context[side], rect, color, this._transparent);
             if (this._imageData[side])
                 this._imageData[side] = this._context[side].getImageData(0, 0, this._size, this._size);
         }
         else {
-            BitmapImageUtils_1.default._fillRect(this._context[side], rect, color, this._transparent);
+            BitmapImageUtils_1.BitmapImageUtils._fillRect(this._context[side], rect, color, this._transparent);
         }
         this.invalidate();
     };
@@ -7068,7 +7029,7 @@ var BitmapImageCube = (function (_super) {
         var i, j, index, argb;
         for (i = 0; i < rect.width; ++i) {
             for (j = 0; j < rect.height; ++j) {
-                argb = ColorUtils_1.default.float32ColorToARGB(inputArray[i + j * rect.width]);
+                argb = ColorUtils_1.ColorUtils.float32ColorToARGB(inputArray[i + j * rect.width]);
                 index = (i + rect.x + (j + rect.y) * this._size) * 4;
                 this._imageData[side].data[index + 0] = argb[1];
                 this._imageData[side].data[index + 1] = argb[2];
@@ -7100,7 +7061,7 @@ var BitmapImageCube = (function (_super) {
      * @param color The resulting RGB color for the pixel.
      */
     BitmapImageCube.prototype.setPixel = function (side, x, y, color) {
-        var argb = ColorUtils_1.default.float32ColorToARGB(color);
+        var argb = ColorUtils_1.ColorUtils.float32ColorToARGB(color);
         if (!this._locked)
             this._imageData[side] = this._context[side].getImageData(0, 0, this._size, this._size);
         var index = (x + y * this._size) * 4;
@@ -7146,7 +7107,7 @@ var BitmapImageCube = (function (_super) {
      *              this color value is ignored.
      */
     BitmapImageCube.prototype.setPixel32 = function (side, x, y, color) {
-        var argb = ColorUtils_1.default.float32ColorToARGB(color);
+        var argb = ColorUtils_1.ColorUtils.float32ColorToARGB(color);
         if (!this._locked)
             this._imageData[side] = this._context[side].getImageData(0, 0, this._size, this._size);
         var index = (x + y * this._size) * 4;
@@ -7261,14 +7222,13 @@ var BitmapImageCube = (function (_super) {
     BitmapImageCube.posZ = 4;
     BitmapImageCube.negZ = 5;
     return BitmapImageCube;
-}(ImageCube_1.default));
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = BitmapImageCube;
+}(ImageCube_1.ImageCube));
+exports.BitmapImageCube = BitmapImageCube;
 
 },{"../geom/Rectangle":"awayjs-core/lib/geom/Rectangle","../image/BitmapImage2D":"awayjs-core/lib/image/BitmapImage2D","../image/ImageCube":"awayjs-core/lib/image/ImageCube","../utils/BitmapImageUtils":"awayjs-core/lib/utils/BitmapImageUtils","../utils/ColorUtils":"awayjs-core/lib/utils/ColorUtils"}],"awayjs-core/lib/image/BlendMode":[function(require,module,exports){
 "use strict";
 /**
- * A class that provides constant values for visual blend mode effects. These
+ * A export class that provides constant values for visual blend mode effects. These
  * constants are used in the following:
  * <ul>
  *   <li> The <code>blendMode</code> property of the
@@ -7443,8 +7403,7 @@ var BlendMode = (function () {
     BlendMode.SUBTRACT = "subtract";
     return BlendMode;
 }());
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = BlendMode;
+exports.BlendMode = BlendMode;
 
 },{}],"awayjs-core/lib/image/CPUCanvas":[function(require,module,exports){
 "use strict";
@@ -7461,11 +7420,11 @@ var CPUCanvas = (function () {
         for (var _i = 1; _i < arguments.length; _i++) {
             args[_i - 1] = arguments[_i];
         }
-        return new CPURenderingContext2D_1.default(this);
+        return new CPURenderingContext2D_1.CPURenderingContext2D(this);
     };
     CPUCanvas.prototype.reset = function () {
         if (!this.imageData) {
-            this.imageData = new ImageData_1.default(this.width, this.height);
+            this.imageData = new ImageData_1.ImageData(this.width, this.height);
         }
         else {
             this.imageData.width = this.width;
@@ -7491,6 +7450,7 @@ var CPUCanvas = (function () {
     };
     return CPUCanvas;
 }());
+exports.CPUCanvas = CPUCanvas;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = CPUCanvas;
 
@@ -7502,15 +7462,15 @@ var Point_1 = require("../geom/Point");
 //TODO: implement all methods
 var CPURenderingContext2D = (function () {
     function CPURenderingContext2D(cpuCanvas) {
-        this.point = new Point_1.default();
-        this.point2 = new Point_1.default();
+        this.point = new Point_1.Point();
+        this.point2 = new Point_1.Point();
         this.cpuCanvas = cpuCanvas;
     }
     CPURenderingContext2D.prototype.restore = function () {
         this.matrix = null;
     };
     CPURenderingContext2D.prototype.setTransform = function (m11, m12, m21, m22, dx, dy) {
-        this.matrix = new Matrix_1.default(m11, m12, m21, m22, dx, dy);
+        this.matrix = new Matrix_1.Matrix(m11, m12, m21, m22, dx, dy);
     };
     CPURenderingContext2D.prototype.save = function () {
     };
@@ -7668,7 +7628,7 @@ var CPURenderingContext2D = (function () {
             var htmlContext = htmlCanvas.getContext("2d");
             htmlContext.drawImage(htmlImage, 0, 0);
             var htmlImageData = htmlContext.getImageData(0, 0, htmlImage.width, htmlImage.height);
-            var resultBitmap = new BitmapImage2D_1.default(htmlImage.width, htmlImage.height, true, 0, false);
+            var resultBitmap = new BitmapImage2D_1.BitmapImage2D(htmlImage.width, htmlImage.height, true, 0, false);
             resultBitmap.getImageData().data = htmlImageData.data;
             var passBitmap = resultBitmap;
             this.drawImage(passBitmap, offsetX, offsetY, width, height, canvasOffsetX, canvasOffsetY, canvasImageWidth, canvasImageHeight);
@@ -7698,7 +7658,7 @@ var CPURenderingContext2D = (function () {
         if (this.matrix || (canvasImageWidth != width || canvasImageHeight != height)) {
             var matrix = this.matrix;
             if (!matrix) {
-                matrix = new Matrix_1.default();
+                matrix = new Matrix_1.Matrix();
                 matrix.scale(canvasImageWidth / width, canvasImageHeight / height);
             }
             var scaleX = Math.sqrt(matrix.a * matrix.a + matrix.b * matrix.b);
@@ -7711,7 +7671,7 @@ var CPURenderingContext2D = (function () {
             canvasOffsetY = Math.floor(matrix.ty);
             matrix.invert();
             if (scaleX >= 1 || scaleY >= 1) {
-                var p = new Point_1.default();
+                var p = new Point_1.Point();
                 for (var i = canvasOffsetX; i < canvasOffsetX + canvasImageWidth; i++) {
                     for (var j = canvasOffsetY; j < canvasOffsetY + canvasImageHeight; j++) {
                         p.x = i;
@@ -7855,6 +7815,7 @@ var CPURenderingContext2D = (function () {
     };
     return CPURenderingContext2D;
 }());
+exports.CPURenderingContext2D = CPURenderingContext2D;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = CPURenderingContext2D;
 
@@ -7880,7 +7841,7 @@ var Image2D = (function (_super) {
         if (powerOfTwo === void 0) { powerOfTwo = true; }
         _super.call(this);
         this._powerOfTwo = true;
-        this._rect = new Rectangle_1.default(0, 0, width, height);
+        this._rect = new Rectangle_1.Rectangle(0, 0, width, height);
         this._powerOfTwo = powerOfTwo;
         this._testDimensions();
     }
@@ -7955,7 +7916,7 @@ var Image2D = (function (_super) {
      * @private
      */
     Image2D.prototype._testDimensions = function () {
-        if (this._powerOfTwo && (!ImageUtils_1.default.isDimensionValid(this._rect.width) || !ImageUtils_1.default.isDimensionValid(this._rect.height)))
+        if (this._powerOfTwo && (!ImageUtils_1.ImageUtils.isDimensionValid(this._rect.width) || !ImageUtils_1.ImageUtils.isDimensionValid(this._rect.height)))
             throw new Error("Invalid dimension: Width and height must be power of 2 and cannot exceed 2048");
     };
     Object.defineProperty(Image2D.prototype, "powerOfTwo", {
@@ -7977,9 +7938,8 @@ var Image2D = (function (_super) {
     });
     Image2D.assetType = "[image Image2D]";
     return Image2D;
-}(ImageBase_1.default));
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = Image2D;
+}(ImageBase_1.ImageBase));
+exports.Image2D = Image2D;
 
 },{"../geom/Rectangle":"awayjs-core/lib/geom/Rectangle","../image/ImageBase":"awayjs-core/lib/image/ImageBase","../utils/ImageUtils":"awayjs-core/lib/utils/ImageUtils"}],"awayjs-core/lib/image/ImageBase":[function(require,module,exports){
 "use strict";
@@ -8010,9 +7970,8 @@ var ImageBase = (function (_super) {
         configurable: true
     });
     return ImageBase;
-}(AssetBase_1.default));
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = ImageBase;
+}(AssetBase_1.AssetBase));
+exports.ImageBase = ImageBase;
 
 },{"../library/AssetBase":"awayjs-core/lib/library/AssetBase"}],"awayjs-core/lib/image/ImageCube":[function(require,module,exports){
 "use strict";
@@ -8076,14 +8035,13 @@ var ImageCube = (function (_super) {
      * @private
      */
     ImageCube.prototype._testDimensions = function () {
-        if (!ImageUtils_1.default.isDimensionValid(this._size))
+        if (!ImageUtils_1.ImageUtils.isDimensionValid(this._size))
             throw new Error("Invalid dimension: Width and height must be power of 2 and cannot exceed 2048");
     };
     ImageCube.assetType = "[image ImageCube]";
     return ImageCube;
-}(ImageBase_1.default));
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = ImageCube;
+}(ImageBase_1.ImageBase));
+exports.ImageCube = ImageCube;
 
 },{"../image/ImageBase":"awayjs-core/lib/image/ImageBase","../utils/ImageUtils":"awayjs-core/lib/utils/ImageUtils"}],"awayjs-core/lib/image/ImageData":[function(require,module,exports){
 "use strict";
@@ -8095,6 +8053,7 @@ var ImageData = (function () {
     }
     return ImageData;
 }());
+exports.ImageData = ImageData;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = ImageData;
 
@@ -8107,7 +8066,7 @@ var __extends = (this && this.__extends) || function (d, b) {
 };
 var SamplerBase_1 = require("../image/SamplerBase");
 /**
- * The Sampler2D class represents display objects that represent bitmap images.
+ * The Sampler2D export class represents display objects that represent bitmap images.
  * These can be images that you load with the <code>flash.Assets</code> or
  * <code>flash.display.Loader</code> classes, or they can be images that you
  * create with the <code>Sampler2D()</code> constructor.
@@ -8156,7 +8115,7 @@ var Sampler2D = (function (_super) {
         /**
          * Controls whether or not the Sampler2D object is snapped to the nearest pixel.
          * This value is ignored in the native and HTML5 targets.
-         * The PixelSnapping class includes possible values:
+         * The PixelSnapping export class includes possible values:
          * <ul>
          *   <li><code>PixelSnapping.NEVER</code> - No pixel snapping occurs.</li>
          *   <li><code>PixelSnapping.ALWAYS</code> - The image is always snapped to
@@ -8226,9 +8185,8 @@ var Sampler2D = (function (_super) {
     };
     Sampler2D.assetType = "[asset Sampler2D]";
     return Sampler2D;
-}(SamplerBase_1.default));
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = Sampler2D;
+}(SamplerBase_1.SamplerBase));
+exports.Sampler2D = Sampler2D;
 
 },{"../image/SamplerBase":"awayjs-core/lib/image/SamplerBase"}],"awayjs-core/lib/image/SamplerBase":[function(require,module,exports){
 "use strict";
@@ -8286,9 +8244,8 @@ var SamplerBase = (function (_super) {
         configurable: true
     });
     return SamplerBase;
-}(AssetBase_1.default));
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = SamplerBase;
+}(AssetBase_1.AssetBase));
+exports.SamplerBase = SamplerBase;
 
 },{"../library/AssetBase":"awayjs-core/lib/library/AssetBase"}],"awayjs-core/lib/image/SamplerCube":[function(require,module,exports){
 "use strict";
@@ -8299,7 +8256,7 @@ var __extends = (this && this.__extends) || function (d, b) {
 };
 var SamplerBase_1 = require("../image/SamplerBase");
 /**
- * The Bitmap class represents display objects that represent bitmap images.
+ * The Bitmap export class represents display objects that represent bitmap images.
  * These can be images that you load with the <code>flash.Assets</code> or
  * <code>flash.display.Loader</code> classes, or they can be images that you
  * create with the <code>Bitmap()</code> constructor.
@@ -8343,9 +8300,8 @@ var SamplerCube = (function (_super) {
     });
     SamplerCube.assetType = "[asset SamplerCube]";
     return SamplerCube;
-}(SamplerBase_1.default));
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = SamplerCube;
+}(SamplerBase_1.SamplerBase));
+exports.SamplerCube = SamplerCube;
 
 },{"../image/SamplerBase":"awayjs-core/lib/image/SamplerBase"}],"awayjs-core/lib/image/SpecularImage2D":[function(require,module,exports){
 "use strict";
@@ -8372,7 +8328,7 @@ var SpecularImage2D = (function (_super) {
         _super.call(this, 1, 1);
         this._specularSource = specularSource;
         this._glossSource = glossSource;
-        this._output = new BitmapImage2D_1.default(1, 1, false, 0xffffff);
+        this._output = new BitmapImage2D_1.BitmapImage2D(1, 1, false, 0xffffff);
         this._testSize();
     }
     Object.defineProperty(SpecularImage2D.prototype, "assetType", {
@@ -8452,12 +8408,12 @@ var SpecularImage2D = (function (_super) {
      * @returns {ImageData}
      */
     SpecularImage2D.prototype.getImageData = function () {
-        var origin = new Point_1.default();
+        var origin = new Point_1.Point();
         this._output.fillRect(this._rect, 0xffffff);
         if (this._glossSource)
-            this._output.copyChannel(this._glossSource, this._rect, origin, BitmapImageChannel_1.default.GREEN, BitmapImageChannel_1.default.GREEN);
+            this._output.copyChannel(this._glossSource, this._rect, origin, BitmapImageChannel_1.BitmapImageChannel.GREEN, BitmapImageChannel_1.BitmapImageChannel.GREEN);
         if (this._specularSource)
-            this._output.copyChannel(this._specularSource, this._rect, origin, BitmapImageChannel_1.default.RED, BitmapImageChannel_1.default.RED);
+            this._output.copyChannel(this._specularSource, this._rect, origin, BitmapImageChannel_1.BitmapImageChannel.RED, BitmapImageChannel_1.BitmapImageChannel.RED);
         return this._output.getImageData();
     };
     /**
@@ -8493,46 +8449,45 @@ var SpecularImage2D = (function (_super) {
         }
         if (w != this._output.width && h != this._output.height) {
             this._output.dispose();
-            this._output = new BitmapImage2D_1.default(w, h, false, 0xffffff);
+            this._output = new BitmapImage2D_1.BitmapImage2D(w, h, false, 0xffffff);
         }
         this._setSize(w, h);
     };
     SpecularImage2D.assetType = "[asset SpecularImage2D]";
     return SpecularImage2D;
-}(Image2D_1.default));
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = SpecularImage2D;
+}(Image2D_1.Image2D));
+exports.SpecularImage2D = SpecularImage2D;
 
 },{"../geom/Point":"awayjs-core/lib/geom/Point","../image/BitmapImage2D":"awayjs-core/lib/image/BitmapImage2D","../image/BitmapImageChannel":"awayjs-core/lib/image/BitmapImageChannel","../image/Image2D":"awayjs-core/lib/image/Image2D"}],"awayjs-core/lib/image":[function(require,module,exports){
 "use strict";
 var BitmapImage2D_1 = require("./image/BitmapImage2D");
-exports.BitmapImage2D = BitmapImage2D_1.default;
+exports.BitmapImage2D = BitmapImage2D_1.BitmapImage2D;
 var BitmapImageChannel_1 = require("./image/BitmapImageChannel");
-exports.BitmapImageChannel = BitmapImageChannel_1.default;
+exports.BitmapImageChannel = BitmapImageChannel_1.BitmapImageChannel;
 var BitmapImageCube_1 = require("./image/BitmapImageCube");
-exports.BitmapImageCube = BitmapImageCube_1.default;
+exports.BitmapImageCube = BitmapImageCube_1.BitmapImageCube;
 var BlendMode_1 = require("./image/BlendMode");
-exports.BlendMode = BlendMode_1.default;
+exports.BlendMode = BlendMode_1.BlendMode;
 var CPUCanvas_1 = require("./image/CPUCanvas");
-exports.CPUCanvas = CPUCanvas_1.default;
+exports.CPUCanvas = CPUCanvas_1.CPUCanvas;
 var CPURenderingContext2D_1 = require("./image/CPURenderingContext2D");
-exports.CPURenderingContext2D = CPURenderingContext2D_1.default;
+exports.CPURenderingContext2D = CPURenderingContext2D_1.CPURenderingContext2D;
 var Image2D_1 = require("./image/Image2D");
-exports.Image2D = Image2D_1.default;
+exports.Image2D = Image2D_1.Image2D;
 var ImageBase_1 = require("./image/ImageBase");
-exports.ImageBase = ImageBase_1.default;
+exports.ImageBase = ImageBase_1.ImageBase;
 var ImageCube_1 = require("./image/ImageCube");
-exports.ImageCube = ImageCube_1.default;
+exports.ImageCube = ImageCube_1.ImageCube;
 var ImageData_1 = require("./image/ImageData");
-exports.ImageData = ImageData_1.default;
+exports.ImageData = ImageData_1.ImageData;
 var Sampler2D_1 = require("./image/Sampler2D");
-exports.Sampler2D = Sampler2D_1.default;
+exports.Sampler2D = Sampler2D_1.Sampler2D;
 var SamplerBase_1 = require("./image/SamplerBase");
-exports.SamplerBase = SamplerBase_1.default;
+exports.SamplerBase = SamplerBase_1.SamplerBase;
 var SamplerCube_1 = require("./image/SamplerCube");
-exports.SamplerCube = SamplerCube_1.default;
+exports.SamplerCube = SamplerCube_1.SamplerCube;
 var SpecularImage2D_1 = require("./image/SpecularImage2D");
-exports.SpecularImage2D = SpecularImage2D_1.default;
+exports.SpecularImage2D = SpecularImage2D_1.SpecularImage2D;
 
 },{"./image/BitmapImage2D":"awayjs-core/lib/image/BitmapImage2D","./image/BitmapImageChannel":"awayjs-core/lib/image/BitmapImageChannel","./image/BitmapImageCube":"awayjs-core/lib/image/BitmapImageCube","./image/BlendMode":"awayjs-core/lib/image/BlendMode","./image/CPUCanvas":"awayjs-core/lib/image/CPUCanvas","./image/CPURenderingContext2D":"awayjs-core/lib/image/CPURenderingContext2D","./image/Image2D":"awayjs-core/lib/image/Image2D","./image/ImageBase":"awayjs-core/lib/image/ImageBase","./image/ImageCube":"awayjs-core/lib/image/ImageCube","./image/ImageData":"awayjs-core/lib/image/ImageData","./image/Sampler2D":"awayjs-core/lib/image/Sampler2D","./image/SamplerBase":"awayjs-core/lib/image/SamplerBase","./image/SamplerCube":"awayjs-core/lib/image/SamplerCube","./image/SpecularImage2D":"awayjs-core/lib/image/SpecularImage2D"}],"awayjs-core/lib/library/AbstractionBase":[function(require,module,exports){
 "use strict";
@@ -8545,7 +8500,7 @@ var AssetEvent_1 = require("../events/AssetEvent");
 var EventDispatcher_1 = require("../events/EventDispatcher");
 /**
  *
- * @class away.pool.AbstractionBase
+ * @export class away.pool.AbstractionBase
  */
 var AbstractionBase = (function (_super) {
     __extends(AbstractionBase, _super);
@@ -8557,15 +8512,15 @@ var AbstractionBase = (function (_super) {
         this._pool = pool;
         this._onClearDelegate = function (event) { return _this.onClear(event); };
         this._onInvalidateDelegate = function (event) { return _this.onInvalidate(event); };
-        this._asset.addEventListener(AssetEvent_1.default.CLEAR, this._onClearDelegate);
-        this._asset.addEventListener(AssetEvent_1.default.INVALIDATE, this._onInvalidateDelegate);
+        this._asset.addEventListener(AssetEvent_1.AssetEvent.CLEAR, this._onClearDelegate);
+        this._asset.addEventListener(AssetEvent_1.AssetEvent.INVALIDATE, this._onInvalidateDelegate);
     }
     /**
      *
      */
     AbstractionBase.prototype.onClear = function (event) {
-        this._asset.removeEventListener(AssetEvent_1.default.CLEAR, this._onClearDelegate);
-        this._asset.removeEventListener(AssetEvent_1.default.INVALIDATE, this._onInvalidateDelegate);
+        this._asset.removeEventListener(AssetEvent_1.AssetEvent.CLEAR, this._onClearDelegate);
+        this._asset.removeEventListener(AssetEvent_1.AssetEvent.INVALIDATE, this._onInvalidateDelegate);
         this._pool.clearAbstraction(this._asset);
         this._pool = null;
         this._asset = null;
@@ -8577,9 +8532,8 @@ var AbstractionBase = (function (_super) {
         this._invalid = true;
     };
     return AbstractionBase;
-}(EventDispatcher_1.default));
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = AbstractionBase;
+}(EventDispatcher_1.EventDispatcher));
+exports.AbstractionBase = AbstractionBase;
 
 },{"../events/AssetEvent":"awayjs-core/lib/events/AssetEvent","../events/EventDispatcher":"awayjs-core/lib/events/EventDispatcher"}],"awayjs-core/lib/library/AssetBase":[function(require,module,exports){
 "use strict";
@@ -8608,7 +8562,7 @@ var AssetBase = (function (_super) {
          *
          */
         get: function () {
-            throw new AbstractMethodError_1.default();
+            throw new AbstractMethodError_1.AbstractMethodError();
         },
         enumerable: true,
         configurable: true
@@ -8646,7 +8600,7 @@ var AssetBase = (function (_super) {
             if (this._name == null)
                 this._name = 'null';
             this.updateFullPath();
-            this.dispatchEvent(new AssetEvent_1.default(AssetEvent_1.default.RENAME, this, prev));
+            this.dispatchEvent(new AssetEvent_1.AssetEvent(AssetEvent_1.AssetEvent.RENAME, this, prev));
         },
         enumerable: true,
         configurable: true
@@ -8655,16 +8609,16 @@ var AssetBase = (function (_super) {
      *
      */
     AssetBase.prototype.invalidate = function () {
-        this.dispatchEvent(new AssetEvent_1.default(AssetEvent_1.default.INVALIDATE, this));
+        this.dispatchEvent(new AssetEvent_1.AssetEvent(AssetEvent_1.AssetEvent.INVALIDATE, this));
     };
     /**
      * @inheritDoc
      */
     AssetBase.prototype.dispose = function () {
-        this.dispatchEvent(new AssetEvent_1.default(AssetEvent_1.default.DISPOSE, this));
+        this.dispatchEvent(new AssetEvent_1.AssetEvent(AssetEvent_1.AssetEvent.DISPOSE, this));
     };
     AssetBase.prototype.clear = function () {
-        this.dispatchEvent(new AssetEvent_1.default(AssetEvent_1.default.CLEAR, this));
+        this.dispatchEvent(new AssetEvent_1.AssetEvent(AssetEvent_1.AssetEvent.CLEAR, this));
     };
     Object.defineProperty(AssetBase.prototype, "assetNamespace", {
         get: function () {
@@ -8701,9 +8655,8 @@ var AssetBase = (function (_super) {
     AssetBase.ID_COUNT = 0;
     AssetBase.DEFAULT_NAMESPACE = 'default';
     return AssetBase;
-}(EventDispatcher_1.default));
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = AssetBase;
+}(EventDispatcher_1.EventDispatcher));
+exports.AssetBase = AssetBase;
 
 },{"../errors/AbstractMethodError":"awayjs-core/lib/errors/AbstractMethodError","../events/AssetEvent":"awayjs-core/lib/events/AssetEvent","../events/EventDispatcher":"awayjs-core/lib/events/EventDispatcher"}],"awayjs-core/lib/library/AssetLibraryBundle":[function(require,module,exports){
 "use strict";
@@ -8742,8 +8695,8 @@ var AssetLibraryBundle = (function (_super) {
         this._assets = new Array(); //new Vector.<IAsset>;
         this._assetDictionary = new Object();
         this._loaderSessions = new Array();
-        this.conflictStrategy = ConflictStrategy_1.default.IGNORE.create();
-        this.conflictPrecedence = ConflictPrecedence_1.default.FAVOR_NEW;
+        this.conflictStrategy = ConflictStrategy_1.ConflictStrategy.IGNORE.create();
+        this.conflictPrecedence = ConflictPrecedence_1.ConflictPrecedence.FAVOR_NEW;
         this._onAssetRenameDelegate = function (event) { return _this.onAssetRename(event); };
         this._onAssetConflictResolvedDelegate = function (event) { return _this.onAssetConflictResolved(event); };
         this._onResourceCompleteDelegate = function (event) { return _this.onResourceComplete(event); };
@@ -8773,13 +8726,13 @@ var AssetLibraryBundle = (function (_super) {
      *
      */
     AssetLibraryBundle.prototype.enableParser = function (parserClass) {
-        Loader_1.default.enableParser(parserClass);
+        Loader_1.Loader.enableParser(parserClass);
     };
     /**
      *
      */
     AssetLibraryBundle.prototype.enableParsers = function (parserClasses) {
-        Loader_1.default.enableParsers(parserClasses);
+        Loader_1.Loader.enableParsers(parserClasses);
     };
     Object.defineProperty(AssetLibraryBundle.prototype, "conflictStrategy", {
         /**
@@ -8797,7 +8750,7 @@ var AssetLibraryBundle = (function (_super) {
         },
         set: function (val) {
             if (!val)
-                throw new ErrorBase_1.default('namingStrategy must not be null. To ignore naming, use AssetLibrary.IGNORE');
+                throw new ErrorBase_1.ErrorBase('namingStrategy must not be null. To ignore naming, use AssetLibrary.IGNORE');
             this._strategy = val.create();
         },
         enumerable: true,
@@ -8843,7 +8796,7 @@ var AssetLibraryBundle = (function (_super) {
         if (assetTypeFilter === void 0) { assetTypeFilter = null; }
         if (namespaceFilter === void 0) { namespaceFilter = null; }
         if (filterFunc === void 0) { filterFunc = null; }
-        return new AssetLibraryIterator_1.default(this._assets, assetTypeFilter, namespaceFilter, filterFunc);
+        return new AssetLibraryIterator_1.AssetLibraryIterator(this._assets, assetTypeFilter, namespaceFilter, filterFunc);
     };
     /**
      * Loads a file and (optionally) all of its dependencies.
@@ -8876,11 +8829,11 @@ var AssetLibraryBundle = (function (_super) {
         this.getLoader().loadData(data, '', context, ns, parser);
     };
     AssetLibraryBundle.prototype.getLoader = function () {
-        var loader = new Loader_1.default();
+        var loader = new Loader_1.Loader();
         this._loaderSessions.push(loader);
-        loader.addEventListener(LoaderEvent_1.default.LOAD_COMPLETE, this._onResourceCompleteDelegate);
-        loader.addEventListener(AssetEvent_1.default.TEXTURE_SIZE_ERROR, this._onTextureSizeErrorDelegate);
-        loader.addEventListener(AssetEvent_1.default.ASSET_COMPLETE, this._onAssetCompleteDelegate);
+        loader.addEventListener(LoaderEvent_1.LoaderEvent.LOAD_COMPLETE, this._onResourceCompleteDelegate);
+        loader.addEventListener(AssetEvent_1.AssetEvent.TEXTURE_SIZE_ERROR, this._onTextureSizeErrorDelegate);
+        loader.addEventListener(AssetEvent_1.AssetEvent.ASSET_COMPLETE, this._onAssetCompleteDelegate);
         // Error are handled separately (see documentation for addErrorHandler)
         loader._iAddErrorHandler(this._onLoadErrorDelegate);
         loader._iAddParseErrorHandler(this._onParseErrorDelegate);
@@ -8902,7 +8855,7 @@ var AssetLibraryBundle = (function (_super) {
         if (this._assetDictDirty)
             this.rehashAssetDict();
         if (ns == null)
-            ns = AssetBase_1.default.DEFAULT_NAMESPACE;
+            ns = AssetBase_1.AssetBase.DEFAULT_NAMESPACE;
         if (!this._assetDictionary.hasOwnProperty(ns))
             return null;
         return this._assetDictionary[ns][name];
@@ -8922,7 +8875,7 @@ var AssetLibraryBundle = (function (_super) {
         if (this._assets.indexOf(asset) >= 0)
             return;
         old = this.getAsset(asset.name, asset.assetNamespace);
-        ns = asset.assetNamespace || AssetBase_1.default.DEFAULT_NAMESPACE;
+        ns = asset.assetNamespace || AssetBase_1.AssetBase.DEFAULT_NAMESPACE;
         if (old != null)
             this._strategy.resolveConflict(asset, old, this._assetDictionary[ns], this._strategyPreference);
         //create unique-id (for now this is used in AwayBuilder only
@@ -8932,8 +8885,8 @@ var AssetLibraryBundle = (function (_super) {
         if (!this._assetDictionary.hasOwnProperty(ns))
             this._assetDictionary[ns] = new Object();
         this._assetDictionary[ns][asset.name] = asset;
-        asset.addEventListener(AssetEvent_1.default.RENAME, this._onAssetRenameDelegate);
-        asset.addEventListener(AssetEvent_1.default.ASSET_CONFLICT_RESOLVED, this._onAssetConflictResolvedDelegate);
+        asset.addEventListener(AssetEvent_1.AssetEvent.RENAME, this._onAssetRenameDelegate);
+        asset.addEventListener(AssetEvent_1.AssetEvent.ASSET_CONFLICT_RESOLVED, this._onAssetConflictResolvedDelegate);
     };
     /**
      * Removes an asset from the library, and optionally disposes that asset by calling
@@ -8947,8 +8900,8 @@ var AssetLibraryBundle = (function (_super) {
         if (dispose === void 0) { dispose = true; }
         var idx;
         this.removeAssetFromDict(asset);
-        asset.removeEventListener(AssetEvent_1.default.RENAME, this._onAssetRenameDelegate);
-        asset.removeEventListener(AssetEvent_1.default.ASSET_CONFLICT_RESOLVED, this._onAssetConflictResolvedDelegate);
+        asset.removeEventListener(AssetEvent_1.AssetEvent.RENAME, this._onAssetRenameDelegate);
+        asset.removeEventListener(AssetEvent_1.AssetEvent.ASSET_CONFLICT_RESOLVED, this._onAssetConflictResolvedDelegate);
         idx = this._assets.indexOf(asset);
         if (idx >= 0)
             this._assets.splice(idx, 1);
@@ -9012,7 +8965,7 @@ var AssetLibraryBundle = (function (_super) {
         old_assets = this._assets.concat();
         this._assets.length = 0;
         if (ns == null)
-            ns = AssetBase_1.default.DEFAULT_NAMESPACE;
+            ns = AssetBase_1.AssetBase.DEFAULT_NAMESPACE;
         var len = old_assets.length;
         for (var d = 0; d < len; d++) {
             asset = old_assets[d];
@@ -9094,7 +9047,7 @@ var AssetLibraryBundle = (function (_super) {
      * Called when a an error occurs during loading.
      */
     AssetLibraryBundle.prototype.onLoadError = function (event) {
-        if (this.hasEventListener(URLLoaderEvent_1.default.LOAD_ERROR)) {
+        if (this.hasEventListener(URLLoaderEvent_1.URLLoaderEvent.LOAD_ERROR)) {
             this.dispatchEvent(event);
             return true;
         }
@@ -9106,7 +9059,7 @@ var AssetLibraryBundle = (function (_super) {
      * Called when a an error occurs during parsing.
      */
     AssetLibraryBundle.prototype.onParseError = function (event) {
-        if (this.hasEventListener(ParserEvent_1.default.PARSE_ERROR)) {
+        if (this.hasEventListener(ParserEvent_1.ParserEvent.PARSE_ERROR)) {
             this.dispatchEvent(event);
             return true;
         }
@@ -9116,7 +9069,7 @@ var AssetLibraryBundle = (function (_super) {
     };
     AssetLibraryBundle.prototype.onAssetComplete = function (event) {
         // Only add asset to library the first time.
-        if (event.type == AssetEvent_1.default.ASSET_COMPLETE)
+        if (event.type == AssetEvent_1.AssetEvent.ASSET_COMPLETE)
             this.addAsset(event.asset);
         this.dispatchEvent(event);
     };
@@ -9141,9 +9094,9 @@ var AssetLibraryBundle = (function (_super) {
         this._gcTimeoutIID = null;
     };
     AssetLibraryBundle.prototype.killloaderSession = function (loader) {
-        loader.removeEventListener(LoaderEvent_1.default.LOAD_COMPLETE, this._onResourceCompleteDelegate);
-        loader.removeEventListener(AssetEvent_1.default.TEXTURE_SIZE_ERROR, this._onTextureSizeErrorDelegate);
-        loader.removeEventListener(AssetEvent_1.default.ASSET_COMPLETE, this._onAssetCompleteDelegate);
+        loader.removeEventListener(LoaderEvent_1.LoaderEvent.LOAD_COMPLETE, this._onResourceCompleteDelegate);
+        loader.removeEventListener(AssetEvent_1.AssetEvent.TEXTURE_SIZE_ERROR, this._onTextureSizeErrorDelegate);
+        loader.removeEventListener(AssetEvent_1.AssetEvent.ASSET_COMPLETE, this._onAssetCompleteDelegate);
         loader.stop();
     };
     AssetLibraryBundle.prototype.onAssetRename = function (event) {
@@ -9165,9 +9118,8 @@ var AssetLibraryBundle = (function (_super) {
     };
     AssetLibraryBundle._iInstances = new Object();
     return AssetLibraryBundle;
-}(EventDispatcher_1.default));
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = AssetLibraryBundle;
+}(EventDispatcher_1.EventDispatcher));
+exports.AssetLibraryBundle = AssetLibraryBundle;
 
 },{"../errors/ErrorBase":"awayjs-core/lib/errors/ErrorBase","../events/AssetEvent":"awayjs-core/lib/events/AssetEvent","../events/EventDispatcher":"awayjs-core/lib/events/EventDispatcher","../events/LoaderEvent":"awayjs-core/lib/events/LoaderEvent","../events/ParserEvent":"awayjs-core/lib/events/ParserEvent","../events/URLLoaderEvent":"awayjs-core/lib/events/URLLoaderEvent","../library/AssetBase":"awayjs-core/lib/library/AssetBase","../library/AssetLibraryIterator":"awayjs-core/lib/library/AssetLibraryIterator","../library/ConflictPrecedence":"awayjs-core/lib/library/ConflictPrecedence","../library/ConflictStrategy":"awayjs-core/lib/library/ConflictStrategy","../library/Loader":"awayjs-core/lib/library/Loader"}],"awayjs-core/lib/library/AssetLibraryIterator":[function(require,module,exports){
 "use strict";
@@ -9231,8 +9183,7 @@ var AssetLibraryIterator = (function () {
     };
     return AssetLibraryIterator;
 }());
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = AssetLibraryIterator;
+exports.AssetLibraryIterator = AssetLibraryIterator;
 
 },{}],"awayjs-core/lib/library/AssetLibrary":[function(require,module,exports){
 "use strict";
@@ -9262,19 +9213,19 @@ var AssetLibrary = (function () {
      */
     AssetLibrary.getBundle = function (key) {
         if (key === void 0) { key = 'default'; }
-        return AssetLibraryBundle_1.default.getInstance(key);
+        return AssetLibraryBundle_1.AssetLibraryBundle.getInstance(key);
     };
     /**
      *
      */
     AssetLibrary.enableParser = function (parserClass) {
-        Loader_1.default.enableParser(parserClass);
+        Loader_1.Loader.enableParser(parserClass);
     };
     /**
      *
      */
     AssetLibrary.enableParsers = function (parserClasses) {
-        Loader_1.default.enableParsers(parserClasses);
+        Loader_1.Loader.enableParsers(parserClasses);
     };
     Object.defineProperty(AssetLibrary, "conflictStrategy", {
         /**
@@ -9444,13 +9395,12 @@ var AssetLibrary = (function () {
     };
     return AssetLibrary;
 }());
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = AssetLibrary;
+exports.AssetLibrary = AssetLibrary;
 
 },{"../library/AssetLibraryBundle":"awayjs-core/lib/library/AssetLibraryBundle","../library/Loader":"awayjs-core/lib/library/Loader"}],"awayjs-core/lib/library/ConflictPrecedence":[function(require,module,exports){
 "use strict";
 /**
- * Enumaration class for precedence when resolving naming conflicts in the library.
+ * Enumaration export class for precedence when resolving naming conflicts in the library.
  *
  * @see away.library.AssetLibrary.conflictPrecedence
  * @see away.library.AssetLibrary.conflictStrategy
@@ -9473,8 +9423,7 @@ var ConflictPrecedence = (function () {
     ConflictPrecedence.FAVOR_NEW = 'favorNew';
     return ConflictPrecedence;
 }());
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = ConflictPrecedence;
+exports.ConflictPrecedence = ConflictPrecedence;
 
 },{}],"awayjs-core/lib/library/ConflictStrategyBase":[function(require,module,exports){
 "use strict";
@@ -9482,8 +9431,8 @@ var ConflictPrecedence_1 = require("../library/ConflictPrecedence");
 var AbstractMethodError_1 = require("../errors/AbstractMethodError");
 var AssetEvent_1 = require("../events/AssetEvent");
 /**
- * Abstract base class for naming conflict resolution classes. Extend this to create a
- * strategy class which the asset library can use to resolve asset naming conflicts, or
+ * Abstract base export class for naming conflict resolution classes. Extend this to create a
+ * strategy export class which the asset library can use to resolve asset naming conflicts, or
  * use one of the bundled concrete strategy classes:
  *
  * <ul>
@@ -9506,7 +9455,7 @@ var ConflictStrategyBase = (function () {
      * classes.
      */
     ConflictStrategyBase.prototype.resolveConflict = function (changedAsset, oldAsset, assetsDictionary, precedence) {
-        throw new AbstractMethodError_1.default();
+        throw new AbstractMethodError_1.AbstractMethodError();
     };
     /**
      * Create instance of this conflict strategy. Used internally by the AssetLibrary to
@@ -9514,7 +9463,7 @@ var ConflictStrategyBase = (function () {
      * would break any state caching that happens inside the strategy class.
      */
     ConflictStrategyBase.prototype.create = function () {
-        throw new AbstractMethodError_1.default();
+        throw new AbstractMethodError_1.AbstractMethodError();
     };
     /**
      * Provided as a convenience method for all conflict strategy classes, as a way to finalize
@@ -9524,18 +9473,17 @@ var ConflictStrategyBase = (function () {
         var loser_prev_name;
         var winner;
         var loser;
-        winner = (precedence === ConflictPrecedence_1.default.FAVOR_NEW) ? newAsset : oldAsset;
-        loser = (precedence === ConflictPrecedence_1.default.FAVOR_NEW) ? oldAsset : newAsset;
+        winner = (precedence === ConflictPrecedence_1.ConflictPrecedence.FAVOR_NEW) ? newAsset : oldAsset;
+        loser = (precedence === ConflictPrecedence_1.ConflictPrecedence.FAVOR_NEW) ? oldAsset : newAsset;
         loser_prev_name = loser.name;
         assetsDictionary[winner.name] = winner;
         assetsDictionary[nonConflictingName] = loser;
         loser.resetAssetPath(nonConflictingName, ns, false);
-        loser.dispatchEvent(new AssetEvent_1.default(AssetEvent_1.default.ASSET_CONFLICT_RESOLVED, loser, loser_prev_name));
+        loser.dispatchEvent(new AssetEvent_1.AssetEvent(AssetEvent_1.AssetEvent.ASSET_CONFLICT_RESOLVED, loser, loser_prev_name));
     };
     return ConflictStrategyBase;
 }());
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = ConflictStrategyBase;
+exports.ConflictStrategyBase = ConflictStrategyBase;
 
 },{"../errors/AbstractMethodError":"awayjs-core/lib/errors/AbstractMethodError","../events/AssetEvent":"awayjs-core/lib/events/AssetEvent","../library/ConflictPrecedence":"awayjs-core/lib/library/ConflictPrecedence"}],"awayjs-core/lib/library/ConflictStrategy":[function(require,module,exports){
 "use strict";
@@ -9543,8 +9491,8 @@ var ErrorConflictStrategy_1 = require("../library/ErrorConflictStrategy");
 var IgnoreConflictStrategy_1 = require("../library/IgnoreConflictStrategy");
 var NumSuffixConflictStrategy_1 = require("../library/NumSuffixConflictStrategy");
 /**
- * Enumeration class for bundled conflict strategies. Set one of these values (or an
- * instance of a self-defined sub-class of ConflictStrategyBase) to the conflictStrategy
+ * Enumeration export class for bundled conflict strategies. Set one of these values (or an
+ * instance of a self-defined sub-export class of ConflictStrategyBase) to the conflictStrategy
  * property on an AssetLibrary to define how that library resolves naming conflicts.
  *
  * The value of the <code>AssetLibrary.conflictPrecedence</code> property defines which
@@ -9561,23 +9509,22 @@ var ConflictStrategy = (function () {
      * Specifies that in case of a naming conflict, one of the assets will be renamed and
      * a numeric suffix appended to the base name.
      */
-    ConflictStrategy.APPEND_NUM_SUFFIX = new NumSuffixConflictStrategy_1.default();
+    ConflictStrategy.APPEND_NUM_SUFFIX = new NumSuffixConflictStrategy_1.NumSuffixConflictStrategy();
     /**
      * Specifies that naming conflicts should be ignored. This is not recommended in most
      * cases, unless it can be 100% guaranteed that the application does not cause naming
      * conflicts in the library (i.e. when an app-level system is in place to prevent this.)
      */
-    ConflictStrategy.IGNORE = new IgnoreConflictStrategy_1.default();
+    ConflictStrategy.IGNORE = new IgnoreConflictStrategy_1.IgnoreConflictStrategy();
     /**
      * Specifies that an error should be thrown if a naming conflict is discovered. Use this
      * to be 100% sure that naming conflicts never occur unnoticed, and when it's undesirable
      * to have the library automatically rename assets to avoid such conflicts.
      */
-    ConflictStrategy.THROW_ERROR = new ErrorConflictStrategy_1.default();
+    ConflictStrategy.THROW_ERROR = new ErrorConflictStrategy_1.ErrorConflictStrategy();
     return ConflictStrategy;
 }());
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = ConflictStrategy;
+exports.ConflictStrategy = ConflictStrategy;
 
 },{"../library/ErrorConflictStrategy":"awayjs-core/lib/library/ErrorConflictStrategy","../library/IgnoreConflictStrategy":"awayjs-core/lib/library/IgnoreConflictStrategy","../library/NumSuffixConflictStrategy":"awayjs-core/lib/library/NumSuffixConflictStrategy"}],"awayjs-core/lib/library/ErrorConflictStrategy":[function(require,module,exports){
 "use strict";
@@ -9594,15 +9541,14 @@ var ErrorConflictStrategy = (function (_super) {
         _super.call(this);
     }
     ErrorConflictStrategy.prototype.resolveConflict = function (changedAsset, oldAsset, assetsDictionary, precedence) {
-        throw new ErrorBase_1.default('Asset name collision while AssetLibrary.namingStrategy set to AssetLibrary.THROW_ERROR. Asset path: ' + changedAsset.assetFullPath);
+        throw new ErrorBase_1.ErrorBase('Asset name collision while AssetLibrary.namingStrategy set to AssetLibrary.THROW_ERROR. Asset path: ' + changedAsset.assetFullPath);
     };
     ErrorConflictStrategy.prototype.create = function () {
         return new ErrorConflictStrategy();
     };
     return ErrorConflictStrategy;
-}(ConflictStrategyBase_1.default));
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = ErrorConflictStrategy;
+}(ConflictStrategyBase_1.ConflictStrategyBase));
+exports.ErrorConflictStrategy = ErrorConflictStrategy;
 
 },{"../errors/ErrorBase":"awayjs-core/lib/errors/ErrorBase","../library/ConflictStrategyBase":"awayjs-core/lib/library/ConflictStrategyBase"}],"awayjs-core/lib/library/IAbstractionPool":[function(require,module,exports){
 "use strict";
@@ -9671,8 +9617,7 @@ var IDUtil = (function () {
     IDUtil.ALPHA_CHAR_CODES = [48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 65, 66, 67, 68, 69, 70];
     return IDUtil;
 }());
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = IDUtil;
+exports.IDUtil = IDUtil;
 
 },{}],"awayjs-core/lib/library/IgnoreConflictStrategy":[function(require,module,exports){
 "use strict";
@@ -9695,9 +9640,8 @@ var IgnoreConflictStrategy = (function (_super) {
         return new IgnoreConflictStrategy();
     };
     return IgnoreConflictStrategy;
-}(ConflictStrategyBase_1.default));
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = IgnoreConflictStrategy;
+}(ConflictStrategyBase_1.ConflictStrategyBase));
+exports.IgnoreConflictStrategy = IgnoreConflictStrategy;
 
 },{"../library/ConflictStrategyBase":"awayjs-core/lib/library/ConflictStrategyBase"}],"awayjs-core/lib/library/LoaderContext":[function(require,module,exports){
 "use strict";
@@ -9812,7 +9756,7 @@ var LoaderContext = (function () {
      * which it's referenced, the dependency data will be retrieved straight from the memory instead.
      *
      * @param originalUrl The original URL which is referenced in the loaded resource.
-     * @param data The embedded data. Can be ByteArray or a class which can be used to create a bytearray.
+     * @param data The embedded data. Can be ByteArray or a export class which can be used to create a bytearray.
      */
     LoaderContext.prototype.mapUrlToData = function (originalUrl, data) {
         this._embeddedDataByUrl[originalUrl] = data;
@@ -9850,8 +9794,7 @@ var LoaderContext = (function () {
     LoaderContext.MULTIPASS_MATERIALS = 2;
     return LoaderContext;
 }());
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = LoaderContext;
+exports.LoaderContext = LoaderContext;
 
 },{}],"awayjs-core/lib/library/LoaderInfo":[function(require,module,exports){
 "use strict";
@@ -9862,7 +9805,7 @@ var __extends = (this && this.__extends) || function (d, b) {
 };
 var EventDispatcher_1 = require("../events/EventDispatcher");
 /**
- * The LoaderInfo class provides information about a loaded SWF file or a
+ * The LoaderInfo export class provides information about a loaded SWF file or a
  * loaded image file(JPEG, GIF, or PNG). LoaderInfo objects are available for
  * any display object. The information provided includes load progress, the
  * URLs of the loader and loaded content, the number of bytes total for the
@@ -9889,13 +9832,13 @@ var EventDispatcher_1 = require("../events/EventDispatcher");
  * file or a bitmap), the <code>loaderInfo</code> property of the display
  * object is the same as the <code>contentLoaderInfo</code> property of the
  * Loader object(<code>DisplayObject.loaderInfo =
- * Loader.contentLoaderInfo</code>). Because the instance of the main class of
+ * Loader.contentLoaderInfo</code>). Because the instance of the main export class of
  * the SWF file has no Loader object, the <code>loaderInfo</code> property is
- * the only way to access the LoaderInfo for the instance of the main class of
+ * the only way to access the LoaderInfo for the instance of the main export class of
  * the SWF file.</p>
  *
  * <p>The following diagram shows the different uses of the LoaderInfo
- * object - for the instance of the main class of the SWF file, for the
+ * object - for the instance of the main export class of the SWF file, for the
  * <code>contentLoaderInfo</code> property of a Loader object, and for the
  * <code>loaderInfo</code> property of a loaded object:</p>
  *
@@ -10058,7 +10001,7 @@ var LoaderInfo = (function (_super) {
         /**
          * The Loader object associated with this LoaderInfo object. If this
          * LoaderInfo object is the <code>loaderInfo</code> property of the instance
-         * of the main class of the SWF file, no Loader object is associated.
+         * of the main export class of the SWF file, no Loader object is associated.
          *
          * @throws SecurityError If the object accessing this API is prevented from
          *                       accessing the Loader object because of security
@@ -10101,9 +10044,8 @@ var LoaderInfo = (function (_super) {
         configurable: true
     });
     return LoaderInfo;
-}(EventDispatcher_1.default));
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = LoaderInfo;
+}(EventDispatcher_1.EventDispatcher));
+exports.LoaderInfo = LoaderInfo;
 
 },{"../events/EventDispatcher":"awayjs-core/lib/events/EventDispatcher"}],"awayjs-core/lib/library/Loader":[function(require,module,exports){
 "use strict";
@@ -10196,7 +10138,7 @@ var Loader = (function (_super) {
      * loader3d can autoselect the correct parser to use.
      * A parser must have been enabled, to be considered when autoselecting the parser.
      *
-     * @param parser The parser class to enable.
+     * @param parser The parser export class to enable.
      *
      * @see away.parsers.Parsers
      */
@@ -10265,7 +10207,7 @@ var Loader = (function (_super) {
         this._uri = req.url = req.url.replace(/\\/g, "/");
         this._context = context;
         this._namespace = ns;
-        this._baseDependency = new ResourceDependency_1.default('', req, null, parser, null);
+        this._baseDependency = new ResourceDependency_1.ResourceDependency('', req, null, parser, null);
         this.retrieveDependency(this._baseDependency);
     };
     /**
@@ -10283,7 +10225,7 @@ var Loader = (function (_super) {
         this._uri = id;
         this._context = context;
         this._namespace = ns;
-        this._baseDependency = new ResourceDependency_1.default(id, null, data, parser, null);
+        this._baseDependency = new ResourceDependency_1.ResourceDependency(id, null, data, parser, null);
         this.retrieveDependency(this._baseDependency);
     };
     /**
@@ -10310,7 +10252,7 @@ var Loader = (function (_super) {
             this.retrieveNext(parser);
         }
         else {
-            this.dispatchEvent(new LoaderEvent_1.default(LoaderEvent_1.default.LOAD_COMPLETE, this._uri, this._baseDependency.parser.content, this._baseDependency.assets));
+            this.dispatchEvent(new LoaderEvent_1.LoaderEvent(LoaderEvent_1.LoaderEvent.LOAD_COMPLETE, this._uri, this._baseDependency.parser.content, this._baseDependency.assets));
         }
     };
     /**
@@ -10322,7 +10264,7 @@ var Loader = (function (_super) {
         if (this._context && this._context.materialMode != 0)
             this._materialMode = this._context.materialMode;
         this._currentDependency = dependency;
-        dependency._iLoader = new URLLoader_1.default();
+        dependency._iLoader = new URLLoader_1.URLLoader();
         this.addEventListeners(dependency._iLoader);
         // Get already loaded (or mapped) data if available
         data = dependency.data;
@@ -10348,7 +10290,7 @@ var Loader = (function (_super) {
             dependency.request.url = this.resolveDependencyUrl(dependency);
             if (dependency.retrieveAsRawData) {
                 // Always use binary for raw data loading
-                dependency._iLoader.dataFormat = URLLoaderDataFormat_1.default.BINARY;
+                dependency._iLoader.dataFormat = URLLoaderDataFormat_1.URLLoaderDataFormat.BINARY;
             }
             else {
                 if (!dependency.parser)
@@ -10360,7 +10302,7 @@ var Loader = (function (_super) {
                     // Always use BINARY for unknown file formats. The thorough
                     // file type check will determine format after load, and if
                     // binary, a text load will have broken the file data.
-                    dependency._iLoader.dataFormat = URLLoaderDataFormat_1.default.BINARY;
+                    dependency._iLoader.dataFormat = URLLoaderDataFormat_1.URLLoaderDataFormat.BINARY;
                 }
             }
             dependency._iLoader.load(dependency.request);
@@ -10448,7 +10390,7 @@ var Loader = (function (_super) {
         var isDependency = (this._currentDependency != this._baseDependency);
         var loader = event.urlLoader;
         this.removeEventListeners(loader);
-        if (this.hasEventListener(URLLoaderEvent_1.default.LOAD_ERROR)) {
+        if (this.hasEventListener(URLLoaderEvent_1.URLLoaderEvent.LOAD_ERROR)) {
             this.dispatchEvent(event);
             handled = true;
         }
@@ -10488,7 +10430,7 @@ var Loader = (function (_super) {
         var isDependency = (this._currentDependency != this._baseDependency);
         var loader = event.target;
         this.removeEventListeners(loader);
-        if (this.hasEventListener(ParserEvent_1.default.PARSE_ERROR)) {
+        if (this.hasEventListener(ParserEvent_1.ParserEvent.PARSE_ERROR)) {
             this.dispatchEvent(event);
             handled = true;
         }
@@ -10549,11 +10491,11 @@ var Loader = (function (_super) {
     Loader.prototype.onParseComplete = function (event) {
         var parser = event.target;
         this.resolveParserDependencies(); //resolve in front of removing listeners to allow any remaining asset events to propagate
-        parser.removeEventListener(ParserEvent_1.default.READY_FOR_DEPENDENCIES, this._onReadyForDependenciesDelegate);
-        parser.removeEventListener(ParserEvent_1.default.PARSE_COMPLETE, this._onParseCompleteDelegate);
-        parser.removeEventListener(ParserEvent_1.default.PARSE_ERROR, this._onParseErrorDelegate);
-        parser.removeEventListener(AssetEvent_1.default.TEXTURE_SIZE_ERROR, this._onTextureSizeErrorDelegate);
-        parser.removeEventListener(AssetEvent_1.default.ASSET_COMPLETE, this._onAssetCompleteDelegate);
+        parser.removeEventListener(ParserEvent_1.ParserEvent.READY_FOR_DEPENDENCIES, this._onReadyForDependenciesDelegate);
+        parser.removeEventListener(ParserEvent_1.ParserEvent.PARSE_COMPLETE, this._onParseCompleteDelegate);
+        parser.removeEventListener(ParserEvent_1.ParserEvent.PARSE_ERROR, this._onParseErrorDelegate);
+        parser.removeEventListener(AssetEvent_1.AssetEvent.TEXTURE_SIZE_ERROR, this._onTextureSizeErrorDelegate);
+        parser.removeEventListener(AssetEvent_1.AssetEvent.ASSET_COMPLETE, this._onAssetCompleteDelegate);
     };
     /**
      * Called when an image is too large or it's dimensions are not a power of 2
@@ -10564,12 +10506,12 @@ var Loader = (function (_super) {
         this.dispatchEvent(event);
     };
     Loader.prototype.addEventListeners = function (loader) {
-        loader.addEventListener(URLLoaderEvent_1.default.LOAD_COMPLETE, this._onLoadCompleteDelegate);
-        loader.addEventListener(URLLoaderEvent_1.default.LOAD_ERROR, this._onLoadErrorDelegate);
+        loader.addEventListener(URLLoaderEvent_1.URLLoaderEvent.LOAD_COMPLETE, this._onLoadCompleteDelegate);
+        loader.addEventListener(URLLoaderEvent_1.URLLoaderEvent.LOAD_ERROR, this._onLoadErrorDelegate);
     };
     Loader.prototype.removeEventListeners = function (loader) {
-        loader.removeEventListener(URLLoaderEvent_1.default.LOAD_COMPLETE, this._onLoadCompleteDelegate);
-        loader.removeEventListener(URLLoaderEvent_1.default.LOAD_ERROR, this._onLoadErrorDelegate);
+        loader.removeEventListener(URLLoaderEvent_1.URLLoaderEvent.LOAD_COMPLETE, this._onLoadCompleteDelegate);
+        loader.removeEventListener(URLLoaderEvent_1.URLLoaderEvent.LOAD_ERROR, this._onLoadErrorDelegate);
     };
     Loader.prototype.stop = function () {
         this.dispose();
@@ -10628,11 +10570,11 @@ var Loader = (function (_super) {
         if (!parser)
             dependency._iSetParser(parser = this.getParserFromData(dependency.data));
         if (parser) {
-            parser.addEventListener(ParserEvent_1.default.READY_FOR_DEPENDENCIES, this._onReadyForDependenciesDelegate);
-            parser.addEventListener(ParserEvent_1.default.PARSE_COMPLETE, this._onParseCompleteDelegate);
-            parser.addEventListener(ParserEvent_1.default.PARSE_ERROR, this._onParseErrorDelegate);
-            parser.addEventListener(AssetEvent_1.default.TEXTURE_SIZE_ERROR, this._onTextureSizeErrorDelegate);
-            parser.addEventListener(AssetEvent_1.default.ASSET_COMPLETE, this._onAssetCompleteDelegate);
+            parser.addEventListener(ParserEvent_1.ParserEvent.READY_FOR_DEPENDENCIES, this._onReadyForDependenciesDelegate);
+            parser.addEventListener(ParserEvent_1.ParserEvent.PARSE_COMPLETE, this._onParseCompleteDelegate);
+            parser.addEventListener(ParserEvent_1.ParserEvent.PARSE_ERROR, this._onParseErrorDelegate);
+            parser.addEventListener(AssetEvent_1.AssetEvent.TEXTURE_SIZE_ERROR, this._onTextureSizeErrorDelegate);
+            parser.addEventListener(AssetEvent_1.AssetEvent.ASSET_COMPLETE, this._onAssetCompleteDelegate);
             if (dependency.request && dependency.request.url)
                 parser._iFileName = dependency.request.url;
             parser.materialMode = this._materialMode;
@@ -10641,8 +10583,8 @@ var Loader = (function (_super) {
         else {
             var handled;
             var message = "No parser defined. To enable all parsers for auto-detection, use Parsers.enableAllBundled()";
-            var event = new ParserEvent_1.default(ParserEvent_1.default.PARSE_ERROR, message);
-            if (this.hasEventListener(ParserEvent_1.default.PARSE_ERROR)) {
+            var event = new ParserEvent_1.ParserEvent(ParserEvent_1.ParserEvent.PARSE_ERROR, message);
+            if (this.hasEventListener(ParserEvent_1.ParserEvent.PARSE_ERROR)) {
                 this.dispatchEvent(event);
                 handled = true;
             }
@@ -10684,9 +10626,8 @@ var Loader = (function (_super) {
     // Image parser only parser that is added by default, to save file size.
     Loader._parsers = new Array();
     return Loader;
-}(EventDispatcher_1.default));
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = Loader;
+}(EventDispatcher_1.EventDispatcher));
+exports.Loader = Loader;
 
 },{"../events/AssetEvent":"awayjs-core/lib/events/AssetEvent","../events/EventDispatcher":"awayjs-core/lib/events/EventDispatcher","../events/LoaderEvent":"awayjs-core/lib/events/LoaderEvent","../events/ParserEvent":"awayjs-core/lib/events/ParserEvent","../events/URLLoaderEvent":"awayjs-core/lib/events/URLLoaderEvent","../net/URLLoader":"awayjs-core/lib/net/URLLoader","../net/URLLoaderDataFormat":"awayjs-core/lib/net/URLLoaderDataFormat","../parsers/ResourceDependency":"awayjs-core/lib/parsers/ResourceDependency"}],"awayjs-core/lib/library/NumSuffixConflictStrategy":[function(require,module,exports){
 "use strict";
@@ -10741,42 +10682,41 @@ var NumSuffixConflictStrategy = (function (_super) {
         return new NumSuffixConflictStrategy(this._separator);
     };
     return NumSuffixConflictStrategy;
-}(ConflictStrategyBase_1.default));
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = NumSuffixConflictStrategy;
+}(ConflictStrategyBase_1.ConflictStrategyBase));
+exports.NumSuffixConflictStrategy = NumSuffixConflictStrategy;
 
 },{"../library/ConflictStrategyBase":"awayjs-core/lib/library/ConflictStrategyBase"}],"awayjs-core/lib/library":[function(require,module,exports){
 "use strict";
 var AbstractionBase_1 = require("./library/AbstractionBase");
-exports.AbstractionBase = AbstractionBase_1.default;
+exports.AbstractionBase = AbstractionBase_1.AbstractionBase;
 var AssetBase_1 = require("./library/AssetBase");
-exports.AssetBase = AssetBase_1.default;
+exports.AssetBase = AssetBase_1.AssetBase;
 var AssetLibrary_1 = require("./library/AssetLibrary");
-exports.AssetLibrary = AssetLibrary_1.default;
+exports.AssetLibrary = AssetLibrary_1.AssetLibrary;
 var AssetLibraryBundle_1 = require("./library/AssetLibraryBundle");
-exports.AssetLibraryBundle = AssetLibraryBundle_1.default;
+exports.AssetLibraryBundle = AssetLibraryBundle_1.AssetLibraryBundle;
 var AssetLibraryIterator_1 = require("./library/AssetLibraryIterator");
-exports.AssetLibraryIterator = AssetLibraryIterator_1.default;
+exports.AssetLibraryIterator = AssetLibraryIterator_1.AssetLibraryIterator;
 var ConflictPrecedence_1 = require("./library/ConflictPrecedence");
-exports.ConflictPrecedence = ConflictPrecedence_1.default;
+exports.ConflictPrecedence = ConflictPrecedence_1.ConflictPrecedence;
 var ConflictStrategy_1 = require("./library/ConflictStrategy");
-exports.ConflictStrategy = ConflictStrategy_1.default;
+exports.ConflictStrategy = ConflictStrategy_1.ConflictStrategy;
 var ConflictStrategyBase_1 = require("./library/ConflictStrategyBase");
-exports.ConflictStrategyBase = ConflictStrategyBase_1.default;
+exports.ConflictStrategyBase = ConflictStrategyBase_1.ConflictStrategyBase;
 var ErrorConflictStrategy_1 = require("./library/ErrorConflictStrategy");
-exports.ErrorConflictStrategy = ErrorConflictStrategy_1.default;
+exports.ErrorConflictStrategy = ErrorConflictStrategy_1.ErrorConflictStrategy;
 var IDUtil_1 = require("./library/IDUtil");
-exports.IDUtil = IDUtil_1.default;
+exports.IDUtil = IDUtil_1.IDUtil;
 var IgnoreConflictStrategy_1 = require("./library/IgnoreConflictStrategy");
-exports.IgnoreConflictStrategy = IgnoreConflictStrategy_1.default;
+exports.IgnoreConflictStrategy = IgnoreConflictStrategy_1.IgnoreConflictStrategy;
 var Loader_1 = require("./library/Loader");
-exports.Loader = Loader_1.default;
+exports.Loader = Loader_1.Loader;
 var LoaderContext_1 = require("./library/LoaderContext");
-exports.LoaderContext = LoaderContext_1.default;
+exports.LoaderContext = LoaderContext_1.LoaderContext;
 var LoaderInfo_1 = require("./library/LoaderInfo");
-exports.LoaderInfo = LoaderInfo_1.default;
+exports.LoaderInfo = LoaderInfo_1.LoaderInfo;
 var NumSuffixConflictStrategy_1 = require("./library/NumSuffixConflictStrategy");
-exports.NumSuffixConflictStrategy = NumSuffixConflictStrategy_1.default;
+exports.NumSuffixConflictStrategy = NumSuffixConflictStrategy_1.NumSuffixConflictStrategy;
 
 },{"./library/AbstractionBase":"awayjs-core/lib/library/AbstractionBase","./library/AssetBase":"awayjs-core/lib/library/AssetBase","./library/AssetLibrary":"awayjs-core/lib/library/AssetLibrary","./library/AssetLibraryBundle":"awayjs-core/lib/library/AssetLibraryBundle","./library/AssetLibraryIterator":"awayjs-core/lib/library/AssetLibraryIterator","./library/ConflictPrecedence":"awayjs-core/lib/library/ConflictPrecedence","./library/ConflictStrategy":"awayjs-core/lib/library/ConflictStrategy","./library/ConflictStrategyBase":"awayjs-core/lib/library/ConflictStrategyBase","./library/ErrorConflictStrategy":"awayjs-core/lib/library/ErrorConflictStrategy","./library/IDUtil":"awayjs-core/lib/library/IDUtil","./library/IgnoreConflictStrategy":"awayjs-core/lib/library/IgnoreConflictStrategy","./library/Loader":"awayjs-core/lib/library/Loader","./library/LoaderContext":"awayjs-core/lib/library/LoaderContext","./library/LoaderInfo":"awayjs-core/lib/library/LoaderInfo","./library/NumSuffixConflictStrategy":"awayjs-core/lib/library/NumSuffixConflictStrategy"}],"awayjs-core/lib/managers/AudioChannel":[function(require,module,exports){
 "use strict";
@@ -10843,8 +10783,7 @@ var AudioChannel = (function () {
     AudioChannel._channels = new Array();
     return AudioChannel;
 }());
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = AudioChannel;
+exports.AudioChannel = AudioChannel;
 
 },{}],"awayjs-core/lib/managers/AudioManager":[function(require,module,exports){
 "use strict";
@@ -10855,7 +10794,7 @@ var AudioManager = (function () {
     }
     AudioManager.getChannel = function (byteLength) {
         //choose best audio channel by bytelength
-        var channelClass = (byteLength > 50000) ? StreamingAudioChannel_1.default : WebAudioChannel_1.default;
+        var channelClass = (byteLength > 50000) ? StreamingAudioChannel_1.StreamingAudioChannel : WebAudioChannel_1.WebAudioChannel;
         var i = 0;
         while (channelClass._channels[i] && channelClass._channels[i].isPlaying())
             i++;
@@ -10878,8 +10817,7 @@ var AudioManager = (function () {
     };
     return AudioManager;
 }());
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = AudioManager;
+exports.AudioManager = AudioManager;
 
 },{"../managers/StreamingAudioChannel":"awayjs-core/lib/managers/StreamingAudioChannel","../managers/WebAudioChannel":"awayjs-core/lib/managers/WebAudioChannel"}],"awayjs-core/lib/managers/EventAudioChannel":[function(require,module,exports){
 "use strict";
@@ -10935,7 +10873,7 @@ var EventAudioChannel = (function () {
         if (id === void 0) { id = 0; }
         this._isPlaying = true;
         this._isLooping = loop;
-        this._audio.src = EventAudioChannel._base64Cache[id] || (EventAudioChannel._base64Cache[id] = ParserUtils_1.default.arrayBufferToBase64(buffer, "audio/mp3"));
+        this._audio.src = EventAudioChannel._base64Cache[id] || (EventAudioChannel._base64Cache[id] = ParserUtils_1.ParserUtils.arrayBufferToBase64(buffer, "audio/mp3"));
         this._audio.loop = this._isLooping;
         this._audio.currentTime = offset;
         this._audio.play();
@@ -10955,8 +10893,7 @@ var EventAudioChannel = (function () {
     EventAudioChannel._base64Cache = new Object();
     return EventAudioChannel;
 }());
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = EventAudioChannel;
+exports.EventAudioChannel = EventAudioChannel;
 
 },{"../parsers/ParserUtils":"awayjs-core/lib/parsers/ParserUtils"}],"awayjs-core/lib/managers/IAudioChannelClass":[function(require,module,exports){
 "use strict";
@@ -11094,8 +11031,7 @@ var StreamingAudioChannel = (function () {
     StreamingAudioChannel._channels = new Array();
     return StreamingAudioChannel;
 }());
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = StreamingAudioChannel;
+exports.StreamingAudioChannel = StreamingAudioChannel;
 
 },{}],"awayjs-core/lib/managers/WebAudioChannel":[function(require,module,exports){
 "use strict";
@@ -11222,17 +11158,16 @@ var WebAudioChannel = (function () {
     WebAudioChannel._errorCache = new Object();
     return WebAudioChannel;
 }());
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = WebAudioChannel;
+exports.WebAudioChannel = WebAudioChannel;
 
 },{}],"awayjs-core/lib/managers":[function(require,module,exports){
 "use strict";
 var AudioManager_1 = require("./managers/AudioManager");
-exports.AudioManager = AudioManager_1.default;
+exports.AudioManager = AudioManager_1.AudioManager;
 var StreamingAudioChannel_1 = require("./managers/StreamingAudioChannel");
-exports.StreamingAudioChannel = StreamingAudioChannel_1.default;
+exports.StreamingAudioChannel = StreamingAudioChannel_1.StreamingAudioChannel;
 var WebAudioChannel_1 = require("./managers/WebAudioChannel");
-exports.WebAudioChannel = WebAudioChannel_1.default;
+exports.WebAudioChannel = WebAudioChannel_1.WebAudioChannel;
 
 },{"./managers/AudioManager":"awayjs-core/lib/managers/AudioManager","./managers/StreamingAudioChannel":"awayjs-core/lib/managers/StreamingAudioChannel","./managers/WebAudioChannel":"awayjs-core/lib/managers/WebAudioChannel"}],"awayjs-core/lib/net/CrossDomainPolicy":[function(require,module,exports){
 "use strict";
@@ -11243,8 +11178,7 @@ var CrossDomainPolicy = (function () {
     CrossDomainPolicy.USE_CREDENTIALS = 'use-credentials';
     return CrossDomainPolicy;
 }());
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = CrossDomainPolicy;
+exports.CrossDomainPolicy = CrossDomainPolicy;
 
 },{}],"awayjs-core/lib/net/URLLoaderDataFormat":[function(require,module,exports){
 "use strict";
@@ -11278,8 +11212,7 @@ var URLLoaderDataFormat = (function () {
     URLLoaderDataFormat.BINARY = "binary";
     return URLLoaderDataFormat;
 }());
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = URLLoaderDataFormat;
+exports.URLLoaderDataFormat = URLLoaderDataFormat;
 
 },{}],"awayjs-core/lib/net/URLLoader":[function(require,module,exports){
 "use strict";
@@ -11312,7 +11245,7 @@ var URLLoader = (function (_super) {
         _super.call(this);
         this._bytesLoaded = 0;
         this._bytesTotal = 0;
-        this._dataFormat = URLLoaderDataFormat_1.default.TEXT;
+        this._dataFormat = URLLoaderDataFormat_1.URLLoaderDataFormat.TEXT;
         this._loadError = false;
     }
     Object.defineProperty(URLLoader.prototype, "url", {
@@ -11383,7 +11316,7 @@ var URLLoader = (function (_super) {
     URLLoader.prototype.load = function (request) {
         this._request = request;
         this.initXHR();
-        if (request.method === URLRequestMethod_1.default.POST)
+        if (request.method === URLRequestMethod_1.URLRequestMethod.POST)
             this.postRequest(request);
         else
             this.getRequest(request);
@@ -11413,15 +11346,15 @@ var URLLoader = (function (_super) {
      */
     URLLoader.prototype.setResponseType = function (xhr, responseType) {
         switch (responseType) {
-            case URLLoaderDataFormat_1.default.ARRAY_BUFFER:
-            case URLLoaderDataFormat_1.default.BLOB:
-            case URLLoaderDataFormat_1.default.TEXT:
+            case URLLoaderDataFormat_1.URLLoaderDataFormat.ARRAY_BUFFER:
+            case URLLoaderDataFormat_1.URLLoaderDataFormat.BLOB:
+            case URLLoaderDataFormat_1.URLLoaderDataFormat.TEXT:
                 xhr.responseType = responseType;
                 break;
-            case URLLoaderDataFormat_1.default.VARIABLES:
-                xhr.responseType = URLLoaderDataFormat_1.default.TEXT;
+            case URLLoaderDataFormat_1.URLLoaderDataFormat.VARIABLES:
+                xhr.responseType = URLLoaderDataFormat_1.URLLoaderDataFormat.TEXT;
                 break;
-            case URLLoaderDataFormat_1.default.BINARY:
+            case URLLoaderDataFormat_1.URLLoaderDataFormat.BINARY:
                 xhr.responseType = '';
                 break;
             default:
@@ -11449,7 +11382,7 @@ var URLLoader = (function (_super) {
         this._loadError = false;
         this._XHR.open(request.method, request.url, request.async);
         if (request.data != null) {
-            if (request.data instanceof URLVariables_1.default) {
+            if (request.data instanceof URLVariables_1.URLVariables) {
                 var urlVars = request.data;
                 try {
                     this._XHR.responseType = 'text';
@@ -11542,9 +11475,9 @@ var URLLoader = (function (_super) {
             this._status = this._XHR.status;
             if (this._status == 404) {
                 this._loadError = true;
-                this.dispatchEvent(this._loadErrorEvent || (this._loadErrorEvent = new URLLoaderEvent_1.default(URLLoaderEvent_1.default.LOAD_ERROR, this)));
+                this.dispatchEvent(this._loadErrorEvent || (this._loadErrorEvent = new URLLoaderEvent_1.URLLoaderEvent(URLLoaderEvent_1.URLLoaderEvent.LOAD_ERROR, this)));
             }
-            this.dispatchEvent(this._statusEvent || (this._statusEvent = new URLLoaderEvent_1.default(URLLoaderEvent_1.default.HTTP_STATUS, this)));
+            this.dispatchEvent(this._statusEvent || (this._statusEvent = new URLLoaderEvent_1.URLLoaderEvent(URLLoaderEvent_1.URLLoaderEvent.HTTP_STATUS, this)));
         }
     };
     /**
@@ -11576,14 +11509,14 @@ var URLLoader = (function (_super) {
     URLLoader.prototype.onProgress = function (event) {
         this._bytesTotal = event.total;
         this._bytesLoaded = event.loaded;
-        this.dispatchEvent(this._progressEvent || (this._progressEvent = new URLLoaderEvent_1.default(URLLoaderEvent_1.default.LOAD_PROGRESS, this)));
+        this.dispatchEvent(this._progressEvent || (this._progressEvent = new URLLoaderEvent_1.URLLoaderEvent(URLLoaderEvent_1.URLLoaderEvent.LOAD_PROGRESS, this)));
     };
     /**
      * When the request starts.
      * @param event
      */
     URLLoader.prototype.onLoadStart = function (event) {
-        this.dispatchEvent(this._loadStartEvent || (this._loadStartEvent = new URLLoaderEvent_1.default(URLLoaderEvent_1.default.LOAD_START, this)));
+        this.dispatchEvent(this._loadStartEvent || (this._loadStartEvent = new URLLoaderEvent_1.URLLoaderEvent(URLLoaderEvent_1.URLLoaderEvent.LOAD_START, this)));
     };
     /**
      * When the request has successfully completed.
@@ -11593,22 +11526,22 @@ var URLLoader = (function (_super) {
         if (this._loadError === true)
             return;
         switch (this._dataFormat) {
-            case URLLoaderDataFormat_1.default.TEXT:
+            case URLLoaderDataFormat_1.URLLoaderDataFormat.TEXT:
                 this._data = this._XHR.responseText;
                 break;
-            case URLLoaderDataFormat_1.default.VARIABLES:
+            case URLLoaderDataFormat_1.URLLoaderDataFormat.VARIABLES:
                 this._data = this.decodeURLVariables(this._XHR.responseText);
                 break;
-            case URLLoaderDataFormat_1.default.BLOB:
-            case URLLoaderDataFormat_1.default.ARRAY_BUFFER:
-            case URLLoaderDataFormat_1.default.BINARY:
+            case URLLoaderDataFormat_1.URLLoaderDataFormat.BLOB:
+            case URLLoaderDataFormat_1.URLLoaderDataFormat.ARRAY_BUFFER:
+            case URLLoaderDataFormat_1.URLLoaderDataFormat.BINARY:
                 this._data = this._XHR.response;
                 break;
             default:
                 this._data = this._XHR.responseText;
                 break;
         }
-        this.dispatchEvent(this._loadCompleteEvent || (this._loadCompleteEvent = new URLLoaderEvent_1.default(URLLoaderEvent_1.default.LOAD_COMPLETE, this)));
+        this.dispatchEvent(this._loadCompleteEvent || (this._loadCompleteEvent = new URLLoaderEvent_1.URLLoaderEvent(URLLoaderEvent_1.URLLoaderEvent.LOAD_COMPLETE, this)));
     };
     /**
      * When the request has failed. ( due to network issues ).
@@ -11616,12 +11549,11 @@ var URLLoader = (function (_super) {
      */
     URLLoader.prototype.onLoadError = function (event) {
         this._loadError = true;
-        this.dispatchEvent(this._loadErrorEvent || (this._loadErrorEvent = new URLLoaderEvent_1.default(URLLoaderEvent_1.default.LOAD_ERROR, this)));
+        this.dispatchEvent(this._loadErrorEvent || (this._loadErrorEvent = new URLLoaderEvent_1.URLLoaderEvent(URLLoaderEvent_1.URLLoaderEvent.LOAD_ERROR, this)));
     };
     return URLLoader;
-}(EventDispatcher_1.default));
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = URLLoader;
+}(EventDispatcher_1.EventDispatcher));
+exports.URLLoader = URLLoader;
 
 },{"../events/EventDispatcher":"awayjs-core/lib/events/EventDispatcher","../events/URLLoaderEvent":"awayjs-core/lib/events/URLLoaderEvent","../net/URLLoaderDataFormat":"awayjs-core/lib/net/URLLoaderDataFormat","../net/URLRequestMethod":"awayjs-core/lib/net/URLRequestMethod","../net/URLVariables":"awayjs-core/lib/net/URLVariables"}],"awayjs-core/lib/net/URLRequestMethod":[function(require,module,exports){
 "use strict";
@@ -11640,8 +11572,7 @@ var URLRequestMethod = (function () {
     URLRequestMethod.GET = 'GET';
     return URLRequestMethod;
 }());
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = URLRequestMethod;
+exports.URLRequestMethod = URLRequestMethod;
 
 },{}],"awayjs-core/lib/net/URLRequest":[function(require,module,exports){
 "use strict";
@@ -11660,7 +11591,7 @@ var URLRequest = (function () {
          *
          * @type {string}
          */
-        this.method = URLRequestMethod_1.default.GET;
+        this.method = URLRequestMethod_1.URLRequestMethod.GET;
         /**
          * Use asynchronous XMLHttpRequest
          * @type {boolean}
@@ -11695,8 +11626,7 @@ var URLRequest = (function () {
     };
     return URLRequest;
 }());
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = URLRequest;
+exports.URLRequest = URLRequest;
 
 },{"../net/URLRequestMethod":"awayjs-core/lib/net/URLRequestMethod"}],"awayjs-core/lib/net/URLVariables":[function(require,module,exports){
 "use strict";
@@ -11762,23 +11692,22 @@ var URLVariables = (function () {
     });
     return URLVariables;
 }());
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = URLVariables;
+exports.URLVariables = URLVariables;
 
 },{}],"awayjs-core/lib/net":[function(require,module,exports){
 "use strict";
 var CrossDomainPolicy_1 = require("./net/CrossDomainPolicy");
-exports.CrossDomainPolicy = CrossDomainPolicy_1.default;
+exports.CrossDomainPolicy = CrossDomainPolicy_1.CrossDomainPolicy;
 var URLLoader_1 = require("./net/URLLoader");
-exports.URLLoader = URLLoader_1.default;
+exports.URLLoader = URLLoader_1.URLLoader;
 var URLLoaderDataFormat_1 = require("./net/URLLoaderDataFormat");
-exports.URLLoaderDataFormat = URLLoaderDataFormat_1.default;
+exports.URLLoaderDataFormat = URLLoaderDataFormat_1.URLLoaderDataFormat;
 var URLRequest_1 = require("./net/URLRequest");
-exports.URLRequest = URLRequest_1.default;
+exports.URLRequest = URLRequest_1.URLRequest;
 var URLRequestMethod_1 = require("./net/URLRequestMethod");
-exports.URLRequestMethod = URLRequestMethod_1.default;
+exports.URLRequestMethod = URLRequestMethod_1.URLRequestMethod;
 var URLVariables_1 = require("./net/URLVariables");
-exports.URLVariables = URLVariables_1.default;
+exports.URLVariables = URLVariables_1.URLVariables;
 
 },{"./net/CrossDomainPolicy":"awayjs-core/lib/net/CrossDomainPolicy","./net/URLLoader":"awayjs-core/lib/net/URLLoader","./net/URLLoaderDataFormat":"awayjs-core/lib/net/URLLoaderDataFormat","./net/URLRequest":"awayjs-core/lib/net/URLRequest","./net/URLRequestMethod":"awayjs-core/lib/net/URLRequestMethod","./net/URLVariables":"awayjs-core/lib/net/URLVariables"}],"awayjs-core/lib/parsers/Image2DParser":[function(require,module,exports){
 "use strict";
@@ -11804,7 +11733,7 @@ var Image2DParser = (function (_super) {
      * @param extra The holder for extra contextual data that the parser might need.
      */
     function Image2DParser() {
-        _super.call(this, URLLoaderDataFormat_1.default.BLOB);
+        _super.call(this, URLLoaderDataFormat_1.URLLoaderDataFormat.BLOB);
     }
     /**
      * Indicates whether or not a given file extension is supported by the parser.
@@ -11823,7 +11752,7 @@ var Image2DParser = (function (_super) {
     Image2DParser.supportsData = function (data) {
         if (data instanceof HTMLImageElement)
             return true;
-        if (!(data instanceof ByteArray_1.default))
+        if (!(data instanceof ByteArray_1.ByteArray))
             return false;
         var ba = data;
         ba.position = 0;
@@ -11851,55 +11780,54 @@ var Image2DParser = (function (_super) {
         var asset;
         var sizeError = false;
         if (this._loadingImage) {
-            return ParserBase_1.default.MORE_TO_PARSE;
+            return ParserBase_1.ParserBase.MORE_TO_PARSE;
         }
         else if (this._htmlImageElement) {
             //if (ImageUtils.isHTMLImageElementValid(this._htmlImageElement)) {
-            asset = ParserUtils_1.default.imageToBitmapImage2D(this._htmlImageElement, false);
+            asset = ParserUtils_1.ParserUtils.imageToBitmapImage2D(this._htmlImageElement, false);
             this._pFinalizeAsset(asset, this._iFileName);
         }
         else if (this.data instanceof HTMLImageElement) {
             var htmlImageElement = this.data;
             //if (ImageUtils.isHTMLImageElementValid(htmlImageElement)) {
-            asset = ParserUtils_1.default.imageToBitmapImage2D(htmlImageElement, false);
+            asset = ParserUtils_1.ParserUtils.imageToBitmapImage2D(htmlImageElement, false);
             this._pFinalizeAsset(asset, this._iFileName);
         }
-        else if (this.data instanceof ByteArray_1.default) {
+        else if (this.data instanceof ByteArray_1.ByteArray) {
             var ba = this.data;
             ba.position = 0;
-            this._htmlImageElement = ParserUtils_1.default.byteArrayToImage(this.data);
+            this._htmlImageElement = ParserUtils_1.ParserUtils.byteArrayToImage(this.data);
             if (!this._htmlImageElement.complete) {
                 this._htmlImageElement.onload = function (event) { return _this.onLoadComplete(event); };
                 this._loadingImage = true;
-                return ParserBase_1.default.MORE_TO_PARSE;
+                return ParserBase_1.ParserBase.MORE_TO_PARSE;
             }
             //if (ImageUtils.isHTMLImageElementValid(this._htmlImageElement)) {
-            asset = ParserUtils_1.default.imageToBitmapImage2D(this._htmlImageElement, false);
+            asset = ParserUtils_1.ParserUtils.imageToBitmapImage2D(this._htmlImageElement, false);
             this._pFinalizeAsset(asset, this._iFileName);
         }
         else if (this.data instanceof ArrayBuffer) {
-            this._htmlImageElement = ParserUtils_1.default.arrayBufferToImage(this.data);
-            asset = ParserUtils_1.default.imageToBitmapImage2D(this._htmlImageElement, false);
+            this._htmlImageElement = ParserUtils_1.ParserUtils.arrayBufferToImage(this.data);
+            asset = ParserUtils_1.ParserUtils.imageToBitmapImage2D(this._htmlImageElement, false);
             this._pFinalizeAsset(asset, this._iFileName);
         }
         else if (this.data instanceof Blob) {
-            this._htmlImageElement = ParserUtils_1.default.blobToImage(this.data);
+            this._htmlImageElement = ParserUtils_1.ParserUtils.blobToImage(this.data);
             this._htmlImageElement.onload = function (event) { return _this.onLoadComplete(event); };
             this._loadingImage = true;
-            return ParserBase_1.default.MORE_TO_PARSE;
+            return ParserBase_1.ParserBase.MORE_TO_PARSE;
         }
         if (sizeError == true) {
         }
         this._pContent = asset;
-        return ParserBase_1.default.PARSING_DONE;
+        return ParserBase_1.ParserBase.PARSING_DONE;
     };
     Image2DParser.prototype.onLoadComplete = function (event) {
         this._loadingImage = false;
     };
     return Image2DParser;
-}(ParserBase_1.default));
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = Image2DParser;
+}(ParserBase_1.ParserBase));
+exports.Image2DParser = Image2DParser;
 
 },{"../net/URLLoaderDataFormat":"awayjs-core/lib/net/URLLoaderDataFormat","../parsers/ParserBase":"awayjs-core/lib/parsers/ParserBase","../parsers/ParserUtils":"awayjs-core/lib/parsers/ParserUtils","../utils/ByteArray":"awayjs-core/lib/utils/ByteArray"}],"awayjs-core/lib/parsers/ImageCubeParser":[function(require,module,exports){
 "use strict";
@@ -11925,7 +11853,7 @@ var ImageCubeParser = (function (_super) {
      * @param extra The holder for extra contextual data that the parser might need.
      */
     function ImageCubeParser() {
-        _super.call(this, URLLoaderDataFormat_1.default.TEXT);
+        _super.call(this, URLLoaderDataFormat_1.URLLoaderDataFormat.TEXT);
     }
     /**
      * Indicates whether or not a given file extension is supported by the parser.
@@ -11967,18 +11895,18 @@ var ImageCubeParser = (function (_super) {
      */
     ImageCubeParser.prototype._pProceedParsing = function () {
         if (this._imgDependencyDictionary != null) {
-            var asset = new BitmapImageCube_1.default(this._getBitmapImage2D(ImageCubeParser.posX).width);
-            asset.draw(BitmapImageCube_1.default.posX, this._getBitmapImage2D(ImageCubeParser.posX));
-            asset.draw(BitmapImageCube_1.default.negX, this._getBitmapImage2D(ImageCubeParser.negX));
-            asset.draw(BitmapImageCube_1.default.posY, this._getBitmapImage2D(ImageCubeParser.posY));
-            asset.draw(BitmapImageCube_1.default.negY, this._getBitmapImage2D(ImageCubeParser.negY));
-            asset.draw(BitmapImageCube_1.default.posZ, this._getBitmapImage2D(ImageCubeParser.posZ));
-            asset.draw(BitmapImageCube_1.default.negZ, this._getBitmapImage2D(ImageCubeParser.negZ));
+            var asset = new BitmapImageCube_1.BitmapImageCube(this._getBitmapImage2D(ImageCubeParser.posX).width);
+            asset.draw(BitmapImageCube_1.BitmapImageCube.posX, this._getBitmapImage2D(ImageCubeParser.posX));
+            asset.draw(BitmapImageCube_1.BitmapImageCube.negX, this._getBitmapImage2D(ImageCubeParser.negX));
+            asset.draw(BitmapImageCube_1.BitmapImageCube.posY, this._getBitmapImage2D(ImageCubeParser.posY));
+            asset.draw(BitmapImageCube_1.BitmapImageCube.negY, this._getBitmapImage2D(ImageCubeParser.negY));
+            asset.draw(BitmapImageCube_1.BitmapImageCube.posZ, this._getBitmapImage2D(ImageCubeParser.posZ));
+            asset.draw(BitmapImageCube_1.BitmapImageCube.negZ, this._getBitmapImage2D(ImageCubeParser.negZ));
             //clear dictionary
             this._imgDependencyDictionary = null;
             asset.name = this._iFileName;
             this._pFinalizeAsset(asset, this._iFileName);
-            return ParserBase_1.default.PARSING_DONE;
+            return ParserBase_1.ParserBase.PARSING_DONE;
         }
         try {
             var json = JSON.parse(this.data);
@@ -11990,20 +11918,20 @@ var ImageCubeParser = (function (_super) {
                 this._imgDependencyDictionary = new Object();
                 for (var c = 0; c < data.length; c++) {
                     rec = data[c];
-                    this._imgDependencyDictionary[rec.id] = this._pAddDependency(rec.id, new URLRequest_1.default(rec.image.toString()));
+                    this._imgDependencyDictionary[rec.id] = this._pAddDependency(rec.id, new URLRequest_1.URLRequest(rec.image.toString()));
                 }
                 if (!this._validateCubeData()) {
                     this._pDieWithError("ImageCubeParser: JSON data error - cubes require id of:   \n" + ImageCubeParser.posX + ', ' + ImageCubeParser.negX + ',  \n' + ImageCubeParser.posY + ', ' + ImageCubeParser.negY + ',  \n' + ImageCubeParser.posZ + ', ' + ImageCubeParser.negZ);
-                    return ParserBase_1.default.PARSING_DONE;
+                    return ParserBase_1.ParserBase.PARSING_DONE;
                 }
                 this._pPauseAndRetrieveDependencies();
-                return ParserBase_1.default.MORE_TO_PARSE;
+                return ParserBase_1.ParserBase.MORE_TO_PARSE;
             }
         }
         catch (e) {
             this._pDieWithError('CubeTexturePaser Error parsing JSON');
         }
-        return ParserBase_1.default.PARSING_DONE;
+        return ParserBase_1.ParserBase.PARSING_DONE;
     };
     ImageCubeParser.prototype._validateCubeData = function () {
         return (this._imgDependencyDictionary[ImageCubeParser.posX] != null && this._imgDependencyDictionary[ImageCubeParser.negX] != null && this._imgDependencyDictionary[ImageCubeParser.posY] != null && this._imgDependencyDictionary[ImageCubeParser.negY] != null && this._imgDependencyDictionary[ImageCubeParser.posZ] != null && this._imgDependencyDictionary[ImageCubeParser.negZ] != null);
@@ -12021,9 +11949,8 @@ var ImageCubeParser = (function (_super) {
     ImageCubeParser.posZ = 'posZ';
     ImageCubeParser.negZ = 'negZ';
     return ImageCubeParser;
-}(ParserBase_1.default));
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = ImageCubeParser;
+}(ParserBase_1.ParserBase));
+exports.ImageCubeParser = ImageCubeParser;
 
 },{"../image/BitmapImageCube":"awayjs-core/lib/image/BitmapImageCube","../net/URLLoaderDataFormat":"awayjs-core/lib/net/URLLoaderDataFormat","../net/URLRequest":"awayjs-core/lib/net/URLRequest","../parsers/ParserBase":"awayjs-core/lib/parsers/ParserBase"}],"awayjs-core/lib/parsers/ParserBase":[function(require,module,exports){
 "use strict";
@@ -12043,7 +11970,7 @@ var ImageUtils_1 = require("../utils/ImageUtils");
 var Timer_1 = require("../utils/Timer");
 var getTimer_1 = require("../utils/getTimer");
 /**
- * <code>ParserBase</code> provides an abstract base class for objects that convert blocks of data to data structures
+ * <code>ParserBase</code> provides an abstract base export class for objects that convert blocks of data to data structures
  * supported by away.
  *
  * If used by <code>Loader</code> to automatically determine the parser type, two public static methods should
@@ -12085,7 +12012,7 @@ var ParserBase = (function (_super) {
     //* Indicates whether or not a given file extension is supported by the parser.
     //----------------------------------------------------------------------------------------------------------------------------------------------------------------
     ParserBase.supportsType = function (extension) {
-        throw new AbstractMethodError_1.default();
+        throw new AbstractMethodError_1.AbstractMethodError();
     };
     Object.defineProperty(ParserBase.prototype, "content", {
         /* Protected */
@@ -12099,7 +12026,7 @@ var ParserBase = (function (_super) {
      * Validates a bitmapData loaded before assigning to a default BitmapMaterial
      */
     ParserBase.prototype.isBitmapImage2DValid = function (bitmapImage2D) {
-        var isValid = ImageUtils_1.default.isImage2DValid(bitmapImage2D);
+        var isValid = ImageUtils_1.ImageUtils.isImage2DValid(bitmapImage2D);
         if (!isValid) {
             console.log(">> Bitmap loaded is not having power of 2 dimensions or is higher than 2048");
         }
@@ -12189,7 +12116,7 @@ var ParserBase = (function (_super) {
      * @param resourceDependency The dependency to be resolved.
      */
     ParserBase.prototype._iResolveDependency = function (resourceDependency) {
-        throw new AbstractMethodError_1.default();
+        throw new AbstractMethodError_1.AbstractMethodError();
     };
     /**
      * Resolve a dependency loading failure. Used by parser to eventually provide a default map
@@ -12197,7 +12124,7 @@ var ParserBase = (function (_super) {
      * @param resourceDependency The dependency to be resolved.
      */
     ParserBase.prototype._iResolveDependencyFailure = function (resourceDependency) {
-        throw new AbstractMethodError_1.default();
+        throw new AbstractMethodError_1.AbstractMethodError();
     };
     /**
      * Resolve a dependency name
@@ -12225,7 +12152,7 @@ var ParserBase = (function (_super) {
         // a per-type default name.
         if (!asset.name)
             asset.name = asset.assetType;
-        this.dispatchEvent(new AssetEvent_1.default(AssetEvent_1.default.ASSET_COMPLETE, asset));
+        this.dispatchEvent(new AssetEvent_1.AssetEvent(AssetEvent_1.AssetEvent.ASSET_COMPLETE, asset));
     };
     /**
      * Parse the next block of data.
@@ -12233,29 +12160,29 @@ var ParserBase = (function (_super) {
      * <code>ParserBase.ParserBase.MORE_TO_PARSE</code>.
      */
     ParserBase.prototype._pProceedParsing = function () {
-        throw new AbstractMethodError_1.default();
+        throw new AbstractMethodError_1.AbstractMethodError();
     };
     ParserBase.prototype._pDieWithError = function (message) {
         if (message === void 0) { message = 'Unknown parsing error'; }
         if (this._timer) {
-            this._timer.removeEventListener(TimerEvent_1.default.TIMER, this._pOnIntervalDelegate);
+            this._timer.removeEventListener(TimerEvent_1.TimerEvent.TIMER, this._pOnIntervalDelegate);
             this._timer.stop();
             this._timer = null;
         }
-        this.dispatchEvent(new ParserEvent_1.default(ParserEvent_1.default.PARSE_ERROR, message));
+        this.dispatchEvent(new ParserEvent_1.ParserEvent(ParserEvent_1.ParserEvent.PARSE_ERROR, message));
     };
     ParserBase.prototype._pAddDependency = function (id, req, retrieveAsRawData, data, suppressErrorEvents, sub_id) {
         if (retrieveAsRawData === void 0) { retrieveAsRawData = false; }
         if (data === void 0) { data = null; }
         if (suppressErrorEvents === void 0) { suppressErrorEvents = false; }
         if (sub_id === void 0) { sub_id = 0; }
-        var dependency = new ResourceDependency_1.default(id, req, data, null, this, retrieveAsRawData, suppressErrorEvents, sub_id);
+        var dependency = new ResourceDependency_1.ResourceDependency(id, req, data, null, this, retrieveAsRawData, suppressErrorEvents, sub_id);
         this._dependencies.push(dependency);
         return dependency;
     };
     ParserBase.prototype._pPauseAndRetrieveDependencies = function () {
         this._pPauseParsing();
-        this.dispatchEvent(new ParserEvent_1.default(ParserEvent_1.default.READY_FOR_DEPENDENCIES));
+        this.dispatchEvent(new ParserEvent_1.ParserEvent(ParserEvent_1.ParserEvent.READY_FOR_DEPENDENCIES));
     };
     ParserBase.prototype._pPauseParsing = function () {
         if (this._timer)
@@ -12267,14 +12194,14 @@ var ParserBase = (function (_super) {
      * @return True if there is still time left, false if the maximum allotted time was exceeded and parsing should be interrupted.
      */
     ParserBase.prototype._pHasTime = function () {
-        return ((getTimer_1.default() - this._lastFrameTime) < this._frameLimit);
+        return ((getTimer_1.getTimer() - this._lastFrameTime) < this._frameLimit);
     };
     /**
      * Called when the parsing pause interval has passed and parsing can proceed.
      */
     ParserBase.prototype._pOnInterval = function (event) {
         if (event === void 0) { event = null; }
-        this._lastFrameTime = getTimer_1.default();
+        this._lastFrameTime = getTimer_1.getTimer();
         this._isParsing = true;
         if (this._pProceedParsing() && !this._parsingFailure)
             this._pFinishParsing();
@@ -12286,8 +12213,8 @@ var ParserBase = (function (_super) {
      */
     ParserBase.prototype._pStartParsing = function (frameLimit) {
         this._frameLimit = frameLimit;
-        this._timer = new Timer_1.default(this._frameLimit, 0);
-        this._timer.addEventListener(TimerEvent_1.default.TIMER, this._pOnIntervalDelegate);
+        this._timer = new Timer_1.Timer(this._frameLimit, 0);
+        this._timer.addEventListener(TimerEvent_1.TimerEvent.TIMER, this._pOnIntervalDelegate);
         this._timer.start();
         //get started!
         this._pOnInterval();
@@ -12297,13 +12224,13 @@ var ParserBase = (function (_super) {
      */
     ParserBase.prototype._pFinishParsing = function () {
         if (this._timer) {
-            this._timer.removeEventListener(TimerEvent_1.default.TIMER, this._pOnIntervalDelegate);
+            this._timer.removeEventListener(TimerEvent_1.TimerEvent.TIMER, this._pOnIntervalDelegate);
             this._timer.stop();
         }
         this._timer = null;
         this._parsingComplete = true;
         this._isParsing = false;
-        this.dispatchEvent(new ParserEvent_1.default(ParserEvent_1.default.PARSE_COMPLETE));
+        this.dispatchEvent(new ParserEvent_1.ParserEvent(ParserEvent_1.ParserEvent.PARSE_COMPLETE));
     };
     /**
      *
@@ -12311,7 +12238,7 @@ var ParserBase = (function (_super) {
      * @private
      */
     ParserBase.prototype._pGetTextData = function () {
-        return ParserUtils_1.default.toString(this._data);
+        return ParserUtils_1.ParserUtils.toString(this._data);
     };
     /**
      *
@@ -12319,7 +12246,7 @@ var ParserBase = (function (_super) {
      * @private
      */
     ParserBase.prototype._pGetByteData = function () {
-        return ParserUtils_1.default.toByteArray(this._data);
+        return ParserUtils_1.ParserUtils.toByteArray(this._data);
     };
     /**
      *
@@ -12339,9 +12266,8 @@ var ParserBase = (function (_super) {
      */
     ParserBase.MORE_TO_PARSE = false;
     return ParserBase;
-}(EventDispatcher_1.default));
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = ParserBase;
+}(EventDispatcher_1.EventDispatcher));
+exports.ParserBase = ParserBase;
 
 },{"../errors/AbstractMethodError":"awayjs-core/lib/errors/AbstractMethodError","../events/AssetEvent":"awayjs-core/lib/events/AssetEvent","../events/EventDispatcher":"awayjs-core/lib/events/EventDispatcher","../events/ParserEvent":"awayjs-core/lib/events/ParserEvent","../events/TimerEvent":"awayjs-core/lib/events/TimerEvent","../parsers/ParserUtils":"awayjs-core/lib/parsers/ParserUtils","../parsers/ResourceDependency":"awayjs-core/lib/parsers/ResourceDependency","../utils/ImageUtils":"awayjs-core/lib/utils/ImageUtils","../utils/Timer":"awayjs-core/lib/utils/Timer","../utils/getTimer":"awayjs-core/lib/utils/getTimer"}],"awayjs-core/lib/parsers/ParserDataFormat":[function(require,module,exports){
 "use strict";
@@ -12365,8 +12291,7 @@ var ParserDataFormat = (function () {
     ParserDataFormat.IMAGE = "image";
     return ParserDataFormat;
 }());
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = ParserDataFormat;
+exports.ParserDataFormat = ParserDataFormat;
 
 },{}],"awayjs-core/lib/parsers/ParserUtils":[function(require,module,exports){
 "use strict";
@@ -12459,7 +12384,7 @@ var ParserUtils = (function () {
      */
     ParserUtils.imageToBitmapImage2D = function (img, powerOfTwo) {
         if (powerOfTwo === void 0) { powerOfTwo = true; }
-        var bitmapData = new BitmapImage2D_1.default(img.width, img.height, true, null, powerOfTwo);
+        var bitmapData = new BitmapImage2D_1.BitmapImage2D(img.width, img.height, true, null, powerOfTwo);
         bitmapData.draw(img);
         return bitmapData;
     };
@@ -12472,7 +12397,7 @@ var ParserUtils = (function () {
      *
      */
     ParserUtils.toByteArray = function (data) {
-        var b = new ByteArray_1.default();
+        var b = new ByteArray_1.ByteArray();
         b.setArrayBuffer(data);
         return b;
     };
@@ -12492,7 +12417,7 @@ var ParserUtils = (function () {
             if (s['substr'] != null)
                 return s.substr(0, s.length);
         }
-        if (data instanceof ByteArray_1.default) {
+        if (data instanceof ByteArray_1.ByteArray) {
             var ba = data;
             ba.position = 0;
             return ba.readUTFBytes(Math.min(ba.getBytesAvailable(), length));
@@ -12518,8 +12443,7 @@ var ParserUtils = (function () {
     };
     return ParserUtils;
 }());
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = ParserUtils;
+exports.ParserUtils = ParserUtils;
 
 },{"../image/BitmapImage2D":"awayjs-core/lib/image/BitmapImage2D","../utils/ByteArray":"awayjs-core/lib/utils/ByteArray"}],"awayjs-core/lib/parsers/ResourceDependency":[function(require,module,exports){
 "use strict";
@@ -12681,8 +12605,7 @@ var ResourceDependency = (function () {
     };
     return ResourceDependency;
 }());
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = ResourceDependency;
+exports.ResourceDependency = ResourceDependency;
 
 },{}],"awayjs-core/lib/parsers/TextureAtlasParser":[function(require,module,exports){
 "use strict";
@@ -12711,7 +12634,7 @@ var TextureAtlasParser = (function (_super) {
      * @param extra The holder for extra contextual data that the parser might need.
      */
     function TextureAtlasParser() {
-        _super.call(this, URLLoaderDataFormat_1.default.TEXT);
+        _super.call(this, URLLoaderDataFormat_1.URLLoaderDataFormat.TEXT);
         this._parseState = 0;
     }
     /**
@@ -12730,7 +12653,7 @@ var TextureAtlasParser = (function (_super) {
      */
     TextureAtlasParser.supportsData = function (data) {
         try {
-            var content = ParserUtils_1.default.toString(data);
+            var content = ParserUtils_1.ParserUtils.toString(data);
             if (content.indexOf("TextureAtlas") != -1 || content.indexOf("textureatlas") != -1)
                 return true;
             return false;
@@ -12766,22 +12689,22 @@ var TextureAtlasParser = (function (_super) {
         switch (this._parseState) {
             case TextureAtlasParserState.PARSE_XML:
                 try {
-                    this._doc = XmlUtils_1.default.getChildrenWithTag(XmlUtils_1.default.strToXml(this._pGetTextData()), "TextureAtlas")[0];
-                    this._imagePath = XmlUtils_1.default.readAttributeValue(this._doc, "imagePath");
-                    this._subTextureNodes = XmlUtils_1.default.getChildrenWithTag(this._doc, "SubTexture");
+                    this._doc = XmlUtils_1.XmlUtils.getChildrenWithTag(XmlUtils_1.XmlUtils.strToXml(this._pGetTextData()), "TextureAtlas")[0];
+                    this._imagePath = XmlUtils_1.XmlUtils.readAttributeValue(this._doc, "imagePath");
+                    this._subTextureNodes = XmlUtils_1.XmlUtils.getChildrenWithTag(this._doc, "SubTexture");
                     this._parseState = TextureAtlasParserState.PARSE_IMAGE;
                 }
                 catch (Error) {
-                    return ParserBase_1.default.PARSING_DONE;
+                    return ParserBase_1.ParserBase.PARSING_DONE;
                 }
                 break;
             case TextureAtlasParserState.PARSE_IMAGE:
                 if (this._imagePath) {
-                    this._pAddDependency(this._imagePath, new URLRequest_1.default(this._imagePath));
+                    this._pAddDependency(this._imagePath, new URLRequest_1.URLRequest(this._imagePath));
                     this._pPauseAndRetrieveDependencies();
                 }
                 else {
-                    return ParserBase_1.default.PARSING_DONE;
+                    return ParserBase_1.ParserBase.PARSING_DONE;
                 }
                 break;
             case TextureAtlasParserState.PARSE_SUBTEXTURES:
@@ -12794,34 +12717,33 @@ var TextureAtlasParser = (function (_super) {
                 var len = this._subTextureNodes.length;
                 for (var i = 0; i < len; i++) {
                     element = this._subTextureNodes[i];
-                    sampler = new Sampler2D_1.default();
+                    sampler = new Sampler2D_1.Sampler2D();
                     //setup subtexture rect
-                    x = XmlUtils_1.default.readAttributeValue(element, "x");
-                    y = XmlUtils_1.default.readAttributeValue(element, "y");
-                    width = XmlUtils_1.default.readAttributeValue(element, "width");
-                    height = XmlUtils_1.default.readAttributeValue(element, "height");
+                    x = XmlUtils_1.XmlUtils.readAttributeValue(element, "x");
+                    y = XmlUtils_1.XmlUtils.readAttributeValue(element, "y");
+                    width = XmlUtils_1.XmlUtils.readAttributeValue(element, "width");
+                    height = XmlUtils_1.XmlUtils.readAttributeValue(element, "height");
                     if (x || y || width || height)
-                        sampler.imageRect = new Rectangle_1.default(parseInt(x) / this._imageData.width, parseInt(y) / this._imageData.height, parseInt(width) / this._imageData.width, parseInt(height) / this._imageData.height);
+                        sampler.imageRect = new Rectangle_1.Rectangle(parseInt(x) / this._imageData.width, parseInt(y) / this._imageData.height, parseInt(width) / this._imageData.width, parseInt(height) / this._imageData.height);
                     //setup frame rect
-                    x = XmlUtils_1.default.readAttributeValue(element, "frameX");
-                    y = XmlUtils_1.default.readAttributeValue(element, "frameY");
-                    width = XmlUtils_1.default.readAttributeValue(element, "frameWidth");
-                    height = XmlUtils_1.default.readAttributeValue(element, "frameHeight");
+                    x = XmlUtils_1.XmlUtils.readAttributeValue(element, "frameX");
+                    y = XmlUtils_1.XmlUtils.readAttributeValue(element, "frameY");
+                    width = XmlUtils_1.XmlUtils.readAttributeValue(element, "frameWidth");
+                    height = XmlUtils_1.XmlUtils.readAttributeValue(element, "frameHeight");
                     if (x || y || width || height)
-                        sampler.frameRect = new Rectangle_1.default(parseInt(x), parseInt(y), parseInt(width), parseInt(height));
-                    this._pFinalizeAsset(sampler, XmlUtils_1.default.readAttributeValue(element, "name"));
+                        sampler.frameRect = new Rectangle_1.Rectangle(parseInt(x), parseInt(y), parseInt(width), parseInt(height));
+                    this._pFinalizeAsset(sampler, XmlUtils_1.XmlUtils.readAttributeValue(element, "name"));
                 }
                 this._parseState = TextureAtlasParserState.PARSE_COMPLETE;
                 break;
             case TextureAtlasParserState.PARSE_COMPLETE:
-                return ParserBase_1.default.PARSING_DONE;
+                return ParserBase_1.ParserBase.PARSING_DONE;
         }
-        return ParserBase_1.default.MORE_TO_PARSE;
+        return ParserBase_1.ParserBase.MORE_TO_PARSE;
     };
     return TextureAtlasParser;
-}(ParserBase_1.default));
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = TextureAtlasParser;
+}(ParserBase_1.ParserBase));
+exports.TextureAtlasParser = TextureAtlasParser;
 var TextureAtlasParserState = (function () {
     function TextureAtlasParserState() {
     }
@@ -12831,6 +12753,7 @@ var TextureAtlasParserState = (function () {
     TextureAtlasParserState.PARSE_COMPLETE = 3;
     return TextureAtlasParserState;
 }());
+exports.TextureAtlasParserState = TextureAtlasParserState;
 
 },{"../geom/Rectangle":"awayjs-core/lib/geom/Rectangle","../image/Sampler2D":"awayjs-core/lib/image/Sampler2D","../net/URLLoaderDataFormat":"awayjs-core/lib/net/URLLoaderDataFormat","../net/URLRequest":"awayjs-core/lib/net/URLRequest","../parsers/ParserBase":"awayjs-core/lib/parsers/ParserBase","../parsers/ParserUtils":"awayjs-core/lib/parsers/ParserUtils","../utils/XmlUtils":"awayjs-core/lib/utils/XmlUtils"}],"awayjs-core/lib/parsers/WaveAudioParser":[function(require,module,exports){
 "use strict";
@@ -12846,14 +12769,14 @@ var ByteArray_1 = require("../utils/ByteArray");
 var WaveAudioParser = (function (_super) {
     __extends(WaveAudioParser, _super);
     function WaveAudioParser() {
-        _super.call(this, URLLoaderDataFormat_1.default.BLOB);
+        _super.call(this, URLLoaderDataFormat_1.URLLoaderDataFormat.BLOB);
     }
     WaveAudioParser.supportsType = function (extension) {
         extension = extension.toLowerCase();
         return extension == "wav" || extension == "mp3" || extension == "ogg";
     };
     WaveAudioParser.supportsData = function (data) {
-        if (!(data instanceof ByteArray_1.default))
+        if (!(data instanceof ByteArray_1.ByteArray))
             return false;
         var ba = data;
         var filetype = WaveAudioParser.parseFileType(ba);
@@ -12866,15 +12789,15 @@ var WaveAudioParser = (function (_super) {
         _super.prototype._pStartParsing.call(this, frameLimit);
     };
     WaveAudioParser.prototype._pProceedParsing = function () {
-        if (this.data instanceof ByteArray_1.default) {
-            this._pContent = new WaveAudio_1.default(this.data.arraybytes);
+        if (this.data instanceof ByteArray_1.ByteArray) {
+            this._pContent = new WaveAudio_1.WaveAudio(this.data.arraybytes);
             this._pFinalizeAsset(this._pContent, this._iFileName);
         }
         else if (this.data instanceof ArrayBuffer) {
-            this._pContent = new WaveAudio_1.default(this.data);
+            this._pContent = new WaveAudio_1.WaveAudio(this.data);
             this._pFinalizeAsset(this._pContent, this._iFileName);
         }
-        return ParserBase_1.default.PARSING_DONE;
+        return ParserBase_1.ParserBase.PARSING_DONE;
     };
     WaveAudioParser.parseFileType = function (ba) {
         ba.position = 0;
@@ -12892,28 +12815,27 @@ var WaveAudioParser = (function (_super) {
         return null;
     };
     return WaveAudioParser;
-}(ParserBase_1.default));
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = WaveAudioParser;
+}(ParserBase_1.ParserBase));
+exports.WaveAudioParser = WaveAudioParser;
 
 },{"../audio/WaveAudio":"awayjs-core/lib/audio/WaveAudio","../net/URLLoaderDataFormat":"awayjs-core/lib/net/URLLoaderDataFormat","../parsers/ParserBase":"awayjs-core/lib/parsers/ParserBase","../utils/ByteArray":"awayjs-core/lib/utils/ByteArray"}],"awayjs-core/lib/parsers":[function(require,module,exports){
 "use strict";
 var Image2DParser_1 = require("./parsers/Image2DParser");
-exports.Image2DParser = Image2DParser_1.default;
+exports.Image2DParser = Image2DParser_1.Image2DParser;
 var ImageCubeParser_1 = require("./parsers/ImageCubeParser");
-exports.ImageCubeParser = ImageCubeParser_1.default;
+exports.ImageCubeParser = ImageCubeParser_1.ImageCubeParser;
 var ParserBase_1 = require("./parsers/ParserBase");
-exports.ParserBase = ParserBase_1.default;
+exports.ParserBase = ParserBase_1.ParserBase;
 var ParserDataFormat_1 = require("./parsers/ParserDataFormat");
-exports.ParserDataFormat = ParserDataFormat_1.default;
+exports.ParserDataFormat = ParserDataFormat_1.ParserDataFormat;
 var ParserUtils_1 = require("./parsers/ParserUtils");
-exports.ParserUtils = ParserUtils_1.default;
+exports.ParserUtils = ParserUtils_1.ParserUtils;
 var ResourceDependency_1 = require("./parsers/ResourceDependency");
-exports.ResourceDependency = ResourceDependency_1.default;
+exports.ResourceDependency = ResourceDependency_1.ResourceDependency;
 var TextureAtlasParser_1 = require("./parsers/TextureAtlasParser");
-exports.TextureAtlasParser = TextureAtlasParser_1.default;
+exports.TextureAtlasParser = TextureAtlasParser_1.TextureAtlasParser;
 var WaveAudioParser_1 = require("./parsers/WaveAudioParser");
-exports.WaveAudioParser = WaveAudioParser_1.default;
+exports.WaveAudioParser = WaveAudioParser_1.WaveAudioParser;
 
 },{"./parsers/Image2DParser":"awayjs-core/lib/parsers/Image2DParser","./parsers/ImageCubeParser":"awayjs-core/lib/parsers/ImageCubeParser","./parsers/ParserBase":"awayjs-core/lib/parsers/ParserBase","./parsers/ParserDataFormat":"awayjs-core/lib/parsers/ParserDataFormat","./parsers/ParserUtils":"awayjs-core/lib/parsers/ParserUtils","./parsers/ResourceDependency":"awayjs-core/lib/parsers/ResourceDependency","./parsers/TextureAtlasParser":"awayjs-core/lib/parsers/TextureAtlasParser","./parsers/WaveAudioParser":"awayjs-core/lib/parsers/WaveAudioParser"}],"awayjs-core/lib/projections/CoordinateSystem":[function(require,module,exports){
 "use strict";
@@ -12935,8 +12857,7 @@ var CoordinateSystem = (function () {
     CoordinateSystem.RIGHT_HANDED = "rightHanded";
     return CoordinateSystem;
 }());
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = CoordinateSystem;
+exports.CoordinateSystem = CoordinateSystem;
 
 },{}],"awayjs-core/lib/projections/FreeMatrixProjection":[function(require,module,exports){
 "use strict";
@@ -12951,7 +12872,7 @@ var FreeMatrixProjection = (function (_super) {
     __extends(FreeMatrixProjection, _super);
     function FreeMatrixProjection() {
         _super.call(this);
-        this._pMatrix.copyFrom(new PerspectiveProjection_1.default().matrix);
+        this._pMatrix.copyFrom(new PerspectiveProjection_1.PerspectiveProjection().matrix);
     }
     Object.defineProperty(FreeMatrixProjection.prototype, "near", {
         //@override
@@ -12992,9 +12913,8 @@ var FreeMatrixProjection = (function (_super) {
         this._pMatrixInvalid = false;
     };
     return FreeMatrixProjection;
-}(ProjectionBase_1.default));
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = FreeMatrixProjection;
+}(ProjectionBase_1.ProjectionBase));
+exports.FreeMatrixProjection = FreeMatrixProjection;
 
 },{"../projections/PerspectiveProjection":"awayjs-core/lib/projections/PerspectiveProjection","../projections/ProjectionBase":"awayjs-core/lib/projections/ProjectionBase"}],"awayjs-core/lib/projections/IProjection":[function(require,module,exports){
 "use strict";
@@ -13076,11 +12996,11 @@ var ObliqueNearPlaneProjection = (function (_super) {
     Object.defineProperty(ObliqueNearPlaneProjection.prototype, "baseProjection", {
         set: function (value) {
             if (this._baseProjection) {
-                this._baseProjection.removeEventListener(ProjectionEvent_1.default.MATRIX_CHANGED, this._onProjectionMatrixChangedDelegate);
+                this._baseProjection.removeEventListener(ProjectionEvent_1.ProjectionEvent.MATRIX_CHANGED, this._onProjectionMatrixChangedDelegate);
             }
             this._baseProjection = value;
             if (this._baseProjection) {
-                this._baseProjection.addEventListener(ProjectionEvent_1.default.MATRIX_CHANGED, this._onProjectionMatrixChangedDelegate);
+                this._baseProjection.addEventListener(ProjectionEvent_1.ProjectionEvent.MATRIX_CHANGED, this._onProjectionMatrixChangedDelegate);
             }
             this.pInvalidateMatrix();
         },
@@ -13099,18 +13019,17 @@ var ObliqueNearPlaneProjection = (function (_super) {
         var cw = -this._plane.d + .05;
         var signX = cx >= 0 ? 1 : -1;
         var signY = cy >= 0 ? 1 : -1;
-        var p = new Vector3D_1.default(signX, signY, 1, 1);
+        var p = new Vector3D_1.Vector3D(signX, signY, 1, 1);
         var inverse = this._pMatrix.clone();
         inverse.invert();
         var q = inverse.transformVector(p);
         this._pMatrix.copyRowTo(3, p);
         var a = (q.x * p.x + q.y * p.y + q.z * p.z + q.w * p.w) / (cx * q.x + cy * q.y + cz * q.z + cw * q.w);
-        this._pMatrix.copyRowFrom(2, new Vector3D_1.default(cx * a, cy * a, cz * a, cw * a));
+        this._pMatrix.copyRowFrom(2, new Vector3D_1.Vector3D(cx * a, cy * a, cz * a, cw * a));
     };
     return ObliqueNearPlaneProjection;
-}(ProjectionBase_1.default));
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = ObliqueNearPlaneProjection;
+}(ProjectionBase_1.ProjectionBase));
+exports.ObliqueNearPlaneProjection = ObliqueNearPlaneProjection;
 
 },{"../events/ProjectionEvent":"awayjs-core/lib/events/ProjectionEvent","../geom/Vector3D":"awayjs-core/lib/geom/Vector3D","../projections/ProjectionBase":"awayjs-core/lib/projections/ProjectionBase"}],"awayjs-core/lib/projections/OrthographicOffCenterProjection":[function(require,module,exports){
 "use strict";
@@ -13177,7 +13096,7 @@ var OrthographicOffCenterProjection = (function (_super) {
     });
     //@override
     OrthographicOffCenterProjection.prototype.unproject = function (nX, nY, sZ) {
-        var v = new Vector3D_1.default(nX, -nY, sZ, 1.0);
+        var v = new Vector3D_1.Vector3D(nX, -nY, sZ, 1.0);
         v = this.unprojectionMatrix.transformVector(v);
         //z is unaffected by transform
         v.z = sZ;
@@ -13193,7 +13112,7 @@ var OrthographicOffCenterProjection = (function (_super) {
     };
     //@override
     OrthographicOffCenterProjection.prototype.pUpdateMatrix = function () {
-        var raw = Matrix3DUtils_1.default.RAW_DATA_CONTAINER;
+        var raw = Matrix3DUtils_1.Matrix3DUtils.RAW_DATA_CONTAINER;
         var w = 1 / (this._maxX - this._minX);
         var h = 1 / (this._maxY - this._minY);
         var d = 1 / (this._pFar - this._pNear);
@@ -13215,9 +13134,8 @@ var OrthographicOffCenterProjection = (function (_super) {
         this._pMatrixInvalid = false;
     };
     return OrthographicOffCenterProjection;
-}(ProjectionBase_1.default));
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = OrthographicOffCenterProjection;
+}(ProjectionBase_1.ProjectionBase));
+exports.OrthographicOffCenterProjection = OrthographicOffCenterProjection;
 
 },{"../geom/Matrix3DUtils":"awayjs-core/lib/geom/Matrix3DUtils","../geom/Vector3D":"awayjs-core/lib/geom/Vector3D","../projections/ProjectionBase":"awayjs-core/lib/projections/ProjectionBase"}],"awayjs-core/lib/projections/OrthographicProjection":[function(require,module,exports){
 "use strict";
@@ -13252,7 +13170,7 @@ var OrthographicProjection = (function (_super) {
     });
     //@override
     OrthographicProjection.prototype.unproject = function (nX, nY, sZ) {
-        var v = new Vector3D_1.default(nX + this.matrix.rawData[12], -nY + this.matrix.rawData[13], sZ, 1.0);
+        var v = new Vector3D_1.Vector3D(nX + this.matrix.rawData[12], -nY + this.matrix.rawData[13], sZ, 1.0);
         v = this.unprojectionMatrix.transformVector(v);
         //z is unaffected by transform
         v.z = sZ;
@@ -13269,7 +13187,7 @@ var OrthographicProjection = (function (_super) {
     };
     //@override
     OrthographicProjection.prototype.pUpdateMatrix = function () {
-        var raw = Matrix3DUtils_1.default.RAW_DATA_CONTAINER;
+        var raw = Matrix3DUtils_1.Matrix3DUtils.RAW_DATA_CONTAINER;
         this._yMax = this._projectionHeight * .5;
         this._xMax = this._yMax * this._pAspectRatio;
         var left;
@@ -13317,9 +13235,8 @@ var OrthographicProjection = (function (_super) {
         this._pMatrixInvalid = false;
     };
     return OrthographicProjection;
-}(ProjectionBase_1.default));
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = OrthographicProjection;
+}(ProjectionBase_1.ProjectionBase));
+exports.OrthographicProjection = OrthographicProjection;
 
 },{"../geom/Matrix3DUtils":"awayjs-core/lib/geom/Matrix3DUtils","../geom/Vector3D":"awayjs-core/lib/geom/Vector3D","../projections/ProjectionBase":"awayjs-core/lib/projections/ProjectionBase"}],"awayjs-core/lib/projections/PerspectiveProjection":[function(require,module,exports){
 "use strict";
@@ -13446,7 +13363,7 @@ var PerspectiveProjection = (function (_super) {
     });
     //@override
     PerspectiveProjection.prototype.unproject = function (nX, nY, sZ) {
-        var v = new Vector3D_1.default(nX, -nY, sZ, 1.0);
+        var v = new Vector3D_1.Vector3D(nX, -nY, sZ, 1.0);
         v.x *= sZ;
         v.y *= sZ;
         v = this.unprojectionMatrix.transformVector(v);
@@ -13465,7 +13382,7 @@ var PerspectiveProjection = (function (_super) {
     };
     //@override
     PerspectiveProjection.prototype.pUpdateMatrix = function () {
-        var raw = Matrix3DUtils_1.default.RAW_DATA_CONTAINER;
+        var raw = Matrix3DUtils_1.Matrix3DUtils.RAW_DATA_CONTAINER;
         if (this._preserveFocalLength) {
             if (this._preserveAspectRatio)
                 this._hFocalLength = this._focalLength;
@@ -13502,7 +13419,7 @@ var PerspectiveProjection = (function (_super) {
         raw[11] = 1;
         raw[1] = raw[2] = raw[3] = raw[4] = raw[6] = raw[7] = raw[12] = raw[13] = raw[15] = 0;
         raw[14] = -2 * this._pFar * this._pNear / (this._pFar - this._pNear);
-        if (this._pCoordinateSystem == CoordinateSystem_1.default.RIGHT_HANDED)
+        if (this._pCoordinateSystem == CoordinateSystem_1.CoordinateSystem.RIGHT_HANDED)
             raw[5] = -raw[5];
         this._pMatrix.copyRawDataFrom(raw);
         this._pFrustumCorners[0] = this._pFrustumCorners[9] = this._pNear * left;
@@ -13518,9 +13435,8 @@ var PerspectiveProjection = (function (_super) {
         this._pMatrixInvalid = false;
     };
     return PerspectiveProjection;
-}(ProjectionBase_1.default));
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = PerspectiveProjection;
+}(ProjectionBase_1.ProjectionBase));
+exports.PerspectiveProjection = PerspectiveProjection;
 
 },{"../geom/Matrix3DUtils":"awayjs-core/lib/geom/Matrix3DUtils","../geom/Vector3D":"awayjs-core/lib/geom/Vector3D","../projections/CoordinateSystem":"awayjs-core/lib/projections/CoordinateSystem","../projections/ProjectionBase":"awayjs-core/lib/projections/ProjectionBase"}],"awayjs-core/lib/projections/ProjectionBase":[function(require,module,exports){
 "use strict";
@@ -13539,9 +13455,9 @@ var ProjectionBase = (function (_super) {
     function ProjectionBase(coordinateSystem) {
         if (coordinateSystem === void 0) { coordinateSystem = "leftHanded"; }
         _super.call(this);
-        this._pMatrix = new Matrix3D_1.default();
-        this._pScissorRect = new Rectangle_1.default();
-        this._pViewPort = new Rectangle_1.default();
+        this._pMatrix = new Matrix3D_1.Matrix3D();
+        this._pScissorRect = new Rectangle_1.Rectangle();
+        this._pViewPort = new Rectangle_1.Rectangle();
         this._pNear = 20;
         this._pFar = 3000;
         this._pAspectRatio = 1;
@@ -13657,7 +13573,7 @@ var ProjectionBase = (function (_super) {
         get: function () {
             if (this._unprojectionInvalid) {
                 if (!this._unprojection)
-                    this._unprojection = new Matrix3D_1.default();
+                    this._unprojection = new Matrix3D_1.Matrix3D();
                 this._unprojection.copyFrom(this.matrix);
                 this._unprojection.invert();
                 this._unprojectionInvalid = false;
@@ -13668,10 +13584,10 @@ var ProjectionBase = (function (_super) {
         configurable: true
     });
     ProjectionBase.prototype.unproject = function (nX, nY, sZ) {
-        throw new AbstractMethodError_1.default();
+        throw new AbstractMethodError_1.AbstractMethodError();
     };
     ProjectionBase.prototype.clone = function () {
-        throw new AbstractMethodError_1.default();
+        throw new AbstractMethodError_1.AbstractMethodError();
     };
     Object.defineProperty(ProjectionBase.prototype, "_iAspectRatio", {
         get: function () {
@@ -13689,10 +13605,10 @@ var ProjectionBase = (function (_super) {
     ProjectionBase.prototype.pInvalidateMatrix = function () {
         this._pMatrixInvalid = true;
         this._unprojectionInvalid = true;
-        this.dispatchEvent(new ProjectionEvent_1.default(ProjectionEvent_1.default.MATRIX_CHANGED, this));
+        this.dispatchEvent(new ProjectionEvent_1.ProjectionEvent(ProjectionEvent_1.ProjectionEvent.MATRIX_CHANGED, this));
     };
     ProjectionBase.prototype.pUpdateMatrix = function () {
-        throw new AbstractMethodError_1.default();
+        throw new AbstractMethodError_1.AbstractMethodError();
     };
     ProjectionBase.prototype._iUpdateScissorRect = function (x, y, width, height) {
         this._pScissorRect.x = x;
@@ -13709,26 +13625,25 @@ var ProjectionBase = (function (_super) {
         this.pInvalidateMatrix();
     };
     return ProjectionBase;
-}(EventDispatcher_1.default));
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = ProjectionBase;
+}(EventDispatcher_1.EventDispatcher));
+exports.ProjectionBase = ProjectionBase;
 
 },{"../errors/AbstractMethodError":"awayjs-core/lib/errors/AbstractMethodError","../events/EventDispatcher":"awayjs-core/lib/events/EventDispatcher","../events/ProjectionEvent":"awayjs-core/lib/events/ProjectionEvent","../geom/Matrix3D":"awayjs-core/lib/geom/Matrix3D","../geom/Rectangle":"awayjs-core/lib/geom/Rectangle"}],"awayjs-core/lib/projections":[function(require,module,exports){
 "use strict";
 var CoordinateSystem_1 = require("./projections/CoordinateSystem");
-exports.CoordinateSystem = CoordinateSystem_1.default;
+exports.CoordinateSystem = CoordinateSystem_1.CoordinateSystem;
 var FreeMatrixProjection_1 = require("./projections/FreeMatrixProjection");
-exports.FreeMatrixProjection = FreeMatrixProjection_1.default;
+exports.FreeMatrixProjection = FreeMatrixProjection_1.FreeMatrixProjection;
 var ObliqueNearPlaneProjection_1 = require("./projections/ObliqueNearPlaneProjection");
-exports.ObliqueNearPlaneProjection = ObliqueNearPlaneProjection_1.default;
+exports.ObliqueNearPlaneProjection = ObliqueNearPlaneProjection_1.ObliqueNearPlaneProjection;
 var OrthographicOffCenterProjection_1 = require("./projections/OrthographicOffCenterProjection");
-exports.OrthographicOffCenterProjection = OrthographicOffCenterProjection_1.default;
+exports.OrthographicOffCenterProjection = OrthographicOffCenterProjection_1.OrthographicOffCenterProjection;
 var OrthographicProjection_1 = require("./projections/OrthographicProjection");
-exports.OrthographicProjection = OrthographicProjection_1.default;
+exports.OrthographicProjection = OrthographicProjection_1.OrthographicProjection;
 var PerspectiveProjection_1 = require("./projections/PerspectiveProjection");
-exports.PerspectiveProjection = PerspectiveProjection_1.default;
+exports.PerspectiveProjection = PerspectiveProjection_1.PerspectiveProjection;
 var ProjectionBase_1 = require("./projections/ProjectionBase");
-exports.ProjectionBase = ProjectionBase_1.default;
+exports.ProjectionBase = ProjectionBase_1.ProjectionBase;
 
 },{"./projections/CoordinateSystem":"awayjs-core/lib/projections/CoordinateSystem","./projections/FreeMatrixProjection":"awayjs-core/lib/projections/FreeMatrixProjection","./projections/ObliqueNearPlaneProjection":"awayjs-core/lib/projections/ObliqueNearPlaneProjection","./projections/OrthographicOffCenterProjection":"awayjs-core/lib/projections/OrthographicOffCenterProjection","./projections/OrthographicProjection":"awayjs-core/lib/projections/OrthographicProjection","./projections/PerspectiveProjection":"awayjs-core/lib/projections/PerspectiveProjection","./projections/ProjectionBase":"awayjs-core/lib/projections/ProjectionBase"}],"awayjs-core/lib/ui/Keyboard":[function(require,module,exports){
 "use strict";
@@ -14550,13 +14465,12 @@ var Keyboard = (function () {
     Keyboard.Z = 90;
     return Keyboard;
 }());
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = Keyboard;
+exports.Keyboard = Keyboard;
 
 },{}],"awayjs-core/lib/ui":[function(require,module,exports){
 "use strict";
 var Keyboard_1 = require("./ui/Keyboard");
-exports.Keyboard = Keyboard_1.default;
+exports.Keyboard = Keyboard_1.Keyboard;
 
 },{"./ui/Keyboard":"awayjs-core/lib/ui/Keyboard"}],"awayjs-core/lib/utils/BitmapImageUtils":[function(require,module,exports){
 "use strict";
@@ -14569,7 +14483,7 @@ var BitmapImageUtils = (function () {
             context.clearRect(rect.x, rect.y, rect.width, rect.height);
         }
         else {
-            var argb = ColorUtils_1.default.float32ColorToARGB(color);
+            var argb = ColorUtils_1.ColorUtils.float32ColorToARGB(color);
             if (transparent)
                 context.fillStyle = 'rgba(' + argb[1] + ',' + argb[2] + ',' + argb[3] + ',' + argb[0] / 255 + ')';
             else
@@ -14592,8 +14506,7 @@ var BitmapImageUtils = (function () {
     };
     return BitmapImageUtils;
 }());
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = BitmapImageUtils;
+exports.BitmapImageUtils = BitmapImageUtils;
 
 },{"../utils/ColorUtils":"awayjs-core/lib/utils/ColorUtils"}],"awayjs-core/lib/utils/ByteArrayBase":[function(require,module,exports){
 "use strict";
@@ -14641,7 +14554,7 @@ var ByteArrayBase = (function () {
         throw "Virtual method";
     };
     ByteArrayBase.prototype.getBytesAvailable = function () {
-        throw new AbstractMethodError_1.default('ByteArrayBase, getBytesAvailable() not implemented ');
+        throw new AbstractMethodError_1.AbstractMethodError('ByteArrayBase, getBytesAvailable() not implemented ');
     };
     ByteArrayBase.prototype.toString = function () {
         return "[ByteArray] ( " + this._mode + " ) position=" + this.position + " length=" + this.length;
@@ -14736,8 +14649,7 @@ var ByteArrayBase = (function () {
     ByteArrayBase.Base64Key = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
     return ByteArrayBase;
 }());
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = ByteArrayBase;
+exports.ByteArrayBase = ByteArrayBase;
 
 },{"../errors/AbstractMethodError":"awayjs-core/lib/errors/AbstractMethodError"}],"awayjs-core/lib/utils/ByteArrayBuffer":[function(require,module,exports){
 "use strict";
@@ -14789,9 +14701,8 @@ var ByteArrayBuffer = (function (_super) {
         }
     };
     ByteArrayBuffer.prototype.readUnsignedShort = function () {
-        if (this.position + 2 > this.length) {
+        if (this.position + 2 > this.length)
             throw "ByteArray out of bounds read. Position=" + this.position + ", Length=" + this.length;
-        }
         var r = this._bytes[this.position] | (this._bytes[this.position + 1] << 8);
         this.position += 2;
         return r;
@@ -14857,9 +14768,8 @@ var ByteArrayBuffer = (function (_super) {
         return y;
     };
     return ByteArrayBuffer;
-}(ByteArrayBase_1.default));
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = ByteArrayBuffer;
+}(ByteArrayBase_1.ByteArrayBase));
+exports.ByteArrayBuffer = ByteArrayBuffer;
 
 },{"../utils/ByteArrayBase":"awayjs-core/lib/utils/ByteArrayBase"}],"awayjs-core/lib/utils/ByteArray":[function(require,module,exports){
 "use strict";
@@ -15095,9 +15005,8 @@ var ByteArray = (function (_super) {
         }
     };
     return ByteArray;
-}(ByteArrayBase_1.default));
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = ByteArray;
+}(ByteArrayBase_1.ByteArrayBase));
+exports.ByteArray = ByteArray;
 
 },{"../utils/ByteArrayBase":"awayjs-core/lib/utils/ByteArrayBase"}],"awayjs-core/lib/utils/CSS":[function(require,module,exports){
 "use strict";
@@ -15172,8 +15081,7 @@ var CSS = (function () {
     };
     return CSS;
 }());
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = CSS;
+exports.CSS = CSS;
 
 },{}],"awayjs-core/lib/utils/ColorUtils":[function(require,module,exports){
 "use strict";
@@ -15206,8 +15114,7 @@ var ColorUtils = (function () {
     };
     return ColorUtils;
 }());
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = ColorUtils;
+exports.ColorUtils = ColorUtils;
 
 },{}],"awayjs-core/lib/utils/Debug":[function(require,module,exports){
 "use strict";
@@ -15236,7 +15143,7 @@ var Debug = (function () {
                 if (e.indexOf(Debug.keyword) == -1)
                     return;
             }
-            throw new PartialImplementationError_1.default(clss + '.' + fnc + ': ' + msg);
+            throw new PartialImplementationError_1.PartialImplementationError(clss + '.' + fnc + ': ' + msg);
         }
     };
     Debug.logPIR = function (clss, fnc, msg) {
@@ -15258,8 +15165,7 @@ var Debug = (function () {
     Debug.keyword = null;
     return Debug;
 }());
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = Debug;
+exports.Debug = Debug;
 
 },{"../errors/PartialImplementationError":"awayjs-core/lib/errors/PartialImplementationError"}],"awayjs-core/lib/utils/Extensions":[function(require,module,exports){
 "use strict";
@@ -15272,8 +15178,7 @@ var Extensions = (function () {
     Extensions.SIMD = Boolean(typeof (SIMD) !== "undefined");
     return Extensions;
 }());
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = Extensions;
+exports.Extensions = Extensions;
 
 },{}],"awayjs-core/lib/utils/IArrayBufferViewClass":[function(require,module,exports){
 "use strict";
@@ -15311,6 +15216,7 @@ var ImageUtils = (function () {
     ImageUtils.MAX_SIZE = 2048;
     return ImageUtils;
 }());
+exports.ImageUtils = ImageUtils;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = ImageUtils;
 
@@ -15377,7 +15283,7 @@ var MipmapGenerator = (function () {
             MipmapGenerator._mipMapUses[newW] = [];
         }
         if (!MipmapGenerator._mipMaps[newW][newH]) {
-            mipMapHolder = MipmapGenerator._mipMaps[newW][newH] = new BitmapImage2D_1.default(newW, newH, true);
+            mipMapHolder = MipmapGenerator._mipMaps[newW][newH] = new BitmapImage2D_1.BitmapImage2D(newW, newH, true);
             MipmapGenerator._mipMapUses[newW][newH] = 1;
         }
         else {
@@ -15481,10 +15387,11 @@ var MipmapGenerator = (function () {
     };
     MipmapGenerator._mipMaps = [];
     MipmapGenerator._mipMapUses = [];
-    MipmapGenerator._matrix = new Matrix_1.default();
-    MipmapGenerator._rect = new Rectangle_1.default();
+    MipmapGenerator._matrix = new Matrix_1.Matrix();
+    MipmapGenerator._rect = new Rectangle_1.Rectangle();
     return MipmapGenerator;
 }());
+exports.MipmapGenerator = MipmapGenerator;
 var PolyphaseKernel = (function () {
     function PolyphaseKernel(f, srcLength, dstLength, samples) {
         var scale = dstLength / srcLength;
@@ -15519,6 +15426,7 @@ var PolyphaseKernel = (function () {
     };
     return PolyphaseKernel;
 }());
+exports.PolyphaseKernel = PolyphaseKernel;
 var BoxFilter = (function () {
     function BoxFilter() {
     }
@@ -15547,6 +15455,7 @@ var BoxFilter = (function () {
     };
     return BoxFilter;
 }());
+exports.BoxFilter = BoxFilter;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = MipmapGenerator;
 
@@ -15558,7 +15467,7 @@ var RequestAnimationFrame = (function () {
         var _this = this;
         this._active = false;
         this._argsArray = new Array();
-        this._getTimer = getTimer_1.default;
+        this._getTimer = getTimer_1.getTimer;
         this.setCallback(callback, callbackContext);
         this._rafUpdateFunction = function () {
             if (_this._active)
@@ -15629,8 +15538,7 @@ var RequestAnimationFrame = (function () {
     };
     return RequestAnimationFrame;
 }());
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = RequestAnimationFrame;
+exports.RequestAnimationFrame = RequestAnimationFrame;
 
 },{"../utils/getTimer":"awayjs-core/lib/utils/getTimer"}],"awayjs-core/lib/utils/Timer":[function(require,module,exports){
 "use strict";
@@ -15653,7 +15561,7 @@ var Timer = (function (_super) {
         this._delay = delay;
         this._repeatCount = repeatCount;
         if (isNaN(delay) || delay < 0)
-            throw new ErrorBase_1.default("Delay is negative or not a number");
+            throw new ErrorBase_1.ErrorBase("Delay is negative or not a number");
     }
     Object.defineProperty(Timer.prototype, "currentCount", {
         get: function () {
@@ -15712,17 +15620,16 @@ var Timer = (function (_super) {
         this._currentCount++;
         if ((this._repeatCount > 0) && this._currentCount >= this._repeatCount) {
             this.stop();
-            this.dispatchEvent(new TimerEvent_1.default(TimerEvent_1.default.TIMER));
-            this.dispatchEvent(new TimerEvent_1.default(TimerEvent_1.default.TIMER_COMPLETE));
+            this.dispatchEvent(new TimerEvent_1.TimerEvent(TimerEvent_1.TimerEvent.TIMER));
+            this.dispatchEvent(new TimerEvent_1.TimerEvent(TimerEvent_1.TimerEvent.TIMER_COMPLETE));
         }
         else {
-            this.dispatchEvent(new TimerEvent_1.default(TimerEvent_1.default.TIMER));
+            this.dispatchEvent(new TimerEvent_1.TimerEvent(TimerEvent_1.TimerEvent.TIMER));
         }
     };
     return Timer;
-}(EventDispatcher_1.default));
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = Timer;
+}(EventDispatcher_1.EventDispatcher));
+exports.Timer = Timer;
 
 },{"../errors/ErrorBase":"awayjs-core/lib/errors/ErrorBase","../events/EventDispatcher":"awayjs-core/lib/events/EventDispatcher","../events/TimerEvent":"awayjs-core/lib/events/TimerEvent"}],"awayjs-core/lib/utils/XmlUtils":[function(require,module,exports){
 "use strict";
@@ -15799,6 +15706,7 @@ var XmlUtils = (function () {
     };
     return XmlUtils;
 }());
+exports.XmlUtils = XmlUtils;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = XmlUtils;
 
@@ -15815,39 +15723,38 @@ function getTimer() {
     // since instance of Flash player was initialised
     return Date.now();
 }
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = getTimer;
+exports.getTimer = getTimer;
 
 },{}],"awayjs-core/lib/utils":[function(require,module,exports){
 "use strict";
 var BitmapImageUtils_1 = require("./utils/BitmapImageUtils");
-exports.BitmapImageUtils = BitmapImageUtils_1.default;
+exports.BitmapImageUtils = BitmapImageUtils_1.BitmapImageUtils;
 var ByteArray_1 = require("./utils/ByteArray");
-exports.ByteArray = ByteArray_1.default;
+exports.ByteArray = ByteArray_1.ByteArray;
 var ByteArrayBase_1 = require("./utils/ByteArrayBase");
-exports.ByteArrayBase = ByteArrayBase_1.default;
+exports.ByteArrayBase = ByteArrayBase_1.ByteArrayBase;
 var ByteArrayBuffer_1 = require("./utils/ByteArrayBuffer");
-exports.ByteArrayBuffer = ByteArrayBuffer_1.default;
+exports.ByteArrayBuffer = ByteArrayBuffer_1.ByteArrayBuffer;
 var ColorUtils_1 = require("./utils/ColorUtils");
-exports.ColorUtils = ColorUtils_1.default;
+exports.ColorUtils = ColorUtils_1.ColorUtils;
 var CSS_1 = require("./utils/CSS");
-exports.CSS = CSS_1.default;
+exports.CSS = CSS_1.CSS;
 var Debug_1 = require("./utils/Debug");
-exports.Debug = Debug_1.default;
+exports.Debug = Debug_1.Debug;
 var Extensions_1 = require("./utils/Extensions");
-exports.Extensions = Extensions_1.default;
+exports.Extensions = Extensions_1.Extensions;
 var getTimer_1 = require("./utils/getTimer");
-exports.getTimer = getTimer_1.default;
+exports.getTimer = getTimer_1.getTimer;
 var ImageUtils_1 = require("./utils/ImageUtils");
-exports.ImageUtils = ImageUtils_1.default;
+exports.ImageUtils = ImageUtils_1.ImageUtils;
 var MipmapGenerator_1 = require("./utils/MipmapGenerator");
-exports.MipmapGenerator = MipmapGenerator_1.default;
+exports.MipmapGenerator = MipmapGenerator_1.MipmapGenerator;
 var RequestAnimationFrame_1 = require("./utils/RequestAnimationFrame");
-exports.RequestAnimationFrame = RequestAnimationFrame_1.default;
+exports.RequestAnimationFrame = RequestAnimationFrame_1.RequestAnimationFrame;
 var Timer_1 = require("./utils/Timer");
-exports.Timer = Timer_1.default;
+exports.Timer = Timer_1.Timer;
 var XmlUtils_1 = require("./utils/XmlUtils");
-exports.XmlUtils = XmlUtils_1.default;
+exports.XmlUtils = XmlUtils_1.XmlUtils;
 
 },{"./utils/BitmapImageUtils":"awayjs-core/lib/utils/BitmapImageUtils","./utils/ByteArray":"awayjs-core/lib/utils/ByteArray","./utils/ByteArrayBase":"awayjs-core/lib/utils/ByteArrayBase","./utils/ByteArrayBuffer":"awayjs-core/lib/utils/ByteArrayBuffer","./utils/CSS":"awayjs-core/lib/utils/CSS","./utils/ColorUtils":"awayjs-core/lib/utils/ColorUtils","./utils/Debug":"awayjs-core/lib/utils/Debug","./utils/Extensions":"awayjs-core/lib/utils/Extensions","./utils/ImageUtils":"awayjs-core/lib/utils/ImageUtils","./utils/MipmapGenerator":"awayjs-core/lib/utils/MipmapGenerator","./utils/RequestAnimationFrame":"awayjs-core/lib/utils/RequestAnimationFrame","./utils/Timer":"awayjs-core/lib/utils/Timer","./utils/XmlUtils":"awayjs-core/lib/utils/XmlUtils","./utils/getTimer":"awayjs-core/lib/utils/getTimer"}]},{},[1])
 //# sourceMappingURL=awayjs-core.js.map

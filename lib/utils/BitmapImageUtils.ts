@@ -1,12 +1,12 @@
-import BlendMode				from "../image/BlendMode";
-import ColorTransform			from "../geom/ColorTransform";
-import Matrix					from "../geom/Matrix";
-import Rectangle				from "../geom/Rectangle";
-import ColorUtils				from "../utils/ColorUtils";
+import {BlendMode}				from "../image/BlendMode";
+import {ColorTransform}			from "../geom/ColorTransform";
+import {Matrix}					from "../geom/Matrix";
+import {Rectangle}				from "../geom/Rectangle";
+import {ColorUtils}				from "../utils/ColorUtils";
 
-class BitmapImageUtils
+export class BitmapImageUtils
 {
-	public static _fillRect(context:CanvasRenderingContext2D, rect:Rectangle, color:number, transparent:boolean)
+	public static _fillRect(context:CanvasRenderingContext2D, rect:Rectangle, color:number, transparent:boolean):void
 	{
 		if (color == 0x0 && transparent) {
 			context.clearRect(rect.x, rect.y, rect.width, rect.height);
@@ -22,12 +22,12 @@ class BitmapImageUtils
 		}
 	}
 
-	public static _copyPixels(context:CanvasRenderingContext2D, bmpd:HTMLImageElement | HTMLCanvasElement | HTMLVideoElement, sourceRect:Rectangle, destRect:Rectangle)
+	public static _copyPixels(context:CanvasRenderingContext2D, bmpd:HTMLImageElement | HTMLCanvasElement | HTMLVideoElement, sourceRect:Rectangle, destRect:Rectangle):void
 	{
 		context.drawImage(bmpd, sourceRect.x, sourceRect.y, sourceRect.width, sourceRect.height, destRect.x, destRect.y, destRect.width, destRect.height);
 	}
 
-	public static _draw(context:CanvasRenderingContext2D, source:any, matrix:Matrix, colorTransform:ColorTransform, blendMode:BlendMode, clipRect:Rectangle, smoothing:boolean)
+	public static _draw(context:CanvasRenderingContext2D, source:any, matrix:Matrix, colorTransform:ColorTransform, blendMode:BlendMode, clipRect:Rectangle, smoothing:boolean):void
 	{
 		context.save();
 
@@ -42,5 +42,3 @@ class BitmapImageUtils
 		context.restore();
 	}
 }
-
-export default BitmapImageUtils;

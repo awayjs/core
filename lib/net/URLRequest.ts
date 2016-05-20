@@ -1,6 +1,6 @@
-import URLRequestMethod				from "../net/URLRequestMethod";
+import {URLRequestMethod}				from "../net/URLRequestMethod";
 
-class URLRequest
+export class URLRequest
 {
 	/*
 	 * The MIME content type of the content in the the data property.
@@ -70,5 +70,3 @@ class URLRequest
 		this._url = null;
 	}
 }
-
-export default URLRequest;

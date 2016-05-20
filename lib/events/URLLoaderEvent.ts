@@ -1,7 +1,7 @@
-import URLLoader				from "../net/URLLoader";
-import EventBase				from "../events/EventBase";
+import {URLLoader}				from "../net/URLLoader";
+import {EventBase}				from "../events/EventBase";
 
-class URLLoaderEvent extends EventBase
+export class URLLoaderEvent extends EventBase
 {
 	public static HTTP_STATUS:string = "httpStatus";
 
@@ -39,5 +39,3 @@ class URLLoaderEvent extends EventBase
 		return new URLLoaderEvent(this.type, this._urlLoader);
 	}
 }
-
-export default URLLoaderEvent;

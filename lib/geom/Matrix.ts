@@ -1,9 +1,9 @@
-import Point					from "../geom/Point";
-import Vector3D					from "../geom/Vector3D";
-import ArgumentError			from "../errors/ArgumentError";
+import {Point}					from "../geom/Point";
+import {Vector3D}					from "../geom/Vector3D";
+import {ArgumentError}			from "../errors/ArgumentError";
 
 /**
- * The Matrix class represents a transformation matrix that determines how to
+ * The Matrix export class represents a transformation matrix that determines how to
  * map points from one coordinate space to another. You can perform various
  * graphical transformations on a display object by setting the properties of
  * a Matrix object, applying that Matrix object to the <code>matrix</code>
@@ -34,7 +34,7 @@ import ArgumentError			from "../errors/ArgumentError";
  *
  * <p>In traditional transformation matrixes, the <code>u</code>,
  * <code>v</code>, and <code>w</code> properties provide extra capabilities.
- * The Matrix class can only operate in two-dimensional space, so it always
+ * The Matrix export class can only operate in two-dimensional space, so it always
  * assumes that the property values <code>u</code> and <code>v</code> are 0.0,
  * and that the property value <code>w</code> is 1.0. The effective values of
  * the matrix are as follows:</p>
@@ -43,7 +43,7 @@ import ArgumentError			from "../errors/ArgumentError";
  * Matrix object: <code>a</code>, <code>b</code>, <code>c</code>,
  * <code>d</code>, <code>tx</code>, and <code>ty</code>.</p>
  *
- * <p>The Matrix class supports the four major types of transformations:
+ * <p>The Matrix export class supports the four major types of transformations:
  * translation, scaling, rotation, and skewing. You can set three of these
  * transformations by using specialized methods, as described in the following
  * table: </p>
@@ -57,7 +57,7 @@ import ArgumentError			from "../errors/ArgumentError";
  * <p>Use the <code>new Matrix()</code> constructor to create a Matrix object
  * before you can call the methods of the Matrix object.</p>
  */
-class Matrix
+export class Matrix
 {
 	/**
 	 * The value that affects the positioning of pixels along the <i>x</i> axis
@@ -572,5 +572,3 @@ class Matrix
 		this.ty += dy;
 	}
 }
-
-export default Matrix;

@@ -1,7 +1,7 @@
-import PerspectiveProjection	from "../projections/PerspectiveProjection";
-import ProjectionBase			from "../projections/ProjectionBase";
+import {PerspectiveProjection}	from "../projections/PerspectiveProjection";
+import {ProjectionBase}			from "../projections/ProjectionBase";
 
-class FreeMatrixProjection extends ProjectionBase
+export class FreeMatrixProjection extends ProjectionBase
 {
 	constructor()
 	{
@@ -41,10 +41,8 @@ class FreeMatrixProjection extends ProjectionBase
 	}
 
 	//@override
-	public pUpdateMatrix()
+	public pUpdateMatrix():void
 	{
 		this._pMatrixInvalid = false;
 	}
 }
-
-export default FreeMatrixProjection;

@@ -1,10 +1,10 @@
-import BitmapImage2D			from "../image/BitmapImage2D";
-import WaveAudio				from "../audio/WaveAudio";
-import ByteArray				from "../utils/ByteArray";
+import {BitmapImage2D}			from "../image/BitmapImage2D";
+import {WaveAudio}				from "../audio/WaveAudio";
+import {ByteArray}				from "../utils/ByteArray";
 
-class ParserUtils
+export class ParserUtils
 {
-	public static arrayBufferToBase64(data:ArrayBuffer, mimeType:string)
+	public static arrayBufferToBase64(data:ArrayBuffer, mimeType:string):string
 	{
 		var byteStr:string = '';
 		var bytes:Uint8Array = new Uint8Array(data);
@@ -172,5 +172,3 @@ class ParserUtils
 
 	}
 }
-
-export default ParserUtils;

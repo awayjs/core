@@ -1,11 +1,11 @@
-import ConflictPrecedence		from "../library/ConflictPrecedence";
-import IAsset					from "../library/IAsset";
-import AbstractMethodError		from "../errors/AbstractMethodError";
-import AssetEvent				from "../events/AssetEvent";
+import {ConflictPrecedence}		from "../library/ConflictPrecedence";
+import {IAsset}					from "../library/IAsset";
+import {AbstractMethodError}		from "../errors/AbstractMethodError";
+import {AssetEvent}				from "../events/AssetEvent";
 
 /**
- * Abstract base class for naming conflict resolution classes. Extend this to create a
- * strategy class which the asset library can use to resolve asset naming conflicts, or
+ * Abstract base export class for naming conflict resolution classes. Extend this to create a
+ * strategy export class which the asset library can use to resolve asset naming conflicts, or
  * use one of the bundled concrete strategy classes:
  *
  * <ul>
@@ -20,7 +20,7 @@ import AssetEvent				from "../events/AssetEvent";
  * @see away.library.ErrorConflictStrategy
  * @see away.library.NumSuffixConflictStrategy
  */
-class ConflictStrategyBase
+export class ConflictStrategyBase
 {
 
 	constructor()
@@ -31,7 +31,7 @@ class ConflictStrategyBase
 	 * Resolve a naming conflict between two assets. Must be implemented by concrete strategy
 	 * classes.
 	 */
-	public resolveConflict(changedAsset:IAsset, oldAsset:IAsset, assetsDictionary:Object, precedence:string)
+	public resolveConflict(changedAsset:IAsset, oldAsset:IAsset, assetsDictionary:Object, precedence:string):void
 	{
 		throw new AbstractMethodError();
 	}
@@ -50,7 +50,7 @@ class ConflictStrategyBase
 	 * Provided as a convenience method for all conflict strategy classes, as a way to finalize
 	 * the conflict resolution by applying the new names and dispatching the correct events.
 	 */
-	public _pUpdateNames(ns:string, nonConflictingName:string, oldAsset:IAsset, newAsset:IAsset, assetsDictionary:Object, precedence:string)
+	public _pUpdateNames(ns:string, nonConflictingName:string, oldAsset:IAsset, newAsset:IAsset, assetsDictionary:Object, precedence:string):void
 	{
 		var loser_prev_name:string;
 		var winner:IAsset;
@@ -68,5 +68,3 @@ class ConflictStrategyBase
 		loser.dispatchEvent(new AssetEvent(AssetEvent.ASSET_CONFLICT_RESOLVED, loser, loser_prev_name));
 	}
 }
-
-export default ConflictStrategyBase;

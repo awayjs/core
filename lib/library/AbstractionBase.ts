@@ -1,13 +1,13 @@
-import AssetEvent					from "../events/AssetEvent";
-import EventDispatcher				from "../events/EventDispatcher";
-import IAbstractionPool				from "../library/IAbstractionPool";
-import IAsset						from "../library/IAsset";
+import {AssetEvent}					from "../events/AssetEvent";
+import {EventDispatcher}				from "../events/EventDispatcher";
+import {IAbstractionPool}				from "../library/IAbstractionPool";
+import {IAsset}						from "../library/IAsset";
 
 /**
  *
- * @class away.pool.AbstractionBase
+ * @export class away.pool.AbstractionBase
  */
-class AbstractionBase extends EventDispatcher
+export class AbstractionBase extends EventDispatcher
 {
 	private _onClearDelegate:(event:AssetEvent) => void;
 	private _onInvalidateDelegate:(event:AssetEvent) => void;
@@ -35,7 +35,7 @@ class AbstractionBase extends EventDispatcher
 	/**
 	 *
 	 */
-	public onClear(event:AssetEvent)
+	public onClear(event:AssetEvent):void
 	{
 		this._asset.removeEventListener(AssetEvent.CLEAR, this._onClearDelegate);
 		this._asset.removeEventListener(AssetEvent.INVALIDATE, this._onInvalidateDelegate);
@@ -48,10 +48,8 @@ class AbstractionBase extends EventDispatcher
 	/**
 	 *
 	 */
-	public onInvalidate(event:AssetEvent)
+	public onInvalidate(event:AssetEvent):void
 	{
 		this._invalid = true;
 	}
 }
-
-export default AbstractionBase;

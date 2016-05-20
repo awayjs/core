@@ -1,6 +1,6 @@
-import EventBase				from "../events/EventBase";
+import {EventBase}				from "../events/EventBase";
 
-class TimerEvent extends EventBase
+export class TimerEvent extends EventBase
 {
 	/**
 	 *

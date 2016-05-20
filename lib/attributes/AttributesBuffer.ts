@@ -1,7 +1,7 @@
-import AttributesView			from "../attributes/AttributesView";
-import AssetBase				from "../library/AssetBase";
+import {AttributesView}			from "../attributes/AttributesView";
+import {AssetBase}				from "../library/AssetBase";
 
-class AttributesBuffer extends AssetBase
+export class AttributesBuffer extends AssetBase
 {
 	public static assetType:string = "[assets AttributesBuffer]";
 	
@@ -86,7 +86,7 @@ class AttributesBuffer extends AssetBase
 		this._buffer = this._bufferView.buffer;
 	}
 
-	public get length()
+	public get length():number
 	{
 		return this._count*this.stride;
 	}
@@ -158,7 +158,7 @@ class AttributesBuffer extends AssetBase
 		return null;
 	}
 
-	public _setAttributes(viewIndex:number, arrayBufferView:ArrayBufferView, offset:number = 0)
+	public _setAttributes(viewIndex:number, arrayBufferView:ArrayBufferView, offset:number = 0):void
 	{
 		var array:Uint8Array = (arrayBufferView instanceof Uint8Array)? <Uint8Array> arrayBufferView : new Uint8Array(arrayBufferView.buffer);
 
@@ -207,7 +207,7 @@ class AttributesBuffer extends AssetBase
 		return localBuffer;
 	}
 
-	public _addView(view:AttributesView)
+	public _addView(view:AttributesView):void
 	{
 		var viewVO:ViewVO = new ViewVO(view);
 		var len:number = this._viewVOs.length;
@@ -224,7 +224,7 @@ class AttributesBuffer extends AssetBase
 		view._index = len;
 	}
 
-	public _removeView(view:AttributesView)
+	public _removeView(view:AttributesView):void
 	{
 		var viewIndex:number = view._index;
 		var viewVO:ViewVO = this._viewVOs.splice(viewIndex, 1)[0];
@@ -248,7 +248,7 @@ class AttributesBuffer extends AssetBase
 		return this._viewVOs[viewIndex].offset;
 	}
 
-	public _updateLength()
+	public _updateLength():void
 	{
 		this._lengthDirty = false;
 
@@ -306,7 +306,7 @@ class ViewVO
 		this.length = view.size*view.dimensions;
 	}
 
-	public dispose()
+	public dispose():void
 	{
 		this.view = null;
 	}
@@ -316,5 +316,3 @@ class ViewVO
 		return new ViewVO(this.view);
 	}
 }
-
-export default AttributesBuffer;

@@ -1,10 +1,10 @@
-import IAsset					from "../library/IAsset";
-import EventBase				from "../events/EventBase";
+import {IAsset}					from "../library/IAsset";
+import {EventBase}				from "../events/EventBase";
 
 /**
- * @class away.events.AssetEvent
+ * @export class away.events.AssetEvent
  */
-class AssetEvent extends EventBase
+export class AssetEvent extends EventBase
 {
 	/**
 	 * Dispatched when the content of an asset is invalidated
@@ -89,5 +89,3 @@ class AssetEvent extends EventBase
 		return new AssetEvent(this.type, this._asset, this._prevName);
 	}
 }
-
-export default AssetEvent;

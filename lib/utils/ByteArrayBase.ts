@@ -1,6 +1,6 @@
-import AbstractMethodError		from "../errors/AbstractMethodError";
+import {AbstractMethodError}		from "../errors/AbstractMethodError";
 
-class ByteArrayBase
+export class ByteArrayBase
 {
 	public position:number = 0;
 	public length:number = 0;
@@ -12,7 +12,7 @@ class ByteArrayBase
 	{
 	}
 
-	public writeByte(b:number)
+	public writeByte(b:number):void
 	{
 		throw "Virtual method";
 	}
@@ -22,7 +22,7 @@ class ByteArrayBase
 		throw "Virtual method";
 	}
 
-	public writeUnsignedByte(b:number)
+	public writeUnsignedByte(b:number):void
 	{
 		throw "Virtual method";
 	}
@@ -32,7 +32,7 @@ class ByteArrayBase
 		throw "Virtual method";
 	}
 
-	public writeUnsignedShort(b:number)
+	public writeUnsignedShort(b:number):void
 	{
 		throw "Virtual method";
 	}
@@ -42,7 +42,7 @@ class ByteArrayBase
 		throw "Virtual method";
 	}
 
-	public writeUnsignedInt(b:number)
+	public writeUnsignedInt(b:number):void
 	{
 		throw "Virtual method";
 	}
@@ -52,22 +52,22 @@ class ByteArrayBase
 		throw "Virtual method";
 	}
 
-	public writeFloat(b:number)
+	public writeFloat(b:number):void
 	{
 		throw "Virtual method";
 	}
 
-	public toFloatBits(x:number)
+	public toFloatBits(x:number):void
 	{
 		throw "Virtual method";
 	}
 
-	public readFloat(b:number)
+	public readFloat(b:number):void
 	{
 		throw "Virtual method";
 	}
 
-	public fromFloatBits(x:number)
+	public fromFloatBits(x:number):void
 	{
 		throw "Virtual method";
 	}
@@ -82,14 +82,14 @@ class ByteArrayBase
 		return "[ByteArray] ( " + this._mode + " ) position=" + this.position + " length=" + this.length;
 	}
 
-	public compareEqual(other, count)
+	public compareEqual(other, count):boolean
 	{
 		if (count == undefined || count > this.length - this.position)
 			count = this.length - this.position;
 		if (count > other.length - other.position)
 			count = other.length - other.position;
 		var co0 = count;
-		var r = true;
+		var r:boolean = true;
 		while (r && count >= 4) {
 			count -= 4;
 			if (this.readUnsignedInt() != other.readUnsignedInt()) r = false;
@@ -104,14 +104,14 @@ class ByteArrayBase
 		return r;
 	}
 
-	public writeBase64String(s:string)
+	public writeBase64String(s:string):void
 	{
 		for (var i:number = 0; i < s.length; i++) {
 			var v = s.charAt(i);
 		}
 	}
 
-	public dumpToConsole()
+	public dumpToConsole():void
 	{
 		var oldpos = this.position;
 		this.position = 0;
@@ -137,7 +137,7 @@ class ByteArrayBase
 		this.position = oldpos;
 	}
 
-	public readBase64String(count:number)
+	public readBase64String(count:number):string
 	{
 		if (count == undefined || count > this.length - this.position)
 			count = this.length - this.position;
@@ -146,9 +146,9 @@ class ByteArrayBase
 		return ByteArrayBase.internalGetBase64String(count, this.readUnsignedByte, this);
 	}
 
-	public static internalGetBase64String(count, getUnsignedByteFunc, self)
+	public static internalGetBase64String(count, getUnsignedByteFunc, self):string
 	{ // return base64 string of the next count bytes
-		var r = "";
+		var r:string = "";
 		var b0, b1, b2, enc1, enc2, enc3, enc4;
 		var base64Key = ByteArrayBase.Base64Key;
 		while (count >= 3) {
@@ -179,5 +179,3 @@ class ByteArrayBase
 		return r;
 	}
 }
-
-export default ByteArrayBase;

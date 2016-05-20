@@ -1,7 +1,7 @@
-import ColorUtils			from "../utils/ColorUtils";
+import {ColorUtils}			from "../utils/ColorUtils";
 
 /**
- * The ColorTransform class lets you adjust the color values in a display
+ * The ColorTransform export class lets you adjust the color values in a display
  * object. The color adjustment or <i>color transformation</i> can be applied
  * to all four channels: red, green, blue, and alpha transparency.
  *
@@ -40,7 +40,7 @@ import ColorUtils			from "../utils/ColorUtils";
  * clip(such as a loaded SWF object). They apply only to graphics and symbols
  * that are attached to the movie clip.</p>
  */
-class ColorTransform
+export class ColorTransform
 {
 	/**
 	 * A decimal value that is multiplied with the alpha transparency channel
@@ -212,5 +212,3 @@ class ColorTransform
 		return Boolean(this.alphaMultiplier) || this.alphaOffset > 0;
 	}
 }
-
-export default ColorTransform;

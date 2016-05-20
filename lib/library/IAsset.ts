@@ -1,6 +1,6 @@
-import IEventDispatcher			from "../events/IEventDispatcher";
+import {IEventDispatcher}			from "../events/IEventDispatcher";
 
-interface IAsset extends IEventDispatcher
+export interface IAsset extends IEventDispatcher
 {
 	/**
 	 *
@@ -63,5 +63,3 @@ interface IAsset extends IEventDispatcher
 	 */
 	resetAssetPath(name:string, ns:string, overrideOriginal?:boolean):void;
 }
-
-export default IAsset;

@@ -1,4 +1,4 @@
-import Vector3D					from "../geom/Vector3D";
+import {Vector3D}					from "../geom/Vector3D";
 
 /**
  * A Box object is an area defined by its position, as indicated by its
@@ -7,7 +7,7 @@ import Vector3D					from "../geom/Vector3D";
  *
  *
  * <p>The <code>x</code>, <code>y</code>, <code>z</code>, <code>width</code>,
- * <code>height</code> <code>depth</code> properties of the Box class are
+ * <code>height</code> <code>depth</code> properties of the Box export class are
  * independent of each other; changing the value of one property has no effect
  * on the others. However, the <code>right</code>, <code>bottom</code> and
  * <code>back</code> properties are integrally related to those six
@@ -25,10 +25,10 @@ import Vector3D					from "../geom/Vector3D";
  * <p>You can use the <code>new Box()</code> constructor to create a
  * Box object.</p>
  *
- * <p><b>Note:</b> The Box class does not define a cubic Shape
+ * <p><b>Note:</b> The Box export class does not define a cubic Shape
  * display object.
  */
-class Box
+export class Box
 {
 	private _size:Vector3D;
 	private _bottomRightBack:Vector3D;
@@ -335,7 +335,7 @@ class Box
 	 *
 	 * @param sourceBox The Box object from which to copy the data.
 	 */
-	public copyFrom(sourceBox:Box)
+	public copyFrom(sourceBox:Box):void
 	{
 		this.x = sourceBox.x;
 		this.y = sourceBox.y;
@@ -380,7 +380,7 @@ class Box
 	 *           object. The following equation is used to calculate the new
 	 *           depth and position of the box:
 	 */
-	public inflate(dx:number, dy:number, dz:number)
+	public inflate(dx:number, dy:number, dz:number):void
 	{
 		this.x -= dx/2;
 		this.y -= dy/2;
@@ -404,7 +404,7 @@ class Box
 	 *              The <code>z</code> property is used to increase the
 	 *              longitudinal dimension of the Box object.
 	 */
-	public inflatePoint(delta:Vector3D)
+	public inflatePoint(delta:Vector3D):void
 	{
 		this.x -= delta.x/2;
 		this.y -= delta.y/2;
@@ -666,7 +666,7 @@ class Box
 	 * @param dy Moves the <i>y</i> value of the Box object by this amount.
 	 * @param dz Moves the <i>z</i> value of the Box object by this amount.
 	 */
-	public offset(dx:number, dy:number, dz:number)
+	public offset(dx:number, dy:number, dz:number):void
 	{
 		this.x += dx;
 		this.y += dy;
@@ -680,7 +680,7 @@ class Box
 	 *
 	 * @param position A Vector3D object to use to offset this Box object.
 	 */
-	public offsetPosition(position:Vector3D)
+	public offsetPosition(position:Vector3D):void
 	{
 		this.x += position.x;
 		this.y += position.y;
@@ -696,7 +696,7 @@ class Box
 	 * <code>depth</code> properties to 0.</p>
 	 *
 	 */
-	public setEmpty()
+	public setEmpty():void
 	{
 		this.x = 0;
 		this.y = 0;
@@ -706,7 +706,7 @@ class Box
 		this.depth = 0;
 	}
 
-	public setBoundIdentity()
+	public setBoundIdentity():void
 	{
 		this.x = Number.MAX_VALUE/2;
 		this.y = Number.MAX_VALUE/2;
@@ -729,7 +729,7 @@ class Box
 	 * @param heighta The height of the box, in pixels.
 	 * @param deptha  The depth of the box, in pixels.
 	 */
-	public setTo(xa:number, ya:number, za:number, widtha:number, heighta:number, deptha:number)
+	public setTo(xa:number, ya:number, za:number, widtha:number, heighta:number, deptha:number):void
 	{
 		this.x = xa;
 		this.y = ya;
@@ -804,5 +804,3 @@ class Box
 		return target;
 	}
 }
-
-export default Box;

@@ -1,8 +1,6 @@
-import IAsset					from "../library/IAsset";
+import {IAsset}					from "../library/IAsset";
 
-interface IAssetClass
+export interface IAssetClass
 {
 	assetType:string;
 }
-
-export default IAssetClass;

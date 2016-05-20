@@ -1,7 +1,7 @@
 /**
 * MathConsts provides some commonly used mathematical constants
 */
-class MathConsts
+export class MathConsts
 {
 	/**
 	 * The amount to multiply with when converting radians to degrees.
@@ -13,5 +13,3 @@ class MathConsts
 	 */
 	public static DEGREES_TO_RADIANS:number = Math.PI/180;
 }
-
-export default MathConsts;

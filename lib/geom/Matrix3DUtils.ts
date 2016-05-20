@@ -1,13 +1,13 @@
-import Quaternion				from "../geom/Quaternion";
-import Matrix3D					from "../geom/Matrix3D";
-import Plane3D					from "../geom/Plane3D";
-import Vector3D					from "../geom/Vector3D";
+import {Quaternion}				from "../geom/Quaternion";
+import {Matrix3D}					from "../geom/Matrix3D";
+import {Plane3D}					from "../geom/Plane3D";
+import {Vector3D}					from "../geom/Vector3D";
 
 
 /**
  * away.geom.Matrix3DUtils provides additional Matrix3D functions.
  */
-class Matrix3DUtils
+export class Matrix3DUtils
 {
 	/**
 	 * A reference to a Vector to be used as a temporary raw data container, to prevent object creation.
@@ -133,7 +133,7 @@ class Matrix3DUtils
 		return true;
 	}
 
-	public static lookAt(matrix:Matrix3D, pos:Vector3D, dir:Vector3D, up:Vector3D)
+	public static lookAt(matrix:Matrix3D, pos:Vector3D, dir:Vector3D, up:Vector3D):void
 	{
 		var dirN:Vector3D;
 		var upN:Vector3D;
@@ -276,7 +276,7 @@ class Matrix3DUtils
 		return result;
 	}
 
-	public static deltaTransformVectors(matrix:Matrix3D, vin:Array<number>, vout:Array<number>)
+	public static deltaTransformVectors(matrix:Matrix3D, vin:Array<number>, vout:Array<number>):void
 	{
 		var raw:Float32Array = Matrix3DUtils.RAW_DATA_CONTAINER;
 		matrix.copyRawDataTo(raw);
@@ -304,5 +304,3 @@ class Matrix3DUtils
 		}
 	}
 }
-
-export default Matrix3DUtils;

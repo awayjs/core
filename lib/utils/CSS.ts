@@ -1,6 +1,6 @@
-class CSS
+export class CSS
 {
-	public static setElementSize(element:HTMLElement, width:number, height:number)
+	public static setElementSize(element:HTMLElement, width:number, height:number):void
 	{
 		if(!element) return;
 		element.style.width = width + "px";
@@ -9,28 +9,28 @@ class CSS
 		element["height"] = height;
 	}
 
-	public static setElementWidth(element:HTMLElement, width:number)
+	public static setElementWidth(element:HTMLElement, width:number):void
 	{
 		if(!element) return;
 		element.style.width = width + "px";
 		element["width"] = width;
 	}
 
-	public static setElementHeight(element:HTMLElement, height:number)
+	public static setElementHeight(element:HTMLElement, height:number):void
 	{
 		if(!element) return;
 		element.style.height = height + "px";
 		element["height"] = height;
 	}
 
-	public static setElementX(element:HTMLElement, x:number)
+	public static setElementX(element:HTMLElement, x:number):void
 	{
 		if(!element) return;
 		element.style.position = 'absolute';
 		element.style.left = x + "px";
 	}
 
-	public static setElementY(element:HTMLElement, y:number)
+	public static setElementY(element:HTMLElement, y:number):void
 	{
 		if(!element) return;
 		element.style.position = 'absolute';
@@ -43,7 +43,7 @@ class CSS
 		return element.style.visibility == 'visible';
 	}
 
-	public static setElementVisibility(element:HTMLElement, visible:boolean)
+	public static setElementVisibility(element:HTMLElement, visible:boolean):void
 	{
 		if(!element) return;
 		if (visible) {
@@ -53,7 +53,7 @@ class CSS
 		}
 	}
 
-	public static setElementAlpha(element:HTMLElement, alpha:number)
+	public static setElementAlpha(element:HTMLElement, alpha:number):void
 	{
 		if (element instanceof HTMLCanvasElement) {
 			var context = (<HTMLCanvasElement> element).getContext("2d");
@@ -61,7 +61,7 @@ class CSS
 		}
 	}
 
-	public static setElementPosition(element:HTMLElement, x:number, y:number, absolute:boolean = false)
+	public static setElementPosition(element:HTMLElement, x:number, y:number, absolute:boolean = false):void
 	{
 		if(!element) return;
 		if (absolute) {
@@ -74,5 +74,3 @@ class CSS
 		element.style.top = y + "px";
 	}
 }
-
-export default CSS;

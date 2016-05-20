@@ -1,6 +1,6 @@
-import ParserUtils				from "../parsers/ParserUtils";
+import {ParserUtils}				from "../parsers/ParserUtils";
 
-class EventAudioChannel
+export class EventAudioChannel
 {
 	public static maxChannels:number = 4;
 
@@ -63,7 +63,7 @@ class EventAudioChannel
 		this._audio.ontimeupdate = (event) => this._onTimeUpdate(event);
 	}
 	
-	public play(buffer:ArrayBuffer, offset:number = 0, loop:boolean = false, id:number = 0)
+	public play(buffer:ArrayBuffer, offset:number = 0, loop:boolean = false, id:number = 0):void
 	{
 		this._isPlaying = true;
 		this._isLooping = loop;
@@ -75,19 +75,17 @@ class EventAudioChannel
 		this._audio.play();
 	}
 
-	public stop()
+	public stop():void
 	{
 		this._audio.pause();
 		this._isPlaying = false;
 		this._isLooping = false;
 	}
 
-	private _onTimeUpdate(event)
+	private _onTimeUpdate(event):void
 	{
 		//TODO: more accurate end detection
 		if (!this._isLooping && this._duration < this._audio.currentTime - this._startTime + 0.1)
 			this.stop();
 	}
 }
-
-export default EventAudioChannel;

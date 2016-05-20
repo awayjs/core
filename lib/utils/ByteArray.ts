@@ -1,6 +1,6 @@
-import ByteArrayBase			from "../utils/ByteArrayBase";
+import {ByteArrayBase}			from "../utils/ByteArrayBase";
 
-class ByteArray extends ByteArrayBase
+export class ByteArray extends ByteArrayBase
 {
 	public maxlength:number;
 	public arraybytes; //ArrayBuffer
@@ -15,7 +15,7 @@ class ByteArray extends ByteArrayBase
 		this.unalignedarraybytestemp = new ArrayBuffer(16);
 	}
 
-	public ensureWriteableSpace(n:number)
+	public ensureWriteableSpace(n:number):void
 	{
 		this.ensureSpace(n + this.position);
 	}
@@ -40,7 +40,7 @@ class ByteArray extends ByteArrayBase
 		return ( this.length ) - ( this.position );
 	}
 
-	public ensureSpace(n:number)
+	public ensureSpace(n:number):void
 	{
 		if (n > this.maxlength) {
 			var newmaxlength:number = (n + 255) & (~255);
@@ -53,7 +53,7 @@ class ByteArray extends ByteArrayBase
 		}
 	}
 
-	public writeByte(b:number)
+	public writeByte(b:number):void
 	{
 		this.ensureWriteableSpace(1);
 
@@ -64,7 +64,7 @@ class ByteArray extends ByteArrayBase
 		}
 	}
 
-	public readByte()
+	public readByte():number
 	{
 		if (this.position >= this.length)
 			throw "ByteArray out of bounds read. Positon=" + this.position + ", Length=" + this.length;
@@ -74,7 +74,7 @@ class ByteArray extends ByteArrayBase
 		return view[ this.position++ ];
 	}
 
-	public readBytes(bytes:ByteArray, offset:number = 0, length:number = 0)
+	public readBytes(bytes:ByteArray, offset:number = 0, length:number = 0):void
 	{
 		if (length == null)
 			length = bytes.length;
@@ -92,7 +92,7 @@ class ByteArray extends ByteArrayBase
 			bytes.length += ( length + offset ) - bytes.length;
 	}
 
-	public writeUnsignedByte(b:number)
+	public writeUnsignedByte(b:number):void
 	{
 		this.ensureWriteableSpace(1);
 
@@ -103,7 +103,7 @@ class ByteArray extends ByteArrayBase
 			this.length = this.position;
 	}
 
-	public readUnsignedByte()
+	public readUnsignedByte():number
 	{
 		if (this.position >= this.length)
 			throw "ByteArray out of bounds read. Positon=" + this.position + ", Length=" + this.length;
@@ -112,7 +112,7 @@ class ByteArray extends ByteArrayBase
 		return view[this.position++];
 	}
 
-	public writeUnsignedShort(b:number)
+	public writeUnsignedShort(b:number):void
 	{
 		this.ensureWriteableSpace(2);
 
@@ -202,7 +202,7 @@ class ByteArray extends ByteArrayBase
 		return double;
 	}
 
-	public readUnsignedShort()
+	public readUnsignedShort():number
 	{
 		if (this.position > this.length + 2)
 			throw "ByteArray out of bounds read. Position=" + this.position + ", Length=" + this.length;
@@ -222,7 +222,7 @@ class ByteArray extends ByteArrayBase
 		}
 	}
 
-	public writeUnsignedInt(b:number)
+	public writeUnsignedInt(b:number):void
 	{
 		this.ensureWriteableSpace(4);
 
@@ -242,7 +242,7 @@ class ByteArray extends ByteArrayBase
 			this.length = this.position;
 	}
 
-	public readUnsignedInt()
+	public readUnsignedInt():number
 	{
 		if (this.position > this.length + 4)
 			throw "ByteArray out of bounds read. Position=" + this.position + ", Length=" + this.length;
@@ -262,7 +262,7 @@ class ByteArray extends ByteArrayBase
 		}
 	}
 
-	public writeFloat(b:number)
+	public writeFloat(b:number):void
 	{
 		this.ensureWriteableSpace(4);
 
@@ -282,7 +282,7 @@ class ByteArray extends ByteArrayBase
 			this.length = this.position;
 	}
 
-	public readFloat()
+	public readFloat():number
 	{
 		if (this.position > this.length + 4)
 			throw "ByteArray out of bounds read. Positon=" + this.position + ", Length=" + this.length;
@@ -302,5 +302,3 @@ class ByteArray extends ByteArrayBase
 		}
 	}
 }
-
-export default ByteArray;

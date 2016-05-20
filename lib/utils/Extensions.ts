@@ -3,9 +3,7 @@ declare var SIMD:any;
 /**
  *
  */
-class Extensions
+export class Extensions
 {
 	public static SIMD:boolean = Boolean(typeof(SIMD) !== "undefined");
 }
-
-export default Extensions;

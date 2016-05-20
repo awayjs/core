@@ -1,1 +1,1 @@
-export {default as WaveAudio}						from "./audio/WaveAudio";
+export {WaveAudio}						from "./audio/WaveAudio";

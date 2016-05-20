@@ -1,1 +1,1 @@
-export {default as Keyboard}						from "./ui/Keyboard";
+export {Keyboard}						from "./ui/Keyboard";

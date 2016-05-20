@@ -1,15 +1,15 @@
-import ConflictStrategyBase		from "../library/ConflictStrategyBase";
-import IAsset					from "../library/IAsset";
-import ErrorBase				from "../errors/ErrorBase";
+import {ConflictStrategyBase}		from "../library/ConflictStrategyBase";
+import {IAsset}					from "../library/IAsset";
+import {ErrorBase}				from "../errors/ErrorBase";
 
-class ErrorConflictStrategy extends ConflictStrategyBase
+export class ErrorConflictStrategy extends ConflictStrategyBase
 {
 	constructor()
 	{
 		super();
 	}
 
-	public resolveConflict(changedAsset:IAsset, oldAsset:IAsset, assetsDictionary:Object, precedence:string)
+	public resolveConflict(changedAsset:IAsset, oldAsset:IAsset, assetsDictionary:Object, precedence:string):void
 	{
 		throw new ErrorBase('Asset name collision while AssetLibrary.namingStrategy set to AssetLibrary.THROW_ERROR. Asset path: ' + changedAsset.assetFullPath);
 	}
@@ -19,5 +19,3 @@ class ErrorConflictStrategy extends ConflictStrategyBase
 		return new ErrorConflictStrategy();
 	}
 }
-
-export default ErrorConflictStrategy;

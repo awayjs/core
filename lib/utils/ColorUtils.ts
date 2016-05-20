@@ -1,7 +1,7 @@
 /**
  *
  */
-class ColorUtils
+export class ColorUtils
 {
 	public static float32ColorToARGB(float32Color:number):number[]
 	{
@@ -35,5 +35,3 @@ class ColorUtils
 		return "#" + ColorUtils.componentToHex(argb[0]) + ColorUtils.componentToHex(argb[1]) + ColorUtils.componentToHex(argb[2]) + ColorUtils.componentToHex(argb[3]);
 	}
 }
-
-export default ColorUtils;

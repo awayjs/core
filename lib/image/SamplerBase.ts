@@ -1,10 +1,10 @@
-import IAsset					from "../library/IAsset";
-import AssetBase				from "../library/AssetBase";
+import {IAsset}					from "../library/IAsset";
+import {AssetBase}				from "../library/AssetBase";
 
 /**
  *
  */
-class SamplerBase extends AssetBase
+export class SamplerBase extends AssetBase
 {
 	private _smooth:boolean;
 	private _mipmap:boolean;
@@ -54,5 +54,3 @@ class SamplerBase extends AssetBase
 		this._mipmap = mipmap;
 	}
 }
-
-export default SamplerBase;

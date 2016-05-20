@@ -1,8 +1,8 @@
-import SamplerBase				from "../image/SamplerBase";
-import ImageCube				from "../image/ImageCube";
+import {SamplerBase}				from "../image/SamplerBase";
+import {ImageCube}				from "../image/ImageCube";
 
 /**
- * The Bitmap class represents display objects that represent bitmap images.
+ * The Bitmap export class represents display objects that represent bitmap images.
  * These can be images that you load with the <code>flash.Assets</code> or
  * <code>flash.display.Loader</code> classes, or they can be images that you
  * create with the <code>Bitmap()</code> constructor.
@@ -21,7 +21,7 @@ import ImageCube				from "../image/ImageCube";
  * object instance.</p>
 
  */
-class SamplerCube extends SamplerBase
+export class SamplerCube extends SamplerBase
 {
 	public static assetType:string = "[asset SamplerCube]";
 
@@ -44,5 +44,3 @@ class SamplerCube extends SamplerBase
 		super(smooth, mipmap);
 	}
 }
-
-export default SamplerCube;

@@ -1,11 +1,11 @@
-import WaveAudio				from "../audio/WaveAudio";
-import IAsset					from "../library/IAsset";
-import URLLoaderDataFormat		from "../net/URLLoaderDataFormat";
-import ParserBase				from "../parsers/ParserBase";
-import ParserUtils				from "../parsers/ParserUtils";
-import ByteArray				from "../utils/ByteArray";
+import {WaveAudio}				from "../audio/WaveAudio";
+import {IAsset}					from "../library/IAsset";
+import {URLLoaderDataFormat}		from "../net/URLLoaderDataFormat";
+import {ParserBase}				from "../parsers/ParserBase";
+import {ParserUtils}				from "../parsers/ParserUtils";
+import {ByteArray}				from "../utils/ByteArray";
 
-class WaveAudioParser extends ParserBase
+export class WaveAudioParser extends ParserBase
 {
 	constructor()
 	{
@@ -30,7 +30,7 @@ class WaveAudioParser extends ParserBase
 		return filetype? true : false;
 	}
 
-	public _pStartParsing(frameLimit:number)
+	public _pStartParsing(frameLimit:number):void
 	{
 		//clear content
 		delete this._pContent;
@@ -75,5 +75,3 @@ class WaveAudioParser extends ParserBase
 		return null;
 	}
 }
-
-export default WaveAudioParser;

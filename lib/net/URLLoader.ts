@@ -1,9 +1,9 @@
-import URLLoaderDataFormat			from "../net/URLLoaderDataFormat";
-import URLRequest					from "../net/URLRequest";
-import URLRequestMethod				from "../net/URLRequestMethod";
-import URLVariables					from "../net/URLVariables";
-import EventDispatcher				from "../events/EventDispatcher";
-import URLLoaderEvent				from "../events/URLLoaderEvent";
+import {URLLoaderDataFormat}			from "../net/URLLoaderDataFormat";
+import {URLRequest}					from "../net/URLRequest";
+import {URLRequestMethod}				from "../net/URLRequestMethod";
+import {URLVariables}					from "../net/URLVariables";
+import {EventDispatcher}				from "../events/EventDispatcher";
+import {URLLoaderEvent}				from "../events/URLLoaderEvent";
 
 /**
  * The URLLoader is used to load a single file, as part of a resource.
@@ -15,7 +15,7 @@ import URLLoaderEvent				from "../events/URLLoaderEvent";
  * @see Loader
  * @see away.library.AssetLibrary
  */
-class URLLoader extends EventDispatcher
+export class URLLoader extends EventDispatcher
 {
 	private _XHR:XMLHttpRequest;
 	private _status:number;
@@ -236,7 +236,7 @@ class URLLoader extends EventDispatcher
 	/**
 	 *
 	 */
-	private initXHR()
+	private initXHR():void
 	{
 		if (!this._XHR) {
 			this._XHR = new XMLHttpRequest();
@@ -255,7 +255,7 @@ class URLLoader extends EventDispatcher
 	/**
 	 *
 	 */
-	private disposeXHR()
+	private disposeXHR():void
 	{
 		if (this._XHR !== null) {
 			this._XHR.onloadstart = null;
@@ -293,7 +293,7 @@ class URLLoader extends EventDispatcher
 	 * When XHR state changes
 	 * @param event
 	 */
-	private onReadyStateChange(event:Event)
+	private onReadyStateChange(event:Event):void
 	{
 		if (this._XHR.readyState == 4) {
 			this._status = this._XHR.status;
@@ -311,7 +311,7 @@ class URLLoader extends EventDispatcher
 	 * When the request has completed, regardless of whether or not it was successful.
 	 * @param event
 	 */
-	private onLoadEnd(event:ProgressEvent)
+	private onLoadEnd(event:ProgressEvent):void
 	{
 		if (this._loadError === true)
 			return;
@@ -321,7 +321,7 @@ class URLLoader extends EventDispatcher
 	 * When the author specified timeout has passed before the request could complete.
 	 * @param event
 	 */
-	private onTimeOut(event:Event)
+	private onTimeOut(event:Event):void
 	{
 		//TODO: Timeout not currently implemented ( also not part of AS3 API )
 	}
@@ -330,7 +330,7 @@ class URLLoader extends EventDispatcher
 	 * When the request has been aborted, either by invoking the abort() method or navigating away from the page.
 	 * @param event
 	 */
-	private onAbort(event:UIEvent)
+	private onAbort(event:UIEvent):void
 	{
 		// TODO: investigate whether this needs to be an IOError
 	}
@@ -339,7 +339,7 @@ class URLLoader extends EventDispatcher
 	 * While loading and sending data.
 	 * @param event
 	 */
-	private onProgress(event:ProgressEvent)
+	private onProgress(event:ProgressEvent):void
 	{
 		this._bytesTotal = event.total;
 		this._bytesLoaded = event.loaded;
@@ -351,7 +351,7 @@ class URLLoader extends EventDispatcher
 	 * When the request starts.
 	 * @param event
 	 */
-	private onLoadStart(event:ProgressEvent)
+	private onLoadStart(event:ProgressEvent):void
 	{
 		this.dispatchEvent(this._loadStartEvent || (this._loadStartEvent = new URLLoaderEvent(URLLoaderEvent.LOAD_START, this)));
 	}
@@ -360,7 +360,7 @@ class URLLoader extends EventDispatcher
 	 * When the request has successfully completed.
 	 * @param event
 	 */
-	private onLoadComplete(event:Event)
+	private onLoadComplete(event:Event):void
 	{
 		if (this._loadError === true)
 			return;
@@ -392,12 +392,10 @@ class URLLoader extends EventDispatcher
 	 * When the request has failed. ( due to network issues ).
 	 * @param event
 	 */
-	private onLoadError(event:Event)
+	private onLoadError(event:Event):void
 	{
 		this._loadError = true;
 
 		this.dispatchEvent(this._loadErrorEvent || (this._loadErrorEvent  = new URLLoaderEvent(URLLoaderEvent.LOAD_ERROR, this)));
 	}
 }
-
-export default URLLoader;

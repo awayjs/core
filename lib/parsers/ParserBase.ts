@@ -1,20 +1,20 @@
-import BitmapImage2D			from "../image/BitmapImage2D";
-import IAsset					from "../library/IAsset";
-import URLRequest				from "../net/URLRequest";
-import AbstractMethodError		from "../errors/AbstractMethodError";
-import AssetEvent				from "../events/AssetEvent";
-import EventDispatcher			from "../events/EventDispatcher";
-import ParserEvent				from "../events/ParserEvent";
-import TimerEvent				from "../events/TimerEvent";
-import ParserUtils				from "../parsers/ParserUtils";
-import ResourceDependency		from "../parsers/ResourceDependency";
-import ByteArray				from "../utils/ByteArray";
-import ImageUtils				from "../utils/ImageUtils";
-import Timer					from "../utils/Timer";
-import getTimer					from "../utils/getTimer";
+import {BitmapImage2D}			from "../image/BitmapImage2D";
+import {IAsset}					from "../library/IAsset";
+import {URLRequest}				from "../net/URLRequest";
+import {AbstractMethodError}		from "../errors/AbstractMethodError";
+import {AssetEvent}				from "../events/AssetEvent";
+import {EventDispatcher}			from "../events/EventDispatcher";
+import {ParserEvent}				from "../events/ParserEvent";
+import {TimerEvent}				from "../events/TimerEvent";
+import {ParserUtils}				from "../parsers/ParserUtils";
+import {ResourceDependency}		from "../parsers/ResourceDependency";
+import {ByteArray}				from "../utils/ByteArray";
+import {ImageUtils}				from "../utils/ImageUtils";
+import {Timer}					from "../utils/Timer";
+import {getTimer}					from "../utils/getTimer";
 
 /**
- * <code>ParserBase</code> provides an abstract base class for objects that convert blocks of data to data structures
+ * <code>ParserBase</code> provides an abstract base export class for objects that convert blocks of data to data structures
  * supported by away.
  *
  * If used by <code>Loader</code> to automatically determine the parser type, two public static methods should
@@ -32,7 +32,7 @@ import getTimer					from "../utils/getTimer";
  *
  * @see Loader
  */
-class ParserBase extends EventDispatcher
+export class ParserBase extends EventDispatcher
 {
 	public _isParsing:boolean;
 	public _iFileName:string;
@@ -167,7 +167,7 @@ class ParserBase extends EventDispatcher
 	 * actual time spent on a frame can exceed this number since time-checks can
 	 * only be performed between logical sections of the parsing procedure.
 	 */
-	public parseAsync(data:any, frameLimit:number = 30)
+	public parseAsync(data:any, frameLimit:number = 30):void
 	{
 		this._data = data;
 		this._pStartParsing(frameLimit);
@@ -188,7 +188,7 @@ class ParserBase extends EventDispatcher
 	 *
 	 * @param resourceDependency The dependency to be resolved.
 	 */
-	public _iResolveDependency(resourceDependency:ResourceDependency)
+	public _iResolveDependency(resourceDependency:ResourceDependency):void
 	{
 		throw new AbstractMethodError();
 	}
@@ -198,7 +198,7 @@ class ParserBase extends EventDispatcher
 	 *
 	 * @param resourceDependency The dependency to be resolved.
 	 */
-	public _iResolveDependencyFailure(resourceDependency:ResourceDependency)
+	public _iResolveDependencyFailure(resourceDependency:ResourceDependency):void
 	{
 		throw new AbstractMethodError();
 	}
@@ -213,7 +213,7 @@ class ParserBase extends EventDispatcher
 		return asset.name;
 	}
 
-	public _iResumeParsing()
+	public _iResumeParsing():void
 	{
 		this._parsingPaused = false;
 
@@ -225,7 +225,7 @@ class ParserBase extends EventDispatcher
 			this._pOnInterval();
 	}
 
-	public _pFinalizeAsset(asset:IAsset, name:string = null)
+	public _pFinalizeAsset(asset:IAsset, name:string = null):void
 	{
 		var type_event:string;
 		var type_name:string;
@@ -251,7 +251,7 @@ class ParserBase extends EventDispatcher
 		throw new AbstractMethodError();
 	}
 
-	public _pDieWithError(message:string = 'Unknown parsing error')
+	public _pDieWithError(message:string = 'Unknown parsing error'):void
 	{
 		if (this._timer) {
 			this._timer.removeEventListener(TimerEvent.TIMER, this._pOnIntervalDelegate);
@@ -270,14 +270,14 @@ class ParserBase extends EventDispatcher
 		return dependency;
 	}
 
-	public _pPauseAndRetrieveDependencies()
+	public _pPauseAndRetrieveDependencies():void
 	{
 		this._pPauseParsing();
 
 		this.dispatchEvent(new ParserEvent(ParserEvent.READY_FOR_DEPENDENCIES));
 	}
 
-	public _pPauseParsing()
+	public _pPauseParsing():void
 	{
 		if (this._timer)
 			this._timer.stop();
@@ -297,7 +297,7 @@ class ParserBase extends EventDispatcher
 	/**
 	 * Called when the parsing pause interval has passed and parsing can proceed.
 	 */
-	public _pOnInterval(event:TimerEvent = null)
+	public _pOnInterval(event:TimerEvent = null):void
 	{
 		this._lastFrameTime = getTimer();
 		this._isParsing = true;
@@ -312,7 +312,7 @@ class ParserBase extends EventDispatcher
 	 * Initializes the parsing of data.
 	 * @param frameLimit The maximum duration of a parsing session.
 	 */
-	public _pStartParsing(frameLimit:number)
+	public _pStartParsing(frameLimit:number):void
 	{
 		this._frameLimit = frameLimit;
 		this._timer = new Timer(this._frameLimit, 0);
@@ -326,7 +326,7 @@ class ParserBase extends EventDispatcher
 	/**
 	 * Finish parsing the data.
 	 */
-	public _pFinishParsing()
+	public _pFinishParsing():void
 	{
 		if (this._timer) {
 			this._timer.removeEventListener(TimerEvent.TIMER, this._pOnIntervalDelegate);
@@ -371,5 +371,3 @@ class ParserBase extends EventDispatcher
 	}
 
 }
-
-export default ParserBase;

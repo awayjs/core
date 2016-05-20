@@ -1,8 +1,8 @@
-import AttributesBuffer			from "../attributes/AttributesBuffer";
-import AssetBase				from "../library/AssetBase";
-import IArrayBufferViewClass	from "../utils/IArrayBufferViewClass";
+import {AttributesBuffer}		from "../attributes/AttributesBuffer";
+import {AssetBase}				from "../library/AssetBase";
+import {IArrayBufferViewClass}	from "../utils/IArrayBufferViewClass";
 
-class AttributesView extends AssetBase
+export class AttributesView extends AssetBase
 {
 	public static assetType:string = "[attributes AttributesView]";
 
@@ -120,7 +120,7 @@ class AttributesView extends AssetBase
 
 	public set(array:Array<number>, offset?:number);
 	public set(arrayBufferView:ArrayBufferView, offset?:number);
-	public set(values:any, offset:number = 0)
+	public set(values:any, offset:number = 0):void
 	{
 		this._attributesBuffer._setAttributes(this._index, (values instanceof Array)? new (this._arrayClass)(values) : <ArrayBufferView> values, offset);
 
@@ -158,7 +158,7 @@ class AttributesView extends AssetBase
 	/**
 	 * @inheritDoc
 	 */
-	public dispose()
+	public dispose():void
 	{
 		if (!this._attributesBuffer)
 			return;
@@ -168,5 +168,3 @@ class AttributesView extends AssetBase
 		this._localArrayBuffer = null;
 	}
 }
-
-export default AttributesView;

@@ -1,27 +1,27 @@
-import URLRequest				from "../net/URLRequest";
-import AssetLibrary				from "../library/AssetLibrary";
-import AssetLibraryIterator		from "../library/AssetLibraryIterator";
-import Loader					from "../library/Loader";
-import LoaderContext			from "../library/LoaderContext";
-import ConflictPrecedence		from "../library/ConflictPrecedence";
-import ConflictStrategy			from "../library/ConflictStrategy";
-import ConflictStrategyBase		from "../library/ConflictStrategyBase";
-import AssetBase				from "../library/AssetBase";
-import IAsset					from "../library/IAsset";
-import ErrorBase				from "../errors/ErrorBase";
-import AssetEvent				from "../events/AssetEvent";
-import URLLoaderEvent			from "../events/URLLoaderEvent";
-import LoaderEvent				from "../events/LoaderEvent";
-import EventDispatcher			from "../events/EventDispatcher";
-import ParserEvent				from "../events/ParserEvent";
-import ParserBase				from "../parsers/ParserBase";
+import {URLRequest}				from "../net/URLRequest";
+import {AssetLibrary}				from "../library/AssetLibrary";
+import {AssetLibraryIterator}		from "../library/AssetLibraryIterator";
+import {Loader}					from "../library/Loader";
+import {LoaderContext}			from "../library/LoaderContext";
+import {ConflictPrecedence}		from "../library/ConflictPrecedence";
+import {ConflictStrategy}			from "../library/ConflictStrategy";
+import {ConflictStrategyBase}		from "../library/ConflictStrategyBase";
+import {AssetBase}				from "../library/AssetBase";
+import {IAsset}					from "../library/IAsset";
+import {ErrorBase}				from "../errors/ErrorBase";
+import {AssetEvent}				from "../events/AssetEvent";
+import {URLLoaderEvent}			from "../events/URLLoaderEvent";
+import {LoaderEvent}				from "../events/LoaderEvent";
+import {EventDispatcher}			from "../events/EventDispatcher";
+import {ParserEvent}				from "../events/ParserEvent";
+import {ParserBase}				from "../parsers/ParserBase";
 
 /**
  * AssetLibraryBundle enforces a multiton pattern and is not intended to be instanced directly.
  * Its purpose is to create a container for 3D data management, both before and after parsing.
  * If you are interested in creating multiple library bundles, please use the <code>getInstance()</code> method.
  */
-class AssetLibraryBundle extends EventDispatcher
+export class AssetLibraryBundle extends EventDispatcher
 {
 	public static _iInstances:Object = new Object();
 
@@ -91,7 +91,7 @@ class AssetLibraryBundle extends EventDispatcher
 	/**
 	 *
 	 */
-	public enableParser(parserClass:Object)
+	public enableParser(parserClass:Object):void
 	{
 		Loader.enableParser(parserClass);
 	}
@@ -99,7 +99,7 @@ class AssetLibraryBundle extends EventDispatcher
 	/**
 	 *
 	 */
-	public enableParsers(parserClasses:Object[])
+	public enableParsers(parserClasses:Object[]):void
 	{
 		Loader.enableParsers(parserClasses);
 	}
@@ -179,7 +179,7 @@ class AssetLibraryBundle extends EventDispatcher
 	 * @param parser An optional parser object for translating the loaded data into a usable resource. If not provided, Loader will attempt to auto-detect the file type.
 	 * @return A handle to the retrieved resource.
 	 */
-	public load(req:URLRequest, context:LoaderContext = null, ns:string = null, parser:ParserBase = null)
+	public load(req:URLRequest, context:LoaderContext = null, ns:string = null, parser:ParserBase = null):void
 	{
 		this.getLoader().load(req, context, ns, parser);
 	}
@@ -193,7 +193,7 @@ class AssetLibraryBundle extends EventDispatcher
 	 * @param parser An optional parser object for translating the loaded data into a usable resource. If not provided, Loader will attempt to auto-detect the file type.
 	 * @return A handle to the retrieved resource.
 	 */
-	public loadData(data:any, context:LoaderContext = null, ns:string = null, parser:ParserBase = null)
+	public loadData(data:any, context:LoaderContext = null, ns:string = null, parser:ParserBase = null):void
 	{
 		this.getLoader().loadData(data, '', context, ns, parser);
 	}
@@ -215,7 +215,7 @@ class AssetLibraryBundle extends EventDispatcher
 		return loader;
 	}
 	
-	public disposeLoader(loader:Loader)
+	public disposeLoader(loader:Loader):void
 	{
 		var index:number = this._loaderSessions.indexOf(loader);
 		this._loaderSessions.splice(index, 1);
@@ -251,7 +251,7 @@ class AssetLibraryBundle extends EventDispatcher
 	 * using the method defined by the <code>conflictStrategy</code> and
 	 * <code>conflictPrecedence</code> properties.
 	 */
-	public addAsset(asset:IAsset)
+	public addAsset(asset:IAsset):void
 	{
 		var ns:string;
 		var old:IAsset;
@@ -289,7 +289,7 @@ class AssetLibraryBundle extends EventDispatcher
 	 * @param asset The asset which should be removed from this library.
 	 * @param dispose Defines whether the assets should also be disposed.
 	 */
-	public removeAsset(asset:IAsset, dispose:boolean = true)
+	public removeAsset(asset:IAsset, dispose:boolean = true):void
 	{
 		var idx:number;
 
@@ -332,7 +332,7 @@ class AssetLibraryBundle extends EventDispatcher
 	 *
 	 * @param dispose Defines whether the assets should also be disposed.
 	 */
-	public removeAllAssets(dispose:boolean = true)
+	public removeAllAssets(dispose:boolean = true):void
 	{
 		if (dispose) {
 			var asset:IAsset;
@@ -357,7 +357,7 @@ class AssetLibraryBundle extends EventDispatcher
 	 *
 	 * @see away.library.AssetLibrary.removeAsset()
 	 */
-	public removeNamespaceAssets(ns:string = null, dispose:boolean = true)
+	public removeNamespaceAssets(ns:string = null, dispose:boolean = true):void
 	{
 		var idx:number = 0;
 		var asset:IAsset;
@@ -415,7 +415,7 @@ class AssetLibraryBundle extends EventDispatcher
 			delete this._assetDictionary[ns];
 	}
 
-	private removeAssetFromDict(asset:IAsset, autoRemoveEmptyNamespace:boolean = true)
+	private removeAssetFromDict(asset:IAsset, autoRemoveEmptyNamespace:boolean = true):void
 	{
 		if (this._assetDictDirty)
 			this.rehashAssetDict();
@@ -440,7 +440,7 @@ class AssetLibraryBundle extends EventDispatcher
 		}
 	}
 
-	public stopAllLoaders()
+	public stopAllLoaders():void
 	{
 		var len:number = this._loaderSessions.length;
 		for (var i:number = 0; i < len; i++)
@@ -449,7 +449,7 @@ class AssetLibraryBundle extends EventDispatcher
 		this._loaderSessions = new Array<Loader>();
 	}
 
-	private rehashAssetDict()
+	private rehashAssetDict():void
 	{
 		var asset:IAsset;
 
@@ -496,7 +496,7 @@ class AssetLibraryBundle extends EventDispatcher
 		}
 	}
 
-	private onAssetComplete(event:AssetEvent)
+	private onAssetComplete(event:AssetEvent):void
 	{
 		// Only add asset to library the first time.
 		if (event.type == AssetEvent.ASSET_COMPLETE)
@@ -506,7 +506,7 @@ class AssetLibraryBundle extends EventDispatcher
 
 	}
 
-	private onTextureSizeError(event:LoaderEvent)
+	private onTextureSizeError(event:LoaderEvent):void
 	{
 		this.dispatchEvent(event);
 	}
@@ -514,7 +514,7 @@ class AssetLibraryBundle extends EventDispatcher
 	/**
 	 * Called when the resource and all of its dependencies was retrieved.
 	 */
-	private onResourceComplete(event:LoaderEvent)
+	private onResourceComplete(event:LoaderEvent):void
 	{
 		var loader:Loader = <Loader> event.target;
 
@@ -536,7 +536,7 @@ class AssetLibraryBundle extends EventDispatcher
 		this._gcTimeoutIID = null;
 	}
 
-	private killloaderSession(loader:Loader)
+	private killloaderSession(loader:Loader):void
 	{
 		loader.removeEventListener(LoaderEvent.LOAD_COMPLETE, this._onResourceCompleteDelegate);
 		loader.removeEventListener(AssetEvent.TEXTURE_SIZE_ERROR, this._onTextureSizeErrorDelegate);
@@ -545,7 +545,7 @@ class AssetLibraryBundle extends EventDispatcher
 	}
 
 
-	private onAssetRename(event:AssetEvent)
+	private onAssetRename(event:AssetEvent):void
 	{
 		var asset:IAsset = <IAsset > event.target;// TODO: was ev.currentTarget - watch this var
 		var old:IAsset = this.getAsset(asset.assetNamespace, asset.name);
@@ -563,10 +563,8 @@ class AssetLibraryBundle extends EventDispatcher
 		}
 	}
 
-	private onAssetConflictResolved(event:AssetEvent)
+	private onAssetConflictResolved(event:AssetEvent):void
 	{
 		this.dispatchEvent(event.clone());
 	}
 }
-
-export default AssetLibraryBundle;

@@ -1,6 +1,6 @@
-import EventBase				from "../events/EventBase";
+import {EventBase}				from "../events/EventBase";
 
-class ParserEvent extends EventBase
+export class ParserEvent extends EventBase
 {
 	private _message:string;
 
@@ -46,5 +46,3 @@ class ParserEvent extends EventBase
 		return new ParserEvent(this.type, this._message);
 	}
 }
-
-export default ParserEvent;

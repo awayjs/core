@@ -1,11 +1,11 @@
-import ConflictStrategyBase			from "../library/ConflictStrategyBase";
-import ErrorConflictStrategy		from "../library/ErrorConflictStrategy";
-import IgnoreConflictStrategy		from "../library/IgnoreConflictStrategy";
-import NumSuffixConflictStrategy	from "../library/NumSuffixConflictStrategy";
+import {ConflictStrategyBase}			from "../library/ConflictStrategyBase";
+import {ErrorConflictStrategy}		from "../library/ErrorConflictStrategy";
+import {IgnoreConflictStrategy}		from "../library/IgnoreConflictStrategy";
+import {NumSuffixConflictStrategy}	from "../library/NumSuffixConflictStrategy";
 
 /**
- * Enumeration class for bundled conflict strategies. Set one of these values (or an
- * instance of a self-defined sub-class of ConflictStrategyBase) to the conflictStrategy
+ * Enumeration export class for bundled conflict strategies. Set one of these values (or an
+ * instance of a self-defined sub-export class of ConflictStrategyBase) to the conflictStrategy
  * property on an AssetLibrary to define how that library resolves naming conflicts.
  *
  * The value of the <code>AssetLibrary.conflictPrecedence</code> property defines which
@@ -14,7 +14,7 @@ import NumSuffixConflictStrategy	from "../library/NumSuffixConflictStrategy";
  * @see away.library.AssetLibrary.conflictStrategy
  * @see away.library.naming.ConflictStrategyBase
  */
-class ConflictStrategy
+export class ConflictStrategy
 {
 	/**
 	 * Specifies that in case of a naming conflict, one of the assets will be renamed and
@@ -41,5 +41,3 @@ class ConflictStrategy
 		//TODO: find out why typescript d.ts files do not include this class
 	}
 }
-
-export default ConflictStrategy;

@@ -1,4 +1,4 @@
-class LoaderContext
+export class LoaderContext
 {
 	public static UNDEFINED:number = 0;
 	public static SINGLEPASS_MATERIALS:number = 1;
@@ -115,7 +115,7 @@ class LoaderContext
 	 *
 	 * @see mapUrlToData()
 	 */
-	public mapUrl(originalUrl:string, newUrl:string)
+	public mapUrl(originalUrl:string, newUrl:string):void
 	{
 		this._remappedUrls[originalUrl] = newUrl;
 	}
@@ -125,9 +125,9 @@ class LoaderContext
 	 * which it's referenced, the dependency data will be retrieved straight from the memory instead.
 	 *
 	 * @param originalUrl The original URL which is referenced in the loaded resource.
-	 * @param data The embedded data. Can be ByteArray or a class which can be used to create a bytearray.
+	 * @param data The embedded data. Can be ByteArray or a export class which can be used to create a bytearray.
 	 */
-	public mapUrlToData(originalUrl:string, data:any)
+	public mapUrlToData(originalUrl:string, data:any):void
 	{
 		this._embeddedDataByUrl[originalUrl] = data;
 	}
@@ -168,5 +168,3 @@ class LoaderContext
 		return this._remappedUrls[originalUrl];
 	}
 }
-
-export default LoaderContext;

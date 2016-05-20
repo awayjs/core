@@ -1,4 +1,4 @@
-class ImageData {
+export class ImageData {
     public width: number;
     public data: any;
     public height: number;

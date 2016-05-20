@@ -1,4 +1,4 @@
-class URLVariables
+export class URLVariables
 {
 	private _variables:Object = new Object();
 
@@ -67,5 +67,3 @@ class URLVariables
 		this._variables = obj;
 	}
 }
-
-export default URLVariables;

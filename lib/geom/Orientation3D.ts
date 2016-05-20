@@ -1,7 +1,7 @@
 /**
  * A Quaternion object which can be used to represent rotations.
  */
-class Orientation3D
+export class Orientation3D
 {
 	/**
 	 * The axis angle orientation uses a combination of an axis and an angle to determine the orientation.
@@ -21,5 +21,3 @@ class Orientation3D
 	 */
 	public static QUATERNION:string = "quaternion";
 }
-
-export default Orientation3D;

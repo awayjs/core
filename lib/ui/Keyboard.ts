@@ -1,4 +1,4 @@
-class Keyboard
+export class Keyboard
 {
 	/**
 	 * Constant associated with the key code value for the A key (65).
@@ -1022,5 +1022,3 @@ class Keyboard
 	public static Z:number /*uint*/ = 90;
 
 }
-
-export default Keyboard;

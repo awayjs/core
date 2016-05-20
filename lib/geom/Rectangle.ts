@@ -1,4 +1,4 @@
-import Point					from "../geom/Point";
+import {Point}					from "../geom/Point";
 
 /**
  * A Rectangle object is an area defined by its position, as indicated by its
@@ -6,7 +6,7 @@ import Point					from "../geom/Point";
  *
  *
  * <p>The <code>x</code>, <code>y</code>, <code>width</code>, and
- * <code>height</code> properties of the Rectangle class are independent of
+ * <code>height</code> properties of the Rectangle export class are independent of
  * each other; changing the value of one property has no effect on the others.
  * However, the <code>right</code> and <code>bottom</code> properties are
  * integrally related to those four properties. For example, if you change the
@@ -40,11 +40,11 @@ import Point					from "../geom/Point";
  * <p>You can use the <code>new Rectangle()</code> constructor to create a
  * Rectangle object.</p>
  *
- * <p><b>Note:</b> The Rectangle class does not define a rectangular Shape
+ * <p><b>Note:</b> The Rectangle export class does not define a rectangular Shape
  * display object. To draw a rectangular Shape object onscreen, use the
  * <code>drawRect()</code> method of the Graphics class.</p>
  */
-class Rectangle
+export class Rectangle
 {
 	private _size:Point;
 	private _bottomRight:Point;
@@ -266,7 +266,7 @@ class Rectangle
 	 *
 	 * @param sourceRect The Rectangle object from which to copy the data.
 	 */
-	public copyFrom(sourceRect:Rectangle)
+	public copyFrom(sourceRect:Rectangle):void
 	{
 
 	}
@@ -302,7 +302,7 @@ class Rectangle
 	 *           Rectangle. The following equation is used to calculate the new
 	 *           height and position of the rectangle:
 	 */
-	public inflate(dx:number, dy:number)
+	public inflate(dx:number, dy:number):void
 	{
 		this.x -= dx/2;
 		this.y -= dy/2;
@@ -322,7 +322,7 @@ class Rectangle
 	 *              The <code>y</code> property is used to increase the vertical
 	 *              dimension of the Rectangle object.
 	 */
-	public inflatePoint(point:Point)
+	public inflatePoint(point:Point):void
 	{
 		this.x -= point.x/2;
 		this.y -= point.y/2;
@@ -419,7 +419,7 @@ class Rectangle
 	 * @param dx Moves the <i>x</i> value of the Rectangle object by this amount.
 	 * @param dy Moves the <i>y</i> value of the Rectangle object by this amount.
 	 */
-	public offset(dx:number, dy:number)
+	public offset(dx:number, dy:number):void
 	{
 		this.x += dx;
 		this.y += dy;
@@ -432,7 +432,7 @@ class Rectangle
 	 *
 	 * @param point A Point object to use to offset this Rectangle object.
 	 */
-	public offsetPoint(point:Point)
+	public offsetPoint(point:Point):void
 	{
 		this.x += point.x;
 		this.y += point.y;
@@ -446,7 +446,7 @@ class Rectangle
 	 * <code>width</code>, and <code>height</code> properties to 0.</p>
 	 *
 	 */
-	public setEmpty()
+	public setEmpty():void
 	{
 		this.x = 0;
 		this.y = 0;
@@ -464,7 +464,7 @@ class Rectangle
 	 * @param widtha  The width of the rectangle, in pixels.
 	 * @param heighta The height of the rectangle, in pixels.
 	 */
-	public setTo(xa:number, ya:number, widtha:number, heighta:number)
+	public setTo(xa:number, ya:number, widtha:number, heighta:number):void
 	{
 		this.x = xa;
 		this.y = ya;
@@ -531,5 +531,3 @@ class Rectangle
 		return u;
 	}
 }
-
-export default Rectangle;

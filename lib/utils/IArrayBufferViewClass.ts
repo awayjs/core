@@ -1,4 +1,4 @@
-interface IArrayBufferViewClass
+export interface IArrayBufferViewClass
 {
 	BYTES_PER_ELEMENT:number;
 
@@ -6,5 +6,3 @@ interface IArrayBufferViewClass
 	new (array: ArrayLike<number>): ArrayBufferView;
 	new (buffer: ArrayBuffer, byteOffset?: number, length?: number): ArrayBufferView;
 }
-
-export default IArrayBufferViewClass;

@@ -1,4 +1,4 @@
-class ErrorBase
+export class ErrorBase
 {
 
 	private _errorID:number = 0;   //Contains the reference number associated with the specific error message.
@@ -66,5 +66,3 @@ class ErrorBase
 	}
 
 }
-
-export default ErrorBase;

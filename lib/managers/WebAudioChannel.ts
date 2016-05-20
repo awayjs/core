@@ -1,5 +1,5 @@
 
-class WebAudioChannel
+export class WebAudioChannel
 {
 	public static maxChannels:number = 64;
 
@@ -78,7 +78,7 @@ class WebAudioChannel
 		this._onEndedDelegate = (event) => this._onEnded(event);
 	}
 
-	public play(buffer:ArrayBuffer, offset:number = 0, loop:boolean = false, id:number = 0)
+	public play(buffer:ArrayBuffer, offset:number = 0, loop:boolean = false, id:number = 0):void
 	{
 		this._isPlaying = true;
 		this._isLooping = loop;
@@ -98,7 +98,7 @@ class WebAudioChannel
 			this.stop();
 	}
 
-	public stop()
+	public stop():void
 	{
 		if (!this._isPlaying)
 			return;
@@ -111,7 +111,7 @@ class WebAudioChannel
 			this._disposeSource();
 	}
 
-	public _onDecodeComplete(buffer)
+	public _onDecodeComplete(buffer):void
 	{
 		if (!this._isPlaying)
 			return;
@@ -142,7 +142,7 @@ class WebAudioChannel
 		}
 	}
 
-	public _onError(event)
+	public _onError(event):void
 	{
 		console.log("Error with decoding audio data");
 		WebAudioChannel._errorCache[this._id] = true;
@@ -154,7 +154,7 @@ class WebAudioChannel
 		this.stop();
 	}
 
-	private _disposeSource()
+	private _disposeSource():void
 	{
 		//clean up
 		this._source.stop(this._audioCtx.currentTime);
@@ -165,5 +165,3 @@ class WebAudioChannel
 		this._source = null;
 	}
 }
-
-export default WebAudioChannel;

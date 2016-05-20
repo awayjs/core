@@ -1,6 +1,6 @@
-import ErrorBase				from "../errors/ErrorBase";
+import {ErrorBase}				from "../errors/ErrorBase";
 
-class DocumentError extends ErrorBase
+export class DocumentError extends ErrorBase
 {
 	public static DOCUMENT_DOES_NOT_EXIST:string = "documentDoesNotExist";
 
@@ -9,5 +9,3 @@ class DocumentError extends ErrorBase
 		super(message, id);
 	}
 }
-
-export default DocumentError;

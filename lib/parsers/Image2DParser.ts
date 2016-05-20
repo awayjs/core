@@ -1,16 +1,16 @@
-import BitmapImage2D			from "../image/BitmapImage2D";
-import IAsset					from "../library/IAsset";
-import URLLoaderDataFormat		from "../net/URLLoaderDataFormat";
-import ParserBase				from "../parsers/ParserBase";
-import ParserUtils				from "../parsers/ParserUtils";
-import ByteArray				from "../utils/ByteArray";
+import {BitmapImage2D}			from "../image/BitmapImage2D";
+import {IAsset}					from "../library/IAsset";
+import {URLLoaderDataFormat}		from "../net/URLLoaderDataFormat";
+import {ParserBase}				from "../parsers/ParserBase";
+import {ParserUtils}				from "../parsers/ParserUtils";
+import {ByteArray}				from "../utils/ByteArray";
 
 /**
  * Image2DParser provides a "parser" for natively supported image types (jpg, png). While it simply loads bytes into
  * a loader object, it wraps it in a BitmapDataResource so resource management can happen consistently without
  * exception cases.
  */
-class Image2DParser extends ParserBase
+export class Image2DParser extends ParserBase
 {
 	private _startedParsing:boolean;
 	private _doneParsing:boolean;
@@ -157,10 +157,8 @@ class Image2DParser extends ParserBase
 
 	}
 
-	public onLoadComplete(event)
+	public onLoadComplete(event):void
 	{
 		this._loadingImage = false;
 	}
 }
-
-export default Image2DParser;

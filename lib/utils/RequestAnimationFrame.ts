@@ -1,6 +1,6 @@
-import getTimer					from "../utils/getTimer";
+import {getTimer}					from "../utils/getTimer";
 
-class RequestAnimationFrame
+export class RequestAnimationFrame
 {
 	private _callback:Function;
 	private _callbackContext:Object;
@@ -33,7 +33,7 @@ class RequestAnimationFrame
 	 * @param callback
 	 * @param callbackContext
 	 */
-	public setCallback(callback:Function, callbackContext:Object)
+	public setCallback(callback:Function, callbackContext:Object):void
 	{
 		this._callback = callback;
 		this._callbackContext = callbackContext;
@@ -42,7 +42,7 @@ class RequestAnimationFrame
 	/**
 	 *
 	 */
-	public start()
+	public start():void
 	{
 		this._prevTime = this._getTimer();
 		this._active = true;
@@ -64,7 +64,7 @@ class RequestAnimationFrame
 	/**
 	 *
 	 */
-	public stop()
+	public stop():void
 	{
 		this._active = false;
 	}
@@ -100,5 +100,3 @@ class RequestAnimationFrame
 
 
 }
-
-export default RequestAnimationFrame;

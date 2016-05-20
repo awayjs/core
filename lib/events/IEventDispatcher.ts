@@ -1,4 +1,4 @@
-import EventBase				from "../events/EventBase";
+import {EventBase}				from "../events/EventBase";
 
 /**
  * Base interface for dispatching events
@@ -6,7 +6,7 @@ import EventBase				from "../events/EventBase";
  * @interface away.events.IEventDispatcher
  *
  */
-interface IEventDispatcher
+export interface IEventDispatcher
 {
 	/**
 	 * Add an event listener
@@ -40,5 +40,3 @@ interface IEventDispatcher
 	 */
 	hasEventListener(type:string, listener?:(event:EventBase) => void) : boolean;
 }
-
-export default IEventDispatcher;

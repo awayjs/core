@@ -1,11 +1,11 @@
-import Matrix3D					from "../geom/Matrix3D";
-import Plane3D					from "../geom/Plane3D";
-import Vector3D					from "../geom/Vector3D";
-import ProjectionEvent			from "../events/ProjectionEvent";
-import IProjection				from "../projections/IProjection";
-import ProjectionBase			from "../projections/ProjectionBase";
+import {Matrix3D}					from "../geom/Matrix3D";
+import {Plane3D}					from "../geom/Plane3D";
+import {Vector3D}					from "../geom/Vector3D";
+import {ProjectionEvent}			from "../events/ProjectionEvent";
+import {IProjection}				from "../projections/IProjection";
+import {ProjectionBase}			from "../projections/ProjectionBase";
 
-class ObliqueNearPlaneProjection extends ProjectionBase
+export class ObliqueNearPlaneProjection extends ProjectionBase
 {
 
 	private _baseProjection:IProjection;
@@ -87,13 +87,13 @@ class ObliqueNearPlaneProjection extends ProjectionBase
 		this.pInvalidateMatrix();
 	}
 
-	private onProjectionMatrixChanged(event:ProjectionEvent)
+	private onProjectionMatrixChanged(event:ProjectionEvent):void
 	{
 		this.pInvalidateMatrix();
 	}
 
 	//@override
-	public pUpdateMatrix()
+	public pUpdateMatrix():void
 	{
 		this._pMatrix.copyFrom(this._baseProjection.matrix);
 
@@ -112,5 +112,3 @@ class ObliqueNearPlaneProjection extends ProjectionBase
 		this._pMatrix.copyRowFrom(2, new Vector3D(cx*a, cy*a, cz*a, cw*a));
 	}
 }
-
-export default ObliqueNearPlaneProjection;

@@ -1,7 +1,7 @@
 /**
  * An enumeration providing values to describe the data format of parsed data.
  */
-class ParserDataFormat
+export class ParserDataFormat
 {
 	/**
 	 * Describes the format of a binary file.
@@ -19,5 +19,3 @@ class ParserDataFormat
 	public static IMAGE:string = "image";
 
 }
-
-export default ParserDataFormat;

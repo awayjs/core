@@ -1,12 +1,12 @@
-import EventBase					from "../events/EventBase";
+import {EventBase}					from "../events/EventBase";
 
 /**
- * Base class for dispatching events
+ * Base export class for dispatching events
 *
-* @class away.events.EventDispatcher
+* @export class away.events.EventDispatcher
 *
 */
-class EventDispatcher
+export class EventDispatcher
 {
 	private listenerObjects:Array<ListenerObject> = new Array<ListenerObject>();
 	private target:any;
@@ -22,7 +22,7 @@ class EventDispatcher
 	 * @param {String} Name of event to add a listener for
 	 * @param {Function} Callback function
 	 */
-	public addEventListener(type:string, listener:(event:EventBase) => void)
+	public addEventListener(type:string, listener:(event:EventBase) => void):void
 	{
 		var l:ListenerObject = this.listenerObjects[type];
 
@@ -38,7 +38,7 @@ class EventDispatcher
 	 * @param {String} Name of event to remove a listener for
 	 * @param {Function} Callback function
 	 */
-	public removeEventListener(type:string, listener:(event:EventBase) => void)
+	public removeEventListener(type:string, listener:(event:EventBase) => void):void
 	{
 		var l:ListenerObject = this.listenerObjects[type];
 
@@ -55,7 +55,7 @@ class EventDispatcher
 	 * @method dispatchEvent
 	 * @param {Event} Event to dispatch
 	 */
-	public dispatchEvent(event:EventBase)
+	public dispatchEvent(event:EventBase):void
 	{
 		var l:ListenerObject = this.listenerObjects[event.type];
 
@@ -83,7 +83,7 @@ class EventDispatcher
 	}
 }
 
-class ListenerObject
+export class ListenerObject
 {
 	public index:number = 0;
 
@@ -91,7 +91,7 @@ class ListenerObject
 
 	public numListeners:number = 0;
 
-	public addEventListener(listener:(event:EventBase) => void)
+	public addEventListener(listener:(event:EventBase) => void):void
 	{
 		//check if listener already added
 		if (this.getEventListenerIndex(listener) !== -1)
@@ -101,7 +101,7 @@ class ListenerObject
 		this.numListeners++;
 	}
 
-	public removeEventListener(listener:(event:EventBase) => void)
+	public removeEventListener(listener:(event:EventBase) => void):void
 	{
 		//check if listener exists
 		var index:number = this.getEventListenerIndex(listener);
@@ -116,7 +116,7 @@ class ListenerObject
 		this.numListeners--;
 	}
 
-	public dispatchEvent(event:EventBase)
+	public dispatchEvent(event:EventBase):void
 	{
 		var len:number = this.numListeners;
 		for (this.index = 0; this.index < len && this.index < this.numListeners; this.index++)

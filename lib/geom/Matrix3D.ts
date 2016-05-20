@@ -1,17 +1,17 @@
-import Box							from "../geom/Box";
-import MathConsts					from "../geom/MathConsts";
-import Orientation3D				from "../geom/Orientation3D";
-import Quaternion					from "../geom/Quaternion";
-import Vector3D						from "../geom/Vector3D";
-import ArgumentError				from "../errors/ArgumentError";
+import {Box}							from "../geom/Box";
+import {MathConsts}					from "../geom/MathConsts";
+import {Orientation3D}				from "../geom/Orientation3D";
+import {Quaternion}					from "../geom/Quaternion";
+import {Vector3D}						from "../geom/Vector3D";
+import {ArgumentError}				from "../errors/ArgumentError";
 
-class Matrix3D
+export class Matrix3D
 {
 	/**
 	 * A Vector of 16 Numbers, where every four elements is a column of a 4x4 matrix.
 	 *
 	 * <p>An exception is thrown if the rawData property is set to a matrix that is not invertible. The Matrix3D
-	 * object must be invertible. If a non-invertible matrix is needed, create a subclass of the Matrix3D object.</p>
+	 * object must be invertible. If a non-invertible matrix is needed, create a subexport class of the Matrix3D object.</p>
 	 */
 	public rawData:Float32Array = new Float32Array(16);
 
@@ -38,7 +38,7 @@ class Matrix3D
 	/**
 	 * Appends the matrix by multiplying another Matrix3D object by the current Matrix3D object.
 	 */
-	public append(lhs:Matrix3D)
+	public append(lhs:Matrix3D):void
 	{
 		var lrd:Float32Array = lhs.rawData;
 
@@ -101,7 +101,7 @@ class Matrix3D
 	/**
 	 * Appends an incremental rotation to a Matrix3D object.
 	 */
-	public appendRotation(degrees:number, axis:Vector3D):void //, pivot:Vector3D = null )
+	public appendRotation(degrees:number, axis:Vector3D):void //, pivot:Vector3D = null ):void
 	{
 		this.append(Matrix3D.getAxisRotation(axis.x, axis.y, axis.z, degrees));
 	}
@@ -109,7 +109,7 @@ class Matrix3D
 	/**
 	 * Appends an incremental skew change along the x, y, and z axes to a Matrix3D object.
 	 */
-	public appendSkew(xSkew:number, ySkew:number, zSkew:number)
+	public appendSkew(xSkew:number, ySkew:number, zSkew:number):void
 	{
 		if(xSkew == 0 && ySkew == 0 && zSkew == 0) return;
 		var raw:Float32Array = Matrix3D.tempRawData;
@@ -139,7 +139,7 @@ class Matrix3D
 	/**
 	 * Appends an incremental scale change along the x, y, and z axes to a Matrix3D object.
 	 */
-	public appendScale(xScale:number, yScale:number, zScale:number)
+	public appendScale(xScale:number, yScale:number, zScale:number):void
 	{
 		if(xScale == 1 && yScale == 1 && zScale == 1)
 			return;
@@ -172,7 +172,7 @@ class Matrix3D
 	/**
 	 * Appends an incremental translation, a repositioning along the x, y, and z axes, to a Matrix3D object.
 	 */
-	public appendTranslation(x:number, y:number, z:number)
+	public appendTranslation(x:number, y:number, z:number):void
 	{
 		this.rawData[12] += x;
 		this.rawData[13] += y;
@@ -192,7 +192,7 @@ class Matrix3D
 	/**
 	 * Copies a Vector3D object into specific column of the calling Matrix3D object.
 	 */
-	public copyColumnFrom(column:number, vector3D:Vector3D)
+	public copyColumnFrom(column:number, vector3D:Vector3D):void
 	{
 		switch (column) {
 			case 0:
@@ -227,7 +227,7 @@ class Matrix3D
 	/**
 	 * Copies specific column of the calling Matrix3D object into the Vector3D object.
 	 */
-	public copyColumnTo(column:number, vector3D:Vector3D)
+	public copyColumnTo(column:number, vector3D:Vector3D):void
 	{
 		switch (column) {
 			case 0:
@@ -262,7 +262,7 @@ class Matrix3D
 	/**
 	 * Copies all of the matrix data from the source Matrix3D object into the calling Matrix3D object.
 	 */
-	public copyFrom(source:Matrix3D)
+	public copyFrom(source:Matrix3D):void
 	{
 		var sourceRaw:Float32Array = source.rawData;
 		var len:number = sourceRaw.length;
@@ -273,7 +273,7 @@ class Matrix3D
 	/**
 	 * Copies this Matrix3D object into a destination Matrix3D object.
 	 */
-	public copyTo(target:Matrix3D)
+	public copyTo(target:Matrix3D):void
 	{
 		var targetRaw:Float32Array = target.rawData;
 		var len:number = this.rawData.length;
@@ -294,7 +294,7 @@ class Matrix3D
 			this.transpose();
 	}
 
-	public copyRawDataTo(vector:Float32Array, index:number = 0, transpose:boolean = false)
+	public copyRawDataTo(vector:Float32Array, index:number = 0, transpose:boolean = false):void
 	{
 		if (transpose)
 			this.transpose();
@@ -310,7 +310,7 @@ class Matrix3D
 	/**
 	 * Copies a Vector3D object into specific row of the calling Matrix3D object.
 	 */
-	public copyRowFrom(row:number, vector3D:Vector3D)
+	public copyRowFrom(row:number, vector3D:Vector3D):void
 	{
 		switch (row) {
 			case 0:
@@ -345,7 +345,7 @@ class Matrix3D
 	/**
 	 * Copies specific row of the calling Matrix3D object into the Vector3D object.
 	 */
-	public copyRowTo(row:number, vector3D:Vector3D)
+	public copyRowTo(row:number, vector3D:Vector3D):void
 	{
 		switch (row) {
 			case 0:
@@ -518,7 +518,7 @@ class Matrix3D
 	/**
 	 * Converts the current matrix to an identity or unit matrix.
 	 */
-	public identity()
+	public identity():void
 	{
 		this.rawData[0] = 1;
 		this.rawData[1] = 0;
@@ -555,7 +555,7 @@ class Matrix3D
 	/**
 	 * Interpolates this matrix towards the translation, rotation, and scale transformations of the target matrix.
 	 */
-	public interpolateTo(toMat:Matrix3D, percent:number)
+	public interpolateTo(toMat:Matrix3D, percent:number):void
 	{
 		for (var i:number = 0; i < 16; ++i)
 			this.rawData[i] = this.rawData[i] + (toMat.rawData[i] - this.rawData[i])*percent;
@@ -620,7 +620,7 @@ class Matrix3D
 	/**
 	 * Prepends a matrix by multiplying the current Matrix3D object by another Matrix3D object.
 	 */
-	public prepend(rhs:Matrix3D)
+	public prepend(rhs:Matrix3D):void
 	{
 		var m111:number = rhs.rawData[0];
 		var m112:number = rhs.rawData[1];
@@ -682,7 +682,7 @@ class Matrix3D
 	/**
 	 * Prepends an incremental rotation to a Matrix3D object.
 	 */
-	public prependRotation(degrees:number, axis:Vector3D) //, pivot:Vector3D = null )
+	public prependRotation(degrees:number, axis:Vector3D) //, pivot:Vector3D = null ):void
 	{
 		var m:Matrix3D = Matrix3D.getAxisRotation(axis.x, axis.y, axis.z, degrees);
 
@@ -699,7 +699,7 @@ class Matrix3D
 	/**
 	 * Prepends an incremental scale change along the x, y, and z axes to a Matrix3D object.
 	 */
-	public prependScale(xScale:number, yScale:number, zScale:number)
+	public prependScale(xScale:number, yScale:number, zScale:number):void
 	{
 		if(xScale == 1 && yScale == 1 && zScale == 1)
 			return;
@@ -732,7 +732,7 @@ class Matrix3D
 	/**
 	 * Prepends an incremental translation, a repositioning along the x, y, and z axes, to a Matrix3D object.
 	 */
-	public prependTranslation(x:number, y:number, z:number)
+	public prependTranslation(x:number, y:number, z:number):void
 	{
 		var raw:Float32Array = Matrix3D.tempRawData;
 
@@ -912,7 +912,7 @@ class Matrix3D
 	/**
 	 * Uses the transformation matrix to transform a Vector of Numbers from one coordinate space to another.
 	 */
-	public transformVectors(vin:number[], vout:number[])
+	public transformVectors(vin:number[], vout:number[]):void
 	{
 		var i:number = 0;
 		var x:number = 0, y:number = 0, z:number = 0;
@@ -931,7 +931,7 @@ class Matrix3D
 	/**
 	 * Converts the current Matrix3D object to a matrix where the rows and columns are swapped.
 	 */
-	public transpose()
+	public transpose():void
 	{
 		var raw:Float32Array = Matrix3D.tempRawData;
 		this.copyRawDataTo(raw);
@@ -955,7 +955,7 @@ class Matrix3D
 	static getAxisRotation(x:number, y:number, z:number, degrees:number):Matrix3D
 	{
 
-		// internal class use by rotations which have been tested
+		// internal export class use by rotations which have been tested
 
 		var m:Matrix3D = new Matrix3D();
 
@@ -1009,7 +1009,7 @@ class Matrix3D
 		return this._position;
 	}
 
-	public invalidatePosition()
+	public invalidatePosition():void
 	{
 		this._positionDirty = true;
 	}
@@ -1025,5 +1025,3 @@ class Matrix3D
 		return "matrix3d(" + Math.round(this.rawData[0]*1000)/1000 + "," + Math.round(this.rawData[1]*1000)/1000 + "," + Math.round(this.rawData[2]*1000)/1000 + "," + Math.round(this.rawData[3]*1000)/1000 + "," + Math.round(this.rawData[4]*1000)/1000 + "," + Math.round(this.rawData[5]*1000)/1000 + "," + Math.round(this.rawData[6]*1000)/1000 + "," + Math.round(this.rawData[7]*1000)/1000 + "," + Math.round(this.rawData[8]*1000)/1000 + "," + Math.round(this.rawData[9]*1000)/1000 + "," + Math.round(this.rawData[10]*1000)/1000 + "," + Math.round(this.rawData[11]*1000)/1000 + "," + Math.round(this.rawData[12]*1000)/1000 + "," + Math.round(this.rawData[13]*1000)/1000 + "," + Math.round(this.rawData[14]*1000)/1000 + "," + Math.round(this.rawData[15]*1000)/1000 + ")";
 	}
 }
-
-export default Matrix3D;

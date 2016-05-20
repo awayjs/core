@@ -1,10 +1,10 @@
-import SamplerBase				from "../image/SamplerBase";
-import Image2D					from "../image/Image2D";
-import Rectangle				from "../geom/Rectangle";
-import IAsset					from "../library/IAsset";
+import {SamplerBase}				from "../image/SamplerBase";
+import {Image2D}					from "../image/Image2D";
+import {Rectangle}				from "../geom/Rectangle";
+import {IAsset}					from "../library/IAsset";
 
 /**
- * The Sampler2D class represents display objects that represent bitmap images.
+ * The Sampler2D export class represents display objects that represent bitmap images.
  * These can be images that you load with the <code>flash.Assets</code> or
  * <code>flash.display.Loader</code> classes, or they can be images that you
  * create with the <code>Sampler2D()</code> constructor.
@@ -23,7 +23,7 @@ import IAsset					from "../library/IAsset";
  * object instance.</p>
 
  */
-class Sampler2D extends SamplerBase
+export class Sampler2D extends SamplerBase
 {
 	public static assetType:string = "[asset Sampler2D]";
 
@@ -43,7 +43,7 @@ class Sampler2D extends SamplerBase
 	/**
 	 * Controls whether or not the Sampler2D object is snapped to the nearest pixel.
 	 * This value is ignored in the native and HTML5 targets.
-	 * The PixelSnapping class includes possible values:
+	 * The PixelSnapping export class includes possible values:
 	 * <ul>
 	 *   <li><code>PixelSnapping.NEVER</code> - No pixel snapping occurs.</li>
 	 *   <li><code>PixelSnapping.ALWAYS</code> - The image is always snapped to
@@ -130,9 +130,7 @@ class Sampler2D extends SamplerBase
 		this._updateRect();
 	}
 
-	private _updateRect()
+	private _updateRect():void
 	{
 	}
 }
-
-export default Sampler2D;

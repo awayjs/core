@@ -1,4 +1,4 @@
-class IDUtil
+export class IDUtil
 {
 	/**
 	 *  @private
@@ -95,5 +95,3 @@ class IDUtil
 	 */
 
 }
-
-export default IDUtil;

@@ -3,7 +3,7 @@
  *
  * @see away.projections.PerspectiveLens#coordinateSystem
  */
-class CoordinateSystem
+export class CoordinateSystem
 {
 	/**
 	 * Default option, projects to a left-handed coordinate system
@@ -15,5 +15,3 @@ class CoordinateSystem
 	 */
 	public static RIGHT_HANDED:string = "rightHanded";
 }
-
-export default CoordinateSystem;

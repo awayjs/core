@@ -1,7 +1,7 @@
-import ConflictStrategyBase		from "../library/ConflictStrategyBase";
-import IAsset					from "../library/IAsset";
+import {ConflictStrategyBase}		from "../library/ConflictStrategyBase";
+import {IAsset}					from "../library/IAsset";
 
-class NumSuffixConflictStrategy extends ConflictStrategyBase
+export class NumSuffixConflictStrategy extends ConflictStrategyBase
 {
 	private _separator:string;
 	private _next_suffix:Object;
@@ -14,7 +14,7 @@ class NumSuffixConflictStrategy extends ConflictStrategyBase
 		this._next_suffix = {};
 	}
 
-	public resolveConflict(changedAsset:IAsset, oldAsset:IAsset, assetsDictionary:Object, precedence:string)
+	public resolveConflict(changedAsset:IAsset, oldAsset:IAsset, assetsDictionary:Object, precedence:string):void
 	{
 		var orig:string;
 		var new_name:string;
@@ -66,5 +66,3 @@ class NumSuffixConflictStrategy extends ConflictStrategyBase
 		return new NumSuffixConflictStrategy(this._separator);
 	}
 }
-
-export default NumSuffixConflictStrategy;

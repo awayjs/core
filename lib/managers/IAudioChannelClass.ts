@@ -1,6 +1,6 @@
-import IAudioChannel			from "../managers/IAudioChannel";
+import {IAudioChannel}			from "../managers/IAudioChannel";
 
-interface IAudioChannelClass
+export interface IAudioChannelClass
 {
 	maxChannels:number;
 
@@ -11,5 +11,3 @@ interface IAudioChannelClass
 	 */
 	new():IAudioChannel;
 }
-
-export default IAudioChannelClass;

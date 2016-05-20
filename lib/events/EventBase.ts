@@ -1,4 +1,4 @@
-class EventBase
+export class EventBase
 {
 	/**
 	 * Type of event
@@ -28,5 +28,3 @@ class EventBase
 		return new EventBase(this.type);
 	}
 }
-
-export default EventBase;

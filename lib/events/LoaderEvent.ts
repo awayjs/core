@@ -1,7 +1,7 @@
-import IAsset					from "../library/IAsset";
-import EventBase				from "../events/EventBase";
+import {IAsset}					from "../library/IAsset";
+import {EventBase}				from "../events/EventBase";
 
-class LoaderEvent extends EventBase
+export class LoaderEvent extends EventBase
 {
 	/**
 	 * Dispatched when the loading of a session and all of its dependencies is complete.
@@ -61,5 +61,3 @@ class LoaderEvent extends EventBase
 		return new LoaderEvent(this.type, this._url, this._content, this._assets);
 	}
 }
-
-export default LoaderEvent;

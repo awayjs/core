@@ -1,8 +1,8 @@
-import Matrix3DUtils			from "../geom/Matrix3DUtils";
-import Vector3D					from "../geom/Vector3D";
-import ProjectionBase			from "../projections/ProjectionBase";
+import {Matrix3DUtils}			from "../geom/Matrix3DUtils";
+import {Vector3D}					from "../geom/Vector3D";
+import {ProjectionBase}			from "../projections/ProjectionBase";
 
-class OrthographicProjection extends ProjectionBase
+export class OrthographicProjection extends ProjectionBase
 {
 
 	private _projectionHeight:number;
@@ -53,7 +53,7 @@ class OrthographicProjection extends ProjectionBase
 	}
 
 	//@override
-	public pUpdateMatrix()
+	public pUpdateMatrix():void
 	{
 		var raw:Float32Array = Matrix3DUtils.RAW_DATA_CONTAINER;
 		this._yMax = this._projectionHeight*.5;
@@ -115,5 +115,3 @@ class OrthographicProjection extends ProjectionBase
 		this._pMatrixInvalid = false;
 	}
 }
-
-export default OrthographicProjection;

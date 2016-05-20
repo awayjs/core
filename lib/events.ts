@@ -1,9 +1,9 @@
-export {default as AssetEvent}						from "./events/AssetEvent";
-export {default as EventBase}						from "./events/EventBase";
-export {default as EventDispatcher}					from "./events/EventDispatcher";
-export {default as IEventDispatcher}				from "./events/IEventDispatcher";
-export {default as LoaderEvent}						from "./events/LoaderEvent";
-export {default as ParserEvent}						from "./events/ParserEvent";
-export {default as ProjectionEvent}					from "./events/ProjectionEvent";
-export {default as TimerEvent}						from "./events/TimerEvent";
-export {default as URLLoaderEvent}					from "./events/URLLoaderEvent";
+export {AssetEvent}						from "./events/AssetEvent";
+export {EventBase}						from "./events/EventBase";
+export {EventDispatcher}				from "./events/EventDispatcher";
+export {IEventDispatcher}				from "./events/IEventDispatcher";
+export {LoaderEvent}					from "./events/LoaderEvent";
+export {ParserEvent}					from "./events/ParserEvent";
+export {ProjectionEvent}				from "./events/ProjectionEvent";
+export {TimerEvent}						from "./events/TimerEvent";
+export {URLLoaderEvent}					from "./events/URLLoaderEvent";

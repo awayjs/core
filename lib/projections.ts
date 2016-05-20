@@ -1,8 +1,8 @@
-export {default as CoordinateSystem}				from "./projections/CoordinateSystem";
-export {default as FreeMatrixProjection}			from "./projections/FreeMatrixProjection";
-export {default as IProjection}						from "./projections/IProjection";
-export {default as ObliqueNearPlaneProjection}		from "./projections/ObliqueNearPlaneProjection";
-export {default as OrthographicOffCenterProjection}	from "./projections/OrthographicOffCenterProjection";
-export {default as OrthographicProjection}			from "./projections/OrthographicProjection";
-export {default as PerspectiveProjection}			from "./projections/PerspectiveProjection";
-export {default as ProjectionBase}					from "./projections/ProjectionBase";
+export {CoordinateSystem}				from "./projections/CoordinateSystem";
+export {FreeMatrixProjection}			from "./projections/FreeMatrixProjection";
+export {IProjection}					from "./projections/IProjection";
+export {ObliqueNearPlaneProjection}		from "./projections/ObliqueNearPlaneProjection";
+export {OrthographicOffCenterProjection}	from "./projections/OrthographicOffCenterProjection";
+export {OrthographicProjection}			from "./projections/OrthographicProjection";
+export {PerspectiveProjection}			from "./projections/PerspectiveProjection";
+export {ProjectionBase}					from "./projections/ProjectionBase";

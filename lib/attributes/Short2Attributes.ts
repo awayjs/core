@@ -1,7 +1,7 @@
-import AttributesBuffer			from "../attributes/AttributesBuffer";
-import AttributesView			from "../attributes/AttributesView";
+import {AttributesBuffer}			from "../attributes/AttributesBuffer";
+import {AttributesView}			from "../attributes/AttributesView";
 
-class Short2Attributes extends AttributesView
+export class Short2Attributes extends AttributesView
 {
 	public static assetType:string = "[attributes Short2Attributes]";
 
@@ -27,7 +27,7 @@ class Short2Attributes extends AttributesView
 	public set(array:Array<number>, offset?:number);
 	public set(typedArray:Uint16Array, offset?:number);
 	public set(typedArray:Int16Array, offset?:number);
-	public set(values:any, offset:number = 0)
+	public set(values:any, offset:number = 0):void
 	{
 		super.set(values, offset);
 	}
@@ -49,5 +49,3 @@ class Short2Attributes extends AttributesView
 		return <Short2Attributes> super.clone(attributesBuffer);
 	}
 }
-
-export default Short2Attributes;

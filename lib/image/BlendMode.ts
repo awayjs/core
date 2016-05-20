@@ -1,5 +1,5 @@
 /**
- * A class that provides constant values for visual blend mode effects. These
+ * A export class that provides constant values for visual blend mode effects. These
  * constants are used in the following:
  * <ul>
  *   <li> The <code>blendMode</code> property of the
@@ -8,7 +8,7 @@
  * method of the flash.display.BitmapData class</li>
  * </ul>
  */
-class BlendMode
+export class BlendMode
 {
 	/**
 	 * Adds the values of the constituent colors of the display object to the
@@ -186,5 +186,3 @@ class BlendMode
 	 */
 	public static SUBTRACT:string = "subtract";
 }
-
-export default BlendMode;

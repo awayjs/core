@@ -1,15 +1,15 @@
-import LoaderContext			from "../library/LoaderContext";
-import LoaderInfo				from "../library/LoaderInfo";
-import URLLoader				from "../net/URLLoader";
-import URLLoaderDataFormat		from "../net/URLLoaderDataFormat";
-import URLRequest				from "../net/URLRequest";
-import AssetEvent				from "../events/AssetEvent";
-import EventDispatcher			from "../events/EventDispatcher";
-import URLLoaderEvent			from "../events/URLLoaderEvent";
-import LoaderEvent				from "../events/LoaderEvent";
-import ParserEvent				from "../events/ParserEvent";
-import ParserBase				from "../parsers/ParserBase";
-import ResourceDependency		from "../parsers/ResourceDependency";
+import {LoaderContext}			from "../library/LoaderContext";
+import {LoaderInfo}				from "../library/LoaderInfo";
+import {URLLoader}				from "../net/URLLoader";
+import {URLLoaderDataFormat}		from "../net/URLLoaderDataFormat";
+import {URLRequest}				from "../net/URLRequest";
+import {AssetEvent}				from "../events/AssetEvent";
+import {EventDispatcher}			from "../events/EventDispatcher";
+import {URLLoaderEvent}			from "../events/URLLoaderEvent";
+import {LoaderEvent}				from "../events/LoaderEvent";
+import {ParserEvent}				from "../events/ParserEvent";
+import {ParserBase}				from "../parsers/ParserBase";
+import {ResourceDependency}		from "../parsers/ResourceDependency";
 
 
 
@@ -72,7 +72,7 @@ import ResourceDependency		from "../parsers/ResourceDependency";
  *
  * @see away.library.AssetLibrary
  */
-class Loader extends EventDispatcher
+export class Loader extends EventDispatcher
 {
 	private _context:LoaderContext;
 	private _loaderInfo:LoaderInfo;
@@ -104,11 +104,11 @@ class Loader extends EventDispatcher
 	 * loader3d can autoselect the correct parser to use.
 	 * A parser must have been enabled, to be considered when autoselecting the parser.
 	 *
-	 * @param parser The parser class to enable.
+	 * @param parser The parser export class to enable.
 	 *
 	 * @see away.parsers.Parsers
 	 */
-	public static enableParser(parser)
+	public static enableParser(parser):void
 	{
 		if (Loader._parsers.indexOf(parser) < 0)
 			Loader._parsers.push(parser);
@@ -123,7 +123,7 @@ class Loader extends EventDispatcher
 	 * @param parsers A Vector of parser classes to enable.
 	 * @see away.parsers.Parsers
 	 */
-	public static enableParsers(parsers:Array<Object>)
+	public static enableParsers(parsers:Array<Object>):void
 	{
 		for (var c:number = 0; c < parsers.length; c++)
 			Loader.enableParser(parsers[ c ]);
@@ -188,7 +188,7 @@ class Loader extends EventDispatcher
 	 * @param ns An optional namespace string under which the file is to be loaded, allowing the differentiation of two resources with identical assets
 	 * @param parser An optional parser object for translating the loaded data into a usable resource. If not provided, Loader will attempt to auto-detect the file type.
 	 */
-	public load(req:URLRequest, context:LoaderContext = null, ns:string = null, parser:ParserBase = null)
+	public load(req:URLRequest, context:LoaderContext = null, ns:string = null, parser:ParserBase = null):void
 	{
 		this._uri = req.url = req.url.replace(/\\/g, "/");
 		this._context = context;
@@ -206,7 +206,7 @@ class Loader extends EventDispatcher
 	 * @param ns An optional namespace string under which the file is to be loaded, allowing the differentiation of two resources with identical assets
 	 * @param parser An optional parser object for translating the loaded data into a usable resource. If not provided, Loader will attempt to auto-detect the file type.
 	 */
-	public loadData(data:any, id:string, context:LoaderContext = null, ns:string = null, parser:ParserBase = null)
+	public loadData(data:any, id:string, context:LoaderContext = null, ns:string = null, parser:ParserBase = null):void
 	{
 		this._uri = id;
 		this._context = context;
@@ -221,7 +221,7 @@ class Loader extends EventDispatcher
 	 * stack when complete and continues on the top set.
 	 * @param parser The parser that will translate the data into a usable resource.
 	 */
-	private retrieveNext(parser:ParserBase = null)
+	private retrieveNext(parser:ParserBase = null):void
 	{
 		if (this._currentDependency.dependencies.length) {
 
@@ -255,7 +255,7 @@ class Loader extends EventDispatcher
 	 * Retrieves a single dependency.
 	 * @param parser The parser that will translate the data into a usable resource.
 	 */
-	private retrieveDependency(dependency:ResourceDependency)
+	private retrieveDependency(dependency:ResourceDependency):void
 	{
 		var data:any;
 
@@ -382,7 +382,7 @@ class Loader extends EventDispatcher
 		}
 	}
 
-	private retrieveParserDependencies()
+	private retrieveParserDependencies():void
 	{
 		if (!this._currentDependency)
 			return;
@@ -402,7 +402,7 @@ class Loader extends EventDispatcher
 		this.retrieveNext();
 	}
 
-	private resolveParserDependencies()
+	private resolveParserDependencies():void
 	{
 		this._currentDependency._iSuccess = true;
 
@@ -418,7 +418,7 @@ class Loader extends EventDispatcher
 	 * Called when a single dependency loading failed, and pushes further dependencies onto the stack.
 	 * @param event
 	 */
-	private onLoadError(event:URLLoaderEvent)
+	private onLoadError(event:URLLoaderEvent):void
 	{
 		var handled:boolean;
 		var isDependency:boolean = (this._currentDependency != this._baseDependency);
@@ -464,7 +464,7 @@ class Loader extends EventDispatcher
 	 * Called when a dependency parsing failed, and dispatches a <code>ParserEvent.PARSE_ERROR</code>
 	 * @param event
 	 */
-	private onParseError(event:ParserEvent)
+	private onParseError(event:ParserEvent):void
 	{
 		var handled:boolean;
 
@@ -496,7 +496,7 @@ class Loader extends EventDispatcher
 		}
 	}
 
-	private onAssetComplete(event:AssetEvent)
+	private onAssetComplete(event:AssetEvent):void
 	{
 		// Add loaded asset to list of assets retrieved as part
 		// of the current dependency. This list will be inspected
@@ -510,7 +510,7 @@ class Loader extends EventDispatcher
 			this.dispatchEvent(event);
 	}
 
-	private onReadyForDependencies(event:ParserEvent)
+	private onReadyForDependencies(event:ParserEvent):void
 	{
 		var parser:ParserBase = <ParserBase> event.target;
 
@@ -524,7 +524,7 @@ class Loader extends EventDispatcher
 	 * Called when a single dependency was parsed, and pushes further dependencies onto the stack.
 	 * @param event
 	 */
-	private onLoadComplete(event:URLLoaderEvent)
+	private onLoadComplete(event:URLLoaderEvent):void
 	{
 		var loader:URLLoader = event.urlLoader;
 
@@ -561,31 +561,31 @@ class Loader extends EventDispatcher
 	 * Called when an image is too large or it's dimensions are not a power of 2
 	 * @param event
 	 */
-	private onTextureSizeError(event:AssetEvent)
+	private onTextureSizeError(event:AssetEvent):void
 	{
 		event.asset.name = this._currentDependency.resolveName(event.asset);
 
 		this.dispatchEvent(event);
 	}
 
-	private addEventListeners(loader:URLLoader)
+	private addEventListeners(loader:URLLoader):void
 	{
 		loader.addEventListener(URLLoaderEvent.LOAD_COMPLETE, this._onLoadCompleteDelegate);
 		loader.addEventListener(URLLoaderEvent.LOAD_ERROR, this._onLoadErrorDelegate);
 	}
 
-	private removeEventListeners(loader:URLLoader)
+	private removeEventListeners(loader:URLLoader):void
 	{
 		loader.removeEventListener(URLLoaderEvent.LOAD_COMPLETE, this._onLoadCompleteDelegate);
 		loader.removeEventListener(URLLoaderEvent.LOAD_ERROR, this._onLoadErrorDelegate);
 	}
 
-	public stop()
+	public stop():void
 	{
 		this.dispose();
 	}
 
-	private dispose()
+	private dispose():void
 	{
 		this._errorHandlers = null;
 		this._parseErrorHandlers = null;
@@ -611,13 +611,13 @@ class Loader extends EventDispatcher
 	 * return true, the Loader knows that the event wasn't handled and will throw an RTE.
 	 */
 
-	public _iAddParseErrorHandler(handler)
+	public _iAddParseErrorHandler(handler):void
 	{
 		if (this._parseErrorHandlers.indexOf(handler) < 0)
 			this._parseErrorHandlers.push(handler);
 	}
 
-	public _iAddErrorHandler(handler)
+	public _iAddErrorHandler(handler):void
 	{
 		if (this._errorHandlers.indexOf(handler) < 0)
 			this._errorHandlers.push(handler);
@@ -720,5 +720,3 @@ class Loader extends EventDispatcher
 		return null;
 	}
 }
-
-export default Loader;

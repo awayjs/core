@@ -1,8 +1,8 @@
-import Matrix3DUtils			from "../geom/Matrix3DUtils";
-import Vector3D					from "../geom/Vector3D";
-import ProjectionBase			from "../projections/ProjectionBase";
+import {Matrix3DUtils}			from "../geom/Matrix3DUtils";
+import {Vector3D}					from "../geom/Vector3D";
+import {ProjectionBase}			from "../projections/ProjectionBase";
 
-class OrthographicOffCenterProjection extends ProjectionBase
+export class OrthographicOffCenterProjection extends ProjectionBase
 {
 
 	private _minX:number;
@@ -85,7 +85,7 @@ class OrthographicOffCenterProjection extends ProjectionBase
 	}
 
 	//@override
-	public pUpdateMatrix()
+	public pUpdateMatrix():void
 	{
 		var raw:Float32Array = Matrix3DUtils.RAW_DATA_CONTAINER;
 		var w:number = 1/(this._maxX - this._minX);
@@ -112,5 +112,3 @@ class OrthographicOffCenterProjection extends ProjectionBase
 		this._pMatrixInvalid = false;
 	}
 }
-
-export default OrthographicOffCenterProjection;

@@ -1,9 +1,9 @@
-import PartialImplementationError	from "../errors/PartialImplementationError";
+import {PartialImplementationError}	from "../errors/PartialImplementationError";
 
 /**
  *
  */
-class Debug
+export class Debug
 {
 	public static THROW_ERRORS:boolean = true;
 	public static ENABLE_LOG:boolean = true;
@@ -16,7 +16,7 @@ class Debug
 		Debug['break']();
 	}
 
-	public static throwPIROnKeyWordOnly(str:string, enable:boolean = true)
+	public static throwPIROnKeyWordOnly(str:string, enable:boolean = true):void
 	{
 		if (!enable)
 			Debug.keyword = null;
@@ -24,7 +24,7 @@ class Debug
 			Debug.keyword = str;
 	}
 
-	public static throwPIR(clss:string, fnc:string, msg:string)
+	public static throwPIR(clss:string, fnc:string, msg:string):void
 	{
 		Debug.logPIR('PartialImplementationError ' + clss, fnc, msg);
 
@@ -40,17 +40,15 @@ class Debug
 		}
 	}
 
-	private static logPIR(clss:string, fnc:string, msg:string = '')
+	private static logPIR(clss:string, fnc:string, msg:string = ''):void
 	{
 		if (Debug.LOG_PI_ERRORS)
 			console.log(clss + '.' + fnc + ': ' + msg);
 	}
 
-	public static log(...args:any[])
+	public static log(...args:any[]):void
 	{
 		if (Debug.ENABLE_LOG)
 			console.log(args);
 	}
 }
-
-export default Debug;

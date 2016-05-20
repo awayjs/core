@@ -1,6 +1,6 @@
 
 
-interface IAudioChannel
+export interface IAudioChannel
 {
 	duration:number;
 
@@ -18,5 +18,3 @@ interface IAudioChannel
 
 	stop();
 }
-
-export default IAudioChannel;

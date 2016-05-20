@@ -1,12 +1,12 @@
-import BitmapImage2D			from "../image/BitmapImage2D";
-import BitmapImageChannel		from "../image/BitmapImageChannel";
-import Image2D					from "../image/Image2D";
-import Point					from "../geom/Point";
+import {BitmapImage2D}			from "../image/BitmapImage2D";
+import {BitmapImageChannel}		from "../image/BitmapImageChannel";
+import {Image2D}					from "../image/Image2D";
+import {Point}					from "../geom/Point";
 
 /**
  *
  */
-class SpecularImage2D extends Image2D
+export class SpecularImage2D extends Image2D
 {
 	public static assetType:string = "[asset SpecularImage2D]";
 
@@ -103,7 +103,7 @@ class SpecularImage2D extends Image2D
 	 * collected by the garbage collector.</p>
 	 *
 	 */
-	public dispose()
+	public dispose():void
 	{
 		super.dispose();
 
@@ -146,14 +146,14 @@ class SpecularImage2D extends Image2D
 	 * @param height
 	 * @private
 	 */
-	public _setSize(width:number, height:number)
+	public _setSize(width:number, height:number):void
 	{
 		super._setSize(width, height);
 
 		this._output._setSize(width, height);
 	}
 
-	private _testSize()
+	private _testSize():void
 	{
 		var w:number, h:number;
 
@@ -176,5 +176,3 @@ class SpecularImage2D extends Image2D
 		this._setSize(w, h);
 	}
 }
-
-export default SpecularImage2D;

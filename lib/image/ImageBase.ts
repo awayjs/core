@@ -1,10 +1,10 @@
-import SamplerBase					from "../image/SamplerBase";
-import AbstractMethodError			from "../errors/AbstractMethodError";
-import AssetEvent					from "../events/AssetEvent";
-import IAsset						from "../library/IAsset";
-import AssetBase					from "../library/AssetBase";
+import {SamplerBase}					from "../image/SamplerBase";
+import {AbstractMethodError}			from "../errors/AbstractMethodError";
+import {AssetEvent}					from "../events/AssetEvent";
+import {IAsset}						from "../library/IAsset";
+import {AssetBase}					from "../library/AssetBase";
 
-class ImageBase extends AssetBase
+export class ImageBase extends AssetBase
 {
 	public _pFormat:string = "bgra";
 
@@ -25,5 +25,3 @@ class ImageBase extends AssetBase
 		return this._pFormat;
 	}
 }
-
-export default ImageBase;

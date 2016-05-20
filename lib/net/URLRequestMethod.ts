@@ -1,4 +1,4 @@
-class URLRequestMethod
+export class URLRequestMethod
 {
 	/**
 	 *
@@ -11,5 +11,3 @@ class URLRequestMethod
 	 */
 	public static GET:string = 'GET';
 }
-
-export default URLRequestMethod;

@@ -1,10 +1,10 @@
-import ErrorBase				from "../errors/ErrorBase";
+import {ErrorBase}				from "../errors/ErrorBase";
 
 /**
  * AbstractMethodError is thrown when an abstract method is called. The method in question should be overridden
  * by a concrete subclass.
  */
-class ArgumentError extends ErrorBase
+export class ArgumentError extends ErrorBase
 {
 	/**
 	 * Create a new ArgumentError.
@@ -17,5 +17,3 @@ class ArgumentError extends ErrorBase
 		super(message || "ArgumentError", id);
 	}
 }
-
-export default ArgumentError;

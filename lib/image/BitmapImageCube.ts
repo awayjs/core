@@ -1,29 +1,29 @@
-import BitmapImage2D			from "../image/BitmapImage2D";
-import ImageCube				from "../image/ImageCube";
-import BlendMode				from "../image/BlendMode";
-import ColorTransform			from "../geom/ColorTransform";
-import Matrix					from "../geom/Matrix";
-import Rectangle				from "../geom/Rectangle";
-import Point					from "../geom/Point";
-import ByteArray				from "../utils/ByteArray";
-import ColorUtils				from "../utils/ColorUtils";
-import BitmapImageUtils			from "../utils/BitmapImageUtils";
+import {BitmapImage2D}			from "../image/BitmapImage2D";
+import {ImageCube}				from "../image/ImageCube";
+import {BlendMode}				from "../image/BlendMode";
+import {ColorTransform}			from "../geom/ColorTransform";
+import {Matrix}					from "../geom/Matrix";
+import {Rectangle}				from "../geom/Rectangle";
+import {Point}					from "../geom/Point";
+import {ByteArray}				from "../utils/ByteArray";
+import {ColorUtils}				from "../utils/ColorUtils";
+import {BitmapImageUtils}			from "../utils/BitmapImageUtils";
 
 /**
- * The BitmapImage2D class lets you work with the data(pixels) of a Bitmap
- * object. You can use the methods of the BitmapImage2D class to create
+ * The BitmapImage2D export class lets you work with the data(pixels) of a Bitmap
+ * object. You can use the methods of the BitmapImage2D export class to create
  * arbitrarily sized transparent or opaque bitmap images and manipulate them
  * in various ways at runtime. You can also access the BitmapImage2D for a bitmap
  * image that you load with the <code>flash.Assets</code> or
  * <code>flash.display.Loader</code> classes.
  *
- * <p>This class lets you separate bitmap rendering operations from the
+ * <p>This export class lets you separate bitmap rendering operations from the
  * internal display updating routines of flash. By manipulating a
  * BitmapImage2D object directly, you can create complex images without incurring
  * the per-frame overhead of constantly redrawing the content from vector
  * data.</p>
  *
- * <p>The methods of the BitmapImage2D class support effects that are not
+ * <p>The methods of the BitmapImage2D export class support effects that are not
  * available through the filters available to non-bitmap display objects.</p>
  *
  * <p>A BitmapImage2D object contains an array of pixel data. This data can
@@ -66,7 +66,7 @@ import BitmapImageUtils			from "../utils/BitmapImageUtils";
  * it can only be 2,048 pixels high.) In Flash Player 9 and earlier, the limitation
  * is 2,880 pixels in height and 2,880 in width.</p>
  */
-class BitmapImageCube extends ImageCube
+export class BitmapImageCube extends ImageCube
 {
 	public static assetType:string = "[image BitmapImageCube]";
 
@@ -182,7 +182,7 @@ class BitmapImageCube extends ImageCube
 	 * @param colorTransform A ColorTransform object that describes the color
 	 *                       transformation values to apply.
 	 */
-	public colorTransform(side:number, rect:Rectangle, colorTransform:ColorTransform)
+	public colorTransform(side:number, rect:Rectangle, colorTransform:ColorTransform):void
 	{
 		if (!this._locked)
 			this._imageData[side] = this._context[side].getImageData(0, 0, this._size, this._size);
@@ -252,7 +252,7 @@ class BitmapImageCube extends ImageCube
 	 *                         <code>BitmapImage2DChannel.ALPHA</code>).
 	 * @throws TypeError The sourceBitmapImage2D, sourceRect or destPoint are null.
 	 */
-	public copyChannel(side:number, sourceBitmap:BitmapImage2D, sourceRect:Rectangle, destPoint:Point, sourceChannel:number, destChannel:number)
+	public copyChannel(side:number, sourceBitmap:BitmapImage2D, sourceRect:Rectangle, destPoint:Point, sourceChannel:number, destChannel:number):void
 	{
 		var imageData:ImageData = sourceBitmap.getImageData();
 
@@ -324,7 +324,7 @@ class BitmapImageCube extends ImageCube
 	 */
 	public copyPixels(side:number, source:BitmapImage2D, sourceRect:Rectangle, destRect:Rectangle);
 	public copyPixels(side:number, source:HTMLImageElement, sourceRect:Rectangle, destRect:Rectangle);
-	public copyPixels(side:number, source:any, sourceRect:Rectangle, destRect:Rectangle)
+	public copyPixels(side:number, source:any, sourceRect:Rectangle, destRect:Rectangle):void
 	{
 		if (source instanceof BitmapImage2D)
 			source = source.getCanvas();
@@ -367,7 +367,7 @@ class BitmapImageCube extends ImageCube
 	 * collected by the garbage collector.</p>
 	 *
 	 */
-	public dispose()
+	public dispose():void
 	{
 		super.dispose();
 
@@ -455,7 +455,7 @@ class BitmapImageCube extends ImageCube
 	 */
 	public draw(side:number, source:BitmapImage2D, matrix?:Matrix, colorTransform?:ColorTransform, blendMode?:BlendMode, clipRect?:Rectangle, smoothing?:boolean);
 	public draw(side:number, source:HTMLElement, matrix?:Matrix, colorTransform?:ColorTransform, blendMode?:BlendMode, clipRect?:Rectangle, smoothing?:boolean);
-	public draw(side:number, source:any, matrix?:Matrix, colorTransform?:ColorTransform, blendMode?:BlendMode, clipRect?:Rectangle, smoothing?:boolean)
+	public draw(side:number, source:any, matrix?:Matrix, colorTransform?:ColorTransform, blendMode?:BlendMode, clipRect?:Rectangle, smoothing?:boolean):void
 	{
 		if (source instanceof BitmapImage2D)
 			source = source.getCanvas();
@@ -487,7 +487,7 @@ class BitmapImageCube extends ImageCube
 	 *              0xFF336699.
 	 * @throws TypeError The rect is null.
 	 */
-	public fillRect(side:number, rect:Rectangle, color:number)
+	public fillRect(side:number, rect:Rectangle, color:number):void
 	{
 		if (this._locked) {
 
@@ -622,7 +622,7 @@ class BitmapImageCube extends ImageCube
 	 * <code>setPixel()</code> or <code>setPixel32()</code> method.
 	 *
 	 */
-	public lock()
+	public lock():void
 	{
 		if (this._locked)
 			return;
@@ -645,7 +645,7 @@ class BitmapImageCube extends ImageCube
 	 * @throws RangeError The vector array is not large enough to read all the
 	 *                    pixel data.
 	 */
-	public setArray(side:number, rect:Rectangle, inputArray:Array<number>)
+	public setArray(side:number, rect:Rectangle, inputArray:Array<number>):void
 	{
 		if (!this._locked)
 			this._imageData[side] = this._context[side].getImageData(0, 0, this._size, this._size);
@@ -688,7 +688,7 @@ class BitmapImageCube extends ImageCube
 	 * @param y     The <i>y</i> position of the pixel whose value changes.
 	 * @param color The resulting RGB color for the pixel.
 	 */
-	public setPixel(side:number, x:number, y:number, color:number)
+	public setPixel(side:number, x:number, y:number, color:number):void
 	{
 		var argb:number[] = ColorUtils.float32ColorToARGB(color);
 
@@ -741,7 +741,7 @@ class BitmapImageCube extends ImageCube
 	 *              opaque(not transparent), the alpha transparency portion of
 	 *              this color value is ignored.
 	 */
-	public setPixel32(side:number, x, y, color:number)
+	public setPixel32(side:number, x, y, color:number):void
 	{
 		var argb:number[] = ColorUtils.float32ColorToARGB(color);
 
@@ -782,7 +782,7 @@ class BitmapImageCube extends ImageCube
 	 *                   before throwing the exception.
 	 * @throws TypeError The rect or inputByteArray are null.
 	 */
-	public setPixels(side:number, rect:Rectangle, inputByteArray:ByteArray)
+	public setPixels(side:number, rect:Rectangle, inputByteArray:ByteArray):void
 	{
 		if (!this._locked)
 			this._imageData[side] = this._context[side].getImageData(0, 0, this._size, this._size);
@@ -820,7 +820,7 @@ class BitmapImageCube extends ImageCube
 	 *                   entire area of the BitmapImage2D object is considered
 	 *                   changed.
 	 */
-	public unlock()
+	public unlock():void
 	{
 		if (!this._locked)
 			return;
@@ -860,7 +860,7 @@ class BitmapImageCube extends ImageCube
 	 * @param height
 	 * @private
 	 */
-	public _setSize(size:number)
+	public _setSize(size:number):void
 	{
 		super._setSize(size);
 
@@ -876,5 +876,3 @@ class BitmapImageCube extends ImageCube
 		}
 	}
 }
-
-export default BitmapImageCube;

@@ -1,9 +1,9 @@
-import ImageBase				from "../image/ImageBase";
-import Sampler2D				from "../image/Sampler2D";
-import Rectangle				from "../geom/Rectangle";
-import ImageUtils				from "../utils/ImageUtils";
+import {ImageBase}				from "../image/ImageBase";
+import {Sampler2D}				from "../image/Sampler2D";
+import {Rectangle}				from "../geom/Rectangle";
+import {ImageUtils}				from "../utils/ImageUtils";
 
-class Image2D extends ImageBase
+export class Image2D extends ImageBase
 {
 	public static assetType:string = "[image Image2D]";
 
@@ -80,7 +80,7 @@ class Image2D extends ImageBase
 	 * @param height
 	 * @private
 	 */
-	public _setSize(width:number, height:number)
+	public _setSize(width:number, height:number):void
 	{
 		if (this._rect.width != width || this._rect.height != height)
 			this.clear();
@@ -95,7 +95,7 @@ class Image2D extends ImageBase
 	 *
 	 * @private
 	 */
-	private _testDimensions()
+	private _testDimensions():void
 	{
 		if (this._powerOfTwo && (!ImageUtils.isDimensionValid(this._rect.width) || !ImageUtils.isDimensionValid(this._rect.height)))
 			throw new Error("Invalid dimension: Width and height must be power of 2 and cannot exceed 2048");
@@ -115,5 +115,3 @@ class Image2D extends ImageBase
 		this._testDimensions();
 	}
 }
-
-export default Image2D;

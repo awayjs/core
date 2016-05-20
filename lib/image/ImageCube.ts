@@ -1,8 +1,8 @@
-import ImageBase				from "../image/ImageBase";
-import SamplerCube				from "../image/SamplerCube";
-import ImageUtils				from "../utils/ImageUtils";
+import {ImageBase}				from "../image/ImageBase";
+import {SamplerCube}				from "../image/SamplerCube";
+import {ImageUtils}				from "../utils/ImageUtils";
 
-class ImageCube extends ImageBase
+export class ImageCube extends ImageBase
 {
 	public static assetType:string = "[image ImageCube]";
 
@@ -51,7 +51,7 @@ class ImageCube extends ImageBase
 	 * @param height
 	 * @private
 	 */
-	public _setSize(size:number)
+	public _setSize(size:number):void
 	{
 		if (this._size != size)
 			this.clear();
@@ -65,11 +65,9 @@ class ImageCube extends ImageBase
 	 *
 	 * @private
 	 */
-	private _testDimensions()
+	private _testDimensions():void
 	{
 		if (!ImageUtils.isDimensionValid(this._size))
 			throw new Error("Invalid dimension: Width and height must be power of 2 and cannot exceed 2048");
 	}
 }
-
-export default ImageCube;

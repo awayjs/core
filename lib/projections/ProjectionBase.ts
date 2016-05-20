@@ -1,12 +1,12 @@
-import Matrix3D					from "../geom/Matrix3D";
-import Rectangle				from "../geom/Rectangle";
-import Vector3D					from "../geom/Vector3D";
-import EventDispatcher			from "../events/EventDispatcher";
-import ProjectionEvent			from "../events/ProjectionEvent";
-import AbstractMethodError		from "../errors/AbstractMethodError";
-import IProjection				from "../projections/IProjection";
+import {Matrix3D}					from "../geom/Matrix3D";
+import {Rectangle}				from "../geom/Rectangle";
+import {Vector3D}					from "../geom/Vector3D";
+import {EventDispatcher}			from "../events/EventDispatcher";
+import {ProjectionEvent}			from "../events/ProjectionEvent";
+import {AbstractMethodError}		from "../errors/AbstractMethodError";
+import {IProjection}				from "../projections/IProjection";
 
-class ProjectionBase extends EventDispatcher implements IProjection
+export class ProjectionBase extends EventDispatcher implements IProjection
 {
 	public _pMatrix:Matrix3D = new Matrix3D();
 	public _pScissorRect:Rectangle = new Rectangle();
@@ -178,19 +178,19 @@ class ProjectionBase extends EventDispatcher implements IProjection
 		this.pInvalidateMatrix();
 	}
 
-	public pInvalidateMatrix()
+	public pInvalidateMatrix():void
 	{
 		this._pMatrixInvalid = true;
 		this._unprojectionInvalid = true;
 		this.dispatchEvent(new ProjectionEvent(ProjectionEvent.MATRIX_CHANGED, this));
 	}
 
-	public pUpdateMatrix()
+	public pUpdateMatrix():void
 	{
 		throw new AbstractMethodError();
 	}
 
-	public _iUpdateScissorRect(x:number, y:number, width:number, height:number)
+	public _iUpdateScissorRect(x:number, y:number, width:number, height:number):void
 	{
 		this._pScissorRect.x = x;
 		this._pScissorRect.y = y;
@@ -199,7 +199,7 @@ class ProjectionBase extends EventDispatcher implements IProjection
 		this.pInvalidateMatrix();
 	}
 
-	public _iUpdateViewport(x:number, y:number, width:number, height:number)
+	public _iUpdateViewport(x:number, y:number, width:number, height:number):void
 	{
 		this._pViewPort.x = x;
 		this._pViewPort.y = y;
@@ -208,5 +208,3 @@ class ProjectionBase extends EventDispatcher implements IProjection
 		this.pInvalidateMatrix();
 	}
 }
-
-export default ProjectionBase;

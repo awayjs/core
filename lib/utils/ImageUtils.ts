@@ -1,6 +1,6 @@
-import Image2D						from "../image/Image2D";
+import {Image2D}						from "../image/Image2D";
 
-class ImageUtils
+export class ImageUtils
 {
 	private static MAX_SIZE:number = 2048;
 

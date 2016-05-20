@@ -1,4 +1,4 @@
-interface IImageCanvas {
+export interface IImageCanvas {
     width: number;
 
     height: number;
@@ -8,5 +8,3 @@ interface IImageCanvas {
     getContext(contextId: string, ...args: any[]): CanvasRenderingContext2D | WebGLRenderingContext;
 
 }
-
-export default IImageCanvas;

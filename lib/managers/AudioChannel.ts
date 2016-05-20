@@ -1,5 +1,5 @@
 
-class AudioChannel
+export class AudioChannel
 {
 	public static maxChannels:number = 16;
 
@@ -62,7 +62,7 @@ class AudioChannel
 		source.connect(this._gainNode);
 	}
 	
-	public play(url:string, offset:number = 0, loop:boolean = false)
+	public play(url:string, offset:number = 0, loop:boolean = false):void
 	{
 		this._isPlaying = true;
 		this._isLooping = loop;
@@ -73,17 +73,15 @@ class AudioChannel
 		this._audio.play();
 	}
 
-	public stop()
+	public stop():void
 	{
 		this._audio.pause();
 		this._isPlaying = false;
 		this._isLooping = false;
 	}
 
-	private _onEnded(event)
+	private _onEnded(event):void
 	{
 		this.stop();
 	}
 }
-
-export default AudioChannel;

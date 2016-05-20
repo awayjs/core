@@ -1,10 +1,10 @@
-import EventDispatcher			from "../events/EventDispatcher";
-import Loader					from "../library/Loader";
-import AssetBase				from "../library/AssetBase";
-import ByteArray				from "../utils/ByteArray";
+import {EventDispatcher}			from "../events/EventDispatcher";
+import {Loader}					from "../library/Loader";
+import {AssetBase}				from "../library/AssetBase";
+import {ByteArray}				from "../utils/ByteArray";
 
 /**
- * The LoaderInfo class provides information about a loaded SWF file or a
+ * The LoaderInfo export class provides information about a loaded SWF file or a
  * loaded image file(JPEG, GIF, or PNG). LoaderInfo objects are available for
  * any display object. The information provided includes load progress, the
  * URLs of the loader and loaded content, the number of bytes total for the
@@ -31,13 +31,13 @@ import ByteArray				from "../utils/ByteArray";
  * file or a bitmap), the <code>loaderInfo</code> property of the display
  * object is the same as the <code>contentLoaderInfo</code> property of the
  * Loader object(<code>DisplayObject.loaderInfo =
- * Loader.contentLoaderInfo</code>). Because the instance of the main class of
+ * Loader.contentLoaderInfo</code>). Because the instance of the main export class of
  * the SWF file has no Loader object, the <code>loaderInfo</code> property is
- * the only way to access the LoaderInfo for the instance of the main class of
+ * the only way to access the LoaderInfo for the instance of the main export class of
  * the SWF file.</p>
  *
  * <p>The following diagram shows the different uses of the LoaderInfo
- * object - for the instance of the main class of the SWF file, for the
+ * object - for the instance of the main export class of the SWF file, for the
  * <code>contentLoaderInfo</code> property of a Loader object, and for the
  * <code>loaderInfo</code> property of a loaded object:</p>
  *
@@ -100,7 +100,7 @@ import ByteArray				from "../utils/ByteArray";
  *                   performed by the same Loader object and the original
  *                   content is removed prior to the load beginning.
  */
-class LoaderInfo extends EventDispatcher
+export class LoaderInfo extends EventDispatcher
 {
 	private _bytes:ByteArray;
 	private _bytesLoaded:number;
@@ -193,7 +193,7 @@ class LoaderInfo extends EventDispatcher
 	/**
 	 * The Loader object associated with this LoaderInfo object. If this
 	 * LoaderInfo object is the <code>loaderInfo</code> property of the instance
-	 * of the main class of the SWF file, no Loader object is associated.
+	 * of the main export class of the SWF file, no Loader object is associated.
 	 * 
 	 * @throws SecurityError If the object accessing this API is prevented from
 	 *                       accessing the Loader object because of security
@@ -232,5 +232,3 @@ class LoaderInfo extends EventDispatcher
 		return this._url;
 	}
 }
-
-export default LoaderInfo;

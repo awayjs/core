@@ -1,7 +1,7 @@
-import PlaneClassification	from "../geom/PlaneClassification";
-import Vector3D				from "../geom/Vector3D";
+import {PlaneClassification}	from "../geom/PlaneClassification";
+import {Vector3D}				from "../geom/Vector3D";
 
-class Sphere
+export class Sphere
 {
 	/**
 	 *
@@ -80,5 +80,3 @@ class Sphere
 		return "Sphere [x:" + this.x + ", y:" + this.y + ", z:" + this.z + ", radius:" + this.radius + "]";
 	}
 }
-
-export default Sphere;

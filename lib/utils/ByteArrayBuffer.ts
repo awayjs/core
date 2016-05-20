@@ -1,6 +1,6 @@
-import ByteArrayBase			from "../utils/ByteArrayBase";
+import {ByteArrayBase}			from "../utils/ByteArrayBase";
 
-class ByteArrayBuffer extends ByteArrayBase
+export class ByteArrayBuffer extends ByteArrayBase
 {
 
 	/*
@@ -18,7 +18,7 @@ class ByteArrayBuffer extends ByteArrayBase
 		this._mode = "Array";
 	}
 
-	public writeByte(b:number)
+	public writeByte(b:number):void
 	{
 		var bi:number = ~~b;
 		this._bytes[ this.position++ ] = bi;
@@ -35,7 +35,7 @@ class ByteArrayBuffer extends ByteArrayBase
 		return this._bytes[ this.position++ ];
 	}
 
-	public writeUnsignedByte(b:number)
+	public writeUnsignedByte(b:number):void
 	{
 		var bi:number = ~~b;
 		this._bytes[this.position++] = bi & 0xff;
@@ -52,7 +52,7 @@ class ByteArrayBuffer extends ByteArrayBase
 		return this._bytes[ this.position++ ];
 	}
 
-	public writeUnsignedShort(b:number)
+	public writeUnsignedShort(b:number):void
 	{
 		var bi:number = ~~b;
 		this._bytes[ this.position++ ] = bi & 0xff;
@@ -64,15 +64,15 @@ class ByteArrayBuffer extends ByteArrayBase
 
 	public readUnsignedShort():number
 	{
-		if (this.position + 2 > this.length) {
+		if (this.position + 2 > this.length)
 			throw "ByteArray out of bounds read. Position=" + this.position + ", Length=" + this.length;
-		}
+
 		var r:number = this._bytes[ this.position ] | ( this._bytes[ this.position + 1 ] << 8 );
 		this.position += 2;
 		return r;
 	}
 
-	public writeUnsignedInt(b:number)
+	public writeUnsignedInt(b:number):void
 	{
 		var bi:number = ~~b;
 		this._bytes[ this.position++ ] = bi & 0xff;
@@ -94,14 +94,14 @@ class ByteArrayBuffer extends ByteArrayBase
 		return r >>> 0;
 	}
 
-	public writeFloat(b:number)
+	public writeFloat(b:number):void
 	{
 		// this is crazy slow and silly, but as a fallback...
 
 		this.writeUnsignedInt(this.toFloatBits(Number(b)));
 	}
 
-	public toFloatBits(x:number)
+	public toFloatBits(x:number):number
 	{
 		// don't handle inf/nan yet
 		// special case zero
@@ -125,12 +125,12 @@ class ByteArrayBuffer extends ByteArrayBase
 		return( ( sign << 31 ) >>> 0) | ( exponent << 23 ) | mantissa;
 	}
 
-	public readFloat(b:number)
+	public readFloat(b:number):number
 	{
 		return this.fromFloatBits(this.readUnsignedInt());
 	}
 
-	public fromFloatBits(x:number)
+	public fromFloatBits(x:number):number
 	{
 		if (x == 0) {
 			return 0;
@@ -164,5 +164,3 @@ class ByteArrayBuffer extends ByteArrayBase
 	 }
 	 */
 }
-
-export default ByteArrayBuffer;

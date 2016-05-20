@@ -1,9 +1,9 @@
-import StreamingAudioChannel	from "../managers/StreamingAudioChannel";
-import WebAudioChannel			from "../managers/WebAudioChannel";
-import IAudioChannel			from "../managers/IAudioChannel";
-import IAudioChannelClass		from "../managers/IAudioChannelClass";
+import {StreamingAudioChannel}	from "../managers/StreamingAudioChannel";
+import {WebAudioChannel}			from "../managers/WebAudioChannel";
+import {IAudioChannel}			from "../managers/IAudioChannel";
+import {IAudioChannelClass}		from "../managers/IAudioChannelClass";
 
-class AudioManager
+export class AudioManager
 {
 	public static getChannel(byteLength:number):IAudioChannel
 	{
@@ -36,5 +36,3 @@ class AudioManager
 
 
 }
-
-export default AudioManager;

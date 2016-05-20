@@ -1,7 +1,7 @@
-import PlaneClassification	from "../geom/PlaneClassification";
-import Vector3D				from "../geom/Vector3D";
+import {PlaneClassification}	from "../geom/PlaneClassification";
+import {Vector3D}				from "../geom/Vector3D";
 
-class Plane3D
+export class Plane3D
 {
 	/**
 	 * The A coefficient of this plane. (Also the x dimension of the plane normal)
@@ -67,7 +67,7 @@ class Plane3D
 	 * @param p1 Vector3D
 	 * @param p2 Vector3D
 	 */
-	public fromPoints(p0:Vector3D, p1:Vector3D, p2:Vector3D)
+	public fromPoints(p0:Vector3D, p1:Vector3D, p2:Vector3D):void
 	{
 		var d1x:number = p1.x - p0.x;
 		var d1y:number = p1.y - p0.y;
@@ -108,7 +108,7 @@ class Plane3D
 	 * @param normal Vector3D
 	 * @param point  Vector3D
 	 */
-	public fromNormalAndPoint(normal:Vector3D, point:Vector3D)
+	public fromNormalAndPoint(normal:Vector3D, point:Vector3D):void
 	{
 		this.a = normal.x;
 		this.b = normal.y;
@@ -205,5 +205,3 @@ class Plane3D
 		return "Plane3D [a:" + this.a + ", b:" + this.b + ", c:" + this.c + ", d:" + this.d + "]";
 	}
 }
-
-export default Plane3D;

@@ -1,5 +1,5 @@
 /**
- * The Vector3D class represents a point or a location in the three-dimensional
+ * The Vector3D export class represents a point or a location in the three-dimensional
  * space using the Cartesian coordinates x, y, and z. As in a two-dimensional
  * space, the x property represents the horizontal axis and the y property
  * represents the vertical axis. In three-dimensional space, the z property
@@ -13,7 +13,7 @@
  * moves away from the viewer's eye. The origin point (0,0,0) of the global
  * space is the upper-left corner of the stage.
  *
- * <p>The Vector3D class can also represent a direction, an arrow pointing from
+ * <p>The Vector3D export class can also represent a direction, an arrow pointing from
  * the origin of the coordinates, such as (0,0,0), to an endpoint; or a
  * floating-point component of an RGB (Red, Green, Blue) color model.</p>
  *
@@ -24,7 +24,7 @@
  * object's orientation. Here is a representation of Vector3D elements in
  * matrix notation:</p>
  */
-class Vector3D
+export class Vector3D
 {
 	/**
 	 * The x axis defined as a Vector3D object with coordinates (1,0,0).
@@ -238,7 +238,7 @@ class Vector3D
 	 * @param a The Vector3D object containing the values to subtract from
 	 *          the current Vector3D object.
 	 */
-	public decrementBy(a:Vector3D)
+	public decrementBy(a:Vector3D):void
 	{
 		this.x -= a.x;
 		this.y -= a.y;
@@ -248,7 +248,7 @@ class Vector3D
 	/**
 	 * Returns the distance between two Vector3D objects. The
 	 * <code>distance()</code> method is a static method. You can use it
-	 * directly as a method of the Vector3D class to get the Euclidean
+	 * directly as a method of the Vector3D export class to get the Euclidean
 	 * distance between two three-dimensional points.
 	 *
 	 * @param pt1 A Vector3D object as the first three-dimensional point.
@@ -329,7 +329,7 @@ class Vector3D
 	 * @param a The Vector3D object to be added to the current Vector3D
 	 *          object.
 	 */
-	public incrementBy(a:Vector3D)
+	public incrementBy(a:Vector3D):void
 	{
 		this.x += a.x;
 		this.y += a.y;
@@ -401,7 +401,7 @@ class Vector3D
 	 *                  Vector3D object is (0,3,4), and you normalize it to
 	 *                  1, the point returned is at(0,0.6,0.8).
 	 */
-	public normalize(thickness:number = 1)
+	public normalize(thickness:number = 1):void
 	{
 		if (this.length != 0) {
 			var invLength = thickness/this.length;
@@ -491,5 +491,3 @@ class Vector3D
 		return "[Vector3D] (x:" + this.x + " ,y:" + this.y + ", z" + this.z + ", w:" + this.w + ")";
 	}
 }
-
-export default Vector3D;

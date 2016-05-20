@@ -1,10 +1,10 @@
-import ErrorBase				from "../errors/ErrorBase";
+import {ErrorBase}				from "../errors/ErrorBase";
 
 /**
  * RangeError is thrown when an index is accessed out of range of the number of
  * available indices on an Array.
  */
-class RangeError extends ErrorBase
+export class RangeError extends ErrorBase
 {
 	/**
 	 * Create a new RangeError.
@@ -17,5 +17,3 @@ class RangeError extends ErrorBase
 		super(message || "RangeError", id);
 	}
 }
-
-export default RangeError;

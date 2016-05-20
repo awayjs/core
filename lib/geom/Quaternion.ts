@@ -1,12 +1,12 @@
-import Matrix3DUtils		from "../geom/Matrix3DUtils";
-import Orientation3D		from "../geom/Orientation3D";
-import Matrix3D				from "../geom/Matrix3D";
-import Vector3D				from "../geom/Vector3D";
+import {Matrix3DUtils}		from "../geom/Matrix3DUtils";
+import {Orientation3D}		from "../geom/Orientation3D";
+import {Matrix3D}				from "../geom/Matrix3D";
+import {Vector3D}				from "../geom/Vector3D";
 
 /**
  * A Quaternion object which can be used to represent rotations.
  */
-class Quaternion
+export class Quaternion
 {
 	/**
 	 * The x value of the quaternion.
@@ -57,7 +57,7 @@ class Quaternion
 	 * @param    qa    The first quaternion in the multiplication.
 	 * @param    qb    The second quaternion in the multiplication.
 	 */
-	public multiply(qa:Quaternion, qb:Quaternion)
+	public multiply(qa:Quaternion, qb:Quaternion):void
 	{
 		var w1:number = qa.w, x1:number = qa.x, y1:number = qa.y, z1:number = qa.z;
 		var w2:number = qb.w, x2:number = qb.x, y2:number = qb.y, z2:number = qb.z;
@@ -95,7 +95,7 @@ class Quaternion
 	 * @param    axis    The axis around which to rotate
 	 * @param    angle    The angle in radians of the rotation.
 	 */
-	public fromAxisAngle(axis:Vector3D, angle:number)
+	public fromAxisAngle(axis:Vector3D, angle:number):void
 	{
 		var sin_a:number = Math.sin(angle/2);
 		var cos_a:number = Math.cos(angle/2);
@@ -114,7 +114,7 @@ class Quaternion
 	 * @param qb The second quaternion to interpolate.
 	 * @param t The interpolation weight, a value between 0 and 1.
 	 */
-	public slerp(qa:Quaternion, qb:Quaternion, t:number)
+	public slerp(qa:Quaternion, qb:Quaternion, t:number):void
 	{
 		var w1:number = qa.w, x1:number = qa.x, y1:number = qa.y, z1:number = qa.z;
 		var w2:number = qb.w, x2:number = qb.x, y2:number = qb.y, z2:number = qb.z;
@@ -159,7 +159,7 @@ class Quaternion
 	 * @param qb The second quaternion to interpolate.
 	 * @param t The interpolation weight, a value between 0 and 1.
 	 */
-	public lerp(qa:Quaternion, qb:Quaternion, t:number)
+	public lerp(qa:Quaternion, qb:Quaternion, t:number):void
 	{
 		var w1:number = qa.w, x1:number = qa.x, y1:number = qa.y, z1:number = qa.z;
 		var w2:number = qb.w, x2:number = qb.x, y2:number = qb.y, z2:number = qb.z;
@@ -192,7 +192,7 @@ class Quaternion
 	 * @param    ay        The angle in radians of the rotation around the ay axis.
 	 * @param    az        The angle in radians of the rotation around the az axis.
 	 */
-	public fromEulerAngles(ax:number, ay:number, az:number)
+	public fromEulerAngles(ax:number, ay:number, az:number):void
 	{
 		var halfX:number = ax*.5, halfY:number = ay*.5, halfZ:number = az*.5;
 		var cosX:number = Math.cos(halfX), sinX:number = Math.sin(halfX);
@@ -230,7 +230,7 @@ class Quaternion
 	/**
 	 * Normalises the quaternion object.
 	 */
-	public normalize(val:number = 1)
+	public normalize(val:number = 1):void
 	{
 		var mag:number = val/Math.sqrt(this.x*this.x + this.y*this.y + this.z*this.z + this.w*this.w);
 
@@ -291,7 +291,7 @@ class Quaternion
 	 * Extracts a quaternion rotation matrix out of a given Matrix3D object.
 	 * @param matrix The Matrix3D out of which the rotation will be extracted.
 	 */
-	public fromMatrix(matrix:Matrix3D)
+	public fromMatrix(matrix:Matrix3D):void
 	{
 		var v:Vector3D = matrix.decompose(Orientation3D.QUATERNION)[1];
 		this.x = v.x;
@@ -305,7 +305,7 @@ class Quaternion
 	 * @param target The Vector.&lt;Number&gt; to contain the raw matrix data.
 	 * @param exclude4thRow If true, the last row will be omitted, and a 4x3 matrix will be generated instead of a 4x4.
 	 */
-	public toRawData(target:number[], exclude4thRow:boolean = false)
+	public toRawData(target:number[], exclude4thRow:boolean = false):void
 	{
 		var xy2:number = 2.0*this.x*this.y, xz2:number = 2.0*this.x*this.z, xw2:number = 2.0*this.x*this.w;
 		var yz2:number = 2.0*this.y*this.z, yw2:number = 2.0*this.y*this.w, zw2:number = 2.0*this.z*this.w;
@@ -372,7 +372,7 @@ class Quaternion
 	 * Copies the data from a quaternion into this instance.
 	 * @param q The quaternion to copy from.
 	 */
-	public copyFrom(q:Quaternion)
+	public copyFrom(q:Quaternion):void
 	{
 		this.x = q.x;
 		this.y = q.y;
@@ -380,5 +380,3 @@ class Quaternion
 		this.w = q.w;
 	}
 }
-
-export default Quaternion;

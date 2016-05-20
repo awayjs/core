@@ -1,7 +1,7 @@
-import AttributesBuffer			from "../attributes/AttributesBuffer";
-import AttributesView			from "../attributes/AttributesView";
+import {AttributesBuffer}			from "../attributes/AttributesBuffer";
+import {AttributesView}			from "../attributes/AttributesView";
 
-class Float4Attributes extends AttributesView
+export class Float4Attributes extends AttributesView
 {
 	public static assetType:string = "[attributes Float4Attributes]";
 
@@ -26,7 +26,7 @@ class Float4Attributes extends AttributesView
 
 	public set(array:Array<number>, offset?:number);
 	public set(typedArray:Float32Array, offset?:number);
-	public set(values:any, offset:number = 0)
+	public set(values:any, offset:number = 0):void
 	{
 		super.set(values, offset);
 	}
@@ -46,5 +46,3 @@ class Float4Attributes extends AttributesView
 		return <Float4Attributes> super.clone(attributesBuffer);
 	}
 }
-
-export default Float4Attributes;

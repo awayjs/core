@@ -20,7 +20,7 @@
  * <p>You can use the <code>new Point()</code> constructor to create a Point
  * object.</p>
  */
-class Point
+export class Point
 {
 	/**
 	 * The horizontal coordinate of the point. The default value is 0.
@@ -75,7 +75,7 @@ class Point
 		return new Point(this.x, this.y);
 	}
 
-	public copyFrom(sourcePoint:Point)
+	public copyFrom(sourcePoint:Point):void
 	{
 
 	}
@@ -101,7 +101,7 @@ class Point
 	 *                 (0,5), and you normalize it to 1, the point returned is
 	 *                  at(0,1).
 	 */
-	public normalize(thickness:number = 1)
+	public normalize(thickness:number = 1):void
 	{
 		if (this.length != 0) {
 			var invLength = thickness/this.length;
@@ -122,13 +122,13 @@ class Point
 	 *           <i>x</i>.
 	 * @param dy The amount by which to offset the vertical coordinate, <i>y</i>.
 	 */
-	public offset(dx:number, dy:number)
+	public offset(dx:number, dy:number):void
 	{
 		this.x += dx;
 		this.y += dy;
 	}
 
-	public setTo(xa:number, ya:number)
+	public setTo(xa:number, ya:number):void
 	{
 		this.x = xa;
 		this.y = ya;
@@ -210,5 +210,3 @@ class Point
 		return new Point(len*Math.cos(angle), len*Math.sin(angle));
 	}
 }
-
-export default Point;

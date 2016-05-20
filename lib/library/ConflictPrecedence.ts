@@ -1,11 +1,11 @@
 /**
- * Enumaration class for precedence when resolving naming conflicts in the library.
+ * Enumaration export class for precedence when resolving naming conflicts in the library.
  *
  * @see away.library.AssetLibrary.conflictPrecedence
  * @see away.library.AssetLibrary.conflictStrategy
  * @see away.library.naming.ConflictStrategy
  */
-class ConflictPrecedence
+export class ConflictPrecedence
 {
 	/**
 	 * Signals that in a conflict, the previous owner of the conflicting name
@@ -21,5 +21,3 @@ class ConflictPrecedence
 	 */
 	public static FAVOR_NEW:string = 'favorNew';
 }
-
-export default ConflictPrecedence;

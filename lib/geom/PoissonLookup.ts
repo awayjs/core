@@ -1,4 +1,4 @@
-class PoissonLookup
+export class PoissonLookup
 {
 	public static _distributions:Array<Array<number>>;
 
@@ -51,5 +51,3 @@ class PoissonLookup
 		return this._distributions[n - 1];
 	}
 }
-
-export default PoissonLookup;

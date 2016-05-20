@@ -1,20 +1,20 @@
-import Sampler2D				from "../image/Sampler2D";
-import BitmapImage2D			from "../image/BitmapImage2D";
-import Rectangle				from "../geom/Rectangle";
-import IAsset					from "../library/IAsset";
-import URLLoaderDataFormat		from "../net/URLLoaderDataFormat";
-import URLRequest				from "../net/URLRequest";
-import ParserBase				from "../parsers/ParserBase";
-import ParserUtils				from "../parsers/ParserUtils";
-import ResourceDependency		from "../parsers/ResourceDependency";
-import XmlUtils					from "../utils/XmlUtils";
+import {Sampler2D}				from "../image/Sampler2D";
+import {BitmapImage2D}			from "../image/BitmapImage2D";
+import {Rectangle}				from "../geom/Rectangle";
+import {IAsset}					from "../library/IAsset";
+import {URLLoaderDataFormat}		from "../net/URLLoaderDataFormat";
+import {URLRequest}				from "../net/URLRequest";
+import {ParserBase}				from "../parsers/ParserBase";
+import {ParserUtils}				from "../parsers/ParserUtils";
+import {ResourceDependency}		from "../parsers/ResourceDependency";
+import {XmlUtils}					from "../utils/XmlUtils";
 
 /**
  * TextureAtlasParser provides a "parser" for natively supported image types (jpg, png). While it simply loads bytes into
  * a loader object, it wraps it in a BitmapImage2DResource so resource management can happen consistently without
  * exception cases.
  */
-class TextureAtlasParser extends ParserBase
+export class TextureAtlasParser extends ParserBase
 {
 	private _doc:Node;
 	private _imagePath:string;
@@ -65,7 +65,7 @@ class TextureAtlasParser extends ParserBase
 	/**
 	 * @inheritDoc
 	 */
-	public _iResolveDependency(resourceDependency:ResourceDependency)
+	public _iResolveDependency(resourceDependency:ResourceDependency):void
 	{
 		if(resourceDependency.assets.length) {
 			this._imageData = <BitmapImage2D> resourceDependency.assets[0];
@@ -79,7 +79,7 @@ class TextureAtlasParser extends ParserBase
 	/**
 	 * @inheritDoc
 	 */
-	public _iResolveDependencyFailure(resourceDependency:ResourceDependency)
+	public _iResolveDependencyFailure(resourceDependency:ResourceDependency):void
 	{
 		this._parseState = TextureAtlasParserState.PARSE_COMPLETE;
 	}
@@ -160,9 +160,7 @@ class TextureAtlasParser extends ParserBase
 	}
 }
 
-export default TextureAtlasParser;
-
-class TextureAtlasParserState {
+export class TextureAtlasParserState {
 	public static PARSE_XML:number = 0;
 	public static PARSE_IMAGE:number = 1;
 	public static PARSE_SUBTEXTURES:number = 2;

@@ -1,10 +1,10 @@
-import IAsset					from "../library/IAsset";
-import IAssetClass				from "../library/IAssetClass";
-import AbstractMethodError		from "../errors/AbstractMethodError";
-import AssetEvent				from "../events/AssetEvent";
-import EventDispatcher			from "../events/EventDispatcher";
+import {IAsset}					from "../library/IAsset";
+import {IAssetClass}				from "../library/IAssetClass";
+import {AbstractMethodError}		from "../errors/AbstractMethodError";
+import {AssetEvent}				from "../events/AssetEvent";
+import {EventDispatcher}			from "../events/EventDispatcher";
 
-class AssetBase extends EventDispatcher implements IAsset
+export class AssetBase extends EventDispatcher implements IAsset
 {
 	public static ID_COUNT:number = 0;
 
@@ -88,12 +88,12 @@ class AssetBase extends EventDispatcher implements IAsset
 	/**
 	 * @inheritDoc
 	 */
-	public dispose()
+	public dispose():void
 	{
 		this.dispatchEvent(new AssetEvent(AssetEvent.DISPOSE, this));
 	}
 
-	public clear()
+	public clear():void
 	{
 		this.dispatchEvent(new AssetEvent(AssetEvent.CLEAR, this));
 	}
@@ -136,5 +136,3 @@ class AssetBase extends EventDispatcher implements IAsset
 		this._full_path = [ this._namespace, this._name ];
 	}
 }
-
-export default AssetBase;

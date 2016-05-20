@@ -1,29 +1,29 @@
-import Image2D					from "../image/Image2D";
-import BlendMode				from "../image/BlendMode";
-import ColorTransform			from "../geom/ColorTransform";
-import Matrix					from "../geom/Matrix";
-import Rectangle				from "../geom/Rectangle";
-import Point					from "../geom/Point";
-import ByteArray				from "../utils/ByteArray";
-import ColorUtils				from "../utils/ColorUtils";
-import BitmapImageUtils			from "../utils/BitmapImageUtils";
-import IImageCanvas				from "../image/IImageCanvas";
-import CPUCanvas				from "../image/CPUCanvas";
+import {Image2D}					from "../image/Image2D";
+import {BlendMode}				from "../image/BlendMode";
+import {ColorTransform}			from "../geom/ColorTransform";
+import {Matrix}					from "../geom/Matrix";
+import {Rectangle}				from "../geom/Rectangle";
+import {Point}					from "../geom/Point";
+import {ByteArray}				from "../utils/ByteArray";
+import {ColorUtils}				from "../utils/ColorUtils";
+import {BitmapImageUtils}			from "../utils/BitmapImageUtils";
+import {IImageCanvas}				from "../image/IImageCanvas";
+import {CPUCanvas}				from "../image/CPUCanvas";
 /**
- * The BitmapImage2D class lets you work with the data(pixels) of a Bitmap
- * object. You can use the methods of the BitmapImage2D class to create
+ * The BitmapImage2D export class lets you work with the data(pixels) of a Bitmap
+ * object. You can use the methods of the BitmapImage2D export class to create
  * arbitrarily sized transparent or opaque bitmap images and manipulate them
  * in various ways at runtime. You can also access the BitmapImage2D for a bitmap
  * image that you load with the <code>flash.Assets</code> or
  * <code>flash.display.Loader</code> classes.
  *
- * <p>This class lets you separate bitmap rendering operations from the
+ * <p>This export class lets you separate bitmap rendering operations from the
  * internal display updating routines of flash. By manipulating a
  * BitmapImage2D object directly, you can create complex images without incurring
  * the per-frame overhead of constantly redrawing the content from vector
  * data.</p>
  *
- * <p>The methods of the BitmapImage2D class support effects that are not
+ * <p>The methods of the BitmapImage2D export class support effects that are not
  * available through the filters available to non-bitmap display objects.</p>
  *
  * <p>A BitmapImage2D object contains an array of pixel data. This data can
@@ -66,7 +66,7 @@ import CPUCanvas				from "../image/CPUCanvas";
  * it can only be 2,048 pixels high.) In Flash Player 9 and earlier, the limitation
  * is 2,880 pixels in height and 2,880 in width.</p>
  */
-class BitmapImage2D extends Image2D
+export class BitmapImage2D extends Image2D
 {
 	public static assetType:string = "[image BitmapImage2D]";
 
@@ -150,7 +150,7 @@ class BitmapImage2D extends Image2D
 			this.fillRect(this._rect, fillColor);
 	}
 
-	public invalidate()
+	public invalidate():void
 	{
 		if (!this._imageDataDirty) {
 			this._imageDataDirty = true;
@@ -183,7 +183,7 @@ class BitmapImage2D extends Image2D
 	 * @param colorTransform A ColorTransform object that describes the color
 	 *                       transformation values to apply.
 	 */
-	public colorTransform(rect:Rectangle, colorTransform:ColorTransform)
+	public colorTransform(rect:Rectangle, colorTransform:ColorTransform):void
 	{
 		if (!this._imageData)
 			this._imageData = this._context.getImageData(0, 0, this._rect.width, this._rect.height);
@@ -251,7 +251,7 @@ class BitmapImage2D extends Image2D
 	 *                         <code>BitmapImage2DChannel.ALPHA</code>).
 	 * @throws TypeError The sourceBitmapImage2D, sourceRect or destPoint are null.
 	 */
-	public copyChannel(sourceBitmap:BitmapImage2D, sourceRect:Rectangle, destPoint:Point, sourceChannel:number, destChannel:number)
+	public copyChannel(sourceBitmap:BitmapImage2D, sourceRect:Rectangle, destPoint:Point, sourceChannel:number, destChannel:number):void
 	{
 		var imageData:ImageData = sourceBitmap.getImageData();
 
@@ -321,7 +321,7 @@ class BitmapImage2D extends Image2D
 	 */
 	public copyPixels(source:BitmapImage2D, sourceRect:Rectangle, destRect:Rectangle);
 	public copyPixels(source:HTMLElement, sourceRect:Rectangle, destRect:Rectangle);
-	public copyPixels(source:any, sourceRect:Rectangle, destRect:Rectangle)
+	public copyPixels(source:any, sourceRect:Rectangle, destRect:Rectangle):void
 	{
 		if (source instanceof BitmapImage2D)
 			source = source.getCanvas();
@@ -355,7 +355,7 @@ class BitmapImage2D extends Image2D
 	 * collected by the garbage collector.</p>
 	 *
 	 */
-	public dispose()
+	public dispose():void
 	{
 		super.dispose();
 
@@ -441,7 +441,7 @@ class BitmapImage2D extends Image2D
 	 */
 	public draw(source:BitmapImage2D, matrix?:Matrix, colorTransform?:ColorTransform, blendMode?:BlendMode, clipRect?:Rectangle, smoothing?:boolean);
 	public draw(source:HTMLElement, matrix?:Matrix, colorTransform?:ColorTransform, blendMode?:BlendMode, clipRect?:Rectangle, smoothing?:boolean);
-	public draw(source:any, matrix?:Matrix, colorTransform?:ColorTransform, blendMode?:BlendMode, clipRect?:Rectangle, smoothing?:boolean)
+	public draw(source:any, matrix?:Matrix, colorTransform?:ColorTransform, blendMode?:BlendMode, clipRect?:Rectangle, smoothing?:boolean):void
 	{
 		if (source instanceof BitmapImage2D && source.getCanvas())
 			source = source.getCanvas();
@@ -465,7 +465,7 @@ class BitmapImage2D extends Image2D
 	 *              0xFF336699.
 	 * @throws TypeError The rect is null.
 	 */
-	public fillRect(rect:Rectangle, color:number)
+	public fillRect(rect:Rectangle, color:number):void
 	{
 		if (this._locked && this._imageData)
 			this._context.putImageData(this._imageData, 0, 0); // at coords 0,0
@@ -586,7 +586,7 @@ class BitmapImage2D extends Image2D
 		return (a << 24) | (r << 16) | (g << 8) | b;
 	}
 
-	public getPixelData(x, y, imagePixel:Uint8ClampedArray)
+	public getPixelData(x, y, imagePixel:Uint8ClampedArray):void
 	{
 		if (!this._imageData)
 			this._imageData = this._context.getImageData(0, 0, this._rect.width, this._rect.height);
@@ -599,7 +599,7 @@ class BitmapImage2D extends Image2D
 		imagePixel[3] = this._imageData.data[index + 3];
 	}
 
-	public setPixelData(x, y, imagePixel:Uint8ClampedArray)
+	public setPixelData(x, y, imagePixel:Uint8ClampedArray):void
 	{
 		if (!this._imageData)
 			this._imageData = this._context.getImageData(0, 0, this._rect.width, this._rect.height);
@@ -622,7 +622,7 @@ class BitmapImage2D extends Image2D
 	 * <code>setPixel()</code> or <code>setPixel32()</code> method.
 	 *
 	 */
-	public lock()
+	public lock():void
 	{
 		if (this._locked)
 			return;
@@ -642,7 +642,7 @@ class BitmapImage2D extends Image2D
 	 * @throws RangeError The vector array is not large enough to read all the
 	 *                    pixel data.
 	 */
-	public setArray(rect:Rectangle, inputArray:Array<number>)
+	public setArray(rect:Rectangle, inputArray:Array<number>):void
 	{
 		if (!this._imageData)
 			this._imageData = this._context.getImageData(0, 0, this._rect.width, this._rect.height);
@@ -683,7 +683,7 @@ class BitmapImage2D extends Image2D
 	 * @param y     The <i>y</i> position of the pixel whose value changes.
 	 * @param color The resulting RGB color for the pixel.
 	 */
-	public setPixel(x:number, y:number, color:number)
+	public setPixel(x:number, y:number, color:number):void
 	{
 		var argb:number[] = ColorUtils.float32ColorToARGB(color);
 
@@ -734,7 +734,7 @@ class BitmapImage2D extends Image2D
 	 *              opaque(not transparent), the alpha transparency portion of
 	 *              this color value is ignored.
 	 */
-	public setPixel32(x, y, color:number)
+	public setPixel32(x, y, color:number):void
 	{
 		var argb:number[] = ColorUtils.float32ColorToARGB(color);
 
@@ -773,7 +773,7 @@ class BitmapImage2D extends Image2D
 	 *                   before throwing the exception.
 	 * @throws TypeError The rect or inputByteArray are null.
 	 */
-	public setPixels(rect:Rectangle, input:Uint8ClampedArray)
+	public setPixels(rect:Rectangle, input:Uint8ClampedArray):void
 	{
 		if (!this._imageData)
 			this._imageData = this._context.getImageData(0, 0, this._rect.width, this._rect.height);
@@ -802,7 +802,7 @@ class BitmapImage2D extends Image2D
 	 *                   entire area of the BitmapImage2D object is considered
 	 *                   changed.
 	 */
-	public unlock()
+	public unlock():void
 	{
 		if (!this._locked)
 			return;
@@ -840,7 +840,7 @@ class BitmapImage2D extends Image2D
 	 * @param height
 	 * @private
 	 */
-	public _setSize(width:number, height:number)
+	public _setSize(width:number, height:number):void
 	{
 		if (this._locked)
 			this._context.putImageData(this._imageData, 0, 0);
@@ -856,5 +856,3 @@ class BitmapImage2D extends Image2D
 			this._imageData = this._context.getImageData(0, 0, this._rect.width, this._rect.height);
 	}
 }
-
-export default BitmapImage2D;

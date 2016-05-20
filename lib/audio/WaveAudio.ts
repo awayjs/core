@@ -1,15 +1,15 @@
-import IAudioChannel				from "../managers/IAudioChannel";
-import AudioManager				from "../managers/AudioManager";
-import ColorTransform			from "../geom/ColorTransform";
-import Matrix					from "../geom/Matrix";
-import Rectangle				from "../geom/Rectangle";
-import IAsset					from "../library/IAsset";
-import AssetBase				from "../library/AssetBase";
-import ParserUtils				from "../parsers/ParserUtils";
-import ColorUtils				from "../utils/ColorUtils";
+import {IAudioChannel}				from "../managers/IAudioChannel";
+import {AudioManager}				from "../managers/AudioManager";
+import {ColorTransform}			from "../geom/ColorTransform";
+import {Matrix}					from "../geom/Matrix";
+import {Rectangle}				from "../geom/Rectangle";
+import {IAsset}					from "../library/IAsset";
+import {AssetBase}				from "../library/AssetBase";
+import {ParserUtils}				from "../parsers/ParserUtils";
+import {ColorUtils}				from "../utils/ColorUtils";
 
 // TODO: Audio should probably be an interface containing play/stop/seek functionality
-class WaveAudio extends AssetBase
+export class WaveAudio extends AssetBase
 {
 	public static assetType:string = "[asset WaveAudio]";
 
@@ -68,12 +68,12 @@ class WaveAudio extends AssetBase
 		this._buffer = buffer;
 	}
 
-	public dispose()
+	public dispose():void
 	{
 		this.stop();
 	}
 
-	public play(offset:number, loop:boolean = false)
+	public play(offset:number, loop:boolean = false):void
 	{
 		this._audioChannel = AudioManager.getChannel(this._buffer.byteLength);
 
@@ -83,7 +83,7 @@ class WaveAudio extends AssetBase
 		}
 	}
 
-	public stop()
+	public stop():void
 	{
 		if (this._audioChannel)
 			this._audioChannel.stop();
@@ -92,7 +92,7 @@ class WaveAudio extends AssetBase
 		this._audioChannel = null;
 	}
 
-	public clone()
+	public clone():WaveAudio
 	{
 		var newInstance:WaveAudio = new WaveAudio(this._buffer);
 
@@ -101,5 +101,3 @@ class WaveAudio extends AssetBase
 		return newInstance;
 	}
 }
-
-export default WaveAudio;

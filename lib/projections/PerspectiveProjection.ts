@@ -1,9 +1,9 @@
-import Matrix3DUtils			from "../geom/Matrix3DUtils";
-import Vector3D					from "../geom/Vector3D";
-import CoordinateSystem			from "../projections/CoordinateSystem";
-import ProjectionBase			from "../projections/ProjectionBase";
+import {Matrix3DUtils}			from "../geom/Matrix3DUtils";
+import {Vector3D}					from "../geom/Vector3D";
+import {CoordinateSystem}			from "../projections/CoordinateSystem";
+import {ProjectionBase}			from "../projections/ProjectionBase";
 
-class PerspectiveProjection extends ProjectionBase
+export class PerspectiveProjection extends ProjectionBase
 {
 	private _fieldOfView:number = 60;
 	private _focalLength:number = 1000;
@@ -158,7 +158,7 @@ class PerspectiveProjection extends ProjectionBase
 	}
 
 	//@override
-	public pUpdateMatrix()
+	public pUpdateMatrix():void
 	{
 		var raw:Float32Array = Matrix3DUtils.RAW_DATA_CONTAINER;
 
@@ -228,5 +228,3 @@ class PerspectiveProjection extends ProjectionBase
 
 	}
 }
-
-export default PerspectiveProjection;

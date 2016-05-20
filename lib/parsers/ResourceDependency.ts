@@ -1,14 +1,14 @@
-﻿import IAsset					from "../library/IAsset";
-import URLLoader				from "../net/URLLoader";
-import URLRequest				from "../net/URLRequest";
-import ParserBase				from "../parsers/ParserBase";
+﻿import {IAsset}					from "../library/IAsset";
+import {URLLoader}				from "../net/URLLoader";
+import {URLRequest}				from "../net/URLRequest";
+import {ParserBase}				from "../parsers/ParserBase";
 
 /**
  * ResourceDependency represents the data required to load, parse and resolve additional files ("dependencies")
  * required by a parser, used by ResourceLoadSession.
  *
  */
-class ResourceDependency
+export class ResourceDependency
 {
 	private _id:string;
 	private _sub_id:number;
@@ -165,5 +165,3 @@ class ResourceDependency
 		return asset.name;
 	}
 }
-
-export default ResourceDependency;

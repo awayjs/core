@@ -1,17 +1,17 @@
-import BitmapImage2D			from "../image/BitmapImage2D";
-import BitmapImageCube			from "../image/BitmapImageCube";
-import IAsset					from "../library/IAsset";
-import URLLoaderDataFormat		from "../net/URLLoaderDataFormat";
-import URLRequest				from "../net/URLRequest";
-import ParserBase				from "../parsers/ParserBase";
-import ResourceDependency		from "../parsers/ResourceDependency";
+import {BitmapImage2D}			from "../image/BitmapImage2D";
+import {BitmapImageCube}			from "../image/BitmapImageCube";
+import {IAsset}					from "../library/IAsset";
+import {URLLoaderDataFormat}		from "../net/URLLoaderDataFormat";
+import {URLRequest}				from "../net/URLRequest";
+import {ParserBase}				from "../parsers/ParserBase";
+import {ResourceDependency}		from "../parsers/ResourceDependency";
 
 /**
  * ImageCubeParser provides a "parser" for natively supported image types (jpg, png). While it simply loads bytes into
  * a loader object, it wraps it in a BitmapImage2DResource so resource management can happen consistently without
  * exception cases.
  */
-class ImageCubeParser extends ParserBase
+export class ImageCubeParser extends ParserBase
 {
 	private static posX:string = 'posX';
 	private static negX:string = 'negX';
@@ -66,7 +66,7 @@ class ImageCubeParser extends ParserBase
 	/**
 	 * @inheritDoc
 	 */
-	public _iResolveDependency(resourceDependency:ResourceDependency)
+	public _iResolveDependency(resourceDependency:ResourceDependency):void
 	{
 
 	}
@@ -74,7 +74,7 @@ class ImageCubeParser extends ParserBase
 	/**
 	 * @inheritDoc
 	 */
-	public _iResolveDependencyFailure(resourceDependency:ResourceDependency)
+	public _iResolveDependencyFailure(resourceDependency:ResourceDependency):void
 	{
 
 	}
@@ -156,5 +156,3 @@ class ImageCubeParser extends ParserBase
 	}
 
 }
-
-export default ImageCubeParser;

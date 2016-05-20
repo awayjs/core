@@ -1,10 +1,10 @@
-import ErrorBase				from "../errors/ErrorBase";
+import {ErrorBase}				from "../errors/ErrorBase";
 
 /**
  * AbstractMethodError is thrown when an abstract method is called. The method in question should be overridden
  * by a concrete subclass.
  */
-class PartialImplementationError extends ErrorBase
+export class PartialImplementationError extends ErrorBase
 {
 	/**
 	 * Create a new AbstractMethodError.
@@ -16,5 +16,3 @@ class PartialImplementationError extends ErrorBase
 		super("PartialImplementationError - this function is in development. Required Dependency: " + dependency, id);
 	}
 }
-
-export default PartialImplementationError;

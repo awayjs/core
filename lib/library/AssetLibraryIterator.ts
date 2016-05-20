@@ -1,6 +1,6 @@
-import IAsset					from "../library/IAsset";
+import {IAsset}					from "../library/IAsset";
 
-class AssetLibraryIterator
+export class AssetLibraryIterator
 {
 
 	private  _assets:Array<IAsset>;
@@ -37,17 +37,17 @@ class AssetLibraryIterator
 		return next;
 	}
 
-	public reset()
+	public reset():void
 	{
 		this._idx = 0;
 	}
 
-	public setIndex(index:number)
+	public setIndex(index:number):void
 	{
 		this._idx = index;
 	}
 
-	private filter(assetTypeFilter:string, namespaceFilter:string, filterFunc)
+	private filter(assetTypeFilter:string, namespaceFilter:string, filterFunc):void
 	{
 		if (assetTypeFilter || namespaceFilter) {
 
@@ -103,5 +103,3 @@ class AssetLibraryIterator
 		}
 	}
 }
-
-export default AssetLibraryIterator;

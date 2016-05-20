@@ -1,7 +1,7 @@
-import EventBase				from "../events/EventBase";
-import IProjection				from "../projections/IProjection";
+import {EventBase}				from "../events/EventBase";
+import {IProjection}				from "../projections/IProjection";
 
-class ProjectionEvent extends EventBase
+export class ProjectionEvent extends EventBase
 {
 	public static MATRIX_CHANGED:string = "matrixChanged";
 
@@ -18,5 +18,3 @@ class ProjectionEvent extends EventBase
 		return this._projection;
 	}
 }
-
-export default ProjectionEvent;

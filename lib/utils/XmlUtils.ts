@@ -1,4 +1,4 @@
-class XmlUtils {
+export class XmlUtils {
 
 	public static getChildrenWithTag(node:Node, tag:string):NodeList {
 

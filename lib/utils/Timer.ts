@@ -1,8 +1,8 @@
-import ErrorBase				from "../errors/ErrorBase";
-import EventDispatcher			from "../events/EventDispatcher";
-import TimerEvent				from "../events/TimerEvent";
+import {ErrorBase}				from "../errors/ErrorBase";
+import {EventDispatcher}			from "../events/EventDispatcher";
+import {TimerEvent}				from "../events/TimerEvent";
 
-class Timer extends EventDispatcher
+export class Timer extends EventDispatcher
 {
 	private _delay:number;
 	private _repeatCount:number = 0;
@@ -92,5 +92,3 @@ class Timer extends EventDispatcher
 		}
 	}
 }
-
-export default Timer;

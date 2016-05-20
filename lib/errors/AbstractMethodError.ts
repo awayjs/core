@@ -1,10 +1,10 @@
-import ErrorBase				from "../errors/ErrorBase";
+import {ErrorBase}				from "../errors/ErrorBase";
 
 /**
  * AbstractMethodError is thrown when an abstract method is called. The method in question should be overridden
  * by a concrete subclass.
  */
-class AbstractMethodError extends ErrorBase
+export class AbstractMethodError extends ErrorBase
 {
 	/**
 	 * Create a new AbstractMethodError.
@@ -13,8 +13,6 @@ class AbstractMethodError extends ErrorBase
 	 */
 	constructor(message:string = null, id:number = 0)
 	{
-		super(message || "An abstract method was called! Either an instance of an abstract class was created, or an abstract method was not overridden by the subclass.", id);
+		super(message || "An abstract method was called! Either an instance of an abstract export class was created, or an abstract method was not overridden by the subclass.", id);
 	}
 }
-
-export default AbstractMethodError;

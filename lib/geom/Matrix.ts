@@ -59,39 +59,89 @@ import {ArgumentError}			from "../errors/ArgumentError";
  */
 export class Matrix
 {
+	public rawData:Float32Array = new Float32Array(6);
+
 	/**
 	 * The value that affects the positioning of pixels along the <i>x</i> axis
 	 * when scaling or rotating an image.
 	 */
-	public a:number;
+	public get a():number
+	{
+		return this.rawData[0];
+	}
+
+	public set a(value:number)
+	{
+		this.rawData[0] = value;
+	}
 
 	/**
 	 * The value that affects the positioning of pixels along the <i>y</i> axis
 	 * when rotating or skewing an image.
 	 */
-	public b:number;
+	public get b():number
+	{
+		return this.rawData[2];
+	}
+
+	public set b(value:number)
+	{
+		this.rawData[2] = value;
+	}
 
 	/**
 	 * The value that affects the positioning of pixels along the <i>x</i> axis
 	 * when rotating or skewing an image.
 	 */
-	public c:number;
+	public get c():number
+	{
+		return this.rawData[1];
+	}
+
+	public set c(value:number)
+	{
+		this.rawData[1] = value;
+	}
 
 	/**
 	 * The value that affects the positioning of pixels along the <i>y</i> axis
 	 * when scaling or rotating an image.
 	 */
-	public d:number;
+	public get d():number
+	{
+		return this.rawData[3];
+	}
+
+	public set d(value:number)
+	{
+		this.rawData[3] = value;
+	}
 
 	/**
 	 * The distance by which to translate each point along the <i>x</i> axis.
 	 */
-	public tx:number;
+	public get tx():number
+	{
+		return this.rawData[4];
+	}
+
+	public set tx(value:number)
+	{
+		this.rawData[4] = value;
+	}
 
 	/**
 	 * The distance by which to translate each point along the <i>y</i> axis.
 	 */
-	public ty:number;
+	public get ty():number
+	{
+		return this.rawData[5];
+	}
+
+	public set ty(value:number)
+	{
+		this.rawData[5] = value;
+	}
 
 	/**
 	 * Creates a new Matrix object with the specified parameters. In matrix
@@ -116,14 +166,27 @@ export class Matrix
 	 * @param ty The distance by which to translate each point along the <i>y</i>
 	 *           axis.
 	 */
-	constructor(a:number = 1, b:number = 0, c:number = 0, d:number = 1, tx:number = 0, ty:number = 0)
+	constructor(rawData?:Float32Array);
+	constructor(a?:number, b?:number, c?:number, d?:number, tx?:number, ty?:number);
+	constructor(a:number | Float32Array = 1, b:number = 0, c:number = 0, d:number = 1, tx:number = 0, ty:number = 0)
 	{
-		this.a = a;
-		this.b = b;
-		this.c = c;
-		this.d = d;
-		this.tx = tx;
-		this.ty = ty;
+		if (a instanceof Float32Array) {
+			this.copyRawDataFrom(a);
+		} else {
+			this.a = Number(a);
+			this.b = b;
+			this.c = c;
+			this.d = d;
+			this.tx = tx;
+			this.ty = ty;
+		}
+	}
+
+
+	public copyRawDataFrom(vector:Float32Array, index:number = 0):void
+	{
+		for (var c:number = 0; c < 6; c++)
+			this.rawData[c] = vector[c + index];
 	}
 
 	/**

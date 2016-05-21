@@ -42,6 +42,8 @@ import {ColorUtils}			from "../utils/ColorUtils";
  */
 export class ColorTransform
 {
+	public rawData:Float32Array = new Float32Array(8);
+	
 	/**
 	 * A decimal value that is multiplied with the alpha transparency channel
 	 * value.
@@ -51,47 +53,111 @@ export class ColorTransform
 	 * affects the value of the <code>alphaMultiplier</code> property of that
 	 * display object's <code>transform.colorTransform</code> property.</p>
 	 */
-	public alphaMultiplier:number;
+	public get alphaMultiplier():number
+	{
+		return this.rawData[3];
+	}
+
+	public set alphaMultiplier(value:number)
+	{
+		this.rawData[3] = value;
+	}
 
 	/**
 	 * A number from -255 to 255 that is added to the alpha transparency channel
 	 * value after it has been multiplied by the <code>alphaMultiplier</code>
 	 * value.
 	 */
-    public alphaOffset:number;
+	public get alphaOffset():number
+	{
+		return this.rawData[7]*0xFF;
+	}
+
+	public set alphaOffset(value:number)
+	{
+		this.rawData[7] = value/0xFF;
+	}
 
 	/**
 	 * A decimal value that is multiplied with the blue channel value.
 	 */
-    public blueMultiplier:number;
+	public get blueMultiplier():number
+	{
+		return this.rawData[2];
+	}
+
+	public set blueMultiplier(value:number)
+	{
+		this.rawData[2] = value;
+	}
 
 	/**
 	 * A number from -255 to 255 that is added to the blue channel value after it
 	 * has been multiplied by the <code>blueMultiplier</code> value.
 	 */
-    public blueOffset:number;
+	public get blueOffset():number
+	{
+		return this.rawData[6]*0xFF;
+	}
+
+	public set blueOffset(value:number)
+	{
+		this.rawData[6] = value/0xFF;
+	}
 
 	/**
 	 * A decimal value that is multiplied with the green channel value.
 	 */
-    public greenMultiplier:number;
+	public get greenMultiplier():number
+	{
+		return this.rawData[1];
+	}
+
+	public set greenMultiplier(value:number)
+	{
+		this.rawData[1] = value;
+	}
 
 	/**
 	 * A number from -255 to 255 that is added to the green channel value after
 	 * it has been multiplied by the <code>greenMultiplier</code> value.
 	 */
-    public greenOffset:number;
+	public get greenOffset():number
+	{
+		return this.rawData[5]*0xFF;
+	}
+
+	public set greenOffset(value:number)
+	{
+		this.rawData[5] = value/0xFF;
+	}
 
 	/**
 	 * A decimal value that is multiplied with the red channel value.
 	 */
-    public redMultiplier:number;
+	public get redMultiplier():number
+	{
+		return this.rawData[0];
+	}
+
+	public set redMultiplier(value:number)
+	{
+		this.rawData[0] = value;
+	}
 
 	/**
 	 * A number from -255 to 255 that is added to the red channel value after it
 	 * has been multiplied by the <code>redMultiplier</code> value.
 	 */
-    public redOffset:number;
+	public get redOffset():number
+	{
+		return this.rawData[4]*0xFF;
+	}
+
+	public set redOffset(value:number)
+	{
+		this.rawData[4] = value/0xFF;
+	}
 
 	/**
 	 * The RGB color value for a ColorTransform object.
@@ -111,20 +177,20 @@ export class ColorTransform
 	 */
 	public get color():number
 	{
-		return((this.redOffset << 16) | ( this.greenOffset << 8) | this.blueOffset);
+		return((this.rawData[0] << 16) | ( this.rawData[1] << 8) | this.rawData[2]);
 	}
 
 	public set color(value:number)
 	{
 		var argb:number[] = ColorUtils.float32ColorToARGB(value);
 
-		this.redOffset = argb[1];  //(value >> 16) & 0xFF;
-		this.greenOffset = argb[2];  //(value >> 8) & 0xFF;
-		this.blueOffset = argb[3];  //value & 0xFF;
+		this.rawData[4] = argb[1];  //(value >> 16) & 0xFF;
+		this.rawData[5] = argb[2];  //(value >> 8) & 0xFF;
+		this.rawData[6] = argb[3];  //value & 0xFF;
 
-		this.redMultiplier = 0;
-		this.greenMultiplier = 0;
-		this.blueMultiplier = 0;
+		this.rawData[0] = 0;
+		this.rawData[1] = 0;
+		this.rawData[2] = 0;
 	}
 
 	/**
@@ -148,45 +214,51 @@ export class ColorTransform
 	 * @param alphaOffset     The offset for alpha transparency channel value, in
 	 *                        the range from -255 to 255.
 	 */
-	constructor(redMultiplier:number = 1, greenMultiplier:number = 1, blueMultiplier:number = 1, alphaMultiplier:number = 1, redOffset:number = 0, greenOffset:number = 0, blueOffset:number = 0, alphaOffset:number = 0)
+	constructor(rawData:Float32Array);
+	constructor(redMultiplier?:number, greenMultiplier?:number, blueMultiplier?:number, alphaMultiplier?:number, redOffset?:number, greenOffset?:number, blueOffset?:number, alphaOffset?:number);
+	constructor(redMultiplier:number | Float32Array = 1, greenMultiplier:number = 1, blueMultiplier:number = 1, alphaMultiplier:number = 1, redOffset:number = 0, greenOffset:number = 0, blueOffset:number = 0, alphaOffset:number = 0)
 	{
-		this.redMultiplier = redMultiplier;
-		this.greenMultiplier = greenMultiplier;
-		this.blueMultiplier = blueMultiplier;
-		this.alphaMultiplier = alphaMultiplier;
-		this.redOffset = redOffset;
-		this.greenOffset = greenOffset;
-		this.blueOffset = blueOffset;
-		this.alphaOffset = alphaOffset;
+		if (redMultiplier instanceof Float32Array) {
+			this.copyRawDataFrom(redMultiplier);
+		} else {
+			this.redMultiplier = Number(redMultiplier);
+			this.greenMultiplier = greenMultiplier;
+			this.blueMultiplier = blueMultiplier;
+			this.alphaMultiplier = alphaMultiplier;
+			this.redOffset = redOffset;
+			this.greenOffset = greenOffset;
+			this.blueOffset = blueOffset;
+			this.alphaOffset = alphaOffset;
+		}
+	}
+
+	public copyRawDataFrom(vector:Float32Array, index:number = 0):void
+	{
+		for (var c:number = 0; c < 8; c++)
+			this.rawData[c] = vector[c + index];
 	}
 
     public clear()
     {
-        this.redMultiplier = 1;
-        this.greenMultiplier = 1;
-        this.blueMultiplier = 1;
-        this.alphaMultiplier = 1;
-        this.redOffset = 0;
-        this.greenOffset = 0;
-        this.blueOffset = 0;
-        this.alphaOffset = 0;
+        this.rawData[0] = 1;
+        this.rawData[1] = 1;
+        this.rawData[2] = 1;
+        this.rawData[3] = 1;
+        this.rawData[4] = 0;
+        this.rawData[5] = 0;
+        this.rawData[6] = 0;
+        this.rawData[7] = 0;
     }
 
     public clone():ColorTransform
     {
-        return new ColorTransform(this.redMultiplier, this.greenMultiplier, this.blueMultiplier, this.alphaMultiplier, this.redOffset, this.greenOffset, this.blueOffset, this.alphaOffset);
+        return new ColorTransform(this.rawData);
     }
 
     public copyFrom(source:ColorTransform)
     {
-        this.redMultiplier = source.redMultiplier;
-        this.greenMultiplier = source.greenMultiplier;
-        this.blueMultiplier = source.blueMultiplier;
-        this.alphaMultiplier = source.alphaMultiplier;
-        this.redOffset = source.redOffset;
-        this.greenOffset = source.greenOffset;
-        this.blueOffset = source.blueOffset;
-        this.alphaOffset = source.alphaOffset;
+		for (var c:number = 0; c < 8; c++)
+			this.rawData[c] = source.rawData[c];
     }
 
     public copyTo(destination:ColorTransform)
@@ -196,10 +268,10 @@ export class ColorTransform
 
     public prepend(ct:ColorTransform)
     {
-        this.redOffset += ct.redOffset * this.redMultiplier;
-        this.greenOffset += ct.greenOffset * this.greenMultiplier;
-        this.blueOffset += ct.blueOffset * this.blueMultiplier;
-        this.alphaOffset += ct.alphaOffset * this.alphaMultiplier;
+        this.rawData[4] += ct.rawData[4] * this.rawData[0];
+        this.rawData[5] += ct.rawData[5] * this.rawData[1];
+        this.rawData[6] += ct.rawData[6] * this.rawData[2];
+        this.rawData[7] += ct.rawData[7] * this.rawData[3];
 
         this.redMultiplier *= ct.redMultiplier;
         this.greenMultiplier *= ct.greenMultiplier;
@@ -209,6 +281,6 @@ export class ColorTransform
 	
 	public _isRenderable():boolean
 	{
-		return Boolean(this.alphaMultiplier) || this.alphaOffset > 0;
+		return this.rawData[3] != 0 || this.rawData[7] > 0;
 	}
 }

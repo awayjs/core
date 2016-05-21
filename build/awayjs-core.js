@@ -2410,27 +2410,6 @@ var ColorUtils_1 = require("../utils/ColorUtils");
  * that are attached to the movie clip.</p>
  */
 var ColorTransform = (function () {
-    /**
-     * Creates a ColorTransform object for a display object with the specified
-     * color channel values and alpha values.
-     *
-     * @param redMultiplier   The value for the red multiplier, in the range from
-     *                        0 to 1.
-     * @param greenMultiplier The value for the green multiplier, in the range
-     *                        from 0 to 1.
-     * @param blueMultiplier  The value for the blue multiplier, in the range
-     *                        from 0 to 1.
-     * @param alphaMultiplier The value for the alpha transparency multiplier, in
-     *                        the range from 0 to 1.
-     * @param redOffset       The offset value for the red color channel, in the
-     *                        range from -255 to 255.
-     * @param greenOffset     The offset value for the green color channel, in
-     *                        the range from -255 to 255.
-     * @param blueOffset      The offset for the blue color channel value, in the
-     *                        range from -255 to 255.
-     * @param alphaOffset     The offset for alpha transparency channel value, in
-     *                        the range from -255 to 255.
-     */
     function ColorTransform(redMultiplier, greenMultiplier, blueMultiplier, alphaMultiplier, redOffset, greenOffset, blueOffset, alphaOffset) {
         if (redMultiplier === void 0) { redMultiplier = 1; }
         if (greenMultiplier === void 0) { greenMultiplier = 1; }
@@ -2440,15 +2419,136 @@ var ColorTransform = (function () {
         if (greenOffset === void 0) { greenOffset = 0; }
         if (blueOffset === void 0) { blueOffset = 0; }
         if (alphaOffset === void 0) { alphaOffset = 0; }
-        this.redMultiplier = redMultiplier;
-        this.greenMultiplier = greenMultiplier;
-        this.blueMultiplier = blueMultiplier;
-        this.alphaMultiplier = alphaMultiplier;
-        this.redOffset = redOffset;
-        this.greenOffset = greenOffset;
-        this.blueOffset = blueOffset;
-        this.alphaOffset = alphaOffset;
+        this.rawData = new Float32Array(8);
+        if (redMultiplier instanceof Float32Array) {
+            this.copyRawDataFrom(redMultiplier);
+        }
+        else {
+            this.redMultiplier = Number(redMultiplier);
+            this.greenMultiplier = greenMultiplier;
+            this.blueMultiplier = blueMultiplier;
+            this.alphaMultiplier = alphaMultiplier;
+            this.redOffset = redOffset;
+            this.greenOffset = greenOffset;
+            this.blueOffset = blueOffset;
+            this.alphaOffset = alphaOffset;
+        }
     }
+    Object.defineProperty(ColorTransform.prototype, "alphaMultiplier", {
+        /**
+         * A decimal value that is multiplied with the alpha transparency channel
+         * value.
+         *
+         * <p>If you set the alpha transparency value of a display object directly by
+         * using the <code>alpha</code> property of the DisplayObject instance, it
+         * affects the value of the <code>alphaMultiplier</code> property of that
+         * display object's <code>transform.colorTransform</code> property.</p>
+         */
+        get: function () {
+            return this.rawData[3];
+        },
+        set: function (value) {
+            this.rawData[3] = value;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(ColorTransform.prototype, "alphaOffset", {
+        /**
+         * A number from -255 to 255 that is added to the alpha transparency channel
+         * value after it has been multiplied by the <code>alphaMultiplier</code>
+         * value.
+         */
+        get: function () {
+            return this.rawData[7] * 0xFF;
+        },
+        set: function (value) {
+            this.rawData[7] = value / 0xFF;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(ColorTransform.prototype, "blueMultiplier", {
+        /**
+         * A decimal value that is multiplied with the blue channel value.
+         */
+        get: function () {
+            return this.rawData[2];
+        },
+        set: function (value) {
+            this.rawData[2] = value;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(ColorTransform.prototype, "blueOffset", {
+        /**
+         * A number from -255 to 255 that is added to the blue channel value after it
+         * has been multiplied by the <code>blueMultiplier</code> value.
+         */
+        get: function () {
+            return this.rawData[6] * 0xFF;
+        },
+        set: function (value) {
+            this.rawData[6] = value / 0xFF;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(ColorTransform.prototype, "greenMultiplier", {
+        /**
+         * A decimal value that is multiplied with the green channel value.
+         */
+        get: function () {
+            return this.rawData[1];
+        },
+        set: function (value) {
+            this.rawData[1] = value;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(ColorTransform.prototype, "greenOffset", {
+        /**
+         * A number from -255 to 255 that is added to the green channel value after
+         * it has been multiplied by the <code>greenMultiplier</code> value.
+         */
+        get: function () {
+            return this.rawData[5] * 0xFF;
+        },
+        set: function (value) {
+            this.rawData[5] = value / 0xFF;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(ColorTransform.prototype, "redMultiplier", {
+        /**
+         * A decimal value that is multiplied with the red channel value.
+         */
+        get: function () {
+            return this.rawData[0];
+        },
+        set: function (value) {
+            this.rawData[0] = value;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(ColorTransform.prototype, "redOffset", {
+        /**
+         * A number from -255 to 255 that is added to the red channel value after it
+         * has been multiplied by the <code>redMultiplier</code> value.
+         */
+        get: function () {
+            return this.rawData[4] * 0xFF;
+        },
+        set: function (value) {
+            this.rawData[4] = value / 0xFF;
+        },
+        enumerable: true,
+        configurable: true
+    });
     Object.defineProperty(ColorTransform.prototype, "color", {
         /**
          * The RGB color value for a ColorTransform object.
@@ -2467,58 +2567,57 @@ var ColorTransform = (function () {
          * value.</p>
          */
         get: function () {
-            return ((this.redOffset << 16) | (this.greenOffset << 8) | this.blueOffset);
+            return ((this.rawData[0] << 16) | (this.rawData[1] << 8) | this.rawData[2]);
         },
         set: function (value) {
             var argb = ColorUtils_1.ColorUtils.float32ColorToARGB(value);
-            this.redOffset = argb[1]; //(value >> 16) & 0xFF;
-            this.greenOffset = argb[2]; //(value >> 8) & 0xFF;
-            this.blueOffset = argb[3]; //value & 0xFF;
-            this.redMultiplier = 0;
-            this.greenMultiplier = 0;
-            this.blueMultiplier = 0;
+            this.rawData[4] = argb[1]; //(value >> 16) & 0xFF;
+            this.rawData[5] = argb[2]; //(value >> 8) & 0xFF;
+            this.rawData[6] = argb[3]; //value & 0xFF;
+            this.rawData[0] = 0;
+            this.rawData[1] = 0;
+            this.rawData[2] = 0;
         },
         enumerable: true,
         configurable: true
     });
+    ColorTransform.prototype.copyRawDataFrom = function (vector, index) {
+        if (index === void 0) { index = 0; }
+        for (var c = 0; c < 8; c++)
+            this.rawData[c] = vector[c + index];
+    };
     ColorTransform.prototype.clear = function () {
-        this.redMultiplier = 1;
-        this.greenMultiplier = 1;
-        this.blueMultiplier = 1;
-        this.alphaMultiplier = 1;
-        this.redOffset = 0;
-        this.greenOffset = 0;
-        this.blueOffset = 0;
-        this.alphaOffset = 0;
+        this.rawData[0] = 1;
+        this.rawData[1] = 1;
+        this.rawData[2] = 1;
+        this.rawData[3] = 1;
+        this.rawData[4] = 0;
+        this.rawData[5] = 0;
+        this.rawData[6] = 0;
+        this.rawData[7] = 0;
     };
     ColorTransform.prototype.clone = function () {
-        return new ColorTransform(this.redMultiplier, this.greenMultiplier, this.blueMultiplier, this.alphaMultiplier, this.redOffset, this.greenOffset, this.blueOffset, this.alphaOffset);
+        return new ColorTransform(this.rawData);
     };
     ColorTransform.prototype.copyFrom = function (source) {
-        this.redMultiplier = source.redMultiplier;
-        this.greenMultiplier = source.greenMultiplier;
-        this.blueMultiplier = source.blueMultiplier;
-        this.alphaMultiplier = source.alphaMultiplier;
-        this.redOffset = source.redOffset;
-        this.greenOffset = source.greenOffset;
-        this.blueOffset = source.blueOffset;
-        this.alphaOffset = source.alphaOffset;
+        for (var c = 0; c < 8; c++)
+            this.rawData[c] = source.rawData[c];
     };
     ColorTransform.prototype.copyTo = function (destination) {
         destination.copyFrom(this);
     };
     ColorTransform.prototype.prepend = function (ct) {
-        this.redOffset += ct.redOffset * this.redMultiplier;
-        this.greenOffset += ct.greenOffset * this.greenMultiplier;
-        this.blueOffset += ct.blueOffset * this.blueMultiplier;
-        this.alphaOffset += ct.alphaOffset * this.alphaMultiplier;
+        this.rawData[4] += ct.rawData[4] * this.rawData[0];
+        this.rawData[5] += ct.rawData[5] * this.rawData[1];
+        this.rawData[6] += ct.rawData[6] * this.rawData[2];
+        this.rawData[7] += ct.rawData[7] * this.rawData[3];
         this.redMultiplier *= ct.redMultiplier;
         this.greenMultiplier *= ct.greenMultiplier;
         this.blueMultiplier *= ct.blueMultiplier;
         this.alphaMultiplier *= ct.alphaMultiplier;
     };
     ColorTransform.prototype._isRenderable = function () {
-        return Boolean(this.alphaMultiplier) || this.alphaOffset > 0;
+        return this.rawData[3] != 0 || this.rawData[7] > 0;
     };
     return ColorTransform;
 }());
@@ -3730,29 +3829,6 @@ var ArgumentError_1 = require("../errors/ArgumentError");
  * before you can call the methods of the Matrix object.</p>
  */
 var Matrix = (function () {
-    /**
-     * Creates a new Matrix object with the specified parameters. In matrix
-     * notation, the properties are organized like this:
-     *
-     * <p>If you do not provide any parameters to the <code>new Matrix()</code>
-     * constructor, it creates an <i>identity matrix</i> with the following
-     * values:</p>
-     *
-     * <p>In matrix notation, the identity matrix looks like this:</p>
-     *
-     * @param a  The value that affects the positioning of pixels along the
-     *           <i>x</i> axis when scaling or rotating an image.
-     * @param b  The value that affects the positioning of pixels along the
-     *           <i>y</i> axis when rotating or skewing an image.
-     * @param c  The value that affects the positioning of pixels along the
-     *           <i>x</i> axis when rotating or skewing an image.
-     * @param d  The value that affects the positioning of pixels along the
-     *           <i>y</i> axis when scaling or rotating an image..
-     * @param tx The distance by which to translate each point along the <i>x</i>
-     *           axis.
-     * @param ty The distance by which to translate each point along the <i>y</i>
-     *           axis.
-     */
     function Matrix(a, b, c, d, tx, ty) {
         if (a === void 0) { a = 1; }
         if (b === void 0) { b = 0; }
@@ -3760,13 +3836,106 @@ var Matrix = (function () {
         if (d === void 0) { d = 1; }
         if (tx === void 0) { tx = 0; }
         if (ty === void 0) { ty = 0; }
-        this.a = a;
-        this.b = b;
-        this.c = c;
-        this.d = d;
-        this.tx = tx;
-        this.ty = ty;
+        this.rawData = new Float32Array(6);
+        if (a instanceof Float32Array) {
+            this.copyRawDataFrom(a);
+        }
+        else {
+            this.a = Number(a);
+            this.b = b;
+            this.c = c;
+            this.d = d;
+            this.tx = tx;
+            this.ty = ty;
+        }
     }
+    Object.defineProperty(Matrix.prototype, "a", {
+        /**
+         * The value that affects the positioning of pixels along the <i>x</i> axis
+         * when scaling or rotating an image.
+         */
+        get: function () {
+            return this.rawData[0];
+        },
+        set: function (value) {
+            this.rawData[0] = value;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Matrix.prototype, "b", {
+        /**
+         * The value that affects the positioning of pixels along the <i>y</i> axis
+         * when rotating or skewing an image.
+         */
+        get: function () {
+            return this.rawData[2];
+        },
+        set: function (value) {
+            this.rawData[2] = value;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Matrix.prototype, "c", {
+        /**
+         * The value that affects the positioning of pixels along the <i>x</i> axis
+         * when rotating or skewing an image.
+         */
+        get: function () {
+            return this.rawData[1];
+        },
+        set: function (value) {
+            this.rawData[1] = value;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Matrix.prototype, "d", {
+        /**
+         * The value that affects the positioning of pixels along the <i>y</i> axis
+         * when scaling or rotating an image.
+         */
+        get: function () {
+            return this.rawData[3];
+        },
+        set: function (value) {
+            this.rawData[3] = value;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Matrix.prototype, "tx", {
+        /**
+         * The distance by which to translate each point along the <i>x</i> axis.
+         */
+        get: function () {
+            return this.rawData[4];
+        },
+        set: function (value) {
+            this.rawData[4] = value;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Matrix.prototype, "ty", {
+        /**
+         * The distance by which to translate each point along the <i>y</i> axis.
+         */
+        get: function () {
+            return this.rawData[5];
+        },
+        set: function (value) {
+            this.rawData[5] = value;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Matrix.prototype.copyRawDataFrom = function (vector, index) {
+        if (index === void 0) { index = 0; }
+        for (var c = 0; c < 6; c++)
+            this.rawData[c] = vector[c + index];
+    };
     /**
      * Returns a new Matrix object that is a clone of this matrix, with an exact
      * copy of the contained object.

@@ -5,6 +5,27 @@ import {IAudioChannelClass}		from "../managers/IAudioChannelClass";
 
 export class AudioManager
 {
+	//todo: make AudioPlaybackManager keep track of active sounds + implement global playback control
+	private static _externalSoundInterface:any=null;
+	public static setExternalSoundInterface(new_obj:any):number
+	{
+		if(new_obj.startSound == null){
+			console.log("Could not set the externalSoundInterface, because it does not provide a 'startSound' function");
+			return;
+		}
+		if(new_obj.stopSound == null){
+			console.log("Could not set the externalSoundInterface, because it does not provide a 'stopSound' function");
+			return;
+		}
+		AudioManager._externalSoundInterface=new_obj;
+	}
+
+	public static getExternalSoundInterface():any
+	{
+		return AudioManager._externalSoundInterface;
+	}
+
+
 	public static getChannel(byteLength:number):IAudioChannel
 	{
 		//choose best audio channel by bytelength

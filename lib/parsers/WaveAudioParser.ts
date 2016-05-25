@@ -57,11 +57,21 @@ export class WaveAudioParser extends ParserBase
 	{
 		ba.position = 0;
 
-		ba.position = 0;
+		/*
+		old mp3 detections doesnt seem to work anymore (why doid it work earlier?  i tested multiple mp3 formats...)
 		if ((ba.readUnsignedShort() & 0xFFE0) == 0xFFE0) {
 			return 'mp3'; // test for MP3 syncword
 		}
+		*/
 
+		var byte_1:number=ba.readUnsignedByte();
+		var byte_2:number=ba.readUnsignedByte();
+		var byte_3:number=ba.readUnsignedByte();
+		if ((byte_1 === 73 && byte_2 === 68 && byte_3 === 51)
+			|| (byte_1 === 255 && byte_2 === 251)){
+			return 'mp3';
+		}
+		
 		ba.position = 0;
 		if (ba.readUTFBytes(4) == 'RIFF')
 			return 'wav';

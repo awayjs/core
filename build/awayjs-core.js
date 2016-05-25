@@ -153,7 +153,7 @@ var AttributesBuffer = (function (_super) {
     };
     AttributesBuffer.prototype.clone = function () {
         var attributesBuffer = new AttributesBuffer(this._stride, this._count);
-        attributesBuffer.bufferView = new Uint8Array(this.bufferView.buffer);
+        attributesBuffer.bufferView.set(this.bufferView);
         var len = this._viewVOs.length;
         for (var i = 0; i < len; i++)
             this._viewVOs[i].view._internalClone(attributesBuffer);
@@ -185,21 +185,6 @@ var AttributesBuffer = (function (_super) {
                 this._bufferView.set(array.subarray(i * vLength, (i + 1) * vLength), (i + offset) * this._stride + vOffset);
         }
         this.invalidate();
-    };
-    AttributesBuffer.prototype._getLocalArrayBuffer = function (viewIndex) {
-        var viewVO = this._viewVOs[viewIndex];
-        var vLength = viewVO.length;
-        var vOffset = viewVO.offset;
-        if (this._lengthDirty)
-            this._updateLength();
-        //fast path for separate buffers
-        if (this._viewVOs.length == 1)
-            return this._buffer;
-        var localBuffer = new ArrayBuffer(this._count * vLength);
-        var localBufferView = new Uint8Array(localBuffer);
-        for (var i = 0; i < this._count; i++)
-            localBufferView.set(this._bufferView.subarray(i * this._stride + vOffset, i * this._stride + vOffset + vLength), i * vLength);
-        return localBuffer;
     };
     AttributesBuffer.prototype._addView = function (view) {
         var viewVO = new ViewVO(view);
@@ -311,7 +296,7 @@ var AttributesView = (function (_super) {
         enumerable: true,
         configurable: true
     });
-    Object.defineProperty(AttributesView.prototype, "buffer", {
+    Object.defineProperty(AttributesView.prototype, "attributesBuffer", {
         get: function () {
             return this._attributesBuffer;
         },
@@ -386,17 +371,20 @@ var AttributesView = (function (_super) {
         enumerable: true,
         configurable: true
     });
+    Object.defineProperty(AttributesView.prototype, "stride", {
+        get: function () {
+            return this._attributesBuffer.stride / this._size;
+        },
+        enumerable: true,
+        configurable: true
+    });
     AttributesView.prototype.set = function (values, offset) {
         if (offset === void 0) { offset = 0; }
         this._attributesBuffer._setAttributes(this._index, (values instanceof Array) ? new (this._arrayClass)(values) : values, offset);
-        this._localArrayBuffer = null;
     };
     AttributesView.prototype.get = function (count, offset) {
         if (offset === void 0) { offset = 0; }
-        if (!this._localArrayBuffer)
-            this._localArrayBuffer = this._attributesBuffer._getLocalArrayBuffer(this._index);
-        var len = this._dimensions * this._size;
-        return new (this._arrayClass)(this._localArrayBuffer, offset * len, count * this._dimensions);
+        return new (this._arrayClass)(this._attributesBuffer.buffer, offset * this._attributesBuffer.stride + this.offset, count * this.stride - this.offset / this.size);
     };
     AttributesView.prototype._internalClone = function (attributesBuffer) {
         return (this._cloneCache = new AttributesView(this._arrayClass, this._dimensions, attributesBuffer, this._unsigned));
@@ -419,149 +407,13 @@ var AttributesView = (function (_super) {
             return;
         this._attributesBuffer._removeView(this);
         this._attributesBuffer = null;
-        this._localArrayBuffer = null;
     };
     AttributesView.assetType = "[attributes AttributesView]";
     return AttributesView;
 }(AssetBase_1.AssetBase));
 exports.AttributesView = AttributesView;
 
-},{"../attributes/AttributesBuffer":"awayjs-core/lib/attributes/AttributesBuffer","../library/AssetBase":"awayjs-core/lib/library/AssetBase"}],"awayjs-core/lib/attributes/Byte1Attributes":[function(require,module,exports){
-"use strict";
-var __extends = (this && this.__extends) || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-};
-var AttributesView_1 = require("../attributes/AttributesView");
-var Byte1Attributes = (function (_super) {
-    __extends(Byte1Attributes, _super);
-    function Byte1Attributes(attributesBufferLength, unsigned) {
-        if (unsigned === void 0) { unsigned = true; }
-        _super.call(this, unsigned ? Uint8Array : Int8Array, 1, attributesBufferLength, unsigned);
-    }
-    Object.defineProperty(Byte1Attributes.prototype, "assetType", {
-        /**
-         *
-         * @returns {string}
-         */
-        get: function () {
-            return Byte1Attributes.assetType;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Byte1Attributes.prototype.set = function (values, offset) {
-        if (offset === void 0) { offset = 0; }
-        _super.prototype.set.call(this, values, offset);
-    };
-    Byte1Attributes.prototype.get = function (count, offset) {
-        if (offset === void 0) { offset = 0; }
-        return _super.prototype.get.call(this, count, offset);
-    };
-    Byte1Attributes.prototype._internalClone = function (attributesBuffer) {
-        return (this._cloneCache = new Byte1Attributes(attributesBuffer, this._arrayClass == Uint8Array));
-    };
-    Byte1Attributes.prototype.clone = function (attributesBuffer) {
-        if (attributesBuffer === void 0) { attributesBuffer = null; }
-        return _super.prototype.clone.call(this, attributesBuffer);
-    };
-    Byte1Attributes.assetType = "[attributes Byte1Attributes]";
-    return Byte1Attributes;
-}(AttributesView_1.AttributesView));
-exports.Byte1Attributes = Byte1Attributes;
-
-},{"../attributes/AttributesView":"awayjs-core/lib/attributes/AttributesView"}],"awayjs-core/lib/attributes/Byte2Attributes":[function(require,module,exports){
-"use strict";
-var __extends = (this && this.__extends) || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-};
-var AttributesView_1 = require("../attributes/AttributesView");
-var Byte2Attributes = (function (_super) {
-    __extends(Byte2Attributes, _super);
-    function Byte2Attributes(attributesBufferLength, unsigned) {
-        if (unsigned === void 0) { unsigned = true; }
-        _super.call(this, unsigned ? Uint8Array : Int8Array, 2, attributesBufferLength, unsigned);
-    }
-    Object.defineProperty(Byte2Attributes.prototype, "assetType", {
-        /**
-         *
-         * @returns {string}
-         */
-        get: function () {
-            return Byte2Attributes.assetType;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Byte2Attributes.prototype.set = function (values, offset) {
-        if (offset === void 0) { offset = 0; }
-        _super.prototype.set.call(this, values, offset);
-    };
-    Byte2Attributes.prototype.get = function (count, offset) {
-        if (offset === void 0) { offset = 0; }
-        return _super.prototype.get.call(this, count, offset);
-    };
-    Byte2Attributes.prototype._internalClone = function (attributesBuffer) {
-        return (this._cloneCache = new Byte2Attributes(attributesBuffer, this._arrayClass == Uint8Array));
-    };
-    Byte2Attributes.prototype.clone = function (attributesBuffer) {
-        if (attributesBuffer === void 0) { attributesBuffer = null; }
-        return _super.prototype.clone.call(this, attributesBuffer);
-    };
-    Byte2Attributes.assetType = "[attributes Byte2Attributes]";
-    return Byte2Attributes;
-}(AttributesView_1.AttributesView));
-exports.Byte2Attributes = Byte2Attributes;
-
-},{"../attributes/AttributesView":"awayjs-core/lib/attributes/AttributesView"}],"awayjs-core/lib/attributes/Byte3Attributes":[function(require,module,exports){
-"use strict";
-var __extends = (this && this.__extends) || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-};
-var AttributesView_1 = require("../attributes/AttributesView");
-var Byte3Attributes = (function (_super) {
-    __extends(Byte3Attributes, _super);
-    function Byte3Attributes(attributesBufferLength, unsigned) {
-        if (unsigned === void 0) { unsigned = true; }
-        _super.call(this, unsigned ? Uint8Array : Int8Array, 3, attributesBufferLength, unsigned);
-    }
-    Object.defineProperty(Byte3Attributes.prototype, "assetType", {
-        /**
-         *
-         * @returns {string}
-         */
-        get: function () {
-            return Byte3Attributes.assetType;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Byte3Attributes.prototype.set = function (values, offset) {
-        if (offset === void 0) { offset = 0; }
-        _super.prototype.set.call(this, values, offset);
-    };
-    Byte3Attributes.prototype.get = function (count, offset) {
-        if (offset === void 0) { offset = 0; }
-        return _super.prototype.get.call(this, count, offset);
-    };
-    Byte3Attributes.prototype._internalClone = function (attributesBuffer) {
-        return (this._cloneCache = new Byte3Attributes(attributesBuffer, this._arrayClass == Uint8Array));
-    };
-    Byte3Attributes.prototype.clone = function (attributesBuffer) {
-        if (attributesBuffer === void 0) { attributesBuffer = null; }
-        return _super.prototype.clone.call(this, attributesBuffer);
-    };
-    Byte3Attributes.assetType = "[attributes Byte3Attributes]";
-    return Byte3Attributes;
-}(AttributesView_1.AttributesView));
-exports.Byte3Attributes = Byte3Attributes;
-
-},{"../attributes/AttributesView":"awayjs-core/lib/attributes/AttributesView"}],"awayjs-core/lib/attributes/Byte4Attributes":[function(require,module,exports){
+},{"../attributes/AttributesBuffer":"awayjs-core/lib/attributes/AttributesBuffer","../library/AssetBase":"awayjs-core/lib/library/AssetBase"}],"awayjs-core/lib/attributes/Byte4Attributes":[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -878,12 +730,6 @@ var AttributesView_1 = require("./attributes/AttributesView");
 exports.AttributesView = AttributesView_1.AttributesView;
 var AttributesBuffer_1 = require("./attributes/AttributesBuffer");
 exports.AttributesBuffer = AttributesBuffer_1.AttributesBuffer;
-var Byte1Attributes_1 = require("./attributes/Byte1Attributes");
-exports.Byte1Attributes = Byte1Attributes_1.Byte1Attributes;
-var Byte2Attributes_1 = require("./attributes/Byte2Attributes");
-exports.Byte2Attributes = Byte2Attributes_1.Byte2Attributes;
-var Byte3Attributes_1 = require("./attributes/Byte3Attributes");
-exports.Byte3Attributes = Byte3Attributes_1.Byte3Attributes;
 var Byte4Attributes_1 = require("./attributes/Byte4Attributes");
 exports.Byte4Attributes = Byte4Attributes_1.Byte4Attributes;
 var Float1Attributes_1 = require("./attributes/Float1Attributes");
@@ -899,7 +745,7 @@ exports.Short2Attributes = Short2Attributes_1.Short2Attributes;
 var Short3Attributes_1 = require("./attributes/Short3Attributes");
 exports.Short3Attributes = Short3Attributes_1.Short3Attributes;
 
-},{"./attributes/AttributesBuffer":"awayjs-core/lib/attributes/AttributesBuffer","./attributes/AttributesView":"awayjs-core/lib/attributes/AttributesView","./attributes/Byte1Attributes":"awayjs-core/lib/attributes/Byte1Attributes","./attributes/Byte2Attributes":"awayjs-core/lib/attributes/Byte2Attributes","./attributes/Byte3Attributes":"awayjs-core/lib/attributes/Byte3Attributes","./attributes/Byte4Attributes":"awayjs-core/lib/attributes/Byte4Attributes","./attributes/Float1Attributes":"awayjs-core/lib/attributes/Float1Attributes","./attributes/Float2Attributes":"awayjs-core/lib/attributes/Float2Attributes","./attributes/Float3Attributes":"awayjs-core/lib/attributes/Float3Attributes","./attributes/Float4Attributes":"awayjs-core/lib/attributes/Float4Attributes","./attributes/Short2Attributes":"awayjs-core/lib/attributes/Short2Attributes","./attributes/Short3Attributes":"awayjs-core/lib/attributes/Short3Attributes"}],"awayjs-core/lib/audio/WaveAudio":[function(require,module,exports){
+},{"./attributes/AttributesBuffer":"awayjs-core/lib/attributes/AttributesBuffer","./attributes/AttributesView":"awayjs-core/lib/attributes/AttributesView","./attributes/Byte4Attributes":"awayjs-core/lib/attributes/Byte4Attributes","./attributes/Float1Attributes":"awayjs-core/lib/attributes/Float1Attributes","./attributes/Float2Attributes":"awayjs-core/lib/attributes/Float2Attributes","./attributes/Float3Attributes":"awayjs-core/lib/attributes/Float3Attributes","./attributes/Float4Attributes":"awayjs-core/lib/attributes/Float4Attributes","./attributes/Short2Attributes":"awayjs-core/lib/attributes/Short2Attributes","./attributes/Short3Attributes":"awayjs-core/lib/attributes/Short3Attributes"}],"awayjs-core/lib/audio/WaveAudio":[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];

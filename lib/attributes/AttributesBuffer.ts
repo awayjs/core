@@ -141,7 +141,7 @@ export class AttributesBuffer extends AssetBase
 	public clone():AttributesBuffer
 	{
 		var attributesBuffer:AttributesBuffer = new AttributesBuffer(this._stride, this._count);
-		attributesBuffer.bufferView = new Uint8Array(this.bufferView.buffer);
+		attributesBuffer.bufferView.set(this.bufferView);
 
 		var len:number = this._viewVOs.length;
 		for (var i:number = 0; i < len; i++)
@@ -183,28 +183,6 @@ export class AttributesBuffer extends AssetBase
 		}
 
 		this.invalidate();
-	}
-
-	public _getLocalArrayBuffer(viewIndex:number):ArrayBuffer
-	{
-		var viewVO:ViewVO = this._viewVOs[viewIndex];
-		var vLength:number = viewVO.length;
-		var vOffset:number = viewVO.offset;
-
-		if (this._lengthDirty)
-			this._updateLength();
-
-		//fast path for separate buffers
-		if (this._viewVOs.length == 1)
-			return this._buffer;
-
-		var localBuffer:ArrayBuffer = new ArrayBuffer(this._count*vLength);
-		var localBufferView:Uint8Array = new Uint8Array(localBuffer);
-
-		for (var i:number = 0; i < this._count; i++)
-			localBufferView.set(this._bufferView.subarray(i*this._stride + vOffset, i*this._stride + vOffset + vLength), i*vLength);
-
-		return localBuffer;
 	}
 
 	public _addView(view:AttributesView):void

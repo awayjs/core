@@ -24,11 +24,9 @@ export class AttributesView extends AssetBase
 	public _index:number;
 	public _arrayClass:IArrayBufferViewClass;
 
-	public _localArrayBuffer:ArrayBuffer;
-
 	public normalized:boolean;
 
-	public get buffer():AttributesBuffer
+	public get attributesBuffer():AttributesBuffer
 	{
 		return this._attributesBuffer;
 	}
@@ -98,6 +96,11 @@ export class AttributesView extends AssetBase
 	{
 		return this._attributesBuffer.count*this._dimensions;
 	}
+	
+	public get stride():number
+	{
+		return this._attributesBuffer.stride/this._size;
+	}
 
 	/**
 	 *
@@ -123,17 +126,11 @@ export class AttributesView extends AssetBase
 	public set(values:any, offset:number = 0):void
 	{
 		this._attributesBuffer._setAttributes(this._index, (values instanceof Array)? new (this._arrayClass)(values) : <ArrayBufferView> values, offset);
-
-		this._localArrayBuffer = null;
 	}
 
 	public get(count:number, offset:number = 0):ArrayBufferView
 	{
-		if (!this._localArrayBuffer)
-			this._localArrayBuffer = this._attributesBuffer._getLocalArrayBuffer(this._index);
-
-		var len:number = this._dimensions*this._size;
-		return new (this._arrayClass)(this._localArrayBuffer, offset*len, count*this._dimensions);
+		return new (this._arrayClass)(this._attributesBuffer.buffer, offset*this._attributesBuffer.stride + this.offset, count*this.stride - this.offset/this.size);
 	}
 
 	public _internalClone(attributesBuffer:AttributesBuffer):AttributesView
@@ -165,6 +162,5 @@ export class AttributesView extends AssetBase
 
 		this._attributesBuffer._removeView(this);
 		this._attributesBuffer = null;
-		this._localArrayBuffer = null;
 	}
 }

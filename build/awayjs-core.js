@@ -30,7 +30,6 @@ library.Loader.enableParser(parsers.Image2DParser);
 library.Loader.enableParser(parsers.ImageCubeParser);
 library.Loader.enableParser(parsers.TextureAtlasParser);
 library.Loader.enableParser(parsers.WaveAudioParser);
-
 },{"./lib/attributes":"awayjs-core/lib/attributes","./lib/audio":"awayjs-core/lib/audio","./lib/errors":"awayjs-core/lib/errors","./lib/events":"awayjs-core/lib/events","./lib/geom":"awayjs-core/lib/geom","./lib/image":"awayjs-core/lib/image","./lib/library":"awayjs-core/lib/library","./lib/managers":"awayjs-core/lib/managers","./lib/net":"awayjs-core/lib/net","./lib/parsers":"awayjs-core/lib/parsers","./lib/projections":"awayjs-core/lib/projections","./lib/ui":"awayjs-core/lib/ui","./lib/utils":"awayjs-core/lib/utils"}],"awayjs-core/lib/attributes/AttributesBuffer":[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
@@ -263,7 +262,6 @@ var ViewVO = (function () {
     };
     return ViewVO;
 }());
-
 },{"../library/AssetBase":"awayjs-core/lib/library/AssetBase"}],"awayjs-core/lib/attributes/AttributesView":[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
@@ -412,7 +410,6 @@ var AttributesView = (function (_super) {
     return AttributesView;
 }(AssetBase_1.AssetBase));
 exports.AttributesView = AttributesView;
-
 },{"../attributes/AttributesBuffer":"awayjs-core/lib/attributes/AttributesBuffer","../library/AssetBase":"awayjs-core/lib/library/AssetBase"}],"awayjs-core/lib/attributes/Byte4Attributes":[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
@@ -457,7 +454,6 @@ var Byte4Attributes = (function (_super) {
     return Byte4Attributes;
 }(AttributesView_1.AttributesView));
 exports.Byte4Attributes = Byte4Attributes;
-
 },{"../attributes/AttributesView":"awayjs-core/lib/attributes/AttributesView"}],"awayjs-core/lib/attributes/Float1Attributes":[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
@@ -501,7 +497,6 @@ var Float1Attributes = (function (_super) {
     return Float1Attributes;
 }(AttributesView_1.AttributesView));
 exports.Float1Attributes = Float1Attributes;
-
 },{"../attributes/AttributesView":"awayjs-core/lib/attributes/AttributesView"}],"awayjs-core/lib/attributes/Float2Attributes":[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
@@ -545,7 +540,6 @@ var Float2Attributes = (function (_super) {
     return Float2Attributes;
 }(AttributesView_1.AttributesView));
 exports.Float2Attributes = Float2Attributes;
-
 },{"../attributes/AttributesView":"awayjs-core/lib/attributes/AttributesView"}],"awayjs-core/lib/attributes/Float3Attributes":[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
@@ -589,7 +583,6 @@ var Float3Attributes = (function (_super) {
     return Float3Attributes;
 }(AttributesView_1.AttributesView));
 exports.Float3Attributes = Float3Attributes;
-
 },{"../attributes/AttributesView":"awayjs-core/lib/attributes/AttributesView"}],"awayjs-core/lib/attributes/Float4Attributes":[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
@@ -633,7 +626,6 @@ var Float4Attributes = (function (_super) {
     return Float4Attributes;
 }(AttributesView_1.AttributesView));
 exports.Float4Attributes = Float4Attributes;
-
 },{"../attributes/AttributesView":"awayjs-core/lib/attributes/AttributesView"}],"awayjs-core/lib/attributes/Short2Attributes":[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
@@ -678,7 +670,6 @@ var Short2Attributes = (function (_super) {
     return Short2Attributes;
 }(AttributesView_1.AttributesView));
 exports.Short2Attributes = Short2Attributes;
-
 },{"../attributes/AttributesView":"awayjs-core/lib/attributes/AttributesView"}],"awayjs-core/lib/attributes/Short3Attributes":[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
@@ -723,7 +714,6 @@ var Short3Attributes = (function (_super) {
     return Short3Attributes;
 }(AttributesView_1.AttributesView));
 exports.Short3Attributes = Short3Attributes;
-
 },{"../attributes/AttributesView":"awayjs-core/lib/attributes/AttributesView"}],"awayjs-core/lib/attributes":[function(require,module,exports){
 "use strict";
 var AttributesView_1 = require("./attributes/AttributesView");
@@ -744,7 +734,6 @@ var Short2Attributes_1 = require("./attributes/Short2Attributes");
 exports.Short2Attributes = Short2Attributes_1.Short2Attributes;
 var Short3Attributes_1 = require("./attributes/Short3Attributes");
 exports.Short3Attributes = Short3Attributes_1.Short3Attributes;
-
 },{"./attributes/AttributesBuffer":"awayjs-core/lib/attributes/AttributesBuffer","./attributes/AttributesView":"awayjs-core/lib/attributes/AttributesView","./attributes/Byte4Attributes":"awayjs-core/lib/attributes/Byte4Attributes","./attributes/Float1Attributes":"awayjs-core/lib/attributes/Float1Attributes","./attributes/Float2Attributes":"awayjs-core/lib/attributes/Float2Attributes","./attributes/Float3Attributes":"awayjs-core/lib/attributes/Float3Attributes","./attributes/Float4Attributes":"awayjs-core/lib/attributes/Float4Attributes","./attributes/Short2Attributes":"awayjs-core/lib/attributes/Short2Attributes","./attributes/Short3Attributes":"awayjs-core/lib/attributes/Short3Attributes"}],"awayjs-core/lib/audio/WaveAudio":[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
@@ -834,12 +823,10 @@ var WaveAudio = (function (_super) {
     return WaveAudio;
 }(AssetBase_1.AssetBase));
 exports.WaveAudio = WaveAudio;
-
 },{"../library/AssetBase":"awayjs-core/lib/library/AssetBase","../managers/AudioManager":"awayjs-core/lib/managers/AudioManager"}],"awayjs-core/lib/audio":[function(require,module,exports){
 "use strict";
 var WaveAudio_1 = require("./audio/WaveAudio");
 exports.WaveAudio = WaveAudio_1.WaveAudio;
-
 },{"./audio/WaveAudio":"awayjs-core/lib/audio/WaveAudio"}],"awayjs-core/lib/errors/AbstractMethodError":[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
@@ -867,7 +854,6 @@ var AbstractMethodError = (function (_super) {
     return AbstractMethodError;
 }(ErrorBase_1.ErrorBase));
 exports.AbstractMethodError = AbstractMethodError;
-
 },{"../errors/ErrorBase":"awayjs-core/lib/errors/ErrorBase"}],"awayjs-core/lib/errors/ArgumentError":[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
@@ -896,7 +882,6 @@ var ArgumentError = (function (_super) {
     return ArgumentError;
 }(ErrorBase_1.ErrorBase));
 exports.ArgumentError = ArgumentError;
-
 },{"../errors/ErrorBase":"awayjs-core/lib/errors/ErrorBase"}],"awayjs-core/lib/errors/DocumentError":[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
@@ -916,7 +901,6 @@ var DocumentError = (function (_super) {
     return DocumentError;
 }(ErrorBase_1.ErrorBase));
 exports.DocumentError = DocumentError;
-
 },{"../errors/ErrorBase":"awayjs-core/lib/errors/ErrorBase"}],"awayjs-core/lib/errors/ErrorBase":[function(require,module,exports){
 "use strict";
 var ErrorBase = (function () {
@@ -981,7 +965,6 @@ var ErrorBase = (function () {
     return ErrorBase;
 }());
 exports.ErrorBase = ErrorBase;
-
 },{}],"awayjs-core/lib/errors/PartialImplementationError":[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
@@ -1009,7 +992,6 @@ var PartialImplementationError = (function (_super) {
     return PartialImplementationError;
 }(ErrorBase_1.ErrorBase));
 exports.PartialImplementationError = PartialImplementationError;
-
 },{"../errors/ErrorBase":"awayjs-core/lib/errors/ErrorBase"}],"awayjs-core/lib/errors/RangeError":[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
@@ -1038,7 +1020,6 @@ var RangeError = (function (_super) {
     return RangeError;
 }(ErrorBase_1.ErrorBase));
 exports.RangeError = RangeError;
-
 },{"../errors/ErrorBase":"awayjs-core/lib/errors/ErrorBase"}],"awayjs-core/lib/errors":[function(require,module,exports){
 "use strict";
 var AbstractMethodError_1 = require("./errors/AbstractMethodError");
@@ -1053,7 +1034,6 @@ var PartialImplementationError_1 = require("./errors/PartialImplementationError"
 exports.PartialImplementationError = PartialImplementationError_1.PartialImplementationError;
 var RangeError_1 = require("./errors/RangeError");
 exports.RangeError = RangeError_1.RangeError;
-
 },{"./errors/AbstractMethodError":"awayjs-core/lib/errors/AbstractMethodError","./errors/ArgumentError":"awayjs-core/lib/errors/ArgumentError","./errors/DocumentError":"awayjs-core/lib/errors/DocumentError","./errors/ErrorBase":"awayjs-core/lib/errors/ErrorBase","./errors/PartialImplementationError":"awayjs-core/lib/errors/PartialImplementationError","./errors/RangeError":"awayjs-core/lib/errors/RangeError"}],"awayjs-core/lib/events/AssetEvent":[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
@@ -1141,7 +1121,6 @@ var AssetEvent = (function (_super) {
     return AssetEvent;
 }(EventBase_1.EventBase));
 exports.AssetEvent = AssetEvent;
-
 },{"../events/EventBase":"awayjs-core/lib/events/EventBase"}],"awayjs-core/lib/events/EventBase":[function(require,module,exports){
 "use strict";
 var EventBase = (function () {
@@ -1170,7 +1149,6 @@ var EventBase = (function () {
     return EventBase;
 }());
 exports.EventBase = EventBase;
-
 },{}],"awayjs-core/lib/events/EventDispatcher":[function(require,module,exports){
 "use strict";
 /**
@@ -1284,10 +1262,8 @@ var ListenerObject = (function () {
 exports.ListenerObject = ListenerObject;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = EventDispatcher;
-
 },{}],"awayjs-core/lib/events/IEventDispatcher":[function(require,module,exports){
 "use strict";
-
 },{}],"awayjs-core/lib/events/LoaderEvent":[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
@@ -1358,7 +1334,6 @@ var LoaderEvent = (function (_super) {
     return LoaderEvent;
 }(EventBase_1.EventBase));
 exports.LoaderEvent = LoaderEvent;
-
 },{"../events/EventBase":"awayjs-core/lib/events/EventBase"}],"awayjs-core/lib/events/ParserEvent":[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
@@ -1405,7 +1380,6 @@ var ParserEvent = (function (_super) {
     return ParserEvent;
 }(EventBase_1.EventBase));
 exports.ParserEvent = ParserEvent;
-
 },{"../events/EventBase":"awayjs-core/lib/events/EventBase"}],"awayjs-core/lib/events/ProjectionEvent":[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
@@ -1431,7 +1405,6 @@ var ProjectionEvent = (function (_super) {
     return ProjectionEvent;
 }(EventBase_1.EventBase));
 exports.ProjectionEvent = ProjectionEvent;
-
 },{"../events/EventBase":"awayjs-core/lib/events/EventBase"}],"awayjs-core/lib/events/TimerEvent":[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
@@ -1458,7 +1431,6 @@ var TimerEvent = (function (_super) {
 exports.TimerEvent = TimerEvent;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = TimerEvent;
-
 },{"../events/EventBase":"awayjs-core/lib/events/EventBase"}],"awayjs-core/lib/events/URLLoaderEvent":[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
@@ -1497,7 +1469,6 @@ var URLLoaderEvent = (function (_super) {
     return URLLoaderEvent;
 }(EventBase_1.EventBase));
 exports.URLLoaderEvent = URLLoaderEvent;
-
 },{"../events/EventBase":"awayjs-core/lib/events/EventBase"}],"awayjs-core/lib/events":[function(require,module,exports){
 "use strict";
 var AssetEvent_1 = require("./events/AssetEvent");
@@ -1516,7 +1487,6 @@ var TimerEvent_1 = require("./events/TimerEvent");
 exports.TimerEvent = TimerEvent_1.TimerEvent;
 var URLLoaderEvent_1 = require("./events/URLLoaderEvent");
 exports.URLLoaderEvent = URLLoaderEvent_1.URLLoaderEvent;
-
 },{"./events/AssetEvent":"awayjs-core/lib/events/AssetEvent","./events/EventBase":"awayjs-core/lib/events/EventBase","./events/EventDispatcher":"awayjs-core/lib/events/EventDispatcher","./events/LoaderEvent":"awayjs-core/lib/events/LoaderEvent","./events/ParserEvent":"awayjs-core/lib/events/ParserEvent","./events/ProjectionEvent":"awayjs-core/lib/events/ProjectionEvent","./events/TimerEvent":"awayjs-core/lib/events/TimerEvent","./events/URLLoaderEvent":"awayjs-core/lib/events/URLLoaderEvent"}],"awayjs-core/lib/geom/Box":[function(require,module,exports){
 "use strict";
 var Vector3D_1 = require("../geom/Vector3D");
@@ -2211,7 +2181,6 @@ var Box = (function () {
     return Box;
 }());
 exports.Box = Box;
-
 },{"../geom/Vector3D":"awayjs-core/lib/geom/Vector3D"}],"awayjs-core/lib/geom/ColorTransform":[function(require,module,exports){
 "use strict";
 var ColorUtils_1 = require("../utils/ColorUtils");
@@ -2468,7 +2437,6 @@ var ColorTransform = (function () {
     return ColorTransform;
 }());
 exports.ColorTransform = ColorTransform;
-
 },{"../utils/ColorUtils":"awayjs-core/lib/utils/ColorUtils"}],"awayjs-core/lib/geom/MathConsts":[function(require,module,exports){
 "use strict";
 /**
@@ -2488,7 +2456,6 @@ var MathConsts = (function () {
     return MathConsts;
 }());
 exports.MathConsts = MathConsts;
-
 },{}],"awayjs-core/lib/geom/Matrix3DUtils":[function(require,module,exports){
 "use strict";
 var Matrix3D_1 = require("../geom/Matrix3D");
@@ -2753,7 +2720,6 @@ var Matrix3DUtils = (function () {
     return Matrix3DUtils;
 }());
 exports.Matrix3DUtils = Matrix3DUtils;
-
 },{"../geom/Matrix3D":"awayjs-core/lib/geom/Matrix3D","../geom/Vector3D":"awayjs-core/lib/geom/Vector3D"}],"awayjs-core/lib/geom/Matrix3D":[function(require,module,exports){
 "use strict";
 var Box_1 = require("../geom/Box");
@@ -3614,7 +3580,6 @@ var Matrix3D = (function () {
     return Matrix3D;
 }());
 exports.Matrix3D = Matrix3D;
-
 },{"../errors/ArgumentError":"awayjs-core/lib/errors/ArgumentError","../geom/Box":"awayjs-core/lib/geom/Box","../geom/MathConsts":"awayjs-core/lib/geom/MathConsts","../geom/Orientation3D":"awayjs-core/lib/geom/Orientation3D","../geom/Vector3D":"awayjs-core/lib/geom/Vector3D"}],"awayjs-core/lib/geom/Matrix":[function(require,module,exports){
 "use strict";
 var Point_1 = require("../geom/Point");
@@ -4196,7 +4161,6 @@ var Matrix = (function () {
     return Matrix;
 }());
 exports.Matrix = Matrix;
-
 },{"../errors/ArgumentError":"awayjs-core/lib/errors/ArgumentError","../geom/Point":"awayjs-core/lib/geom/Point"}],"awayjs-core/lib/geom/Orientation3D":[function(require,module,exports){
 "use strict";
 /**
@@ -4223,7 +4187,6 @@ var Orientation3D = (function () {
     return Orientation3D;
 }());
 exports.Orientation3D = Orientation3D;
-
 },{}],"awayjs-core/lib/geom/Plane3D":[function(require,module,exports){
 "use strict";
 var PlaneClassification_1 = require("../geom/PlaneClassification");
@@ -4375,7 +4338,6 @@ var Plane3D = (function () {
     return Plane3D;
 }());
 exports.Plane3D = Plane3D;
-
 },{"../geom/PlaneClassification":"awayjs-core/lib/geom/PlaneClassification"}],"awayjs-core/lib/geom/PlaneClassification":[function(require,module,exports){
 "use strict";
 var PlaneClassification = (function () {
@@ -4390,7 +4352,6 @@ var PlaneClassification = (function () {
     return PlaneClassification;
 }());
 exports.PlaneClassification = PlaneClassification;
-
 },{}],"awayjs-core/lib/geom/Point":[function(require,module,exports){
 "use strict";
 /**
@@ -4574,7 +4535,6 @@ var Point = (function () {
     return Point;
 }());
 exports.Point = Point;
-
 },{}],"awayjs-core/lib/geom/PoissonLookup":[function(require,module,exports){
 "use strict";
 var PoissonLookup = (function () {
@@ -4626,7 +4586,6 @@ var PoissonLookup = (function () {
     return PoissonLookup;
 }());
 exports.PoissonLookup = PoissonLookup;
-
 },{}],"awayjs-core/lib/geom/Quaternion":[function(require,module,exports){
 "use strict";
 var Matrix3DUtils_1 = require("../geom/Matrix3DUtils");
@@ -4958,7 +4917,6 @@ var Quaternion = (function () {
     return Quaternion;
 }());
 exports.Quaternion = Quaternion;
-
 },{"../geom/Matrix3D":"awayjs-core/lib/geom/Matrix3D","../geom/Matrix3DUtils":"awayjs-core/lib/geom/Matrix3DUtils","../geom/Orientation3D":"awayjs-core/lib/geom/Orientation3D","../geom/Vector3D":"awayjs-core/lib/geom/Vector3D"}],"awayjs-core/lib/geom/Rectangle":[function(require,module,exports){
 "use strict";
 var Point_1 = require("../geom/Point");
@@ -5419,7 +5377,6 @@ var Rectangle = (function () {
     return Rectangle;
 }());
 exports.Rectangle = Rectangle;
-
 },{"../geom/Point":"awayjs-core/lib/geom/Point"}],"awayjs-core/lib/geom/Sphere":[function(require,module,exports){
 "use strict";
 var Sphere = (function () {
@@ -5473,7 +5430,6 @@ var Sphere = (function () {
     return Sphere;
 }());
 exports.Sphere = Sphere;
-
 },{}],"awayjs-core/lib/geom/Vector3D":[function(require,module,exports){
 "use strict";
 /**
@@ -5893,7 +5849,6 @@ var Vector3D = (function () {
     return Vector3D;
 }());
 exports.Vector3D = Vector3D;
-
 },{}],"awayjs-core/lib/geom":[function(require,module,exports){
 "use strict";
 var Box_1 = require("./geom/Box");
@@ -5926,7 +5881,6 @@ var Sphere_1 = require("./geom/Sphere");
 exports.Sphere = Sphere_1.Sphere;
 var Vector3D_1 = require("./geom/Vector3D");
 exports.Vector3D = Vector3D_1.Vector3D;
-
 },{"./geom/Box":"awayjs-core/lib/geom/Box","./geom/ColorTransform":"awayjs-core/lib/geom/ColorTransform","./geom/MathConsts":"awayjs-core/lib/geom/MathConsts","./geom/Matrix":"awayjs-core/lib/geom/Matrix","./geom/Matrix3D":"awayjs-core/lib/geom/Matrix3D","./geom/Matrix3DUtils":"awayjs-core/lib/geom/Matrix3DUtils","./geom/Orientation3D":"awayjs-core/lib/geom/Orientation3D","./geom/Plane3D":"awayjs-core/lib/geom/Plane3D","./geom/PlaneClassification":"awayjs-core/lib/geom/PlaneClassification","./geom/Point":"awayjs-core/lib/geom/Point","./geom/PoissonLookup":"awayjs-core/lib/geom/PoissonLookup","./geom/Quaternion":"awayjs-core/lib/geom/Quaternion","./geom/Rectangle":"awayjs-core/lib/geom/Rectangle","./geom/Sphere":"awayjs-core/lib/geom/Sphere","./geom/Vector3D":"awayjs-core/lib/geom/Vector3D"}],"awayjs-core/lib/image/BitmapImage2D":[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
@@ -6560,7 +6514,6 @@ var BitmapImage2D = (function (_super) {
     return BitmapImage2D;
 }(Image2D_1.Image2D));
 exports.BitmapImage2D = BitmapImage2D;
-
 },{"../image/CPUCanvas":"awayjs-core/lib/image/CPUCanvas","../image/Image2D":"awayjs-core/lib/image/Image2D","../utils/BitmapImageUtils":"awayjs-core/lib/utils/BitmapImageUtils","../utils/ColorUtils":"awayjs-core/lib/utils/ColorUtils"}],"awayjs-core/lib/image/BitmapImageChannel":[function(require,module,exports){
 "use strict";
 var BitmapImageChannel = (function () {
@@ -6573,7 +6526,6 @@ var BitmapImageChannel = (function () {
     return BitmapImageChannel;
 }());
 exports.BitmapImageChannel = BitmapImageChannel;
-
 },{}],"awayjs-core/lib/image/BitmapImageCube":[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
@@ -7239,7 +7191,6 @@ var BitmapImageCube = (function (_super) {
     return BitmapImageCube;
 }(ImageCube_1.ImageCube));
 exports.BitmapImageCube = BitmapImageCube;
-
 },{"../geom/Rectangle":"awayjs-core/lib/geom/Rectangle","../image/BitmapImage2D":"awayjs-core/lib/image/BitmapImage2D","../image/ImageCube":"awayjs-core/lib/image/ImageCube","../utils/BitmapImageUtils":"awayjs-core/lib/utils/BitmapImageUtils","../utils/ColorUtils":"awayjs-core/lib/utils/ColorUtils"}],"awayjs-core/lib/image/BlendMode":[function(require,module,exports){
 "use strict";
 /**
@@ -7419,7 +7370,6 @@ var BlendMode = (function () {
     return BlendMode;
 }());
 exports.BlendMode = BlendMode;
-
 },{}],"awayjs-core/lib/image/CPUCanvas":[function(require,module,exports){
 "use strict";
 var CPURenderingContext2D_1 = require("../image/CPURenderingContext2D");
@@ -7468,7 +7418,6 @@ var CPUCanvas = (function () {
 exports.CPUCanvas = CPUCanvas;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = CPUCanvas;
-
 },{"../image/CPURenderingContext2D":"awayjs-core/lib/image/CPURenderingContext2D","../image/ImageData":"awayjs-core/lib/image/ImageData"}],"awayjs-core/lib/image/CPURenderingContext2D":[function(require,module,exports){
 "use strict";
 var BitmapImage2D_1 = require("../image/BitmapImage2D");
@@ -7833,10 +7782,8 @@ var CPURenderingContext2D = (function () {
 exports.CPURenderingContext2D = CPURenderingContext2D;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = CPURenderingContext2D;
-
 },{"../geom/Matrix":"awayjs-core/lib/geom/Matrix","../geom/Point":"awayjs-core/lib/geom/Point","../image/BitmapImage2D":"awayjs-core/lib/image/BitmapImage2D"}],"awayjs-core/lib/image/IImageCanvas":[function(require,module,exports){
 "use strict";
-
 },{}],"awayjs-core/lib/image/Image2D":[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
@@ -7955,7 +7902,6 @@ var Image2D = (function (_super) {
     return Image2D;
 }(ImageBase_1.ImageBase));
 exports.Image2D = Image2D;
-
 },{"../geom/Rectangle":"awayjs-core/lib/geom/Rectangle","../image/ImageBase":"awayjs-core/lib/image/ImageBase","../utils/ImageUtils":"awayjs-core/lib/utils/ImageUtils"}],"awayjs-core/lib/image/ImageBase":[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
@@ -7987,7 +7933,6 @@ var ImageBase = (function (_super) {
     return ImageBase;
 }(AssetBase_1.AssetBase));
 exports.ImageBase = ImageBase;
-
 },{"../library/AssetBase":"awayjs-core/lib/library/AssetBase"}],"awayjs-core/lib/image/ImageCube":[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
@@ -8057,7 +8002,6 @@ var ImageCube = (function (_super) {
     return ImageCube;
 }(ImageBase_1.ImageBase));
 exports.ImageCube = ImageCube;
-
 },{"../image/ImageBase":"awayjs-core/lib/image/ImageBase","../utils/ImageUtils":"awayjs-core/lib/utils/ImageUtils"}],"awayjs-core/lib/image/ImageData":[function(require,module,exports){
 "use strict";
 var ImageData = (function () {
@@ -8071,7 +8015,6 @@ var ImageData = (function () {
 exports.ImageData = ImageData;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = ImageData;
-
 },{}],"awayjs-core/lib/image/Sampler2D":[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
@@ -8202,7 +8145,6 @@ var Sampler2D = (function (_super) {
     return Sampler2D;
 }(SamplerBase_1.SamplerBase));
 exports.Sampler2D = Sampler2D;
-
 },{"../image/SamplerBase":"awayjs-core/lib/image/SamplerBase"}],"awayjs-core/lib/image/SamplerBase":[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
@@ -8261,7 +8203,6 @@ var SamplerBase = (function (_super) {
     return SamplerBase;
 }(AssetBase_1.AssetBase));
 exports.SamplerBase = SamplerBase;
-
 },{"../library/AssetBase":"awayjs-core/lib/library/AssetBase"}],"awayjs-core/lib/image/SamplerCube":[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
@@ -8317,7 +8258,6 @@ var SamplerCube = (function (_super) {
     return SamplerCube;
 }(SamplerBase_1.SamplerBase));
 exports.SamplerCube = SamplerCube;
-
 },{"../image/SamplerBase":"awayjs-core/lib/image/SamplerBase"}],"awayjs-core/lib/image/SpecularImage2D":[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
@@ -8472,7 +8412,6 @@ var SpecularImage2D = (function (_super) {
     return SpecularImage2D;
 }(Image2D_1.Image2D));
 exports.SpecularImage2D = SpecularImage2D;
-
 },{"../geom/Point":"awayjs-core/lib/geom/Point","../image/BitmapImage2D":"awayjs-core/lib/image/BitmapImage2D","../image/BitmapImageChannel":"awayjs-core/lib/image/BitmapImageChannel","../image/Image2D":"awayjs-core/lib/image/Image2D"}],"awayjs-core/lib/image":[function(require,module,exports){
 "use strict";
 var BitmapImage2D_1 = require("./image/BitmapImage2D");
@@ -8503,7 +8442,6 @@ var SamplerCube_1 = require("./image/SamplerCube");
 exports.SamplerCube = SamplerCube_1.SamplerCube;
 var SpecularImage2D_1 = require("./image/SpecularImage2D");
 exports.SpecularImage2D = SpecularImage2D_1.SpecularImage2D;
-
 },{"./image/BitmapImage2D":"awayjs-core/lib/image/BitmapImage2D","./image/BitmapImageChannel":"awayjs-core/lib/image/BitmapImageChannel","./image/BitmapImageCube":"awayjs-core/lib/image/BitmapImageCube","./image/BlendMode":"awayjs-core/lib/image/BlendMode","./image/CPUCanvas":"awayjs-core/lib/image/CPUCanvas","./image/CPURenderingContext2D":"awayjs-core/lib/image/CPURenderingContext2D","./image/Image2D":"awayjs-core/lib/image/Image2D","./image/ImageBase":"awayjs-core/lib/image/ImageBase","./image/ImageCube":"awayjs-core/lib/image/ImageCube","./image/ImageData":"awayjs-core/lib/image/ImageData","./image/Sampler2D":"awayjs-core/lib/image/Sampler2D","./image/SamplerBase":"awayjs-core/lib/image/SamplerBase","./image/SamplerCube":"awayjs-core/lib/image/SamplerCube","./image/SpecularImage2D":"awayjs-core/lib/image/SpecularImage2D"}],"awayjs-core/lib/library/AbstractionBase":[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
@@ -8549,7 +8487,6 @@ var AbstractionBase = (function (_super) {
     return AbstractionBase;
 }(EventDispatcher_1.EventDispatcher));
 exports.AbstractionBase = AbstractionBase;
-
 },{"../events/AssetEvent":"awayjs-core/lib/events/AssetEvent","../events/EventDispatcher":"awayjs-core/lib/events/EventDispatcher"}],"awayjs-core/lib/library/AssetBase":[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
@@ -8672,7 +8609,6 @@ var AssetBase = (function (_super) {
     return AssetBase;
 }(EventDispatcher_1.EventDispatcher));
 exports.AssetBase = AssetBase;
-
 },{"../errors/AbstractMethodError":"awayjs-core/lib/errors/AbstractMethodError","../events/AssetEvent":"awayjs-core/lib/events/AssetEvent","../events/EventDispatcher":"awayjs-core/lib/events/EventDispatcher"}],"awayjs-core/lib/library/AssetLibraryBundle":[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
@@ -9135,7 +9071,6 @@ var AssetLibraryBundle = (function (_super) {
     return AssetLibraryBundle;
 }(EventDispatcher_1.EventDispatcher));
 exports.AssetLibraryBundle = AssetLibraryBundle;
-
 },{"../errors/ErrorBase":"awayjs-core/lib/errors/ErrorBase","../events/AssetEvent":"awayjs-core/lib/events/AssetEvent","../events/EventDispatcher":"awayjs-core/lib/events/EventDispatcher","../events/LoaderEvent":"awayjs-core/lib/events/LoaderEvent","../events/ParserEvent":"awayjs-core/lib/events/ParserEvent","../events/URLLoaderEvent":"awayjs-core/lib/events/URLLoaderEvent","../library/AssetBase":"awayjs-core/lib/library/AssetBase","../library/AssetLibraryIterator":"awayjs-core/lib/library/AssetLibraryIterator","../library/ConflictPrecedence":"awayjs-core/lib/library/ConflictPrecedence","../library/ConflictStrategy":"awayjs-core/lib/library/ConflictStrategy","../library/Loader":"awayjs-core/lib/library/Loader"}],"awayjs-core/lib/library/AssetLibraryIterator":[function(require,module,exports){
 "use strict";
 var AssetLibraryIterator = (function () {
@@ -9199,7 +9134,6 @@ var AssetLibraryIterator = (function () {
     return AssetLibraryIterator;
 }());
 exports.AssetLibraryIterator = AssetLibraryIterator;
-
 },{}],"awayjs-core/lib/library/AssetLibrary":[function(require,module,exports){
 "use strict";
 var AssetLibraryBundle_1 = require("../library/AssetLibraryBundle");
@@ -9411,7 +9345,6 @@ var AssetLibrary = (function () {
     return AssetLibrary;
 }());
 exports.AssetLibrary = AssetLibrary;
-
 },{"../library/AssetLibraryBundle":"awayjs-core/lib/library/AssetLibraryBundle","../library/Loader":"awayjs-core/lib/library/Loader"}],"awayjs-core/lib/library/ConflictPrecedence":[function(require,module,exports){
 "use strict";
 /**
@@ -9439,7 +9372,6 @@ var ConflictPrecedence = (function () {
     return ConflictPrecedence;
 }());
 exports.ConflictPrecedence = ConflictPrecedence;
-
 },{}],"awayjs-core/lib/library/ConflictStrategyBase":[function(require,module,exports){
 "use strict";
 var ConflictPrecedence_1 = require("../library/ConflictPrecedence");
@@ -9499,7 +9431,6 @@ var ConflictStrategyBase = (function () {
     return ConflictStrategyBase;
 }());
 exports.ConflictStrategyBase = ConflictStrategyBase;
-
 },{"../errors/AbstractMethodError":"awayjs-core/lib/errors/AbstractMethodError","../events/AssetEvent":"awayjs-core/lib/events/AssetEvent","../library/ConflictPrecedence":"awayjs-core/lib/library/ConflictPrecedence"}],"awayjs-core/lib/library/ConflictStrategy":[function(require,module,exports){
 "use strict";
 var ErrorConflictStrategy_1 = require("../library/ErrorConflictStrategy");
@@ -9540,7 +9471,6 @@ var ConflictStrategy = (function () {
     return ConflictStrategy;
 }());
 exports.ConflictStrategy = ConflictStrategy;
-
 },{"../library/ErrorConflictStrategy":"awayjs-core/lib/library/ErrorConflictStrategy","../library/IgnoreConflictStrategy":"awayjs-core/lib/library/IgnoreConflictStrategy","../library/NumSuffixConflictStrategy":"awayjs-core/lib/library/NumSuffixConflictStrategy"}],"awayjs-core/lib/library/ErrorConflictStrategy":[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
@@ -9564,16 +9494,12 @@ var ErrorConflictStrategy = (function (_super) {
     return ErrorConflictStrategy;
 }(ConflictStrategyBase_1.ConflictStrategyBase));
 exports.ErrorConflictStrategy = ErrorConflictStrategy;
-
 },{"../errors/ErrorBase":"awayjs-core/lib/errors/ErrorBase","../library/ConflictStrategyBase":"awayjs-core/lib/library/ConflictStrategyBase"}],"awayjs-core/lib/library/IAbstractionPool":[function(require,module,exports){
 "use strict";
-
 },{}],"awayjs-core/lib/library/IAssetClass":[function(require,module,exports){
 "use strict";
-
 },{}],"awayjs-core/lib/library/IAsset":[function(require,module,exports){
 "use strict";
-
 },{}],"awayjs-core/lib/library/IDUtil":[function(require,module,exports){
 "use strict";
 var IDUtil = (function () {
@@ -9633,7 +9559,6 @@ var IDUtil = (function () {
     return IDUtil;
 }());
 exports.IDUtil = IDUtil;
-
 },{}],"awayjs-core/lib/library/IgnoreConflictStrategy":[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
@@ -9657,7 +9582,6 @@ var IgnoreConflictStrategy = (function (_super) {
     return IgnoreConflictStrategy;
 }(ConflictStrategyBase_1.ConflictStrategyBase));
 exports.IgnoreConflictStrategy = IgnoreConflictStrategy;
-
 },{"../library/ConflictStrategyBase":"awayjs-core/lib/library/ConflictStrategyBase"}],"awayjs-core/lib/library/LoaderContext":[function(require,module,exports){
 "use strict";
 var LoaderContext = (function () {
@@ -9810,7 +9734,6 @@ var LoaderContext = (function () {
     return LoaderContext;
 }());
 exports.LoaderContext = LoaderContext;
-
 },{}],"awayjs-core/lib/library/LoaderInfo":[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
@@ -10061,7 +9984,6 @@ var LoaderInfo = (function (_super) {
     return LoaderInfo;
 }(EventDispatcher_1.EventDispatcher));
 exports.LoaderInfo = LoaderInfo;
-
 },{"../events/EventDispatcher":"awayjs-core/lib/events/EventDispatcher"}],"awayjs-core/lib/library/Loader":[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
@@ -10643,7 +10565,6 @@ var Loader = (function (_super) {
     return Loader;
 }(EventDispatcher_1.EventDispatcher));
 exports.Loader = Loader;
-
 },{"../events/AssetEvent":"awayjs-core/lib/events/AssetEvent","../events/EventDispatcher":"awayjs-core/lib/events/EventDispatcher","../events/LoaderEvent":"awayjs-core/lib/events/LoaderEvent","../events/ParserEvent":"awayjs-core/lib/events/ParserEvent","../events/URLLoaderEvent":"awayjs-core/lib/events/URLLoaderEvent","../net/URLLoader":"awayjs-core/lib/net/URLLoader","../net/URLLoaderDataFormat":"awayjs-core/lib/net/URLLoaderDataFormat","../parsers/ResourceDependency":"awayjs-core/lib/parsers/ResourceDependency"}],"awayjs-core/lib/library/NumSuffixConflictStrategy":[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
@@ -10699,7 +10620,6 @@ var NumSuffixConflictStrategy = (function (_super) {
     return NumSuffixConflictStrategy;
 }(ConflictStrategyBase_1.ConflictStrategyBase));
 exports.NumSuffixConflictStrategy = NumSuffixConflictStrategy;
-
 },{"../library/ConflictStrategyBase":"awayjs-core/lib/library/ConflictStrategyBase"}],"awayjs-core/lib/library":[function(require,module,exports){
 "use strict";
 var AbstractionBase_1 = require("./library/AbstractionBase");
@@ -10732,7 +10652,6 @@ var LoaderInfo_1 = require("./library/LoaderInfo");
 exports.LoaderInfo = LoaderInfo_1.LoaderInfo;
 var NumSuffixConflictStrategy_1 = require("./library/NumSuffixConflictStrategy");
 exports.NumSuffixConflictStrategy = NumSuffixConflictStrategy_1.NumSuffixConflictStrategy;
-
 },{"./library/AbstractionBase":"awayjs-core/lib/library/AbstractionBase","./library/AssetBase":"awayjs-core/lib/library/AssetBase","./library/AssetLibrary":"awayjs-core/lib/library/AssetLibrary","./library/AssetLibraryBundle":"awayjs-core/lib/library/AssetLibraryBundle","./library/AssetLibraryIterator":"awayjs-core/lib/library/AssetLibraryIterator","./library/ConflictPrecedence":"awayjs-core/lib/library/ConflictPrecedence","./library/ConflictStrategy":"awayjs-core/lib/library/ConflictStrategy","./library/ConflictStrategyBase":"awayjs-core/lib/library/ConflictStrategyBase","./library/ErrorConflictStrategy":"awayjs-core/lib/library/ErrorConflictStrategy","./library/IDUtil":"awayjs-core/lib/library/IDUtil","./library/IgnoreConflictStrategy":"awayjs-core/lib/library/IgnoreConflictStrategy","./library/Loader":"awayjs-core/lib/library/Loader","./library/LoaderContext":"awayjs-core/lib/library/LoaderContext","./library/LoaderInfo":"awayjs-core/lib/library/LoaderInfo","./library/NumSuffixConflictStrategy":"awayjs-core/lib/library/NumSuffixConflictStrategy"}],"awayjs-core/lib/managers/AudioChannel":[function(require,module,exports){
 "use strict";
 var AudioChannel = (function () {
@@ -10799,7 +10718,6 @@ var AudioChannel = (function () {
     return AudioChannel;
 }());
 exports.AudioChannel = AudioChannel;
-
 },{}],"awayjs-core/lib/managers/AudioManager":[function(require,module,exports){
 "use strict";
 var StreamingAudioChannel_1 = require("../managers/StreamingAudioChannel");
@@ -10851,7 +10769,6 @@ var AudioManager = (function () {
     return AudioManager;
 }());
 exports.AudioManager = AudioManager;
-
 },{"../managers/StreamingAudioChannel":"awayjs-core/lib/managers/StreamingAudioChannel","../managers/WebAudioChannel":"awayjs-core/lib/managers/WebAudioChannel"}],"awayjs-core/lib/managers/EventAudioChannel":[function(require,module,exports){
 "use strict";
 var ParserUtils_1 = require("../parsers/ParserUtils");
@@ -10927,13 +10844,10 @@ var EventAudioChannel = (function () {
     return EventAudioChannel;
 }());
 exports.EventAudioChannel = EventAudioChannel;
-
 },{"../parsers/ParserUtils":"awayjs-core/lib/parsers/ParserUtils"}],"awayjs-core/lib/managers/IAudioChannelClass":[function(require,module,exports){
 "use strict";
-
 },{}],"awayjs-core/lib/managers/IAudioChannel":[function(require,module,exports){
 "use strict";
-
 },{}],"awayjs-core/lib/managers/StreamingAudioChannel":[function(require,module,exports){
 "use strict";
 var StreamingAudioChannel = (function () {
@@ -11065,7 +10979,6 @@ var StreamingAudioChannel = (function () {
     return StreamingAudioChannel;
 }());
 exports.StreamingAudioChannel = StreamingAudioChannel;
-
 },{}],"awayjs-core/lib/managers/WebAudioChannel":[function(require,module,exports){
 "use strict";
 var WebAudioChannel = (function () {
@@ -11192,7 +11105,6 @@ var WebAudioChannel = (function () {
     return WebAudioChannel;
 }());
 exports.WebAudioChannel = WebAudioChannel;
-
 },{}],"awayjs-core/lib/managers":[function(require,module,exports){
 "use strict";
 var AudioManager_1 = require("./managers/AudioManager");
@@ -11201,7 +11113,6 @@ var StreamingAudioChannel_1 = require("./managers/StreamingAudioChannel");
 exports.StreamingAudioChannel = StreamingAudioChannel_1.StreamingAudioChannel;
 var WebAudioChannel_1 = require("./managers/WebAudioChannel");
 exports.WebAudioChannel = WebAudioChannel_1.WebAudioChannel;
-
 },{"./managers/AudioManager":"awayjs-core/lib/managers/AudioManager","./managers/StreamingAudioChannel":"awayjs-core/lib/managers/StreamingAudioChannel","./managers/WebAudioChannel":"awayjs-core/lib/managers/WebAudioChannel"}],"awayjs-core/lib/net/CrossDomainPolicy":[function(require,module,exports){
 "use strict";
 var CrossDomainPolicy = (function () {
@@ -11212,7 +11123,6 @@ var CrossDomainPolicy = (function () {
     return CrossDomainPolicy;
 }());
 exports.CrossDomainPolicy = CrossDomainPolicy;
-
 },{}],"awayjs-core/lib/net/URLLoaderDataFormat":[function(require,module,exports){
 "use strict";
 var URLLoaderDataFormat = (function () {
@@ -11246,7 +11156,6 @@ var URLLoaderDataFormat = (function () {
     return URLLoaderDataFormat;
 }());
 exports.URLLoaderDataFormat = URLLoaderDataFormat;
-
 },{}],"awayjs-core/lib/net/URLLoader":[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
@@ -11587,7 +11496,6 @@ var URLLoader = (function (_super) {
     return URLLoader;
 }(EventDispatcher_1.EventDispatcher));
 exports.URLLoader = URLLoader;
-
 },{"../events/EventDispatcher":"awayjs-core/lib/events/EventDispatcher","../events/URLLoaderEvent":"awayjs-core/lib/events/URLLoaderEvent","../net/URLLoaderDataFormat":"awayjs-core/lib/net/URLLoaderDataFormat","../net/URLRequestMethod":"awayjs-core/lib/net/URLRequestMethod","../net/URLVariables":"awayjs-core/lib/net/URLVariables"}],"awayjs-core/lib/net/URLRequestMethod":[function(require,module,exports){
 "use strict";
 var URLRequestMethod = (function () {
@@ -11606,7 +11514,6 @@ var URLRequestMethod = (function () {
     return URLRequestMethod;
 }());
 exports.URLRequestMethod = URLRequestMethod;
-
 },{}],"awayjs-core/lib/net/URLRequest":[function(require,module,exports){
 "use strict";
 var URLRequestMethod_1 = require("../net/URLRequestMethod");
@@ -11660,7 +11567,6 @@ var URLRequest = (function () {
     return URLRequest;
 }());
 exports.URLRequest = URLRequest;
-
 },{"../net/URLRequestMethod":"awayjs-core/lib/net/URLRequestMethod"}],"awayjs-core/lib/net/URLVariables":[function(require,module,exports){
 "use strict";
 var URLVariables = (function () {
@@ -11726,7 +11632,6 @@ var URLVariables = (function () {
     return URLVariables;
 }());
 exports.URLVariables = URLVariables;
-
 },{}],"awayjs-core/lib/net":[function(require,module,exports){
 "use strict";
 var CrossDomainPolicy_1 = require("./net/CrossDomainPolicy");
@@ -11741,7 +11646,6 @@ var URLRequestMethod_1 = require("./net/URLRequestMethod");
 exports.URLRequestMethod = URLRequestMethod_1.URLRequestMethod;
 var URLVariables_1 = require("./net/URLVariables");
 exports.URLVariables = URLVariables_1.URLVariables;
-
 },{"./net/CrossDomainPolicy":"awayjs-core/lib/net/CrossDomainPolicy","./net/URLLoader":"awayjs-core/lib/net/URLLoader","./net/URLLoaderDataFormat":"awayjs-core/lib/net/URLLoaderDataFormat","./net/URLRequest":"awayjs-core/lib/net/URLRequest","./net/URLRequestMethod":"awayjs-core/lib/net/URLRequestMethod","./net/URLVariables":"awayjs-core/lib/net/URLVariables"}],"awayjs-core/lib/parsers/Image2DParser":[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
@@ -11861,7 +11765,6 @@ var Image2DParser = (function (_super) {
     return Image2DParser;
 }(ParserBase_1.ParserBase));
 exports.Image2DParser = Image2DParser;
-
 },{"../net/URLLoaderDataFormat":"awayjs-core/lib/net/URLLoaderDataFormat","../parsers/ParserBase":"awayjs-core/lib/parsers/ParserBase","../parsers/ParserUtils":"awayjs-core/lib/parsers/ParserUtils","../utils/ByteArray":"awayjs-core/lib/utils/ByteArray"}],"awayjs-core/lib/parsers/ImageCubeParser":[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
@@ -11984,7 +11887,6 @@ var ImageCubeParser = (function (_super) {
     return ImageCubeParser;
 }(ParserBase_1.ParserBase));
 exports.ImageCubeParser = ImageCubeParser;
-
 },{"../image/BitmapImageCube":"awayjs-core/lib/image/BitmapImageCube","../net/URLLoaderDataFormat":"awayjs-core/lib/net/URLLoaderDataFormat","../net/URLRequest":"awayjs-core/lib/net/URLRequest","../parsers/ParserBase":"awayjs-core/lib/parsers/ParserBase"}],"awayjs-core/lib/parsers/ParserBase":[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
@@ -12301,7 +12203,6 @@ var ParserBase = (function (_super) {
     return ParserBase;
 }(EventDispatcher_1.EventDispatcher));
 exports.ParserBase = ParserBase;
-
 },{"../errors/AbstractMethodError":"awayjs-core/lib/errors/AbstractMethodError","../events/AssetEvent":"awayjs-core/lib/events/AssetEvent","../events/EventDispatcher":"awayjs-core/lib/events/EventDispatcher","../events/ParserEvent":"awayjs-core/lib/events/ParserEvent","../events/TimerEvent":"awayjs-core/lib/events/TimerEvent","../parsers/ParserUtils":"awayjs-core/lib/parsers/ParserUtils","../parsers/ResourceDependency":"awayjs-core/lib/parsers/ResourceDependency","../utils/ImageUtils":"awayjs-core/lib/utils/ImageUtils","../utils/Timer":"awayjs-core/lib/utils/Timer","../utils/getTimer":"awayjs-core/lib/utils/getTimer"}],"awayjs-core/lib/parsers/ParserDataFormat":[function(require,module,exports){
 "use strict";
 /**
@@ -12325,7 +12226,6 @@ var ParserDataFormat = (function () {
     return ParserDataFormat;
 }());
 exports.ParserDataFormat = ParserDataFormat;
-
 },{}],"awayjs-core/lib/parsers/ParserUtils":[function(require,module,exports){
 "use strict";
 var BitmapImage2D_1 = require("../image/BitmapImage2D");
@@ -12477,7 +12377,6 @@ var ParserUtils = (function () {
     return ParserUtils;
 }());
 exports.ParserUtils = ParserUtils;
-
 },{"../image/BitmapImage2D":"awayjs-core/lib/image/BitmapImage2D","../utils/ByteArray":"awayjs-core/lib/utils/ByteArray"}],"awayjs-core/lib/parsers/ResourceDependency":[function(require,module,exports){
 "use strict";
 /**
@@ -12639,7 +12538,6 @@ var ResourceDependency = (function () {
     return ResourceDependency;
 }());
 exports.ResourceDependency = ResourceDependency;
-
 },{}],"awayjs-core/lib/parsers/TextureAtlasParser":[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
@@ -12787,7 +12685,6 @@ var TextureAtlasParserState = (function () {
     return TextureAtlasParserState;
 }());
 exports.TextureAtlasParserState = TextureAtlasParserState;
-
 },{"../geom/Rectangle":"awayjs-core/lib/geom/Rectangle","../image/Sampler2D":"awayjs-core/lib/image/Sampler2D","../net/URLLoaderDataFormat":"awayjs-core/lib/net/URLLoaderDataFormat","../net/URLRequest":"awayjs-core/lib/net/URLRequest","../parsers/ParserBase":"awayjs-core/lib/parsers/ParserBase","../parsers/ParserUtils":"awayjs-core/lib/parsers/ParserUtils","../utils/XmlUtils":"awayjs-core/lib/utils/XmlUtils"}],"awayjs-core/lib/parsers/WaveAudioParser":[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
@@ -12833,18 +12730,25 @@ var WaveAudioParser = (function (_super) {
         return ParserBase_1.ParserBase.PARSING_DONE;
     };
     WaveAudioParser.parseFileType = function (ba) {
+        //old mp3 detections
+        // This does not seem to work for all my mp3 files (i tested different mp3 encoders)
+        // I leave it in, because it might work for mp3 data that i do not have here to test
         ba.position = 0;
-        /*
-        old mp3 detections doesnt seem to work anymore (why doid it work earlier?  i tested multiple mp3 formats...)
         if ((ba.readUnsignedShort() & 0xFFE0) == 0xFFE0) {
             return 'mp3'; // test for MP3 syncword
         }
-        */
+        // new mp3 detection
+        // this from is-mp3 npm module,
+        // but still i have mp3 files that are not detected by this
+        // i added the hack: (byte_1 === 255 && byte_2 === 243 && byte_3 === 130) 	to catch those mp3s
+        // todo: find a more foolproof way to detect al mp3 (my hack might collide with detection for other filetypes)
+        ba.position = 0;
         var byte_1 = ba.readUnsignedByte();
         var byte_2 = ba.readUnsignedByte();
         var byte_3 = ba.readUnsignedByte();
         if ((byte_1 === 73 && byte_2 === 68 && byte_3 === 51)
-            || (byte_1 === 255 && byte_2 === 251)) {
+            || (byte_1 === 255 && byte_2 === 251)
+            || (byte_1 === 255 && byte_2 === 243 && byte_3 === 130)) {
             return 'mp3';
         }
         ba.position = 0;
@@ -12859,7 +12763,6 @@ var WaveAudioParser = (function (_super) {
     return WaveAudioParser;
 }(ParserBase_1.ParserBase));
 exports.WaveAudioParser = WaveAudioParser;
-
 },{"../audio/WaveAudio":"awayjs-core/lib/audio/WaveAudio","../net/URLLoaderDataFormat":"awayjs-core/lib/net/URLLoaderDataFormat","../parsers/ParserBase":"awayjs-core/lib/parsers/ParserBase","../utils/ByteArray":"awayjs-core/lib/utils/ByteArray"}],"awayjs-core/lib/parsers":[function(require,module,exports){
 "use strict";
 var Image2DParser_1 = require("./parsers/Image2DParser");
@@ -12878,7 +12781,6 @@ var TextureAtlasParser_1 = require("./parsers/TextureAtlasParser");
 exports.TextureAtlasParser = TextureAtlasParser_1.TextureAtlasParser;
 var WaveAudioParser_1 = require("./parsers/WaveAudioParser");
 exports.WaveAudioParser = WaveAudioParser_1.WaveAudioParser;
-
 },{"./parsers/Image2DParser":"awayjs-core/lib/parsers/Image2DParser","./parsers/ImageCubeParser":"awayjs-core/lib/parsers/ImageCubeParser","./parsers/ParserBase":"awayjs-core/lib/parsers/ParserBase","./parsers/ParserDataFormat":"awayjs-core/lib/parsers/ParserDataFormat","./parsers/ParserUtils":"awayjs-core/lib/parsers/ParserUtils","./parsers/ResourceDependency":"awayjs-core/lib/parsers/ResourceDependency","./parsers/TextureAtlasParser":"awayjs-core/lib/parsers/TextureAtlasParser","./parsers/WaveAudioParser":"awayjs-core/lib/parsers/WaveAudioParser"}],"awayjs-core/lib/projections/CoordinateSystem":[function(require,module,exports){
 "use strict";
 /**
@@ -12900,7 +12802,6 @@ var CoordinateSystem = (function () {
     return CoordinateSystem;
 }());
 exports.CoordinateSystem = CoordinateSystem;
-
 },{}],"awayjs-core/lib/projections/FreeMatrixProjection":[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
@@ -12957,10 +12858,8 @@ var FreeMatrixProjection = (function (_super) {
     return FreeMatrixProjection;
 }(ProjectionBase_1.ProjectionBase));
 exports.FreeMatrixProjection = FreeMatrixProjection;
-
 },{"../projections/PerspectiveProjection":"awayjs-core/lib/projections/PerspectiveProjection","../projections/ProjectionBase":"awayjs-core/lib/projections/ProjectionBase"}],"awayjs-core/lib/projections/IProjection":[function(require,module,exports){
 "use strict";
-
 },{}],"awayjs-core/lib/projections/ObliqueNearPlaneProjection":[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
@@ -13072,7 +12971,6 @@ var ObliqueNearPlaneProjection = (function (_super) {
     return ObliqueNearPlaneProjection;
 }(ProjectionBase_1.ProjectionBase));
 exports.ObliqueNearPlaneProjection = ObliqueNearPlaneProjection;
-
 },{"../events/ProjectionEvent":"awayjs-core/lib/events/ProjectionEvent","../geom/Vector3D":"awayjs-core/lib/geom/Vector3D","../projections/ProjectionBase":"awayjs-core/lib/projections/ProjectionBase"}],"awayjs-core/lib/projections/OrthographicOffCenterProjection":[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
@@ -13178,7 +13076,6 @@ var OrthographicOffCenterProjection = (function (_super) {
     return OrthographicOffCenterProjection;
 }(ProjectionBase_1.ProjectionBase));
 exports.OrthographicOffCenterProjection = OrthographicOffCenterProjection;
-
 },{"../geom/Matrix3DUtils":"awayjs-core/lib/geom/Matrix3DUtils","../geom/Vector3D":"awayjs-core/lib/geom/Vector3D","../projections/ProjectionBase":"awayjs-core/lib/projections/ProjectionBase"}],"awayjs-core/lib/projections/OrthographicProjection":[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
@@ -13279,7 +13176,6 @@ var OrthographicProjection = (function (_super) {
     return OrthographicProjection;
 }(ProjectionBase_1.ProjectionBase));
 exports.OrthographicProjection = OrthographicProjection;
-
 },{"../geom/Matrix3DUtils":"awayjs-core/lib/geom/Matrix3DUtils","../geom/Vector3D":"awayjs-core/lib/geom/Vector3D","../projections/ProjectionBase":"awayjs-core/lib/projections/ProjectionBase"}],"awayjs-core/lib/projections/PerspectiveProjection":[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
@@ -13479,7 +13375,6 @@ var PerspectiveProjection = (function (_super) {
     return PerspectiveProjection;
 }(ProjectionBase_1.ProjectionBase));
 exports.PerspectiveProjection = PerspectiveProjection;
-
 },{"../geom/Matrix3DUtils":"awayjs-core/lib/geom/Matrix3DUtils","../geom/Vector3D":"awayjs-core/lib/geom/Vector3D","../projections/CoordinateSystem":"awayjs-core/lib/projections/CoordinateSystem","../projections/ProjectionBase":"awayjs-core/lib/projections/ProjectionBase"}],"awayjs-core/lib/projections/ProjectionBase":[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
@@ -13669,7 +13564,6 @@ var ProjectionBase = (function (_super) {
     return ProjectionBase;
 }(EventDispatcher_1.EventDispatcher));
 exports.ProjectionBase = ProjectionBase;
-
 },{"../errors/AbstractMethodError":"awayjs-core/lib/errors/AbstractMethodError","../events/EventDispatcher":"awayjs-core/lib/events/EventDispatcher","../events/ProjectionEvent":"awayjs-core/lib/events/ProjectionEvent","../geom/Matrix3D":"awayjs-core/lib/geom/Matrix3D","../geom/Rectangle":"awayjs-core/lib/geom/Rectangle"}],"awayjs-core/lib/projections":[function(require,module,exports){
 "use strict";
 var CoordinateSystem_1 = require("./projections/CoordinateSystem");
@@ -13686,7 +13580,6 @@ var PerspectiveProjection_1 = require("./projections/PerspectiveProjection");
 exports.PerspectiveProjection = PerspectiveProjection_1.PerspectiveProjection;
 var ProjectionBase_1 = require("./projections/ProjectionBase");
 exports.ProjectionBase = ProjectionBase_1.ProjectionBase;
-
 },{"./projections/CoordinateSystem":"awayjs-core/lib/projections/CoordinateSystem","./projections/FreeMatrixProjection":"awayjs-core/lib/projections/FreeMatrixProjection","./projections/ObliqueNearPlaneProjection":"awayjs-core/lib/projections/ObliqueNearPlaneProjection","./projections/OrthographicOffCenterProjection":"awayjs-core/lib/projections/OrthographicOffCenterProjection","./projections/OrthographicProjection":"awayjs-core/lib/projections/OrthographicProjection","./projections/PerspectiveProjection":"awayjs-core/lib/projections/PerspectiveProjection","./projections/ProjectionBase":"awayjs-core/lib/projections/ProjectionBase"}],"awayjs-core/lib/ui/Keyboard":[function(require,module,exports){
 "use strict";
 var Keyboard = (function () {
@@ -14508,12 +14401,10 @@ var Keyboard = (function () {
     return Keyboard;
 }());
 exports.Keyboard = Keyboard;
-
 },{}],"awayjs-core/lib/ui":[function(require,module,exports){
 "use strict";
 var Keyboard_1 = require("./ui/Keyboard");
 exports.Keyboard = Keyboard_1.Keyboard;
-
 },{"./ui/Keyboard":"awayjs-core/lib/ui/Keyboard"}],"awayjs-core/lib/utils/BitmapImageUtils":[function(require,module,exports){
 "use strict";
 var ColorUtils_1 = require("../utils/ColorUtils");
@@ -14549,7 +14440,6 @@ var BitmapImageUtils = (function () {
     return BitmapImageUtils;
 }());
 exports.BitmapImageUtils = BitmapImageUtils;
-
 },{"../utils/ColorUtils":"awayjs-core/lib/utils/ColorUtils"}],"awayjs-core/lib/utils/ByteArrayBase":[function(require,module,exports){
 "use strict";
 var AbstractMethodError_1 = require("../errors/AbstractMethodError");
@@ -14692,7 +14582,6 @@ var ByteArrayBase = (function () {
     return ByteArrayBase;
 }());
 exports.ByteArrayBase = ByteArrayBase;
-
 },{"../errors/AbstractMethodError":"awayjs-core/lib/errors/AbstractMethodError"}],"awayjs-core/lib/utils/ByteArrayBuffer":[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
@@ -14812,7 +14701,6 @@ var ByteArrayBuffer = (function (_super) {
     return ByteArrayBuffer;
 }(ByteArrayBase_1.ByteArrayBase));
 exports.ByteArrayBuffer = ByteArrayBuffer;
-
 },{"../utils/ByteArrayBase":"awayjs-core/lib/utils/ByteArrayBase"}],"awayjs-core/lib/utils/ByteArray":[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
@@ -15049,7 +14937,6 @@ var ByteArray = (function (_super) {
     return ByteArray;
 }(ByteArrayBase_1.ByteArrayBase));
 exports.ByteArray = ByteArray;
-
 },{"../utils/ByteArrayBase":"awayjs-core/lib/utils/ByteArrayBase"}],"awayjs-core/lib/utils/CSS":[function(require,module,exports){
 "use strict";
 var CSS = (function () {
@@ -15124,7 +15011,6 @@ var CSS = (function () {
     return CSS;
 }());
 exports.CSS = CSS;
-
 },{}],"awayjs-core/lib/utils/ColorUtils":[function(require,module,exports){
 "use strict";
 /**
@@ -15157,7 +15043,6 @@ var ColorUtils = (function () {
     return ColorUtils;
 }());
 exports.ColorUtils = ColorUtils;
-
 },{}],"awayjs-core/lib/utils/Debug":[function(require,module,exports){
 "use strict";
 var PartialImplementationError_1 = require("../errors/PartialImplementationError");
@@ -15208,7 +15093,6 @@ var Debug = (function () {
     return Debug;
 }());
 exports.Debug = Debug;
-
 },{"../errors/PartialImplementationError":"awayjs-core/lib/errors/PartialImplementationError"}],"awayjs-core/lib/utils/Extensions":[function(require,module,exports){
 "use strict";
 /**
@@ -15221,10 +15105,8 @@ var Extensions = (function () {
     return Extensions;
 }());
 exports.Extensions = Extensions;
-
 },{}],"awayjs-core/lib/utils/IArrayBufferViewClass":[function(require,module,exports){
 "use strict";
-
 },{}],"awayjs-core/lib/utils/ImageUtils":[function(require,module,exports){
 "use strict";
 var ImageUtils = (function () {
@@ -15261,7 +15143,6 @@ var ImageUtils = (function () {
 exports.ImageUtils = ImageUtils;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = ImageUtils;
-
 },{}],"awayjs-core/lib/utils/MipmapGenerator":[function(require,module,exports){
 "use strict";
 var BitmapImage2D_1 = require("../image/BitmapImage2D");
@@ -15500,7 +15381,6 @@ var BoxFilter = (function () {
 exports.BoxFilter = BoxFilter;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = MipmapGenerator;
-
 },{"../geom/Matrix":"awayjs-core/lib/geom/Matrix","../geom/Rectangle":"awayjs-core/lib/geom/Rectangle","../image/BitmapImage2D":"awayjs-core/lib/image/BitmapImage2D"}],"awayjs-core/lib/utils/RequestAnimationFrame":[function(require,module,exports){
 "use strict";
 var getTimer_1 = require("../utils/getTimer");
@@ -15581,7 +15461,6 @@ var RequestAnimationFrame = (function () {
     return RequestAnimationFrame;
 }());
 exports.RequestAnimationFrame = RequestAnimationFrame;
-
 },{"../utils/getTimer":"awayjs-core/lib/utils/getTimer"}],"awayjs-core/lib/utils/Timer":[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
@@ -15672,7 +15551,6 @@ var Timer = (function (_super) {
     return Timer;
 }(EventDispatcher_1.EventDispatcher));
 exports.Timer = Timer;
-
 },{"../errors/ErrorBase":"awayjs-core/lib/errors/ErrorBase","../events/EventDispatcher":"awayjs-core/lib/events/EventDispatcher","../events/TimerEvent":"awayjs-core/lib/events/TimerEvent"}],"awayjs-core/lib/utils/XmlUtils":[function(require,module,exports){
 "use strict";
 var XmlUtils = (function () {
@@ -15751,7 +15629,6 @@ var XmlUtils = (function () {
 exports.XmlUtils = XmlUtils;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = XmlUtils;
-
 },{}],"awayjs-core/lib/utils/getTimer":[function(require,module,exports){
 "use strict";
 /**
@@ -15766,7 +15643,6 @@ function getTimer() {
     return Date.now();
 }
 exports.getTimer = getTimer;
-
 },{}],"awayjs-core/lib/utils":[function(require,module,exports){
 "use strict";
 var BitmapImageUtils_1 = require("./utils/BitmapImageUtils");
@@ -15797,6 +15673,5 @@ var Timer_1 = require("./utils/Timer");
 exports.Timer = Timer_1.Timer;
 var XmlUtils_1 = require("./utils/XmlUtils");
 exports.XmlUtils = XmlUtils_1.XmlUtils;
-
 },{"./utils/BitmapImageUtils":"awayjs-core/lib/utils/BitmapImageUtils","./utils/ByteArray":"awayjs-core/lib/utils/ByteArray","./utils/ByteArrayBase":"awayjs-core/lib/utils/ByteArrayBase","./utils/ByteArrayBuffer":"awayjs-core/lib/utils/ByteArrayBuffer","./utils/CSS":"awayjs-core/lib/utils/CSS","./utils/ColorUtils":"awayjs-core/lib/utils/ColorUtils","./utils/Debug":"awayjs-core/lib/utils/Debug","./utils/Extensions":"awayjs-core/lib/utils/Extensions","./utils/ImageUtils":"awayjs-core/lib/utils/ImageUtils","./utils/MipmapGenerator":"awayjs-core/lib/utils/MipmapGenerator","./utils/RequestAnimationFrame":"awayjs-core/lib/utils/RequestAnimationFrame","./utils/Timer":"awayjs-core/lib/utils/Timer","./utils/XmlUtils":"awayjs-core/lib/utils/XmlUtils","./utils/getTimer":"awayjs-core/lib/utils/getTimer"}]},{},[1])
 //# sourceMappingURL=awayjs-core.js.map

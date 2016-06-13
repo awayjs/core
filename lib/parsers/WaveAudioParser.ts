@@ -55,20 +55,28 @@ export class WaveAudioParser extends ParserBase
 
 	private static parseFileType(ba:ByteArray):string
 	{
-		ba.position = 0;
 
-		/*
-		old mp3 detections doesnt seem to work anymore (why doid it work earlier?  i tested multiple mp3 formats...)
+
+		//old mp3 detections
+		// This does not seem to work for all my mp3 files (i tested different mp3 encoders)
+		// I leave it in, because it might work for mp3 data that i do not have here to test
+		ba.position = 0;
 		if ((ba.readUnsignedShort() & 0xFFE0) == 0xFFE0) {
 			return 'mp3'; // test for MP3 syncword
 		}
-		*/
 
+		// new mp3 detection
+		// this from is-mp3 npm module,
+		// but still i have mp3 files that are not detected by this
+		// i added the hack: (byte_1 === 255 && byte_2 === 243 && byte_3 === 130) 	to catch those mp3s
+		// todo: find a more foolproof way to detect al mp3 (my hack might collide with detection for other filetypes)
+		ba.position = 0;
 		var byte_1:number=ba.readUnsignedByte();
 		var byte_2:number=ba.readUnsignedByte();
 		var byte_3:number=ba.readUnsignedByte();
 		if ((byte_1 === 73 && byte_2 === 68 && byte_3 === 51)
-			|| (byte_1 === 255 && byte_2 === 251)){
+			|| (byte_1 === 255 && byte_2 === 251)
+			|| (byte_1 === 255 && byte_2 === 243 && byte_3 === 130)){
 			return 'mp3';
 		}
 		

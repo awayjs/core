@@ -1,16 +1,15 @@
 {
   "name": "@awayjs/core",
-  "version": "0.6.39",
+  "version": "0.6.40",
   "description": "AwayJS core classes",
   "url": "http://www.away3d.com",
-  "author": "The Away Foundation <admin@theawayfoundation.org>",
-  "repository": "awayjs/core",
-  "scripts": {
-    "postversion": "git push && git push --tags && npm publish"
-  },
+  "author": "Rob Bateman",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/awayjs/awayjs-core.git"
+  },
+  "scripts": {
+    "postversion": "git push && git push --tags && npm publish"
   },
   "keywords": [
     "AwayJS",
@@ -19,12 +18,10 @@
     "3D",
     "graphics"
   ],
-  "author": "Rob Bateman",
   "license": "Apache-2.0",
   "bugs": {
     "url": "https://github.com/awayjs/awayjs-core/issues"
   },
   "homepage": "https://github.com/awayjs/awayjs-core#readme",
-  "devDependencies": {
-  }
+  "devDependencies": {}
 }

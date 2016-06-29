@@ -1,0 +1,32 @@
+export declare class WebAudioChannel {
+    static maxChannels: number;
+    static _channels: Array<WebAudioChannel>;
+    static _decodeCache: Object;
+    static _errorCache: Object;
+    private static _audioCtx;
+    private _audioCtx;
+    private _gainNode;
+    private _source;
+    private _isPlaying;
+    private _isLooping;
+    private _isDecoding;
+    private _currentTime;
+    private _id;
+    private _volume;
+    private _startTime;
+    private _duration;
+    private _onEndedDelegate;
+    readonly duration: number;
+    readonly currentTime: number;
+    volume: number;
+    isPlaying(): boolean;
+    isLooping(): boolean;
+    isDecoding(): boolean;
+    constructor();
+    play(buffer: ArrayBuffer, offset?: number, loop?: boolean, id?: number): void;
+    stop(): void;
+    _onDecodeComplete(buffer: any): void;
+    _onError(event: any): void;
+    private _onEnded(event);
+    private _disposeSource();
+}

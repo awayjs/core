@@ -6,9 +6,17 @@
   "author": "Rob Bateman",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/awayjs/awayjs-core.git"
+    "url": "git+https://github.com/awayjs/core.git"
   },
   "scripts": {
+    "rimraf": "rimraf",
+    "tsc": "tsc",
+    "clean": "npm cache clean && npm run rimraf -- node_modules dist",
+    "clean:dist": "npm run rimraf -- dist",
+    "watch": "npm run build -- --w",
+    "prebuild": "npm run clean:dist",
+    "build": "tsc",
+    "version": "npm run build",
     "postversion": "git push && git push --tags && npm publish"
   },
   "keywords": [
@@ -20,8 +28,11 @@
   ],
   "license": "Apache-2.0",
   "bugs": {
-    "url": "https://github.com/awayjs/awayjs-core/issues"
+    "url": "https://github.com/awayjs/core/issues"
   },
-  "homepage": "https://github.com/awayjs/awayjs-core#readme",
-  "devDependencies": {}
+  "homepage": "https://github.com/awayjs/core#readme",
+  "devDependencies": {
+    "rimraf": "^2.5.2",
+    "typescript": "^1.9.0-dev.20160603-1.0"
+  }
 }

@@ -3,8 +3,11 @@
     "target": "ES5",
     "module": "commonjs",
     "moduleResolution": "node",
-    "sourceMap": true
+    "declaration": true,
+    "outDir": "./dist",
+    "baseUrl": "."
   },
   "files": [
+    "./index.ts"
   ]
 }

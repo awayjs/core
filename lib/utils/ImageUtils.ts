@@ -2,7 +2,7 @@ import {Image2D}						from "../image/Image2D";
 
 export class ImageUtils
 {
-	private static MAX_SIZE:number = 2048;
+	private static MAX_SIZE:number = 8192;
 
 	public static isImage2DValid(image2D:Image2D):boolean
 	{

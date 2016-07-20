@@ -151,6 +151,13 @@ export class AttributesView extends AssetBase
 
 		return cloneCache;
 	}
+	
+	public invalidate()
+	{
+		super.invalidate();
+		
+		this._attributesBuffer.invalidate();
+	}
 
 	/**
 	 * @inheritDoc

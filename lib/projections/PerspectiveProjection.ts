@@ -60,6 +60,9 @@ export class PerspectiveProjection extends ProjectionBase
 	 */
 	public get fieldOfView():number
 	{
+		if (this._pMatrixInvalid && this._preserveFocalLength)
+			this.pUpdateMatrix();
+
 		return this._fieldOfView;
 	}
 
@@ -78,6 +81,9 @@ export class PerspectiveProjection extends ProjectionBase
 	 */
 	public get focalLength():number
 	{
+		if (this._pMatrixInvalid && !this._preserveFocalLength)
+			this.pUpdateMatrix();
+
 		return this._focalLength;
 	}
 
@@ -96,6 +102,9 @@ export class PerspectiveProjection extends ProjectionBase
 	 */
 	public get hFieldOfView():number
 	{
+		if (this._pMatrixInvalid && this._preserveFocalLength)
+			this.pUpdateMatrix();
+
 		return this._hFieldOfView;
 	}
 
@@ -116,6 +125,9 @@ export class PerspectiveProjection extends ProjectionBase
 	 */
 	public get hFocalLength():number
 	{
+		if (this._pMatrixInvalid && !this._preserveFocalLength)
+			this.pUpdateMatrix();
+
 		return this._hFocalLength;
 	}
 

@@ -137,7 +137,7 @@ export class BitmapImage2D extends Image2D
 		super(width, height, powerOfTwo);
 
 		this._transparent = transparent;
-		if(document) {
+		if(typeof document !== "undefined") {
 			this._imageCanvas = <IImageCanvas> document.createElement("canvas");
 		}else {
 			this._imageCanvas = new CPUCanvas();

@@ -42,7 +42,7 @@ export class MipmapGenerator {
 			MipmapGenerator._matrix.a = MipmapGenerator._rect.width / source.width;
 			MipmapGenerator._matrix.d = MipmapGenerator._rect.height / source.height;
 			//todo: add support for NPOT textures
-			if (document) {
+			if (typeof document !== "undefined") {
 				mipmap.draw(source, MipmapGenerator._matrix); //TODO: smoothing?
 			} else {
 				if (source.constructor.toString().indexOf("BitmapImage2D") > -1) {

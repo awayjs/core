@@ -32,9 +32,30 @@ export class ByteArray extends ByteArrayBase
 		localInt8View.set(inInt8AView);
 
 		this.position = 0;
-
 	}
 
+	public writeArrayBuffer(aBuffer:ArrayBuffer):void
+	{
+		this.ensureWriteableSpace(aBuffer.byteLength);
+
+		var inInt8AView:Int8Array = new Int8Array(aBuffer);
+		var localInt8View:Int8Array = new Int8Array(this.arraybytes, this.length, aBuffer.byteLength);
+		localInt8View.set(inInt8AView);
+		this.length += aBuffer.byteLength;
+		this.position = this.length;
+
+	}
+	public writeByteArray(ba:ByteArray):void
+	{
+		this.ensureWriteableSpace(ba.length);
+
+		var inInt8AView:Int8Array = new Int8Array(ba.arraybytes, 0, ba.length);
+		var localInt8View:Int8Array = new Int8Array(this.arraybytes, this.length, ba.length);
+		localInt8View.set(inInt8AView);
+		this.length += ba.length;
+		this.position = this.length;
+
+	}
 	public getBytesAvailable():number
 	{
 		return ( this.length ) - ( this.position );
@@ -138,7 +159,6 @@ export class ByteArray extends ByteArrayBase
 		var value:string = "";
 		var max:number = this.position + len;
 		var data:DataView = new DataView(this.arraybytes);
-
 		// utf8-encode
 		while (this.position < max) {
 
@@ -172,6 +192,20 @@ export class ByteArray extends ByteArrayBase
 		return value;
 	}
 
+	public writeUTFBytes(s:string) {
+		var escstr = encodeURIComponent(s);
+		var binstr = escstr.replace(/%([0-9A-F]{2})/g, function(match, p1) {
+			return String.fromCharCode(parseInt('0x' + p1));
+		});
+
+		this.ensureWriteableSpace(4+binstr.length);
+		this.writeUnsignedInt(binstr.length);
+		for (var i=0; i<binstr.length; i++){
+			this.writeUnsignedByte(binstr.charCodeAt(i)); //todo: there are probably faster ways to do this
+
+		}
+		return binstr.length;
+	}
 	public readInt():number
 	{
 		var data:DataView = new DataView(this.arraybytes);

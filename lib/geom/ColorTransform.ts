@@ -42,7 +42,7 @@ import {ColorUtils}			from "../utils/ColorUtils";
  */
 export class ColorTransform
 {
-	public rawData:Float32Array = new Float32Array(8);
+	public _rawData:Float32Array;
 	
 	/**
 	 * A decimal value that is multiplied with the alpha transparency channel
@@ -55,12 +55,12 @@ export class ColorTransform
 	 */
 	public get alphaMultiplier():number
 	{
-		return this.rawData[3];
+		return this._rawData[3];
 	}
 
 	public set alphaMultiplier(value:number)
 	{
-		this.rawData[3] = value;
+		this._rawData[3] = value;
 	}
 
 	/**
@@ -70,12 +70,12 @@ export class ColorTransform
 	 */
 	public get alphaOffset():number
 	{
-		return this.rawData[7]*0xFF;
+		return this._rawData[7]*0xFF;
 	}
 
 	public set alphaOffset(value:number)
 	{
-		this.rawData[7] = value/0xFF;
+		this._rawData[7] = value/0xFF;
 	}
 
 	/**
@@ -83,12 +83,12 @@ export class ColorTransform
 	 */
 	public get blueMultiplier():number
 	{
-		return this.rawData[2];
+		return this._rawData[2];
 	}
 
 	public set blueMultiplier(value:number)
 	{
-		this.rawData[2] = value;
+		this._rawData[2] = value;
 	}
 
 	/**
@@ -97,12 +97,12 @@ export class ColorTransform
 	 */
 	public get blueOffset():number
 	{
-		return this.rawData[6]*0xFF;
+		return this._rawData[6]*0xFF;
 	}
 
 	public set blueOffset(value:number)
 	{
-		this.rawData[6] = value/0xFF;
+		this._rawData[6] = value/0xFF;
 	}
 
 	/**
@@ -110,12 +110,12 @@ export class ColorTransform
 	 */
 	public get greenMultiplier():number
 	{
-		return this.rawData[1];
+		return this._rawData[1];
 	}
 
 	public set greenMultiplier(value:number)
 	{
-		this.rawData[1] = value;
+		this._rawData[1] = value;
 	}
 
 	/**
@@ -124,12 +124,12 @@ export class ColorTransform
 	 */
 	public get greenOffset():number
 	{
-		return this.rawData[5]*0xFF;
+		return this._rawData[5]*0xFF;
 	}
 
 	public set greenOffset(value:number)
 	{
-		this.rawData[5] = value/0xFF;
+		this._rawData[5] = value/0xFF;
 	}
 
 	/**
@@ -137,12 +137,12 @@ export class ColorTransform
 	 */
 	public get redMultiplier():number
 	{
-		return this.rawData[0];
+		return this._rawData[0];
 	}
 
 	public set redMultiplier(value:number)
 	{
-		this.rawData[0] = value;
+		this._rawData[0] = value;
 	}
 
 	/**
@@ -151,12 +151,12 @@ export class ColorTransform
 	 */
 	public get redOffset():number
 	{
-		return this.rawData[4]*0xFF;
+		return this._rawData[4]*0xFF;
 	}
 
 	public set redOffset(value:number)
 	{
-		this.rawData[4] = value/0xFF;
+		this._rawData[4] = value/0xFF;
 	}
 
 	/**
@@ -177,20 +177,20 @@ export class ColorTransform
 	 */
 	public get color():number
 	{
-		return((this.rawData[0] << 16) | ( this.rawData[1] << 8) | this.rawData[2]);
+		return((this._rawData[0] << 16) | ( this._rawData[1] << 8) | this._rawData[2]);
 	}
 
 	public set color(value:number)
 	{
 		var argb:number[] = ColorUtils.float32ColorToARGB(value);
 
-		this.rawData[4] = argb[1];  //(value >> 16) & 0xFF;
-		this.rawData[5] = argb[2];  //(value >> 8) & 0xFF;
-		this.rawData[6] = argb[3];  //value & 0xFF;
+		this._rawData[4] = argb[1];  //(value >> 16) & 0xFF;
+		this._rawData[5] = argb[2];  //(value >> 8) & 0xFF;
+		this._rawData[6] = argb[3];  //value & 0xFF;
 
-		this.rawData[0] = 0;
-		this.rawData[1] = 0;
-		this.rawData[2] = 0;
+		this._rawData[0] = 0;
+		this._rawData[1] = 0;
+		this._rawData[2] = 0;
 	}
 
 	/**
@@ -219,8 +219,9 @@ export class ColorTransform
 	constructor(redMultiplier:number | Float32Array = 1, greenMultiplier:number = 1, blueMultiplier:number = 1, alphaMultiplier:number = 1, redOffset:number = 0, greenOffset:number = 0, blueOffset:number = 0, alphaOffset:number = 0)
 	{
 		if (redMultiplier instanceof Float32Array) {
-			this.copyRawDataFrom(redMultiplier);
+			this._rawData = redMultiplier;
 		} else {
+			this._rawData = new Float32Array(8);
 			this.redMultiplier = Number(redMultiplier);
 			this.greenMultiplier = greenMultiplier;
 			this.blueMultiplier = blueMultiplier;
@@ -232,46 +233,66 @@ export class ColorTransform
 		}
 	}
 
-	public copyRawDataFrom(vector:Float32Array, index:number = 0):void
+	public copyRawDataFrom(sourceData:Float32Array):void
 	{
-		for (var c:number = 0; c < 8; c++)
-			this.rawData[c] = vector[c + index];
+		var targetData = this._rawData;
+
+		targetData[0] = targetData[0];
+		targetData[1] = targetData[1];
+		targetData[2] = targetData[2];
+		targetData[3] = targetData[3];
+		targetData[4] = targetData[4];
+		targetData[5] = targetData[5];
+		targetData[6] = targetData[6];
+		targetData[7] = targetData[7];
 	}
 
     public clear()
     {
-        this.rawData[0] = 1;
-        this.rawData[1] = 1;
-        this.rawData[2] = 1;
-        this.rawData[3] = 1;
-        this.rawData[4] = 0;
-        this.rawData[5] = 0;
-        this.rawData[6] = 0;
-        this.rawData[7] = 0;
+        this._rawData[0] = 1;
+        this._rawData[1] = 1;
+        this._rawData[2] = 1;
+        this._rawData[3] = 1;
+        this._rawData[4] = 0;
+        this._rawData[5] = 0;
+        this._rawData[6] = 0;
+        this._rawData[7] = 0;
     }
 
     public clone():ColorTransform
     {
-        return new ColorTransform(this.rawData);
+		var colorTransform:ColorTransform = new ColorTransform();
+
+		colorTransform.copyFrom(this);
+		
+		return colorTransform;
     }
 
     public copyFrom(source:ColorTransform)
     {
-		for (var c:number = 0; c < 8; c++)
-			this.rawData[c] = source.rawData[c];
+		var sourceData = source._rawData, targetData = this._rawData;
+
+		targetData[0] = sourceData[0];
+		targetData[1] = sourceData[1];
+		targetData[2] = sourceData[2];
+		targetData[3] = sourceData[3];
+		targetData[4] = sourceData[4];
+		targetData[5] = sourceData[5];
+		targetData[6] = sourceData[6];
+		targetData[7] = sourceData[7];
     }
 
-    public copyTo(destination:ColorTransform)
+    public copyTo(target:ColorTransform)
     {
-        destination.copyFrom(this);
+		target.copyFrom(this);
     }
 
     public prepend(ct:ColorTransform)
     {
-        this.rawData[4] += ct.rawData[4] * this.rawData[0];
-        this.rawData[5] += ct.rawData[5] * this.rawData[1];
-        this.rawData[6] += ct.rawData[6] * this.rawData[2];
-        this.rawData[7] += ct.rawData[7] * this.rawData[3];
+        this._rawData[4] += ct._rawData[4] * this._rawData[0];
+        this._rawData[5] += ct._rawData[5] * this._rawData[1];
+        this._rawData[6] += ct._rawData[6] * this._rawData[2];
+        this._rawData[7] += ct._rawData[7] * this._rawData[3];
 
         this.redMultiplier *= ct.redMultiplier;
         this.greenMultiplier *= ct.greenMultiplier;
@@ -281,6 +302,6 @@ export class ColorTransform
 	
 	public _isRenderable():boolean
 	{
-		return this.rawData[3] != 0 || this.rawData[7] > 0;
+		return this._rawData[3] != 0 || this._rawData[7] > 0;
 	}
 }

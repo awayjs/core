@@ -199,9 +199,15 @@ export class ByteArray extends ByteArrayBase
 		});
 
 		this.ensureWriteableSpace(4+binstr.length);
-		this.writeUnsignedInt(binstr.length);
+		this.writeInt(binstr.length);
 		for (var i=0; i<binstr.length; i++){
 			this.writeUnsignedByte(binstr.charCodeAt(i)); //todo: there are probably faster ways to do this
+		}
+		if(binstr.length%4){
+			var paddingbytes:number=binstr.length%4;
+			for (var i=0; i<paddingbytes; i++){
+				this.writeUnsignedByte(0);
+			}
 
 		}
 		return binstr.length;
@@ -266,6 +272,26 @@ export class ByteArray extends ByteArrayBase
 		} else {
 			var view = new Uint32Array(this.unalignedarraybytestemp, 0, 1);
 			view[0] = (~~b) & 0xffffffff;
+			var view2 = new Uint8Array(this.arraybytes, this.position, 4);
+			var view3 = new Uint8Array(this.unalignedarraybytestemp, 0, 4);
+			view2.set(view3);
+		}
+		this.position += 4;
+
+		if (this.position > this.length)
+			this.length = this.position;
+	}
+
+	public writeInt(b:number):void
+	{
+		this.ensureWriteableSpace(4);
+
+		if (( this.position & 3 ) == 0) {
+			var view = new Int32Array(this.arraybytes);
+			view[ this.position >> 2 ] = (~~b); // ~~ is cast to int in js...
+		} else {
+			var view = new Int32Array(this.unalignedarraybytestemp, 0, 1);
+			view[0] = (~~b);
 			var view2 = new Uint8Array(this.arraybytes, this.position, 4);
 			var view3 = new Uint8Array(this.unalignedarraybytestemp, 0, 4);
 			view2.set(view3);

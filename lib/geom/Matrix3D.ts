@@ -303,6 +303,8 @@ export class Matrix3D
 			targetData[13] = sourceData[13];
 			targetData[14] = sourceData[14];
 		}
+
+		this._positionDirty = true;
 	}
 
 	/**
@@ -349,6 +351,8 @@ export class Matrix3D
 			targetData[13] = sourceData[offset + 13];
 			targetData[14] = sourceData[offset + 14];
 		}
+
+		this._positionDirty = true;
 	}
 
 	public copyRawDataTo(targetData:Float32Array, offset:number = 0, transpose:boolean = false):void
@@ -401,6 +405,8 @@ export class Matrix3D
 		this._rawData[row + 4] = vector3D.y;
 		this._rawData[row + 8] = vector3D.z;
 		this._rawData[row + 12] = vector3D.w;
+
+		this._positionDirty = true;
 	}
 
 	/**
@@ -415,6 +421,8 @@ export class Matrix3D
 		vector3D.y = this._rawData[row + 4];
 		vector3D.z = this._rawData[row + 8];
 		vector3D.w = this._rawData[row + 12];
+
+		this._positionDirty = true;
 	}
 
 	/**

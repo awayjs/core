@@ -22,7 +22,7 @@ export class Matrix3DUtils
 	 *
 	 * @param    quarternion    The quarterion object to convert.
 	 */
-	public static quaternion2matrix(quarternion:Quaternion, m:Matrix3D = null):Matrix3D
+	public static quaternion2matrix(quarternion:Quaternion, target:Matrix3D = null):Matrix3D
 	{
 		var x:number = quarternion.x;
 		var y:number = quarternion.y;
@@ -41,24 +41,25 @@ export class Matrix3DUtils
 		var zz:number = z*z;
 		var zw:number = z*w;
 
-		var raw:Float32Array = Matrix3DUtils.RAW_DATA_CONTAINER;
-		raw[0] = 1 - 2*(yy + zz);
-		raw[1] = 2*(xy + zw);
-		raw[2] = 2*(xz - yw);
-		raw[4] = 2*(xy - zw);
-		raw[5] = 1 - 2*(xx + zz);
-		raw[6] = 2*(yz + xw);
-		raw[8] = 2*(xz + yw);
-		raw[9] = 2*(yz - xw);
-		raw[10] = 1 - 2*(xx + yy);
-		raw[3] = raw[7] = raw[11] = raw[12] = raw[13] = raw[14] = 0;
-		raw[15] = 1;
+		if (!target)
+			target = new Matrix3D();
+		
+		var rawData:Float32Array = target._rawData;
+		rawData[0] = 1 - 2*(yy + zz);
+		rawData[1] = 2*(xy + zw);
+		rawData[2] = 2*(xz - yw);
+		rawData[4] = 2*(xy - zw);
+		rawData[5] = 1 - 2*(xx + zz);
+		rawData[6] = 2*(yz + xw);
+		rawData[8] = 2*(xz + yw);
+		rawData[9] = 2*(yz - xw);
+		rawData[10] = 1 - 2*(xx + yy);
+		rawData[3] = rawData[7] = rawData[11] = rawData[12] = rawData[13] = rawData[14] = 0;
+		rawData[15] = 1;
 
-		if (m) {
-			m.copyRawDataFrom(raw);
-			return m;
-		} else
-			return new Matrix3D(raw);
+		target.invalidatePosition();
+		
+		return target;
 	}
 
 	/**
@@ -137,7 +138,7 @@ export class Matrix3DUtils
 		var dirN:Vector3D;
 		var upN:Vector3D;
 		var lftN:Vector3D;
-		var raw:Float32Array = Matrix3DUtils.RAW_DATA_CONTAINER;
+		var rawData:Float32Array = matrix._rawData;
 
 		lftN = dir.crossProduct(up);
 		lftN.normalize();
@@ -147,27 +148,27 @@ export class Matrix3DUtils
 		dirN = dir.clone();
 		dirN.normalize();
 
-		raw[0] = lftN.x;
-		raw[1] = upN.x;
-		raw[2] = -dirN.x;
-		raw[3] = 0.0;
+		rawData[0] = lftN.x;
+		rawData[1] = upN.x;
+		rawData[2] = -dirN.x;
+		rawData[3] = 0.0;
 
-		raw[4] = lftN.y;
-		raw[5] = upN.y;
-		raw[6] = -dirN.y;
-		raw[7] = 0.0;
+		rawData[4] = lftN.y;
+		rawData[5] = upN.y;
+		rawData[6] = -dirN.y;
+		rawData[7] = 0.0;
 
-		raw[8] = lftN.z;
-		raw[9] = upN.z;
-		raw[10] = -dirN.z;
-		raw[11] = 0.0;
+		rawData[8] = lftN.z;
+		rawData[9] = upN.z;
+		rawData[10] = -dirN.z;
+		rawData[11] = 0.0;
 
-		raw[12] = -lftN.dotProduct(pos);
-		raw[13] = -upN.dotProduct(pos);
-		raw[14] = dirN.dotProduct(pos);
-		raw[15] = 1.0;
+		rawData[12] = -lftN.dotProduct(pos);
+		rawData[13] = -upN.dotProduct(pos);
+		rawData[14] = dirN.dotProduct(pos);
+		rawData[15] = 1.0;
 
-		matrix.copyRawDataFrom(raw);
+		matrix.invalidatePosition();
 	}
 
 	public static reflection(plane:Plane3D, target:Matrix3D = null):Matrix3D
@@ -176,11 +177,12 @@ export class Matrix3DUtils
 			target = new Matrix3D();
 
 		var a:number = plane.a, b:number = plane.b, c:number = plane.c, d:number = plane.d;
-		var rawData:Float32Array = Matrix3DUtils.RAW_DATA_CONTAINER;
 		var ab2:number = -2*a*b;
 		var ac2:number = -2*a*c;
 		var bc2:number = -2*b*c;
+		
 		// reflection matrix
+		var rawData:Float32Array = target._rawData;
 		rawData[0] = 1 - 2*a*a;
 		rawData[4] = ab2;
 		rawData[8] = ac2;
@@ -197,102 +199,110 @@ export class Matrix3DUtils
 		rawData[7] = 0;
 		rawData[11] = 0;
 		rawData[15] = 1;
-		target.copyRawDataFrom(rawData);
+		
+		target.invalidatePosition();
 
 		return target;
 	}
 
 
-	public static transformVector(matrix:Matrix3D, vector:Vector3D, result:Vector3D = null):Vector3D
+	public static transformVector(matrix:Matrix3D, vector:Vector3D, target:Vector3D = null):Vector3D
 	{
-		if (!result)
-			result = new Vector3D();
+		if (!target)
+			target = new Vector3D();
 
-		var raw:Float32Array = Matrix3DUtils.RAW_DATA_CONTAINER;
-		matrix.copyRawDataTo(raw);
-		var a:number = raw[0];
-		var e:number = raw[1];
-		var i:number = raw[2];
-		var m:number = raw[3];
-		var b:number = raw[4];
-		var f:number = raw[5];
-		var j:number = raw[6];
-		var n:number = raw[7];
-		var c:number = raw[8];
-		var g:number = raw[9];
-		var k:number = raw[10];
-		var o:number = raw[11];
-		var d:number = raw[12];
-		var h:number = raw[13];
-		var l:number = raw[14];
-		var p:number = raw[15];
+		var rawData:Float32Array = matrix._rawData;
+		
+		var a:number = rawData[0];
+		var e:number = rawData[1];
+		var i:number = rawData[2];
+		var m:number = rawData[3];
+		var b:number = rawData[4];
+		var f:number = rawData[5];
+		var j:number = rawData[6];
+		var n:number = rawData[7];
+		var c:number = rawData[8];
+		var g:number = rawData[9];
+		var k:number = rawData[10];
+		var o:number = rawData[11];
+		var d:number = rawData[12];
+		var h:number = rawData[13];
+		var l:number = rawData[14];
+		var p:number = rawData[15];
 
 		var x:number = vector.x;
 		var y:number = vector.y;
 		var z:number = vector.z;
-		result.x = a * x + b * y + c * z + d;
-		result.y = e * x + f * y + g * z + h;
-		result.z = i * x + j * y + k * z + l;
-		result.w = m * x + n * y + o * z + p;
-		return result;
+		target.x = a * x + b * y + c * z + d;
+		target.y = e * x + f * y + g * z + h;
+		target.z = i * x + j * y + k * z + l;
+		target.w = m * x + n * y + o * z + p;
+		
+		return target;
 	}
 
-	public static deltaTransformVector(matrix:Matrix3D, vector:Vector3D, result:Vector3D = null):Vector3D
+	public static deltaTransformVector(matrix:Matrix3D, vector:Vector3D, target:Vector3D = null):Vector3D
 	{
-		if (!result)
-			result = new Vector3D();
+		if (!target)
+			target = new Vector3D();
 
-		var raw:Float32Array = Matrix3DUtils.RAW_DATA_CONTAINER;
-		matrix.copyRawDataTo(raw);
-		var a:number = raw[0];
-		var e:number = raw[1];
-		var i:number = raw[2];
-		var m:number = raw[3];
-		var b:number = raw[4];
-		var f:number = raw[5];
-		var j:number = raw[6];
-		var n:number = raw[7];
-		var c:number = raw[8];
-		var g:number = raw[9];
-		var k:number = raw[10];
-		var o:number = raw[11];
+		var rawData:Float32Array = matrix._rawData;
+		
+		var a:number = rawData[0];
+		var e:number = rawData[1];
+		var i:number = rawData[2];
+		var m:number = rawData[3];
+		var b:number = rawData[4];
+		var f:number = rawData[5];
+		var j:number = rawData[6];
+		var n:number = rawData[7];
+		var c:number = rawData[8];
+		var g:number = rawData[9];
+		var k:number = rawData[10];
+		var o:number = rawData[11];
+		
 		var x:number = vector.x;
 		var y:number = vector.y;
 		var z:number = vector.z;
-		result.x = a * x + b * y + c * z;
-		result.y = e * x + f * y + g * z;
-		result.z = i * x + j * y + k * z;
-		result.w = m * x + n * y + o * z;
-		return result;
+		
+		target.x = a * x + b * y + c * z;
+		target.y = e * x + f * y + g * z;
+		target.z = i * x + j * y + k * z;
+		target.w = m * x + n * y + o * z;
+		
+		return target;
 	}
 
-	public static getTranslation(transform:Matrix3D, result:Vector3D = null):Vector3D
+	public static getTranslation(transform:Matrix3D, target:Vector3D = null):Vector3D
 	{
-		if(!result)
-			result = new Vector3D();
+		if(!target)
+			target = new Vector3D();
 
-		transform.copyColumnTo(3, result);
-		return result;
+		transform.copyColumnTo(3, target);
+		
+		return target;
 	}
 
 	public static deltaTransformVectors(matrix:Matrix3D, vin:Array<number>, vout:Array<number>):void
 	{
-		var raw:Float32Array = Matrix3DUtils.RAW_DATA_CONTAINER;
-		matrix.copyRawDataTo(raw);
-		var a:number = raw[0];
-		var e:number = raw[1];
-		var i:number = raw[2];
-		var m:number = raw[3];
-		var b:number = raw[4];
-		var f:number = raw[5];
-		var j:number = raw[6];
-		var n:number = raw[7];
-		var c:number = raw[8];
-		var g:number = raw[9];
-		var k:number = raw[10];
-		var o:number = raw[11];
+		var rawData:Float32Array = matrix._rawData;
+		
+		var a:number = rawData[0];
+		var e:number = rawData[1];
+		var i:number = rawData[2];
+		var m:number = rawData[3];
+		var b:number = rawData[4];
+		var f:number = rawData[5];
+		var j:number = rawData[6];
+		var n:number = rawData[7];
+		var c:number = rawData[8];
+		var g:number = rawData[9];
+		var k:number = rawData[10];
+		var o:number = rawData[11];
+		
 		var outIndex:number = 0;
 		var length:number = vin.length;
+		
 		for(var index:number = 0; index<length; index+=3) {
 			var x:number = vin[index];
 			var y:number = vin[index+1];

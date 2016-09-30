@@ -32,7 +32,7 @@ export class OrthographicProjection extends ProjectionBase
 	//@override
 	public unproject(nX:number, nY:number, sZ:number):Vector3D
 	{
-		var v:Vector3D = new Vector3D(nX + this.matrix.rawData[12], -nY + this.matrix.rawData[13], sZ, 1.0);
+		var v:Vector3D = new Vector3D(nX + this.matrix._rawData[12], -nY + this.matrix._rawData[13], sZ, 1.0);
 		v = this.unprojectionMatrix.transformVector(v);
 
 		//z is unaffected by transform

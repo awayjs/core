@@ -122,13 +122,12 @@ export class Matrix3DUtils
 	public static compare(m1:Matrix3D, m2:Matrix3D):boolean
 	{
 		var r1:Float32Array = Matrix3DUtils.RAW_DATA_CONTAINER;
-		var r2:Float32Array = m2.rawData;
+		var r2:Float32Array = m2._rawData;
 		m1.copyRawDataTo(r1);
 
-		for (var i:number = 0; i < 16; ++i) {
+		for (var i:number = 0; i < 16; ++i)
 			if (r1[i] != r2[i])
 				return false;
-		}
 
 		return true;
 	}

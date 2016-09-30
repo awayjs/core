@@ -257,10 +257,14 @@ export class Quaternion
 	 */
 	public toMatrix3D(target:Matrix3D = null):Matrix3D
 	{
-		var rawData:Float32Array = Matrix3DUtils.RAW_DATA_CONTAINER;
 		var xy2:number = 2.0*this.x*this.y, xz2:number = 2.0*this.x*this.z, xw2:number = 2.0*this.x*this.w;
 		var yz2:number = 2.0*this.y*this.z, yw2:number = 2.0*this.y*this.w, zw2:number = 2.0*this.z*this.w;
 		var xx:number = this.x*this.x, yy:number = this.y*this.y, zz:number = this.z*this.z, ww:number = this.w*this.w;
+
+		if (!target)
+			target = new Matrix3D();
+
+		var rawData:Float32Array = target._rawData;
 
 		rawData[0] = xx - yy - zz + ww;
 		rawData[4] = xy2 - zw2;
@@ -278,11 +282,6 @@ export class Quaternion
 		rawData[7] = 0.0;
 		rawData[11] = 0;
 		rawData[15] = 1;
-
-		if (!target)
-			return new Matrix3D(rawData);
-		else
-			target.copyRawDataFrom(rawData);
 
 		return target;
 	}

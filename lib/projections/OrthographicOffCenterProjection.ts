@@ -1,4 +1,4 @@
-import {Matrix3DUtils}			from "../geom/Matrix3DUtils";
+import {Matrix3D}			from "../geom/Matrix3D";
 import {Vector3D}					from "../geom/Vector3D";
 import {ProjectionBase}			from "../projections/ProjectionBase";
 
@@ -87,7 +87,7 @@ export class OrthographicOffCenterProjection extends ProjectionBase
 	//@override
 	public pUpdateMatrix():void
 	{
-		var raw:Float32Array = Matrix3DUtils.RAW_DATA_CONTAINER;
+		var raw:Float32Array = Matrix3D.CALCULATION_MATRIX._rawData;
 		var w:number = 1/(this._maxX - this._minX);
 		var h:number = 1/(this._maxY - this._minY);
 		var d:number = 1/(this._pFar - this._pNear);

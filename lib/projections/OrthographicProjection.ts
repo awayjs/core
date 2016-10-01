@@ -1,4 +1,4 @@
-import {Matrix3DUtils}			from "../geom/Matrix3DUtils";
+import {Matrix3D}				from "../geom/Matrix3D";
 import {Vector3D}					from "../geom/Vector3D";
 import {ProjectionBase}			from "../projections/ProjectionBase";
 
@@ -55,7 +55,7 @@ export class OrthographicProjection extends ProjectionBase
 	//@override
 	public pUpdateMatrix():void
 	{
-		var raw:Float32Array = Matrix3DUtils.RAW_DATA_CONTAINER;
+		var raw:Float32Array = Matrix3D.CALCULATION_MATRIX._rawData;
 		this._yMax = this._projectionHeight*.5;
 		this._xMax = this._yMax*this._pAspectRatio;
 

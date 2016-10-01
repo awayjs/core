@@ -1,4 +1,5 @@
 import {Box}							from "../geom/Box";
+import {Plane3D}							from "../geom/Plane3D";
 import {MathConsts}					from "../geom/MathConsts";
 import {Orientation3D}				from "../geom/Orientation3D";
 import {Quaternion}					from "../geom/Quaternion";
@@ -8,6 +9,177 @@ import {ArgumentError}				from "../errors/ArgumentError";
 export class Matrix3D
 {
 	/**
+	 * A reference to a Matrix3D to be used as a temporary data container, preventing object creation.
+	 */
+	public static CALCULATION_MATRIX:Matrix3D = new Matrix3D();
+
+	private static _tempMatrix:Matrix3D = new Matrix3D();
+
+	static getAxisRotationMatrix(x:number, y:number, z:number, degrees:number, target:Matrix3D = null):Matrix3D
+	{
+		if (target == null)
+			target = new Matrix3D();
+
+		var targetData:Float32Array = target._rawData;
+
+		var rad = degrees*MathConsts.DEGREES_TO_RADIANS;
+		var c:number = Math.cos(rad);
+		var s:number = Math.sin(rad);
+		var t:number = 1 - c;
+		var tmp1:number, tmp2:number;
+
+		targetData[0] = c + x*x*t;
+		targetData[5] = c + y*y*t;
+		targetData[10] = c + z*z*t;
+
+		tmp1 = x*y*t;
+		tmp2 = z*s;
+		targetData[1] = tmp1 + tmp2;
+		targetData[4] = tmp1 - tmp2;
+		tmp1 = x*z*t;
+		tmp2 = y*s;
+		targetData[8] = tmp1 + tmp2;
+		targetData[2] = tmp1 - tmp2;
+		tmp1 = y*z*t;
+		tmp2 = x*s;
+		targetData[9] = tmp1 - tmp2;
+		targetData[6] = tmp1 + tmp2;
+
+		targetData[3] = 0;
+		targetData[7] = 0;
+		targetData[11] = 0;
+		targetData[12] = 0;
+		targetData[13] = 0;
+		targetData[14] = 0;
+		targetData[15] = 1;
+
+		target.invalidatePosition();
+
+		return target;
+	}
+
+	public static getPointAtMatrix(pos:Vector3D, dir:Vector3D, up:Vector3D, target:Matrix3D = null):Matrix3D
+	{
+		var dirN:Vector3D;
+		var upN:Vector3D;
+		var lftN:Vector3D;
+
+		if (target == null)
+			target = new Matrix3D();
+
+		var targetData:Float32Array = target._rawData;
+
+		dirN = dir.clone();
+		dirN.normalize();
+
+		upN = up.clone();
+		upN.normalize();
+		
+		lftN = upN.crossProduct(dirN);
+		lftN.normalize();
+
+		if (lftN.length < 0.05) {
+			lftN.x = upN.y;
+			lftN.y = upN.x;
+			lftN.z = 0;
+			lftN.normalize();
+		}
+
+		upN = dirN.crossProduct(lftN);
+
+		targetData[0] = lftN.x;
+		targetData[1] = lftN.y;
+		targetData[2] = lftN.z;
+		targetData[3] = 0;
+
+		targetData[4] = upN.x;
+		targetData[5] = upN.y;
+		targetData[6] = upN.z;
+		targetData[7] = 0;
+
+		targetData[8] = dirN.x;
+		targetData[9] = dirN.y;
+		targetData[10] = dirN.z;
+		targetData[11] = 0;
+
+		targetData[12] = lftN.dotProduct(pos);
+		targetData[13] = upN.dotProduct(pos);
+		targetData[14] = dirN.dotProduct(pos);
+		targetData[15] = 1;
+
+		target.invalidatePosition();
+
+		return target;
+	}
+
+	/**
+	 * Fills the 3d matrix with values representing the transformation made by the given quaternion.
+	 *
+	 * @param    quarternion    The quarterion object to convert.
+	 */
+	public static getQuaternionMatrix(quarternion:Quaternion, target:Matrix3D = null):Matrix3D
+	{
+		if (target == null)
+			target = new Matrix3D();
+
+		var targetData:Float32Array = target._rawData;
+
+		var x:number = quarternion.x;
+		var y:number = quarternion.y;
+		var z:number = quarternion.z;
+		var w:number = quarternion.w;
+
+		var xx:number = x*x;
+		var xy:number = x*y;
+		var xz:number = x*z;
+		var xw:number = x*w;
+
+		var yy:number = y*y;
+		var yz:number = y*z;
+		var yw:number = y*w;
+
+		var zz:number = z*z;
+		var zw:number = z*w;
+
+		targetData[0] = 1 - 2*(yy + zz);
+		targetData[1] = 2*(xy + zw);
+		targetData[2] = 2*(xz - yw);
+		targetData[4] = 2*(xy - zw);
+		targetData[5] = 1 - 2*(xx + zz);
+		targetData[6] = 2*(yz + xw);
+		targetData[8] = 2*(xz + yw);
+		targetData[9] = 2*(yz - xw);
+		targetData[10] = 1 - 2*(xx + yy);
+
+		targetData[3] = 0;
+		targetData[7] = 0;
+		targetData[11] = 0;
+		targetData[12] = 0;
+		targetData[13] = 0;
+		targetData[14] = 0;
+		targetData[15] = 1;
+
+		target.invalidatePosition();
+
+		return target;
+	}
+
+	/**
+	 * Returns a boolean value representing whether there is any difference between the two given 3d matrices.
+	 */
+	public static compare(m1:Matrix3D, m2:Matrix3D):boolean
+	{
+		var r1:Float32Array = m1._rawData;
+		var r2:Float32Array = m2._rawData;
+
+		for (var i:number = 0; i < 16; ++i)
+			if (r1[i] != r2[i])
+				return false;
+
+		return true;
+	}
+
+	/**
 	 * A Vector of 16 Numbers, where every four elements is a column of a 4x4 matrix.
 	 *
 	 * <p>An exception is thrown if the _rawData property is set to a matrix that is not invertible. The Matrix3D
@@ -15,18 +187,39 @@ export class Matrix3D
 	 */
 	public _rawData:Float32Array;
 
-	private static tempMatrix:Matrix3D = new Matrix3D();
-	private static tempRawData:Float32Array = Matrix3D.tempMatrix._rawData;
-
 	private _position:Vector3D = new Vector3D();
 	private _positionDirty:boolean = true;
 
 	private _components:Array<Vector3D>;
 
 	/**
+	 * [read-only] A number that determines whether a matrix is invertible.
+	 */
+	public get determinant():number
+	{
+		return ((this._rawData[0]*this._rawData[5] - this._rawData[4]*this._rawData[1])*(this._rawData[10]*this._rawData[15] - this._rawData[14]*this._rawData[11]) - (this._rawData[0]*this._rawData[9] - this._rawData[8]*this._rawData[1])*(this._rawData[6]*this._rawData[15] - this._rawData[14]*this._rawData[7]) + (this._rawData[0]*this._rawData[13] - this._rawData[12]*this._rawData[1])*(this._rawData[6]*this._rawData[11] - this._rawData[10]*this._rawData[7]) + (this._rawData[4]*this._rawData[9] - this._rawData[8]*this._rawData[5])*(this._rawData[2]*this._rawData[15] - this._rawData[14]*this._rawData[3]) - (this._rawData[4]*this._rawData[13] - this._rawData[12]*this._rawData[5])*(this._rawData[2]*this._rawData[11] - this._rawData[10]*this._rawData[3]) + (this._rawData[8]*this._rawData[13] - this._rawData[12]*this._rawData[9])*(this._rawData[2]*this._rawData[7] - this._rawData[6]*this._rawData[3]));
+	}
+
+	/**
+	 * A Vector3D object that holds the position, the 3D coordinate (x,y,z) of a display object within the
+	 * transformation's frame of reference.
+	 */
+	public get position():Vector3D
+	{
+		if (this._positionDirty) {
+			this._positionDirty = false;
+			this._position.x = this._rawData[12];
+			this._position.y = this._rawData[13];
+			this._position.z = this._rawData[14];
+		}
+
+		return this._position;
+	}
+
+	/**
 	 * Creates a Matrix3D object.
 	 */
-	constructor(rawData:Float32Array = null, offset:number = 0)
+	constructor(rawData:Float32Array = null)
 	{
 		if (rawData != null) {
 			this._rawData = rawData;
@@ -102,9 +295,9 @@ export class Matrix3D
 	/**
 	 * Appends an incremental rotation to a Matrix3D object.
 	 */
-	public appendRotation(degrees:number, axis:Vector3D):void //, pivot:Vector3D = null ):void
+	public appendRotation(degrees:number, axis:Vector3D):void
 	{
-		this.append(Matrix3D.getAxisRotation(axis.x, axis.y, axis.z, degrees));
+		this.append(Matrix3D.getAxisRotationMatrix(axis.x, axis.y, axis.z, degrees, Matrix3D._tempMatrix));
 	}
 
 	/**
@@ -112,29 +305,32 @@ export class Matrix3D
 	 */
 	public appendSkew(xSkew:number, ySkew:number, zSkew:number):void
 	{
-		if(xSkew == 0 && ySkew == 0 && zSkew == 0) return;
-		var raw:Float32Array = Matrix3D.tempRawData;
-		raw[0] = 1;
-		raw[1] = 0;
-		raw[2] = 0;
-		raw[3] = 0;
+		if(xSkew == 0 && ySkew == 0 && zSkew == 0)
+			return;
 
-		raw[4] = xSkew;
-		raw[5] = 1;
-		raw[6] = 0;
-		raw[7] = 0;
+		var rawData:Float32Array = Matrix3D._tempMatrix._rawData;
 
-		raw[8] = ySkew;
-		raw[9] = zSkew;
-		raw[10] = 1;
-		raw[11] = 0;
+		rawData[0] = 1;
+		rawData[1] = 0;
+		rawData[2] = 0;
+		rawData[3] = 0;
 
-		raw[12] = 0;
-		raw[13] = 0;
-		raw[14] = 0;
-		raw[15] = 1;
+		rawData[4] = xSkew;
+		rawData[5] = 1;
+		rawData[6] = 0;
+		rawData[7] = 0;
 
-		this.append(Matrix3D.tempMatrix);
+		rawData[8] = ySkew;
+		rawData[9] = zSkew;
+		rawData[10] = 1;
+		rawData[11] = 0;
+
+		rawData[12] = 0;
+		rawData[13] = 0;
+		rawData[14] = 0;
+		rawData[15] = 1;
+
+		this.append(Matrix3D._tempMatrix);
 	}
 
 	/**
@@ -145,29 +341,29 @@ export class Matrix3D
 		if(xScale == 1 && yScale == 1 && zScale == 1)
 			return;
 
-		var raw:Float32Array = Matrix3D.tempRawData;
+		var rawData:Float32Array = Matrix3D._tempMatrix._rawData;
 
-		raw[0] = xScale;
-		raw[1] = 0;
-		raw[2] = 0;
-		raw[3] = 0;
+		rawData[0] = xScale;
+		rawData[1] = 0;
+		rawData[2] = 0;
+		rawData[3] = 0;
 
-		raw[4] = 0;
-		raw[5] = yScale;
-		raw[6] = 0;
-		raw[7] = 0;
+		rawData[4] = 0;
+		rawData[5] = yScale;
+		rawData[6] = 0;
+		rawData[7] = 0;
 
-		raw[8] = 0;
-		raw[9] = 0;
-		raw[10] = zScale;
-		raw[11] = 0;
+		rawData[8] = 0;
+		rawData[9] = 0;
+		rawData[10] = zScale;
+		rawData[11] = 0;
 
-		raw[12] = 0;
-		raw[13] = 0;
-		raw[14] = 0;
-		raw[15] = 1;
+		rawData[12] = 0;
+		rawData[13] = 0;
+		rawData[14] = 0;
+		rawData[15] = 1;
 
-		this.append(Matrix3D.tempMatrix);
+		this.append(Matrix3D._tempMatrix);
 	}
 
 	/**
@@ -199,68 +395,40 @@ export class Matrix3D
 	 */
 	public copyColumnFrom(column:number, vector3D:Vector3D):void
 	{
-		switch (column) {
-			case 0:
-				this._rawData[ 0 ] = vector3D.x;
-				this._rawData[ 1 ] = vector3D.y;
-				this._rawData[ 2 ] = vector3D.z;
-				this._rawData[ 3 ] = vector3D.w;
-				break;
-			case 1:
-				this._rawData[ 4 ] = vector3D.x;
-				this._rawData[ 5 ] = vector3D.y;
-				this._rawData[ 6 ] = vector3D.z;
-				this._rawData[ 7 ] = vector3D.w;
-				break;
-			case 2:
-				this._rawData[ 8 ] = vector3D.x;
-				this._rawData[ 9 ] = vector3D.y;
-				this._rawData[ 10 ] = vector3D.z;
-				this._rawData[ 11 ] = vector3D.w;
-				break;
-			case 3:
-				this._rawData[ 12 ] = vector3D.x;
-				this._rawData[ 13 ] = vector3D.y;
-				this._rawData[ 14 ] = vector3D.z;
-				this._rawData[ 15 ] = vector3D.w;
-				break;
-			default:
-				throw new ArgumentError("ArgumentError, Column " + column + " out of bounds [0, ..., 3]");
-		}
+		if (column < 0 || column > 3)
+			throw new ArgumentError("ArgumentError, Column " + column + " out of bounds [0, ..., 3]");
+
+		column *= 4;
+		this._rawData[column] = vector3D.x;
+		this._rawData[column + 1] = vector3D.y;
+		this._rawData[column + 2] = vector3D.z;
+		this._rawData[column + 3] = vector3D.w;
+
+		this._positionDirty = true;
 	}
 
 	/**
 	 * Copies specific column of the calling Matrix3D object into the Vector3D object.
 	 */
-	public copyColumnTo(column:number, vector3D:Vector3D):void
+	public copyColumnTo(column:number, vector3D:Vector3D, negate:boolean = false):void
 	{
-		switch (column) {
-			case 0:
-				vector3D.x = this._rawData[ 0 ];
-				vector3D.y = this._rawData[ 1 ];
-				vector3D.z = this._rawData[ 2 ];
-				vector3D.w = this._rawData[ 3 ];
-				break;
-			case 1:
-				vector3D.x = this._rawData[ 4 ];
-				vector3D.y = this._rawData[ 5 ];
-				vector3D.z = this._rawData[ 6 ];
-				vector3D.w = this._rawData[ 7 ];
-				break;
-			case 2:
-				vector3D.x = this._rawData[ 8 ];
-				vector3D.y = this._rawData[ 9 ];
-				vector3D.z = this._rawData[ 10 ];
-				vector3D.w = this._rawData[ 11 ];
-				break;
-			case 3:
-				vector3D.x = this._rawData[ 12 ];
-				vector3D.y = this._rawData[ 13 ];
-				vector3D.z = this._rawData[ 14 ];
-				vector3D.w = this._rawData[ 15 ];
-				break;
-			default:
-				throw new ArgumentError("ArgumentError, Column " + column + " out of bounds [0, ..., 3]");
+		if (column < 0 || column > 3)
+			throw new ArgumentError("ArgumentError, Column " + column + " out of bounds [0, ..., 3]");
+
+		column *= 4;
+
+		var sourceData = this._rawData;
+		
+		if (negate) {
+			vector3D.x = -sourceData[column];
+			vector3D.y = -sourceData[column + 1];
+			vector3D.z = -sourceData[column + 2];
+			vector3D.w = -sourceData[column + 3];
+		} else {
+			vector3D.x = sourceData[column];
+			vector3D.y = sourceData[column + 1];
+			vector3D.z = sourceData[column + 2];
+			vector3D.w = sourceData[column + 3];
 		}
 	}
 
@@ -325,18 +493,8 @@ export class Matrix3D
 		targetData[15] = sourceData[offset + 15];
 
 		if (transpose) {
-			targetData[1] = sourceData[offset + 4];
-			targetData[2] = sourceData[offset + 8];
-			targetData[3] = sourceData[offset + 12];
-			targetData[4] = sourceData[offset + 1];
-			targetData[6] = sourceData[offset + 9];
-			targetData[7] = sourceData[offset + 13];
-			targetData[8] = sourceData[offset + 2];
-			targetData[9] = sourceData[offset + 6];
-			targetData[11] = sourceData[offset + 14];
-			targetData[12] = sourceData[offset + 3];
-			targetData[13] = sourceData[offset + 7];
-			targetData[14] = sourceData[offset + 11];
+
+
 		} else {
 			targetData[1] = sourceData[offset + 1];
 			targetData[2] = sourceData[offset + 2];
@@ -412,17 +570,24 @@ export class Matrix3D
 	/**
 	 * Copies specific row of the calling Matrix3D object into the Vector3D object.
 	 */
-	public copyRowTo(row:number, vector3D:Vector3D):void
+	public copyRowTo(row:number, vector3D:Vector3D, negate:boolean = false):void
 	{
 		if (row < 0 || row > 3)
 			throw new ArgumentError("ArgumentError, Row " + row + " out of bounds [0, ..., 3]");
 		
-		vector3D.x = this._rawData[row];
-		vector3D.y = this._rawData[row + 4];
-		vector3D.z = this._rawData[row + 8];
-		vector3D.w = this._rawData[row + 12];
-
-		this._positionDirty = true;
+		var sourceData:Float32Array = this._rawData;
+		
+		if (negate) {
+			vector3D.x = -sourceData[row];
+			vector3D.y = -sourceData[row + 4];
+			vector3D.z = -sourceData[row + 8];
+			vector3D.w = -sourceData[row + 12];
+		} else {
+			vector3D.x = sourceData[row];
+			vector3D.y = sourceData[row + 4];
+			vector3D.z = sourceData[row + 8];
+			vector3D.w = sourceData[row + 12];
+		}
 	}
 
 	/**
@@ -563,6 +728,36 @@ export class Matrix3D
 		return t;
 	}
 
+	public deltaTransformVectors(vin:Array<number>, vout:Array<number>):void
+	{
+		var rawData:Float32Array = this._rawData;
+
+		var a:number = rawData[0];
+		var e:number = rawData[1];
+		var i:number = rawData[2];
+		var m:number = rawData[3];
+		var b:number = rawData[4];
+		var f:number = rawData[5];
+		var j:number = rawData[6];
+		var n:number = rawData[7];
+		var c:number = rawData[8];
+		var g:number = rawData[9];
+		var k:number = rawData[10];
+		var o:number = rawData[11];
+
+		var outIndex:number = 0;
+		var length:number = vin.length;
+
+		for(var index:number = 0; index<length; index+=3) {
+			var x:number = vin[index];
+			var y:number = vin[index+1];
+			var z:number = vin[index+2];
+			vout[outIndex++] = a * x + b * y + c * z;
+			vout[outIndex++] = e * x + f * y + g * z;
+			vout[outIndex++] = i * x + j * y + k * z;
+		}
+	}
+
 	/**
 	 * Converts the current matrix to an identity or unit matrix.
 	 */
@@ -586,27 +781,6 @@ export class Matrix3D
 		this._rawData[15] = 1;
 
 		this._positionDirty = true;
-	}
-
-	/**
-	 * [static] Interpolates the translation, rotation, and scale transformation of one matrix toward those of the target matrix.
-	 */
-	static interpolate(thisMat:Matrix3D, toMat:Matrix3D, percent:number):Matrix3D
-	{
-		var m:Matrix3D = new Matrix3D();
-		for (var i:number = 0; i < 16; ++i)
-			m._rawData[i] = thisMat._rawData[i] + (toMat._rawData[i] - thisMat._rawData[i])*percent;
-
-		return m;
-	}
-
-	/**
-	 * Interpolates this matrix towards the translation, rotation, and scale transformations of the target matrix.
-	 */
-	public interpolateTo(toMat:Matrix3D, percent:number):void
-	{
-		for (var i:number = 0; i < 16; ++i)
-			this._rawData[i] = this._rawData[i] + (toMat._rawData[i] - this._rawData[i])*percent;
 	}
 
 	/**
@@ -658,12 +832,6 @@ export class Matrix3D
 
 		return invertable;
 	}
-
-	/* TODO implement pointAt
-	 public pointAt( pos:Vector3D, at:Vector3D = null, up:Vector3D = null )
-	 {
-	 }
-	 */
 
 	/**
 	 * Prepends a matrix by multiplying the current Matrix3D object by another Matrix3D object.
@@ -732,16 +900,7 @@ export class Matrix3D
 	 */
 	public prependRotation(degrees:number, axis:Vector3D) //, pivot:Vector3D = null ):void
 	{
-		var m:Matrix3D = Matrix3D.getAxisRotation(axis.x, axis.y, axis.z, degrees);
-
-		/*
-		 if ( pivot != null )
-		 {
-		 var p:Vector3D = pivot;
-		 m.appendTranslation( p.x, p.y, p.z );
-		 }
-		 */
-		this.prepend(m);
+		this.prepend(Matrix3D.getAxisRotationMatrix(axis.x, axis.y, axis.z, degrees, Matrix3D._tempMatrix));
 	}
 
 	/**
@@ -752,29 +911,29 @@ export class Matrix3D
 		if(xScale == 1 && yScale == 1 && zScale == 1)
 			return;
 
-		var raw:Float32Array = Matrix3D.tempRawData;
+		var rawData:Float32Array = Matrix3D._tempMatrix._rawData;
 
-		raw[0] = xScale;
-		raw[1] = 0;
-		raw[2] = 0;
-		raw[3] = 0;
+		rawData[0] = xScale;
+		rawData[1] = 0;
+		rawData[2] = 0;
+		rawData[3] = 0;
 
-		raw[4] = 0;
-		raw[5] = yScale;
-		raw[6] = 0;
-		raw[7] = 0;
+		rawData[4] = 0;
+		rawData[5] = yScale;
+		rawData[6] = 0;
+		rawData[7] = 0;
 
-		raw[8] = 0;
-		raw[9] = 0;
-		raw[10] = zScale;
-		raw[11] = 0;
+		rawData[8] = 0;
+		rawData[9] = 0;
+		rawData[10] = zScale;
+		rawData[11] = 0;
 
-		raw[12] = 0;
-		raw[13] = 0;
-		raw[14] = 0;
-		raw[15] = 1;
+		rawData[12] = 0;
+		rawData[13] = 0;
+		rawData[14] = 0;
+		rawData[15] = 1;
 
-		this.prepend(Matrix3D.tempMatrix);
+		this.prepend(Matrix3D._tempMatrix);
 	}
 
 	/**
@@ -782,29 +941,29 @@ export class Matrix3D
 	 */
 	public prependTranslation(x:number, y:number, z:number):void
 	{
-		var raw:Float32Array = Matrix3D.tempRawData;
+		var rawData:Float32Array = Matrix3D._tempMatrix._rawData;
 
-		raw[0] = 1;
-		raw[1] = 0;
-		raw[2] = 0;
-		raw[3] = 0;
+		rawData[0] = 1;
+		rawData[1] = 0;
+		rawData[2] = 0;
+		rawData[3] = 0;
 
-		raw[4] = 0;
-		raw[5] = 1;
-		raw[6] = 0;
-		raw[7] = 0;
+		rawData[4] = 0;
+		rawData[5] = 1;
+		rawData[6] = 0;
+		rawData[7] = 0;
 
-		raw[8] = 0;
-		raw[9] = 0;
-		raw[10] = 1;
-		raw[11] = 0;
+		rawData[8] = 0;
+		rawData[9] = 0;
+		rawData[10] = 1;
+		rawData[11] = 0;
 
-		raw[12] = x;
-		raw[13] = y;
-		raw[14] = z;
-		raw[15] = 1;
+		rawData[12] = x;
+		rawData[13] = y;
+		rawData[14] = z;
+		rawData[15] = 1;
 
-		this.prepend(Matrix3D.tempMatrix);
+		this.prepend(Matrix3D._tempMatrix);
 	}
 
 	// TODO orientationStyle
@@ -826,11 +985,11 @@ export class Matrix3D
 
 		var sin:number;
 		var cos:number;
-		var raw:Float32Array = Matrix3D.tempRawData;
-		raw[12] = 0;
-		raw[13] = 0;
-		raw[14] = 0;
-		raw[15] = 0;
+		var rawData:Float32Array = Matrix3D._tempMatrix._rawData;
+		rawData[12] = 0;
+		rawData[13] = 0;
+		rawData[14] = 0;
+		rawData[15] = 0;
 
 		var rotation:Vector3D = components[1];
 		if (rotation) {
@@ -839,66 +998,66 @@ export class Matrix3D
 				sin = Math.sin(angle);
 				cos = Math.cos(angle);
 
-				raw[0] = 1;
-				raw[1] = 0;
-				raw[2] = 0;
-				raw[3] = 0;
+				rawData[0] = 1;
+				rawData[1] = 0;
+				rawData[2] = 0;
+				rawData[3] = 0;
 
-				raw[4] = 0;
-				raw[5] = cos;
-				raw[6] = -sin;
-				raw[7] = 0;
+				rawData[4] = 0;
+				rawData[5] = cos;
+				rawData[6] = -sin;
+				rawData[7] = 0;
 
-				raw[8] = 0;
-				raw[9] = sin;
-				raw[10] = cos;
-				raw[11] = 0;
+				rawData[8] = 0;
+				rawData[9] = sin;
+				rawData[10] = cos;
+				rawData[11] = 0;
 
-				this.append(Matrix3D.tempMatrix);
+				this.append(Matrix3D._tempMatrix);
 			}
 			angle = -rotation.y;
 			if(angle != 0){
 				sin = Math.sin(angle);
 				cos = Math.cos(angle);
 
-				raw[0] = cos;
-				raw[1] = 0;
-				raw[2] = sin;
-				raw[3] = 0;
+				rawData[0] = cos;
+				rawData[1] = 0;
+				rawData[2] = sin;
+				rawData[3] = 0;
 
-				raw[4] = 0;
-				raw[5] = 1;
-				raw[6] = 0;
-				raw[7] = 0;
+				rawData[4] = 0;
+				rawData[5] = 1;
+				rawData[6] = 0;
+				rawData[7] = 0;
 
-				raw[8] = -sin;
-				raw[9] = 0;
-				raw[10] = cos;
-				raw[11] = 0;
+				rawData[8] = -sin;
+				rawData[9] = 0;
+				rawData[10] = cos;
+				rawData[11] = 0;
 
-				this.append(Matrix3D.tempMatrix);
+				this.append(Matrix3D._tempMatrix);
 			}
 			angle = -rotation.z;
 			if(angle != 0){
 				sin = Math.sin(angle);
 				cos = Math.cos(angle);
 
-				raw[0] = cos;
-				raw[1] = -sin;
-				raw[2] = 0;
-				raw[3] = 0;
+				rawData[0] = cos;
+				rawData[1] = -sin;
+				rawData[2] = 0;
+				rawData[3] = 0;
 
-				raw[4] = sin;
-				raw[5] = cos;
-				raw[6] = 0;
-				raw[7] = 0;
+				rawData[4] = sin;
+				rawData[5] = cos;
+				rawData[6] = 0;
+				rawData[7] = 0;
 
-				raw[8] = 0;
-				raw[9] = 0;
-				raw[10] = 1;
-				raw[11] = 0;
+				rawData[8] = 0;
+				rawData[9] = 0;
+				rawData[10] = 1;
+				rawData[11] = 0;
 
-				this.append(Matrix3D.tempMatrix);
+				this.append(Matrix3D._tempMatrix);
 			}
 		}
 
@@ -914,47 +1073,78 @@ export class Matrix3D
 		return true;
 	}
 
-	public transformVector(v:Vector3D, t:Vector3D = null):Vector3D
+
+	public reflect(plane:Plane3D):void
 	{
-		if (v == null)
-			return t || new Vector3D();
+		var a:number = plane.a, b:number = plane.b, c:number = plane.c, d:number = plane.d;
+		var ab2:number = -2*a*b;
+		var ac2:number = -2*a*c;
+		var bc2:number = -2*b*c;
 
-		var x:number = v.x;
-		var y:number = v.y;
-		var z:number = v.z;
+		// reflection matrix
+		var rawData:Float32Array = this._rawData;
+		rawData[0] = 1 - 2*a*a;
+		rawData[4] = ab2;
+		rawData[8] = ac2;
+		rawData[12] = -2*a*d;
+		rawData[1] = ab2;
+		rawData[5] = 1 - 2*b*b;
+		rawData[9] = bc2;
+		rawData[13] = -2*b*d;
+		rawData[2] = ac2;
+		rawData[6] = bc2;
+		rawData[10] = 1 - 2*c*c;
+		rawData[14] = -2*c*d;
+		rawData[3] = 0;
+		rawData[7] = 0;
+		rawData[11] = 0;
+		rawData[15] = 1;
 
-		if (!t)
-			t = new Vector3D();
-
-		t.x = x*this._rawData[0] + y*this._rawData[4] + z*this._rawData[8] + this._rawData[12];
-		t.y = x*this._rawData[1] + y*this._rawData[5] + z*this._rawData[9] + this._rawData[13];
-		t.z = x*this._rawData[2] + y*this._rawData[6] + z*this._rawData[10] + this._rawData[14];
-		t.w = x*this._rawData[3] + y*this._rawData[7] + z*this._rawData[11] + this._rawData[15];
-
-		return t;
+		this._positionDirty = true;
 	}
 
-	public transformBox(b:Box, t:Box = null):Box
+	public transformBox(box:Box, target:Box = null):Box
 	{
-		if (b == null)
-			return t || new Box();
+		if (box == null)
+			throw new ArgumentError("ArgumentError, box cannot be null");
 
 		var minX:number, minY:number, minZ:number;
 		var maxX:number, maxY:number, maxZ:number;
 
-		maxX = b.width + (minX = b.x);
-		maxY = b.height + (minY = b.y);
-		maxZ = b.depth + (minZ = b.z);
+		maxX = box.width + (minX = box.x);
+		maxY = box.height + (minY = box.y);
+		maxZ = box.depth + (minZ = box.z);
 
-		if (!t)
-			t = new Box();
+		if (!target)
+			target = new Box();
 
 		//TODO: take account of shear
-		t.width = maxX*this._rawData[0] + maxY*this._rawData[4] + maxZ*this._rawData[8] + this._rawData[12] - (t.x = minX*this._rawData[0] + minY*this._rawData[4] + minZ*this._rawData[8] + this._rawData[12]);
-		t.height = maxX*this._rawData[1] + maxY*this._rawData[5] + maxZ*this._rawData[9] + this._rawData[13] - (t.y = minX*this._rawData[1] + minY*this._rawData[5] + minZ*this._rawData[9] + this._rawData[13]);
-		t.depth = maxX*this._rawData[2] + maxY*this._rawData[6] + maxZ*this._rawData[10] + this._rawData[14] - (t.z = minX*this._rawData[2] + minY*this._rawData[6] + minZ*this._rawData[10] + this._rawData[14]);
+		target.width = maxX*this._rawData[0] + maxY*this._rawData[4] + maxZ*this._rawData[8] + this._rawData[12] - (target.x = minX*this._rawData[0] + minY*this._rawData[4] + minZ*this._rawData[8] + this._rawData[12]);
+		target.height = maxX*this._rawData[1] + maxY*this._rawData[5] + maxZ*this._rawData[9] + this._rawData[13] - (target.y = minX*this._rawData[1] + minY*this._rawData[5] + minZ*this._rawData[9] + this._rawData[13]);
+		target.depth = maxX*this._rawData[2] + maxY*this._rawData[6] + maxZ*this._rawData[10] + this._rawData[14] - (target.z = minX*this._rawData[2] + minY*this._rawData[6] + minZ*this._rawData[10] + this._rawData[14]);
 
-		return t;
+		return target;
+	}
+
+
+	public transformVector(vector:Vector3D, target:Vector3D = null):Vector3D
+	{
+		if (vector == null)
+			throw new ArgumentError("ArgumentError, vector cannot be null");
+
+		var x:number = vector.x;
+		var y:number = vector.y;
+		var z:number = vector.z;
+
+		if (!target)
+			target = new Vector3D();
+
+		target.x = x*this._rawData[0] + y*this._rawData[4] + z*this._rawData[8] + this._rawData[12];
+		target.y = x*this._rawData[1] + y*this._rawData[5] + z*this._rawData[9] + this._rawData[13];
+		target.z = x*this._rawData[2] + y*this._rawData[6] + z*this._rawData[10] + this._rawData[14];
+		target.w = x*this._rawData[3] + y*this._rawData[7] + z*this._rawData[11] + this._rawData[15];
+
+		return target;
 	}
 
 	/**
@@ -981,80 +1171,24 @@ export class Matrix3D
 	 */
 	public transpose():void
 	{
-		var raw:Float32Array = Matrix3D.tempRawData;
-		this.copyRawDataTo(raw);
+		var rawData:Float32Array = Matrix3D._tempMatrix._rawData;
 
-		this._rawData[1] = raw[4];
-		this._rawData[2] = raw[8];
-		this._rawData[3] = raw[12];
-		this._rawData[4] = raw[1];
-		this._rawData[6] = raw[9];
-		this._rawData[7] = raw[13];
-		this._rawData[8] = raw[2];
-		this._rawData[9] = raw[6];
-		this._rawData[11] = raw[14];
-		this._rawData[12] = raw[3];
-		this._rawData[13] = raw[7];
-		this._rawData[14] = raw[11];
+		this.copyRawDataTo(rawData, 0, true);
+
+		this._rawData[1] = rawData[1];
+		this._rawData[2] = rawData[2];
+		this._rawData[3] = rawData[3];
+		this._rawData[4] = rawData[4];
+		this._rawData[6] = rawData[6];
+		this._rawData[7] = rawData[7];
+		this._rawData[8] = rawData[8];
+		this._rawData[9] = rawData[9];
+		this._rawData[11] = rawData[11];
+		this._rawData[12] = rawData[12];
+		this._rawData[13] = rawData[13];
+		this._rawData[14] = rawData[14];
 
 		this._positionDirty = true;
-	}
-
-	static getAxisRotation(x:number, y:number, z:number, degrees:number):Matrix3D
-	{
-
-		// internal export class use by rotations which have been tested
-
-		var m:Matrix3D = new Matrix3D();
-
-		var rad = degrees*MathConsts.DEGREES_TO_RADIANS;
-		var c:number = Math.cos(rad);
-		var s:number = Math.sin(rad);
-		var t:number = 1 - c;
-		var tmp1:number, tmp2:number;
-
-		m._rawData[0] = c + x*x*t;
-		m._rawData[5] = c + y*y*t;
-		m._rawData[10] = c + z*z*t;
-
-		tmp1 = x*y*t;
-		tmp2 = z*s;
-		m._rawData[1] = tmp1 + tmp2;
-		m._rawData[4] = tmp1 - tmp2;
-		tmp1 = x*z*t;
-		tmp2 = y*s;
-		m._rawData[8] = tmp1 + tmp2;
-		m._rawData[2] = tmp1 - tmp2;
-		tmp1 = y*z*t;
-		tmp2 = x*s;
-		m._rawData[9] = tmp1 - tmp2;
-		m._rawData[6] = tmp1 + tmp2;
-
-		return m;
-	}
-
-	/**
-	 * [read-only] A Number that determines whether a matrix is invertible.
-	 */
-	public get determinant():number
-	{
-		return ((this._rawData[0]*this._rawData[5] - this._rawData[4]*this._rawData[1])*(this._rawData[10]*this._rawData[15] - this._rawData[14]*this._rawData[11]) - (this._rawData[0]*this._rawData[9] - this._rawData[8]*this._rawData[1])*(this._rawData[6]*this._rawData[15] - this._rawData[14]*this._rawData[7]) + (this._rawData[0]*this._rawData[13] - this._rawData[12]*this._rawData[1])*(this._rawData[6]*this._rawData[11] - this._rawData[10]*this._rawData[7]) + (this._rawData[4]*this._rawData[9] - this._rawData[8]*this._rawData[5])*(this._rawData[2]*this._rawData[15] - this._rawData[14]*this._rawData[3]) - (this._rawData[4]*this._rawData[13] - this._rawData[12]*this._rawData[5])*(this._rawData[2]*this._rawData[11] - this._rawData[10]*this._rawData[3]) + (this._rawData[8]*this._rawData[13] - this._rawData[12]*this._rawData[9])*(this._rawData[2]*this._rawData[7] - this._rawData[6]*this._rawData[3]));
-	}
-
-	/**
-	 * A Vector3D object that holds the position, the 3D coordinate (x,y,z) of a display object within the
-	 * transformation's frame of reference.
-	 */
-	public get position():Vector3D
-	{
-		if (this._positionDirty) {
-			this._positionDirty = false;
-			this._position.x = this._rawData[12];
-			this._position.y = this._rawData[13];
-			this._position.z = this._rawData[14];
-		}
-
-		return this._position;
 	}
 
 	public invalidatePosition():void

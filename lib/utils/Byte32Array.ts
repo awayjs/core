@@ -43,10 +43,7 @@ export class Byte32Array
 		if (byteLength == -1)
 			byteLength = byte32Array.byteLength - byte32Array.bytePosition;
 
-		if (this.bytePosition == 0 && this.byteLength == byteLength)
-			byte32Array.writeInt32Array(this._int32Array);
-		else
-			byte32Array.writeInt32Array(this._int32Array.subarray(this.bytePosition/4, (this.bytePosition + byteLength)/4));
+		byte32Array.writeInt32Array(this._int32Array.subarray(this.bytePosition/4, (this.bytePosition + byteLength)/4));
 
 		this.bytePosition += byteLength;
 	}
@@ -60,54 +57,44 @@ export class Byte32Array
 
 	public writeFloat32Array(float32Array:Float32Array):void
 	{
-		this._ensureSpace(this.bytePosition + float32Array.buffer.byteLength);
+		this._ensureSpace(this.bytePosition + float32Array.length*4);
 
 		this._uint32Array.set(float32Array, this.bytePosition/4);
 
-		this.bytePosition += float32Array.buffer.byteLength;
+		this.bytePosition += float32Array.length*4;
 	}
 	
 	public writeInt32Array(int32Array:Int32Array):void
 	{
-		this._ensureSpace(this.bytePosition + int32Array.buffer.byteLength);
+		this._ensureSpace(this.bytePosition + int32Array.length*4);
 
 		this._uint32Array.set(int32Array, this.bytePosition/4);
 
-		this.bytePosition += int32Array.buffer.byteLength;
+		this.bytePosition += int32Array.length*4;
 	}
 	
 	public writeUint32Array(uint32Array:Uint32Array):void
 	{
-		this._ensureSpace(this.bytePosition + uint32Array.buffer.byteLength);
+		this._ensureSpace(this.bytePosition + uint32Array.length*4);
 
 		this._uint32Array.set(uint32Array, this.bytePosition/4);
 		
-		this.bytePosition += uint32Array.buffer.byteLength;
+		this.bytePosition += uint32Array.length*4;
 	}
 
 	public readFloat32Array(float32Array:Float32Array):void
 	{
-		if (this.bytePosition == 0 && this.byteLength == float32Array.byteLength)
-			float32Array.set(this._float32Array);
-		else
-			float32Array.set(this._float32Array.subarray(this.bytePosition/4, (this.bytePosition + float32Array.byteLength)/4));
+		float32Array.set(this._float32Array.subarray(this.bytePosition/4, this.bytePosition/4 + float32Array.length));
 	}
 
 	public readInt32Array(int32Array:Int32Array):void
 	{
-		if (this.bytePosition == 0 && this.byteLength == int32Array.byteLength)
-			int32Array.set(this._int32Array);
-		else
-			int32Array.set(this._int32Array.subarray(this.bytePosition/4, (this.bytePosition + int32Array.byteLength)/4));
-
+		int32Array.set(this._int32Array.subarray(this.bytePosition/4, this.bytePosition/4 + int32Array.length));
 	}
+
 	public readUint32Array(uint32Array:Uint32Array):void
 	{
-		if (this.bytePosition == 0 && this.byteLength == uint32Array.byteLength)
-			uint32Array.set(this._uint32Array);
-		else
-			uint32Array.set(this._uint32Array.subarray(this.bytePosition/4, (this.bytePosition + uint32Array.byteLength)/4));
-
+		uint32Array.set(this._uint32Array.subarray(this.bytePosition/4, this.bytePosition/4 + uint32Array.length));
 	}
 	
 	public getBytesAvailable():number

@@ -1,5 +1,6 @@
 export {BitmapImageUtils}				from "./utils/BitmapImageUtils";
 export {ByteArray}						from "./utils/ByteArray";
+export {Byte32Array}					from "./utils/Byte32Array";
 export {ByteArrayBase}					from "./utils/ByteArrayBase";
 export {ByteArrayBuffer}				from "./utils/ByteArrayBuffer";
 export {ColorUtils}						from "./utils/ColorUtils";

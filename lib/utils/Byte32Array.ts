@@ -59,7 +59,7 @@ export class Byte32Array
 	{
 		this._ensureSpace(this.bytePosition + float32Array.length*4);
 
-		this._uint32Array.set(float32Array, this.bytePosition/4);
+		this._float32Array.set(float32Array, this.bytePosition/4);
 
 		this.bytePosition += float32Array.length*4;
 	}
@@ -150,7 +150,7 @@ export class Byte32Array
 		if(binstr.length%4){
 			var padding:number=binstr.length%4;
 			for (var i = 0; i < padding; i++)
-				binstr += "\0";
+				binstr += " ";
 		}
 		
 		this._ensureSpace(this.bytePosition + 4 + binstr.length);

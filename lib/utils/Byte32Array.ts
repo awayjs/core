@@ -55,7 +55,7 @@ export class Byte32Array
 	{
 		byte32Array.bytePosition = 0;
 
-		byte32Array.readByte32Array(this);
+		byte32Array.readByte32Array(this, byte32Array.byteLength);
 	}
 
 	public writeFloat32Array(float32Array:Float32Array):void

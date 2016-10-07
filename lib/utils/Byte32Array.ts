@@ -7,7 +7,7 @@ export class Byte32Array
 	private _int32Array:Int32Array;
 	private _uint32Array:Uint32Array;
 
-	public bytePosition:number = -1;
+	public bytePosition:number = 0;
 
 	public byteLength:number = -1;
 	
@@ -19,7 +19,7 @@ export class Byte32Array
 	public set arrayBuffer(value:ArrayBuffer)
 	{
 		//reset position
-		this.bytePosition = -1;
+		this.bytePosition = 0;
 
 		//clear length
 		this.byteLength = -1;

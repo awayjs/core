@@ -243,7 +243,9 @@ export class Byte32Array
 
 				var newArrayBuffer:ArrayBuffer = new ArrayBuffer(this._maxLength);
 				var newInt32Array:Int32Array = new Int32Array(newArrayBuffer);
-				newInt32Array.set(this._int32Array); // memcpy
+				
+				if (this._int32Array)
+					newInt32Array.set(this._int32Array); // memcpy
 
 				this._uint32Array = new Uint32Array(newArrayBuffer);
 				this._float32Array = new Float32Array(newArrayBuffer);

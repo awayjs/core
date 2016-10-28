@@ -304,10 +304,10 @@ export class Rectangle
 	 */
 	public inflate(dx:number, dy:number):void
 	{
-		this.x -= dx/2;
-		this.y -= dy/2;
-		this.width += dx/2;
-		this.height += dy/2;
+		this.x -= dx;
+		this.y -= dy;
+		this.width += 2 * dx;
+		this.height += 2 * dy;
 	}
 
 	/**
@@ -324,10 +324,10 @@ export class Rectangle
 	 */
 	public inflatePoint(point:Point):void
 	{
-		this.x -= point.x/2;
-		this.y -= point.y/2;
-		this.width += point.x/2;
-		this.height += point.y/2;
+		this.x -= point.x;
+		this.y -= point.y;
+		this.width += 2 * point.x;
+		this.height += 2 * point.y;
 	}
 
 	/**

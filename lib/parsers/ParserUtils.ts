@@ -1,5 +1,3 @@
-import {BitmapImage2D}			from "../image/BitmapImage2D";
-import {WaveAudio}				from "../audio/WaveAudio";
 import {ByteArray}				from "../utils/ByteArray";
 
 export class ParserUtils
@@ -97,17 +95,6 @@ export class ParserUtils
 		var img:HTMLAudioElement = <HTMLAudioElement> new Audio();
 		img.src = src;
 		return img;
-	}
-
-	/**
-	 *
-	 */
-	public static imageToBitmapImage2D(img:HTMLImageElement, powerOfTwo:boolean = true):BitmapImage2D
-	{
-		var bitmapData:BitmapImage2D = new BitmapImage2D(img.width, img.height, true, null, powerOfTwo);
-		bitmapData.draw(img);
-
-		return bitmapData;
 	}
 
 	/**

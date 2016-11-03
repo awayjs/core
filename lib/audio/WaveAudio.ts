@@ -1,12 +1,6 @@
 import {IAudioChannel}				from "../managers/IAudioChannel";
 import {AudioManager}				from "../managers/AudioManager";
-import {ColorTransform}			from "../geom/ColorTransform";
-import {Matrix}					from "../geom/Matrix";
-import {Rectangle}				from "../geom/Rectangle";
-import {IAsset}					from "../library/IAsset";
 import {AssetBase}				from "../library/AssetBase";
-import {ParserUtils}				from "../parsers/ParserUtils";
-import {ColorUtils}				from "../utils/ColorUtils";
 
 // TODO: Audio should probably be an interface containing play/stop/seek functionality
 export class WaveAudio extends AssetBase

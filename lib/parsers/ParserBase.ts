@@ -1,4 +1,3 @@
-import {BitmapImage2D}			from "../image/BitmapImage2D";
 import {IAsset}					from "../library/IAsset";
 import {URLRequest}				from "../net/URLRequest";
 import {AbstractMethodError}		from "../errors/AbstractMethodError";
@@ -9,7 +8,6 @@ import {TimerEvent}				from "../events/TimerEvent";
 import {ParserUtils}				from "../parsers/ParserUtils";
 import {ResourceDependency}		from "../parsers/ResourceDependency";
 import {ByteArray}				from "../utils/ByteArray";
-import {ImageUtils}				from "../utils/ImageUtils";
 import {Timer}					from "../utils/Timer";
 import {getTimer}					from "../utils/getTimer";
 
@@ -96,22 +94,6 @@ export class ParserBase extends EventDispatcher
 		this._dependencies = new Array<ResourceDependency>();
 
 		this._pOnIntervalDelegate = (event:TimerEvent) => this._pOnInterval(event);
-	}
-
-	/**
-	 * Validates a bitmapData loaded before assigning to a default BitmapMaterial
-	 */
-
-	public isBitmapImage2DValid(bitmapImage2D:BitmapImage2D):boolean
-	{
-		var isValid:boolean = ImageUtils.isImage2DValid(bitmapImage2D);
-
-		if (!isValid) {
-
-			console.log(">> Bitmap loaded is not having power of 2 dimensions or is higher than 2048");
-		}
-
-		return isValid;
 	}
 
 	public set parsingFailure(b:boolean)

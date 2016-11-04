@@ -493,8 +493,18 @@ export class Matrix3D
 		targetData[15] = sourceData[offset + 15];
 
 		if (transpose) {
-
-
+			targetData[offset + 1] = sourceData[4];
+			targetData[offset + 2] = sourceData[8];
+			targetData[offset + 3] = sourceData[12];
+			targetData[offset + 4] = sourceData[1];
+			targetData[offset + 6] = sourceData[9];
+			targetData[offset + 7] = sourceData[13];
+			targetData[offset + 8] = sourceData[2];
+			targetData[offset + 9] = sourceData[6];
+			targetData[offset + 11] = sourceData[14];
+			targetData[offset + 12] = sourceData[3];
+			targetData[offset + 13] = sourceData[7];
+			targetData[offset + 14] = sourceData[11];
 		} else {
 			targetData[1] = sourceData[offset + 1];
 			targetData[2] = sourceData[offset + 2];

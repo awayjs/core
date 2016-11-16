@@ -148,7 +148,7 @@ export class Byte32Array
 		});
 		
 		if(binstr.length%4){
-			var padding:number=binstr.length%4;
+			var padding:number=4-(binstr.length%4);
 			for (var i = 0; i < padding; i++)
 				binstr += " ";
 		}
@@ -158,7 +158,7 @@ export class Byte32Array
 		this.writeInt(binstr.length);
 		
 		for (var i=0; i<binstr.length; i+=4)
-			this.writeUnsignedInt((binstr.charCodeAt(i) << 24) | (binstr.charCodeAt(i+1) << 16) | (binstr.charCodeAt(i+2) << 8)| binstr.charCodeAt(i));
+			this.writeUnsignedInt((binstr.charCodeAt(i+3) << 24) | (binstr.charCodeAt(i+2) << 16) | (binstr.charCodeAt(i+1) << 8)| binstr.charCodeAt(i));
 		
 		return binstr.length;
 	}

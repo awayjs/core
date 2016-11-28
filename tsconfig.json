@@ -1,11 +1,13 @@
 {
   "compilerOptions": {
     "target": "ES5",
-    "module": "commonjs",
+    "module": "ES2015",
     "moduleResolution": "node",
+    "noImplicitUseStrict": true,
+    "noEmitHelpers": true,
+    "importHelpers": true,
     "declaration": true,
-    "outDir": "./dist",
-    "baseUrl": "."
+    "outDir": "./dist"
   },
   "files": [
     "./index.ts"

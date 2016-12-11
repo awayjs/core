@@ -1,10 +1,12 @@
-import {Matrix3D}					from "../geom/Matrix3D";
-import {Rectangle}				from "../geom/Rectangle";
-import {Vector3D}					from "../geom/Vector3D";
-import {EventDispatcher}			from "../events/EventDispatcher";
-import {ProjectionEvent}			from "../events/ProjectionEvent";
-import {AbstractMethodError}		from "../errors/AbstractMethodError";
-import {IProjection}				from "../projections/IProjection";
+import {Matrix3D} from "../geom/Matrix3D";
+import {Rectangle} from "../geom/Rectangle";
+import {Vector3D} from "../geom/Vector3D";
+import {EventDispatcher} from "../events/EventDispatcher";
+import {ProjectionEvent} from "../events/ProjectionEvent";
+import {AbstractMethodError} from "../errors/AbstractMethodError";
+import {IProjection} from "../projections/IProjection";
+
+import {CoordinateSystem} from "./CoordinateSystem";
 
 export class ProjectionBase extends EventDispatcher implements IProjection
 {
@@ -17,14 +19,14 @@ export class ProjectionBase extends EventDispatcher implements IProjection
 
 	public _pMatrixInvalid:boolean = true;
 	public _pFrustumCorners:number[] = [];
-	public _pCoordinateSystem:string;
+	public _pCoordinateSystem:CoordinateSystem;
 	public _pOriginX:number = 0.5;
 	public _pOriginY:number = 0.5;
 
 	private _unprojection:Matrix3D;
 	private _unprojectionInvalid:boolean = true;
 
-	constructor(coordinateSystem:string = "leftHanded")
+	constructor(coordinateSystem:CoordinateSystem = CoordinateSystem.LEFT_HANDED)
 	{
 		super();
 
@@ -34,12 +36,12 @@ export class ProjectionBase extends EventDispatcher implements IProjection
 	/**
 	 * The handedness of the coordinate system projection. The default is LEFT_HANDED.
 	 */
-	public get coordinateSystem():string
+	public get coordinateSystem():CoordinateSystem
 	{
 		return this._pCoordinateSystem;
 	}
 
-	public set coordinateSystem(value:string)
+	public set coordinateSystem(value:CoordinateSystem)
 	{
 		if (this._pCoordinateSystem == value)
 			return;

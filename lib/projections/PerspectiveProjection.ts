@@ -12,7 +12,7 @@ export class PerspectiveProjection extends ProjectionBase
 	private _preserveAspectRatio:boolean = true;
 	private _preserveFocalLength:boolean = false;
 
-	constructor(fieldOfView:number = 60, coordinateSystem:string = "leftHanded")
+	constructor(fieldOfView:number = 60, coordinateSystem:CoordinateSystem = CoordinateSystem.LEFT_HANDED)
 	{
 		super(coordinateSystem);
 		this.fieldOfView = fieldOfView;

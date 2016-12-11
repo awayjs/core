@@ -2,6 +2,8 @@ import {Matrix3D}					from "../geom/Matrix3D";
 import {Vector3D}					from "../geom/Vector3D";
 import {IEventDispatcher}			from "../events/IEventDispatcher";
 
+import {CoordinateSystem} from "./CoordinateSystem";
+
 /**
  * IMaterialOwner provides an interface for objects that can use materials.
  *
@@ -9,7 +11,7 @@ import {IEventDispatcher}			from "../events/IEventDispatcher";
  */
 export interface IProjection extends IEventDispatcher
 {
-	coordinateSystem:string;
+	coordinateSystem:CoordinateSystem;
 
 	frustumCorners:Array<number>
 

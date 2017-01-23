@@ -1,3 +1,7 @@
+/**
+ * @module library
+ */ /** */
+
 import {IEventDispatcher}			from "../events/IEventDispatcher";
 
 export interface IAsset extends IEventDispatcher

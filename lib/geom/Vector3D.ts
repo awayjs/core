@@ -1,4 +1,8 @@
 /**
+ * @module geom
+ */ /** */
+
+/**
  * The Vector3D export class represents a point or a location in the three-dimensional
  * space using the Cartesian coordinates x, y, and z. As in a two-dimensional
  * space, the x property represents the horizontal axis and the y property

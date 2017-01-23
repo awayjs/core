@@ -1,3 +1,7 @@
+/**
+ * @module geom
+ */ /** */
+
 export class PoissonLookup
 {
 	public static _distributions:Array<Array<number>>;

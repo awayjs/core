@@ -1,4 +1,8 @@
 /**
+ * @module projections
+ */ /** */
+
+/**
  * Provides constant values for camera lens projection options use the the <code>coordinateSystem</code> property
  *
  * @see away.projections.PerspectiveLens#coordinateSystem

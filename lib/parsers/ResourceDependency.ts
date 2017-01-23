@@ -1,4 +1,8 @@
-﻿import {IAsset}					from "../library/IAsset";
+﻿/**
+ * @module parsers
+ */ /** */
+
+import {IAsset}					from "../library/IAsset";
 import {URLLoader}				from "../net/URLLoader";
 import {URLRequest}				from "../net/URLRequest";
 import {ParserBase}				from "../parsers/ParserBase";

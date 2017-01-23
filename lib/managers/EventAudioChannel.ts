@@ -1,3 +1,7 @@
+/**
+ * @module managers
+ */ /** */
+
 import {ParserUtils}				from "../parsers/ParserUtils";
 
 export class EventAudioChannel

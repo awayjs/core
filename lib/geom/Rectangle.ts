@@ -1,3 +1,7 @@
+/**
+ * @module geom
+ */ /** */
+
 import {Point}					from "../geom/Point";
 
 /**

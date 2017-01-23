@@ -1,3 +1,7 @@
+/**
+ * @module errors
+ */ /** */
+
 import {ErrorBase}				from "../errors/ErrorBase";
 
 export class DocumentError extends ErrorBase

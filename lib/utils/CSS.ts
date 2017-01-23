@@ -1,3 +1,7 @@
+/**
+ * @module utils
+ */ /** */
+
 export class CSS
 {
 	public static setElementSize(element:HTMLElement, width:number, height:number):void

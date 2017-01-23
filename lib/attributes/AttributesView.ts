@@ -1,3 +1,7 @@
+/**
+ * @module attributes
+ */ /** */
+
 import {AttributesBuffer}		from "../attributes/AttributesBuffer";
 import {AssetBase}				from "../library/AssetBase";
 import {IArrayBufferViewClass}	from "../utils/IArrayBufferViewClass";

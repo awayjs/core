@@ -1,3 +1,7 @@
+/**
+ * @module library
+ */ /** */
+
 import {ConflictStrategyBase}			from "../library/ConflictStrategyBase";
 import {ErrorConflictStrategy}		from "../library/ErrorConflictStrategy";
 import {IgnoreConflictStrategy}		from "../library/IgnoreConflictStrategy";

@@ -1,3 +1,7 @@
+/**
+ * @module library
+ */ /** */
+
 import {URLRequest}				from "../net/URLRequest";
 import {AssetLibrary}				from "../library/AssetLibrary";
 import {AssetLibraryIterator}		from "../library/AssetLibraryIterator";

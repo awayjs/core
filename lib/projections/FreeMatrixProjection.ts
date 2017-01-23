@@ -1,3 +1,7 @@
+/**
+ * @module projections
+ */ /** */
+
 import {PerspectiveProjection}	from "../projections/PerspectiveProjection";
 import {ProjectionBase}			from "../projections/ProjectionBase";
 

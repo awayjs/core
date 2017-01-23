@@ -1,3 +1,7 @@
+/**
+ * @module ui
+ */ /** */
+
 export class Keyboard
 {
 	/**

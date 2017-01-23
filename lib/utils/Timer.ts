@@ -1,3 +1,7 @@
+/**
+ * @module utils
+ */ /** */
+
 import {ErrorBase}				from "../errors/ErrorBase";
 import {EventDispatcher}			from "../events/EventDispatcher";
 import {TimerEvent}				from "../events/TimerEvent";

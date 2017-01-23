@@ -15,3 +15,7 @@ npm-debug.log
 .project
 .DS_Store
 *.iml
+
+# Misc
+deploy_key
+deploy_key.pub

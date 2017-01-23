@@ -1,3 +1,7 @@
+/**
+ * @module managers
+ */ /** */
+
 import {IAudioChannel}			from "../managers/IAudioChannel";
 
 export interface IAudioChannelClass

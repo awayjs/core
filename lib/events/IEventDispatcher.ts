@@ -1,3 +1,7 @@
+/**
+ * @module events
+ */ /** */
+
 import {EventBase}				from "../events/EventBase";
 
 /**

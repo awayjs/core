@@ -1,3 +1,7 @@
+/**
+ * @module utils
+ */ /** */
+
 export interface IArrayBufferViewClass
 {
 	BYTES_PER_ELEMENT:number;

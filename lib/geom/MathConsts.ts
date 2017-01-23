@@ -1,4 +1,8 @@
 /**
+ * @module geom
+ */ /** */
+
+/**
 * MathConsts provides some commonly used mathematical constants
 */
 export class MathConsts

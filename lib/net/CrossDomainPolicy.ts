@@ -1,3 +1,7 @@
+/**
+ * @module net
+ */ /** */
+
 export class CrossDomainPolicy
 {
 	public static ANONYMOUS:string = 'anonymous';

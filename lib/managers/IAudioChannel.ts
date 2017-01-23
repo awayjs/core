@@ -1,4 +1,6 @@
-
+/**
+ * @module managers
+ */ /** */
 
 export interface IAudioChannel
 {

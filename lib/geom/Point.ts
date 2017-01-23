@@ -1,4 +1,8 @@
 /**
+ * @module geom
+ */ /** */
+
+/**
  * The Point object represents a location in a two-dimensional coordinate
  * system, where <i>x</i> represents the horizontal axis and <i>y</i>
  * represents the vertical axis.

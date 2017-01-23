@@ -1,3 +1,7 @@
+/**
+ * @module managers
+ */ /** */
+
 import {StreamingAudioChannel}	from "../managers/StreamingAudioChannel";
 import {WebAudioChannel}			from "../managers/WebAudioChannel";
 import {IAudioChannel}			from "../managers/IAudioChannel";

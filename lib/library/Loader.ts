@@ -1,3 +1,7 @@
+/**
+ * @module library
+ */ /** */
+
 import {LoaderContext}			from "../library/LoaderContext";
 import {LoaderInfo}				from "../library/LoaderInfo";
 import {URLLoader}				from "../net/URLLoader";

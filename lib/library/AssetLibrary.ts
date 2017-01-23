@@ -1,3 +1,7 @@
+/**
+ * @module library
+ */ /**' */
+
 import {URLRequest}				from "../net/URLRequest";
 import {EventBase}				from "../events/EventBase";
 import {AssetLibraryBundle}		from "../library/AssetLibraryBundle";

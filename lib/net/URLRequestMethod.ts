@@ -1,3 +1,7 @@
+/**
+ * @module net
+ */ /** */
+
 export class URLRequestMethod
 {
 	/**

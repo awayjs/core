@@ -1,3 +1,7 @@
+/**
+ * @module geom
+ */ /** */
+
 import {ColorUtils}			from "../utils/ColorUtils";
 
 /**

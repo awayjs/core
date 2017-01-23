@@ -1,3 +1,7 @@
+/**
+ * @module library
+ */ /** */
+
 import {ConflictStrategyBase}		from "../library/ConflictStrategyBase";
 import {IAsset}					from "../library/IAsset";
 

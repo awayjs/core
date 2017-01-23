@@ -1,3 +1,7 @@
+/**
+ * @module net
+ */ /** */
+
 export class URLVariables
 {
 	private _variables:Object = new Object();

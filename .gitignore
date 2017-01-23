@@ -2,6 +2,7 @@
 node_modules/
 dist/
 bundle/
+docs/
 
 # Dev files
 npm-debug.log

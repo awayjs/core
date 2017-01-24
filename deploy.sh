@@ -35,11 +35,12 @@ cd ..
 # Clean out existing contents
 echo "Clearing sources..."
 rm -rf out/* || exit 0
-ls -la
+ls -la out
 
 # Run our compile script
 doCompileDocs
 cp -r docs/* out/
+ls -la out
 
 # Now let's go have some fun with the cloned repo
 cd out

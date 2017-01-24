@@ -21,7 +21,7 @@ export class AttributesBuffer extends AssetBase
 
 
 	/**
-	 * Test change something in docs.
+	 * Test change something in docs 1.
 	 * @returns {string}
 	 */
 	public get assetType():string

@@ -1,6 +1,6 @@
 /**
  * @module attributes
- */ /** */
+ */
 
 import {AttributesView}			from "../attributes/AttributesView";
 import {AssetBase}				from "../library/AssetBase";

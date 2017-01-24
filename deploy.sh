@@ -44,7 +44,8 @@ ls -la out
 
 # Clean out existing contents
 echo "Clearing sources..."
-find . -type d -not -name 'out' -exec rm -rf
+shopt -s extglob
+rm \!(out)
 ls -la
 
 # Now let's go have some fun with the cloned repo

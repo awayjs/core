@@ -1,4 +1,8 @@
 /**
+ * @module utils
+ */ /** */
+
+/**
  *
  */
 export class ColorUtils

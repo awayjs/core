@@ -1,3 +1,7 @@
+/**
+ * @module utils
+ */ /** */
+
 import {ByteArrayBase}			from "../utils/ByteArrayBase";
 
 export class ByteArray extends ByteArrayBase

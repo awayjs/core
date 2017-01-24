@@ -1,3 +1,7 @@
+/**
+ * @module library
+ */ /** */
+
 export class LoaderContext
 {
 	public static UNDEFINED:number = 0;

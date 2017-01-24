@@ -21,7 +21,8 @@
     "prebuild": "npm run clean:dist",
     "build": "npm run tsc && npm run rollup && npm run uglifyjs",
     "version": "npm run build",
-    "postversion": "git push && git push --tags && npm publish"
+    "postversion": "git push && git push --tags && npm publish",
+    "docs": "node_modules/typedoc-md-theme/bin/typedoc --options typedoc.json --source lib"
   },
   "keywords": [
     "AwayJS",
@@ -42,6 +43,9 @@
     "rimraf": "^2.5.2",
     "rollup": "^0.36.3",
     "rollup-plugin-includepaths": "^0.2.1",
+    "typedoc": "^0.5.5",
+    "typedoc-md-theme": "^1.0.1",
+    "typedoc-plugin-external-module-name": "^1.0.8",
     "typescript": "2.2.0-dev.20161123",
     "uglifyjs": "^2.4.10"
   }

@@ -1,3 +1,6 @@
+/**
+ * @module managers
+ */ /** */
 
 export class AudioChannel
 {

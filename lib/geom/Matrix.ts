@@ -1,3 +1,7 @@
+/**
+ * @module geom
+ */ /** */
+
 import {Point}					from "../geom/Point";
 import {Vector3D}					from "../geom/Vector3D";
 import {ArgumentError}			from "../errors/ArgumentError";

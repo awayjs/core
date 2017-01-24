@@ -1,3 +1,7 @@
+/**
+ * @module geom
+ */ /** */
+
 import {PlaneClassification}	from "../geom/PlaneClassification";
 import {Vector3D}				from "../geom/Vector3D";
 

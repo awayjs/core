@@ -1,3 +1,7 @@
+/**
+ * @module library
+ */ /** */
+
 import {IAsset}					from "../library/IAsset";
 
 export class AssetLibraryIterator

@@ -1,4 +1,8 @@
 /**
+ * @module geom
+ */ /** */
+
+/**
  * A Quaternion object which can be used to represent rotations.
  */
 export class Orientation3D

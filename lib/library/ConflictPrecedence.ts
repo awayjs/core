@@ -1,4 +1,8 @@
 /**
+ * @module library
+ */ /** */
+
+/**
  * Enumaration export class for precedence when resolving naming conflicts in the library.
  *
  * @see away.library.AssetLibrary.conflictPrecedence

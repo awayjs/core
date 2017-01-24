@@ -1,3 +1,7 @@
+/**
+ * @module geom
+ */ /** */
+
 import {Box}							from "../geom/Box";
 import {Plane3D}							from "../geom/Plane3D";
 import {MathConsts}					from "../geom/MathConsts";

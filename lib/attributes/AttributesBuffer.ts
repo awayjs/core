@@ -1,10 +1,14 @@
+/**
+ * @module attributes
+ */ /** */
+
 import {AttributesView}			from "../attributes/AttributesView";
 import {AssetBase}				from "../library/AssetBase";
 
 export class AttributesBuffer extends AssetBase
 {
 	public static assetType:string = "[assets AttributesBuffer]";
-	
+
 	private _count:number = 0;
 	private _stride:number = 0;
 	private _newStride:number = 0;
@@ -42,19 +46,19 @@ export class AttributesBuffer extends AssetBase
 
 		this.resize();
 	}
-	
+
 	public get count():number
 	{
 		return this._count;
 	}
-	
+
 	public set count(value:number)
 	{
 		if (this._count == value)
 			return;
-		
+
 		this._count = value;
-		
+
 		this.resize();
 	}
 
@@ -90,7 +94,7 @@ export class AttributesBuffer extends AssetBase
 	{
 		return this._count*this.stride;
 	}
-	
+
 	/**
 	 *
 	 */

@@ -33,7 +33,7 @@ git checkout $TARGET_BRANCH || git checkout --orphan $TARGET_BRANCH
 cd ..
 
 # Clean out existing contents
-echo "Clearing sources..."
+echo "Clearing docs..."
 rm -rf out/* || exit 0
 ls -la out
 
@@ -41,6 +41,11 @@ ls -la out
 doCompileDocs
 cp -r docs/* out/
 ls -la out
+
+# Clean out existing contents
+echo "Clearing sources..."
+find . ! -name 'out' -type d -exec rm -rf {} +
+ls -la
 
 # Now let's go have some fun with the cloned repo
 cd out

@@ -1,4 +1,5 @@
 {
+  "theme": "node_modules/typedoc-md-theme/bin",
   "mode": "modules",
   "moduleResolution": "node",
   "tsconfig": "tsconfig.json",

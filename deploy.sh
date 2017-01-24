@@ -33,7 +33,9 @@ git checkout $TARGET_BRANCH || git checkout --orphan $TARGET_BRANCH
 cd ..
 
 # Clean out existing contents
+echo "Clearing sources..."
 rm -rf out/* || exit 0
+ls -la
 
 # Run our compile script
 doCompileDocs

@@ -1,10 +1,13 @@
 {
-  "theme": "node_modules/typedoc-md-theme/bin",
-  "mode": "modules",
+  "theme": "docsTheme",
+  "mode": "file",
   "moduleResolution": "node",
-  "tsconfig": "tsconfig.json",
   "includeDeclarations": true,
   "ignoreCompilerErrors": true,
   "excludePrivate": true,
+  "excludeNotExported": true,
+  "excludeExternals": false,
+  "includes": "docsInclude",
+  "json": "docs/docs.json",
   "out": "docs"
 }

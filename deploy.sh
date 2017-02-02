@@ -42,12 +42,6 @@ doCompileDocs
 cp -r docs/* out/
 ls -la out
 
-# Clean out existing contents
-#echo "Clearing sources..."
-#shopt -s extglob
-#rm \!(out)
-#ls -la
-
 # Now let's go have some fun with the cloned repo
 cd out
 git config user.name "Travis CI"

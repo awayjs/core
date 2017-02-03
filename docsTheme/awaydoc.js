@@ -84,31 +84,6 @@ handlebars.registerHelper('newLine', function () { return '\n'; });
             return origGetUrls.call(this, project);
         }
 
-        // (2) Modify link urls.
-        // var origGetNavigation = app.renderer.theme.getNavigation;
-        // app.renderer.theme.getNavigation = function modGetNavigation(project) {
-        //     console.log("~awaydoc~   modifying theme.getNavigation()");
-        //
-        //     function replaceNavigationExtention(navigation) {
-        //         navigation.url = replaceExtention(navigation.url);
-        //         console.log("~awaydoc~     nav: " + navigation.url);
-        //         if (navigation.dedicatedUrls) {
-        //             navigation.dedicatedUrls = navigation.dedicatedUrls.map(replaceExtention);
-        //         }
-        //         navigation.children && navigation.children.forEach(replaceNavigationExtention);
-        //     }
-        //
-        //     var navigation = origGetNavigation.call(this, project);
-        //     replaceNavigationExtention(navigation)
-        //
-        //     return navigation;
-        // }
-
-        // (3) Modify existing files check.
-        // app.renderer.theme.isOutputDirectory = function(path) {
-        //     return fs.existsSync(path + "/index.html");
-        // }
-
         return success;
     };
 })();
@@ -119,14 +94,4 @@ app.generateDocs(files, options.out);
 if(options.json) {
     console.log("~awaydoc~ generate JSON: " + options.json);
     app.generateJson(files, options.json);
-}
-
-// ----------------------------
-// Utils
-// ----------------------------
-
-function replaceExtention(path) {
-    // console.log("path: " + path);
-    return path;
-    // return path ? path.replace(/\.html($|#.*$)/, '.md$1') : path;
 }

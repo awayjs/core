@@ -1,4 +1,6 @@
 {
+  "out": "docs",
+  "json": "docs/docs.json",
   "theme": "docsTheme",
   "mode": "file",
   "moduleResolution": "node",
@@ -8,6 +10,5 @@
   "excludeNotExported": true,
   "excludeExternals": false,
   "includes": "docsInclude",
-  "json": "docs/docs.json",
-  "out": "docs"
+  "tsconfig": "tsconfig.json"
 }

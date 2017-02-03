@@ -887,8 +887,13 @@ img { max-width: 100%; }
 
 <div class="container container-main">
     <div class="content-wrap">
+
         <div class="tsd-panel tsd-typography">
-            {{#markdown}}{{{model.readme}}}{{/markdown}}
+            {{#if model.readme}}
+                {{#markdown}}{{{model.readme}}}{{/markdown}}
+            {{else}}
+                <h1>{{model.name}}</h1>
+            {{/if}}
         </div>
 
         {{{contents}}}

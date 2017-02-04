@@ -3,15 +3,15 @@
 var typedoc = require('typedoc');
 var handlebars = require('handlebars');
 var fs = require('fs');
-var nav = require("../node_modules/typedoc/dist/lib/output/models/NavigationItem.js");
+var nav = require("../../node_modules/typedoc/dist/lib/output/models/NavigationItem.js");
 
 console.log("~awaydoc~ running typedoc API...");
 
 // Initialize typedoc API.
 var options = {
-    "out": "docs",
+    "out": "docs/bin",
     "json": "",
-    "theme": "docsTheme",
+    "theme": "docs/theme",
     "mode": "modules",
     "logger": "console",
     "moduleResolution": "node",
@@ -20,7 +20,7 @@ var options = {
     "excludePrivate": true,
     "excludeNotExported": true,
     "excludeExternals": false,
-    "includes": "docsInclude",
+    "includes": "docs/includes",
     "tsconfig": "tsconfig.json"
 };
 var app = new typedoc.Application(options);

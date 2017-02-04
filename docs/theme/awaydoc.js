@@ -10,6 +10,7 @@ console.log("~awaydoc~ running typedoc API...");
 // Initialize typedoc API.
 var options = {
     "out": "docs/bin",
+    "name": "core",
     "json": "",
     "theme": "docs/theme",
     "mode": "modules",

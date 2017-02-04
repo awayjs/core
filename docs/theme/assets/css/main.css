@@ -640,7 +640,8 @@ pre code { padding: 0; font-size: 100%; background-color: transparent; }
 .tsd-page-title { padding: 70px 0 20px 0; margin: 0 0 40px 0; background: #fff; box-shadow: 0 0 5px rgba(0, 0, 0, 0.35); }
 .tsd-page-title h1 { margin: 0; }
 
-.tsd-breadcrumb { margin: 0; padding: 0; color: #808080; }
+
+.tsd-breadcrumb { width: 90%; margin: 0; padding: 0; color: #808080; }
 .tsd-breadcrumb a { color: #808080; text-decoration: none; }
 .tsd-breadcrumb a:hover { text-decoration: underline; }
 .tsd-breadcrumb li { display: inline; }

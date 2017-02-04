@@ -39,7 +39,7 @@ ls -la out
 
 # Run our compile script
 doCompileDocs
-cp -r docs/* out/
+cp -r docs/bin/* out/
 ls -la out
 
 # Now let's go have some fun with the cloned repo

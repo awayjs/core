@@ -3,53 +3,26 @@
 var typedoc = require('typedoc');
 var handlebars = require('handlebars');
 var fs = require('fs');
+var nav = require("../node_modules/typedoc/dist/lib/output/models/NavigationItem.js");
 
 console.log("~awaydoc~ running typedoc API...");
 
-// Parse parameters.
-var paramName;
-var paramVal;
-var optionsPath;
-var srcPath;
-if (process.argv.length > 2) {
-    for(var p = 2; p < process.argv.length; p++) {
-        paramName = process.argv[p];
-        if (paramName === "--options") {
-            paramVal = process.argv[p + 1];
-            if (paramVal != null) {
-                optionsPath = paramVal;
-            }
-        }
-        if (paramName === "--source") {
-            paramVal = process.argv[p + 1];
-            if (paramVal != null) {
-                srcPath = paramVal;
-            }
-        }
-    }
-}
-
-// Prepare options.
-// This is a json object that is passed to the typedoc api,
-// and is where you set all the doc generation options.
-var options;
-if(optionsPath != null) {
-    console.log("~awaydoc~ using options from: " + optionsPath);
-    options = JSON.parse(fs.readFileSync(optionsPath, 'utf8'));
-}
-else {
-    options = {
-        "theme": ".",
-        "out": "docs"
-    }
-}
-
-// Prepare path.
-srcPath = srcPath == null ? "src" : srcPath;
-console.log("~awaydoc~ using ts sources from: " + srcPath);
-
 // Initialize typedoc API.
-console.log("~awaydoc~ options: " + JSON.stringify(options));
+var options = {
+    "out": "docs",
+    "json": "",
+    "theme": "docsTheme",
+    "mode": "file",
+    "logger": "console",
+    "moduleResolution": "node",
+    "includeDeclarations": true,
+    "ignoreCompilerErrors": true,
+    "excludePrivate": true,
+    "excludeNotExported": true,
+    "excludeExternals": false,
+    "includes": "docsInclude",
+    "tsconfig": "tsconfig.json"
+};
 var app = new typedoc.Application(options);
 
 // Register handlebars helpers.
@@ -68,13 +41,24 @@ handlebars.registerHelper('newLine', function () { return '\n'; });
 
         var success = origPrepareTheme.call(this);
 
-        // (1) Modify file names.
+        // Always keep the nav at the project root.
+        app.renderer.removeComponent('toc');
+        this.listenTo(app.renderer, 'beginPage', function onRendererBeginPage(page){
+            var model = page.project;
+            page.toc = new nav.NavigationItem();
+            var children = model.children || [];
+            children.forEach((child) => {
+                nav.NavigationItem.create(child, page.toc, true);
+            });
+        });
+
+        // Keep camelcase in URLs.
         var origGetUrls = app.renderer.theme.getUrls;
         app.renderer.theme.getUrls = function modGetURls(project) {
             console.log("~awaydoc~   modifying theme.getUrls()");
 
             // Reflection.getAlias() uses toLowerCase(),
-            // here, we state that we want the original class names.
+            // here, we state that we want the original class names as aliases.
             if (project.children) {
                 project.children.forEach((child) => {
                     child._alias = child.name;
@@ -89,9 +73,8 @@ handlebars.registerHelper('newLine', function () { return '\n'; });
 })();
 
 // Trigger doc generation.
-var files = app.expandInputFiles([srcPath]);
+var files = app.expandInputFiles(["lib"]);
 app.generateDocs(files, options.out);
-if(options.json) {
-    console.log("~awaydoc~ generate JSON: " + options.json);
+if(options.json && options.json !== "") {
     app.generateJson(files, options.json);
 }

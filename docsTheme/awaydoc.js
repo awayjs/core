@@ -12,7 +12,7 @@ var options = {
     "out": "docs",
     "json": "",
     "theme": "docsTheme",
-    "mode": "file",
+    "mode": "modules",
     "logger": "console",
     "moduleResolution": "node",
     "includeDeclarations": true,
@@ -43,13 +43,19 @@ handlebars.registerHelper('newLine', function () { return '\n'; });
 
         // Always keep the nav at the project root.
         app.renderer.removeComponent('toc');
+        function buildToc(model, parent, level) {
+            var children = model.children || [];
+            children.forEach((child) => {
+                var item = nav.NavigationItem.create(child, parent, true);
+                if(level == 0) {
+                    buildToc(child, item, level + 1);
+                }
+            });
+        }
         this.listenTo(app.renderer, 'beginPage', function onRendererBeginPage(page){
             var model = page.project;
             page.toc = new nav.NavigationItem();
-            var children = model.children || [];
-            children.forEach((child) => {
-                nav.NavigationItem.create(child, page.toc, true);
-            });
+            buildToc(model, page.toc, 0);
         });
 
         // Keep camelcase in URLs.

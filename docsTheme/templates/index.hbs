@@ -1,15 +1,3 @@
-{{#with model}}
-    {{> comment}}
-{{/with}}
-
-{{#if model.typeHierarchy}}
-    <section class="tsd-hierarchy">
-        <h2>Hierarchy</h2>
-        {{#with model.typeHierarchy}}{{> hierarchy}}{{/with}}
-    </section>
-{{/if}}
-
-{{#with model}}
-    <div style="position:relative;"><a name="typedoc-main-index" class="tsd-anchor"></a></div>
-    {{> index}}
-{{/with}}
+<div class="tsd-panel tsd-typography">
+    {{#markdown}}{{{model.readme}}}{{/markdown}}
+</div>

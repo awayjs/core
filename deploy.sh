@@ -8,10 +8,6 @@ set -e # Exit with nonzero exit code if anything fails
 SOURCE_BRANCH="dev"
 TARGET_BRANCH="gh-pages"
 
-function doCompileDocs {
-    echo "Compiling documentation..."
-    npm run docs
-}
 # Pull requests and commits to other branches shouldn't try to deploy, just build to verify
 if [ "$TRAVIS_PULL_REQUEST" != "false" -o "$TRAVIS_BRANCH" != "$SOURCE_BRANCH" ]; then
     echo "Skipping deploy; just doing a build."
@@ -41,7 +37,8 @@ mv .git-gh-pages out/.git
 ls -la out
 
 # Run our compile script
-doCompileDocs
+echo "Compiling documentation..."
+npm run docs
 rm -f docs/bin/docs.json
 cp -r docs/bin/* out/
 ls -la out

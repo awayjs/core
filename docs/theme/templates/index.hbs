@@ -1,3 +1,8 @@
 <div class="tsd-panel tsd-typography">
     {{#markdown}}{{{model.readme}}}{{/markdown}}
 </div>
+{{#with model}}
+    <div style="position:relative;"><a name="typedoc-main-index" class="tsd-anchor"></a></div>
+    {{> index}}
+    {{> members}}
+{{/with}}

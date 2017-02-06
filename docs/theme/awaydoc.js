@@ -66,11 +66,16 @@ handlebars.registerHelper('newLine', function () { return '\n'; });
 
             // Reflection.getAlias() uses toLowerCase(),
             // here, we state that we want the original class names as aliases.
-            if (project.children) {
-                project.children.forEach((child) => {
-                    child._alias = child.name;
-                });
+            function applyAlias(obj) {
+                if (obj.children) {
+                    obj.children.forEach((child) => {
+                        console.log("url: " + child.name);
+                        child._alias = child.name;
+                        applyAlias(child);
+                    });
+                }
             }
+            applyAlias(project);
 
             return origGetUrls.call(this, project);
         }

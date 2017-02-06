@@ -39,7 +39,7 @@ ls -la out
 
 # Run our compile script
 doCompileDocs
-rm docs/bin/docs.json
+rm -f docs/bin/docs.json
 cp -r docs/bin/* out/
 ls -la out
 

@@ -30,11 +30,12 @@ echo "Creating deploy branch..."
 git clone $REPO out
 cd out
 git checkout $TARGET_BRANCH || git checkout --orphan $TARGET_BRANCH
-cd ..
 
 # Clean out existing contents
 echo "Clearing docs..."
-rm -rf out/* || exit 0
+cd out
+rm -rf ..?* .[!.]* * || exit 0
+cd ..
 ls -la out
 
 # Run our compile script

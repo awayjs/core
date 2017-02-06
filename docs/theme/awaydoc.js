@@ -69,7 +69,6 @@ handlebars.registerHelper('newLine', function () { return '\n'; });
             function applyAlias(obj) {
                 if (obj.children) {
                     obj.children.forEach((child) => {
-                        console.log("url: " + child.name);
                         child._alias = child.name;
                         applyAlias(child);
                     });

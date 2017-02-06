@@ -33,13 +33,13 @@ git checkout $TARGET_BRANCH || git checkout --orphan $TARGET_BRANCH
 
 # Clean out existing contents
 echo "Clearing docs..."
-cd out
 rm -rf ..?* .[!.]* * || exit 0
 cd ..
 ls -la out
 
 # Run our compile script
 doCompileDocs
+rm docs/bin/docs.json
 cp -r docs/bin/* out/
 ls -la out
 

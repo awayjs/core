@@ -51,7 +51,7 @@ git config user.email "palebluedot@gmail.com"
 # Commit the "changes", i.e. the new version.
 # The delta will show diffs between new and old versions.
 echo "Committing changes..."
-git add .
+git add -A
 git commit -m "Deploy to GitHub Pages: ${SHA}"
 
 # Get the deploy key by using Travis's stored variables to decrypt key.enc

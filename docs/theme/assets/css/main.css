@@ -833,7 +833,7 @@ ul.tsd-parameters .tsd-comment, ul.tsd-type-parameters .tsd-comment { margin-top
 .tsd-sources ul, .tsd-sources p { margin: 0 !important; }
 .tsd-sources ul { list-style: none; padding: 0; }
 
-.tsd-page-toolbar { position: absolute; z-index: 1; top: 0; left: 0; width: 100%; height: 40px; color: #333; background: #fff; border-bottom: 1px solid #eee; }
+.tsd-page-toolbar { position: fixed; z-index: 1; top: 0; left: 0; width: 100%; height: 40px; color: #333; background: #fff; border-bottom: 1px solid #eee; }
 .tsd-page-toolbar a { color: #333; text-decoration: none; }
 .tsd-page-toolbar a.title { font-weight: bold; }
 .tsd-page-toolbar a.title:hover { text-decoration: underline; }

@@ -13,7 +13,7 @@ var options = {
     "name": "core",
     "json": "",
     "theme": "docs/theme",
-    "mode": "modules",
+    "mode": "file",
     "logger": "console",
     "moduleResolution": "node",
     "includeDeclarations": true,
@@ -47,10 +47,7 @@ handlebars.registerHelper('newLine', function () { return '\n'; });
         function buildToc(model, parent, level) {
             var children = model.children || [];
             children.forEach((child) => {
-                var item = nav.NavigationItem.create(child, parent, true);
-                if(level == 0) {
-                    buildToc(child, item, level + 1);
-                }
+                nav.NavigationItem.create(child, parent, true);
             });
         }
         this.listenTo(app.renderer, 'beginPage', function onRendererBeginPage(page){

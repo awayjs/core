@@ -37,7 +37,7 @@
   },
   "homepage": "https://github.com/awayjs/core#readme",
   "dependencies": {
-    "@awayjs/typedoc-theme": "^0.1.1",
+    "@awayjs/typedoc-theme": "^0.1.5",
     "tslib": "github:microsoft/tslib"
   },
   "devDependencies": {

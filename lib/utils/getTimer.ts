@@ -1,8 +1,4 @@
 /**
- * @module utils
- */ /** */
-
-/**
  *
  *
  * @returns {number}

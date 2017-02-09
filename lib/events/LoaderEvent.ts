@@ -1,7 +1,3 @@
-/**
- * @module events
- */ /** */
-
 import {IAsset}					from "../library/IAsset";
 import {EventBase}				from "../events/EventBase";
 

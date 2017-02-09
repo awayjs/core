@@ -1,7 +1,3 @@
-/**
- * @module errors
- */ /** */
-
 export class ErrorBase
 {
 

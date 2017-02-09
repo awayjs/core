@@ -1,7 +1,3 @@
-/**
- * @module library
- */ /** */
-
 import {ConflictPrecedence}		from "../library/ConflictPrecedence";
 import {IAsset}					from "../library/IAsset";
 import {AbstractMethodError}		from "../errors/AbstractMethodError";

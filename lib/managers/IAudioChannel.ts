@@ -1,7 +1,3 @@
-/**
- * @module managers
- */ /** */
-
 export interface IAudioChannel
 {
 	duration:number;

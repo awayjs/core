@@ -1,7 +1,3 @@
-/**
- * @module net
- */ /** */
-
 export class URLLoaderDataFormat
 {
 	/**

@@ -1,7 +1,3 @@
-/**
- * @module projections
- */ /** */
-
 import {Matrix3D}			from "../geom/Matrix3D";
 import {Vector3D}					from "../geom/Vector3D";
 import {ProjectionBase}			from "../projections/ProjectionBase";

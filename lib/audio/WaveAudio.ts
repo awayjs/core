@@ -1,7 +1,3 @@
-/**
- * @module audio
- */ /** */
-
 import {IAudioChannel}				from "../managers/IAudioChannel";
 import {AudioManager}				from "../managers/AudioManager";
 import {AssetBase}				from "../library/AssetBase";

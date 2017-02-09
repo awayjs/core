@@ -1,7 +1,3 @@
-/**
- * @module image
- */ /** */
-
 export class ImageData {
     public width: number;
     public data: any;

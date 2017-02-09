@@ -1,7 +1,3 @@
-/**
- * @module library
- */ /** */
-
 export class IDUtil
 {
 	/**

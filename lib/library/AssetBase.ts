@@ -1,7 +1,3 @@
-/**
- * @module library
- */ /** */
-
 import {IAsset}					from "../library/IAsset";
 import {IAssetClass}				from "../library/IAssetClass";
 import {AbstractMethodError}		from "../errors/AbstractMethodError";

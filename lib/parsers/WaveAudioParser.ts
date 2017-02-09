@@ -1,7 +1,3 @@
-/**
- * @module parsers
- */ /** */
-
 import {WaveAudio}				from "../audio/WaveAudio";
 import {IAsset}					from "../library/IAsset";
 import {URLLoaderDataFormat}		from "../net/URLLoaderDataFormat";

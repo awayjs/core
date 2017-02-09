@@ -1,7 +1,3 @@
-/**
- * @module managers
- */ /** */
-
 export class AudioChannel
 {
 	public static maxChannels:number = 16;

@@ -1,7 +1,3 @@
-/**
- * @module net
- */ /** */
-
 import {URLLoaderDataFormat}			from "../net/URLLoaderDataFormat";
 import {URLRequest}					from "../net/URLRequest";
 import {URLRequestMethod}				from "../net/URLRequestMethod";

@@ -22,7 +22,7 @@
     "build": "npm run tsc && npm run rollup && npm run uglifyjs && npm run docs",
     "version": "npm run build",
     "postversion": "git push && git push --tags && npm publish",
-    "docs": "rm -rf docs/bin || true && node docs/theme/awaydoc.js"
+    "docs": "rm -rf docs/bin || true && node node_modules/awayjs-docs/awaydoc.js"
   },
   "keywords": [
     "AwayJS",
@@ -40,6 +40,7 @@
     "tslib": "github:microsoft/tslib"
   },
   "devDependencies": {
+    "awayjs-docs": "^1.0.0",
     "rimraf": "^2.5.2",
     "rollup": "^0.36.3",
     "rollup-plugin-includepaths": "^0.2.1",

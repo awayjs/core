@@ -1,7 +1,3 @@
-/**
- * @module attributes
- */ /** */
-
 import {AttributesBuffer}		from "../attributes/AttributesBuffer";
 import {AttributesView}			from "../attributes/AttributesView";
 

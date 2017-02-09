@@ -1,7 +1,3 @@
-/**
- * @module errors
- */ /** */
-
 import {ErrorBase}				from "../errors/ErrorBase";
 
 /**

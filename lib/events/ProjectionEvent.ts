@@ -1,7 +1,3 @@
-/**
- * @module events
- */ /** */
-
 import {EventBase}				from "../events/EventBase";
 import {IProjection}				from "../projections/IProjection";
 

@@ -1,7 +1,3 @@
-/**
- * @module utils
- */ /** */
-
 export class Byte32Array
 {
 	private _maxLength:number = -1;

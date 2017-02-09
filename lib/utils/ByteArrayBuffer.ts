@@ -1,7 +1,3 @@
-/**
- * @module utils
- */ /** */
-
 import {ByteArrayBase}			from "../utils/ByteArrayBase";
 
 export class ByteArrayBuffer extends ByteArrayBase

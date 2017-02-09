@@ -1,7 +1,3 @@
-/**
- * @module library
- */ /** */
-
 import {EventDispatcher}			from "../events/EventDispatcher";
 import {Loader}					from "../library/Loader";
 import {AssetBase}				from "../library/AssetBase";

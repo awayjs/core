@@ -1,7 +1,3 @@
-/**
- * @module library
- */ /** */
-
 import {IAsset}						from "../library/IAsset";
 import {AbstractionBase}				from "../library/AbstractionBase";
 

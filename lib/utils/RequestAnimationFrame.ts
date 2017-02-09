@@ -1,7 +1,3 @@
-/**
- * @module utils
- */ /** */
-
 import {getTimer}					from "../utils/getTimer";
 
 export class RequestAnimationFrame

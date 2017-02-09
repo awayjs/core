@@ -1,7 +1,3 @@
-/**
- * @module parsers
- */ /** */
-
 import {IAsset}					from "../library/IAsset";
 import {URLRequest}				from "../net/URLRequest";
 import {AbstractMethodError}		from "../errors/AbstractMethodError";

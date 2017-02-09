@@ -1,7 +1,3 @@
-/**
- * @module events
- */ /** */
-
 export class EventBase
 {
 	/**

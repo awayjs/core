@@ -1,7 +1,3 @@
-/**
- * @module parsers
- */ /** */
-
 import {ByteArray}				from "../utils/ByteArray";
 
 export class ParserUtils

@@ -1,7 +1,3 @@
-/**
- * @module events
- */ /** */
-
 import {URLLoader}				from "../net/URLLoader";
 import {EventBase}				from "../events/EventBase";
 

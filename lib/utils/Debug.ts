@@ -1,7 +1,3 @@
-/**
- * @module utils
- */ /** */
-
 import {PartialImplementationError}	from "../errors/PartialImplementationError";
 
 /**

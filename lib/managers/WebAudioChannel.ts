@@ -1,7 +1,3 @@
-/**
- * @module managers
- */ /** */
-
 export class WebAudioChannel
 {
 	public static maxChannels:number = 64;

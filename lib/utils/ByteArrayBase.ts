@@ -1,7 +1,3 @@
-/**
- * @module utils
- */ /** */
-
 import {AbstractMethodError}		from "../errors/AbstractMethodError";
 
 export class ByteArrayBase

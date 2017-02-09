@@ -1,8 +1,4 @@
 /**
- * @module parsers
- */ /** */
-
-/**
  * An enumeration providing values to describe the data format of parsed data.
  */
 export class ParserDataFormat

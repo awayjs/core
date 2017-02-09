@@ -1,7 +1,3 @@
-/**
- * @module geom
- */ /** */
-
 import {Orientation3D}		from "../geom/Orientation3D";
 import {Matrix3D}				from "../geom/Matrix3D";
 import {Vector3D}				from "../geom/Vector3D";

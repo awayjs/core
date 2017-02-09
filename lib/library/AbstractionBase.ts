@@ -1,7 +1,3 @@
-/**
- * @module library
- */ /** */
-
 import {AssetEvent}					from "../events/AssetEvent";
 import {EventDispatcher}				from "../events/EventDispatcher";
 import {IAbstractionPool}				from "../library/IAbstractionPool";

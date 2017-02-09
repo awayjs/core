@@ -1,7 +1,3 @@
-/**
- * @module utils
- */ /** */
-
 declare var SIMD:any;
 
 /**

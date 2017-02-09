@@ -1,7 +1,3 @@
-/**
- * @module managers
- */ /** */
-
 export class StreamingAudioChannel
 {
 	public static maxChannels:number = 4;

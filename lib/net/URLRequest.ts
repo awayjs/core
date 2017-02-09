@@ -1,7 +1,3 @@
-/**
- * @module net
- */ /** */
-
 import {URLRequestMethod}				from "../net/URLRequestMethod";
 
 export class URLRequest

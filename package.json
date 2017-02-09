@@ -37,8 +37,7 @@
   },
   "homepage": "https://github.com/awayjs/core#readme",
   "dependencies": {
-    "tslib": "github:microsoft/tslib",
-    "typedoc-plugin-external-module-name": "^1.0.8"
+    "tslib": "github:microsoft/tslib"
   },
   "devDependencies": {
     "rimraf": "^2.5.2",

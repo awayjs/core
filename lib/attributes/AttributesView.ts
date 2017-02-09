@@ -12,6 +12,7 @@ export class AttributesView extends AssetBase
 
 	/**
 	 *
+	 *
 	 */
 	public get assetType():string
 	{

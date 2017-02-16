@@ -843,6 +843,29 @@ export class Matrix3D
 		return invertable;
 	}
 
+	public isIdentity():boolean
+	{
+		if (this._rawData[0] == 1 &&
+			this._rawData[1] == 0 &&
+			this._rawData[2] == 0 &&
+			this._rawData[3] == 0 &&
+			this._rawData[4] == 0 &&
+			this._rawData[5] == 1 &&
+			this._rawData[6] == 0 &&
+			this._rawData[7] == 0 &&
+			this._rawData[8] == 0 &&
+			this._rawData[9] == 0 &&
+			this._rawData[10] == 1 &&
+			this._rawData[11] == 0 &&
+			this._rawData[12] == 0 &&
+			this._rawData[13] == 0 &&
+			this._rawData[14] == 0 &&
+			this._rawData[15] == 1)
+				return true;
+
+		return false;
+	}
+
 	/**
 	 * Prepends a matrix by multiplying the current Matrix3D object by another Matrix3D object.
 	 */

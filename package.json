@@ -1,6 +1,6 @@
 {
   "name": "@awayjs/core",
-  "version": "0.6.59",
+  "version": "0.6.60",
   "description": "AwayJS core classes",
   "main": "bundle/awayjs-core.umd.js",
   "types": "dist/index.d.ts",
@@ -37,10 +37,10 @@
   },
   "homepage": "https://github.com/awayjs/core#readme",
   "dependencies": {
-    "@awayjs/typedoc-theme": "^0.1.5",
     "tslib": "github:microsoft/tslib"
   },
   "devDependencies": {
+    "@awayjs/typedoc-theme": "^0.1.5",
     "rimraf": "^2.5.2",
     "rollup": "^0.36.3",
     "rollup-plugin-includepaths": "^0.2.1",

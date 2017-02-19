@@ -271,8 +271,15 @@ export class Loader extends EventDispatcher
 		// Get already loaded (or mapped) data if available
 		data = dependency.data;
 
-		if (this._context && dependency.request && this._context._iHasDataForUrl(dependency.request.url))
-			data = this._context._iGetDataForUrl(dependency.request.url);
+		if (this._context && dependency.request) {
+			if (this._context._iHasDataForUrl(dependency.request.url)) {
+				data = this._context._iGetDataForUrl(dependency.request.url);
+			} else if (this._context.externalAssetMode == LoaderContext.ON_DEMAND && (this.getSuffix(dependency.request.url) == "jpg" || this.getSuffix(dependency.request.url) == "png")) {
+				data = dependency.request;
+				if (!dependency.parser)
+					dependency._iSetParser(this.getParserFromSuffix(dependency.request.url));
+			}
+		}
 
 		if (data) {
 			if (data.constructor === Function)
@@ -704,9 +711,7 @@ export class Loader extends EventDispatcher
 	 */
 	private getParserFromSuffix(url:string):ParserBase
 	{
-		// Get rid of query string if any and extract extension
-		var base:string = (url.indexOf('?') > 0)? url.split('?')[0] : url;
-		var fileExtension:string = base.substr(base.lastIndexOf('.') + 1).toLowerCase();
+		var fileExtension:string = this.getSuffix(url);
 
 		var len:number = Loader._parsers.length;
 
@@ -718,5 +723,12 @@ export class Loader extends EventDispatcher
 		}
 
 		return null;
+	}
+
+	private getSuffix(url:string):string
+	{
+		// Get rid of query string if any and extract extension
+		var base:string = (url.indexOf('?') > 0)? url.split('?')[0] : url;
+		return base.substr(base.lastIndexOf('.') + 1).toLowerCase();
 	}
 }

@@ -3,12 +3,16 @@ export class LoaderContext
 	public static UNDEFINED:number = 0;
 	public static SINGLEPASS_MATERIALS:number = 1;
 	public static MULTIPASS_MATERIALS:number = 2;
+	
+	public static ON_DEMAND:string = "onDemand";
+	public static PRELOADED:string = "preloaded";
 
 	private _includeDependencies:boolean;
 	private _dependencyBaseUrl:string;
 	private _embeddedDataByUrl:Object;
 	private _remappedUrls:Object;
 	private _materialMode:number;
+	private _externalAssetMode:string;
 
 	private _overrideAbsPath:boolean;
 	private _overrideFullUrls:boolean;
@@ -27,6 +31,7 @@ export class LoaderContext
 		this._embeddedDataByUrl = {};
 		this._remappedUrls = {};
 		this._materialMode = LoaderContext.UNDEFINED;
+		this._externalAssetMode = LoaderContext.PRELOADED;
 	}
 
 	/**
@@ -56,10 +61,21 @@ export class LoaderContext
 		return this._materialMode;
 	}
 
-	public set materialMode(materialMode:number)
+	public set materialMode(value:number)
 	{
-		this._materialMode = materialMode;
+		this._materialMode = value;
 	}
+
+	public get externalAssetMode():string
+	{
+		return this._externalAssetMode;
+	}
+
+	public set externalAssetMode(value:string)
+	{
+		this._externalAssetMode = value;
+	}
+	
 
 	/**
 	 * A base URL that will be prepended to all relative dependency URLs found in a loaded resource.

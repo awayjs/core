@@ -22,7 +22,7 @@
     "build": "npm run tsc && npm run rollup && npm run uglifyjs && npm run docs",
     "version": "npm run build",
     "postversion": "git push && git push --tags && npm publish",
-    "docs": "rm -rf docs/bin || true && node node_modules/@awayjs/typedoc-theme/awaydoc.js"
+    "docs": "rm -rf docs/bin || true && node node_modules/@awayjs/typedoc-theme/awaydoc.js --name=core"
   },
   "keywords": [
     "AwayJS",

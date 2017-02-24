@@ -9,14 +9,13 @@ SOURCE_BRANCH="dev"
 TARGET_BRANCH="gh-pages"
 
 function doCompile {
-    echo "Compiling..."
+    echo "Compiling docs..."
     npm run docs
 }
 
 # Pull requests and commits to other branches shouldn't try to deploy, just build to verify
 if [ "$TRAVIS_PULL_REQUEST" != "false" -o "$TRAVIS_BRANCH" != "$SOURCE_BRANCH" ]; then
-    echo "Skipping deploy; just doing a build."
-    doCompile
+    echo "Not a dev branch commit, skipping docs deploy."
     exit 0
 fi
 

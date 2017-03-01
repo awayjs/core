@@ -2,7 +2,8 @@ language: node_js
 node_js:
 - stable
 script: bash ./deploy.sh
+after_success:
+  - bash gendocs.sh
 env:
   global:
   - ENCRYPTION_LABEL: 15094503a9ff
-  - secure: ZDVGRFPpzhrhVakfte1kYBbHJpif0RAOt54w2Fx3KfMfLVQN4sTReTF42SNwl30CjZMZrtNOy8DX/dC9zNUHRLbFamTBo6FIjSFdNpSkavDUxY//tFdSbCAqLF6GNpCmC6di4D3HXr3BXn55PHGgNX1esdgM4Rudf+A8w9Ynbe0=

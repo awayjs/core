@@ -1,158 +1,240 @@
+import {Transform} from "../base/Transform";
 import {Matrix3D} from "../geom/Matrix3D";
+import {Plane3D} from "../geom/Plane3D";
 import {Rectangle} from "../geom/Rectangle";
 import {Vector3D} from "../geom/Vector3D";
 import {EventDispatcher} from "../events/EventDispatcher";
 import {ProjectionEvent} from "../events/ProjectionEvent";
+import {TransformEvent} from "../events/TransformEvent";
 import {AbstractMethodError} from "../errors/AbstractMethodError";
-import {IProjection} from "../projections/IProjection";
 
+import {IProjection} from "./IProjection";
 import {CoordinateSystem} from "./CoordinateSystem";
 
 export class ProjectionBase extends EventDispatcher implements IProjection
 {
-	public _pMatrix:Matrix3D = new Matrix3D();
-	public _pScissorRect:Rectangle = new Rectangle();
-	public _pViewPort:Rectangle = new Rectangle();
-	public _pNear:number = 20;
-	public _pFar:number = 3000;
-	public _pAspectRatio:number = 1;
+	protected _viewMatrix3D:Matrix3D = new Matrix3D();
+	protected _inverseViewMatrix3D:Matrix3D = new Matrix3D();
+	protected _frustumMatrix3D:Matrix3D = new Matrix3D();
+	protected _viewRect:Rectangle = new Rectangle();
+	protected _stageRect:Rectangle = new Rectangle();
+	protected _near:number = 20;
+	protected _far:number = 3000;
+	protected _aspectRatio:number = 1;
+	protected _frustumCorners:number[] = [];
+	protected _transform:Transform;
+	protected _coordinateSystem:CoordinateSystem;
+	protected _originX:number = 0.5;
+	protected _originY:number = 0.5;
 
-	public _pMatrixInvalid:boolean = true;
-	public _pFrustumCorners:number[] = [];
-	public _pCoordinateSystem:CoordinateSystem;
-	public _pOriginX:number = 0.5;
-	public _pOriginY:number = 0.5;
-
-	private _unprojection:Matrix3D;
-	private _unprojectionInvalid:boolean = true;
-
+	private _viewMatrix3DDirty:boolean = true;
+	private _inverseViewMatrix3DDirty:boolean = true;
+	protected _frustumMatrix3DDirty:boolean = true;
+	private _frustumPlanes:Array<Plane3D>;
+	private _frustumPlanesDirty:boolean = true;
+	private _onInvalidateConcatenatedMatrix3DDelegate:(event:TransformEvent) => void;
+	
 	constructor(coordinateSystem:CoordinateSystem = CoordinateSystem.LEFT_HANDED)
 	{
 		super();
 
-		this.coordinateSystem = coordinateSystem;
+		this._coordinateSystem = coordinateSystem;
+
+		this._onInvalidateConcatenatedMatrix3DDelegate = (event:TransformEvent) => this._onInvalidateConcatenatedMatrix3D(event);
 	}
 
+	public get transform():Transform
+	{
+		return this._transform;
+	}
+
+	public set transform(value:Transform)
+	{
+		if (this._transform == value)
+			return;
+
+		if (this._transform)
+			this._transform.removeEventListener(TransformEvent.INVALIDATE_CONCATENATED_MATRIX3D, this._onInvalidateConcatenatedMatrix3DDelegate);
+		
+		this._transform = value;
+
+		if (this._transform)
+			this._transform.addEventListener(TransformEvent.INVALIDATE_CONCATENATED_MATRIX3D, this._onInvalidateConcatenatedMatrix3DDelegate);
+		
+		this._invalidateViewMatrix3D();
+	}
+
+	public get aspectRatio():number
+	{
+		return this._aspectRatio;
+	}
+
+	public set aspectRatio(value:number)
+	{
+		if (this._aspectRatio == value)
+			return;
+
+		this._aspectRatio = value;
+
+		this._invalidateFrustumMatrix3D();
+	}
+	
 	/**
 	 * The handedness of the coordinate system projection. The default is LEFT_HANDED.
 	 */
 	public get coordinateSystem():CoordinateSystem
 	{
-		return this._pCoordinateSystem;
+		return this._coordinateSystem;
 	}
 
 	public set coordinateSystem(value:CoordinateSystem)
 	{
-		if (this._pCoordinateSystem == value)
+		if (this._coordinateSystem == value)
 			return;
 
-		this._pCoordinateSystem = value;
+		this._coordinateSystem = value;
 
-		this.pInvalidateMatrix();
+		this._invalidateFrustumMatrix3D();
 	}
 
+	/**
+	 * 
+	 * @returns {number[]}
+	 */
 	public get frustumCorners():number[]
 	{
-		return this._pFrustumCorners;
+		return this._frustumCorners;
 	}
 
-	public set frustumCorners(frustumCorners:number[])
+	/**
+	 * 
+	 * @returns {Matrix3D}
+	 */
+	public get frustumMatrix3D():Matrix3D
 	{
-		this._pFrustumCorners = frustumCorners;
+		if (this._frustumMatrix3DDirty)
+			this._updateFrustumMatrix3D();
+		
+		return this._frustumMatrix3D;
 	}
 
-	public get matrix():Matrix3D
-	{
-		if (this._pMatrixInvalid) {
-			this.pUpdateMatrix();
-			this._pMatrixInvalid = false;
-		}
-		return this._pMatrix;
-	}
-
-	public set matrix(value:Matrix3D)
-	{
-		this._pMatrix = value;
-		this.pInvalidateMatrix();
-	}
-
+	/**
+	 * 
+	 * @returns {number}
+	 */
 	public get near():number
 	{
-		return this._pNear;
+		return this._near;
 	}
 
 	public set near(value:number)
 	{
-		if (value == this._pNear) {
+		if (value == this._near)
 			return;
-		}
-		this._pNear = value;
-		this.pInvalidateMatrix();
+		
+		this._near = value;
+		
+		this._invalidateFrustumMatrix3D();
 	}
 
+	/**
+	 * 
+	 * @returns {number}
+	 */
 	public get originX():number
 	{
-		return this._pOriginX;
+		return this._originX;
 	}
 
 	public set originX(value:number)
 	{
-		if (this._pOriginX == value)
+		if (this._originX == value)
 			return;
 
-		this._pOriginX = value;
+		this._originX = value;
+
+		this._invalidateFrustumMatrix3D();
 	}
 
+	/**
+	 * 
+	 * @returns {number}
+	 */
 	public get originY():number
 	{
-		return this._pOriginY;
+		return this._originY;
 	}
 
 	public set originY(value:number)
 	{
-		if (this._pOriginY == value)
+		if (this._originY == value)
 			return;
 
-		this._pOriginY = value;
+		this._originY = value;
+
+		this._invalidateFrustumMatrix3D();
 	}
 
+	/**
+	 * 
+	 * @returns {number}
+	 */
 	public get far():number
 	{
-		return this._pFar;
+		return this._far;
 	}
 
 	public set far(value:number)
 	{
-		if (value == this._pFar) {
+		if (value == this._far)
 			return;
-		}
-		this._pFar = value;
-		this.pInvalidateMatrix();
+		
+		this._far = value;
+		
+		this._invalidateFrustumMatrix3D();
 	}
 
-	public project(point3d:Vector3D):Vector3D
+	/*
+	
+	 */
+	public project(vector3D:Vector3D):Vector3D
 	{
-		var v:Vector3D = this.matrix.transformVector(point3d);
+		var v:Vector3D = this.viewMatrix3D.transformVector(vector3D);
 		v.x = v.x/v.w;
 		v.y = -v.y/v.w;
 
-		//z is unaffected by transform
-		v.z = point3d.z;
+		//z is remapped to w
+		v.z = v.w;
+		v.w = 1;
 
 		return v;
 	}
 
-	public get unprojectionMatrix():Matrix3D
+	public get viewMatrix3D():Matrix3D
 	{
-		if (this._unprojectionInvalid) {
-			if (!this._unprojection)
-				this._unprojection = new Matrix3D();
+		if (this._viewMatrix3DDirty) {
+			this._viewMatrix3DDirty = false;
 
-			this._unprojection.copyFrom(this.matrix);
-			this._unprojection.invert();
-			this._unprojectionInvalid = false;
+			if (this._transform) {
+				this._viewMatrix3D.copyFrom(this._transform.inverseConcatenatedMatrix3D);
+				this._viewMatrix3D.append(this.frustumMatrix3D);
+			} else {
+				this._viewMatrix3D.copyFrom(this.frustumMatrix3D);
+			}
 		}
-		return this._unprojection;
+
+		return this._viewMatrix3D;
+	}
+	
+	public get inverseViewMatrix3D():Matrix3D
+	{
+		if (this._inverseViewMatrix3DDirty) {
+			this._inverseViewMatrix3DDirty = false;
+			this._inverseViewMatrix3D.copyFrom(this.viewMatrix3D);
+			this._inverseViewMatrix3D.invert();
+		}
+		
+		return this._inverseViewMatrix3D;
 	}
 
 	public unproject(nX:number, nY:number, sZ:number):Vector3D
@@ -165,48 +247,163 @@ export class ProjectionBase extends EventDispatcher implements IProjection
 		throw new AbstractMethodError();
 	}
 
-	public get _iAspectRatio():number
+	private _invalidateViewMatrix3D():void
 	{
-		return this._pAspectRatio;
-	}
+		this._viewMatrix3DDirty = true;
+		this._inverseViewMatrix3DDirty = true;
+		this._frustumPlanesDirty = true;
 
-	public set _iAspectRatio(value:number)
-	{
-		if (this._pAspectRatio == value)
-			return;
-
-		this._pAspectRatio = value;
-
-		this.pInvalidateMatrix();
-	}
-
-	public pInvalidateMatrix():void
-	{
-		this._pMatrixInvalid = true;
-		this._unprojectionInvalid = true;
 		this.dispatchEvent(new ProjectionEvent(ProjectionEvent.MATRIX_CHANGED, this));
 	}
 
-	public pUpdateMatrix():void
+	protected _invalidateFrustumMatrix3D():void
 	{
-		throw new AbstractMethodError();
+		this._frustumMatrix3DDirty = true;
+
+		this._invalidateViewMatrix3D();
 	}
 
-	public _iUpdateScissorRect(x:number, y:number, width:number, height:number):void
+	public setViewRect(x:number, y:number, width:number, height:number):void
 	{
-		this._pScissorRect.x = x;
-		this._pScissorRect.y = y;
-		this._pScissorRect.width = width;
-		this._pScissorRect.height = height;
-		this.pInvalidateMatrix();
+		this._viewRect.x = x;
+		this._viewRect.y = y;
+		this._viewRect.width = width;
+		this._viewRect.height = height;
+		
+		this._invalidateFrustumMatrix3D();
 	}
 
-	public _iUpdateViewport(x:number, y:number, width:number, height:number):void
+	public setStageRect(x:number, y:number, width:number, height:number):void
 	{
-		this._pViewPort.x = x;
-		this._pViewPort.y = y;
-		this._pViewPort.width = width;
-		this._pViewPort.height = height;
-		this.pInvalidateMatrix();
+		this._stageRect.x = x;
+		this._stageRect.y = y;
+		this._stageRect.width = width;
+		this._stageRect.height = height;
+		
+		this._invalidateFrustumMatrix3D();
 	}
+
+	protected _updateFrustumMatrix3D():void
+	{
+		this._frustumMatrix3DDirty = false;
+	}
+
+	public get frustumPlanes():Array<Plane3D>
+	{
+		if (this._frustumPlanesDirty)
+			this._updateFrustumPlanes();
+
+		return this._frustumPlanes;
+	}
+
+	private _updateFrustumPlanes():void
+	{
+		this._frustumPlanesDirty = false;
+
+		if (!this._frustumPlanes) {
+			this._frustumPlanes = [];
+
+			for (var i:number = 0; i < 6; ++i)
+				this._frustumPlanes[i] = new Plane3D();
+		}
+
+		var a:number, b:number, c:number;
+		//var d : Number;
+		var c11:number, c12:number, c13:number, c14:number;
+		var c21:number, c22:number, c23:number, c24:number;
+		var c31:number, c32:number, c33:number, c34:number;
+		var c41:number, c42:number, c43:number, c44:number;
+		var p:Plane3D;
+		var raw:Float32Array = this.viewMatrix3D._rawData;
+		var invLen:number;
+
+		c11 = raw[0];
+		c12 = raw[4];
+		c13 = raw[8];
+		c14 = raw[12];
+		c21 = raw[1];
+		c22 = raw[5];
+		c23 = raw[9];
+		c24 = raw[13];
+		c31 = raw[2];
+		c32 = raw[6];
+		c33 = raw[10];
+		c34 = raw[14];
+		c41 = raw[3];
+		c42 = raw[7];
+		c43 = raw[11];
+		c44 = raw[15];
+
+		// left plane
+		p = this._frustumPlanes[0];
+		a = c41 + c11;
+		b = c42 + c12;
+		c = c43 + c13;
+		invLen = 1/Math.sqrt(a*a + b*b + c*c);
+		p.a = a*invLen;
+		p.b = b*invLen;
+		p.c = c*invLen;
+		p.d = -(c44 + c14)*invLen;
+
+		// right plane
+		p = this._frustumPlanes[1];
+		a = c41 - c11;
+		b = c42 - c12;
+		c = c43 - c13;
+		invLen = 1/Math.sqrt(a*a + b*b + c*c);
+		p.a = a*invLen;
+		p.b = b*invLen;
+		p.c = c*invLen;
+		p.d = (c14 - c44)*invLen;
+
+		// bottom
+		p = this._frustumPlanes[2];
+		a = c41 + c21;
+		b = c42 + c22;
+		c = c43 + c23;
+		invLen = 1/Math.sqrt(a*a + b*b + c*c);
+		p.a = a*invLen;
+		p.b = b*invLen;
+		p.c = c*invLen;
+		p.d = -(c44 + c24)*invLen;
+
+		// top
+		p = this._frustumPlanes[3];
+		a = c41 - c21;
+		b = c42 - c22;
+		c = c43 - c23;
+		invLen = 1/Math.sqrt(a*a + b*b + c*c);
+		p.a = a*invLen;
+		p.b = b*invLen;
+		p.c = c*invLen;
+		p.d = (c24 - c44)*invLen;
+
+		// near
+		p = this._frustumPlanes[4];
+		a = c31;
+		b = c32;
+		c = c33;
+		invLen = 1/Math.sqrt(a*a + b*b + c*c);
+		p.a = a*invLen;
+		p.b = b*invLen;
+		p.c = c*invLen;
+		p.d = -c34*invLen;
+
+		// far
+		p = this._frustumPlanes[5];
+		a = c41 - c31;
+		b = c42 - c32;
+		c = c43 - c33;
+		invLen = 1/Math.sqrt(a*a + b*b + c*c);
+		p.a = a*invLen;
+		p.b = b*invLen;
+		p.c = c*invLen;
+		p.d = (c34 - c44)*invLen;
+	}
+	
+	private _onInvalidateConcatenatedMatrix3D(event:TransformEvent):void
+	{
+		this._invalidateViewMatrix3D();
+	}
+	
 }

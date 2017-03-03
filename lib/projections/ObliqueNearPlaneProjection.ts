@@ -15,6 +15,7 @@ export class ObliqueNearPlaneProjection extends ProjectionBase
 	constructor(baseProjection:IProjection, plane:Plane3D)
 	{
 		super();
+
 		this.baseProjection = baseProjection;
 		this.plane = plane;
 
@@ -52,15 +53,15 @@ export class ObliqueNearPlaneProjection extends ProjectionBase
 	}
 
 	//@override
-	public get iAspectRatio():number
+	public get aspectRatio():number
 	{
-		return this._baseProjection._iAspectRatio;
+		return this._baseProjection.aspectRatio;
 	}
 
 	//@override
-	public set iAspectRatio(value:number)
+	public set aspectRatio(value:number)
 	{
-		this._baseProjection._iAspectRatio = value;
+		this._baseProjection.aspectRatio = value;
 	}
 
 	public get plane():Plane3D
@@ -71,31 +72,34 @@ export class ObliqueNearPlaneProjection extends ProjectionBase
 	public set plane(value:Plane3D)
 	{
 		this._plane = value;
-		this.pInvalidateMatrix();
+		
+		this._invalidateFrustumMatrix3D();
 	}
 
 	public set baseProjection(value:IProjection)
 	{
-		if (this._baseProjection) {
+		if (this._baseProjection)
 			this._baseProjection.removeEventListener(ProjectionEvent.MATRIX_CHANGED, this._onProjectionMatrixChangedDelegate);
-		}
+		
 		this._baseProjection = value;
 
-		if (this._baseProjection) {
+		if (this._baseProjection)
 			this._baseProjection.addEventListener(ProjectionEvent.MATRIX_CHANGED, this._onProjectionMatrixChangedDelegate);
-		}
-		this.pInvalidateMatrix();
+		
+		this._invalidateFrustumMatrix3D();
 	}
 
 	private onProjectionMatrixChanged(event:ProjectionEvent):void
 	{
-		this.pInvalidateMatrix();
+		this._invalidateFrustumMatrix3D();
 	}
 
 	//@override
-	public pUpdateMatrix():void
+	public _updateFrustumMatrix3D():void
 	{
-		this._pMatrix.copyFrom(this._baseProjection.matrix);
+		super._updateFrustumMatrix3D();
+		
+		this._frustumMatrix3D.copyFrom(this._baseProjection.frustumMatrix3D);
 
 		var cx:number = this._plane.a;
 		var cy:number = this._plane.b;
@@ -104,11 +108,11 @@ export class ObliqueNearPlaneProjection extends ProjectionBase
 		var signX:number = cx >= 0? 1 : -1;
 		var signY:number = cy >= 0? 1 : -1;
 		var p:Vector3D = new Vector3D(signX, signY, 1, 1);
-		var inverse:Matrix3D = this._pMatrix.clone();
+		var inverse:Matrix3D = this._frustumMatrix3D.clone();
 		inverse.invert();
 		var q:Vector3D = inverse.transformVector(p);
-		this._pMatrix.copyRowTo(3, p);
+		this._frustumMatrix3D.copyRowTo(3, p);
 		var a:number = (q.x*p.x + q.y*p.y + q.z*p.z + q.w*p.w)/(cx*q.x + cy*q.y + cz*q.z + cw*q.w);
-		this._pMatrix.copyRowFrom(2, new Vector3D(cx*a, cy*a, cz*a, cw*a));
+		this._frustumMatrix3D.copyRowFrom(2, new Vector3D(cx*a, cy*a, cz*a, cw*a));
 	}
 }

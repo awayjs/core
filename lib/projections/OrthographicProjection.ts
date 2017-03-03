@@ -1,6 +1,8 @@
-import {Matrix3D}				from "../geom/Matrix3D";
-import {Vector3D}					from "../geom/Vector3D";
-import {ProjectionBase}			from "../projections/ProjectionBase";
+import {Transform} from "../base/Transform";
+import {Matrix3D} from "../geom/Matrix3D";
+import {Vector3D} from "../geom/Vector3D";
+
+import {ProjectionBase} from "./ProjectionBase";
 
 export class OrthographicProjection extends ProjectionBase
 {
@@ -12,6 +14,7 @@ export class OrthographicProjection extends ProjectionBase
 	constructor(projectionHeight:number = 500)
 	{
 		super();
+
 		this._projectionHeight = projectionHeight;
 	}
 
@@ -22,18 +25,19 @@ export class OrthographicProjection extends ProjectionBase
 
 	public set projectionHeight(value:number)
 	{
-		if (value == this._projectionHeight) {
+		if (value == this._projectionHeight)
 			return;
-		}
+
 		this._projectionHeight = value;
-		this.pInvalidateMatrix();
+
+		this._invalidateFrustumMatrix3D();
 	}
 
 	//@override
 	public unproject(nX:number, nY:number, sZ:number):Vector3D
 	{
-		var v:Vector3D = new Vector3D(nX + this.matrix._rawData[12], -nY + this.matrix._rawData[13], sZ, 1.0);
-		v = this.unprojectionMatrix.transformVector(v);
+		var v:Vector3D = new Vector3D(nX + this.viewMatrix3D._rawData[12], -nY + this.viewMatrix3D._rawData[13], sZ, 1.0);
+		v = this.inverseViewMatrix3D.transformVector(v);
 
 		//z is unaffected by transform
 		v.z = sZ;
@@ -45,26 +49,28 @@ export class OrthographicProjection extends ProjectionBase
 	public clone():ProjectionBase
 	{
 		var clone:OrthographicProjection = new OrthographicProjection();
-		clone._pNear = this._pNear;
-		clone._pFar = this._pFar;
-		clone._pAspectRatio = this._pAspectRatio;
+		clone._near = this._near;
+		clone._far = this._far;
+		clone._aspectRatio = this._aspectRatio;
 		clone.projectionHeight = this._projectionHeight;
 		return clone;
 	}
 
 	//@override
-	public pUpdateMatrix():void
+	public _updateFrustumMatrix3D():void
 	{
+		super._updateFrustumMatrix3D();
+
 		var raw:Float32Array = Matrix3D.CALCULATION_MATRIX._rawData;
 		this._yMax = this._projectionHeight*.5;
-		this._xMax = this._yMax*this._pAspectRatio;
+		this._xMax = this._yMax*this._aspectRatio;
 
 		var left:number;
 		var right:number;
 		var top:number;
 		var bottom:number;
 
-		if (this._pScissorRect.x == 0 && this._pScissorRect.y == 0 && this._pScissorRect.width == this._pViewPort.width && this._pScissorRect.height == this._pViewPort.height) {
+		if (this._viewRect.x == 0 && this._viewRect.y == 0 && this._viewRect.width == this._stageRect.width && this._viewRect.height == this._stageRect.height) {
 			// assume symmetric frustum
 
 			left = -this._xMax;
@@ -72,19 +78,19 @@ export class OrthographicProjection extends ProjectionBase
 			top = -this._yMax;
 			bottom = this._yMax;
 
-			raw[0] = 2/(this._projectionHeight*this._pAspectRatio);
+			raw[0] = 2/(this._projectionHeight*this._aspectRatio);
 			raw[5] = 2/this._projectionHeight;
-			raw[10] = 1/(this._pFar - this._pNear);
-			raw[14] = this._pNear/(this._pNear - this._pFar);
+			raw[10] = 1/(this._far - this._near);
+			raw[14] = this._near/(this._near - this._far);
 			raw[1] = raw[2] = raw[3] = raw[4] = raw[6] = raw[7] = raw[8] = raw[9] = raw[11] = raw[12] = raw[13] = 0;
 			raw[15] = 1;
 
 		} else {
 
-			var xWidth:number = this._xMax*(this._pViewPort.width/this._pScissorRect.width);
-			var yHgt:number = this._yMax*(this._pViewPort.height/this._pScissorRect.height);
-			var center:number = this._xMax*(this._pScissorRect.x*2 - this._pViewPort.width)/this._pScissorRect.width + this._xMax;
-			var middle:number = -this._yMax*(this._pScissorRect.y*2 - this._pViewPort.height)/this._pScissorRect.height - this._yMax;
+			var xWidth:number = this._xMax*(this._stageRect.width/this._viewRect.width);
+			var yHgt:number = this._yMax*(this._stageRect.height/this._viewRect.height);
+			var center:number = this._xMax*(this._viewRect.x*2 - this._stageRect.width)/this._viewRect.width + this._xMax;
+			var middle:number = -this._yMax*(this._viewRect.y*2 - this._stageRect.height)/this._viewRect.height - this._yMax;
 
 			left = center - xWidth;
 			right = center + xWidth;
@@ -93,25 +99,23 @@ export class OrthographicProjection extends ProjectionBase
 
 			raw[0] = 2*1/(right - left);
 			raw[5] = -2*1/(top - bottom);
-			raw[10] = 1/(this._pFar - this._pNear);
+			raw[10] = 1/(this._far - this._near);
 
 			raw[12] = (right + left)/(right - left);
 			raw[13] = (bottom + top)/(bottom - top);
-			raw[14] = this._pNear/(this.near - this.far);
+			raw[14] = this._near/(this.near - this.far);
 
 			raw[1] = raw[2] = raw[3] = raw[4] = raw[6] = raw[7] = raw[8] = raw[9] = raw[11] = 0;
 			raw[15] = 1;
 		}
 
-		this._pFrustumCorners[0] = this._pFrustumCorners[9] = this._pFrustumCorners[12] = this._pFrustumCorners[21] = left;
-		this._pFrustumCorners[3] = this._pFrustumCorners[6] = this._pFrustumCorners[15] = this._pFrustumCorners[18] = right;
-		this._pFrustumCorners[1] = this._pFrustumCorners[4] = this._pFrustumCorners[13] = this._pFrustumCorners[16] = top;
-		this._pFrustumCorners[7] = this._pFrustumCorners[10] = this._pFrustumCorners[19] = this._pFrustumCorners[22] = bottom;
-		this._pFrustumCorners[2] = this._pFrustumCorners[5] = this._pFrustumCorners[8] = this._pFrustumCorners[11] = this._pNear;
-		this._pFrustumCorners[14] = this._pFrustumCorners[17] = this._pFrustumCorners[20] = this._pFrustumCorners[23] = this._pFar;
+		this._frustumCorners[0] = this._frustumCorners[9] = this._frustumCorners[12] = this._frustumCorners[21] = left;
+		this._frustumCorners[3] = this._frustumCorners[6] = this._frustumCorners[15] = this._frustumCorners[18] = right;
+		this._frustumCorners[1] = this._frustumCorners[4] = this._frustumCorners[13] = this._frustumCorners[16] = top;
+		this._frustumCorners[7] = this._frustumCorners[10] = this._frustumCorners[19] = this._frustumCorners[22] = bottom;
+		this._frustumCorners[2] = this._frustumCorners[5] = this._frustumCorners[8] = this._frustumCorners[11] = this._near;
+		this._frustumCorners[14] = this._frustumCorners[17] = this._frustumCorners[20] = this._frustumCorners[23] = this._far;
 
-		this._pMatrix.copyRawDataFrom(raw);
-
-		this._pMatrixInvalid = false;
+		this._frustumMatrix3D.copyRawDataFrom(raw);
 	}
 }

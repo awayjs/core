@@ -1,5 +1,8 @@
-import {PerspectiveProjection}	from "../projections/PerspectiveProjection";
-import {ProjectionBase}			from "../projections/ProjectionBase";
+import {Transform} from "../base/Transform";
+import {Matrix3D} from "../geom/Matrix3D";
+
+import {PerspectiveProjection} from "./PerspectiveProjection";
+import {ProjectionBase} from "./ProjectionBase";
 
 export class FreeMatrixProjection extends ProjectionBase
 {
@@ -7,42 +10,34 @@ export class FreeMatrixProjection extends ProjectionBase
 	{
 		super();
 
-		this._pMatrix.copyFrom(new PerspectiveProjection().matrix);
+		this._frustumMatrix3D.copyFrom(new PerspectiveProjection().frustumMatrix3D);
 	}
 
-	//@override
-	public set near(value:number)
+	/**
+	 *
+	 * @returns {Matrix3D}
+	 */
+	public get frustumMatrix3D():Matrix3D
 	{
-		this._pNear = value;
+		if (this._frustumMatrix3DDirty)
+			this._updateFrustumMatrix3D();
+
+		return this._frustumMatrix3D;
 	}
 
-	//@override
-	public set far(value:number)
+	public set frustumMatrix3D(value:Matrix3D)
 	{
-		this._pFar = value;
+		this._frustumMatrix3D = value;
+
+		this._invalidateFrustumMatrix3D();
 	}
 
 	//@override
-	public set iAspectRatio(value:number)
-	{
-		this._pAspectRatio = value;
-	}
-
-	//@override
-	public clone():ProjectionBase
+	public clone():FreeMatrixProjection
 	{
 		var clone:FreeMatrixProjection = new FreeMatrixProjection();
-		clone._pMatrix.copyFrom(this._pMatrix);
-		clone._pNear = this._pNear;
-		clone._pFar = this._pFar;
-		clone._pAspectRatio = this._pAspectRatio;
-		clone.pInvalidateMatrix();
+		clone.transform = this._transform.clone();
+		clone.frustumMatrix3D.copyFrom(this._frustumMatrix3D);
 		return clone;
-	}
-
-	//@override
-	public pUpdateMatrix():void
-	{
-		this._pMatrixInvalid = false;
 	}
 }

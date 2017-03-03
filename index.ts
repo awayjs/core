@@ -10,6 +10,9 @@ export {Short3Attributes}				from "./lib/attributes/Short3Attributes";
 
 export {WaveAudio}						from "./lib/audio/WaveAudio";
 
+export {ColorTransform}					from "./lib/base/ColorTransform";
+export {Transform}						from "./lib/base/Transform";
+
 export {AbstractMethodError}			from "./lib/errors/AbstractMethodError";
 export {ArgumentError}					from "./lib/errors/ArgumentError";
 export {DocumentError}					from "./lib/errors/DocumentError";
@@ -25,10 +28,10 @@ export {LoaderEvent}					from "./lib/events/LoaderEvent";
 export {ParserEvent}					from "./lib/events/ParserEvent";
 export {ProjectionEvent}				from "./lib/events/ProjectionEvent";
 export {TimerEvent}						from "./lib/events/TimerEvent";
+export {TransformEvent}					from "./lib/events/TransformEvent";
 export {URLLoaderEvent}					from "./lib/events/URLLoaderEvent";
 
 export {Box}							from "./lib/geom/Box";
-export {ColorTransform}					from "./lib/geom/ColorTransform";
 export {MathConsts}						from "./lib/geom/MathConsts";
 export {Matrix}							from "./lib/geom/Matrix";
 export {Matrix3D}						from "./lib/geom/Matrix3D";

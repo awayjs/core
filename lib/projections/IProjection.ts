@@ -1,6 +1,8 @@
-import {Matrix3D}					from "../geom/Matrix3D";
-import {Vector3D}					from "../geom/Vector3D";
-import {IEventDispatcher}			from "../events/IEventDispatcher";
+import {Transform} from "../base/Transform";
+import {Matrix3D} from "../geom/Matrix3D";
+import {Plane3D} from "../geom/Plane3D";
+import {Vector3D} from "../geom/Vector3D";
+import {IEventDispatcher} from "../events/IEventDispatcher";
 
 import {CoordinateSystem} from "./CoordinateSystem";
 
@@ -13,9 +15,15 @@ export interface IProjection extends IEventDispatcher
 {
 	coordinateSystem:CoordinateSystem;
 
-	frustumCorners:Array<number>
+	frustumCorners:Array<number>;
 
-	matrix:Matrix3D;
+	frustumPlanes:Array<Plane3D>;
+
+	frustumMatrix3D:Matrix3D;
+
+	viewMatrix3D:Matrix3D;
+
+	transform:Transform;
 
 	near:number;
 
@@ -25,13 +33,13 @@ export interface IProjection extends IEventDispatcher
 
 	far:number;
 
-	_iAspectRatio:number;
+	aspectRatio:number;
 
-	project(point3d:Vector3D):Vector3D;
+	project(vector3D:Vector3D):Vector3D;
 
 	unproject(nX:number, nY:number, sZ:number):Vector3D;
 
-	_iUpdateScissorRect(x:number, y:number, width:number, height:number);
+	setViewRect(x:number, y:number, width:number, height:number);
 
-	_iUpdateViewport(x:number, y:number, width:number, height:number);
+	setStageRect(x:number, y:number, width:number, height:number);
 }

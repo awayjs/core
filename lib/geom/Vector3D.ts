@@ -118,7 +118,7 @@ export class Vector3D
 	 * @param w An optional element for additional data such as the angle
 	 *          of rotation.
 	 */
-	constructor(x:number = 0, y:number = 0, z:number = 0, w:number = 0)
+	constructor(x:number = 0, y:number = 0, z:number = 0, w:number = 1)
 	{
 		this.x = x;
 		this.y = y;

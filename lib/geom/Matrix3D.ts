@@ -1168,14 +1168,15 @@ export class Matrix3D
 		var x:number = vector.x;
 		var y:number = vector.y;
 		var z:number = vector.z;
+		var w:number = vector.w;
 
 		if (!target)
 			target = new Vector3D();
 
-		target.x = x*this._rawData[0] + y*this._rawData[4] + z*this._rawData[8] + this._rawData[12];
-		target.y = x*this._rawData[1] + y*this._rawData[5] + z*this._rawData[9] + this._rawData[13];
-		target.z = x*this._rawData[2] + y*this._rawData[6] + z*this._rawData[10] + this._rawData[14];
-		target.w = x*this._rawData[3] + y*this._rawData[7] + z*this._rawData[11] + this._rawData[15];
+		target.x = x*this._rawData[0] + y*this._rawData[4] + z*this._rawData[8] + w*this._rawData[12];
+		target.y = x*this._rawData[1] + y*this._rawData[5] + z*this._rawData[9] + w*this._rawData[13];
+		target.z = x*this._rawData[2] + y*this._rawData[6] + z*this._rawData[10] + w*this._rawData[14];
+		target.w = x*this._rawData[3] + y*this._rawData[7] + z*this._rawData[11] + w*this._rawData[15];
 
 		return target;
 	}

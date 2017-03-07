@@ -1,6 +1,6 @@
 {
   "name": "@awayjs/core",
-  "version": "0.6.63",
+  "version": "0.6.64",
   "description": "AwayJS core classes",
   "main": "bundle/awayjs-core.umd.js",
   "types": "dist/index.d.ts",

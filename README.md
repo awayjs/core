@@ -1,5 +1,7 @@
 # AwayJS Core
 
+[![Build Status](https://travis-ci.org/awayjs/core.svg?branch=dev)](https://travis-ci.org/awayjs/core)
+
 The root dependency for all AwayJS modules: contains basic data structures, loading mechanisms, event objects and utility functions useful for all types of rich media interface and interaction.
 
 ## Internal Structure

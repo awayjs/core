@@ -2,11 +2,14 @@ language: node_js
 node_js:
 - stable
 script:
-  - bash scripts/build.sh
+- bash scripts/build.sh
 after_success:
-  - bash scripts/gendocs.sh
-  - bash scripts/genexamples.sh
-  - bash scripts/genfull.sh
+- bash scripts/gendocs.sh
+- bash scripts/genexamples.sh
+- bash scripts/genfull.sh
 env:
   global:
   - ENCRYPTION_LABEL: 15094503a9ff
+notifications:
+  slack:
+    secure: TVmKfO5R3sRdSSdbyFZijs0oxtmXYPRGZofF4Ou5ZvkLi+g/BLcuBY5CLoc7ZoNwEObVGz/Ve+fhnXCSfM6Xy35cF6uLPxaoqnvolK5vodKZZXSu+0AfTEvNwrCi7QbwB6GrNwDMFy6zX7nKyEr33vgx8Hv7OCVPvxgXGvQQ88U=

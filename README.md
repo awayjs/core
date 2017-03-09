@@ -7,40 +7,40 @@ event objects and utility functions useful for all types of rich media interface
 ## Internal Structure
 
 * attributes<br>
-Data structures for interleaved or isolated binary data streams
+Data structures for interleaved or isolated binary data streams.
 
 * audio<br>
-Data structures for audio (to be moved to its own audio module)
+Data structures for audio (to be moved to its own audio module).
 
 * errors<br>
-Error types
+Error types.
 
 * events<br>
-Event objects for core classes
+Event objects for core classes.
 
 * geom<br>
-Geometric data structures
+Geometric data structures.
 
 * image<br>
-Deprecated
+Deprecated.
 
 * library<br>
-Asset loading and management APIs
+Asset loading and management APIs.
 
 * managers<br>
-Managers for audio (to be moved to own audio module)
+Managers for audio (to be moved to own audio module).
 
 * net<br>
-URL Request APIs
+URL Request APIs.
 
 * parsers<br>
-Base classes for parsers API, possibly merge with library
+Base classes for parsers API, possibly merge with library.
 
 * projections<br>
-Projection APIs for general 2D / 3D projection
+Projection APIs for general 2D / 3D projection.
 
 * ui<br>
-Helper classes for interface interaction
+Helper classes for interface interaction.
 
 * utils<br>
-Binary data wrappers, helper classes for RAF and timers, Color and debug utils
+Binary data wrappers, helper classes for RAF and timers, Color and debug utils.

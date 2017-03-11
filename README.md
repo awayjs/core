@@ -4,7 +4,11 @@
 The root dependency for all AwayJS modules: contains basic data structures, loading mechanisms, 
 event objects and utility functions useful for all types of rich media interface and interaction.
 
-## Internal Structure
+# Documentation
+
+[Oficial AwayJS Documentation](awayjs.github.io/docs)
+
+# Internal Structure
 
 * attributes<br>
 Data structures for interleaved or isolated binary data streams.

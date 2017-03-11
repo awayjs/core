@@ -6,7 +6,7 @@ event objects and utility functions useful for all types of rich media interface
 
 # Documentation
 
-[Oficial AwayJS Documentation](https://awayjs.github.io/docs)
+[Official AwayJS Documentation](https://awayjs.github.io/docs)
 
 # Internal Structure
 

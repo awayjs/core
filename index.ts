@@ -84,8 +84,6 @@ export {ResourceDependency}				from "./lib/parsers/ResourceDependency";
 export {WaveAudioParser}				from "./lib/parsers/WaveAudioParser";
 
 export {CoordinateSystem}				from "./lib/projections/CoordinateSystem";
-export {FreeMatrixProjection}			from "./lib/projections/FreeMatrixProjection";
-export {IProjection}					from "./lib/projections/IProjection";
 export {ObliqueNearPlaneProjection}		from "./lib/projections/ObliqueNearPlaneProjection";
 export {OrthographicOffCenterProjection}	from "./lib/projections/OrthographicOffCenterProjection";
 export {OrthographicProjection}			from "./lib/projections/OrthographicProjection";

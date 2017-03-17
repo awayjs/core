@@ -263,6 +263,7 @@ export class Transform extends EventDispatcher
 		targetData[15] = sourceData[15];
 		
 		this.invalidateComponents();
+		this.invalidateConcatenatedMatrix3D();
 	}
 
 	/**
@@ -398,7 +399,7 @@ export class Transform extends EventDispatcher
 		this._colorTransform = new ColorTransform(new Float32Array(this._rawData.buffer, 64, 8));
 		
 		//create the concatenatedMatrix3D if required
-		this._concatenatedMatrix3D = concatenatedMatrix3D || new Matrix3D();
+		this._concatenatedMatrix3D = concatenatedMatrix3D || this._matrix3D;
 		
 		if (rawData == null) {
 			this._matrix3D.identity();

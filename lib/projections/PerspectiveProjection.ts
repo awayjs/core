@@ -170,7 +170,6 @@ export class PerspectiveProjection extends ProjectionBase
 		clone._preserveFocalLength = this._preserveFocalLength;
 		clone._near = this._near;
 		clone._far = this._far;
-		clone._aspectRatio = this._aspectRatio;
 		clone._coordinateSystem = this._coordinateSystem;
 
 		return clone;
@@ -234,5 +233,21 @@ export class PerspectiveProjection extends ProjectionBase
 
 		this._frustumCorners[2] = this._frustumCorners[5] = this._frustumCorners[8] = this._frustumCorners[11] = this._near;
 		this._frustumCorners[14] = this._frustumCorners[17] = this._frustumCorners[20] = this._frustumCorners[23] = this._far;
+	}
+
+	protected _updateProperties():void
+	{
+		super._updateProperties();
+
+		var rawData:Float32Array = this._frustumMatrix3D._rawData;
+
+		this._near = rawData[14]/(-1 - rawData[10]);
+		this._far = rawData[14]/(1 - rawData[10]);
+
+		//rawData[8] = 2*(this._viewRect.x + this._originX*this._viewRect.width)/this._stageRect.width - 1;
+		this._originX = ((rawData[8] + 1)*this._stageRect.width/2 - this._viewRect.x)/this._viewRect.width;
+
+		//rawData[9] = 1 - 2*(this._viewRect.y + this._originY*this._viewRect.height)/this._stageRect.height;
+		this._originY = ((1 - rawData[9])*this._stageRect.height/2 - this._viewRect.y)/this._viewRect.height;
 	}
 }

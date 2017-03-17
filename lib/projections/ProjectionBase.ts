@@ -8,10 +8,9 @@ import {ProjectionEvent} from "../events/ProjectionEvent";
 import {TransformEvent} from "../events/TransformEvent";
 import {AbstractMethodError} from "../errors/AbstractMethodError";
 
-import {IProjection} from "./IProjection";
 import {CoordinateSystem} from "./CoordinateSystem";
 
-export class ProjectionBase extends EventDispatcher implements IProjection
+export class ProjectionBase extends EventDispatcher
 {
 	protected _viewMatrix3D:Matrix3D = new Matrix3D();
 	protected _inverseViewMatrix3D:Matrix3D = new Matrix3D();
@@ -20,13 +19,13 @@ export class ProjectionBase extends EventDispatcher implements IProjection
 	protected _stageRect:Rectangle = new Rectangle();
 	protected _near:number = 20;
 	protected _far:number = 3000;
-	protected _aspectRatio:number = 1;
 	protected _frustumCorners:number[] = [];
 	protected _transform:Transform;
 	protected _coordinateSystem:CoordinateSystem;
 	protected _originX:number = 0.5;
 	protected _originY:number = 0.5;
 
+	protected _propertiesDirty:boolean;
 	private _viewMatrix3DDirty:boolean = true;
 	private _inverseViewMatrix3DDirty:boolean = true;
 	protected _frustumMatrix3DDirty:boolean = true;
@@ -62,21 +61,6 @@ export class ProjectionBase extends EventDispatcher implements IProjection
 			this._transform.addEventListener(TransformEvent.INVALIDATE_CONCATENATED_MATRIX3D, this._onInvalidateConcatenatedMatrix3DDelegate);
 		
 		this._invalidateViewMatrix3D();
-	}
-
-	public get aspectRatio():number
-	{
-		return this._aspectRatio;
-	}
-
-	public set aspectRatio(value:number)
-	{
-		if (this._aspectRatio == value)
-			return;
-
-		this._aspectRatio = value;
-
-		this._invalidateFrustumMatrix3D();
 	}
 	
 	/**
@@ -118,12 +102,23 @@ export class ProjectionBase extends EventDispatcher implements IProjection
 		return this._frustumMatrix3D;
 	}
 
+	public set frustumMatrix3D(value:Matrix3D)
+	{
+		this._frustumMatrix3D = value;
+
+		this._invalidateViewMatrix3D();
+		this._invalidateProperties();
+	}
+
 	/**
 	 * 
 	 * @returns {number}
 	 */
 	public get near():number
 	{
+		if (this._propertiesDirty)
+			this._updateProperties();
+
 		return this._near;
 	}
 
@@ -143,6 +138,9 @@ export class ProjectionBase extends EventDispatcher implements IProjection
 	 */
 	public get originX():number
 	{
+		if (this._propertiesDirty)
+			this._updateProperties();
+
 		return this._originX;
 	}
 
@@ -162,6 +160,9 @@ export class ProjectionBase extends EventDispatcher implements IProjection
 	 */
 	public get originY():number
 	{
+		if (this._propertiesDirty)
+			this._updateProperties();
+
 		return this._originY;
 	}
 
@@ -181,6 +182,9 @@ export class ProjectionBase extends EventDispatcher implements IProjection
 	 */
 	public get far():number
 	{
+		if (this._propertiesDirty)
+			this._updateProperties();
+
 		return this._far;
 	}
 
@@ -247,6 +251,11 @@ export class ProjectionBase extends EventDispatcher implements IProjection
 		throw new AbstractMethodError();
 	}
 
+	private _invalidateProperties():void
+	{
+		this._propertiesDirty = true;
+	}
+
 	private _invalidateViewMatrix3D():void
 	{
 		this._viewMatrix3DDirty = true;
@@ -258,6 +267,9 @@ export class ProjectionBase extends EventDispatcher implements IProjection
 
 	protected _invalidateFrustumMatrix3D():void
 	{
+		if (this._propertiesDirty)
+			this._updateProperties();
+
 		this._frustumMatrix3DDirty = true;
 
 		this._invalidateViewMatrix3D();
@@ -287,6 +299,12 @@ export class ProjectionBase extends EventDispatcher implements IProjection
 	{
 		this._frustumMatrix3DDirty = false;
 	}
+
+	protected _updateProperties():void
+	{
+		this._propertiesDirty = false;
+	}
+
 
 	public get frustumPlanes():Array<Plane3D>
 	{

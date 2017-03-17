@@ -1,18 +1,17 @@
-import {Matrix3D}					from "../geom/Matrix3D";
-import {Plane3D}					from "../geom/Plane3D";
-import {Vector3D}					from "../geom/Vector3D";
-import {ProjectionEvent}			from "../events/ProjectionEvent";
-import {IProjection}				from "../projections/IProjection";
-import {ProjectionBase}			from "../projections/ProjectionBase";
+import {Matrix3D} from "../geom/Matrix3D";
+import {Plane3D} from "../geom/Plane3D";
+import {Vector3D} from "../geom/Vector3D";
+import {ProjectionEvent} from "../events/ProjectionEvent";
+import {ProjectionBase} from "../projections/ProjectionBase";
 
 export class ObliqueNearPlaneProjection extends ProjectionBase
 {
 
-	private _baseProjection:IProjection;
+	private _baseProjection:ProjectionBase;
 	private _plane:Plane3D;
 	private _onProjectionMatrixChangedDelegate:(event:ProjectionEvent) => void;
 
-	constructor(baseProjection:IProjection, plane:Plane3D)
+	constructor(baseProjection:ProjectionBase, plane:Plane3D)
 	{
 		super();
 
@@ -52,18 +51,6 @@ export class ObliqueNearPlaneProjection extends ProjectionBase
 		this._baseProjection.far = value;
 	}
 
-	//@override
-	public get aspectRatio():number
-	{
-		return this._baseProjection.aspectRatio;
-	}
-
-	//@override
-	public set aspectRatio(value:number)
-	{
-		this._baseProjection.aspectRatio = value;
-	}
-
 	public get plane():Plane3D
 	{
 		return this._plane;
@@ -76,7 +63,7 @@ export class ObliqueNearPlaneProjection extends ProjectionBase
 		this._invalidateFrustumMatrix3D();
 	}
 
-	public set baseProjection(value:IProjection)
+	public set baseProjection(value:ProjectionBase)
 	{
 		if (this._baseProjection)
 			this._baseProjection.removeEventListener(ProjectionEvent.MATRIX_CHANGED, this._onProjectionMatrixChangedDelegate);

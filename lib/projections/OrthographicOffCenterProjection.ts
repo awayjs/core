@@ -82,7 +82,6 @@ export class OrthographicOffCenterProjection extends ProjectionBase
 		var clone:OrthographicOffCenterProjection = new OrthographicOffCenterProjection(this._minX, this._maxX, this._minY, this._maxY);
 		clone._near = this._near;
 		clone._far = this._far;
-		clone._aspectRatio = this._aspectRatio;
 		return clone;
 	}
 

@@ -608,7 +608,7 @@ export class Matrix3D
 		var q:Quaternion;
 
 		if (this._components == null)
-			this._components = [null, new Vector3D(), new Vector3D(), new Vector3D()];
+			this._components = [new Vector3D(), new Vector3D(), new Vector3D(), new Vector3D()];
 
 		var colX:Vector3D = new Vector3D(this._rawData[0], this._rawData[1], this._rawData[2]);
 		var colY:Vector3D = new Vector3D(this._rawData[4], this._rawData[5], this._rawData[6]);
@@ -712,7 +712,7 @@ export class Matrix3D
 				break;
 		}
 
-		this._components[0] = this.position;
+		this._components[0].copyFrom(this.position);
 
 		return this._components;
 	}

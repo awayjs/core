@@ -51,7 +51,6 @@ export class OrthographicProjection extends ProjectionBase
 		var clone:OrthographicProjection = new OrthographicProjection();
 		clone._near = this._near;
 		clone._far = this._far;
-		clone._aspectRatio = this._aspectRatio;
 		clone.projectionHeight = this._projectionHeight;
 		return clone;
 	}
@@ -63,7 +62,7 @@ export class OrthographicProjection extends ProjectionBase
 
 		var raw:Float32Array = Matrix3D.CALCULATION_MATRIX._rawData;
 		this._yMax = this._projectionHeight*.5;
-		this._xMax = this._yMax*this._aspectRatio;
+		this._xMax = this._yMax*this._viewRect.width/this._viewRect.height;
 
 		var left:number;
 		var right:number;
@@ -78,7 +77,7 @@ export class OrthographicProjection extends ProjectionBase
 			top = -this._yMax;
 			bottom = this._yMax;
 
-			raw[0] = 2/(this._projectionHeight*this._aspectRatio);
+			raw[0] = 2/(this._projectionHeight*this._viewRect.width/this._viewRect.height);
 			raw[5] = 2/this._projectionHeight;
 			raw[10] = 1/(this._far - this._near);
 			raw[14] = this._near/(this._near - this._far);

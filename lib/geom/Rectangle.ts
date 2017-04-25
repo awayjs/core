@@ -94,6 +94,11 @@ export class Rectangle
 		return this.y + this.height;
 	}
 
+	public set bottom(val:number)
+	{
+		this.height = val - this.y;
+	}
+
 	/**
 	 * The location of the Rectangle object's bottom-right corner, determined by
 	 * the values of the <code>right</code> and <code>bottom</code> properties.
@@ -124,12 +129,23 @@ export class Rectangle
 		return this.x;
 	}
 
+	public set left(val:number)
+	{
+		this.width += this.x - val;
+		this.x = val;
+	}
+
 	/**
 	 * The sum of the <code>x</code> and <code>width</code> properties.
 	 */
 	public get right():number
 	{
 		return this.x + this.width;
+	}
+
+	public set right(val:number)
+	{
+		this.width = val - this.x;
 	}
 
 	/**
@@ -160,6 +176,12 @@ export class Rectangle
 	public get top():number
 	{
 		return this.y;
+	}
+
+	public set top(val:number)
+	{
+		this.height += (this.y - val);
+		this.y = val;
 	}
 
 	/**

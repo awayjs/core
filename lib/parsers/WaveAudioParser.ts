@@ -7,11 +7,19 @@ import {ByteArray}				from "../utils/ByteArray";
 
 export class WaveAudioParser extends ParserBase
 {
+	private _convertingBlobState:number;
 	constructor()
 	{
 		super(URLLoaderDataFormat.BLOB);
+		this._convertingBlobState = 0;
 	}
 
+	/*
+		this static property can be set with a function that that will be called on each filename before adding it to the library
+	*/
+	public static processFilename=function(filename):string {
+		return filename;
+	};
 	public static supportsType(extension:string):boolean
 	{
 
@@ -41,6 +49,15 @@ export class WaveAudioParser extends ParserBase
 
 	public _pProceedParsing():boolean
 	{
+		if (this._convertingBlobState == 1) {
+			return ParserBase.MORE_TO_PARSE;
+		}
+		else if (this._convertingBlobState == 2) {
+			return ParserBase.PARSING_DONE;
+		}
+		else if (this._convertingBlobState == 3) {
+			return ParserBase.PARSING_DONE; //todo
+		}
 		if (this.data instanceof ByteArray) { // Parse a ByteArray
 			this._pContent = new WaveAudio(this.data.arraybytes);
 			this._pFinalizeAsset(this._pContent, this._iFileName);
@@ -48,9 +65,22 @@ export class WaveAudioParser extends ParserBase
 			this._pContent = new WaveAudio(this.data);
 			this._pFinalizeAsset(this._pContent, this._iFileName);
 		}
-
+		else if (this.data instanceof Blob) {
+			this._convertingBlobState = 1;
+			var fileReader = new FileReader();
+			fileReader.onload = (event) => this.blobConverted(event);
+			fileReader.readAsArrayBuffer(this.data);
+			return ParserBase.MORE_TO_PARSE;
+		}
 		return ParserBase.PARSING_DONE;
 
+	}
+	private blobConverted(event)
+	{
+		this._pContent = new WaveAudio(event.target.result);
+		this._pFinalizeAsset(this._pContent, WaveAudioParser.processFilename(this._iFileName));
+		this._convertingBlobState = 2;
+		
 	}
 
 	private static parseFileType(ba:ByteArray):string

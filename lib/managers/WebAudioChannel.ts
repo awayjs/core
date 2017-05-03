@@ -24,6 +24,13 @@ export class WebAudioChannel
 
 	private _onEndedDelegate : (event:any) => void;
 
+	public static stopAllSounds(){
+		var len:number = WebAudioChannel._channels.length;
+		for (var j:number = 0; j < len; j++) {
+			WebAudioChannel._channels[j].stop();
+		}
+		WebAudioChannel._channels.length=0;
+	}
 	public get duration():number
 	{
 		return this._duration;

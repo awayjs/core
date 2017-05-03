@@ -74,6 +74,16 @@ export class ByteArray extends ByteArrayBase
 		}
 	}
 
+
+	public writeObject(object:any):void
+	{
+		console.log("writeObject not implemented yet in core/ByteArray");
+	}
+	public readObject():any
+	{
+		console.log("readObject not implemented yet in core/ByteArray");
+		return {};
+	}
 	public writeByte(b:number):void
 	{
 		this.ensureWriteableSpace(1);

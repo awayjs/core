@@ -90,7 +90,7 @@ export class Transform extends EventDispatcher
 	private _invalidateConcatenatedMatrix3D:TransformEvent;
 	private _updateConcatenatedMatrix3D:TransformEvent;
 	private _invalidateColorTransform:TransformEvent;
-	
+
 	/**
 	 *
 	 */
@@ -167,7 +167,9 @@ export class Transform extends EventDispatcher
 
 		return this._inverseConcatenatedMatrix3D;
 	}
-	
+	public append(value:Matrix3D){
+		console.log("append not implemented yet in core/Transform");
+	}
 	/**
 	 *
 	 */

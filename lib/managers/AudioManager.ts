@@ -25,6 +25,13 @@ export class AudioManager
 		return AudioManager._externalSoundInterface;
 	}
 
+	public static stopAllSounds()
+	{
+		WebAudioChannel.stopAllSounds();
+		StreamingAudioChannel.stopAllSounds();
+		//EventAudioChannel.stopAllSounds();
+		//AudioChannel.stopAllSounds();
+	}
 
 	public static getChannel(byteLength:number):IAudioChannel
 	{

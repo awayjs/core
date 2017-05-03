@@ -23,6 +23,14 @@ export class StreamingAudioChannel
 	private _mediaSource:MediaSource;
 	private _urlString:string;
 
+	public static stopAllSounds(){
+		var len:number = StreamingAudioChannel._channels.length;
+		for (var j:number = 0; j < len; j++) {
+			StreamingAudioChannel._channels[j].stop();
+		}
+		StreamingAudioChannel._channels.length=0;
+	}
+
 	public get duration():number
 	{
 		return this._duration;

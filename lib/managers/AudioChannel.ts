@@ -14,6 +14,15 @@ export class AudioChannel
 
 	private _audio:HTMLAudioElement;
 
+	public static stopAllSounds(){
+		var channel:IAudioChannel;
+		var len:number = AudioChannel._channels.length;
+		for (var j:number = 0; j < len; j++) {
+			channel = AudioChannel._channels[j];
+			channel.stop();
+		}
+		AudioChannel._channels.length=0;
+	}
 	public get currentTime():number
 	{
 		return this._audio.currentTime;

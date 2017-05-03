@@ -16,6 +16,16 @@ export class EventAudioChannel
 	
 	private _audio:HTMLAudioElement;
 
+	public static stopAllSounds(){
+		var channel:IAudioChannel;
+		var len:number = EventAudioChannel._channels.length;
+		for (var j:number = 0; j < len; j++) {
+			channel = EventAudioChannel._channels[j];
+			channel.stop();
+		}
+		EventAudioChannel._channels.length=0;
+	}
+
 	public get duration():number
 	{
 		return this._duration;

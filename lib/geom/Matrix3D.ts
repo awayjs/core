@@ -1151,10 +1151,32 @@ export class Matrix3D
 		if (!target)
 			target = new Box();
 
-		//TODO: take account of shear
-		target.width = maxX*this._rawData[0] + maxY*this._rawData[4] + maxZ*this._rawData[8] + this._rawData[12] - (target.x = minX*this._rawData[0] + minY*this._rawData[4] + minZ*this._rawData[8] + this._rawData[12]);
-		target.height = maxX*this._rawData[1] + maxY*this._rawData[5] + maxZ*this._rawData[9] + this._rawData[13] - (target.y = minX*this._rawData[1] + minY*this._rawData[5] + minZ*this._rawData[9] + this._rawData[13]);
-		target.depth = maxX*this._rawData[2] + maxY*this._rawData[6] + maxZ*this._rawData[10] + this._rawData[14] - (target.z = minX*this._rawData[2] + minY*this._rawData[6] + minZ*this._rawData[10] + this._rawData[14]);
+		var hx:number = box.width/2;
+		var hy:number = box.height/2;
+		var hz:number = box.depth/2;
+		var cx:number = box.x + hx;
+		var cy:number = box.y + hy;
+		var cz:number = box.z + hz;
+
+		var m11:number = this._rawData[0], m12:number = this._rawData[4], m13:number = this._rawData[8], m14:number = this._rawData[12];
+		var m21:number = this._rawData[1], m22:number = this._rawData[5], m23:number = this._rawData[9], m24:number = this._rawData[13];
+		var m31:number = this._rawData[2], m32:number = this._rawData[6], m33:number = this._rawData[10], m34:number = this._rawData[14];
+
+		var centerX:number = cx*m11 + cy*m12 + cz*m13 + m14;
+		var centerY:number = cx*m21 + cy*m22 + cz*m23 + m24;
+		var centerZ:number = cx*m31 + cy*m32 + cz*m33 + m34;
+
+		var halfExtentsX:number = Math.abs(hx*m11 + hy*m12 + hz*m13);
+		var halfExtentsY:number = Math.abs(hx*m21 + hy*m22 + hz*m23);
+		var halfExtentsZ:number = Math.abs(hx*m31 + hy*m32 + hz*m33);
+
+		target.width = halfExtentsX*2;
+		target.height = halfExtentsY*2;
+		target.depth = halfExtentsZ*2;
+
+		target.x = centerX - halfExtentsX;
+		target.y = centerY - halfExtentsY;
+		target.z = centerZ - halfExtentsZ;
 
 		return target;
 	}

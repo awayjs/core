@@ -28,6 +28,15 @@ export class AudioChannel
 		return this._audio.currentTime;
 	}
 
+	public get panning():number
+	{
+		return this._gainNode.gain.value;
+	}
+
+	public set volume(value:number)
+	{
+		this._gainNode.gain.value = value;
+	}
 
 	public get volume():number
 	{

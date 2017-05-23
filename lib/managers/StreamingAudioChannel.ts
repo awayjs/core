@@ -72,6 +72,17 @@ export class StreamingAudioChannel
 		return false;
 	}
 
+	public get pan():number
+	{
+		//todo
+		return 0;
+	}
+
+	public set pan(value:number)
+	{
+		//todo
+	}
+
 	constructor()
 	{
 		this._sourceOpenDelegate = (event) => this._sourceOpen(event);

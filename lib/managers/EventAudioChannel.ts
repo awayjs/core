@@ -36,6 +36,17 @@ export class EventAudioChannel
 		return this._audio.currentTime - this._startTime;
 	}
 
+	public get pan():number
+	{
+		//todo
+		return 0;
+	}
+
+	public set pan(value:number)
+	{
+		//todo
+	}
+
 
 	public get volume():number
 	{

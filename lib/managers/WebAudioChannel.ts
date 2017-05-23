@@ -11,6 +11,7 @@ export class WebAudioChannel
 	private _audioCtx;
 
 	private _gainNode;
+	private _pannerNode;
 	private _source;
 
 	private _isPlaying:boolean = false;
@@ -19,6 +20,7 @@ export class WebAudioChannel
 	private _currentTime:number;
 	private _id:number;
 	private _volume:number = 1;
+	private _pan:number = 0;
 	private _startTime:number = 0;
 	private _duration:number;
 
@@ -56,6 +58,20 @@ export class WebAudioChannel
 		this._gainNode.gain.value = this._volume;
 	}
 
+	public get pan():number
+	{
+		return this._pan;
+	}
+
+	public set pan(value:number)
+	{
+		if (this._pan == value)
+			return;
+
+		this._pan = value;
+
+		this._pannerNode.pan.value = this._pan;
+	}
 
 	public isPlaying():boolean
 	{
@@ -79,7 +95,12 @@ export class WebAudioChannel
 		this._gainNode = this._audioCtx.createGain();
 		this._gainNode.gain.value = this._volume;
 
-		this._gainNode.connect(this._audioCtx.destination);
+		this._pannerNode = this._audioCtx.createStereoPanner();
+		this._pannerNode.pan.value = this._pan;
+
+		this._gainNode.connect(this._pannerNode);
+		this._pannerNode.connect(this._audioCtx.destination);
+
 
 		this._onEndedDelegate = (event) => this._onEnded(event);
 	}

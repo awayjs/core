@@ -25,7 +25,7 @@ export class AudioManager
 		return AudioManager._externalSoundInterface;
 	}
 
-	public static stopAllSounds()
+	public static stopAllSounds() 
 	{
 		WebAudioChannel.stopAllSounds();
 		StreamingAudioChannel.stopAllSounds();
@@ -37,7 +37,7 @@ export class AudioManager
 	{
 		//choose best audio channel by bytelength
 		//todo: StreamingAudioChannel doesnt seem to be working. no error, but also no sound is playing
-		var channelClass:IAudioChannelClass = (byteLength > 50000)? StreamingAudioChannel : WebAudioChannel;
+		var channelClass:IAudioChannelClass = (byteLength > 50000000)? StreamingAudioChannel : WebAudioChannel;
 		//var channelClass:IAudioChannelClass = WebAudioChannel;
 
 		var i:number = 0;

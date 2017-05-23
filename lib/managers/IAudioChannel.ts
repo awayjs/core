@@ -6,6 +6,8 @@ export interface IAudioChannel
 
 	volume:number;
 
+	pan:number;
+	
 	isPlaying():boolean;
 
 	isLooping():boolean;

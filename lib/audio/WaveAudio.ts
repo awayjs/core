@@ -9,6 +9,7 @@ export class WaveAudio extends AssetBase
 
 	private _audioChannel:IAudioChannel;
 	private _volume:number = 1;
+	private _pan:number = 0;
 	private _buffer:ArrayBuffer;
 
 	/**
@@ -20,6 +21,22 @@ export class WaveAudio extends AssetBase
 		return WaveAudio.assetType;
 	}
 
+	public get pan():number
+	{
+		return this._pan;
+	}
+
+	public set pan(value:number)
+	{
+		if (this._pan == value)
+			return;
+
+		this._pan = value;
+
+		if (this._audioChannel)
+			this._audioChannel.pan = this._pan;
+	}
+	
 	public get volume():number
 	{
 		return this._volume;

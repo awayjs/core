@@ -13,3 +13,5 @@ env:
 notifications:
   slack:
     secure: TVmKfO5R3sRdSSdbyFZijs0oxtmXYPRGZofF4Ou5ZvkLi+g/BLcuBY5CLoc7ZoNwEObVGz/Ve+fhnXCSfM6Xy35cF6uLPxaoqnvolK5vodKZZXSu+0AfTEvNwrCi7QbwB6GrNwDMFy6zX7nKyEr33vgx8Hv7OCVPvxgXGvQQ88U=
+    on_success: never
+    on_failure: always

@@ -140,6 +140,7 @@ export class AttributesBuffer extends AssetBase
 	public clone():AttributesBuffer
 	{
 		var attributesBuffer:AttributesBuffer = new AttributesBuffer(this._stride, this._count);
+		
 		attributesBuffer.bufferView.set(this.bufferView);
 
 		var len:number = this._viewVOs.length;

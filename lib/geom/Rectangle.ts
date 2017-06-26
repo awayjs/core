@@ -290,7 +290,10 @@ export class Rectangle
 	 */
 	public copyFrom(sourceRect:Rectangle):void
 	{
-
+		this.x = sourceRect.x;
+		this.y = sourceRect.y;
+		this.width = sourceRect.width;
+		this.height = sourceRect.height;
 	}
 
 	/**

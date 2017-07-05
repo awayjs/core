@@ -706,16 +706,6 @@ export class Box
 		this.depth = 0;
 	}
 
-	public setBoundIdentity():void
-	{
-		this.x = Number.MAX_VALUE/2;
-		this.y = Number.MAX_VALUE/2;
-		this.z = Number.MAX_VALUE/2;
-		this.width = -Number.MAX_VALUE;
-		this.height = -Number.MAX_VALUE;
-		this.depth = -Number.MAX_VALUE;
-	}
-
 	/**
 	 * Sets the members of Box to the specified values
 	 *

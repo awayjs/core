@@ -117,7 +117,7 @@ export class Transform extends EventDispatcher
 
 	public set colorTransform(val:ColorTransform)
 	{
-		var sourceData:Float32Array = val._rawData, targetData:Float32Array = this._matrix3D._rawData;
+		var sourceData:Float32Array = val._rawData, targetData:Float32Array = this._colorTransform._rawData;
 		
 		targetData[0] = sourceData[0];
 		targetData[1] = sourceData[1];

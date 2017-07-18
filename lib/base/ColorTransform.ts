@@ -70,12 +70,12 @@ export class ColorTransform
 	 */
 	public get alphaOffset():number
 	{
-		return this._rawData[7]*0xFF;
+		return this._rawData[7];
 	}
 
 	public set alphaOffset(value:number)
 	{
-		this._rawData[7] = value/0xFF;
+		this._rawData[7] = value;
 	}
 
 	/**
@@ -97,12 +97,12 @@ export class ColorTransform
 	 */
 	public get blueOffset():number
 	{
-		return this._rawData[6]*0xFF;
+		return this._rawData[6];
 	}
 
 	public set blueOffset(value:number)
 	{
-		this._rawData[6] = value/0xFF;
+		this._rawData[6] = value;
 	}
 
 	/**
@@ -124,12 +124,12 @@ export class ColorTransform
 	 */
 	public get greenOffset():number
 	{
-		return this._rawData[5]*0xFF;
+		return this._rawData[5];
 	}
 
 	public set greenOffset(value:number)
 	{
-		this._rawData[5] = value/0xFF;
+		this._rawData[5] = value;
 	}
 
 	/**
@@ -151,12 +151,12 @@ export class ColorTransform
 	 */
 	public get redOffset():number
 	{
-		return this._rawData[4]*0xFF;
+		return this._rawData[4];
 	}
 
 	public set redOffset(value:number)
 	{
-		this._rawData[4] = value/0xFF;
+		this._rawData[4] = value;
 	}
 
 	/**
@@ -177,7 +177,7 @@ export class ColorTransform
 	 */
 	public get color():number
 	{
-		return((this._rawData[0] << 16) | ( this._rawData[1] << 8) | this._rawData[2]);
+		return((this._rawData[4] << 16) | ( this._rawData[5] << 8) | this._rawData[6]);
 	}
 
 	public set color(value:number)
@@ -237,14 +237,14 @@ export class ColorTransform
 	{
 		var targetData = this._rawData;
 
-		targetData[0] = targetData[0];
-		targetData[1] = targetData[1];
-		targetData[2] = targetData[2];
-		targetData[3] = targetData[3];
-		targetData[4] = targetData[4];
-		targetData[5] = targetData[5];
-		targetData[6] = targetData[6];
-		targetData[7] = targetData[7];
+		targetData[0] = sourceData[0];
+		targetData[1] = sourceData[1];
+		targetData[2] = sourceData[2];
+		targetData[3] = sourceData[3];
+		targetData[4] = sourceData[4];
+		targetData[5] = sourceData[5];
+		targetData[6] = sourceData[6];
+		targetData[7] = sourceData[7];
 	}
 
     public clear()

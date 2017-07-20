@@ -9,6 +9,7 @@ export class WebAudioChannel
 
 	private static _audioCtx;
 	private _audioCtx;
+	private _usingNativePanner:boolean;
 
 	private _gainNode;
 	private _pannerNode;
@@ -70,7 +71,10 @@ export class WebAudioChannel
 
 		this._pan = value;
 
-		this._pannerNode.pan.value = this._pan;
+		if (this._usingNativePanner)
+			this._pannerNode.pan.value = this._pan;
+		else
+			this._pannerNode.setPosition(Math.sin(this._pan*(Math.PI/2)), 0, Math.cos(this._pan*(Math.PI/2)));
 	}
 
 	public isPlaying():boolean
@@ -92,11 +96,17 @@ export class WebAudioChannel
 	{
 		this._audioCtx = WebAudioChannel._audioCtx || (WebAudioChannel._audioCtx = new (window["AudioContext"] || window["webkitAudioContext"])());
 
+		this._usingNativePanner = typeof this._audioCtx.createStereoPanner === 'function';
+
 		this._gainNode = this._audioCtx.createGain();
 		this._gainNode.gain.value = this._volume;
 
-		this._pannerNode = this._audioCtx.createStereoPanner();
-		this._pannerNode.pan.value = this._pan;
+		this._pannerNode = this._usingNativePanner? this._audioCtx.createStereoPanner() : this._audioCtx.createPanner();
+
+		if (this._usingNativePanner)
+			this._pannerNode.pan.value = this._pan;
+		else
+			this._pannerNode.setPosition(Math.sin(this._pan*(Math.PI/2)), 0, Math.cos(this._pan*(Math.PI/2)));
 
 		this._gainNode.connect(this._pannerNode);
 		this._pannerNode.connect(this._audioCtx.destination);

@@ -125,7 +125,7 @@ export class WebAudioChannel
 		this._id = id;
 
 		this._isDecoding = true;
-
+		buffer=buffer.slice(0);
 		//fast path for short sounds
 		if (WebAudioChannel._decodeCache[id])
 			this._onDecodeComplete(WebAudioChannel._decodeCache[id]);

@@ -34,15 +34,22 @@ export class OrthographicProjection extends ProjectionBase
 	}
 
 	//@override
-	public unproject(nX:number, nY:number, sZ:number):Vector3D
+	public unproject(nX:number, nY:number, sZ:number, target:Vector3D = null):Vector3D
 	{
-		var v:Vector3D = new Vector3D(nX + this.viewMatrix3D._rawData[12], -nY + this.viewMatrix3D._rawData[13], sZ, 1.0);
-		v = this.inverseViewMatrix3D.transformVector(v);
+		if (target == null)
+			target = new Vector3D();
+
+		target.x = nX + this.viewMatrix3D._rawData[12];
+		target.y = -nY + this.viewMatrix3D._rawData[13];
+		target.z = sZ
+		target.w = 1.0;
+
+		this.inverseViewMatrix3D.transformVector(target, target);
 
 		//z is unaffected by transform
-		v.z = sZ;
+		target.z = sZ;
 
-		return v;
+		return target;
 	}
 
 	//@override

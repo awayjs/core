@@ -146,15 +146,20 @@ export class PerspectiveProjection extends ProjectionBase
 
 
 	//@override
-	public unproject(nX:number, nY:number, sZ:number):Vector3D
+	public unproject(nX:number, nY:number, sZ:number, target:Vector3D = null):Vector3D
 	{
-		var v:Vector3D = new Vector3D(nX*sZ, -nY*sZ, (this._far + this._near)/(this._far - this._near)*sZ - 2*this._far*this._near/(this._far - this._near), sZ);
+		if (target == null)
+			target = new Vector3D();
 
-		v = this.inverseViewMatrix3D.transformVector(v, v);
+		target.x = nX*sZ, -nY*sZ;
+		target.y = (this._far + this._near)/(this._far - this._near)*sZ - 2*this._far*this._near/(this._far - this._near);
+		target.z = sZ;
 
-		v.w = 1;
+		this.inverseViewMatrix3D.transformVector(target, target);
 
-		return v;
+		target.w = 1;
+
+		return target;
 	}
 
 	/**

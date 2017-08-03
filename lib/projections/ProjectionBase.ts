@@ -241,7 +241,7 @@ export class ProjectionBase extends EventDispatcher
 		return this._inverseViewMatrix3D;
 	}
 
-	public unproject(nX:number, nY:number, sZ:number):Vector3D
+	public unproject(nX:number, nY:number, sZ:number, target:Vector3D = null):Vector3D
 	{
 		throw new AbstractMethodError();
 	}

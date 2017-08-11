@@ -1151,94 +1151,33 @@ export class Matrix3D
 		if (!target)
 			target = new Box();
 
-
-		// consider all four courner points of the box for calculating correct size of transformed-boundingbox
-
-		// todo: for 3d bounding boxes we need to consider 8 corner points...
-
-		var btn_left_x:number=box.x;
-		var btn_left_y:number=box.y;
-		var btn_left_z:number=box.z;
-
-		var btn_right_x:number=box.x+box.width;
-		var btn_right_y:number=box.y;
-		var btn_right_z:number=box.z;
-
-		var top_left_x:number=box.x;
-		var top_left_y:number=box.y+box.height;
-		var top_left_z:number=box.z;
-
-		var top_right_x:number=box.x+box.width;
-		var top_right_y:number=box.y+box.height;
-		var top_right_z:number=box.z;
+		var hx:number = box.width/2;
+		var hy:number = box.height/2;
+		var hz:number = box.depth/2;
+		var cx:number = box.x + hx;
+		var cy:number = box.y + hy;
+		var cz:number = box.z + hz;
 
 		var m11:number = this._rawData[0], m12:number = this._rawData[4], m13:number = this._rawData[8], m14:number = this._rawData[12];
 		var m21:number = this._rawData[1], m22:number = this._rawData[5], m23:number = this._rawData[9], m24:number = this._rawData[13];
 		var m31:number = this._rawData[2], m32:number = this._rawData[6], m33:number = this._rawData[10], m34:number = this._rawData[14];
 
-		//transform the 4 verts:
+		var centerX:number = cx*m11 + cy*m12 + cz*m13 + m14;
+		var centerY:number = cx*m21 + cy*m22 + cz*m23 + m24;
+		var centerZ:number = cx*m31 + cy*m32 + cz*m33 + m34;
 
-		var btn_left_x_tf:number = btn_left_x*m11 + btn_left_y*m12 + btn_left_z*m13 + m14;
-		var btn_left_y_tf:number = btn_left_x*m21 + btn_left_y*m22 + btn_left_z*m23 + m24;
-		var btn_left_z_tf:number = btn_left_x*m31 + btn_left_y*m32 + btn_left_z*m33 + m34;
+		var halfExtentsX:number = Math.max(Math.abs(hx*m11 + hy*m12 + hz*m13), Math.abs(-hx*m11 + hy*m12 + hz*m13), Math.abs(hx*m11 - hy*m12 + hz*m13), Math.abs(hx*m11 + hy*m12 - hz*m13));
+		var halfExtentsY:number = Math.max(Math.abs(hx*m21 + hy*m22 + hz*m23), Math.abs(-hx*m21 + hy*m22 + hz*m23), Math.abs(hx*m21 - hy*m22 + hz*m23), Math.abs(hx*m21 + hy*m22 - hz*m23));
+		var halfExtentsZ:number = Math.max(Math.abs(hx*m31 + hy*m32 + hz*m33), Math.abs(-hx*m31 + hy*m32 + hz*m33), Math.abs(hx*m31 - hy*m32 + hz*m33), Math.abs(hx*m31 + hy*m32 - hz*m33));
 
-		var btn_right_x_tf:number = btn_right_x*m11 + btn_right_y*m12 + btn_right_z*m13 + m14;
-		var btn_right_y_tf:number = btn_right_x*m21 + btn_right_y*m22 + btn_right_z*m23 + m24;
-		var btn_right_z_tf:number = btn_right_x*m31 + btn_right_y*m32 + btn_right_z*m33 + m34;
+		target.width = halfExtentsX*2;
+		target.height = halfExtentsY*2;
+		target.depth = halfExtentsZ*2;
 
-		var top_left_x_tf:number = top_left_x*m11 + top_left_y*m12 + top_left_z*m13 + m14;
-		var top_left_y_tf:number = top_left_x*m21 + top_left_y*m22 + top_left_z*m23 + m24;
-		var top_left_z_tf:number = top_left_x*m31 + top_left_y*m32 + top_left_z*m33 + m34;
+		target.x = centerX - halfExtentsX;
+		target.y = centerY - halfExtentsY;
+		target.z = centerZ - halfExtentsZ;
 
-		var top_right_x_tf:number = top_right_x*m11 + top_right_y*m12 + top_right_z*m13 + m14;
-		var top_right_y_tf:number = top_right_x*m21 + top_right_y*m22 + top_right_z*m23 + m24;
-		var top_right_z_tf:number = top_right_x*m31 + top_right_y*m32 + top_right_z*m33 + m34;
-
-		//get the max values from the transformed verts
-
-		var maxX:number=Math.max(btn_left_x_tf, btn_right_x_tf, top_left_x_tf, top_right_x_tf);
-		var minX:number=Math.min(btn_left_x_tf, btn_right_x_tf, top_left_x_tf, top_right_x_tf);
-		var maxY:number=Math.max(btn_left_y_tf, btn_right_y_tf, top_left_y_tf, top_right_y_tf);
-		var minY:number=Math.min(btn_left_y_tf, btn_right_y_tf, top_left_y_tf, top_right_y_tf);
-		var maxZ:number=Math.max(btn_left_z_tf, btn_right_z_tf, top_left_z_tf, top_right_z_tf);
-		var minZ:number=Math.min(btn_left_z_tf, btn_right_z_tf, top_left_z_tf, top_right_z_tf);
-
-		target.width = maxX-minX;
-		target.height = maxY-minY;
-		target.depth = maxZ-minZ;
-
-		target.x = minX;
-		target.y = minY;
-		target.z = minZ;
-
-		/*
-				var hx:number = box.width/2;
-				var hy:number = box.height/2;
-				var hz:number = box.depth/2;
-				var cx:number = box.x + hx;
-				var cy:number = box.y + hy;
-				var cz:number = box.z + hz;
-
-				var m11:number = this._rawData[0], m12:number = this._rawData[4], m13:number = this._rawData[8], m14:number = this._rawData[12];
-				var m21:number = this._rawData[1], m22:number = this._rawData[5], m23:number = this._rawData[9], m24:number = this._rawData[13];
-				var m31:number = this._rawData[2], m32:number = this._rawData[6], m33:number = this._rawData[10], m34:number = this._rawData[14];
-
-				var centerX:number = cx*m11 + cy*m12 + cz*m13 + m14;
-				var centerY:number = cx*m21 + cy*m22 + cz*m23 + m24;
-				var centerZ:number = cx*m31 + cy*m32 + cz*m33 + m34;
-
-				var halfExtentsX:number = Math.abs(hx*m11 + hy*m12 + hz*m13);
-				var halfExtentsY:number = Math.abs(hx*m21 + hy*m22 + hz*m23);
-				var halfExtentsZ:number = Math.abs(hx*m31 + hy*m32 + hz*m33);
-
-				target.width = halfExtentsX*2;
-				target.height = halfExtentsY*2;
-				target.depth = halfExtentsZ*2;
-
-				target.x = centerX - halfExtentsX;
-				target.y = centerY - halfExtentsY;
-				target.z = centerZ - halfExtentsZ;
-*/
 		return target;
 	}
 

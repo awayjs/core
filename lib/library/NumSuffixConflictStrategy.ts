@@ -1,5 +1,5 @@
 import {ConflictStrategyBase}		from "../library/ConflictStrategyBase";
-import {IAsset}					from "../library/IAsset";
+import {IAssetAdapter}					from "../library/IAssetAdapter";
 
 export class NumSuffixConflictStrategy extends ConflictStrategyBase
 {
@@ -14,14 +14,14 @@ export class NumSuffixConflictStrategy extends ConflictStrategyBase
 		this._next_suffix = {};
 	}
 
-	public resolveConflict(changedAsset:IAsset, oldAsset:IAsset, assetsDictionary:Object, precedence:string):void
+	public resolveConflict(changedAsset:IAssetAdapter, oldAsset:IAssetAdapter, assetsDictionary:Object, precedence:string):void
 	{
 		var orig:string;
 		var new_name:string;
 		var base:string;
 		var suffix:number;
 
-		orig = changedAsset.name;
+		orig = changedAsset.adaptee.name;
 
 		if (orig.indexOf(this._separator) >= 0) {
 			// Name has an ocurrence of the separator, so get base name and suffix,
@@ -57,7 +57,7 @@ export class NumSuffixConflictStrategy extends ConflictStrategyBase
 		} while (assetsDictionary.hasOwnProperty(new_name));
 
 		this._next_suffix[ base ] = suffix;
-		this._pUpdateNames(oldAsset.assetNamespace, new_name, oldAsset, changedAsset, assetsDictionary, precedence);
+		this._pUpdateNames(oldAsset.adaptee.assetNamespace, new_name, oldAsset, changedAsset, assetsDictionary, precedence);
 
 	}
 

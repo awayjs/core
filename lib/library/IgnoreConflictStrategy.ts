@@ -1,5 +1,5 @@
 import {ConflictStrategyBase}		from "../library/ConflictStrategyBase";
-import {IAsset}					from "../library/IAsset";
+import {IAssetAdapter}					from "../library/IAssetAdapter";
 
 export class IgnoreConflictStrategy extends ConflictStrategyBase
 {
@@ -8,7 +8,7 @@ export class IgnoreConflictStrategy extends ConflictStrategyBase
 		super();
 	}
 
-	public resolveConflict(changedAsset:IAsset, oldAsset:IAsset, assetsDictionary:Object, precedence:string):void
+	public resolveConflict(changedAsset:IAssetAdapter, oldAsset:IAssetAdapter, assetsDictionary:Object, precedence:string):void
 	{
 		// Do nothing, ignore the fact that there is a conflict.
 		return;

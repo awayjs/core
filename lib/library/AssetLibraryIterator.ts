@@ -1,20 +1,20 @@
-import {IAsset}					from "../library/IAsset";
+import {IAssetAdapter} from "../library/IAssetAdapter";
 
 export class AssetLibraryIterator
 {
 
-	private  _assets:Array<IAsset>;
-	private _filtered:Array<IAsset>;
+	private  _assets:Array<IAssetAdapter>;
+	private _filtered:Array<IAssetAdapter>;
 
 	private _idx:number;
 
-	constructor(assets:Array<IAsset>, assetTypeFilter:string, namespaceFilter:string, filterFunc)
+	constructor(assets:Array<IAssetAdapter>, assetTypeFilter:string, namespaceFilter:string, filterFunc)
 	{
 		this._assets = assets;
 		this.filter(assetTypeFilter, namespaceFilter, filterFunc);
 	}
 
-	public get currentAsset():IAsset
+	public get currentAsset():IAssetAdapter
 	{
 		// Return current, or null if no current
 		return ( this._idx < this._filtered.length )? this._filtered[ this._idx ] : null;
@@ -25,9 +25,9 @@ export class AssetLibraryIterator
 		return this._filtered.length;
 	}
 
-	public next():IAsset
+	public next():IAssetAdapter
 	{
-		var next:IAsset = null;
+		var next:IAssetAdapter = null;
 
 		if (this._idx < this._filtered.length)
 			next = this._filtered[this._idx];
@@ -52,24 +52,24 @@ export class AssetLibraryIterator
 		if (assetTypeFilter || namespaceFilter) {
 
 			var idx:number;
-			var asset:IAsset;
+			var asset:IAssetAdapter;
 
 
 			idx = 0;
-			this._filtered = new Array<IAsset>();//new Vector.<IAsset>;
+			this._filtered = new Array<IAssetAdapter>();//new Vector.<IAsset>;
 
 			var l:number = this._assets.length;
 
 			for (var c:number = 0; c < l; c++) {
 
-				asset = <IAsset> this._assets[c];
+				asset = <IAssetAdapter> this._assets[c];
 
 				// Skip this assets if filtering on type and this is wrong type
-				if (assetTypeFilter && asset.assetType != assetTypeFilter)
+				if (assetTypeFilter && asset.adaptee.assetType != assetTypeFilter)
 					continue;
 
 				// Skip this asset if filtering on namespace and this is wrong namespace
-				if (namespaceFilter && asset.assetNamespace != namespaceFilter)
+				if (namespaceFilter && asset.adaptee.assetNamespace != namespaceFilter)
 					continue;
 
 				// Skip this asset if a filter func has been provided and it returns false

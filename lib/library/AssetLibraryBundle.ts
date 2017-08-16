@@ -1,20 +1,21 @@
-import {URLRequest}				from "../net/URLRequest";
-import {AssetLibrary}				from "../library/AssetLibrary";
-import {AssetLibraryIterator}		from "../library/AssetLibraryIterator";
-import {Loader}					from "../library/Loader";
-import {LoaderContext}			from "../library/LoaderContext";
-import {ConflictPrecedence}		from "../library/ConflictPrecedence";
-import {ConflictStrategy}			from "../library/ConflictStrategy";
-import {ConflictStrategyBase}		from "../library/ConflictStrategyBase";
-import {AssetBase}				from "../library/AssetBase";
-import {IAsset}					from "../library/IAsset";
-import {ErrorBase}				from "../errors/ErrorBase";
-import {AssetEvent}				from "../events/AssetEvent";
-import {URLLoaderEvent}			from "../events/URLLoaderEvent";
-import {LoaderEvent}				from "../events/LoaderEvent";
-import {EventDispatcher}			from "../events/EventDispatcher";
-import {ParserEvent}				from "../events/ParserEvent";
-import {ParserBase}				from "../parsers/ParserBase";
+import {URLRequest} from "../net/URLRequest";
+import {AssetLibrary} from "../library/AssetLibrary";
+import {AssetLibraryIterator} from "../library/AssetLibraryIterator";
+import {Loader} from "../library/Loader";
+import {LoaderContext} from "../library/LoaderContext";
+import {ConflictPrecedence} from "../library/ConflictPrecedence";
+import {ConflictStrategy} from "../library/ConflictStrategy";
+import {ConflictStrategyBase} from "../library/ConflictStrategyBase";
+import {AssetBase} from "../library/AssetBase";
+import {IAsset} from "../library/IAsset";
+import {IAssetAdapter} from "../library/IAssetAdapter";
+import {ErrorBase} from "../errors/ErrorBase";
+import {AssetEvent} from "../events/AssetEvent";
+import {URLLoaderEvent} from "../events/URLLoaderEvent";
+import {LoaderEvent} from "../events/LoaderEvent";
+import {EventDispatcher} from "../events/EventDispatcher";
+import {ParserEvent} from "../events/ParserEvent";
+import {ParserBase}	from "../parsers/ParserBase";
 
 /**
  * AssetLibraryBundle enforces a multiton pattern and is not intended to be instanced directly.
@@ -28,7 +29,7 @@ export class AssetLibraryBundle extends EventDispatcher
 	private _loaderSessions:Array<Loader>;
 	private _strategy:ConflictStrategyBase;
 	private _strategyPreference:string;
-	private _assets:Array<IAsset>;
+	private _assets:Array<IAssetAdapter>;
 	private _assetDictionary:Object;
 	private _assetDictDirty:boolean;
 	private _loaderSessionsGarbage:Array<Loader> = new Array<Loader>();
@@ -36,7 +37,7 @@ export class AssetLibraryBundle extends EventDispatcher
 
 	private _onAssetRenameDelegate:(event:AssetEvent) => void;
 	private _onAssetConflictResolvedDelegate:(event:AssetEvent) => void;
-	private _onResourceCompleteDelegate:(event:LoaderEvent) => void;
+	private _onLoadCompleteDelegate:(event:LoaderEvent) => void;
 	private _onTextureSizeErrorDelegate:(event:LoaderEvent) => void;
 	private _onAssetCompleteDelegate:(event:AssetEvent) => void;
 	private _onLoadErrorDelegate:(event:URLLoaderEvent) => boolean;
@@ -51,7 +52,7 @@ export class AssetLibraryBundle extends EventDispatcher
 	{
 		super();
 
-		this._assets = new Array<IAsset>();//new Vector.<IAsset>;
+		this._assets = new Array<IAssetAdapter>();//new Vector.<IAsset>;
 		this._assetDictionary = new Object();
 		this._loaderSessions = new Array<Loader>();
 
@@ -60,7 +61,7 @@ export class AssetLibraryBundle extends EventDispatcher
 
 		this._onAssetRenameDelegate = (event:AssetEvent) => this.onAssetRename(event);
 		this._onAssetConflictResolvedDelegate = (event:AssetEvent) => this.onAssetConflictResolved(event);
-		this._onResourceCompleteDelegate = (event:LoaderEvent) => this.onResourceComplete(event);
+		this._onLoadCompleteDelegate = (event:LoaderEvent) => this.onLoadComplete(event);
 		this._onTextureSizeErrorDelegate = (event:LoaderEvent) => this.onTextureSizeError(event);
 		this._onAssetCompleteDelegate = (event:AssetEvent) => this.onAssetComplete(event);
 		this._onLoadErrorDelegate = (event:URLLoaderEvent) => this.onLoadError(event);
@@ -204,7 +205,7 @@ export class AssetLibraryBundle extends EventDispatcher
 
 		this._loaderSessions.push(loader);
 
-		loader.addEventListener(LoaderEvent.LOAD_COMPLETE, this._onResourceCompleteDelegate);
+		loader.addEventListener(LoaderEvent.LOAD_COMPLETE, this._onLoadCompleteDelegate);
 		loader.addEventListener(AssetEvent.TEXTURE_SIZE_ERROR, this._onTextureSizeErrorDelegate);
 		loader.addEventListener(AssetEvent.ASSET_COMPLETE, this._onAssetCompleteDelegate);
 
@@ -228,7 +229,7 @@ export class AssetLibraryBundle extends EventDispatcher
 	/**
 	 *
 	 */
-	public getAsset(name:string, ns:string = null):IAsset
+	public getAsset(name:string, ns:string = null):IAssetAdapter
 	{
 		if (this._assetDictDirty)
 			this.rehashAssetDict();
@@ -242,7 +243,7 @@ export class AssetLibraryBundle extends EventDispatcher
 		return this._assetDictionary[ns][name];
 
 	}
-	public getAllAssets():Array<IAsset>
+	public getAllAssets():Array<IAssetAdapter>
 	{
 		return this._assets;
 	}
@@ -251,17 +252,17 @@ export class AssetLibraryBundle extends EventDispatcher
 	 * using the method defined by the <code>conflictStrategy</code> and
 	 * <code>conflictPrecedence</code> properties.
 	 */
-	public addAsset(asset:IAsset):void
+	public addAsset(asset:IAssetAdapter):void
 	{
 		var ns:string;
-		var old:IAsset;
+		var old:IAssetAdapter;
 
 		// Bail if asset has already been added.
 		if (this._assets.indexOf(asset) >= 0)
 			return;
 
-		old = this.getAsset(asset.name, asset.assetNamespace);
-		ns = asset.assetNamespace || AssetBase.DEFAULT_NAMESPACE;
+		old = this.getAsset(asset.adaptee.name, asset.adaptee.assetNamespace);
+		ns = asset.adaptee.assetNamespace || AssetBase.DEFAULT_NAMESPACE;
 
 		if (old != null)
 			this._strategy.resolveConflict(asset, old, this._assetDictionary[ns], this._strategyPreference);
@@ -275,10 +276,10 @@ export class AssetLibraryBundle extends EventDispatcher
 		if (!this._assetDictionary.hasOwnProperty(ns))
 			this._assetDictionary[ns] = new Object();
 
-		this._assetDictionary[ns][asset.name] = asset;
+		this._assetDictionary[ns][asset.adaptee.name] = asset;
 
-		asset.addEventListener(AssetEvent.RENAME, this._onAssetRenameDelegate);
-		asset.addEventListener(AssetEvent.ASSET_CONFLICT_RESOLVED, this._onAssetConflictResolvedDelegate);
+		asset.adaptee.addEventListener(AssetEvent.RENAME, this._onAssetRenameDelegate);
+		asset.adaptee.addEventListener(AssetEvent.ASSET_CONFLICT_RESOLVED, this._onAssetConflictResolvedDelegate);
 	}
 
 	/**
@@ -289,14 +290,14 @@ export class AssetLibraryBundle extends EventDispatcher
 	 * @param asset The asset which should be removed from this library.
 	 * @param dispose Defines whether the assets should also be disposed.
 	 */
-	public removeAsset(asset:IAsset, dispose:boolean = true):void
+	public removeAsset(asset:IAssetAdapter, dispose:boolean = true):void
 	{
 		var idx:number;
 
 		this.removeAssetFromDict(asset);
 
-		asset.removeEventListener(AssetEvent.RENAME, this._onAssetRenameDelegate);
-		asset.removeEventListener(AssetEvent.ASSET_CONFLICT_RESOLVED, this._onAssetConflictResolvedDelegate);
+		asset.adaptee.removeEventListener(AssetEvent.RENAME, this._onAssetRenameDelegate);
+		asset.adaptee.removeEventListener(AssetEvent.ASSET_CONFLICT_RESOLVED, this._onAssetConflictResolvedDelegate);
 
 		idx = this._assets.indexOf(asset);
 
@@ -316,9 +317,9 @@ export class AssetLibraryBundle extends EventDispatcher
 	 *
 	 * @see away.library.AssetLibrary.removeAsset()
 	 */
-	public removeAssetByName(name:string, ns:string = null, dispose:boolean = true):IAsset
+	public removeAssetByName(name:string, ns:string = null, dispose:boolean = true):IAssetAdapter
 	{
-		var asset:IAsset = this.getAsset(name, ns);
+		var asset:IAssetAdapter = this.getAsset(name, ns);
 
 		if (asset)
 			this.removeAsset(asset, dispose);
@@ -335,7 +336,7 @@ export class AssetLibraryBundle extends EventDispatcher
 	public removeAllAssets(dispose:boolean = true):void
 	{
 		if (dispose) {
-			var asset:IAsset;
+			var asset:IAssetAdapter;
 			var len:number = this._assets.length;
 			for (var c:number = 0; c < len; c++) {
 				asset = this._assets[c];
@@ -360,8 +361,8 @@ export class AssetLibraryBundle extends EventDispatcher
 	public removeNamespaceAssets(ns:string = null, dispose:boolean = true):void
 	{
 		var idx:number = 0;
-		var asset:IAsset;
-		var old_assets:IAsset[];
+		var asset:IAssetAdapter;
+		var old_assets:IAssetAdapter[];
 
 		// Empty the assets vector after having stored a copy of it.
 		// The copy will be filled with all assets which weren't removed.
@@ -377,7 +378,7 @@ export class AssetLibraryBundle extends EventDispatcher
 
 			// Remove from dict if in the supplied namespace. If not,
 			// transfer over to the new vector.
-			if (asset.assetNamespace == ns) {
+			if (asset.adaptee.assetNamespace == ns) {
 				if (dispose)
 					asset.dispose();
 
@@ -415,27 +416,27 @@ export class AssetLibraryBundle extends EventDispatcher
 			delete this._assetDictionary[ns];
 	}
 
-	private removeAssetFromDict(asset:IAsset, autoRemoveEmptyNamespace:boolean = true):void
+	private removeAssetFromDict(asset:IAssetAdapter, autoRemoveEmptyNamespace:boolean = true):void
 	{
 		if (this._assetDictDirty)
 			this.rehashAssetDict();
 
-		if (this._assetDictionary.hasOwnProperty(asset.assetNamespace)) {
-			if (this._assetDictionary[asset.assetNamespace].hasOwnProperty(asset.name))
-				delete this._assetDictionary[asset.assetNamespace][asset.name];
+		if (this._assetDictionary.hasOwnProperty(asset.adaptee.assetNamespace)) {
+			if (this._assetDictionary[asset.adaptee.assetNamespace].hasOwnProperty(asset.adaptee.name))
+				delete this._assetDictionary[asset.adaptee.assetNamespace][asset.adaptee.name];
 
 			if (autoRemoveEmptyNamespace) {
 
 				var key:string;
 				var empty:boolean = true;
 
-				for (key in this._assetDictionary[asset.assetNamespace]) {
+				for (key in this._assetDictionary[asset.adaptee.assetNamespace]) {
 					empty = false;
 					break;
 				}
 
 				if (empty)
-					delete this._assetDictionary[asset.assetNamespace];
+					delete this._assetDictionary[asset.adaptee.assetNamespace];
 			}
 		}
 	}
@@ -451,7 +452,7 @@ export class AssetLibraryBundle extends EventDispatcher
 
 	private rehashAssetDict():void
 	{
-		var asset:IAsset;
+		var asset:IAssetAdapter;
 
 		this._assetDictionary = {};
 
@@ -459,10 +460,10 @@ export class AssetLibraryBundle extends EventDispatcher
 		for (var c:number = 0; c < len; c++) {
 			asset = this._assets[c];
 
-			if (!this._assetDictionary.hasOwnProperty(asset.assetNamespace))
-				this._assetDictionary[asset.assetNamespace] = {};
+			if (!this._assetDictionary.hasOwnProperty(asset.adaptee.assetNamespace))
+				this._assetDictionary[asset.adaptee.assetNamespace] = {};
 
-			this._assetDictionary[asset.assetNamespace][asset.name] = asset;
+			this._assetDictionary[asset.adaptee.assetNamespace][asset.adaptee.name] = asset;
 
 		}
 
@@ -500,7 +501,7 @@ export class AssetLibraryBundle extends EventDispatcher
 	{
 		// Only add asset to library the first time.
 		if (event.type == AssetEvent.ASSET_COMPLETE)
-			this.addAsset(event.asset);
+			this.addAsset(event.asset.adapter);
 
 		this.dispatchEvent(event);
 
@@ -514,7 +515,7 @@ export class AssetLibraryBundle extends EventDispatcher
 	/**
 	 * Called when the resource and all of its dependencies was retrieved.
 	 */
-	private onResourceComplete(event:LoaderEvent):void
+	private onLoadComplete(event:LoaderEvent):void
 	{
 		var loader:Loader = <Loader> event.target;
 
@@ -538,7 +539,7 @@ export class AssetLibraryBundle extends EventDispatcher
 
 	private killloaderSession(loader:Loader):void
 	{
-		loader.removeEventListener(LoaderEvent.LOAD_COMPLETE, this._onResourceCompleteDelegate);
+		loader.removeEventListener(LoaderEvent.LOAD_COMPLETE, this._onLoadCompleteDelegate);
 		loader.removeEventListener(AssetEvent.TEXTURE_SIZE_ERROR, this._onTextureSizeErrorDelegate);
 		loader.removeEventListener(AssetEvent.ASSET_COMPLETE, this._onAssetCompleteDelegate);
 		loader.stop();
@@ -547,11 +548,11 @@ export class AssetLibraryBundle extends EventDispatcher
 
 	private onAssetRename(event:AssetEvent):void
 	{
-		var asset:IAsset = <IAsset > event.target;// TODO: was ev.currentTarget - watch this var
-		var old:IAsset = this.getAsset(asset.assetNamespace, asset.name);
+		var asset:IAssetAdapter = (<IAsset > event.target).adapter;// TODO: was ev.currentTarget - watch this var
+		var old:IAssetAdapter = this.getAsset(asset.adaptee.assetNamespace, asset.adaptee.name);
 
 		if (old != null) {
-			this._strategy.resolveConflict(asset, old, this._assetDictionary[asset.assetNamespace], this._strategyPreference);
+			this._strategy.resolveConflict(asset, old, this._assetDictionary[asset.adaptee.assetNamespace], this._strategyPreference);
 		} else {
 			var dict:Object = this._assetDictionary[event.asset.assetNamespace];
 

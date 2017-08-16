@@ -1,12 +1,12 @@
-import {URLRequest}				from "../net/URLRequest";
-import {EventBase}				from "../events/EventBase";
-import {AssetLibraryBundle}		from "../library/AssetLibraryBundle";
-import {AssetLibraryIterator}		from "../library/AssetLibraryIterator";
-import {Loader}					from "../library/Loader";
-import {LoaderContext}			from "../library/LoaderContext";
-import {ConflictStrategyBase}		from "../library/ConflictStrategyBase";
-import {IAsset}					from "../library/IAsset";
-import {ParserBase}				from "../parsers/ParserBase";
+import {URLRequest} from "../net/URLRequest";
+import {EventBase} from "../events/EventBase";
+import {AssetLibraryBundle} from "../library/AssetLibraryBundle";
+import {AssetLibraryIterator} from "../library/AssetLibraryIterator";
+import {Loader} from "../library/Loader";
+import {LoaderContext} from "../library/LoaderContext";
+import {ConflictStrategyBase} from "../library/ConflictStrategyBase";
+import {IAssetAdapter} from "../library/IAssetAdapter";
+import {ParserBase} from "../parsers/ParserBase";
 
 /**
  * AssetLibrary enforces a singleton pattern and is not intended to be instanced.
@@ -129,7 +129,7 @@ export class AssetLibrary
 	 *
 	 * @see AssetLibraryBundle.getAsset()
 	 */
-	public static getAsset(name:string, ns:string = null):IAsset
+	public static getAsset(name:string, ns:string = null):IAssetAdapter
 	{
 		return AssetLibrary.getBundle().getAsset(name, ns);
 	}
@@ -139,7 +139,7 @@ export class AssetLibrary
 	 *
 	 * @see AssetLibraryBundle.getAsset()
 	 */
-	public static getAllAssets():Array<IAsset>
+	public static getAllAssets():Array<IAssetAdapter>
 	{
 		return AssetLibrary.getBundle().getAllAssets();
 	}
@@ -179,7 +179,7 @@ export class AssetLibrary
 	 *
 	 * @see AssetLibraryBundle.addAsset()
 	 */
-	public static addAsset(asset:IAsset):void
+	public static addAsset(asset:IAssetAdapter):void
 	{
 		AssetLibrary.getBundle().addAsset(asset);
 	}
@@ -192,7 +192,7 @@ export class AssetLibrary
 	 *
 	 * @see AssetLibraryBundle.removeAsset()
 	 */
-	public static removeAsset(asset:IAsset, dispose:boolean = true):void
+	public static removeAsset(asset:IAssetAdapter, dispose:boolean = true):void
 	{
 		AssetLibrary.getBundle().removeAsset(asset, dispose);
 	}
@@ -206,7 +206,7 @@ export class AssetLibrary
 	 *
 	 * @see AssetLibraryBundle.removeAssetByName()
 	 */
-	public static removeAssetByName(name:string, ns:string = null, dispose:boolean = true):IAsset
+	public static removeAssetByName(name:string, ns:string = null, dispose:boolean = true):IAssetAdapter
 	{
 		return AssetLibrary.getBundle().removeAssetByName(name, ns, dispose);
 	}

@@ -56,6 +56,7 @@ export {ConflictStrategyBase}			from "./lib/library/ConflictStrategyBase";
 export {ErrorConflictStrategy}			from "./lib/library/ErrorConflictStrategy";
 export {IAbstractionPool}				from "./lib/library/IAbstractionPool";
 export {IAsset}							from "./lib/library/IAsset";
+export {IAssetAdapter}					from "./lib/library/IAssetAdapter";
 export {IAssetClass}					from "./lib/library/IAssetClass";
 export {IDUtil}							from "./lib/library/IDUtil";
 export {IgnoreConflictStrategy}			from "./lib/library/IgnoreConflictStrategy";

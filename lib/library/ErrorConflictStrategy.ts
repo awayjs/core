@@ -1,5 +1,5 @@
 import {ConflictStrategyBase}		from "../library/ConflictStrategyBase";
-import {IAsset}					from "../library/IAsset";
+import {IAssetAdapter}					from "../library/IAssetAdapter";
 import {ErrorBase}				from "../errors/ErrorBase";
 
 export class ErrorConflictStrategy extends ConflictStrategyBase
@@ -9,9 +9,9 @@ export class ErrorConflictStrategy extends ConflictStrategyBase
 		super();
 	}
 
-	public resolveConflict(changedAsset:IAsset, oldAsset:IAsset, assetsDictionary:Object, precedence:string):void
+	public resolveConflict(changedAsset:IAssetAdapter, oldAsset:IAssetAdapter, assetsDictionary:Object, precedence:string):void
 	{
-		throw new ErrorBase('Asset name collision while AssetLibrary.namingStrategy set to AssetLibrary.THROW_ERROR. Asset path: ' + changedAsset.assetFullPath);
+		throw new ErrorBase('Asset name collision while AssetLibrary.namingStrategy set to AssetLibrary.THROW_ERROR. Asset path: ' + changedAsset.adaptee.assetFullPath);
 	}
 
 	public create():ConflictStrategyBase

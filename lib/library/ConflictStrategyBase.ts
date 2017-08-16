@@ -1,5 +1,5 @@
 import {ConflictPrecedence}		from "../library/ConflictPrecedence";
-import {IAsset}					from "../library/IAsset";
+import {IAssetAdapter}					from "../library/IAssetAdapter";
 import {AbstractMethodError}		from "../errors/AbstractMethodError";
 import {AssetEvent}				from "../events/AssetEvent";
 
@@ -31,7 +31,7 @@ export class ConflictStrategyBase
 	 * Resolve a naming conflict between two assets. Must be implemented by concrete strategy
 	 * classes.
 	 */
-	public resolveConflict(changedAsset:IAsset, oldAsset:IAsset, assetsDictionary:Object, precedence:string):void
+	public resolveConflict(changedAsset:IAssetAdapter, oldAsset:IAssetAdapter, assetsDictionary:Object, precedence:string):void
 	{
 		throw new AbstractMethodError();
 	}
@@ -50,21 +50,21 @@ export class ConflictStrategyBase
 	 * Provided as a convenience method for all conflict strategy classes, as a way to finalize
 	 * the conflict resolution by applying the new names and dispatching the correct events.
 	 */
-	public _pUpdateNames(ns:string, nonConflictingName:string, oldAsset:IAsset, newAsset:IAsset, assetsDictionary:Object, precedence:string):void
+	public _pUpdateNames(ns:string, nonConflictingName:string, oldAsset:IAssetAdapter, newAsset:IAssetAdapter, assetsDictionary:Object, precedence:string):void
 	{
 		var loser_prev_name:string;
-		var winner:IAsset;
-		var loser:IAsset;
+		var winner:IAssetAdapter;
+		var loser:IAssetAdapter;
 
 		winner = (precedence === ConflictPrecedence.FAVOR_NEW)? newAsset : oldAsset;
 		loser = (precedence === ConflictPrecedence.FAVOR_NEW)? oldAsset : newAsset;
 
-		loser_prev_name = loser.name;
+		loser_prev_name = loser.adaptee.name;
 
-		assetsDictionary[winner.name] = winner;
+		assetsDictionary[winner.adaptee.name] = winner;
 		assetsDictionary[nonConflictingName] = loser;
-		loser.resetAssetPath(nonConflictingName, ns, false);
+		loser.adaptee.resetAssetPath(nonConflictingName, ns, false);
 
-		loser.dispatchEvent(new AssetEvent(AssetEvent.ASSET_CONFLICT_RESOLVED, loser, loser_prev_name));
+		loser.adaptee.dispatchEvent(new AssetEvent(AssetEvent.ASSET_CONFLICT_RESOLVED, loser.adaptee, loser_prev_name));
 	}
 }

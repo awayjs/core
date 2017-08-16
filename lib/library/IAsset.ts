@@ -1,7 +1,11 @@
-import {IEventDispatcher}			from "../events/IEventDispatcher";
+import {IEventDispatcher} from "../events/IEventDispatcher";
+
+import {IAssetAdapter} from "./IAssetAdapter";
 
 export interface IAsset extends IEventDispatcher
 {
+	adapter:IAssetAdapter;
+
 	/**
 	 *
 	 */

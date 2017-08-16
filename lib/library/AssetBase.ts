@@ -1,13 +1,15 @@
 import {IAsset}					from "../library/IAsset";
+import {IAssetAdapter}					from "../library/IAssetAdapter";
 import {IAssetClass}				from "../library/IAssetClass";
 import {AbstractMethodError}		from "../errors/AbstractMethodError";
 import {AssetEvent}				from "../events/AssetEvent";
 import {EventDispatcher}			from "../events/EventDispatcher";
 
-export class AssetBase extends EventDispatcher implements IAsset
+export class AssetBase extends EventDispatcher implements IAsset, IAssetAdapter
 {
 	public static ID_COUNT:number = 0;
 
+	public _adapter:IAssetAdapter;
 	private _originalName:string;
 	private _namespace:string;
 	private _name:string;
@@ -29,6 +31,25 @@ export class AssetBase extends EventDispatcher implements IAsset
 		this._originalName = name;
 
 		this.updateFullPath();
+	}
+
+	public get adaptee():AssetBase
+	{
+		return this;
+	}
+
+	/**
+	 * adapter is used to provide MovieClip to scripts taken from different platforms
+	 * setter typically managed by factory. getter defaults to AwayJS class
+	 */
+	public get adapter():IAssetAdapter
+	{
+		return this._adapter || this;
+	}
+
+	public set adapter(value:IAssetAdapter)
+	{
+		this._adapter = value;
 	}
 
 	/**
@@ -131,7 +152,7 @@ export class AssetBase extends EventDispatcher implements IAsset
 		this.updateFullPath();
 	}
 
-	private updateFullPath():void
+	public updateFullPath():void
 	{
 		this._full_path = [ this._namespace, this._name ];
 	}

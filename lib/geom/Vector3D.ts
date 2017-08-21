@@ -456,11 +456,12 @@ export class Vector3D
 	 * @param ya The second element, such as the y coordinate.
 	 * @param za The third element, such as the z coordinate.
 	 */
-	public setTo(xa:number, ya:number, za:number):void
+	public setTo(xa:number, ya:number, za:number, wa:number = 1):void
 	{
 		this.x = xa;
 		this.y = ya;
 		this.z = za;
+		this.w = wa;
 	}
 
 	/**

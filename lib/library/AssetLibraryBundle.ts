@@ -33,7 +33,6 @@ export class AssetLibraryBundle extends EventDispatcher
 	private _assetDictionary:Object;
 	private _assetDictDirty:boolean;
 	private _loaderSessionsGarbage:Array<Loader> = new Array<Loader>();
-	private _gcTimeoutIID;
 
 	private _onAssetRenameDelegate:(event:AssetEvent) => void;
 	private _onAssetConflictResolvedDelegate:(event:AssetEvent) => void;
@@ -221,9 +220,7 @@ export class AssetLibraryBundle extends EventDispatcher
 		var index:number = this._loaderSessions.indexOf(loader);
 		this._loaderSessions.splice(index, 1);
 
-		// Add loader to a garbage array - for a collection sweep and kill
-		this._loaderSessionsGarbage.push(loader);
-		this._gcTimeoutIID = setTimeout(() => {this.loaderSessionGC()}, 100);
+		this.killloaderSession(loader);
 	}
 
 	/**
@@ -522,19 +519,6 @@ export class AssetLibraryBundle extends EventDispatcher
 		this.dispatchEvent(event);
 
 		this.disposeLoader(loader);
-	}
-
-	private loaderSessionGC():void
-	{
-		var loader:Loader;
-
-		while (this._loaderSessionsGarbage.length > 0) {
-			loader = this._loaderSessionsGarbage.pop();
-			this.killloaderSession(loader);
-		}
-
-		clearTimeout(this._gcTimeoutIID);
-		this._gcTimeoutIID = null;
 	}
 
 	private killloaderSession(loader:Loader):void

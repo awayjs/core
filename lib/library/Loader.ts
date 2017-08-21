@@ -233,7 +233,6 @@ export class Loader extends EventDispatcher
 		} else if (this._currentDependency.parser && this._currentDependency.parser.parsingPaused) {
 
 			this._currentDependency.parser._iResumeParsing();
-			this._stack.pop();
 
 		} else if (this._stack.length) {
 
@@ -555,13 +554,13 @@ export class Loader extends EventDispatcher
 	{
 		var parser:ParserBase = <ParserBase> event.target;
 
-		this.resolveParserDependencies();//resolve in front of removing listeners to allow any remaining asset events to propagate
-
 		parser.removeEventListener(ParserEvent.READY_FOR_DEPENDENCIES, this._onReadyForDependenciesDelegate);
 		parser.removeEventListener(ParserEvent.PARSE_COMPLETE, this._onParseCompleteDelegate);
 		parser.removeEventListener(ParserEvent.PARSE_ERROR, this._onParseErrorDelegate);
 		parser.removeEventListener(AssetEvent.TEXTURE_SIZE_ERROR, this._onTextureSizeErrorDelegate);
 		parser.removeEventListener(AssetEvent.ASSET_COMPLETE, this._onAssetCompleteDelegate);
+
+		this.resolveParserDependencies();
 	}
 
 	/**

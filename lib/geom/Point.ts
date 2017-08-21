@@ -103,13 +103,13 @@ export class Point
 	 */
 	public normalize(thickness:number = 1):void
 	{
-		if (this.length != 0) {
-			var invLength = thickness/this.length;
+		var len:number = this.length;
+
+		if (len) {
+			var invLength = thickness/len;
 			this.x *= invLength;
 			this.y *= invLength;
-			return;
 		}
-		throw "Cannot divide by zero length.";
 	}
 
 	/**

@@ -244,9 +244,9 @@ export class ParserBase extends EventDispatcher
 		this.dispatchEvent(new ParserEvent(ParserEvent.PARSE_ERROR, message));
 	}
 
-	public _pAddDependency(id:string, req:URLRequest, retrieveAsRawData:boolean = false, data:any = null, suppressErrorEvents:boolean = false, sub_id:number=0):ResourceDependency
+	public _pAddDependency(id:string, req:URLRequest, parser:ParserBase = null, data:any = null, retrieveAsRawData:boolean = false, suppressErrorEvents:boolean = false, sub_id:number=0):ResourceDependency
 	{
-		var dependency:ResourceDependency = new ResourceDependency(id, req, data, null, this, retrieveAsRawData, suppressErrorEvents, sub_id);
+		var dependency:ResourceDependency = new ResourceDependency(id, req, data, parser, this, retrieveAsRawData, suppressErrorEvents, sub_id);
 		this._dependencies.push(dependency);
 
 		return dependency;

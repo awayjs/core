@@ -142,7 +142,7 @@ export class Vector3D
 	 */
 	public add(a:Vector3D):Vector3D
 	{
-		return new Vector3D(this.x + a.x, this.y + a.y, this.z + a.z, this.w + a.w)
+		return new Vector3D(this.x + a.x, this.y + a.y, this.z + a.z);
 	}
 
 	/**

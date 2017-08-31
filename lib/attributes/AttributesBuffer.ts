@@ -6,6 +6,7 @@ export class AttributesBuffer extends AssetBase
 	public static assetType:string = "[assets AttributesBuffer]";
 
 	private _count:number = 0;
+	private _newCount:number = 0;
 	private _stride:number = 0;
 	private _newStride:number = 0;
 
@@ -42,11 +43,26 @@ export class AttributesBuffer extends AssetBase
 		this.resize();
 	}
 
+
+	public set newCount(value:number)
+	{
+		if (this._newCount == value)
+			return;
+
+		this._newCount = value;
+
+		this.resize();
+	}
+
+	public get newCount():number
+	{
+		return this._newCount;
+	}
+
 	public get count():number
 	{
 		return this._count;
 	}
-
 	public set count(value:number)
 	{
 		if (this._count == value)
@@ -56,7 +72,6 @@ export class AttributesBuffer extends AssetBase
 
 		this.resize();
 	}
-
 
 	public get buffer():ArrayBuffer
 	{
@@ -98,7 +113,7 @@ export class AttributesBuffer extends AssetBase
 		super();
 
 		this._stride = this._newStride = stride;
-		this._count = count;
+		this._count = this._newCount = count;
 
 		this._buffer = new ArrayBuffer(this._stride*this._count);
 		this._bufferView = new Uint8Array(this._buffer, 0, this._buffer.byteLength);
@@ -168,8 +183,8 @@ export class AttributesBuffer extends AssetBase
 		var vCount:number = array.length/vLength;
 
 		//make sure there is enough space in the buffer
-		if (this.count < vCount + offset)
-			this.count = vCount + offset;
+		if (this.newCount < vCount + offset)
+			this.newCount = vCount + offset;
 
 		if (this._lengthDirty)
 			this._updateLength();
@@ -234,7 +249,7 @@ export class AttributesBuffer extends AssetBase
 		var j:number;
 		var len:number = this._viewVOs.length;
 
-		var newLength:number = this._newStride*this._count;
+		var newLength:number = this._newStride*this._newCount;
 
 		if (!this._buffer || this._buffer.byteLength != newLength) {
 			var newBuffer:ArrayBuffer = new ArrayBuffer(newLength);
@@ -265,6 +280,7 @@ export class AttributesBuffer extends AssetBase
 			this._buffer = newBuffer;
 			this._bufferView = newView;
 		}
+		this._count=this._newCount;
 	}
 }
 

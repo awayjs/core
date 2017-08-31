@@ -74,6 +74,8 @@ import {ResourceDependency}		from "../parsers/ResourceDependency";
  */
 export class Loader extends EventDispatcher
 {
+	private _bytesLoaded:number;
+	private _bytesTotal:number;
 	private _context:LoaderContext;
 	private _loaderInfo:LoaderInfo;
 	private _uri:string;
@@ -90,6 +92,7 @@ export class Loader extends EventDispatcher
 	private _onReadyForDependenciesDelegate:(event:ParserEvent) => void;
 	private _onParseCompleteDelegate:(event:ParserEvent) => void;
 	private _onParseErrorDelegate:(event:ParserEvent) => void;
+	private _onLoadProgressDelegate:(event:URLLoaderEvent) => void;
 	private _onLoadCompleteDelegate:(event:URLLoaderEvent) => void;
 	private _onLoadErrorDelegate:(event:URLLoaderEvent) => void;
 	private _onTextureSizeErrorDelegate:(event:AssetEvent) => void;
@@ -174,6 +177,7 @@ export class Loader extends EventDispatcher
 		this._onReadyForDependenciesDelegate = (event:ParserEvent) => this.onReadyForDependencies(event);
 		this._onParseCompleteDelegate = (event:ParserEvent) => this.onParseComplete(event);
 		this._onParseErrorDelegate = (event:ParserEvent) => this.onParseError(event);
+		this._onLoadProgressDelegate = (event:URLLoaderEvent) => this.onLoadProgress(event);
 		this._onLoadCompleteDelegate = (event:URLLoaderEvent) => this.onLoadComplete(event);
 		this._onLoadErrorDelegate = (event:URLLoaderEvent) => this.onLoadError(event);
 		this._onTextureSizeErrorDelegate = (event:AssetEvent) => this.onTextureSizeError(event);
@@ -526,6 +530,11 @@ export class Loader extends EventDispatcher
 			this.retrieveParserDependencies();
 	}
 
+	private onLoadProgress(event:URLLoaderEvent):void
+	{
+		this.dispatchEvent(event);
+	}
+
 	/**
 	 * Called when a single dependency was parsed, and pushes further dependencies onto the stack.
 	 * @param event
@@ -576,12 +585,14 @@ export class Loader extends EventDispatcher
 
 	private addEventListeners(loader:URLLoader):void
 	{
+		loader.addEventListener(URLLoaderEvent.LOAD_PROGRESS, this._onLoadProgressDelegate);
 		loader.addEventListener(URLLoaderEvent.LOAD_COMPLETE, this._onLoadCompleteDelegate);
 		loader.addEventListener(URLLoaderEvent.LOAD_ERROR, this._onLoadErrorDelegate);
 	}
 
 	private removeEventListeners(loader:URLLoader):void
 	{
+		loader.removeEventListener(URLLoaderEvent.LOAD_PROGRESS, this._onLoadProgressDelegate);
 		loader.removeEventListener(URLLoaderEvent.LOAD_COMPLETE, this._onLoadCompleteDelegate);
 		loader.removeEventListener(URLLoaderEvent.LOAD_ERROR, this._onLoadErrorDelegate);
 	}

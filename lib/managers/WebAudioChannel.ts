@@ -8,6 +8,15 @@ export class WebAudioChannel
 	public static _errorCache:Object = new Object();
 
 	public static _audioCtx;
+
+	public static getAudioContext()
+	{
+		if (!WebAudioChannel._audioCtx)
+			WebAudioChannel._audioCtx = new (window["AudioContext"] || window["webkitAudioContext"])();
+
+		return WebAudioChannel._audioCtx;
+	}
+
 	private _audioCtx;
 	private _usingNativePanner:boolean;
 
@@ -94,7 +103,7 @@ export class WebAudioChannel
 
 	constructor()
 	{
-		this._audioCtx = WebAudioChannel._audioCtx;
+		this._audioCtx = WebAudioChannel.getAudioContext();
 
 		this._usingNativePanner = typeof this._audioCtx.createStereoPanner === 'function';
 
@@ -203,7 +212,7 @@ export class WebAudioChannel
 	}
 }
 
-var audioCtx = WebAudioChannel._audioCtx = new (window["AudioContext"] || window["webkitAudioContext"])();
+var audioCtx = WebAudioChannel.getAudioContext();
 
 // context state at this time is `undefined` in iOS8 Safari
 if (audioCtx.state === 'suspended') {

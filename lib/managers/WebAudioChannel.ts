@@ -7,7 +7,7 @@ export class WebAudioChannel
 	public static _decodeCache:Object = new Object();
 	public static _errorCache:Object = new Object();
 
-	private static _audioCtx;
+	public static _audioCtx;
 	private _audioCtx;
 	private _usingNativePanner:boolean;
 
@@ -94,7 +94,7 @@ export class WebAudioChannel
 
 	constructor()
 	{
-		this._audioCtx = WebAudioChannel._audioCtx || (WebAudioChannel._audioCtx = new (window["AudioContext"] || window["webkitAudioContext"])());
+		this._audioCtx = WebAudioChannel._audioCtx;
 
 		this._usingNativePanner = typeof this._audioCtx.createStereoPanner === 'function';
 
@@ -197,8 +197,32 @@ export class WebAudioChannel
 		this._source.stop(this._audioCtx.currentTime);
 		this._source.onended = null;
 		this._source.disconnect();
-		delete this._source.buffer;
-		delete this._source;
+		// delete this._source.buffer;
+		// delete this._source;
 		this._source = null;
 	}
+}
+
+var audioCtx = WebAudioChannel._audioCtx = new (window["AudioContext"] || window["webkitAudioContext"])();
+
+// context state at this time is `undefined` in iOS8 Safari
+if (audioCtx.state === 'suspended') {
+	var resume = () => {
+		audioCtx.resume();
+
+		//create empty buffer
+		var buffer = audioCtx.createBuffer(1, 1, 22050);
+		var source = audioCtx.createBufferSource();
+		source.buffer = buffer;
+		source.connect(audioCtx.destination);
+		source.start();
+
+		setTimeout(() => {
+			if (audioCtx.state === 'running') {
+				document.removeEventListener('touchend', resume, false);
+			}
+		}, 0);
+	};
+
+	document.addEventListener('touchend', resume, false);
 }

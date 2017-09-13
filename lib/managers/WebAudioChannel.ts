@@ -11,7 +11,7 @@ export class WebAudioChannel
 
 	public static getAudioContext()
 	{
-		if (!WebAudioChannel._audioCtx)
+		if (!WebAudioChannel._audioCtx && (window["AudioContext"] || window["webkitAudioContext"]))
 			WebAudioChannel._audioCtx = new (window["AudioContext"] || window["webkitAudioContext"])();
 
 		return WebAudioChannel._audioCtx;
@@ -215,7 +215,7 @@ export class WebAudioChannel
 var audioCtx = WebAudioChannel.getAudioContext();
 
 // context state at this time is `undefined` in iOS8 Safari
-if (audioCtx.state === 'suspended') {
+if (audioCtx && audioCtx.state === 'suspended') {
 	var resume = () => {
 		audioCtx.resume();
 

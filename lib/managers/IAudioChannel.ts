@@ -7,6 +7,8 @@ export interface IAudioChannel
 	volume:number;
 
 	pan:number;
+
+	onSoundComplete:Function;
 	
 	isPlaying():boolean;
 

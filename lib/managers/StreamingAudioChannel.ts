@@ -19,6 +19,7 @@ export class StreamingAudioChannel
 	private _duration:number;
 	
 	private _audio:HTMLAudioElement;
+	public onSoundComplete:Function;
 	
 	private _mediaSource:MediaSource;
 	private _urlString:string;

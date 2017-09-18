@@ -13,7 +13,8 @@ export class EventAudioChannel
 	private _volume:number;
 	private _startTime:number = 0;
 	private _duration:number;
-	
+
+	public onSoundComplete:Function;
 	private _audio:HTMLAudioElement;
 
 	public static stopAllSounds(){

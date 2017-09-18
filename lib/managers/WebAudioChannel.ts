@@ -33,6 +33,7 @@ export class WebAudioChannel
 	private _pan:number = 0;
 	private _startTime:number = 0;
 	private _duration:number;
+	public onSoundComplete:Function;
 
 	private _onEndedDelegate : (event:any) => void;
 
@@ -197,6 +198,9 @@ export class WebAudioChannel
 
 	private _onEnded(event):void
 	{
+		if(this.onSoundComplete){
+			this.onSoundComplete();
+		}
 		this.stop();
 	}
 

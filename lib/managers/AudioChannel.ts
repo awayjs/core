@@ -12,6 +12,7 @@ export class AudioChannel
 
 	private _gainNode;
 
+	public onSoundComplete:Function;
 	private _audio:HTMLAudioElement;
 
 	public static stopAllSounds(){
@@ -99,6 +100,9 @@ export class AudioChannel
 
 	private _onEnded(event):void
 	{
+		if(this.onSoundComplete){
+			this.onSoundComplete();
+		}
 		this.stop();
 	}
 }

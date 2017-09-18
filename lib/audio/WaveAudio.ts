@@ -11,7 +11,7 @@ export class WaveAudio extends AssetBase
 	private _volume:number = 1;
 	private _pan:number = 0;
 	private _buffer:ArrayBuffer;
-
+	private _onSoundComplete:Function;
 	/**
 	 *
 	 * @returns {string}
@@ -91,6 +91,17 @@ export class WaveAudio extends AssetBase
 		if (this._audioChannel) {
 			this._audioChannel.volume = this._volume;
 			this._audioChannel.play(this._buffer, offset, loop, this.id);
+			if(this._onSoundComplete){
+				this._audioChannel.onSoundComplete=this._onSoundComplete;
+
+			}
+		}
+	}
+	public set onSoundComplete(value:Function)
+	{
+		this._onSoundComplete=value;
+		if (this._audioChannel) {
+			this._audioChannel.onSoundComplete=this._onSoundComplete;
 		}
 	}
 

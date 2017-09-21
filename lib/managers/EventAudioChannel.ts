@@ -1,5 +1,5 @@
 import {ParserUtils}				from "../parsers/ParserUtils";
-
+import {IAudioChannel}				from "./IAudioChannel";
 export class EventAudioChannel
 {
 	public static maxChannels:number = 4;
@@ -92,9 +92,11 @@ export class EventAudioChannel
 
 		this._audio.src = EventAudioChannel._base64Cache[id] || (EventAudioChannel._base64Cache[id] = ParserUtils.arrayBufferToBase64(buffer, "audio/mp3"));
 		this._audio.loop = this._isLooping;
-
-		this._audio.currentTime = offset;
-		this._audio.play();
+		var thisAudio=this._audio;
+		this._audio.addEventListener('loadedmetadata', function() {
+			thisAudio.currentTime = offset;
+			thisAudio.play();
+		}, false);
 	}
 
 	public stop():void

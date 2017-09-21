@@ -1,10 +1,12 @@
 import {StreamingAudioChannel}	from "../managers/StreamingAudioChannel";
 import {WebAudioChannel}			from "../managers/WebAudioChannel";
 import {IAudioChannel}			from "../managers/IAudioChannel";
+import {EventAudioChannel}			from "../managers/EventAudioChannel";
 import {IAudioChannelClass}		from "../managers/IAudioChannelClass";
 
 export class AudioManager
 {
+	private static isIE:boolean=!!navigator.userAgent.match(/Trident/g) || !!navigator.userAgent.match(/MSIE/g);
 	//todo: make AudioPlaybackManager keep track of active sounds + implement global playback control
 	private static _externalSoundInterface:any=null;
 	public static setExternalSoundInterface(new_obj:any):number
@@ -38,6 +40,9 @@ export class AudioManager
 		//choose best audio channel by bytelength
 		//todo: StreamingAudioChannel doesnt seem to be working. no error, but also no sound is playing
 		var channelClass:IAudioChannelClass = (byteLength > 50000000)? StreamingAudioChannel : WebAudioChannel;
+		if( AudioManager.isIE){
+			channelClass=EventAudioChannel;
+		}
 		//var channelClass:IAudioChannelClass = WebAudioChannel;
 
 		var i:number = 0;

@@ -12,6 +12,7 @@ export class WaveAudio extends AssetBase
 	private _pan:number = 0;
 	private _buffer:ArrayBuffer;
 	private _onSoundComplete:Function;
+	private _audioChannels:IAudioChannel[];
 	/**
 	 *
 	 * @returns {string}
@@ -75,7 +76,7 @@ export class WaveAudio extends AssetBase
 	constructor(buffer:ArrayBuffer)
 	{
 		super();
-
+		this._audioChannels=[];
 		this._buffer = buffer;
 	}
 
@@ -86,9 +87,12 @@ export class WaveAudio extends AssetBase
 
 	public play(offset:number, loop:boolean = false):void
 	{
+
 		this._audioChannel = AudioManager.getChannel(this._buffer.byteLength);
 
+
 		if (this._audioChannel) {
+			this._audioChannels.push(this._audioChannel);
 			this._audioChannel.volume = this._volume;
 			this._audioChannel.play(this._buffer, offset, loop, this.id);
 			if(this._onSoundComplete){
@@ -107,9 +111,11 @@ export class WaveAudio extends AssetBase
 
 	public stop():void
 	{
-		if (this._audioChannel)
-			this._audioChannel.stop();
+		for(let channel of this._audioChannels){
+			channel.stop();
+		}
 
+		this._audioChannels.length=0;
 		delete this._audioChannel;
 		this._audioChannel = null;
 	}

@@ -178,10 +178,14 @@ export class WebAudioChannel
 
 		this._source.buffer = buffer;
 		this._duration = buffer.duration;
-
+		this._pan=0;
 		this._startTime = this._audioCtx.currentTime - this._currentTime;
 		this._source.onended = this._onEndedDelegate;
 		try {
+			if (this._usingNativePanner)
+				this._pannerNode.pan.value = this._pan;
+			else
+				this._pannerNode.setPosition(Math.sin(this._pan*(Math.PI/2)), 0, Math.cos(this._pan*(Math.PI/2)));
 			this._source.start(this._audioCtx.currentTime, this._currentTime);
 		} catch (error) {
 			console.log("Error starting audio: " + error);

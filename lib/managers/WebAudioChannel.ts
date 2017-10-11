@@ -1,6 +1,6 @@
 export class WebAudioChannel
 {
-	public static maxChannels:number = 64;
+	public static maxChannels:number = 64; // for icycle: 128;
 
 	public static _channels:Array<WebAudioChannel> = new Array<WebAudioChannel>();
 
@@ -182,6 +182,7 @@ export class WebAudioChannel
 		this._startTime = this._audioCtx.currentTime - this._currentTime;
 		this._source.onended = this._onEndedDelegate;
 		try {
+			this._gainNode.gain.value = this._volume;
 			if (this._usingNativePanner)
 				this._pannerNode.pan.value = this._pan;
 			else

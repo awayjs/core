@@ -1,6 +1,6 @@
 export class AudioChannel
 {
-	public static maxChannels:number = 16;
+	public static maxChannels:number = 16; //for icycle: 32
 
 	public static _channels:Array<AudioChannel> = new Array<AudioChannel>();
 

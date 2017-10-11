@@ -52,6 +52,10 @@ export class WaveAudio extends AssetBase
 
 		if (this._audioChannel)
 			this._audioChannel.volume = this._volume;
+
+		for(var i:number=0; i<this._audioChannels.length; i++){
+			this._audioChannels[i].volume = this._volume;
+		}
 	}
 
 	public get currentTime():number
@@ -111,12 +115,13 @@ export class WaveAudio extends AssetBase
 
 	public stop():void
 	{
-		for(let channel of this._audioChannels){
-			channel.stop();
+		for(var i:number=0; i<this._audioChannels.length; i++){
+			this._audioChannels[i].stop();
+			delete this._audioChannels[i];
 		}
 
 		this._audioChannels.length=0;
-		delete this._audioChannel;
+
 		this._audioChannel = null;
 	}
 

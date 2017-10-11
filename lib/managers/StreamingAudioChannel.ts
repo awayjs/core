@@ -110,6 +110,7 @@ export class StreamingAudioChannel
 
 		this._buffer = buffer;
 		this._offset = offset;
+		this._audio.volume = this._volume;
 
 		if (!this._isQueuing && !this._isOpening)
 			this._queueBuffer();

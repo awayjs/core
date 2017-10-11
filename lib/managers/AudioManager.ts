@@ -66,7 +66,7 @@ export class AudioManager
 			return null;
 		}
 
-		return channelClass._channels[i] || (channelClass._channels[i] = new channelClass());
+		return  (channelClass._channels[i] = new channelClass());
 	}
 
 

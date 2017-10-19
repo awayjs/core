@@ -9,6 +9,30 @@ export class AudioManager
 	private static isIE:boolean=!!navigator.userAgent.match(/Trident/g) || !!navigator.userAgent.match(/MSIE/g);
 	//todo: make AudioPlaybackManager keep track of active sounds + implement global playback control
 	private static _externalSoundInterface:any=null;
+
+	private static _channelGroupVolumes:number[]=[1];
+	private static _channelGroupPanning:number[]=[0.5];
+
+	public static setVolume(value:number, channelGroup:number=-1):void{
+		if(channelGroup<0){
+			var len: number = AudioManager._channelGroupVolumes.length;
+			for (var j: number = 0; j < len; j++) {
+				AudioManager._channelGroupVolumes[j] = value;
+			}
+		}
+		else{
+			AudioManager._channelGroupVolumes[channelGroup] = value;
+		}
+		WebAudioChannel.setChannelGroupVolume(value, channelGroup);
+		StreamingAudioChannel.setChannelGroupVolume(value, channelGroup);
+		EventAudioChannel.setChannelGroupVolume(value, channelGroup);
+
+	}
+
+	public static getVolume(channelGroup:number=0):number{
+		return AudioManager._channelGroupVolumes[channelGroup];
+	}
+
 	public static setExternalSoundInterface(new_obj:any):number
 	{
 		if(new_obj.startSound == null){
@@ -31,11 +55,11 @@ export class AudioManager
 	{
 		WebAudioChannel.stopAllSounds();
 		StreamingAudioChannel.stopAllSounds();
-		//EventAudioChannel.stopAllSounds();
+		EventAudioChannel.stopAllSounds();
 		//AudioChannel.stopAllSounds();
 	}
 
-	public static getChannel(byteLength:number):IAudioChannel
+	public static getChannel(byteLength:number, channelGroup:number=0):IAudioChannel
 	{
 		//choose best audio channel by bytelength
 		//todo: StreamingAudioChannel doesnt seem to be working. no error, but also no sound is playing
@@ -56,6 +80,9 @@ export class AudioManager
 			for (var j:number = 0; j < len; j++) {
 				channel = channelClass._channels[j];
 				if (!channel.isLooping() && !channel.isDecoding()) {
+					channel.groupID=channelGroup;
+					channel.groupVolume=AudioManager._channelGroupVolumes[channelGroup];
+					channel.groupPan=AudioManager._channelGroupPanning[channelGroup];
 					channelClass._channels.push(channelClass._channels.splice(j, 1)[0]);
 					channel.stop();
 					return channel;
@@ -66,7 +93,7 @@ export class AudioManager
 			return null;
 		}
 
-		return  (channelClass._channels[i] = new channelClass());
+		return  (channelClass._channels[i] = new channelClass(channelGroup, AudioManager._channelGroupVolumes[channelGroup], AudioManager._channelGroupPanning[channelGroup]));
 	}
 
 

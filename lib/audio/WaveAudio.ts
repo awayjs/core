@@ -13,6 +13,7 @@ export class WaveAudio extends AssetBase
 	private _buffer:ArrayBuffer;
 	private _onSoundComplete:Function;
 	private _audioChannels:IAudioChannel[];
+	private _channelGroup:number;
 	/**
 	 *
 	 * @returns {string}
@@ -37,7 +38,24 @@ export class WaveAudio extends AssetBase
 		if (this._audioChannel)
 			this._audioChannel.pan = this._pan;
 	}
-	
+
+	public get channelGroup():number
+	{
+		return this._channelGroup;
+	}
+
+	public set channelGroup(value:number)
+	{
+		if (this._channelGroup == value)
+			return;
+
+		this._channelGroup = value;
+
+		var groupVolume:number=AudioManager.getVolume(value);
+		for(var i:number=0; i<this._audioChannels.length; i++){
+			this._audioChannels[i].groupVolume = groupVolume;
+		}
+	}
 	public get volume():number
 	{
 		return this._volume;
@@ -77,11 +95,12 @@ export class WaveAudio extends AssetBase
 	/**
 	 *
 	 */
-	constructor(buffer:ArrayBuffer)
+	constructor(buffer:ArrayBuffer, channelGroup:number=0)
 	{
 		super();
 		this._audioChannels=[];
 		this._buffer = buffer;
+		this._channelGroup=channelGroup;
 	}
 
 	public dispose():void
@@ -92,7 +111,7 @@ export class WaveAudio extends AssetBase
 	public play(offset:number, loop:boolean = false):void
 	{
 
-		this._audioChannel = AudioManager.getChannel(this._buffer.byteLength);
+		this._audioChannel = AudioManager.getChannel(this._buffer.byteLength, this.channelGroup);
 
 
 		if (this._audioChannel) {

@@ -9,5 +9,5 @@ export interface IAudioChannelClass
 	/**
 	 *
 	 */
-	new():IAudioChannel;
+	new(channelGroupID:number, channelGroupVolume:number, channelGroupPan:number):IAudioChannel;
 }

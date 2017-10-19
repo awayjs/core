@@ -31,19 +31,51 @@ export class WebAudioChannel
 	private _id:number;
 	private _volume:number = 1;
 	private _pan:number = 0;
+	private _groupID:number = 0;
+	private _groupVolume:number = 1;
+	private _groupPan:number = 0;
 	private _startTime:number = 0;
 	private _duration:number;
 	public onSoundComplete:Function;
 
 	private _onEndedDelegate : (event:any) => void;
 
-	public static stopAllSounds(){
-		var len:number = WebAudioChannel._channels.length;
-		for (var j:number = 0; j < len; j++) {
-			WebAudioChannel._channels[j].stop();
+	public static stopAllSounds(channelGroup:number=-1){
+		var len: number = WebAudioChannel._channels.length;
+		if(channelGroup<0){
+			for (var j: number = 0; j < len; j++) {
+				WebAudioChannel._channels[j].stop();
+			}
+			WebAudioChannel._channels.length=0;
+			return;
 		}
-		WebAudioChannel._channels.length=0;
+		var aliveChannels:WebAudioChannel[]=[];
+		for (var j: number = 0; j < len; j++) {
+			if(WebAudioChannel._channels[j].groupID==channelGroup){
+				WebAudioChannel._channels[j].stop();
+			}
+			else{
+				aliveChannels[aliveChannels.length]=WebAudioChannel._channels[j];
+			}
+		}
+		WebAudioChannel._channels=aliveChannels;
 	}
+
+	public static setChannelGroupVolume(value:number, channelGroup:number=-1){
+		var len: number = WebAudioChannel._channels.length;
+		if(channelGroup<0){
+			for (var j: number = 0; j < len; j++) {
+				WebAudioChannel._channels[j].groupVolume=value;
+			}
+			return;
+		}
+		for (var j: number = 0; j < len; j++) {
+			if(WebAudioChannel._channels[j].groupID==channelGroup){
+				WebAudioChannel._channels[j].groupVolume=value;
+			}
+		}
+	}
+
 	public get duration():number
 	{
 		return this._duration;
@@ -52,6 +84,39 @@ export class WebAudioChannel
 	public get currentTime():number
 	{
 		return this._audioCtx.currentTime - this._startTime;
+	}
+
+	public get groupID():number
+	{
+		return this._groupID;
+	}
+
+	public set groupID(value:number)
+	{
+		this._groupID=value;
+	}
+	public get groupVolume():number
+	{
+		return this._groupVolume;
+	}
+
+	public set groupVolume(value:number)
+	{
+		if (this._groupVolume == value)
+			return;
+
+		this._groupVolume = value;
+
+		this._gainNode.gain.value = this._groupVolume * this._volume;
+	}
+
+	public get groupPan():number
+	{
+		return this._groupPan;
+	}
+
+	public set groupPan(value:number)
+	{
 	}
 
 	public get volume():number
@@ -66,7 +131,7 @@ export class WebAudioChannel
 
 		this._volume = value;
 
-		this._gainNode.gain.value = this._volume;
+		this._gainNode.gain.value = this._groupVolume * this._volume;
 	}
 
 	public get pan():number
@@ -102,14 +167,18 @@ export class WebAudioChannel
 		return this._isDecoding;
 	}
 
-	constructor()
+	constructor(groupID:number=0, groupVolume:number=1, groupPan:number=1)
 	{
+		this._groupID=groupID;
+		this._groupVolume=groupVolume;
+		this._groupPan=groupPan;
+
 		this._audioCtx = WebAudioChannel.getAudioContext();
 
 		this._usingNativePanner = typeof this._audioCtx.createStereoPanner === 'function';
 
 		this._gainNode = this._audioCtx.createGain();
-		this._gainNode.gain.value = this._volume;
+		this._gainNode.gain.value = this._groupVolume * this._volume;
 
 		this._pannerNode = this._usingNativePanner? this._audioCtx.createStereoPanner() : this._audioCtx.createPanner();
 
@@ -182,7 +251,7 @@ export class WebAudioChannel
 		this._startTime = this._audioCtx.currentTime - this._currentTime;
 		this._source.onended = this._onEndedDelegate;
 		try {
-			this._gainNode.gain.value = this._volume;
+			this._gainNode.gain.value = this._groupVolume * this._volume;
 			if (this._usingNativePanner)
 				this._pannerNode.pan.value = this._pan;
 			else

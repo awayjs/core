@@ -8,6 +8,12 @@ export interface IAudioChannel
 
 	pan:number;
 
+	groupVolume:number;
+
+	groupPan:number;
+
+	groupID:number;
+
 	onSoundComplete:Function;
 	
 	isPlaying():boolean;

@@ -15,6 +15,9 @@ export class StreamingAudioChannel
 	private _buffer:ArrayBuffer;
 	private _offset:number;
 	private _volume:number;
+	private _groupID:number = 0;
+	private _groupVolume:number = 1;
+	private _groupPan:number = 0;
 	private _startTime:number = 0;
 	private _duration:number;
 	
@@ -24,12 +27,40 @@ export class StreamingAudioChannel
 	private _mediaSource:MediaSource;
 	private _urlString:string;
 
-	public static stopAllSounds(){
-		var len:number = StreamingAudioChannel._channels.length;
-		for (var j:number = 0; j < len; j++) {
-			StreamingAudioChannel._channels[j].stop();
+	public static stopAllSounds(channelGroup:number=-1){
+		var len: number = StreamingAudioChannel._channels.length;
+		if(channelGroup<0){
+			for (var j: number = 0; j < len; j++) {
+				StreamingAudioChannel._channels[j].stop();
+			}
+			StreamingAudioChannel._channels.length=0;
+			return;
 		}
-		StreamingAudioChannel._channels.length=0;
+		var aliveChannels:StreamingAudioChannel[]=[];
+		for (var j: number = 0; j < len; j++) {
+			if(StreamingAudioChannel._channels[j].groupID==channelGroup){
+				StreamingAudioChannel._channels[j].stop();
+			}
+			else{
+				aliveChannels[aliveChannels.length]=StreamingAudioChannel._channels[j];
+			}
+		}
+		StreamingAudioChannel._channels=aliveChannels;
+	}
+
+	public static setChannelGroupVolume(value:number, channelGroup:number=-1){
+		var len: number = StreamingAudioChannel._channels.length;
+		if(channelGroup<0){
+			for (var j: number = 0; j < len; j++) {
+				StreamingAudioChannel._channels[j].groupVolume=value;
+			}
+			return;
+		}
+		for (var j: number = 0; j < len; j++) {
+			if(StreamingAudioChannel._channels[j].groupID==channelGroup){
+				StreamingAudioChannel._channels[j].groupVolume=value;
+			}
+		}
 	}
 
 	public get duration():number
@@ -42,6 +73,38 @@ export class StreamingAudioChannel
 		return this._audio.currentTime - this._startTime;
 	}
 
+	public get groupID():number
+	{
+		return this._groupID;
+	}
+
+	public set groupID(value:number)
+	{
+		this._groupID=value;
+	}
+	public get groupVolume():number
+	{
+		return this._groupVolume;
+	}
+
+	public set groupVolume(value:number)
+	{
+		if (this._groupVolume == value)
+			return;
+
+		this._groupVolume = value;
+
+		this._audio.volume = this._groupVolume * this._volume;
+	}
+
+	public get groupPan():number
+	{
+		return this._groupPan;
+	}
+
+	public set groupPan(value:number)
+	{
+	}
 
 	public get volume():number
 	{
@@ -84,8 +147,12 @@ export class StreamingAudioChannel
 		//todo
 	}
 
-	constructor()
+	constructor(groupID:number=0, groupVolume:number=1, groupPan:number=1)
 	{
+		this._groupID=groupID;
+		this._groupVolume=groupVolume;
+		this._groupPan=groupPan;
+
 		this._sourceOpenDelegate = (event) => this._sourceOpen(event);
 		this._updateEndDelegate = (event) => this._updateEnd(event);
 
@@ -110,7 +177,7 @@ export class StreamingAudioChannel
 
 		this._buffer = buffer;
 		this._offset = offset;
-		this._audio.volume = this._volume;
+		this._audio.volume = this._groupVolume*this._volume;
 
 		if (!this._isQueuing && !this._isOpening)
 			this._queueBuffer();

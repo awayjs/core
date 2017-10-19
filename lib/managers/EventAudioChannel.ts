@@ -11,20 +11,49 @@ export class EventAudioChannel
 	private _isPlaying:boolean = false;
 	private _isLooping:boolean = false;
 	private _volume:number;
+	private _groupID:number = 0;
+	private _groupVolume:number = 1;
+	private _groupPan:number = 0;
 	private _startTime:number = 0;
 	private _duration:number;
 
 	public onSoundComplete:Function;
 	private _audio:HTMLAudioElement;
 
-	public static stopAllSounds(){
-		var channel:IAudioChannel;
-		var len:number = EventAudioChannel._channels.length;
-		for (var j:number = 0; j < len; j++) {
-			channel = EventAudioChannel._channels[j];
-			channel.stop();
+	public static stopAllSounds(channelGroup:number=-1){
+		var len: number = EventAudioChannel._channels.length;
+		if(channelGroup<0){
+			for (var j: number = 0; j < len; j++) {
+				EventAudioChannel._channels[j].stop();
+			}
+			EventAudioChannel._channels.length=0;
+			return;
 		}
-		EventAudioChannel._channels.length=0;
+		var aliveChannels:EventAudioChannel[]=[];
+		for (var j: number = 0; j < len; j++) {
+			if(EventAudioChannel._channels[j].groupID==channelGroup){
+				EventAudioChannel._channels[j].stop();
+			}
+			else{
+				aliveChannels[aliveChannels.length]=EventAudioChannel._channels[j];
+			}
+		}
+		EventAudioChannel._channels=aliveChannels;
+	}
+
+	public static setChannelGroupVolume(value:number, channelGroup:number=-1){
+		var len: number = EventAudioChannel._channels.length;
+		if(channelGroup<0){
+			for (var j: number = 0; j < len; j++) {
+				EventAudioChannel._channels[j].groupVolume=value;
+			}
+			return;
+		}
+		for (var j: number = 0; j < len; j++) {
+			if(EventAudioChannel._channels[j].groupID==channelGroup){
+				EventAudioChannel._channels[j].groupVolume=value;
+			}
+		}
 	}
 
 	public get duration():number
@@ -48,6 +77,38 @@ export class EventAudioChannel
 		//todo
 	}
 
+	public get groupID():number
+	{
+		return this._groupID;
+	}
+
+	public set groupID(value:number)
+	{
+		this._groupID=value;
+	}
+	public get groupVolume():number
+	{
+		return this._groupVolume;
+	}
+
+	public set groupVolume(value:number)
+	{
+		if (this._groupVolume == value)
+			return;
+
+		this._groupVolume = value;
+
+		this._audio.volume = this._groupVolume * this._volume;
+	}
+
+	public get groupPan():number
+	{
+		return this._groupPan;
+	}
+
+	public set groupPan(value:number)
+	{
+	}
 
 	public get volume():number
 	{
@@ -79,8 +140,12 @@ export class EventAudioChannel
 		return false;
 	}
 
-	constructor()
+	constructor(groupID:number=0, groupVolume:number=1, groupPan:number=1)
 	{
+		this._groupID=groupID;
+		this._groupVolume=groupVolume;
+		this._groupPan=groupPan;
+
 		this._audio = new Audio();
 		this._audio.ontimeupdate = (event) => this._onTimeUpdate(event);
 	}

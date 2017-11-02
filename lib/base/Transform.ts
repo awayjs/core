@@ -1,5 +1,5 @@
 import {EventDispatcher} from "../events/EventDispatcher";
-import {Matrix,} from "../geom/Matrix";
+import {Matrix} from "../geom/Matrix";
 import {Matrix3D} from "../geom/Matrix3D";
 import {Rectangle} from "../geom/Rectangle";
 import {Vector3D} from "../geom/Vector3D";
@@ -152,6 +152,9 @@ export class Transform extends EventDispatcher
 	{
 		if (this._concatenatedMatrix3DDirty) {
 			this._concatenatedMatrix3DDirty = false;
+			if (this._concatenatedMatrix3D == this._matrix3D && this._matrix3DDirty) //in cases where concatenated matrix has not been supplied
+                this.updateMatrix3D();
+
 			this.dispatchEvent(this._updateConcatenatedMatrix3D || (this._updateConcatenatedMatrix3D = new TransformEvent(TransformEvent.UPDATE_CONCATENATED_MATRIX3D, this)));
 		}
 		
@@ -479,6 +482,22 @@ export class Transform extends EventDispatcher
 		
 	}
 
+    /**
+     * Rotates the 3d object around to face a point defined relative to the local coordinates of the parent <code>ObjectContainer3D</code>.
+     *
+     * @param    target        The vector defining the point to be looked at
+     * @param    upAxis        An optional vector used to define the desired up orientation of the 3d object after rotation has occurred
+     */
+    public lookAt(position:Vector3D, upAxis:Vector3D = null):void
+    {
+        if (upAxis == null)
+            upAxis = Vector3D.Y_AXIS;
+
+        var vec:Vector3D = Matrix3D.getPointAtMatrix(new Vector3D(), position.subtract(this._matrix3D.position), upAxis, Matrix3D.CALCULATION_MATRIX).decompose()[1];
+
+        this.rotateTo(vec.x, vec.y, vec.z)
+    }
+
 	/**
 	 * Moves the 3d object forwards along it's local z axis
 	 *
@@ -654,6 +673,12 @@ export class Transform extends EventDispatcher
 	 */
 	public invalidateMatrix3D():void
 	{
+        if (this._concatenatedMatrix3D == this._matrix3D)
+            this.invalidateConcatenatedMatrix3D();
+
+		if (this._matrix3DDirty)
+			return;
+
 		this._matrix3DDirty = true;
 		
 		this.dispatchEvent(this._invalidateMatrix3D || (this._invalidateMatrix3D = new TransformEvent(TransformEvent.INVALIDATE_MATRIX3D, this)));
@@ -669,6 +694,9 @@ export class Transform extends EventDispatcher
 
 	public invalidateConcatenatedMatrix3D():void
 	{
+        if (this._concatenatedMatrix3DDirty)
+            return;
+
 		this._concatenatedMatrix3DDirty = true;
 		this._inverseConcatenatedMatrix3DDirty = true;
 
@@ -680,9 +708,12 @@ export class Transform extends EventDispatcher
 	 */
 	public invalidatePosition():void
 	{
+        if (this._concatenatedMatrix3D == this._matrix3D)
+            this.invalidateConcatenatedMatrix3D();
+
 		this._matrix3D.invalidatePosition();
 
-		this.dispatchEvent(this._invalidateMatrix3D || (this._invalidateMatrix3D = new TransformEvent(TransformEvent.INVALIDATE_MATRIX3D, this)));
+		this.dispatchEvent(this._invalidateMatrix3D || (this._invalidateMatrix3D = new TransformEvent(TransformEvent.INVALIDATE_MATRIX3D, this))); //stricty speaking, this should be UPDATE_MATRIX3D
 	}
 
 	public invalidateColorTransform():void

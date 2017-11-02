@@ -43,32 +43,16 @@ export class AttributesBuffer extends AssetBase
 		this.resize();
 	}
 
-
-	public set newCount(value:number)
+	public get count():number
+	{
+		return this._newCount;
+	}
+	public set count(value:number)
 	{
 		if (this._newCount == value)
 			return;
 
 		this._newCount = value;
-
-		this.resize();
-	}
-
-	public get newCount():number
-	{
-		return this._newCount;
-	}
-
-	public get count():number
-	{
-		return this._count;
-	}
-	public set count(value:number)
-	{
-		if (this._count == value)
-			return;
-
-		this._count = value;
 
 		this.resize();
 	}
@@ -183,8 +167,8 @@ export class AttributesBuffer extends AssetBase
 		var vCount:number = array.length/vLength;
 
 		//make sure there is enough space in the buffer
-		if (this.newCount < vCount + offset)
-			this.newCount = vCount + offset;
+		if (this.count < vCount + offset)
+			this.count = vCount + offset;
 
 		if (this._lengthDirty)
 			this._updateLength();

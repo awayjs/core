@@ -138,7 +138,7 @@ export class Transform extends EventDispatcher
 //for AVM!:
 	public get concatenatedMatrix():Matrix
 	{
-
+		return null;
 	}
 
 	/**

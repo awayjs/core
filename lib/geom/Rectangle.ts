@@ -46,6 +46,20 @@ import {Point}					from "../geom/Point";
  */
 export class Rectangle
 {
+	//for AVM1:
+
+	// for AVM1:
+	public axCallPublicProperty(value1:any, value2:any):any{
+		return null;
+	}
+	public axGetPublicProperty(value:any):any{
+		return null;
+	}
+	public axSetPublicProperty(value:any):any{
+		return null;
+	}
+
+
 	private _size:Point;
 	private _bottomRight:Point;
 	private _topLeft:Point;

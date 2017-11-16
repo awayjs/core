@@ -43,7 +43,14 @@ import {ColorUtils}			from "../utils/ColorUtils";
 export class ColorTransform
 {
 	public _rawData:Float32Array;
-	
+
+	//for AVM1:
+	public concat(second: ColorTransform):ColorTransform
+	{
+		console.log("todo: ColorTransform.concat");
+		return this;
+	}
+
 	/**
 	 * A decimal value that is multiplied with the alpha transparency channel
 	 * value.

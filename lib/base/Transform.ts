@@ -135,7 +135,11 @@ export class Transform extends EventDispatcher
 
 		this.invalidateColorTransform();
 	}
-	
+//for AVM!:
+	public get concatenatedMatrix():Matrix
+	{
+
+	}
 
 	/**
 	 * A Matrix object representing the combined transformation matrixes of the

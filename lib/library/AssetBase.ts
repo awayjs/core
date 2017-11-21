@@ -9,6 +9,7 @@ export class AssetBase extends EventDispatcher implements IAsset, IAssetAdapter
 {
 	public static ID_COUNT:number = 0;
 
+	public _symbol:any;
 	public _adapter:IAssetAdapter;
 	private _originalName:string;
 	private _namespace:string;

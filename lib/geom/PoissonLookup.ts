@@ -45,7 +45,7 @@ export class PoissonLookup
 		if (!this._distributions)
 			this.initDistributions();
 
-		if (n < 2 || n > 32)
+		if (n < 1 || n > 32)
 			return null;
 
 		return this._distributions[n - 1];

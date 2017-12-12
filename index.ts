@@ -1,13 +1,3 @@
-export {AttributesView}					from "./lib/attributes/AttributesView";
-export {AttributesBuffer}				from "./lib/attributes/AttributesBuffer";
-export {Byte4Attributes}				from "./lib/attributes/Byte4Attributes";
-export {Float1Attributes}				from "./lib/attributes/Float1Attributes";
-export {Float2Attributes}				from "./lib/attributes/Float2Attributes";
-export {Float3Attributes}				from "./lib/attributes/Float3Attributes";
-export {Float4Attributes}				from "./lib/attributes/Float4Attributes";
-export {Short2Attributes}				from "./lib/attributes/Short2Attributes";
-export {Short3Attributes}				from "./lib/attributes/Short3Attributes";
-
 export {WaveAudio}						from "./lib/audio/WaveAudio";
 
 export {ColorTransform}					from "./lib/base/ColorTransform";
@@ -54,6 +44,7 @@ export {ConflictPrecedence}				from "./lib/library/ConflictPrecedence";
 export {ConflictStrategy}				from "./lib/library/ConflictStrategy";
 export {ConflictStrategyBase}			from "./lib/library/ConflictStrategyBase";
 export {ErrorConflictStrategy}			from "./lib/library/ErrorConflictStrategy";
+export {IAbstractionClass} from "./lib/library/IAbstractionClass";
 export {IAbstractionPool}				from "./lib/library/IAbstractionPool";
 export {IAsset}							from "./lib/library/IAsset";
 export {IAssetAdapter}					from "./lib/library/IAssetAdapter";

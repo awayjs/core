@@ -14,6 +14,7 @@ export class WaveAudio extends AssetBase
 	private _onSoundComplete:Function;
 	private _audioChannels:IAudioChannel[];
 	private _channelGroup:number;
+	private _loopsToPlay:number;
 	/**
 	 *
 	 * @returns {string}
@@ -23,6 +24,38 @@ export class WaveAudio extends AssetBase
 		return WaveAudio.assetType;
 	}
 
+	public get loopsToPlay():number
+	{
+		return this._loopsToPlay;
+	}
+
+	public set loopsToPlay(value:number)
+	{
+		if (this._loopsToPlay == value)
+			return;
+
+		this._loopsToPlay = value;
+
+		if(this._audioChannel){
+			this._audioChannel.onSoundComplete=()=>this.soundCompleteInternal();
+		}
+
+	}
+
+
+	private soundCompleteInternal(){
+		this._loopsToPlay--;
+		//console.log("soundCompleteInternal", this.loopsToPlay);
+		if(this._loopsToPlay>0){
+			this.stop();
+			this.play(0, false);
+		}
+		else{
+			if(this._onSoundComplete){
+				this._onSoundComplete();
+			}
+		}
+	}
 	public get pan():number
 	{
 		return this._pan;
@@ -100,6 +133,7 @@ export class WaveAudio extends AssetBase
 		super();
 		this._audioChannels=[];
 		this._buffer = buffer;
+		this._loopsToPlay=0;
 		this._channelGroup=channelGroup;
 	}
 
@@ -118,9 +152,8 @@ export class WaveAudio extends AssetBase
 			this._audioChannels.push(this._audioChannel);
 			this._audioChannel.volume = this._volume;
 			this._audioChannel.play(this._buffer, offset, loop, this.id);
-			if(this._onSoundComplete){
-				this._audioChannel.onSoundComplete=this._onSoundComplete;
-
+			if(this._onSoundComplete || this._loopsToPlay>0){
+				this._audioChannel.onSoundComplete=()=>this.soundCompleteInternal();
 			}
 		}
 	}
@@ -128,7 +161,7 @@ export class WaveAudio extends AssetBase
 	{
 		this._onSoundComplete=value;
 		if (this._audioChannel) {
-			this._audioChannel.onSoundComplete=this._onSoundComplete;
+			this._audioChannel.onSoundComplete=()=>this.soundCompleteInternal();
 		}
 	}
 

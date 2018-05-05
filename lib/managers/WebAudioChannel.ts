@@ -13,6 +13,9 @@ export class WebAudioChannel
 	{
 		if (!WebAudioChannel._audioCtx && (window["AudioContext"] || window["webkitAudioContext"]))
 			WebAudioChannel._audioCtx = new (window["AudioContext"] || window["webkitAudioContext"])();
+                     
+        if(WebAudioChannel._audioCtx && WebAudioChannel._audioCtx.status=="suspended")
+            WebAudioChannel._audioCtx.resume();
 
 		return WebAudioChannel._audioCtx;
 	}

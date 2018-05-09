@@ -26,7 +26,7 @@ export class XmlUtils {
 		if(nodes) {
 			var num:number = nodes.length;
 			for(var i:number = 0; i < num; i++) {
-				var child:Node = nodes[i];
+				var child:any = nodes[i];
 				if(child != null) {
 					if(child.attributes.getNamedItem(paramName).value == paramValue) {
 						fragment.appendChild(child);
@@ -50,7 +50,7 @@ export class XmlUtils {
 		return str;
 	}
 
-	public static readAttributeValue(node:Node, attrName:string):string {
+	public static readAttributeValue(node:any, attrName:string):string {
 		var attrs = node.attributes;
 		if(attrs == undefined) {
 			return "";
@@ -64,14 +64,14 @@ export class XmlUtils {
 		return attribute.value;
 	}
 
-	public static writeAttributeValue(node:Node, attrName:string, attrValue:string) {
+	public static writeAttributeValue(node:any, attrName:string, attrValue:string) {
 		var attribute:Attr = document.createAttribute(attrName);
 		attribute.value = attrValue;
 		attribute = node.attributes.setNamedItem(attribute);
 		console.log("XmlUltils - writeAttributeValue() - name: " + attribute.name + ", value: " + attribute.value);
 	}
 
-	public static hasAttribute(node:Node, attrName:string):boolean {
+	public static hasAttribute(node:any, attrName:string):boolean {
 		var attrs = node.attributes;
 		if(attrs == undefined) {
 			return false;

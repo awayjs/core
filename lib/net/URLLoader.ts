@@ -148,11 +148,11 @@ export class URLLoader extends EventDispatcher
 			case URLLoaderDataFormat.ARRAY_BUFFER:
 			case URLLoaderDataFormat.BLOB:
 			case URLLoaderDataFormat.TEXT:
-				xhr.responseType = responseType;
+				xhr.responseType = <XMLHttpRequestResponseType> responseType;
 				break;
 
 			case URLLoaderDataFormat.VARIABLES:
-				xhr.responseType = URLLoaderDataFormat.TEXT;
+				xhr.responseType = <XMLHttpRequestResponseType> URLLoaderDataFormat.TEXT;
 				break;
 
 			case URLLoaderDataFormat.BINARY:

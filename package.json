@@ -37,7 +37,7 @@
   },
   "homepage": "https://github.com/awayjs/core#readme",
   "dependencies": {
-    "tslib": "github:microsoft/tslib"
+    "tslib": "^1.9.0"
   },
   "devDependencies": {
     "rimraf": "^2.5.2",

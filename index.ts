@@ -1,3 +1,6 @@
+
+console.log("AwayJS - Core - 0.7.16");
+
 export {WaveAudio}						from "./lib/audio/WaveAudio";
 
 export {ColorTransform}					from "./lib/base/ColorTransform";

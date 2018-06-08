@@ -15,6 +15,12 @@ export class WaveAudio extends AssetBase
 	private _audioChannels:IAudioChannel[];
 	private _channelGroup:number;
 	private _loopsToPlay:number;
+	private _isPlaying:boolean;
+	
+	public get isPlaying():boolean
+	{
+		return this.isPlaying;
+	}
 	/**
 	 *
 	 * @returns {string}
@@ -51,6 +57,7 @@ export class WaveAudio extends AssetBase
 			this.play(0, false);
 		}
 		else{
+			this._isPlaying=false;
 			if(this._onSoundComplete){
 				this._onSoundComplete();
 			}
@@ -135,6 +142,7 @@ export class WaveAudio extends AssetBase
 		this._buffer = buffer;
 		this._loopsToPlay=0;
 		this._channelGroup=channelGroup;
+		this._isPlaying=false;
 	}
 
 	public dispose():void
@@ -145,6 +153,7 @@ export class WaveAudio extends AssetBase
 	public play(offset:number, loop:boolean = false):void
 	{
 
+		this._isPlaying=true;;
 		this._audioChannel = AudioManager.getChannel(this._buffer.byteLength, this.channelGroup);
 
 

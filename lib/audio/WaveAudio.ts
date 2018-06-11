@@ -16,6 +16,7 @@ export class WaveAudio extends AssetBase
 	private _channelGroup:number;
 	private _loopsToPlay:number;
 	private _isPlaying:boolean;
+	private _channelsPlaying:number=0;
 
 	public get isPlaying():boolean
 	{
@@ -57,7 +58,10 @@ export class WaveAudio extends AssetBase
 			this.play(0, false);
 		}
 		else{
-			this._isPlaying=false;
+			if(this._channelsPlaying>0)
+				this._channelsPlaying--;
+			if(this._channelsPlaying==0)
+				this._isPlaying=false;			
 			if(this._onSoundComplete){
 				this._onSoundComplete();
 			}
@@ -143,6 +147,7 @@ export class WaveAudio extends AssetBase
 		this._loopsToPlay=0;
 		this._channelGroup=channelGroup;
 		this._isPlaying=false;
+		this._channelsPlaying=0;
 	}
 
 	public dispose():void
@@ -159,12 +164,13 @@ export class WaveAudio extends AssetBase
 
 
 		if (this._audioChannel) {
+			this._channelsPlaying++;
 			this._audioChannels.push(this._audioChannel);
 			this._audioChannel.volume = this._volume;
 			this._audioChannel.play(this._buffer, offset, loop, this.id);
-			if(this._onSoundComplete || this._loopsToPlay>0){
-				this._audioChannel.onSoundComplete=()=>this.soundCompleteInternal();
-			}
+			//if(this._onSoundComplete || this._loopsToPlay>0){
+			this._audioChannel.onSoundComplete=()=>this.soundCompleteInternal();
+			//}
 		}
 	}
 	public set onSoundComplete(value:Function)
@@ -183,6 +189,7 @@ export class WaveAudio extends AssetBase
 			delete this._audioChannels[i];
 		}
 
+		this._channelsPlaying=0;
 		this._audioChannels.length=0;
 
 		this._audioChannel = null;

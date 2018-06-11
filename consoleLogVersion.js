@@ -9,6 +9,7 @@ var fs = require("fs");
 // with the new version number from package.json
 
 // update dist/index.js with the new content
+console.log("update dist/index.js with version:", process.env.npm_package_version);
 
 fs.readFile("./dist/index.js", 'utf8', function(err, data) {
     if (err) throw err;

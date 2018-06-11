@@ -1,6 +1,6 @@
 "use strict";
 exports.__esModule = true;
-//var fs = require("fs-extra");
+var fs = require("fs");
 //var path = require("path");
 /*
 function readdir(dir, prefix, outputDir, result) {
@@ -31,6 +31,11 @@ function readdir(dir, prefix, outputDir, result) {
     });
     return result;
 }*/
+fs.readFile("./dist/index.js", 'utf8', function(err, data) {
+  if (err) throw err;
+  console.log('OK: ' + filename);
+  console.log(data)
+});           
 console.log(process.env.npm_package_version);
 /*var len = output.length;
 var outStr = "[";

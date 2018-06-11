@@ -1,5 +1,5 @@
 
-console.log("AwayJS - Core - 0.7.20");
+console.log("AwayJS - Core - #BUILD_VIA_NPM_VERSION_PATCH_TO_DISPLAY_VERSION_HERE#");
 
 export {WaveAudio}						from "./lib/audio/WaveAudio";
 

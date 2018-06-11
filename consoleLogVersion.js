@@ -14,7 +14,7 @@ console.log("update src/index.ts with version:", process.env.npm_package_version
 
 fs.readFile("./index.ts", 'utf8', function(err, data) {
     if (err) throw err;
-    var re = /(.*\-\s+)(.*)(\s+);.*)/g;
+    var re = /(.*\-\s+)(.*)(\s+\);.*)/g;
     data = data.replace(re, process.env.npm_package_version);//#BUILD_VIA_NPM_VERSION_PATCH_TO_DISPLAY_VERSION_HERE#", process.env.npm_package_version);
     fs.writeFile("./index.ts", data, function(err) {
         if (err) throw err;    

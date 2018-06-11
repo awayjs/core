@@ -1,6 +1,6 @@
 {
   "name": "@awayjs/core",
-  "version": "0.7.34",
+  "version": "0.7.20",
   "description": "AwayJS core classes",
   "main": "bundle/awayjs-core.umd.js",
   "module": "dist/index.js",
@@ -22,7 +22,7 @@
     "prebuild": "npm run clean:dist",
     "build": "npm run tsc && npm run rollup && npm run uglifyjs",
     "version": "npm run build",
-    "postversion": "node ./consoleLogVersion"
+    "postversion": "node ./consoleLogVersion && git add . && git commit -m'add console.log for version' && git push && git push --tags"
   },
   "keywords": [
     "AwayJS",
@@ -37,7 +37,7 @@
   },
   "homepage": "https://github.com/awayjs/core#readme",
   "dependencies": {
-    "fs-extra": "^6.0.1",
+    "fs": "0.0.1-security",
     "tslib": "^1.9.0"
   },
   "devDependencies": {

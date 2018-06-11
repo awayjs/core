@@ -13,7 +13,7 @@ console.log("update src/index.ts with version:", process.env.npm_package_version
 
 fs.readFile("./index.ts", 'utf8', function(err, data) {
     if (err) throw err;
-    var re = /(console\.log\(\"AwayJS\s\-\s[a-zA-Z]\s\-\s)(.*)(\"\)\;.*)/;
+    var re = /(.*console\.log\(\"AwayJS\s\-\s[a-zA-Z]\s\-\s)(.*)(\"\)\;.*)/;
     data = data.replace(re, "$1"+process.env.npm_package_version+"$3");//#BUILD_VIA_NPM_VERSION_PATCH_TO_DISPLAY_VERSION_HERE#", process.env.npm_package_version);
     fs.writeFile("./index.ts", data, function(err) {
         if (err) throw err;    

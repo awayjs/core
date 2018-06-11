@@ -1,6 +1,6 @@
 {
   "name": "@awayjs/core",
-  "version": "0.7.22",
+  "version": "0.7.21",
   "description": "AwayJS core classes",
   "main": "bundle/awayjs-core.umd.js",
   "module": "dist/index.js",
@@ -22,7 +22,7 @@
     "prebuild": "npm run clean:dist",
     "build": "npm run tsc && npm run rollup && npm run uglifyjs",
     "version": "npm run build",
-    "postversion": "node ./consoleLogVersion && git push && git push --tags"
+    "postversion": "node ./consoleLogVersion && git add . && git commit -m'add console.log for version' && git push && git push --tags"
   },
   "keywords": [
     "AwayJS",

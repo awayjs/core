@@ -33,7 +33,7 @@ function readdir(dir, prefix, outputDir, result) {
 }*/
 fs.readFile("./dist/index.js", 'utf8', function(err, data) {
   if (err) throw err;
-  console.log('OK: ' + filename);
+  console.log('OK: ');
   console.log(data)
 });           
 console.log(process.env.npm_package_version);

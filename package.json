@@ -1,6 +1,6 @@
 {
   "name": "@awayjs/core",
-  "version": "0.7.46",
+  "version": "0.7.47",
   "description": "AwayJS core classes",
   "main": "bundle/awayjs-core.umd.js",
   "module": "dist/index.js",
@@ -22,7 +22,7 @@
     "prebuild": "npm run clean:dist",
     "build": "npm run tsc && npm run rollup && npm run uglifyjs",
     "version": "npm run build",
-    "postversion": "npm run copyVersionToIndex",
+    "postversion": "npm run copyVersionToIndex && git push && git push --tags",
     "copyVersionToIndex": "node ./copyVersionToIndex && git add . && git commit -m 'addVersionToIndex'"
   },
   "keywords": [

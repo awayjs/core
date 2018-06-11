@@ -22,7 +22,7 @@
     "prebuild": "npm run clean:dist",
     "build": "npm run tsc && npm run rollup && npm run uglifyjs",
     "version": "npm run build",
-    "postversion": "node ./consoleLogVersion && git push && git push --tags"
+    "postversion": "node ./consoleLogVersion"
   },
   "keywords": [
     "AwayJS",

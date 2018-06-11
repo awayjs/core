@@ -31,7 +31,7 @@ function readdir(dir, prefix, outputDir, result) {
     });
     return result;
 }*/
-console.log(npm_package_version);
+console.log(%npm_package_version%);
 /*var len = output.length;
 var outStr = "[";
 for (var i = 0; i < len; i++) {

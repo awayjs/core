@@ -22,7 +22,7 @@
     "prebuild": "npm run clean:dist",
     "build": "npm run tsc && npm run rollup && npm run uglifyjs",
     "version": "npm run build",
-    "postversion": "npm run copyVersionToIndex && git push && git push --tags",
+    "postversion": "npm run copyVersionToIndex && git push && git push --tags && npm publish",
     "copyVersionToIndex": "node ./copyVersionToIndex && git add . && git commit -m 'addVersionToIndex'"
   },
   "keywords": [

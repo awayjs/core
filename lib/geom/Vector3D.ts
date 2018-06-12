@@ -318,6 +318,17 @@ export class Vector3D
 	{
 		return (this.x == toCompare.x && this.y == toCompare.y && this.z == toCompare.z && (!allFour || this.w == toCompare.w ));
 	}
+	
+	/**
+	 * Converts the current vector to an identity or unit vector.
+	 */
+	public identity():void
+	{
+		this.x = 0;
+		this.y = 0;
+		this.z = 0;
+		this.w = 1;
+	}
 
 	/**
 	 * Increments the value of the x, y, and z elements of the current

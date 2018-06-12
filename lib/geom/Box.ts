@@ -648,17 +648,6 @@ export class Box
 	}
 
 	/**
-	 * Determines whether or not this Box object is empty.
-	 *
-	 * @return A value of <code>true</code> if the Box object's width, height or
-	 *         depth is less than or equal to 0; otherwise <code>false</code>.
-	 */
-	public isEmpty():boolean
-	{
-		return (this.x == 0 && this.y == 0 && this.z == 0 && this.width == 0 && this.height == 0 && this.depth == 0);
-	}
-
-	/**
 	 * Adjusts the location of the Box object, as determined by its
 	 * top-left-front corner, by the specified amounts.
 	 *
@@ -696,7 +685,7 @@ export class Box
 	 * <code>depth</code> properties to 0.</p>
 	 *
 	 */
-	public setEmpty():void
+	public identity():void
 	{
 		this.x = 0;
 		this.y = 0;

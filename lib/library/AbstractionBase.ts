@@ -28,8 +28,10 @@ export class AbstractionBase extends EventDispatcher
 		this._onClearDelegate = (event:AssetEvent) => this.onClear(event);
 		this._onInvalidateDelegate = (event:AssetEvent) => this.onInvalidate(event);
 
-		this._asset.addEventListener(AssetEvent.CLEAR, this._onClearDelegate);
-		this._asset.addEventListener(AssetEvent.INVALIDATE, this._onInvalidateDelegate);
+		if (this._asset) {
+			this._asset.addEventListener(AssetEvent.CLEAR, this._onClearDelegate);
+			this._asset.addEventListener(AssetEvent.INVALIDATE, this._onInvalidateDelegate);
+		}
 	}
 
 	/**
@@ -37,9 +39,11 @@ export class AbstractionBase extends EventDispatcher
 	 */
 	public onClear(event:AssetEvent):void
 	{
-		this._asset.removeEventListener(AssetEvent.CLEAR, this._onClearDelegate);
-		this._asset.removeEventListener(AssetEvent.INVALIDATE, this._onInvalidateDelegate);
-
+		if (this._asset) {
+			this._asset.removeEventListener(AssetEvent.CLEAR, this._onClearDelegate);
+			this._asset.removeEventListener(AssetEvent.INVALIDATE, this._onInvalidateDelegate);
+		}
+		
 		this._pool.clearAbstraction(this._asset);
 		this._pool = null;
 		this._asset = null;

@@ -21,7 +21,7 @@
     "watch": "npm run tsc -- --w",
     "prebuild": "npm run clean:dist",
     "build": "npm run tsc && npm run rollup && npm run uglifyjs",
-    "copyVersionToIndex": "node ./copyVersionToIndex && git add . && git commit -m 'update version number in index.ts'",
+    "copyVersionToIndex": "node ./copyVersionToIndex && git add . && git commit -m \"update version number in index.ts\"",
     "version": "npm run copyVersionToIndex && npm run build",
     "postversion": "git push && git push --tags && npm publish"
   },

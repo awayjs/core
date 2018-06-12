@@ -75,6 +75,49 @@ export class Sphere
 		return distance <= this.radius;
 	}
 
+	
+	/**
+	 * Copies all of sphere data from the source Sphere object into the calling
+	 * Sphere object.
+	 *
+	 * @param sourceSphere The Sphere object from which to copy the data.
+	 */
+	public copyFrom(sourceSphere:Sphere):void
+	{
+		this.x = sourceSphere.x;
+		this.y = sourceSphere.y;
+		this.z = sourceSphere.z;
+		this.radius = sourceSphere.radius;
+	}
+
+		/**
+	 * Adds two spheres together to create a new Sphere object, by filling
+	 * in the horizontal, vertical and longitudinal space between the two spheres.
+	 *
+	 * <p><b>Note:</b> The <code>union()</code> method ignores spheres with
+	 * <code>0</code> as the height, width or depth value, such as: <code>var
+	 * box2:Sphere = new Sphere(300,300,300,50,50,0);</code></p>
+	 *
+	 * @param toUnion A Sphere object to add to this Sphere object.
+	 * @return A new Sphere object that is the union of the two spheres.
+	 */
+	public union(toUnion:Sphere, target:Sphere = null):Sphere
+	{
+		var xDiff:number = toUnion.x - this.x;
+		var yDiff:number = toUnion.y - this.y;
+		var zDiff:number = toUnion.z - this.z;
+
+		if (target == null)
+			target = new Sphere();
+
+		target.radius = (Math.sqrt(xDiff*xDiff + yDiff*yDiff + zDiff*zDiff) + toUnion.radius + this.radius)/2;
+		target.x = this.x + xDiff/2;
+		target.y = this.y + yDiff/2;
+		target.z = this.z + zDiff/2;
+
+		return target;
+	}
+
 	public toString():string
 	{
 		return "Sphere [x:" + this.x + ", y:" + this.y + ", z:" + this.z + ", radius:" + this.radius + "]";

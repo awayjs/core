@@ -495,7 +495,7 @@ export class Box
 	 */
 	public intersects(toIntersect:Box):boolean
 	{
-		return (this.x + this.width > toIntersect.x && this.x < toIntersect.x + toIntersect.width && this.y + this.height > toIntersect.y && this.y < toIntersect.y + toIntersect.height && this.z + this.depth > toIntersect.z && this.z < toIntersect.z + toIntersect.depth);
+		return (this.x + this.width >= toIntersect.x && this.x <= toIntersect.x + toIntersect.width && this.y + this.height >= toIntersect.y && this.y <= toIntersect.y + toIntersect.height && this.z + this.depth >= toIntersect.z && this.z <= toIntersect.z + toIntersect.depth);
 	}
 
 	public rayIntersection(position:Vector3D, direction:Vector3D, targetNormal:Vector3D):number

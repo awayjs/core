@@ -33,6 +33,15 @@ export class ProjectionBase extends EventDispatcher
 	private _frustumPlanesDirty:boolean = true;
 	private _onInvalidateConcatenatedMatrix3DDelegate:(event:TransformEvent) => void;
 	
+	public get viewRect():Rectangle
+	{
+		return this._viewRect;
+	}
+
+	public get stageRect():Rectangle
+	{
+		return this._stageRect;
+	}
 	constructor(coordinateSystem:CoordinateSystem = CoordinateSystem.LEFT_HANDED)
 	{
 		super();
@@ -87,6 +96,9 @@ export class ProjectionBase extends EventDispatcher
 	 */
 	public get frustumCorners():number[]
 	{
+		if (this._frustumMatrix3DDirty)
+			this._updateFrustumMatrix3D();
+
 		return this._frustumCorners;
 	}
 

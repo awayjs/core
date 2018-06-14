@@ -5,6 +5,9 @@
 export class BuildMode {
 	// used when building AwayJS to use with AVM1
 	public static AVM1:string = "avm1";
+	
+	// used when building AwayJS to use with AS2 Framescript that have been converted to js
+	public static AS2_AS_JS:string = "as2asjs";
 
 	// used when building standart AwayJS (not for AVM1)
 	public static STANDART:string = "standart";

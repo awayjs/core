@@ -750,6 +750,11 @@ export class Box
 		if (target == null)
 			target = new Box();
 
+		if (toUnion == null) {
+			target.copyFrom(this);
+			return target;
+		}
+
 		if (this.x < toUnion.x) {
 			width = toUnion.x - this.x + toUnion.width;
 			target.x = this.x;

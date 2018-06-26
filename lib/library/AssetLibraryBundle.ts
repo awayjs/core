@@ -237,7 +237,7 @@ export class AssetLibraryBundle extends EventDispatcher
 		if (!this._assetDictionary.hasOwnProperty(ns))
 			return null;
 
-		return this._assetDictionary[ns][name];
+		return this._assetDictionary[ns][name.toString().toLowerCase()];
 
 	}
 	public getAllAssets():Array<IAssetAdapter>
@@ -273,7 +273,7 @@ export class AssetLibraryBundle extends EventDispatcher
 		if (!this._assetDictionary.hasOwnProperty(ns))
 			this._assetDictionary[ns] = new Object();
 
-		this._assetDictionary[ns][asset.adaptee.name] = asset;
+		this._assetDictionary[ns][asset.adaptee.name.toString().toLowerCase()] = asset;
 
 		asset.adaptee.addEventListener(AssetEvent.RENAME, this._onAssetRenameDelegate);
 		asset.adaptee.addEventListener(AssetEvent.ASSET_CONFLICT_RESOLVED, this._onAssetConflictResolvedDelegate);

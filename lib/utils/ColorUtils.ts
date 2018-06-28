@@ -14,6 +14,29 @@ export class ColorUtils
 		return result;
 	}
 
+	public static f32_RGBA_To_f32_ARGB(float32Color:number):number
+	{
+		var r:number = ( float32Color & 0xff000000 ) >>> 24;
+		var g:number = ( float32Color & 0xff0000 ) >>> 16;
+		var b:number = ( float32Color & 0xff00 ) >>> 8;
+		var a:number = float32Color & 0xff;
+		return (a << 24) | (r << 16) |	(g << 8) | b;
+	}
+	
+	public static f32_RGB_To_f32_ARGB(float32Color:number):number
+	{
+		var r:number = ( float32Color & 0xff000000 ) >>> 24;
+		var g:number = ( float32Color & 0xff0000 ) >>> 16;
+		var b:number = ( float32Color & 0xff00 ) >>> 8;
+		var a:number = float32Color & 0xff;
+		return (a << 24) | (r << 16) |	(g << 8) | b;
+	}
+
+	public getAlphaFromF32RGBA(float32Color:number):number
+	{
+		return float32Color & 0xff;
+	}
+
 	public static ARGBtoFloat32(a:number, r:number, g:number, b:number):number
 	{
 		return ((a << 24) | (r << 16) | (g << 8) | b);

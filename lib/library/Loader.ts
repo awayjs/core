@@ -238,7 +238,7 @@ export class Loader extends EventDispatcher
 
 			this._currentDependency.parser._iResumeParsing();
 
-		} else if (this._stack.length) {
+		} else if (this._stack && this._stack.length) {
 
 			var prev:ResourceDependency = this._currentDependency;
 

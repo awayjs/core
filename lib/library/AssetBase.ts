@@ -129,6 +129,12 @@ export class AssetBase extends EventDispatcher implements IAsset, IAssetAdapter
 	{
 		return this._namespace;
 	}
+	public set assetNamespace(value:string)
+	{
+		this._namespace=value? value : AssetBase.DEFAULT_NAMESPACE;
+		this.updateFullPath();
+	}
+
 
 	public get assetFullPath():Array<string>
 	{

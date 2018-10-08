@@ -221,9 +221,9 @@ export class WebAudioChannel
 	{
 		// for AVM1 it is a bug to stop a audio thats currently decoding.
 		// when we call stopAllASounds() during audio-decode, this audio should still play
-		if(this._isDecoding){
-			return;
-		}
+		//if(this._isDecoding){
+		//	return;
+		//}
 		if (!this._isPlaying)
 			return;
 
@@ -289,8 +289,8 @@ export class WebAudioChannel
 	private _disposeSource():void
 	{
 		//clean up
-		this._source.stop(this._audioCtx.currentTime);
 		this._source.onended = null;
+		this._source.stop(this._audioCtx.currentTime);
 		this._source.disconnect();
 		// delete this._source.buffer;
 		// delete this._source;

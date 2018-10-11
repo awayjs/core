@@ -1,7 +1,5 @@
 import {Transform} from "../base/Transform";
 import {Matrix3D} from "../geom/Matrix3D";
-import {Plane3D} from "../geom/Plane3D";
-import {Rectangle} from "../geom/Rectangle";
 import {Vector3D} from "../geom/Vector3D";
 import {EventDispatcher} from "../events/EventDispatcher";
 import {ProjectionEvent} from "../events/ProjectionEvent";
@@ -9,39 +7,35 @@ import {TransformEvent} from "../events/TransformEvent";
 import {AbstractMethodError} from "../errors/AbstractMethodError";
 
 import {CoordinateSystem} from "./CoordinateSystem";
+import { Rectangle } from '../geom/Rectangle';
+import { Plane3D } from '../geom/Plane3D';
 
 export class ProjectionBase extends EventDispatcher
 {
 	protected _viewMatrix3D:Matrix3D = new Matrix3D();
 	protected _inverseViewMatrix3D:Matrix3D = new Matrix3D();
 	protected _frustumMatrix3D:Matrix3D = new Matrix3D();
-	protected _viewRect:Rectangle = new Rectangle();
-	protected _stageRect:Rectangle = new Rectangle();
 	protected _near:number = 20;
 	protected _far:number = 3000;
-	protected _frustumCorners:number[] = [];
+	protected _scale:number = 1;
+	protected _ratio:number = 1;
 	protected _transform:Transform;
 	protected _coordinateSystem:CoordinateSystem;
-	protected _originX:number = 0.5;
-	protected _originY:number = 0.5;
+	protected _originX:number = 0;
+	protected _originY:number = 0;
+	protected _frustumRect:Rectangle = new Rectangle();
+	private _viewFrustumCorners:number[] = [];
+	private _viewFrustumPlanes:Array<Plane3D>;
 
-	protected _propertiesDirty:boolean;
+	private _propertiesDirty:boolean;
 	private _viewMatrix3DDirty:boolean = true;
 	private _inverseViewMatrix3DDirty:boolean = true;
 	protected _frustumMatrix3DDirty:boolean = true;
-	private _frustumPlanes:Array<Plane3D>;
-	private _frustumPlanesDirty:boolean = true;
+	private _viewFrustumCornersDirty:boolean = true;
+	private _viewFrustumPlanesDirty:boolean = true;
 	private _onInvalidateConcatenatedMatrix3DDelegate:(event:TransformEvent) => void;
-	
-	public get viewRect():Rectangle
-	{
-		return this._viewRect;
-	}
 
-	public get stageRect():Rectangle
-	{
-		return this._stageRect;
-	}
+
 	constructor(coordinateSystem:CoordinateSystem = CoordinateSystem.LEFT_HANDED)
 	{
 		super();
@@ -91,15 +85,45 @@ export class ProjectionBase extends EventDispatcher
 	}
 
 	/**
-	 * 
-	 * @returns {number[]}
+	 *
 	 */
-	public get frustumCorners():number[]
+	public get scale():number
 	{
-		if (this._frustumMatrix3DDirty)
-			this._updateFrustumMatrix3D();
+		if (this._propertiesDirty)
+			this._updateProperties();
+		
+		return this._scale;
+	}
 
-		return this._frustumCorners;
+	public set scale(value:number)
+	{
+		if (this._scale == value)
+			return;
+
+		this._scale = value;
+
+		this._invalidateFrustumMatrix3D();
+	}
+	
+	/**
+	 *
+	 */
+	public get ratio():number
+	{
+		if (this._propertiesDirty)
+			this._updateProperties();
+		
+		return this._ratio;
+	}
+
+	public set ratio(value:number)
+	{
+		if (this._ratio == value)
+			return;
+
+		this._ratio = value;
+
+		this._invalidateFrustumMatrix3D();
 	}
 
 	/**
@@ -122,6 +146,144 @@ export class ProjectionBase extends EventDispatcher
 		this._invalidateProperties();
 	}
 
+	
+	/**
+	 * 
+	 * @returns {number[]}
+	 */
+	public get viewFrustumCorners():number[]
+	{
+		if (this._viewFrustumCornersDirty) {
+            this._viewFrustumCornersDirty = false;
+
+			if (this._frustumMatrix3DDirty)
+				this._updateFrustumMatrix3D();
+			
+            var left:number = this._frustumRect.left;
+            var right:number = this._frustumRect.right;
+            var top:number = this._frustumRect.top;
+			var bottom:number = this._frustumRect.bottom;
+			
+			if (this._propertiesDirty)
+				this._updateProperties();
+
+            var near:number = this._near;
+            var far:number = this._far;
+
+            this._viewFrustumCorners[0] = this._viewFrustumCorners[9] = near*left;
+            this._viewFrustumCorners[3] = this._viewFrustumCorners[6] = near*right;
+            this._viewFrustumCorners[1] = this._viewFrustumCorners[4] = near*top;
+            this._viewFrustumCorners[7] = this._viewFrustumCorners[10] = near*bottom;
+    
+            this._viewFrustumCorners[12] = this._viewFrustumCorners[21] = far*left;
+            this._viewFrustumCorners[15] = this._viewFrustumCorners[18] = far*right;
+            this._viewFrustumCorners[13] = this._viewFrustumCorners[16] = far*top;
+            this._viewFrustumCorners[19] = this._viewFrustumCorners[22] = far*bottom;
+    
+            this._viewFrustumCorners[2] = this._viewFrustumCorners[5] = this._viewFrustumCorners[8] = this._viewFrustumCorners[11] = near;
+            this._viewFrustumCorners[14] = this._viewFrustumCorners[17] = this._viewFrustumCorners[20] = this._viewFrustumCorners[23] = far;
+
+            this._transform.concatenatedMatrix3D.transformVectors(this._viewFrustumCorners, this._viewFrustumCorners);
+        }
+
+		return this._viewFrustumCorners;
+	}
+
+	/**
+	 * 
+	 */
+    public get viewFrustumPlanes():Array<Plane3D>
+    {
+        if (this._viewFrustumPlanesDirty) {
+            this._viewFrustumPlanesDirty = false;
+
+            if (!this._viewFrustumPlanes) {
+                this._viewFrustumPlanes = [];
+
+                for (var i:number = 0; i < 6; ++i)
+                    this._viewFrustumPlanes[i] = new Plane3D();
+            }
+
+            var raw:Float32Array = this.viewMatrix3D._rawData;
+            var invLen:number;
+
+            var c11:number = raw[0], c12:number = raw[4], c13:number = raw[8], c14:number = raw[12];
+            var c21:number = raw[1], c22:number = raw[5], c23:number = raw[9], c24:number = raw[13];
+            var c31:number = raw[2], c32:number = raw[6], c33:number = raw[10], c34:number = raw[14];
+            var c41:number = raw[3], c42:number = raw[7], c43:number = raw[11], c44:number = raw[15];
+
+            var a:number, b:number, c:number, p:Plane3D;
+
+            // left plane
+            p = this._viewFrustumPlanes[0];
+            a = c41 + c11;
+            b = c42 + c12;
+            c = c43 + c13;
+            invLen = 1/Math.sqrt(a*a + b*b + c*c);
+            p.a = a*invLen;
+            p.b = b*invLen;
+            p.c = c*invLen;
+            p.d = -(c44 + c14)*invLen;
+
+            // right plane
+            p = this._viewFrustumPlanes[1];
+            a = c41 - c11;
+            b = c42 - c12;
+            c = c43 - c13;
+            invLen = 1/Math.sqrt(a*a + b*b + c*c);
+            p.a = a*invLen;
+            p.b = b*invLen;
+            p.c = c*invLen;
+            p.d = (c14 - c44)*invLen;
+
+            // bottom
+            p = this._viewFrustumPlanes[2];
+            a = c41 + c21;
+            b = c42 + c22;
+            c = c43 + c23;
+            invLen = 1/Math.sqrt(a*a + b*b + c*c);
+            p.a = a*invLen;
+            p.b = b*invLen;
+            p.c = c*invLen;
+            p.d = -(c44 + c24)*invLen;
+
+            // top
+            p = this._viewFrustumPlanes[3];
+            a = c41 - c21;
+            b = c42 - c22;
+            c = c43 - c23;
+            invLen = 1/Math.sqrt(a*a + b*b + c*c);
+            p.a = a*invLen;
+            p.b = b*invLen;
+            p.c = c*invLen;
+            p.d = (c24 - c44)*invLen;
+
+            // near
+            p = this._viewFrustumPlanes[4];
+            a = c31;
+            b = c32;
+            c = c33;
+            invLen = 1/Math.sqrt(a*a + b*b + c*c);
+            p.a = a*invLen;
+            p.b = b*invLen;
+            p.c = c*invLen;
+            p.d = -c34*invLen;
+
+            // far
+            p = this._viewFrustumPlanes[5];
+            a = c41 - c31;
+            b = c42 - c32;
+            c = c43 - c33;
+            invLen = 1/Math.sqrt(a*a + b*b + c*c);
+            p.a = a*invLen;
+            p.b = b*invLen;
+            p.c = c*invLen;
+            p.d = (c34 - c44)*invLen;
+        }
+
+        return this._viewFrustumPlanes;
+    }
+	
 	/**
 	 * 
 	 * @returns {number}
@@ -210,20 +372,34 @@ export class ProjectionBase extends EventDispatcher
 		this._invalidateFrustumMatrix3D();
 	}
 
-	/*
-	
-	 */
-	public project(vector3D:Vector3D):Vector3D
+	public get frustumRect():Rectangle
 	{
-		var v:Vector3D = this.viewMatrix3D.transformVector(vector3D);
-		v.x = v.x/v.w;
-		v.y = -v.y/v.w;
+		if (this._frustumMatrix3DDirty)
+			this._updateFrustumMatrix3D();
 
-		//z is remapped to w
-		v.z = v.w;
-		v.w = 1;
+		return this._frustumRect;
+	}
 
-		return v;
+	/**
+	 * 
+	 * @param position 
+	 * @param target 
+	 */
+	public project(position:Vector3D, target:Vector3D = null):Vector3D
+	{
+		throw new AbstractMethodError();
+	}
+
+	/**
+	 * 
+	 * @param nX 
+	 * @param nY 
+	 * @param sZ 
+	 * @param target 
+	 */
+	public unproject(nX:number, nY:number, sZ:number, target:Vector3D = null):Vector3D
+	{
+		throw new AbstractMethodError();
 	}
 
 	public get viewMatrix3D():Matrix3D
@@ -241,7 +417,7 @@ export class ProjectionBase extends EventDispatcher
 
 		return this._viewMatrix3D;
 	}
-	
+
 	public get inverseViewMatrix3D():Matrix3D
 	{
 		if (this._inverseViewMatrix3DDirty) {
@@ -251,11 +427,6 @@ export class ProjectionBase extends EventDispatcher
 		}
 		
 		return this._inverseViewMatrix3D;
-	}
-
-	public unproject(nX:number, nY:number, sZ:number, target:Vector3D = null):Vector3D
-	{
-		throw new AbstractMethodError();
 	}
 
 	public clone():ProjectionBase
@@ -272,9 +443,10 @@ export class ProjectionBase extends EventDispatcher
 	{
 		this._viewMatrix3DDirty = true;
 		this._inverseViewMatrix3DDirty = true;
-		this._frustumPlanesDirty = true;
+		this._viewFrustumCornersDirty = true;
+		this._viewFrustumPlanesDirty = true;
 
-		this.dispatchEvent(new ProjectionEvent(ProjectionEvent.MATRIX_CHANGED, this));
+		this.dispatchEvent(new ProjectionEvent(ProjectionEvent.INVALIDATE_VIEW_MATRIX3D, this));
 	}
 
 	protected _invalidateFrustumMatrix3D():void
@@ -284,27 +456,9 @@ export class ProjectionBase extends EventDispatcher
 
 		this._frustumMatrix3DDirty = true;
 
+		this.dispatchEvent(new ProjectionEvent(ProjectionEvent.INVALIDATE_FRUSTUM_MATRIX3D, this));
+
 		this._invalidateViewMatrix3D();
-	}
-
-	public setViewRect(x:number, y:number, width:number, height:number):void
-	{
-		this._viewRect.x = x;
-		this._viewRect.y = y;
-		this._viewRect.width = width;
-		this._viewRect.height = height;
-		
-		this._invalidateFrustumMatrix3D();
-	}
-
-	public setStageRect(x:number, y:number, width:number, height:number):void
-	{
-		this._stageRect.x = x;
-		this._stageRect.y = y;
-		this._stageRect.width = width;
-		this._stageRect.height = height;
-		
-		this._invalidateFrustumMatrix3D();
 	}
 
 	protected _updateFrustumMatrix3D():void
@@ -317,123 +471,8 @@ export class ProjectionBase extends EventDispatcher
 		this._propertiesDirty = false;
 	}
 
-
-	public get frustumPlanes():Array<Plane3D>
-	{
-		if (this._frustumPlanesDirty)
-			this._updateFrustumPlanes();
-
-		return this._frustumPlanes;
-	}
-
-	private _updateFrustumPlanes():void
-	{
-		this._frustumPlanesDirty = false;
-
-		if (!this._frustumPlanes) {
-			this._frustumPlanes = [];
-
-			for (var i:number = 0; i < 6; ++i)
-				this._frustumPlanes[i] = new Plane3D();
-		}
-
-		var a:number, b:number, c:number;
-		//var d : Number;
-		var c11:number, c12:number, c13:number, c14:number;
-		var c21:number, c22:number, c23:number, c24:number;
-		var c31:number, c32:number, c33:number, c34:number;
-		var c41:number, c42:number, c43:number, c44:number;
-		var p:Plane3D;
-		var raw:Float32Array = this.viewMatrix3D._rawData;
-		var invLen:number;
-
-		c11 = raw[0];
-		c12 = raw[4];
-		c13 = raw[8];
-		c14 = raw[12];
-		c21 = raw[1];
-		c22 = raw[5];
-		c23 = raw[9];
-		c24 = raw[13];
-		c31 = raw[2];
-		c32 = raw[6];
-		c33 = raw[10];
-		c34 = raw[14];
-		c41 = raw[3];
-		c42 = raw[7];
-		c43 = raw[11];
-		c44 = raw[15];
-
-		// left plane
-		p = this._frustumPlanes[0];
-		a = c41 + c11;
-		b = c42 + c12;
-		c = c43 + c13;
-		invLen = 1/Math.sqrt(a*a + b*b + c*c);
-		p.a = a*invLen;
-		p.b = b*invLen;
-		p.c = c*invLen;
-		p.d = -(c44 + c14)*invLen;
-
-		// right plane
-		p = this._frustumPlanes[1];
-		a = c41 - c11;
-		b = c42 - c12;
-		c = c43 - c13;
-		invLen = 1/Math.sqrt(a*a + b*b + c*c);
-		p.a = a*invLen;
-		p.b = b*invLen;
-		p.c = c*invLen;
-		p.d = (c14 - c44)*invLen;
-
-		// bottom
-		p = this._frustumPlanes[2];
-		a = c41 + c21;
-		b = c42 + c22;
-		c = c43 + c23;
-		invLen = 1/Math.sqrt(a*a + b*b + c*c);
-		p.a = a*invLen;
-		p.b = b*invLen;
-		p.c = c*invLen;
-		p.d = -(c44 + c24)*invLen;
-
-		// top
-		p = this._frustumPlanes[3];
-		a = c41 - c21;
-		b = c42 - c22;
-		c = c43 - c23;
-		invLen = 1/Math.sqrt(a*a + b*b + c*c);
-		p.a = a*invLen;
-		p.b = b*invLen;
-		p.c = c*invLen;
-		p.d = (c24 - c44)*invLen;
-
-		// near
-		p = this._frustumPlanes[4];
-		a = c31;
-		b = c32;
-		c = c33;
-		invLen = 1/Math.sqrt(a*a + b*b + c*c);
-		p.a = a*invLen;
-		p.b = b*invLen;
-		p.c = c*invLen;
-		p.d = -c34*invLen;
-
-		// far
-		p = this._frustumPlanes[5];
-		a = c41 - c31;
-		b = c42 - c32;
-		c = c43 - c33;
-		invLen = 1/Math.sqrt(a*a + b*b + c*c);
-		p.a = a*invLen;
-		p.b = b*invLen;
-		p.c = c*invLen;
-		p.d = (c34 - c44)*invLen;
-	}
-	
 	private _onInvalidateConcatenatedMatrix3D(event:TransformEvent):void
 	{
 		this._invalidateViewMatrix3D();
 	}
-	
 }

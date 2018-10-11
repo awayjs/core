@@ -80,7 +80,6 @@ export {WaveAudioParser}				from "./lib/parsers/WaveAudioParser";
 
 export {CoordinateSystem}				from "./lib/projections/CoordinateSystem";
 export {ObliqueNearPlaneProjection}		from "./lib/projections/ObliqueNearPlaneProjection";
-export {OrthographicOffCenterProjection}	from "./lib/projections/OrthographicOffCenterProjection";
 export {OrthographicProjection}			from "./lib/projections/OrthographicProjection";
 export {PerspectiveProjection}			from "./lib/projections/PerspectiveProjection";
 export {ProjectionBase}					from "./lib/projections/ProjectionBase";

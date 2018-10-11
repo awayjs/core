@@ -21,11 +21,6 @@ export class ObliqueNearPlaneProjection extends ProjectionBase
 		this._onProjectionMatrixChangedDelegate = (event:ProjectionEvent) => this.onProjectionMatrixChanged(event);
 	}
 
-	//@override
-	public get frustumCorners():number[]
-	{
-		return this._baseProjection.frustumCorners;
-	}
 
 	//@override
 	public get near():number
@@ -66,12 +61,12 @@ export class ObliqueNearPlaneProjection extends ProjectionBase
 	public set baseProjection(value:ProjectionBase)
 	{
 		if (this._baseProjection)
-			this._baseProjection.removeEventListener(ProjectionEvent.MATRIX_CHANGED, this._onProjectionMatrixChangedDelegate);
+			this._baseProjection.removeEventListener(ProjectionEvent.INVALIDATE_FRUSTUM_MATRIX3D, this._onProjectionMatrixChangedDelegate);
 		
 		this._baseProjection = value;
 
 		if (this._baseProjection)
-			this._baseProjection.addEventListener(ProjectionEvent.MATRIX_CHANGED, this._onProjectionMatrixChangedDelegate);
+			this._baseProjection.addEventListener(ProjectionEvent.INVALIDATE_FRUSTUM_MATRIX3D, this._onProjectionMatrixChangedDelegate);
 		
 		this._invalidateFrustumMatrix3D();
 	}

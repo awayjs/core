@@ -8,12 +8,12 @@ import {EventBase}					from "../events/EventBase";
 */
 export class EventDispatcher
 {
-	private listenerObjects:Array<ListenerObject> = new Array<ListenerObject>();
-	private target:any;
+	private _listenerObjects:Array<ListenerObject> = new Array<ListenerObject>();
+	private _t:any;
 
 	constructor(target:any = null)
 	{
-		this.target = target || this;
+		this._t = target || this;
 	}
 
 	/**
@@ -24,10 +24,10 @@ export class EventDispatcher
 	 */
 	public addEventListener(type:string, listener:(event:EventBase) => void):void
 	{
-		var l:ListenerObject = this.listenerObjects[type];
+		var l:ListenerObject = this._listenerObjects[type];
 
 		if (l === undefined)
-			l = this.listenerObjects[type] = new ListenerObject();
+			l = this._listenerObjects[type] = new ListenerObject();
 
 		l.addEventListener(listener);
 	}
@@ -40,13 +40,13 @@ export class EventDispatcher
 	 */
 	public removeEventListener(type:string, listener:(event:EventBase) => void):void
 	{
-		var l:ListenerObject = this.listenerObjects[type];
+		var l:ListenerObject = this._listenerObjects[type];
 
 		if (l) {
 			l.removeEventListener(listener);
 
 			if (l.numListeners == 0)
-				delete this.listenerObjects[type];
+				delete this._listenerObjects[type];
 		}
 	}
 
@@ -57,10 +57,10 @@ export class EventDispatcher
 	 */
 	public dispatchEvent(event:EventBase):void
 	{
-		var l:ListenerObject = this.listenerObjects[event.type];
+		var l:ListenerObject = this._listenerObjects[event.type];
 
 		if (l) {
-			event.target = this.target;
+			event.target = this._t;
 			l.dispatchEvent(event);
 		}
 	}
@@ -73,21 +73,19 @@ export class EventDispatcher
 	 */
 	public hasEventListener(type:string, listener?:(event:EventBase) => void):boolean
 	{
-		if (this.listenerObjects[type] === undefined)
+		if (this._listenerObjects[type] === undefined)
 			return false;
 
 		if (listener != null)
-			return this.listenerObjects[type].getEventListenerIndex(listener) !== -1;
+			return this._listenerObjects[type].getEventListenerIndex(listener) !== -1;
 
-		return this.listenerObjects[type].numListeners > 0;
+		return this._listenerObjects[type].numListeners > 0;
 	}
 }
 
 export class ListenerObject
 {
-	public index:number = 0;
-
-	public listeners:Array<(event:EventBase) => void> = new Array<(event:EventBase) => void>();
+	private _listeners:Array<(event:EventBase) => void> = new Array<(event:EventBase) => void>();
 
 	public numListeners:number = 0;
 
@@ -97,7 +95,8 @@ export class ListenerObject
 		if (this.getEventListenerIndex(listener) !== -1)
 			return;
 
-		this.listeners.push(listener);
+		this._listeners.push(listener);
+		
 		this.numListeners++;
 	}
 
@@ -109,9 +108,7 @@ export class ListenerObject
 		if (index === -1)
 			return;
 
-		this.listeners.splice(index, 1);
-		if (index <= this.index)
-			this.index--;
+		this._listeners.splice(index, 1);
 
 		this.numListeners--;
 	}
@@ -119,8 +116,8 @@ export class ListenerObject
 	public dispatchEvent(event:EventBase):void
 	{
 		var len:number = this.numListeners;
-		for (this.index = 0; this.index < len && this.index < this.numListeners; this.index++)
-			this.listeners[this.index](event);
+		for (var index:number = 0; index < len && index < this.numListeners; index++)
+			this._listeners[index](event);
 	}
 
 	/**
@@ -132,7 +129,7 @@ export class ListenerObject
 	public getEventListenerIndex(listener:(event:EventBase) => void):number
 	{
 		for (var index:number = 0; index < this.numListeners; index++)
-			if (listener == this.listeners[index])
+			if (listener == this._listeners[index])
 				return index;
 
 		return -1;

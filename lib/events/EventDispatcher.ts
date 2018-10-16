@@ -85,6 +85,8 @@ export class EventDispatcher
 
 export class ListenerObject
 {
+	private _index:number = 0;
+
 	private _listeners:Array<(event:EventBase) => void> = new Array<(event:EventBase) => void>();
 
 	public numListeners:number = 0;
@@ -110,14 +112,18 @@ export class ListenerObject
 
 		this._listeners.splice(index, 1);
 
+		//deals with removing a listener mid-way through dispatching listeners
+		if (index <= this._index)
+			this._index--;
+
 		this.numListeners--;
 	}
 
 	public dispatchEvent(event:EventBase):void
 	{
 		var len:number = this.numListeners;
-		for (var index:number = 0; index < len && index < this.numListeners; index++)
-			this._listeners[index](event);
+		for (this._index = 0; this._index < len && this._index < this.numListeners; this._index++)
+			this._listeners[this._index](event);
 	}
 
 	/**

@@ -5,6 +5,7 @@ import {Orientation3D}				from "../geom/Orientation3D";
 import {Quaternion}					from "../geom/Quaternion";
 import {Vector3D}						from "../geom/Vector3D";
 import {ArgumentError}				from "../errors/ArgumentError";
+import { Sphere } from './Sphere';
 
 export class Matrix3D
 {
@@ -1181,6 +1182,28 @@ export class Matrix3D
 		return target;
 	}
 
+	public transformSphere(sphere:Sphere, target:Sphere = null):Sphere
+	{
+		//TODO: use a better solution than this
+		if (sphere == null)
+			throw new ArgumentError("ArgumentError, sphere cannot be null");
+
+		var box:Box = new Box(sphere.x - sphere.radius, sphere.y - sphere.radius, sphere.z - sphere.radius, sphere.radius*2, sphere.radius*2, sphere.radius*2);
+
+		this.transformBox(box, box);
+
+		if (!target)
+			target = new Sphere();
+
+		target.x = box.x + box.width/2;
+		target.y = box.y + box.height/2;
+		target.z = box.z + box.depth/2;
+
+		target.radius = Math.max(box.width, box.height, box.depth);
+
+		return target;
+	}
+
 
 	public transformVector(vector:Vector3D, target:Vector3D = null):Vector3D
 	{
@@ -1195,6 +1218,7 @@ export class Matrix3D
 		if (!target)
 			target = new Vector3D();
 
+		
 		target.x = x*this._rawData[0] + y*this._rawData[4] + z*this._rawData[8] + w*this._rawData[12];
 		target.y = x*this._rawData[1] + y*this._rawData[5] + z*this._rawData[9] + w*this._rawData[13];
 		target.z = x*this._rawData[2] + y*this._rawData[6] + z*this._rawData[10] + w*this._rawData[14];

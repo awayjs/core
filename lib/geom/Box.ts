@@ -735,10 +735,6 @@ export class Box
 	 * Adds two boxes together to create a new Box object, by filling
 	 * in the horizontal, vertical and longitudinal space between the two boxes.
 	 *
-	 * <p><b>Note:</b> The <code>union()</code> method ignores boxes with
-	 * <code>0</code> as the height, width or depth value, such as: <code>var
-	 * box2:Box = new Box(300,300,300,50,50,0);</code></p>
-	 *
 	 * @param toUnion A Box object to add to this Box object.
 	 * @return A new Box object that is the union of the two boxes.
 	 */

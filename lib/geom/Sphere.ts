@@ -103,12 +103,17 @@ export class Sphere
 	 */
 	public union(toUnion:Sphere, target:Sphere = null):Sphere
 	{
+		if (target == null)
+			target = new Sphere();
+
+		if (toUnion == null) {
+			target.copyFrom(this);
+			return target;
+		}
+		
 		var xDiff:number = toUnion.x - this.x;
 		var yDiff:number = toUnion.y - this.y;
 		var zDiff:number = toUnion.z - this.z;
-
-		if (target == null)
-			target = new Sphere();
 
 		target.radius = (Math.sqrt(xDiff*xDiff + yDiff*yDiff + zDiff*zDiff) + toUnion.radius + this.radius)/2;
 		target.x = this.x + xDiff/2;

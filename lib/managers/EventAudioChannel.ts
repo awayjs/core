@@ -162,6 +162,27 @@ export class EventAudioChannel
 			thisAudio.currentTime = offset;
 			thisAudio.play();
 		}, false);
+		this._audio.addEventListener('error', function(err) {
+            console.log("error in audio", err)
+		}, false);
+		this._audio.addEventListener('error', function(err) {
+            console.log("error in audio", err)
+		}, false);
+		this._audio.addEventListener('canplay', function(err) {
+            console.log("canplay in audio", err)
+		}, false);
+		this._audio.addEventListener('canplaythrough', function(err) {
+            console.log("canplaythrough in audio", err)
+		}, false);
+		this._audio.addEventListener('abort', function(err) {
+            console.log("abort in audio", err)
+		}, false);
+		this._audio.addEventListener('loadstart', function(err) {
+            console.log("loadstart in audio", err)
+		}, false);
+		this._audio.addEventListener('suspend', function(err) {
+            console.log("suspend in audio", err)
+		}, false);
 	}
 
 	public stop():void
@@ -174,7 +195,12 @@ export class EventAudioChannel
 	private _onTimeUpdate(event):void
 	{
 		//TODO: more accurate end detection
-		if (!this._isLooping && this._duration < this._audio.currentTime - this._startTime + 0.1)
+		if (!this._isLooping && this._audio.duration < this._audio.currentTime - this._startTime + 0.1){
+
+            if(this.onSoundComplete){
+                this.onSoundComplete();
+            }
 			this.stop();
+        }
 	}
 }

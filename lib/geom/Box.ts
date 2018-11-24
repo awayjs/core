@@ -498,7 +498,7 @@ export class Box
 		return (this.x + this.width >= toIntersect.x && this.x <= toIntersect.x + toIntersect.width && this.y + this.height >= toIntersect.y && this.y <= toIntersect.y + toIntersect.height && this.z + this.depth >= toIntersect.z && this.z <= toIntersect.z + toIntersect.depth);
 	}
 
-	public rayIntersection(position:Vector3D, direction:Vector3D, targetNormal:Vector3D):number
+	public rayIntersection(position:Vector3D, direction:Vector3D, targetNormal:Vector3D = null):number
 	{
 		if (this.containsPoint(position))
 			return 0;
@@ -532,9 +532,11 @@ export class Box
 				iy = py + rayEntryDistance*vy;
 				iz = pz + rayEntryDistance*vz;
 				if (iy > -halfExtentsY && iy < halfExtentsY && iz > -halfExtentsZ && iz < halfExtentsZ) {
-					targetNormal.x = 1;
-					targetNormal.y = 0;
-					targetNormal.z = 0;
+					if (targetNormal) {
+						targetNormal.x = 1;
+						targetNormal.y = 0;
+						targetNormal.z = 0;
+					}
 
 					intersects = true;
 				}
@@ -546,9 +548,12 @@ export class Box
 				iy = py + rayEntryDistance*vy;
 				iz = pz + rayEntryDistance*vz;
 				if (iy > -halfExtentsY && iy < halfExtentsY && iz > -halfExtentsZ && iz < halfExtentsZ) {
-					targetNormal.x = -1;
-					targetNormal.y = 0;
-					targetNormal.z = 0;
+					if (targetNormal) {
+						targetNormal.x = -1;
+						targetNormal.y = 0;
+						targetNormal.z = 0;
+					}
+
 					intersects = true;
 				}
 			}
@@ -559,9 +564,12 @@ export class Box
 				ix = px + rayEntryDistance*vx;
 				iz = pz + rayEntryDistance*vz;
 				if (ix > -halfExtentsX && ix < halfExtentsX && iz > -halfExtentsZ && iz < halfExtentsZ) {
-					targetNormal.x = 0;
-					targetNormal.y = 1;
-					targetNormal.z = 0;
+					if (targetNormal) {
+						targetNormal.x = 0;
+						targetNormal.y = 1;
+						targetNormal.z = 0;
+					}
+
 					intersects = true;
 				}
 			}
@@ -572,9 +580,12 @@ export class Box
 				ix = px + rayEntryDistance*vx;
 				iz = pz + rayEntryDistance*vz;
 				if (ix > -halfExtentsX && ix < halfExtentsX && iz > -halfExtentsZ && iz < halfExtentsZ) {
-					targetNormal.x = 0;
-					targetNormal.y = -1;
-					targetNormal.z = 0;
+					if (targetNormal) {
+						targetNormal.x = 0;
+						targetNormal.y = -1;
+						targetNormal.z = 0;
+					}
+
 					intersects = true;
 				}
 			}
@@ -585,9 +596,12 @@ export class Box
 				ix = px + rayEntryDistance*vx;
 				iy = py + rayEntryDistance*vy;
 				if (iy > -halfExtentsY && iy < halfExtentsY && ix > -halfExtentsX && ix < halfExtentsX) {
-					targetNormal.x = 0;
-					targetNormal.y = 0;
-					targetNormal.z = 1;
+					if (targetNormal) {
+						targetNormal.x = 0;
+						targetNormal.y = 0;
+						targetNormal.z = 1;
+					}
+
 					intersects = true;
 				}
 			}
@@ -598,9 +612,12 @@ export class Box
 				ix = px + rayEntryDistance*vx;
 				iy = py + rayEntryDistance*vy;
 				if (iy > -halfExtentsY && iy < halfExtentsY && ix > -halfExtentsX && ix < halfExtentsX) {
-					targetNormal.x = 0;
-					targetNormal.y = 0;
-					targetNormal.z = -1;
+					if (targetNormal) {
+						targetNormal.x = 0;
+						targetNormal.y = 0;
+						targetNormal.z = -1;
+					}
+
 					intersects = true;
 				}
 			}

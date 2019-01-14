@@ -100,3 +100,8 @@ export {IArrayBufferViewClass}			from "./lib/utils/IArrayBufferViewClass";
 export {RequestAnimationFrame}			from "./lib/utils/RequestAnimationFrame";
 export {Timer}							from "./lib/utils/Timer";
 export {XmlUtils}						from "./lib/utils/XmlUtils";
+
+import {Loader} from "./lib/library/Loader";
+import {WaveAudioParser} from "./lib/parsers/WaveAudioParser";
+
+Loader.enableParser(WaveAudioParser);

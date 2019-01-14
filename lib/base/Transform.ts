@@ -6,6 +6,7 @@ import {Vector3D} from "../geom/Vector3D";
 import {TransformEvent} from "../events/TransformEvent";
 
 import {ColorTransform} from "./ColorTransform";
+import { Point } from '../geom/Point';
 
 /**
  * The Transform class provides access to color adjustment properties and two-
@@ -63,6 +64,9 @@ import {ColorTransform} from "./ColorTransform";
  */
 export class Transform extends EventDispatcher
 {
+	//temp vector used in global to local
+	private _tempVector3D:Vector3D = new Vector3D();
+
 	private _rawData:Float32Array;
 
 	private _backVector:Vector3D;
@@ -484,6 +488,102 @@ export class Transform extends EventDispatcher
 	public dispose():void
 	{
 		
+	}
+
+	
+	/**
+	 * Converts the <code>point</code> object from the Scene(global) coordinates
+	 * to the display object's(local) coordinates.
+	 *
+	 * <p>To use this method, first create an instance of the Point class. The
+	 * <i>x</i> and <i>y</i> values that you assign represent global coordinates
+	 * because they relate to the origin(0,0) of the main display area. Then
+	 * pass the Point instance as the parameter to the
+	 * <code>globalToLocal()</code> method. The method returns a new Point object
+	 * with <i>x</i> and <i>y</i> values that relate to the origin of the display
+	 * object instead of the origin of the Scene.</p>
+	 *
+	 * @param point An object created with the Point class. The Point object
+	 *              specifies the <i>x</i> and <i>y</i> coordinates as
+	 *              properties.
+	 * @return A Point object with coordinates relative to the display object.
+	 */
+	public globalToLocal(point:Point, target:Point = null):Point
+	{
+		this._tempVector3D.setTo(point.x, point.y, 0);
+		//console.log("this._tempVector3D", this._tempVector3D);
+		//console.log("this._transform.inverseConcatenatedMatrix3D", this._transform.inverseConcatenatedMatrix3D);
+		var pos:Vector3D = this.inverseConcatenatedMatrix3D.transformVector(this._tempVector3D, this._tempVector3D);
+
+		//console.log("pos", pos);
+		if (!target)
+			target = new Point();
+
+		target.x = pos.x;
+		target.y = pos.y;
+
+		return target;
+	}
+
+	/**
+	 * Converts a two-dimensional point from the Scene(global) coordinates to a
+	 * three-dimensional display object's(local) coordinates.
+	 *
+	 * <p>To use this method, first create an instance of the Vector3D class. The x,
+	 * y and z values that you assign to the Vector3D object represent global
+	 * coordinates because they are relative to the origin(0,0,0) of the scene. Then
+	 * pass the Vector3D object to the <code>globalToLocal3D()</code> method as the
+	 * <code>position</code> parameter.
+	 * The method returns three-dimensional coordinates as a Vector3D object
+	 * containing <code>x</code>, <code>y</code>, and <code>z</code> values that
+	 * are relative to the origin of the three-dimensional display object.</p>
+	 *
+	 * @param point A Vector3D object representing global x, y and z coordinates in
+	 *              the scene.
+	 * @return A Vector3D object with coordinates relative to the three-dimensional
+	 *         display object.
+	 */
+	public globalToLocal3D(position:Vector3D):Vector3D
+	{
+		return this.inverseConcatenatedMatrix3D.transformVector(position);
+	}
+
+	
+	/**
+	 * Converts the <code>point</code> object from the display object's(local)
+	 * coordinates to the Scene(global) coordinates.
+	 *
+	 * <p>This method allows you to convert any given <i>x</i> and <i>y</i>
+	 * coordinates from values that are relative to the origin(0,0) of a
+	 * specific display object(local coordinates) to values that are relative to
+	 * the origin of the Scene(global coordinates).</p>
+	 *
+	 * <p>To use this method, first create an instance of the Point class. The
+	 * <i>x</i> and <i>y</i> values that you assign represent local coordinates
+	 * because they relate to the origin of the display object.</p>
+	 *
+	 * <p>You then pass the Point instance that you created as the parameter to
+	 * the <code>localToGlobal()</code> method. The method returns a new Point
+	 * object with <i>x</i> and <i>y</i> values that relate to the origin of the
+	 * Scene instead of the origin of the display object.</p>
+	 *
+	 * @param point The name or identifier of a point created with the Point
+	 *              class, specifying the <i>x</i> and <i>y</i> coordinates as
+	 *              properties.
+	 * @return A Point object with coordinates relative to the Scene.
+	 */
+	public localToGlobal(point:Point, target:Point = null):Point
+	{
+		this._tempVector3D.setTo(point.x, point.y, 0);
+		var pos:Vector3D = this.concatenatedMatrix3D.transformVector(this._tempVector3D, this._tempVector3D);
+
+		if (!target)
+			target = new Point();
+
+		target.x = pos.x;
+		target.y = pos.y;
+
+		return target;
 	}
 
     /**

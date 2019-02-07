@@ -12,11 +12,11 @@ export class AbstractionBase extends EventDispatcher
 	private _onClearDelegate:(event:AssetEvent) => void;
 	private _onInvalidateDelegate:(event:AssetEvent) => void;
 
-	public _pool:IAbstractionPool;
+	protected _pool:IAbstractionPool;
 
-	public _asset:IAsset;
+	protected _asset:IAsset;
 
-	public _invalid:boolean = true;
+	protected _invalid:boolean = true;
 
 	constructor(asset:IAsset, pool:IAbstractionPool)
 	{

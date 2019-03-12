@@ -1,5 +1,5 @@
 
-console.log("AwayJS - Core - 0.7.69");
+console.log("AwayJS - Core - 0.8.0");
 
 export {WaveAudio}						from "./lib/audio/WaveAudio";
 

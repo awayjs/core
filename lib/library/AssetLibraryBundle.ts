@@ -419,8 +419,8 @@ export class AssetLibraryBundle extends EventDispatcher
 			this.rehashAssetDict();
 
 		if (this._assetDictionary.hasOwnProperty(asset.adaptee.assetNamespace)) {
-			if (this._assetDictionary[asset.adaptee.assetNamespace].hasOwnProperty(asset.adaptee.name))
-				delete this._assetDictionary[asset.adaptee.assetNamespace][asset.adaptee.name];
+			if (this._assetDictionary[asset.adaptee.assetNamespace].hasOwnProperty(asset.adaptee.name.toString().toLowerCase()))
+				delete this._assetDictionary[asset.adaptee.assetNamespace][asset.adaptee.name.toString().toLowerCase()];
 
 			if (autoRemoveEmptyNamespace) {
 
@@ -460,7 +460,7 @@ export class AssetLibraryBundle extends EventDispatcher
 			if (!this._assetDictionary.hasOwnProperty(asset.adaptee.assetNamespace))
 				this._assetDictionary[asset.adaptee.assetNamespace] = {};
 
-			this._assetDictionary[asset.adaptee.assetNamespace][asset.adaptee.name] = asset;
+			this._assetDictionary[asset.adaptee.assetNamespace][asset.adaptee.name.toString().toLowerCase()] = asset;
 
 		}
 
@@ -544,7 +544,7 @@ export class AssetLibraryBundle extends EventDispatcher
 				return;
 
 			dict[event.prevName] = null;
-			dict[event.asset.name] = event.asset;
+			dict[event.asset.name.toString().toLowerCase()] = event.asset;
 		}
 	}
 

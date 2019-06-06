@@ -220,7 +220,7 @@ export class WaveAudioData
 	{
 		if (this._buffer) {
 			audioChannel.play(this._buffer, offset, loop, id);
-		} else if (this._loading!) {
+		} else if (!this._loading) {
 			this._loading = true;
 			var fileReader = new FileReader();
 			fileReader.onload = (event) => this._blobConverted(event, audioChannel, offset, loop, id);

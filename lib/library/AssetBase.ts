@@ -112,7 +112,7 @@ export class AssetBase extends EventDispatcher implements IAsset, IAssetAdapter
 	 */
 	public dispose():void
 	{
-		this.dispatchEvent(new AssetEvent(AssetEvent.DISPOSE, this));
+		throw new AbstractMethodError();
 	}
 
 	public clone():AssetBase

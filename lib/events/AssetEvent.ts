@@ -12,11 +12,6 @@ export class AssetEvent extends EventBase
 	public static INVALIDATE:string = "invalidate";
 
 	/**
-	 * Dispatched when an asset is diposed
-	 */
-	public static DISPOSE:string = "dispose";
-
-	/**
 	 * Dispatched when an asset is cleared
 	 */
 	public static CLEAR:string = "clear";

@@ -55,11 +55,6 @@ export interface IAsset extends IEventDispatcher
 
 	/**
 	 *
-	 */
-	dispose();
-
-	/**
-	 *
 	 * @param IAssetClass
 	 */
 	isAsset(IAssetClass):boolean;

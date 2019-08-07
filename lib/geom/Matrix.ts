@@ -81,12 +81,12 @@ export class Matrix
 	 */
 	public get b():number
 	{
-		return this.rawData[2];
+		return this.rawData[1];
 	}
 
 	public set b(value:number)
 	{
-		this.rawData[2] = value;
+		this.rawData[1] = value;
 	}
 
 	/**
@@ -95,12 +95,12 @@ export class Matrix
 	 */
 	public get c():number
 	{
-		return this.rawData[1];
+		return this.rawData[2];
 	}
 
 	public set c(value:number)
 	{
-		this.rawData[1] = value;
+		this.rawData[2] = value;
 	}
 
 	/**
@@ -173,20 +173,28 @@ export class Matrix
 		if (a instanceof Float32Array) {
 			this.copyRawDataFrom(a);
 		} else {
-			this.a = Number(a);
-			this.b = b;
-			this.c = c;
-			this.d = d;
-			this.tx = tx;
-			this.ty = ty;
+			var raw:Float32Array = this.rawData;
+
+			raw[0] = Number(a);
+			raw[1] = b;
+			raw[2] = c;
+			raw[3] = d;
+			raw[4] = tx;
+			raw[5] = ty;
 		}
 	}
 
 
 	public copyRawDataFrom(vector:Float32Array, index:number = 0):void
 	{
-		for (var c:number = 0; c < 6; c++)
-			this.rawData[c] = vector[c + index];
+		var raw:Float32Array = this.rawData;
+
+		raw[0] = vector[0];
+		raw[1] = vector[1];
+		raw[2] = vector[2];
+		raw[3] = vector[3];
+		raw[4] = vector[4];
+		raw[5] = vector[5];
 	}
 
 	/**
@@ -197,7 +205,9 @@ export class Matrix
 	 */
 	public clone():Matrix
 	{
-		return new Matrix(this.a, this.b, this.c, this.d, this.tx, this.ty);
+		var raw:Float32Array = this.rawData;
+
+		return new Matrix(raw[0], raw[1], raw[2], raw[3], raw[4], raw[5]);
 	}
 
 	/**
@@ -220,18 +230,30 @@ export class Matrix
 	 */
 	public concat(matrix:Matrix):void
 	{
-		var a1 = this.a*matrix.a + this.b*matrix.c;
-		this.b = this.a*matrix.b + this.b*matrix.d;
-		this.a = a1;
-
-		var c1 = this.c*matrix.a + this.d*matrix.c;
-		this.d = this.c*matrix.b + this.d*matrix.d;
-
-		this.c = c1;
-
-		var tx1 = this.tx*matrix.a + this.ty*matrix.c + matrix.tx;
-		this.ty = this.tx*matrix.b + this.ty*matrix.d + matrix.ty;
-		this.tx = tx1;
+		var m:Float32Array = this.rawData;
+		var n:Float32Array = matrix.rawData;
+		var a =  m[0] * n[0];
+		var b =  0.0;
+		var c =  0.0;
+		var d =  m[3] * n[3];
+		var tx = m[4] * n[0] + n[4];
+		var ty = m[5] * n[3] + n[5];
+	
+		if (m[1] !== 0.0 || m[2] !== 0.0 || n[1] !== 0.0 || n[2] !== 0.0) {
+		  a  += m[1] * n[2];
+		  d  += m[2] * n[1];
+		  b  += m[0] * n[1] + m[1] * n[3];
+		  c  += m[2] * n[0] + m[3] * n[2];
+		  tx += m[5] * n[2];
+		  ty += m[4] * n[1];
+		}
+	
+		m[0] = a;
+		m[1] = b;
+		m[2] = c;
+		m[3] = d;
+		m[4] = tx;
+		m[5] = ty;
 	}
 
 	/**
@@ -243,17 +265,20 @@ export class Matrix
 	 */
 	public copyColumnFrom(column:number, vector3D:Vector3D):void
 	{
+		var raw:Float32Array = this.rawData;
+		var rawVector3D:Float32Array = vector3D._rawData;
+
 		if (column > 2) {
 			throw "Column " + column + " out of bounds (2)";
 		} else if (column == 0) {
-			this.a = vector3D.x;
-			this.c = vector3D.y;
+			raw[0] = rawVector3D[0];
+			raw[1] = rawVector3D[1];
 		} else if (column == 1) {
-			this.b = vector3D.x;
-			this.d = vector3D.y;
+			raw[2] = rawVector3D[0];
+			raw[3] = rawVector3D[1];
 		} else {
-			this.tx = vector3D.x;
-			this.ty = vector3D.y;
+			raw[4] = rawVector3D[0];
+			raw[5] = rawVector3D[1];
 		}
 	}
 
@@ -266,20 +291,23 @@ export class Matrix
 	 */
 	public copyColumnTo(column:number, vector3D:Vector3D):void
 	{
+		var raw:Float32Array = this.rawData;
+		var rawVector3D:Float32Array = vector3D._rawData;
+
 		if (column > 2) {
 			throw new ArgumentError("ArgumentError, Column " + column + " out of bounds [0, ..., 2]");
 		} else if (column == 0) {
-			vector3D.x = this.a;
-			vector3D.y = this.c;
-			vector3D.z = 0;
+			rawVector3D[0] = raw[0];
+			rawVector3D[1] = raw[1];
+			rawVector3D[2] = 0;
 		} else if (column == 1) {
-			vector3D.x = this.b;
-			vector3D.y = this.d;
-			vector3D.z = 0;
+			rawVector3D[0] = raw[2];
+			rawVector3D[1] = raw[3];
+			rawVector3D[2] = 0;
 		} else {
-			vector3D.x = this.tx;
-			vector3D.y = this.ty;
-			vector3D.z = 1;
+			rawVector3D[0] = raw[4];
+			rawVector3D[1] = raw[5];
+			rawVector3D[2] = 1;
 		}
 	}
 
@@ -291,12 +319,15 @@ export class Matrix
 	 */
 	public copyFrom(sourceMatrix:Matrix):void
 	{
-		this.a = sourceMatrix.a;
-		this.b = sourceMatrix.b;
-		this.c = sourceMatrix.c;
-		this.d = sourceMatrix.d;
-		this.tx = sourceMatrix.tx;
-		this.ty = sourceMatrix.ty;
+		var raw:Float32Array = this.rawData;
+		var sourceRaw:Float32Array = sourceMatrix.rawData;
+
+		raw[0] = sourceRaw[0];
+		raw[1] = sourceRaw[1];
+		raw[2] = sourceRaw[2];
+		raw[3] = sourceRaw[3];
+		raw[4] = sourceRaw[4];
+		raw[5] = sourceRaw[5];
 	}
 
 	/**
@@ -307,17 +338,19 @@ export class Matrix
 	 */
 	public copyRowFrom(row:number, vector3D:Vector3D):void
 	{
+		var raw:Float32Array = this.rawData;
+		var rawVector3D:Float32Array = vector3D._rawData;
+
 		if (row > 2) {
 			throw new ArgumentError("ArgumentError, Row " + row + " out of bounds [0, ..., 2]");
 		} else if (row == 0) {
-			this.a = vector3D.x;
-			this.c = vector3D.y;
-		} else if (row == 1) {
-			this.b = vector3D.x;
-			this.d = vector3D.y;
+			raw[0] = rawVector3D[0];
+			raw[2] = rawVector3D[1];
+			raw[4] = rawVector3D[2];
 		} else {
-			this.tx = vector3D.x;
-			this.ty = vector3D.y;
+			raw[1] = rawVector3D[0];
+			raw[3] = rawVector3D[1];
+			raw[5] = rawVector3D[2];
 		}
 	}
 
@@ -330,18 +363,23 @@ export class Matrix
 	 */
 	public copyRowTo(row:number, vector3D:Vector3D):void
 	{
+		var raw:Float32Array = this.rawData;
+		var rawVector3D:Float32Array = vector3D._rawData;
+
 		if (row > 2) {
 			throw new ArgumentError("ArgumentError, Row " + row + " out of bounds [0, ..., 2]");
 		} else if (row == 0) {
-			vector3D.x = this.a;
-			vector3D.y = this.b;
-			vector3D.z = this.tx;
+			rawVector3D[0] = raw[0];
+			rawVector3D[1] = raw[2];
+			rawVector3D[2] = raw[4];
 		} else if (row == 1) {
-			vector3D.x = this.c;
-			vector3D.y = this.d;
-			vector3D.z = this.ty;
+			rawVector3D[0] = raw[1];
+			rawVector3D[1] = raw[3];
+			rawVector3D[2] = raw[5];
 		} else {
-			vector3D.setTo(0, 0, 1);
+			rawVector3D[0] = 0;
+			rawVector3D[1] = 0;
+			rawVector3D[2] = 1;
 		}
 	}
 
@@ -365,11 +403,24 @@ export class Matrix
 	 */
 	public createBox(scaleX:number, scaleY:number, rotation:number = 0, tx:number = 0, ty:number = 0):void
 	{
-		this.a = scaleX;
-		this.d = scaleY;
-		this.b = rotation;
-		this.tx = tx;
-		this.ty = ty;
+		var raw:Float32Array = this.rawData;
+
+		if (rotation !== 0) {
+			var u = Math.cos(rotation);
+			var v = Math.sin(rotation);
+			raw[0] =  u * scaleX;
+			raw[1] =  v * scaleY;
+			raw[2] = -v * scaleX;
+			raw[3] =  u * scaleY;
+		} else {
+			raw[0] = scaleX;
+			raw[1] = 0;
+			raw[2] = 0;
+			raw[3] = scaleY;
+		}
+
+		raw[4] = tx;
+		raw[5] = ty;
 	}
 
 	/**
@@ -407,23 +458,7 @@ export class Matrix
 	 */
 	public createGradientBox(width:number, height:number, rotation:number = 0, tx:number = 0, ty:number = 0):void
 	{
-		this.a = width/1638.4;
-		this.d = height/1638.4;
-
-		if (rotation != 0.0) {
-			var cos = Math.cos(rotation);
-			var sin = Math.sin(rotation);
-
-			this.b = sin*this.d;
-			this.c = -sin*this.a;
-			this.a *= cos;
-			this.d *= cos;
-		} else {
-			this.b = this.c = 0;
-		}
-
-		this.tx = tx + width/2;
-		this.ty = ty + height/2;
+		this.createBox(width / 1638.4, height / 1638.4, rotation, tx + width / 2, ty + height / 2);
 	}
 
 	/**
@@ -440,7 +475,9 @@ export class Matrix
 	 */
 	public deltaTransformPoint(point:Point):Point
 	{
-		return new Point(point.x*this.a + point.y*this.c, point.x*this.b + point.y*this.d);
+		var raw:Float32Array = this.rawData;
+
+		return new Point(point.x*raw[0] + point.y*raw[2], point.x*raw[1] + point.y*raw[3]);
 	}
 
 	/**
@@ -458,12 +495,13 @@ export class Matrix
 	 */
 	public identity():void
 	{
-		this.a = 1;
-		this.b = 0;
-		this.c = 0;
-		this.d = 1;
-		this.tx = 0;
-		this.ty = 0;
+		var raw:Float32Array = this.rawData;
+		raw[0] = 1;
+		raw[1] = 0;
+		raw[2] = 0;
+		raw[3] = 1;
+		raw[4] = 0;
+		raw[5] = 0;
 	}
 
 	/**
@@ -473,24 +511,41 @@ export class Matrix
 	 */
 	public invert():void
 	{
-		var norm = this.a*this.d - this.b*this.c;
+		var raw = this.rawData;
+		var b  = raw[1];
+		var c  = raw[2];
+		var tx = raw[4];
+		var ty = raw[5];
+		if (b === 0 && c === 0) {
+			var a = raw[0] = 1/raw[0];
+			var d = raw[3] = 1/raw[3];
+			raw[1] = raw[2] = 0;
+			raw[4] = -a*tx;
+			raw[5] = -d*ty;
 
-		if (norm == 0) {
-			this.a = this.b = this.c = this.d = 0;
-			this.tx = -this.tx;
-			this.ty = -this.ty;
-		} else {
-			norm = 1.0/norm;
-			var a1 = this.d*norm;
-			this.d = this.a*norm;
-			this.a = a1;
-			this.b *= -norm;
-			this.c *= -norm;
-
-			var tx1 = -this.a*this.tx - this.c*this.ty;
-			this.ty = -this.b*this.tx - this.d*this.ty;
-			this.tx = tx1;
+			return;
 		}
+
+		var a = raw[0];
+		var d = raw[3];
+		var determinant = a*d - b*c;
+		if (determinant === 0) {
+			this.identity();
+			return;
+		}
+		/**
+		 * Multiplying by reciprocal of the |determinant| is only accurate if the reciprocal is
+		 * representable without loss of precision. This is usually only the case for powers of
+		 * two: 1/2, 1/4 ...
+		 */
+		determinant = 1/determinant;
+		var k = 0;
+		k = raw[0] =  d*determinant;
+		b = raw[1] = -b*determinant;
+		c = raw[2] = -c*determinant;
+		d = raw[3] =  a*determinant;
+		raw[4] = -(k*tx + c*ty);
+		raw[5] = -(b*tx + d*ty);
 	}
 
 
@@ -529,20 +584,24 @@ export class Matrix
 	 */
 	public rotate(angle:number):void
 	{
-		var cos = Math.cos(angle);
-		var sin = Math.sin(angle);
+		if (angle !== 0) {
+			var raw:Float32Array = this.rawData;
+			var u = Math.cos(angle);
+			var v = Math.sin(angle);
+			var ta = raw[0];
+			var tb = raw[1];
+			var tc = raw[2];
+			var td = raw[3];
+			var ttx = raw[4];
+			var tty = raw[5];
 
-		var a1 = this.a*cos - this.b*sin;
-		this.b = this.a*sin + this.b*cos;
-		this.a = a1;
-
-		var c1 = this.c*cos - this.d*sin;
-		this.d = this.c*sin + this.d*cos;
-		this.c = c1;
-
-		var tx1 = this.tx*cos - this.ty*sin;
-		this.ty = this.tx*sin + this.ty*cos;
-		this.tx = tx1;
+			raw[0] = ta  * u - tb  * v;
+			raw[1] = ta  * v + tb  * u;
+			raw[2] = tc  * u - td  * v;
+			raw[3] = tc  * v + td  * u;
+			raw[4] = ttx * u - tty * v;
+			raw[5] = ttx * v + tty * u;
+		}
 	}
 
 	/**
@@ -560,14 +619,18 @@ export class Matrix
 	 */
 	public scale(sx:number, sy:number):void
 	{
-		this.a *= sx;
-		this.b *= sy;
+		var raw:Float32Array = this.rawData;
 
-		this.c *= sx;
-		this.d *= sy;
-
-		this.tx *= sx;
-		this.ty *= sy;
+		if (sx !== 1) {
+			raw[0] *= sx;
+			raw[1] *= sx;
+			raw[4] *= sx;
+		}
+		if (sy !== 1) {
+			raw[2] *= sy;
+			raw[3] *= sy;
+			raw[5] *= sy;
+		}
 	}
 
 	/**
@@ -588,12 +651,14 @@ export class Matrix
 	 */
 	public setTo(a:number, b:number, c:number, d:number, tx:number, ty:number):void
 	{
-		this.a = a;
-		this.b = b;
-		this.c = c;
-		this.d = d;
-		this.tx = tx;
-		this.ty = ty;
+		var raw:Float32Array = this.rawData;
+
+		raw[0] = a;
+		raw[2] = b;
+		raw[1] = c;
+		raw[3] = d;
+		raw[4] = tx;
+		raw[5] = ty;
 	}
 
 	/**
@@ -618,7 +683,8 @@ export class Matrix
 	 */
 	public transformPoint(point:Point):Point
 	{
-		return new Point(point.x*this.a + point.y*this.c + this.tx, point.x*this.b + point.y*this.d + this.ty);
+		var raw:Float32Array = this.rawData;
+		return new Point(point.x*raw[0] + point.y*raw[2] + raw[4], point.x*raw[1] + point.y*raw[3] + raw[5]);
 	}
 
 	/**
@@ -631,7 +697,7 @@ export class Matrix
 	 */
 	public translate(dx:number, dy:number):void
 	{
-		this.tx += dx;
-		this.ty += dy;
+		this.rawData[4] += dx;
+		this.rawData[5] += dy;
 	}
 }

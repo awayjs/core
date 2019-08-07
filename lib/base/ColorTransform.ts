@@ -44,11 +44,16 @@ export class ColorTransform
 {
 	public _rawData:Float32Array;
 
-	//for AVM1:
-	public concat(second: ColorTransform):ColorTransform
+	public concat(second: ColorTransform):void
 	{
-		console.log("todo: ColorTransform.concat");
-		return this;
+		this._rawData[0] *= second._rawData[0];
+		this._rawData[1] *= second._rawData[1];
+		this._rawData[2] *= second._rawData[2];
+		this._rawData[3] *= second._rawData[3];
+		this._rawData[4] += second._rawData[4];
+		this._rawData[5] += second._rawData[5];
+		this._rawData[6] += second._rawData[6];
+		this._rawData[7] += second._rawData[7];
 	}
 
 	/**
@@ -195,9 +200,9 @@ export class ColorTransform
 		this._rawData[5] = argb[2];  //(value >> 8) & 0xFF;
 		this._rawData[6] = argb[3];  //value & 0xFF;
 
-		this._rawData[0] = 0;
-		this._rawData[1] = 0;
-		this._rawData[2] = 0;
+		this._rawData[0] = 1;
+		this._rawData[1] = 1;
+		this._rawData[2] = 1;
 	}
 
 	/**

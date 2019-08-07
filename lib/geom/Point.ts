@@ -22,22 +22,40 @@
  */
 export class Point
 {
+	public _rawData:Float32Array = new Float32Array(2);
+
 	/**
 	 * The horizontal coordinate of the point. The default value is 0.
 	 */
-	public x:number;
+	public get x():number
+	{
+		return this._rawData[0];
+	}
+
+	public set x(value:number)
+	{
+		this._rawData[0] = value;
+	}
 
 	/**
 	 * The vertical coordinate of the point. The default value is 0.
 	 */
-	public y:number;
+	public get y():number
+	{
+		return this._rawData[1];
+	}
+
+	public set y(value:number)
+	{
+		this._rawData[1] = value;
+	}
 
 	/**
 	 * The length of the line segment from(0,0) to this point.
 	 */
 	public get length():number
 	{
-		return Math.sqrt(this.x*this.x + this.y*this.y);
+		return Math.sqrt(this._rawData[0]*this._rawData[0] + this._rawData[1]*this._rawData[1]);
 	}
 
 	/**
@@ -49,8 +67,8 @@ export class Point
 	 */
 	constructor(x:number = 0, y:number = 0)
 	{
-		this.x = x;
-		this.y = y;
+		this._rawData[0] = x;
+		this._rawData[1] = y;
 	}
 
 	/**
@@ -62,7 +80,7 @@ export class Point
 	 */
 	public add(v:Point):Point
 	{
-		return new Point(this.x + v.x, this.y + v.y);
+		return new Point(this._rawData[0] + v._rawData[0], this._rawData[1] + v._rawData[1]);
 	}
 
 	/**
@@ -77,7 +95,8 @@ export class Point
 
 	public copyFrom(sourcePoint:Point):void
 	{
-
+		this._rawData[0] = sourcePoint._rawData[0];
+		this._rawData[1] = sourcePoint._rawData[1];
 	}
 
 	/**
@@ -90,7 +109,7 @@ export class Point
 	 */
 	public equals(toCompare:Point):boolean
 	{
-		return (this.x == toCompare.x && this.y == toCompare.y);
+		return (this._rawData[0] === toCompare._rawData[0] && this._rawData[1] == toCompare._rawData[1]);
 	}
 
 	/**
@@ -105,10 +124,10 @@ export class Point
 	{
 		var len:number = this.length;
 
-		if (len) {
-			var invLength = thickness/len;
-			this.x *= invLength;
-			this.y *= invLength;
+		if ((this.x !== 0 || this.y !== 0) && len) {
+			var relativeThickness:number = thickness/len;
+			this._rawData[0] *= relativeThickness;
+			this._rawData[1] *= relativeThickness;
 		}
 	}
 
@@ -124,14 +143,14 @@ export class Point
 	 */
 	public offset(dx:number, dy:number):void
 	{
-		this.x += dx;
-		this.y += dy;
+		this._rawData[0] += dx;
+		this._rawData[1] += dy;
 	}
 
 	public setTo(xa:number, ya:number):void
 	{
-		this.x = xa;
-		this.y = ya;
+		this._rawData[0] = xa;
+		this._rawData[1] = ya;
 	}
 
 	/**
@@ -171,7 +190,7 @@ export class Point
 		var dx:number = pt2.x - pt1.x;
 		var dy:number = pt2.y - pt1.y;
 
-		return Math.sqrt(dx*dx + dy*dy);
+		return (dx === 0) ? Math.abs(dy) : (dy === 0) ? Math.abs(dx) : Math.sqrt(dx*dx + dy*dy);
 	}
 
 	/**
@@ -195,7 +214,11 @@ export class Point
 	 */
 	public static interpolate(pt1:Point, pt2:Point, f:number):Point
 	{
-		return new Point(pt2.x + (pt1.x - pt2.x)*f, pt2.y + (pt1.y - pt2.y)*f);
+		var f1: number = 1 - f;
+		var raw1:Float32Array = pt1._rawData;
+		var raw2:Float32Array = pt2._rawData;
+
+    	return new Point(raw1[0]*f + raw2[0]*f1, raw1[1]*f + raw2[1]*f1);
 	}
 
 	/**

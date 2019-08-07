@@ -26,6 +26,8 @@
  */
 export class Vector3D
 {
+	public _rawData:Float32Array = new Float32Array(4);
+
 	/**
 	 * The x axis defined as a Vector3D object with coordinates (1,0,0).
 	 */
@@ -45,22 +47,46 @@ export class Vector3D
 	 * The first element of a Vector3D object, such as the x coordinate of
 	 * a point in the three-dimensional space. The default value is 0.
 	 */
-	public x:number;
+	public get x():number
+	{
+		return this._rawData[0];
+	}
+
+	public set x(value:number)
+	{
+		this._rawData[0] = value;
+	}
 
 	/*
 	 *The second element of a Vector3D object, such as the y coordinate of
 	 * a point in the three-dimensional space. The default value is 0.
 	 */
-	public y:number;
+	public get y():number
+	{
+		return this._rawData[1];
+	}
+
+	public set y(value:number)
+	{
+		this._rawData[1] = value;
+	}
 
 	/**
-	 * The third element of a Vector3D object, such as the y coordinate of
+	 * The third element of a Vector3D object, such as the z coordinate of
 	 * a point in the three-dimensional space. The default value is 0.
 	 */
-	public z:number;
+	public get z():number
+	{
+		return this._rawData[2];
+	}
+
+	public set z(value:number)
+	{
+		this._rawData[2] = value;
+	}
 
 	/**
-	 * TThe fourth element of a Vector3D object (in addition to the x, y,
+	 * The fourth element of a Vector3D object (in addition to the x, y,
 	 * and z properties) can hold data such as the angle of rotation. The
 	 * default value is 0.
 	 *
@@ -82,7 +108,15 @@ export class Vector3D
 	 * use the <code>Vector3D.project()</code> method to divide the first
 	 * three elements of a Vector3D object by its fourth element.</p>
 	 */
-	public w:number;
+	public get w():number
+	{
+		return this._rawData[3];
+	}
+
+	public set w(value:number)
+	{
+		this._rawData[3] = value;
+	}
 
 	/**
 	 * The length, magnitude, of the current Vector3D object from the
@@ -104,7 +138,8 @@ export class Vector3D
 	 */
 	public get lengthSquared():number
 	{
-		return this.x*this.x + this.y*this.y + this.z*this.z;
+		var raw:Float32Array = this._rawData;
+		return raw[0]*raw[0] + raw[1]*raw[1] + raw[2]*raw[2];
 	}
 
 	/**
@@ -120,10 +155,12 @@ export class Vector3D
 	 */
 	constructor(x:number = 0, y:number = 0, z:number = 0, w:number = 1)
 	{
-		this.x = x;
-		this.y = y;
-		this.z = z;
-		this.w = w;
+		var raw:Float32Array = this._rawData;
+
+		raw[0] = x;
+		raw[1] = y;
+		raw[2] = z;
+		raw[3] = w;
 	}
 
 	/**
@@ -142,7 +179,10 @@ export class Vector3D
 	 */
 	public add(a:Vector3D):Vector3D
 	{
-		return new Vector3D(this.x + a.x, this.y + a.y, this.z + a.z);
+		var raw:Float32Array = this._rawData;
+		var rawA:Float32Array = a._rawData;
+
+		return new Vector3D(raw[0] + rawA[0], raw[1] + rawA[1], raw[2] + rawA[2]);
 	}
 
 	/**
@@ -176,12 +216,17 @@ export class Vector3D
 	 */
 	public clone():Vector3D
 	{
-		return new Vector3D(this.x, this.y, this.z, this.w);
+		var raw:Float32Array = this._rawData;
+
+		return new Vector3D(raw[0], raw[1], raw[2], raw[3]);
 	}
 
 	public static combine(a:Vector3D, b:Vector3D, ascl:number, bscl:number):Vector3D
 	{
-		return new Vector3D(a.x*ascl + b.x*bscl, a.y*ascl + b.y*bscl, a.z*ascl + b.z*bscl);
+		var rawA:Float32Array = a._rawData;
+		var rawB:Float32Array = b._rawData;
+
+		return new Vector3D(rawA[0]*ascl + rawB[0]*bscl, rawA[1]*ascl + rawB[1]*bscl, rawA[2]*ascl + rawB[2]*bscl);
 	}
 
 	/**
@@ -192,10 +237,13 @@ export class Vector3D
 	 */
 	public copyFrom(src:Vector3D):void
 	{
-		this.x = src.x;
-		this.y = src.y;
-		this.z = src.z;
-		this.w = src.w;
+		var raw:Float32Array = this._rawData;
+		var rawSrc:Float32Array = src._rawData;
+
+		raw[0] = rawSrc[0];
+		raw[1] = rawSrc[1];
+		raw[2] = rawSrc[2];
+		raw[3] = rawSrc[3];
 	}
 
 	/**
@@ -220,9 +268,13 @@ export class Vector3D
 		if (t == null)
 			t = new Vector3D();
 
-		t.x = this.y*a.z - this.z*a.y;
-		t.y = this.z*a.x - this.x*a.z;
-		t.z = this.x*a.y - this.y*a.x;
+		var raw:Float32Array = this._rawData;
+		var rawA:Float32Array = a._rawData;
+		var rawT:Float32Array = t._rawData;
+
+		rawT[0] = raw[1]*rawA[2] - raw[2]*rawA[1];
+		rawT[1] = raw[2]*rawA[0] - raw[0]*rawA[2];
+		rawT[2] = raw[0]*rawA[1] - raw[1]*rawA[0];
 
 		return t;
 	}
@@ -240,9 +292,12 @@ export class Vector3D
 	 */
 	public decrementBy(a:Vector3D):void
 	{
-		this.x -= a.x;
-		this.y -= a.y;
-		this.z -= a.z;
+		var raw:Float32Array = this._rawData;
+		var rawA:Float32Array = a._rawData;
+
+		raw[0] -= rawA[0];
+		raw[1] -= rawA[1];
+		raw[2] -= rawA[2];
 	}
 
 	/**
@@ -255,11 +310,14 @@ export class Vector3D
 	 * @param pt2 A Vector3D object as the second three-dimensional point.
 	 * @returns The distance between two Vector3D objects.
 	 */
-	static distance(pt1:Vector3D, pt2:Vector3D):number
+	public static distance(pt1:Vector3D, pt2:Vector3D):number
 	{
-		var x:number = (pt1.x - pt2.x);
-		var y:number = (pt1.y - pt2.y);
-		var z:number = (pt1.z - pt2.z);
+		var rawPt1:Float32Array = pt1._rawData;
+		var rawPt2:Float32Array = pt2._rawData;
+
+		var x:number = rawPt1[0] - rawPt2[0];
+		var y:number = rawPt1[1] - rawPt2[1];
+		var z:number = rawPt1[2] - rawPt2[2];
 		return Math.sqrt(x*x + y*y + z*z);
 	}
 
@@ -292,7 +350,10 @@ export class Vector3D
 	 */
 	public dotProduct(a:Vector3D):number
 	{
-		return this.x*a.x + this.y*a.y + this.z*a.z;
+		var raw:Float32Array = this._rawData;
+		var rawA:Float32Array = a._rawData;
+
+		return raw[0]*rawA[0] + raw[1]*rawA[1] + raw[2]*rawA[2];
 	}
 
 	/**
@@ -302,9 +363,6 @@ export class Vector3D
 	 * same, the two Vector3D objects are equal. If the second optional
 	 * parameter is set to true, all four elements of the Vector3D objects,
 	 * including the w property, are compared.
-	 */
-
-	/**
 	 *
 	 * @param toCompare The Vector3D object to be compared with the current
 	 *                  Vector3D object.
@@ -316,7 +374,10 @@ export class Vector3D
 	 */
 	public equals(toCompare:Vector3D, allFour:boolean = false):boolean
 	{
-		return (this.x == toCompare.x && this.y == toCompare.y && this.z == toCompare.z && (!allFour || this.w == toCompare.w ));
+		var raw:Float32Array = this._rawData;
+		var rawToCompare:Float32Array = toCompare._rawData;
+
+		return (raw[0] == rawToCompare[0] && raw[1] == rawToCompare[1] && raw[2] == rawToCompare[2] && (!allFour || raw[3] == rawToCompare[3] ));
 	}
 	
 	/**
@@ -324,10 +385,12 @@ export class Vector3D
 	 */
 	public identity():void
 	{
-		this.x = 0;
-		this.y = 0;
-		this.z = 0;
-		this.w = 1;
+		var raw:Float32Array = this._rawData;
+
+		raw[0] = 0;
+		raw[1] = 0;
+		raw[2] = 0;
+		raw[3] = 1;
 	}
 
 	/**
@@ -342,9 +405,12 @@ export class Vector3D
 	 */
 	public incrementBy(a:Vector3D):void
 	{
-		this.x += a.x;
-		this.y += a.y;
-		this.z += a.z;
+		var raw:Float32Array = this._rawData;
+		var rawA:Float32Array = a._rawData;
+
+		raw[0] += rawA[0];
+		raw[1] += rawA[1];
+		raw[2] += rawA[2];
 	}
 
 	/**
@@ -359,9 +425,6 @@ export class Vector3D
 	 * Vector3D objects, including the <code>w</code> property, are
 	 * compared. Otherwise, only the x, y, and z elements are included in
 	 * the comparison.
-	 */
-
-	/**
 	 *
 	 * @param toCompare The Vector3D object to be compared with the current
 	 *                  Vector3D object.
@@ -382,7 +445,13 @@ export class Vector3D
 	 */
 	public nearEquals(toCompare:Vector3D, tolerance:number, allFour:boolean = true):boolean
 	{
-		return ((Math.abs(this.x - toCompare.x) < tolerance) && (Math.abs(this.y - toCompare.y) < tolerance) && (Math.abs(this.z - toCompare.z) < tolerance) && (!allFour || Math.abs(this.w - toCompare.w) < tolerance));
+		var raw:Float32Array = this._rawData;
+		var rawToCompare:Float32Array = toCompare._rawData;
+
+		return ((Math.abs(raw[0] - rawToCompare[0]) < tolerance)
+				&& (Math.abs(raw[1] - rawToCompare[1]) < tolerance)
+				&& (Math.abs(raw[2] - rawToCompare[2]) < tolerance)
+				&& (!allFour || Math.abs(raw[3] - rawToCompare[3]) < tolerance));
 	}
 
 	/**
@@ -393,35 +462,34 @@ export class Vector3D
 	 */
 	public negate():void
 	{
-		this.x = -this.x;
-		this.y = -this.y;
-		this.z = -this.z;
+		var raw:Float32Array = this._rawData;
+
+		raw[0] = -raw[0];
+		raw[1] = -raw[1];
+		raw[2] = -raw[2];
 	}
 
 	/**
-	 * Converts a Vector3D object to a unit vector by dividing the first
-	 * three elements (x, y, z) by the length of the vector. Unit vertices
-	 * are vertices that have a direction but their length is one. They
-	 * simplify vector calculations by removing length as a factor.
-	 */
-	/**
-	 * Scales the line segment between(0,0) and the current point to a set
+	 * Scales the Vector3D object between(0,0,0) and the current point to a set
 	 * length.
 	 *
 	 * @param thickness The scaling value. For example, if the current
 	 *                  Vector3D object is (0,3,4), and you normalize it to
 	 *                  1, the point returned is at(0,0.6,0.8).
 	 */
-	public normalize(thickness:number = 1):void
+	public normalize(thickness:number = 1):number
 	{
 		var len:number = this.length;
 
 		if (len) {
+			var raw:Float32Array = this._rawData;
 			var invLength = thickness/len;
-			this.x *= invLength;
-			this.y *= invLength;
-			this.z *= invLength;
+			raw[0] *= invLength;
+			raw[1] *= invLength;
+			raw[2] *= invLength;
 		}
+
+		return len;
 	}
 
 	/**
@@ -438,9 +506,11 @@ export class Vector3D
 	 */
 	public project():void
 	{
-		this.x /= this.w;
-		this.y /= this.w;
-		this.z /= this.w;
+		var raw:Float32Array = this._rawData;
+
+		raw[0] /= raw[3];
+		raw[1] /= raw[3];
+		raw[2] /= raw[3];
 	}
 
 	/**
@@ -452,13 +522,14 @@ export class Vector3D
 	 * vector by a negative number reverses its direction.
 	 *
 	 * @param s A multiplier (scalar) used to scale a Vector3D object.
-
 	 */
 	public scaleBy(s:number):void
 	{
-		this.x *= s;
-		this.y *= s;
-		this.z *= s;
+		var raw:Float32Array = this._rawData;
+
+		raw[0] *= s;
+		raw[1] *= s;
+		raw[2] *= s;
 	}
 
 	/**
@@ -470,10 +541,12 @@ export class Vector3D
 	 */
 	public setTo(xa:number, ya:number, za:number, wa:number = 1):void
 	{
-		this.x = xa;
-		this.y = ya;
-		this.z = za;
-		this.w = wa;
+		var raw:Float32Array = this._rawData;
+
+		raw[0] = xa;
+		raw[1] = ya;
+		raw[2] = za;
+		raw[3] = wa;
 	}
 
 	/**
@@ -492,7 +565,10 @@ export class Vector3D
 	 */
 	public subtract(a:Vector3D):Vector3D
 	{
-		return new Vector3D(this.x - a.x, this.y - a.y, this.z - a.z);
+		var raw:Float32Array = this._rawData;
+		var rawA:Float32Array = a._rawData;
+
+		return new Vector3D(raw[0] - rawA[0], raw[1] - rawA[1], raw[2] - rawA[2]);
 	}
 
 	/**
@@ -501,6 +577,8 @@ export class Vector3D
 	 */
 	public toString():string
 	{
-		return "[Vector3D] (x:" + this.x + " ,y:" + this.y + ", z" + this.z + ", w:" + this.w + ")";
+		var raw:Float32Array = this._rawData;
+
+		return "[Vector3D] (x:" + raw[0] + " ,y:" + raw[1] + ", z" + raw[2] + ", w:" + raw[3] + ")";
 	}
 }

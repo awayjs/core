@@ -46,6 +46,7 @@ import {Point}					from "../geom/Point";
  */
 export class Rectangle
 {
+	public _rawData:Float32Array = new Float32Array(4);
 	//for AVM1:
 
 	// for AVM1:
@@ -69,14 +70,30 @@ export class Rectangle
 	 * value of a Rectangle object has no effect on the <code>x</code>,
 	 * <code>y</code>, and <code>width</code> properties.
 	 */
-	public height:number;
+	public get height():number
+	{
+		return this._rawData[3];
+	}
+
+	public set height(value:number)
+	{
+		this._rawData[3] = value;
+	}
 
 	/**
 	 * The width of the rectangle, in pixels. Changing the <code>width</code>
 	 * value of a Rectangle object has no effect on the <code>x</code>,
 	 * <code>y</code>, and <code>height</code> properties.
 	 */
-	public width:number;
+	public get width():number
+	{
+		return this._rawData[2];
+	}
+
+	public set width(value:number)
+	{
+		this._rawData[2] = value;
+	}
 
 	/**
 	 * The <i>x</i> coordinate of the top-left corner of the rectangle. Changing
@@ -87,7 +104,15 @@ export class Rectangle
 	 * <p>The value of the <code>x</code> property is equal to the value of the
 	 * <code>left</code> property.</p>
 	 */
-	public x:number;
+	public get x():number
+	{
+		return this._rawData[0];
+	}
+
+	public set x(value:number)
+	{
+		this._rawData[0] = value;
+	}
 
 	/**
 	 * The <i>y</i> coordinate of the top-left corner of the rectangle. Changing
@@ -98,19 +123,27 @@ export class Rectangle
 	 * <p>The value of the <code>y</code> property is equal to the value of the
 	 * <code>top</code> property.</p>
 	 */
-	public y:number;
+	public get y():number
+	{
+		return this._rawData[1];
+	}
+
+	public set y(value:number)
+	{
+		this._rawData[1] = value;
+	}
 
 	/**
 	 * The sum of the <code>y</code> and <code>height</code> properties.
 	 */
 	public get bottom():number
 	{
-		return this.y + this.height;
+		return this._rawData[1] + this._rawData[3];
 	}
 
 	public set bottom(val:number)
 	{
-		this.height = val - this.y;
+		this._rawData[3] = val - this._rawData[1];
 	}
 
 	/**
@@ -122,8 +155,8 @@ export class Rectangle
 		if (this._bottomRight == null)
 			this._bottomRight = new Point();
 
-		this._bottomRight.x = this.x + this.width;
-		this._bottomRight.y = this.y + this.height;
+		this._bottomRight._rawData[0] = this._rawData[0] + this._rawData[2];
+		this._bottomRight._rawData[1] = this._rawData[1] + this._rawData[3];
 
 		return this._bottomRight;
 	}
@@ -140,13 +173,13 @@ export class Rectangle
 	 */
 	public get left():number
 	{
-		return this.x;
+		return this._rawData[0];
 	}
 
 	public set left(val:number)
 	{
-		this.width += this.x - val;
-		this.x = val;
+		this._rawData[2] += this._rawData[0] - val;
+		this._rawData[0] = val;
 	}
 
 	/**
@@ -154,12 +187,12 @@ export class Rectangle
 	 */
 	public get right():number
 	{
-		return this.x + this.width;
+		return this._rawData[0] + this._rawData[2];
 	}
 
 	public set right(val:number)
 	{
-		this.width = val - this.x;
+		this._rawData[2] = val - this._rawData[0];
 	}
 
 	/**
@@ -171,8 +204,8 @@ export class Rectangle
 		if (this._size == null)
 			this._size = new Point();
 
-		this._size.x = this.width;
-		this._size.y = this.height;
+		this._size._rawData[0] = this._rawData[2];
+		this._size._rawData[1] = this._rawData[3];
 
 		return this._size;
 	}
@@ -189,13 +222,13 @@ export class Rectangle
 	 */
 	public get top():number
 	{
-		return this.y;
+		return this._rawData[1];
 	}
 
 	public set top(val:number)
 	{
-		this.height += (this.y - val);
-		this.y = val;
+		this._rawData[3] += (this._rawData[1] - val);
+		this._rawData[1] = val;
 	}
 
 	/**
@@ -207,8 +240,8 @@ export class Rectangle
 		if (this._topLeft == null)
 			this._topLeft = new Point();
 
-		this._topLeft.x = this.x;
-		this._topLeft.y = this.y;
+		this._topLeft._rawData[0] = this._rawData[0];
+		this._topLeft._rawData[1] = this._rawData[1];
 
 		return this._topLeft;
 	}
@@ -230,10 +263,12 @@ export class Rectangle
 	 */
 	constructor(x:number = 0, y:number = 0, width:number = 0, height:number = 0)
 	{
-		this.x = x;
-		this.y = y;
-		this.width = width;
-		this.height = height;
+		var raw:Float32Array = this._rawData;
+
+		raw[0] = x;
+		raw[1] = y;
+		raw[2] = width;
+		raw[3] = height;
 	}
 
 	/**
@@ -247,7 +282,9 @@ export class Rectangle
 	 */
 	public clone():Rectangle
 	{
-		return new Rectangle(this.x, this.y, this.width, this.height);
+		var raw:Float32Array = this._rawData;
+
+		return new Rectangle(raw[0], raw[1], raw[2], raw[3]);
 	}
 
 	/**
@@ -261,7 +298,9 @@ export class Rectangle
 	 */
 	public contains(x:number, y:number):boolean
 	{
-		return (this.x <= x && this.x + this.width >= x && this.y <= y && this.y + this.height >= y);
+		var raw:Float32Array = this._rawData;
+
+		return (raw[0] <= x && raw[0] + raw[2] >= x && raw[1] <= y && raw[1] + raw[3] >= y);
 	}
 
 	/**
@@ -277,7 +316,10 @@ export class Rectangle
 	 */
 	public containsPoint(point:Point):boolean
 	{
-		return (this.x <= point.x && this.x + this.width >= point.x && this.y <= point.y && this.y + this.height >= point.y);
+		var raw:Float32Array = this._rawData;
+		var rawPoint:Float32Array = point._rawData;
+
+		return (raw[0] <= rawPoint[0] && raw[0] + raw[2] >= rawPoint[0] && raw[1] <= rawPoint[1] && raw[1] + raw[3] >= rawPoint[1]);
 	}
 
 	/**
@@ -293,7 +335,10 @@ export class Rectangle
 	 */
 	public containsRect(rect:Rectangle):boolean
 	{
-		return (this.x <= rect.x && this.x + this.width >= rect.x + rect.width && this.y <= rect.y && this.y + this.height >= rect.y + rect.height)
+		var raw:Float32Array = this._rawData;
+		var rawRect:Float32Array = rect._rawData;
+
+		return (raw[0] <= rawRect[0] && raw[0] + raw[2] >= rawRect[0] + rawRect[2] && raw[1] <= rawRect[1] && raw[1] + raw[3] >= rawRect[1] + rawRect[3])
 	}
 
 	/**
@@ -304,10 +349,13 @@ export class Rectangle
 	 */
 	public copyFrom(sourceRect:Rectangle):void
 	{
-		this.x = sourceRect.x;
-		this.y = sourceRect.y;
-		this.width = sourceRect.width;
-		this.height = sourceRect.height;
+		var raw:Float32Array = this._rawData;
+		var rawSource:Float32Array = sourceRect._rawData;
+
+		raw[0] = rawSource[0];
+		raw[1] = rawSource[1];
+		raw[2] = rawSource[2];
+		raw[3] = rawSource[3];
 	}
 
 	/**
@@ -325,7 +373,10 @@ export class Rectangle
 	 */
 	public equals(toCompare:Rectangle):boolean
 	{
-		return (this.x == toCompare.x && this.y == toCompare.y && this.width == toCompare.width && this.height == toCompare.height)
+		var raw:Float32Array = this._rawData;
+		var rawCompare:Float32Array = toCompare._rawData;
+
+		return (raw[0] == rawCompare[0] && raw[1] == rawCompare[1] && raw[2] == rawCompare[2] && raw[3] == rawCompare[3])
 	}
 
 	/**
@@ -343,10 +394,12 @@ export class Rectangle
 	 */
 	public inflate(dx:number, dy:number):void
 	{
-		this.x -= dx/2;
-		this.y -= dy/2;
-		this.width += dx/2;
-		this.height += dy/2;
+		var raw:Float32Array = this._rawData;
+
+		raw[0] -= dx/2;
+		raw[1] -= dy/2;
+		raw[2] += dx/2;
+		raw[3] += dy/2;
 	}
 
 	/**
@@ -363,10 +416,12 @@ export class Rectangle
 	 */
 	public inflatePoint(point:Point):void
 	{
-		this.x -= point.x/2;
-		this.y -= point.y/2;
-		this.width += point.x/2;
-		this.height += point.y/2;
+		var raw:Float32Array = this._rawData;
+
+		raw[0] -= point.x/2;
+		raw[1] -= point.y/2;
+		raw[2] += point.x/2;
+		raw[3] += point.y/2;
 	}
 
 	/**
@@ -386,38 +441,42 @@ export class Rectangle
 	 */
 	public intersection(toIntersect:Rectangle):Rectangle
 	{
+		var raw:Float32Array = this._rawData;
+		var rawIntersect:Float32Array = toIntersect._rawData;
+
 		if (this.intersects(toIntersect)) {
-			var i:Rectangle = new Rectangle();
+			var result:Rectangle = new Rectangle();
+			var rawResult:Float32Array = result._rawData;
 
-			if (this.x > toIntersect.x) {
-				i.x = this.x;
-				i.width = toIntersect.x - this.x + toIntersect.width;
+			if (raw[0] > rawIntersect[0]) {
+				rawResult[0] = raw[0];
+				rawResult[2] = rawIntersect[0] - raw[0] + rawIntersect[2];
 
-				if (i.width > this.width)
-					i.width = this.width;
+				if (rawResult[2] > raw[2])
+				rawResult[2] = raw[2];
 			} else {
-				i.x = toIntersect.x;
-				i.width = this.x - toIntersect.x + this.width;
+				rawResult[0] = rawIntersect[0];
+				rawResult[2] = raw[0] - rawIntersect[0] + raw[2];
 
-				if (i.width > toIntersect.width)
-					i.width = toIntersect.width;
+				if (rawResult[2] > rawIntersect[2])
+				rawResult[2] = rawIntersect[2];
 			}
 
-			if (this.y > toIntersect.y) {
-				i.y = this.y;
-				i.height = toIntersect.y - this.y + toIntersect.height;
+			if (raw[1] > rawIntersect[1]) {
+				rawResult[1] = raw[1];
+				rawResult[3] = rawIntersect[1] - raw[1] + rawIntersect[3];
 
-				if (i.height > this.height)
-					i.height = this.height;
+				if (rawResult[3] > raw[3])
+				rawResult[3] = raw[3];
 			} else {
-				i.y = toIntersect.y;
-				i.height = this.y - toIntersect.y + this.height;
+				rawResult[1] = rawIntersect[1];
+				rawResult[3] = raw[1] - rawIntersect[1] + raw[3];
 
-				if (i.height > toIntersect.height)
-					i.height = toIntersect.height;
+				if (rawResult[3] > rawIntersect[3])
+				rawResult[3] = rawIntersect[3];
 			}
 
-			return i;
+			return result;
 		}
 
 		return new Rectangle();
@@ -437,7 +496,10 @@ export class Rectangle
 	 */
 	public intersects(toIntersect:Rectangle):boolean
 	{
-		return (this.x + this.width > toIntersect.x && this.x < toIntersect.x + toIntersect.width && this.y + this.height > toIntersect.y && this.y < toIntersect.y + toIntersect.height);
+		var raw:Float32Array = this._rawData;
+		var rawIntersect:Float32Array = toIntersect._rawData;
+
+		return (raw[0] + raw[2] > rawIntersect[0] && raw[0] < rawIntersect[0] + rawIntersect[2] && raw[1] + raw[3] > rawIntersect[1] && raw[1] < rawIntersect[1] + rawIntersect[3]);
 	}
 
 	/**
@@ -448,7 +510,9 @@ export class Rectangle
 	 */
 	public isEmpty():boolean
 	{
-		return (this.x == 0 && this.y == 0 && this.width == 0 && this.height == 0);
+		var raw:Float32Array = this._rawData;
+
+		return (raw[0] == 0 && raw[1] == 0 && raw[2] == 0 && raw[3] == 0);
 	}
 
 	/**
@@ -460,8 +524,8 @@ export class Rectangle
 	 */
 	public offset(dx:number, dy:number):void
 	{
-		this.x += dx;
-		this.y += dy;
+		this._rawData[0] += dx;
+		this._rawData[1] += dy;
 	}
 
 	/**
@@ -473,8 +537,8 @@ export class Rectangle
 	 */
 	public offsetPoint(point:Point):void
 	{
-		this.x += point.x;
-		this.y += point.y;
+		this._rawData[0] += point.x;
+		this._rawData[1] += point.y;
 	}
 
 	/**
@@ -487,10 +551,12 @@ export class Rectangle
 	 */
 	public setEmpty():void
 	{
-		this.x = 0;
-		this.y = 0;
-		this.width = 0;
-		this.height = 0;
+		var raw:Float32Array = this._rawData;
+
+		raw[0] = 0;
+		raw[1] = 0;
+		raw[2] = 0;
+		raw[3] = 0;
 	}
 
 	/**
@@ -505,10 +571,12 @@ export class Rectangle
 	 */
 	public setTo(xa:number, ya:number, widtha:number, heighta:number):void
 	{
-		this.x = xa;
-		this.y = ya;
-		this.width = widtha;
-		this.height = heighta;
+		var raw:Float32Array = this._rawData;
+
+		raw[0] = xa;
+		raw[1] = ya;
+		raw[2] = widtha;
+		raw[3] = heighta;
 	}
 
 	/**
@@ -537,36 +605,40 @@ export class Rectangle
 	 */
 	public union(toUnion:Rectangle):Rectangle
 	{
-		var u:Rectangle = new Rectangle();
+		var raw:Float32Array = this._rawData;
+		var rawUnion:Float32Array = toUnion._rawData;
 
-		if (this.x < toUnion.x) {
-			u.x = this.x;
-			u.width = toUnion.x - this.x + toUnion.width;
+		var target:Rectangle = new Rectangle();
+		var rawTarget:Float32Array = target._rawData;
 
-			if (u.width < this.width)
-				u.width = this.width;
+		if (raw[0] < rawUnion[0]) {
+			rawTarget[0] = raw[0];
+			rawTarget[2] = rawUnion[0] - raw[0] + rawUnion[2];
+
+			if (rawTarget[2] < raw[2])
+			rawTarget[2] = raw[2];
 		} else {
-			u.x = toUnion.x;
-			u.width = this.x - toUnion.x + this.width;
+			rawTarget[0] = rawUnion[0];
+			rawTarget[2] = raw[0] - rawUnion[0] + raw[2];
 
-			if (u.width < toUnion.width)
-				u.width = toUnion.width;
+			if (rawTarget[2] < rawUnion[2])
+			rawTarget[2] = rawUnion[2];
 		}
 
-		if (this.y < toUnion.y) {
-			u.y = this.y;
-			u.height = toUnion.y - this.y + toUnion.height;
+		if (raw[1] < rawUnion[1]) {
+			rawTarget[1] = raw[1];
+			rawTarget[3] = rawUnion[1] - raw[1] + rawUnion[3];
 
-			if (u.height < this.height)
-				u.height = this.height;
+			if (rawTarget[3] < raw[3])
+			rawTarget[3] = raw[3];
 		} else {
-			u.y = toUnion.y;
-			u.height = this.y - toUnion.y + this.height;
+			rawTarget[1] = rawUnion[1];
+			rawTarget[3] = raw[1] - rawUnion[1] + raw[3];
 
-			if (u.height < toUnion.height)
-				u.height = toUnion.height;
+			if (rawTarget[3] < rawUnion[3])
+				rawTarget[3] = rawUnion[3];
 		}
 
-		return u;
+		return target;
 	}
 }

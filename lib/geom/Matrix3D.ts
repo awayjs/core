@@ -198,7 +198,14 @@ export class Matrix3D
 	 */
 	public get determinant():number
 	{
-		return ((this._rawData[0]*this._rawData[5] - this._rawData[4]*this._rawData[1])*(this._rawData[10]*this._rawData[15] - this._rawData[14]*this._rawData[11]) - (this._rawData[0]*this._rawData[9] - this._rawData[8]*this._rawData[1])*(this._rawData[6]*this._rawData[15] - this._rawData[14]*this._rawData[7]) + (this._rawData[0]*this._rawData[13] - this._rawData[12]*this._rawData[1])*(this._rawData[6]*this._rawData[11] - this._rawData[10]*this._rawData[7]) + (this._rawData[4]*this._rawData[9] - this._rawData[8]*this._rawData[5])*(this._rawData[2]*this._rawData[15] - this._rawData[14]*this._rawData[3]) - (this._rawData[4]*this._rawData[13] - this._rawData[12]*this._rawData[5])*(this._rawData[2]*this._rawData[11] - this._rawData[10]*this._rawData[3]) + (this._rawData[8]*this._rawData[13] - this._rawData[12]*this._rawData[9])*(this._rawData[2]*this._rawData[7] - this._rawData[6]*this._rawData[3]));
+		var raw:Float32Array = this._rawData;
+
+		return ((raw[0]*raw[5] - raw[4]*raw[1])*(raw[10]*raw[15] - raw[14]*raw[11])
+			- (raw[0]*raw[9] - raw[8]*raw[1])*(raw[6]*raw[15] - raw[14]*raw[7])
+			+ (raw[0]*raw[13] - raw[12]*raw[1])*(raw[6]*raw[11] - raw[10]*raw[7])
+			+ (raw[4]*raw[9] - raw[8]*raw[5])*(raw[2]*raw[15] - raw[14]*raw[3])
+			- (raw[4]*raw[13] - raw[12]*raw[5])*(raw[2]*raw[11] - raw[10]*raw[3])
+			+ (raw[8]*raw[13] - raw[12]*raw[9])*(raw[2]*raw[7] - raw[6]*raw[3]));
 	}
 
 	/**
@@ -235,60 +242,61 @@ export class Matrix3D
 	 */
 	public append(lhs:Matrix3D):void
 	{
-		var lrd:Float32Array = lhs._rawData;
+		var raw:Float32Array = this._rawData;
+		var rawLhs:Float32Array = lhs._rawData;
 
-		var m111:number = this._rawData[0];
-		var m112:number = this._rawData[1];
-		var m113:number = this._rawData[2];
-		var m114:number = this._rawData[3];
-		var m121:number = this._rawData[4];
-		var m122:number = this._rawData[5];
-		var m123:number = this._rawData[6];
-		var m124:number = this._rawData[7];
-		var m131:number = this._rawData[8];
-		var m132:number = this._rawData[9];
-		var m133:number = this._rawData[10];
-		var m134:number = this._rawData[11];
-		var m141:number = this._rawData[12];
-		var m142:number = this._rawData[13];
-		var m143:number = this._rawData[14];
-		var m144:number = this._rawData[15];
-		var m211:number = lrd[0];
-		var m212:number = lrd[1];
-		var m213:number = lrd[2];
-		var m214:number = lrd[3];
-		var m221:number = lrd[4];
-		var m222:number = lrd[5];
-		var m223:number = lrd[6];
-		var m224:number = lrd[7];
-		var m231:number = lrd[8];
-		var m232:number = lrd[9];
-		var m233:number = lrd[10];
-		var m234:number = lrd[11];
-		var m241:number = lrd[12];
-		var m242:number = lrd[13];
-		var m243:number = lrd[14];
-		var m244:number = lrd[15];
+		var m111:number = raw[0];
+		var m112:number = raw[1];
+		var m113:number = raw[2];
+		var m114:number = raw[3];
+		var m121:number = raw[4];
+		var m122:number = raw[5];
+		var m123:number = raw[6];
+		var m124:number = raw[7];
+		var m131:number = raw[8];
+		var m132:number = raw[9];
+		var m133:number = raw[10];
+		var m134:number = raw[11];
+		var m141:number = raw[12];
+		var m142:number = raw[13];
+		var m143:number = raw[14];
+		var m144:number = raw[15];
+		var m211:number = rawLhs[0];
+		var m212:number = rawLhs[1];
+		var m213:number = rawLhs[2];
+		var m214:number = rawLhs[3];
+		var m221:number = rawLhs[4];
+		var m222:number = rawLhs[5];
+		var m223:number = rawLhs[6];
+		var m224:number = rawLhs[7];
+		var m231:number = rawLhs[8];
+		var m232:number = rawLhs[9];
+		var m233:number = rawLhs[10];
+		var m234:number = rawLhs[11];
+		var m241:number = rawLhs[12];
+		var m242:number = rawLhs[13];
+		var m243:number = rawLhs[14];
+		var m244:number = rawLhs[15];
 
-		this._rawData[0] = m111*m211 + m112*m221 + m113*m231 + m114*m241;
-		this._rawData[1] = m111*m212 + m112*m222 + m113*m232 + m114*m242;
-		this._rawData[2] = m111*m213 + m112*m223 + m113*m233 + m114*m243;
-		this._rawData[3] = m111*m214 + m112*m224 + m113*m234 + m114*m244;
+		raw[0] = m111*m211 + m112*m221 + m113*m231 + m114*m241;
+		raw[1] = m111*m212 + m112*m222 + m113*m232 + m114*m242;
+		raw[2] = m111*m213 + m112*m223 + m113*m233 + m114*m243;
+		raw[3] = m111*m214 + m112*m224 + m113*m234 + m114*m244;
 
-		this._rawData[4] = m121*m211 + m122*m221 + m123*m231 + m124*m241;
-		this._rawData[5] = m121*m212 + m122*m222 + m123*m232 + m124*m242;
-		this._rawData[6] = m121*m213 + m122*m223 + m123*m233 + m124*m243;
-		this._rawData[7] = m121*m214 + m122*m224 + m123*m234 + m124*m244;
+		raw[4] = m121*m211 + m122*m221 + m123*m231 + m124*m241;
+		raw[5] = m121*m212 + m122*m222 + m123*m232 + m124*m242;
+		raw[6] = m121*m213 + m122*m223 + m123*m233 + m124*m243;
+		raw[7] = m121*m214 + m122*m224 + m123*m234 + m124*m244;
 
-		this._rawData[8] = m131*m211 + m132*m221 + m133*m231 + m134*m241;
-		this._rawData[9] = m131*m212 + m132*m222 + m133*m232 + m134*m242;
-		this._rawData[10] = m131*m213 + m132*m223 + m133*m233 + m134*m243;
-		this._rawData[11] = m131*m214 + m132*m224 + m133*m234 + m134*m244;
+		raw[8] = m131*m211 + m132*m221 + m133*m231 + m134*m241;
+		raw[9] = m131*m212 + m132*m222 + m133*m232 + m134*m242;
+		raw[10] = m131*m213 + m132*m223 + m133*m233 + m134*m243;
+		raw[11] = m131*m214 + m132*m224 + m133*m234 + m134*m244;
 
-		this._rawData[12] = m141*m211 + m142*m221 + m143*m231 + m144*m241;
-		this._rawData[13] = m141*m212 + m142*m222 + m143*m232 + m144*m242;
-		this._rawData[14] = m141*m213 + m142*m223 + m143*m233 + m144*m243;
-		this._rawData[15] = m141*m214 + m142*m224 + m143*m234 + m144*m244;
+		raw[12] = m141*m211 + m142*m221 + m143*m231 + m144*m241;
+		raw[13] = m141*m212 + m142*m222 + m143*m232 + m144*m242;
+		raw[14] = m141*m213 + m142*m223 + m143*m233 + m144*m243;
+		raw[15] = m141*m214 + m142*m224 + m143*m234 + m144*m244;
 
 		this._positionDirty = true;
 	}
@@ -368,13 +376,29 @@ export class Matrix3D
 	}
 
 	/**
-	 * Appends an incremental translation, a repositioning along the x, y, and z axes, to a Matrix3D object.
+	*Appends an incremental translation, a repositioning along the x, y, and z axes, to a Matrix3D object.
 	 */
 	public appendTranslation(x:number, y:number, z:number):void
 	{
-		this._rawData[12] += x;
-		this._rawData[13] += y;
-		this._rawData[14] += z;
+		var raw:Float32Array = this._rawData;
+
+		var m41 = raw[3], m42 = raw[7], m43 = raw[11], m44 = raw[15];
+
+		raw[0 ] += x*m41;
+		raw[1 ] += y*m41;
+		raw[2 ] += z*m41;
+
+		raw[4 ] += x*m42;
+		raw[5 ] += y*m42;
+		raw[6 ] += z*m42;
+
+		raw[8 ] += x*m43;
+		raw[9 ] += y*m43;
+		raw[10] += z*m43;
+
+		raw[12] += x*m44;
+		raw[13] += y*m44;
+		raw[14] += z*m44;
 
 		this._positionDirty = true;
 	}
@@ -399,11 +423,14 @@ export class Matrix3D
 		if (column < 0 || column > 3)
 			throw new ArgumentError("ArgumentError, Column " + column + " out of bounds [0, ..., 3]");
 
+		var targetData:Float32Array = this._rawData;
+		var vectorData:Float32Array = vector3D._rawData;
+
 		column *= 4;
-		this._rawData[column] = vector3D.x;
-		this._rawData[column + 1] = vector3D.y;
-		this._rawData[column + 2] = vector3D.z;
-		this._rawData[column + 3] = vector3D.w;
+		targetData[column] = vectorData[0];
+		targetData[column + 1] = vectorData[1];
+		targetData[column + 2] = vectorData[2];
+		targetData[column + 3] = vectorData[3];
 
 		this._positionDirty = true;
 	}
@@ -418,18 +445,19 @@ export class Matrix3D
 
 		column *= 4;
 
-		var sourceData = this._rawData;
+		var sourceData:Float32Array = this._rawData;
+		var vectorData:Float32Array = vector3D._rawData;
 		
 		if (negate) {
-			vector3D.x = -sourceData[column];
-			vector3D.y = -sourceData[column + 1];
-			vector3D.z = -sourceData[column + 2];
-			vector3D.w = -sourceData[column + 3];
+			vectorData[0] = -sourceData[column];
+			vectorData[1] = -sourceData[column + 1];
+			vectorData[2] = -sourceData[column + 2];
+			vectorData[3] = -sourceData[column + 3];
 		} else {
-			vector3D.x = sourceData[column];
-			vector3D.y = sourceData[column + 1];
-			vector3D.z = sourceData[column + 2];
-			vector3D.w = sourceData[column + 3];
+			vectorData[0] = sourceData[column];
+			vectorData[1] = sourceData[column + 1];
+			vectorData[2] = sourceData[column + 2];
+			vectorData[3] = sourceData[column + 3];
 		}
 	}
 
@@ -570,10 +598,13 @@ export class Matrix3D
 		if (row < 0 || row > 3)
 			throw new ArgumentError("ArgumentError, Row " + row + " out of bounds [0, ..., 3]");
 
-		this._rawData[row] = vector3D.x;
-		this._rawData[row + 4] = vector3D.y;
-		this._rawData[row + 8] = vector3D.z;
-		this._rawData[row + 12] = vector3D.w;
+		var targetData:Float32Array = this._rawData;
+		var vectorData:Float32Array = vector3D._rawData;
+
+		targetData[row] = vectorData[0];
+		targetData[row + 4] = vectorData[1];
+		targetData[row + 8] = vectorData[2];
+		targetData[row + 12] = vectorData[3];
 
 		this._positionDirty = true;
 	}
@@ -587,17 +618,18 @@ export class Matrix3D
 			throw new ArgumentError("ArgumentError, Row " + row + " out of bounds [0, ..., 3]");
 		
 		var sourceData:Float32Array = this._rawData;
+		var vectorData:Float32Array = vector3D._rawData;
 		
 		if (negate) {
-			vector3D.x = -sourceData[row];
-			vector3D.y = -sourceData[row + 4];
-			vector3D.z = -sourceData[row + 8];
-			vector3D.w = -sourceData[row + 12];
+			vectorData[0] = -sourceData[row];
+			vectorData[1] = -sourceData[row + 4];
+			vectorData[2] = -sourceData[row + 8];
+			vectorData[3] = -sourceData[row + 12];
 		} else {
-			vector3D.x = sourceData[row];
-			vector3D.y = sourceData[row + 4];
-			vector3D.z = sourceData[row + 8];
-			vector3D.w = sourceData[row + 12];
+			vectorData[0] = sourceData[row];
+			vectorData[1] = sourceData[row + 4];
+			vectorData[2] = sourceData[row + 8];
+			vectorData[3] = sourceData[row + 12];
 		}
 	}
 
@@ -731,30 +763,33 @@ export class Matrix3D
 		if (!t)
 			t = new Vector3D();
 
-		t.x = x*this._rawData[0] + y*this._rawData[4] + z*this._rawData[8];
-		t.y = x*this._rawData[1] + y*this._rawData[5] + z*this._rawData[9];
-		t.z = x*this._rawData[2] + y*this._rawData[6] + z*this._rawData[10];
-		t.w = x*this._rawData[3] + y*this._rawData[7] + z*this._rawData[11];
+		var raw:Float32Array = this._rawData;
+		var rawT:Float32Array = t._rawData;
+
+		rawT[0] = x*raw[0] + y*raw[4] + z*raw[8];
+		rawT[1] = x*raw[1] + y*raw[5] + z*raw[9];
+		rawT[2] = x*raw[2] + y*raw[6] + z*raw[10];
+		rawT[3] = x*raw[3] + y*raw[7] + z*raw[11];
 
 		return t;
 	}
 
 	public deltaTransformVectors(vin:Array<number>, vout:Array<number>):void
 	{
-		var rawData:Float32Array = this._rawData;
+		var raw:Float32Array = this._rawData;
 
-		var a:number = rawData[0];
-		var e:number = rawData[1];
-		var i:number = rawData[2];
-		var m:number = rawData[3];
-		var b:number = rawData[4];
-		var f:number = rawData[5];
-		var j:number = rawData[6];
-		var n:number = rawData[7];
-		var c:number = rawData[8];
-		var g:number = rawData[9];
-		var k:number = rawData[10];
-		var o:number = rawData[11];
+		var a:number = raw[0];
+		var e:number = raw[1];
+		var i:number = raw[2];
+		var m:number = raw[3];
+		var b:number = raw[4];
+		var f:number = raw[5];
+		var j:number = raw[6];
+		var n:number = raw[7];
+		var c:number = raw[8];
+		var g:number = raw[9];
+		var k:number = raw[10];
+		var o:number = raw[11];
 
 		var outIndex:number = 0;
 		var length:number = vin.length;
@@ -774,22 +809,24 @@ export class Matrix3D
 	 */
 	public identity():void
 	{
-		this._rawData[0] = 1;
-		this._rawData[1] = 0;
-		this._rawData[2] = 0;
-		this._rawData[3] = 0;
-		this._rawData[4] = 0;
-		this._rawData[5] = 1;
-		this._rawData[6] = 0;
-		this._rawData[7] = 0;
-		this._rawData[8] = 0;
-		this._rawData[9] = 0;
-		this._rawData[10] = 1;
-		this._rawData[11] = 0;
-		this._rawData[12] = 0;
-		this._rawData[13] = 0;
-		this._rawData[14] = 0;
-		this._rawData[15] = 1;
+		var raw:Float32Array = this._rawData;
+
+		raw[0] = 1;
+		raw[1] = 0;
+		raw[2] = 0;
+		raw[3] = 0;
+		raw[4] = 0;
+		raw[5] = 1;
+		raw[6] = 0;
+		raw[7] = 0;
+		raw[8] = 0;
+		raw[9] = 0;
+		raw[10] = 1;
+		raw[11] = 0;
+		raw[12] = 0;
+		raw[13] = 0;
+		raw[14] = 0;
+		raw[15] = 1;
 
 		this._positionDirty = true;
 	}
@@ -801,42 +838,43 @@ export class Matrix3D
 	{
 		var d = this.determinant;
 		var invertable:boolean = Math.abs(d) > 0.00000000001;
+		var raw:Float32Array = this._rawData;
 
 		if (invertable) {
 			d = 1/d;
-			var m11:number = this._rawData[0];
-			var m12:number = this._rawData[1];
-			var m13:number = this._rawData[2];
-			var m14:number = this._rawData[3];
-			var m21:number = this._rawData[4];
-			var m22:number = this._rawData[5];
-			var m23:number = this._rawData[6];
-			var m24:number = this._rawData[7];
-			var m31:number = this._rawData[8];
-			var m32:number = this._rawData[9];
-			var m33:number = this._rawData[10];
-			var m34:number = this._rawData[11];
-			var m41:number = this._rawData[12];
-			var m42:number = this._rawData[13];
-			var m43:number = this._rawData[14];
-			var m44:number = this._rawData[15];
+			var m11:number = raw[0];
+			var m12:number = raw[1];
+			var m13:number = raw[2];
+			var m14:number = raw[3];
+			var m21:number = raw[4];
+			var m22:number = raw[5];
+			var m23:number = raw[6];
+			var m24:number = raw[7];
+			var m31:number = raw[8];
+			var m32:number = raw[9];
+			var m33:number = raw[10];
+			var m34:number = raw[11];
+			var m41:number = raw[12];
+			var m42:number = raw[13];
+			var m43:number = raw[14];
+			var m44:number = raw[15];
 
-			this._rawData[0] = d*(m22*(m33*m44 - m43*m34) - m32*(m23*m44 - m43*m24) + m42*(m23*m34 - m33*m24));
-			this._rawData[1] = -d*(m12*(m33*m44 - m43*m34) - m32*(m13*m44 - m43*m14) + m42*(m13*m34 - m33*m14));
-			this._rawData[2] = d*(m12*(m23*m44 - m43*m24) - m22*(m13*m44 - m43*m14) + m42*(m13*m24 - m23*m14));
-			this._rawData[3] = -d*(m12*(m23*m34 - m33*m24) - m22*(m13*m34 - m33*m14) + m32*(m13*m24 - m23*m14));
-			this._rawData[4] = -d*(m21*(m33*m44 - m43*m34) - m31*(m23*m44 - m43*m24) + m41*(m23*m34 - m33*m24));
-			this._rawData[5] = d*(m11*(m33*m44 - m43*m34) - m31*(m13*m44 - m43*m14) + m41*(m13*m34 - m33*m14));
-			this._rawData[6] = -d*(m11*(m23*m44 - m43*m24) - m21*(m13*m44 - m43*m14) + m41*(m13*m24 - m23*m14));
-			this._rawData[7] = d*(m11*(m23*m34 - m33*m24) - m21*(m13*m34 - m33*m14) + m31*(m13*m24 - m23*m14));
-			this._rawData[8] = d*(m21*(m32*m44 - m42*m34) - m31*(m22*m44 - m42*m24) + m41*(m22*m34 - m32*m24));
-			this._rawData[9] = -d*(m11*(m32*m44 - m42*m34) - m31*(m12*m44 - m42*m14) + m41*(m12*m34 - m32*m14));
-			this._rawData[10] = d*(m11*(m22*m44 - m42*m24) - m21*(m12*m44 - m42*m14) + m41*(m12*m24 - m22*m14));
-			this._rawData[11] = -d*(m11*(m22*m34 - m32*m24) - m21*(m12*m34 - m32*m14) + m31*(m12*m24 - m22*m14));
-			this._rawData[12] = -d*(m21*(m32*m43 - m42*m33) - m31*(m22*m43 - m42*m23) + m41*(m22*m33 - m32*m23));
-			this._rawData[13] = d*(m11*(m32*m43 - m42*m33) - m31*(m12*m43 - m42*m13) + m41*(m12*m33 - m32*m13));
-			this._rawData[14] = -d*(m11*(m22*m43 - m42*m23) - m21*(m12*m43 - m42*m13) + m41*(m12*m23 - m22*m13));
-			this._rawData[15] = d*(m11*(m22*m33 - m32*m23) - m21*(m12*m33 - m32*m13) + m31*(m12*m23 - m22*m13));
+			raw[0] = d*(m22*(m33*m44 - m43*m34) - m32*(m23*m44 - m43*m24) + m42*(m23*m34 - m33*m24));
+			raw[1] = -d*(m12*(m33*m44 - m43*m34) - m32*(m13*m44 - m43*m14) + m42*(m13*m34 - m33*m14));
+			raw[2] = d*(m12*(m23*m44 - m43*m24) - m22*(m13*m44 - m43*m14) + m42*(m13*m24 - m23*m14));
+			raw[3] = -d*(m12*(m23*m34 - m33*m24) - m22*(m13*m34 - m33*m14) + m32*(m13*m24 - m23*m14));
+			raw[4] = -d*(m21*(m33*m44 - m43*m34) - m31*(m23*m44 - m43*m24) + m41*(m23*m34 - m33*m24));
+			raw[5] = d*(m11*(m33*m44 - m43*m34) - m31*(m13*m44 - m43*m14) + m41*(m13*m34 - m33*m14));
+			raw[6] = -d*(m11*(m23*m44 - m43*m24) - m21*(m13*m44 - m43*m14) + m41*(m13*m24 - m23*m14));
+			raw[7] = d*(m11*(m23*m34 - m33*m24) - m21*(m13*m34 - m33*m14) + m31*(m13*m24 - m23*m14));
+			raw[8] = d*(m21*(m32*m44 - m42*m34) - m31*(m22*m44 - m42*m24) + m41*(m22*m34 - m32*m24));
+			raw[9] = -d*(m11*(m32*m44 - m42*m34) - m31*(m12*m44 - m42*m14) + m41*(m12*m34 - m32*m14));
+			raw[10] = d*(m11*(m22*m44 - m42*m24) - m21*(m12*m44 - m42*m14) + m41*(m12*m24 - m22*m14));
+			raw[11] = -d*(m11*(m22*m34 - m32*m24) - m21*(m12*m34 - m32*m14) + m31*(m12*m24 - m22*m14));
+			raw[12] = -d*(m21*(m32*m43 - m42*m33) - m31*(m22*m43 - m42*m23) + m41*(m22*m33 - m32*m23));
+			raw[13] = d*(m11*(m32*m43 - m42*m33) - m31*(m12*m43 - m42*m13) + m41*(m12*m33 - m32*m13));
+			raw[14] = -d*(m11*(m22*m43 - m42*m23) - m21*(m12*m43 - m42*m13) + m41*(m12*m23 - m22*m13));
+			raw[15] = d*(m11*(m22*m33 - m32*m23) - m21*(m12*m33 - m32*m13) + m31*(m12*m23 - m22*m13));
 		}
 
 		this._positionDirty = true;
@@ -846,22 +884,24 @@ export class Matrix3D
 
 	public isIdentity():boolean
 	{
-		if (this._rawData[0] == 1 &&
-			this._rawData[1] == 0 &&
-			this._rawData[2] == 0 &&
-			this._rawData[3] == 0 &&
-			this._rawData[4] == 0 &&
-			this._rawData[5] == 1 &&
-			this._rawData[6] == 0 &&
-			this._rawData[7] == 0 &&
-			this._rawData[8] == 0 &&
-			this._rawData[9] == 0 &&
-			this._rawData[10] == 1 &&
-			this._rawData[11] == 0 &&
-			this._rawData[12] == 0 &&
-			this._rawData[13] == 0 &&
-			this._rawData[14] == 0 &&
-			this._rawData[15] == 1)
+		var raw:Float32Array = this._rawData;
+
+		if (raw[0] == 1 &&
+			raw[1] == 0 &&
+			raw[2] == 0 &&
+			raw[3] == 0 &&
+			raw[4] == 0 &&
+			raw[5] == 1 &&
+			raw[6] == 0 &&
+			raw[7] == 0 &&
+			raw[8] == 0 &&
+			raw[9] == 0 &&
+			raw[10] == 1 &&
+			raw[11] == 0 &&
+			raw[12] == 0 &&
+			raw[13] == 0 &&
+			raw[14] == 0 &&
+			raw[15] == 1)
 				return true;
 
 		return false;
@@ -872,59 +912,62 @@ export class Matrix3D
 	 */
 	public prepend(rhs:Matrix3D):void
 	{
-		var m111:number = rhs._rawData[0];
-		var m112:number = rhs._rawData[1];
-		var m113:number = rhs._rawData[2];
-		var m114:number = rhs._rawData[3];
-		var m121:number = rhs._rawData[4];
-		var m122:number = rhs._rawData[5];
-		var m123:number = rhs._rawData[6];
-		var m124:number = rhs._rawData[7];
-		var m131:number = rhs._rawData[8];
-		var m132:number = rhs._rawData[9];
-		var m133:number = rhs._rawData[10];
-		var m134:number = rhs._rawData[11];
-		var m141:number = rhs._rawData[12];
-		var m142:number = rhs._rawData[13];
-		var m143:number = rhs._rawData[14];
-		var m144:number = rhs._rawData[15];
+		var raw:Float32Array = this._rawData;
+		var rawRhs:Float32Array = rhs._rawData;
 
-		var m211:number = this._rawData[0];
-		var m212:number = this._rawData[1];
-		var m213:number = this._rawData[2];
-		var m214:number = this._rawData[3];
-		var m221:number = this._rawData[4];
-		var m222:number = this._rawData[5];
-		var m223:number = this._rawData[6];
-		var m224:number = this._rawData[7];
-		var m231:number = this._rawData[8];
-		var m232:number = this._rawData[9];
-		var m233:number = this._rawData[10];
-		var m234:number = this._rawData[11];
-		var m241:number = this._rawData[12];
-		var m242:number = this._rawData[13];
-		var m243:number = this._rawData[14];
-		var m244:number = this._rawData[15];
+		var m111:number = rawRhs[0];
+		var m112:number = rawRhs[1];
+		var m113:number = rawRhs[2];
+		var m114:number = rawRhs[3];
+		var m121:number = rawRhs[4];
+		var m122:number = rawRhs[5];
+		var m123:number = rawRhs[6];
+		var m124:number = rawRhs[7];
+		var m131:number = rawRhs[8];
+		var m132:number = rawRhs[9];
+		var m133:number = rawRhs[10];
+		var m134:number = rawRhs[11];
+		var m141:number = rawRhs[12];
+		var m142:number = rawRhs[13];
+		var m143:number = rawRhs[14];
+		var m144:number = rawRhs[15];
 
-		this._rawData[0] = m111*m211 + m112*m221 + m113*m231 + m114*m241;
-		this._rawData[1] = m111*m212 + m112*m222 + m113*m232 + m114*m242;
-		this._rawData[2] = m111*m213 + m112*m223 + m113*m233 + m114*m243;
-		this._rawData[3] = m111*m214 + m112*m224 + m113*m234 + m114*m244;
+		var m211:number = raw[0];
+		var m212:number = raw[1];
+		var m213:number = raw[2];
+		var m214:number = raw[3];
+		var m221:number = raw[4];
+		var m222:number = raw[5];
+		var m223:number = raw[6];
+		var m224:number = raw[7];
+		var m231:number = raw[8];
+		var m232:number = raw[9];
+		var m233:number = raw[10];
+		var m234:number = raw[11];
+		var m241:number = raw[12];
+		var m242:number = raw[13];
+		var m243:number = raw[14];
+		var m244:number = raw[15];
 
-		this._rawData[4] = m121*m211 + m122*m221 + m123*m231 + m124*m241;
-		this._rawData[5] = m121*m212 + m122*m222 + m123*m232 + m124*m242;
-		this._rawData[6] = m121*m213 + m122*m223 + m123*m233 + m124*m243;
-		this._rawData[7] = m121*m214 + m122*m224 + m123*m234 + m124*m244;
+		raw[0] = m111*m211 + m112*m221 + m113*m231 + m114*m241;
+		raw[1] = m111*m212 + m112*m222 + m113*m232 + m114*m242;
+		raw[2] = m111*m213 + m112*m223 + m113*m233 + m114*m243;
+		raw[3] = m111*m214 + m112*m224 + m113*m234 + m114*m244;
 
-		this._rawData[8] = m131*m211 + m132*m221 + m133*m231 + m134*m241;
-		this._rawData[9] = m131*m212 + m132*m222 + m133*m232 + m134*m242;
-		this._rawData[10] = m131*m213 + m132*m223 + m133*m233 + m134*m243;
-		this._rawData[11] = m131*m214 + m132*m224 + m133*m234 + m134*m244;
+		raw[4] = m121*m211 + m122*m221 + m123*m231 + m124*m241;
+		raw[5] = m121*m212 + m122*m222 + m123*m232 + m124*m242;
+		raw[6] = m121*m213 + m122*m223 + m123*m233 + m124*m243;
+		raw[7] = m121*m214 + m122*m224 + m123*m234 + m124*m244;
 
-		this._rawData[12] = m141*m211 + m142*m221 + m143*m231 + m144*m241;
-		this._rawData[13] = m141*m212 + m142*m222 + m143*m232 + m144*m242;
-		this._rawData[14] = m141*m213 + m142*m223 + m143*m233 + m144*m243;
-		this._rawData[15] = m141*m214 + m142*m224 + m143*m234 + m144*m244;
+		raw[8] = m131*m211 + m132*m221 + m133*m231 + m134*m241;
+		raw[9] = m131*m212 + m132*m222 + m133*m232 + m134*m242;
+		raw[10] = m131*m213 + m132*m223 + m133*m233 + m134*m243;
+		raw[11] = m131*m214 + m132*m224 + m133*m234 + m134*m244;
+
+		raw[12] = m141*m211 + m142*m221 + m143*m231 + m144*m241;
+		raw[13] = m141*m212 + m142*m222 + m143*m232 + m144*m242;
+		raw[14] = m141*m213 + m142*m223 + m143*m233 + m144*m243;
+		raw[15] = m141*m214 + m142*m224 + m143*m234 + m144*m244;
 
 		this._positionDirty = true;
 	}
@@ -1218,11 +1261,13 @@ export class Matrix3D
 		if (!target)
 			target = new Vector3D();
 
+		var raw:Float32Array = this._rawData;
+		var rawTarget:Float32Array = target._rawData;
 		
-		target.x = x*this._rawData[0] + y*this._rawData[4] + z*this._rawData[8] + w*this._rawData[12];
-		target.y = x*this._rawData[1] + y*this._rawData[5] + z*this._rawData[9] + w*this._rawData[13];
-		target.z = x*this._rawData[2] + y*this._rawData[6] + z*this._rawData[10] + w*this._rawData[14];
-		target.w = x*this._rawData[3] + y*this._rawData[7] + z*this._rawData[11] + w*this._rawData[15];
+		rawTarget[0] = x*raw[0] + y*raw[4] + z*raw[8] + w*raw[12];
+		rawTarget[1] = x*raw[1] + y*raw[5] + z*raw[9] + w*raw[13];
+		rawTarget[2] = x*raw[2] + y*raw[6] + z*raw[10] + w*raw[14];
+		rawTarget[3] = x*raw[3] + y*raw[7] + z*raw[11] + w*raw[15];
 
 		return target;
 	}
@@ -1234,14 +1279,15 @@ export class Matrix3D
 	{
 		var i:number = 0;
 		var x:number = 0, y:number = 0, z:number = 0;
+		var raw:Float32Array = this._rawData;
 
 		while (i + 3 <= vin.length) {
 			x = vin[i];
 			y = vin[i + 1];
 			z = vin[i + 2];
-			vout[i] = x*this._rawData[0] + y*this._rawData[4] + z*this._rawData[8] + this._rawData[12];
-			vout[i + 1] = x*this._rawData[1] + y*this._rawData[5] + z*this._rawData[9] + this._rawData[13];
-			vout[i + 2] = x*this._rawData[2] + y*this._rawData[6] + z*this._rawData[10] + this._rawData[14];
+			vout[i] = x*raw[0] + y*raw[4] + z*raw[8] + raw[12];
+			vout[i + 1] = x*raw[1] + y*raw[5] + z*raw[9] + raw[13];
+			vout[i + 2] = x*raw[2] + y*raw[6] + z*raw[10] + raw[14];
 			i += 3;
 		}
 	}
@@ -1251,22 +1297,23 @@ export class Matrix3D
 	 */
 	public transpose():void
 	{
-		var rawData:Float32Array = Matrix3D._tempMatrix._rawData;
+		var raw:Float32Array = this._rawData;
+		var rawTemp:Float32Array = Matrix3D._tempMatrix._rawData;
 
-		this.copyRawDataTo(rawData, 0, true);
+		this.copyRawDataTo(rawTemp, 0, true);
 
-		this._rawData[1] = rawData[1];
-		this._rawData[2] = rawData[2];
-		this._rawData[3] = rawData[3];
-		this._rawData[4] = rawData[4];
-		this._rawData[6] = rawData[6];
-		this._rawData[7] = rawData[7];
-		this._rawData[8] = rawData[8];
-		this._rawData[9] = rawData[9];
-		this._rawData[11] = rawData[11];
-		this._rawData[12] = rawData[12];
-		this._rawData[13] = rawData[13];
-		this._rawData[14] = rawData[14];
+		raw[1] = rawTemp[1];
+		raw[2] = rawTemp[2];
+		raw[3] = rawTemp[3];
+		raw[4] = rawTemp[4];
+		raw[6] = rawTemp[6];
+		raw[7] = rawTemp[7];
+		raw[8] = rawTemp[8];
+		raw[9] = rawTemp[9];
+		raw[11] = rawTemp[11];
+		raw[12] = rawTemp[12];
+		raw[13] = rawTemp[13];
+		raw[14] = rawTemp[14];
 
 		this._positionDirty = true;
 	}

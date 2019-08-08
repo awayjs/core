@@ -10,6 +10,7 @@ export class EventDispatcher
 {
 	private _listenerObjects:Array<ListenerObject> = new Array<ListenerObject>();
 	private _t:any;
+	public avm2Adapter:any;
 
 	constructor(target:any = null)
 	{

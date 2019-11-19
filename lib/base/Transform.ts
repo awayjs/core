@@ -225,6 +225,7 @@ export class Transform extends EventDispatcher
 		return this._leftVector;
 	}
 
+	private _matrix:Matrix=null;
 	/**
 	 * A Matrix object containing values that alter the scaling, rotation, and
 	 * translation of the display object.
@@ -237,7 +238,25 @@ export class Transform extends EventDispatcher
 	 * 
 	 * @throws TypeError The matrix is null when being set
 	 */
-	public matrix:Matrix;
+	public get matrix():Matrix{
+		if(!this._matrix)
+			this._matrix=new Matrix(this.matrix3D._rawData[0],
+				this.matrix3D._rawData[1],
+				this.matrix3D._rawData[4],
+				this.matrix3D._rawData[5],
+				this.matrix3D._rawData[12],
+				this.matrix3D._rawData[13]);
+		this._matrix.a=this.matrix3D._rawData[0];
+		this._matrix.b=this.matrix3D._rawData[1];
+		this._matrix.c=this.matrix3D._rawData[4];
+		this._matrix.d=this.matrix3D._rawData[5];
+		this._matrix.tx=this.matrix3D._rawData[12];
+		this._matrix.ty=this.matrix3D._rawData[13];
+		return this._matrix;
+	}
+	public set matrix(value:Matrix){
+		this._matrix=value;
+	}
 
 	/**
 	 * Provides access to the Matrix3D object of a three-dimensional display

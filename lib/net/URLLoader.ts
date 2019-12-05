@@ -243,8 +243,8 @@ export class URLLoader extends EventDispatcher
 
 			this._XHR.onloadstart = (event:ProgressEvent) => this.onLoadStart(event);                 // loadstart	        - When the request starts.
 			this._XHR.onprogress = (event:ProgressEvent) => this.onProgress(event);	                // progress	            - While loading and sending data.
-			this._XHR.onabort = (event:UIEvent) => this.onAbort(event);	                        // abort	            - When the request has been aborted, either by invoking the abort() method or navigating away from the page.
-			this._XHR.onerror = (event:ErrorEvent) => this.onLoadError(event);                     // error	            - When the request has failed.
+			this._XHR.onabort = (event:ProgressEvent) => this.onAbort(event);	                        // abort	            - When the request has been aborted, either by invoking the abort() method or navigating away from the page.
+			this._XHR.onerror = (event:ProgressEvent) => this.onLoadError(event);                     // error	            - When the request has failed.
 			this._XHR.onload = (event:Event) => this.onLoadComplete(event);                   // load	                - When the request has successfully completed.
 			this._XHR.ontimeout = (event:Event) => this.onTimeOut(event);                     // timeout	            - When the author specified timeout has passed before the request could complete.
 			this._XHR.onloadend = (event:ProgressEvent) => this.onLoadEnd(event);                     // loadend	            - When the request has completed, regardless of whether or not it was successful.
@@ -330,7 +330,7 @@ export class URLLoader extends EventDispatcher
 	 * When the request has been aborted, either by invoking the abort() method or navigating away from the page.
 	 * @param event
 	 */
-	private onAbort(event:UIEvent):void
+	private onAbort(event:ProgressEvent):void
 	{
 		// TODO: investigate whether this needs to be an IOError
 	}

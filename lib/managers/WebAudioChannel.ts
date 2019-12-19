@@ -265,8 +265,7 @@ export class WebAudioChannel
 			else
 				this._pannerNode.setPosition(Math.sin(this._pan*(Math.PI/2)), 0, Math.cos(this._pan*(Math.PI/2)));
 			// TODO: offset / startTime make problem in dino-run game:
-			//this._source.start(this._audioCtx.currentTime, this._currentTime);
-			this._source.start();
+			this._source.start(this._audioCtx.currentTime, this._currentTime);
 		} catch (error) {
 			console.log("Error starting audio: " + error);
 			this._disposeSource();

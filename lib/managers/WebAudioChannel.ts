@@ -86,6 +86,9 @@ export class WebAudioChannel
 
 	public get currentTime():number
 	{
+		if(this._isDecoding){
+			return this._currentTime;
+		}
 		return this._audioCtx.currentTime - this._startTime;
 	}
 
@@ -203,7 +206,7 @@ export class WebAudioChannel
 		this._isLooping = loop;
 
 		this._currentTime = offset;
-
+		//console.log("play with offset time", offset)
 		this._id = id;
 
 		this._isDecoding = true;
@@ -257,6 +260,7 @@ export class WebAudioChannel
 		this._duration = buffer.duration;
 		this._pan=0;
 		this._startTime = this._audioCtx.currentTime - this._currentTime;
+		//console.log("play with offset time decode complete", this._audioCtx.currentTime, this._currentTime, this._startTime)
 		this._source.onended = this._onEndedDelegate;
 		try {
 			this._gainNode.gain.value = this._groupVolume * this._volume;

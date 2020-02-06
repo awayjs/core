@@ -155,6 +155,15 @@ export class ParserBase extends EventDispatcher
 		this._pStartParsing(frameLimit);
 	}
 
+	public parseSync(data:any):IAsset
+	{
+		this._data = data;
+		var state=ParserBase.MORE_TO_PARSE;
+		while(state==ParserBase.MORE_TO_PARSE){
+			state=this._pProceedParsing();
+		}
+		return this._pContent;
+	}
 	/**
 	 * A list of dependencies that need to be loaded and resolved for the object being parsed.
 	 */

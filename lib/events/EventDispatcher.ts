@@ -94,7 +94,7 @@ export class ListenerObject
 	public addEventListener(listener:(event:EventBase) => void):void
 	{
 		//check if listener already added
-		if (this.getEventListenerIndex(listener) !== -1)
+		if (this._listeners.indexOf(listener) !== -1)
 			return;
 
 		this._listeners.push(listener);
@@ -105,7 +105,7 @@ export class ListenerObject
 	public removeEventListener(listener:(event:EventBase) => void):void
 	{
 		//check if listener exists
-		var index:number = this.getEventListenerIndex(listener);
+		var index:number = this._listeners.indexOf(listener);
 
 		if (index === -1)
 			return;
@@ -125,7 +125,7 @@ export class ListenerObject
 		for (this._index = 0; this._index < len && this._index < this.numListeners; this._index++)
 			this._listeners[this._index](event);
 	}
-
+	
 	/**
 	 * get Event Listener Index in array. Returns -1 if no listener is added
 	 * @method getEventListenerIndex
@@ -134,11 +134,7 @@ export class ListenerObject
 	 */
 	public getEventListenerIndex(listener:(event:EventBase) => void):number
 	{
-		for (var index:number = 0; index < this.numListeners; index++)
-			if (listener == this._listeners[index])
-				return index;
-
-		return -1;
+		return this._listeners.indexOf(listener);
 	}
 }
 export default EventDispatcher;

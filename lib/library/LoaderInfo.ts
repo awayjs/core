@@ -108,7 +108,11 @@ export class LoaderInfo extends EventDispatcher
 	private _content:AssetBase;
 	private _contentType:string;
 	private _loader:Loader;
-	private _url:string;
+    private _url:string;
+	private _frameRate:number;
+	private _width:number;
+	private _height:number;
+    
 	/**
 	 * The bytes associated with a LoaderInfo object.
 	 * 
@@ -230,5 +234,20 @@ export class LoaderInfo extends EventDispatcher
 	public get url():string
 	{
 		return this._url;
+    }
+    
+	public get frameRate():number /*int*/
+	{
+		return this._frameRate;
+    }
+    
+	public get width():number /*int*/
+	{
+		return this._width;
+    }
+    
+	public get height():number /*int*/
+	{
+		return this._height;
 	}
 }

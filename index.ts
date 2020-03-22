@@ -1,12 +1,13 @@
 
 console.debug("AwayJS - Core - 0.9.2");
 
+import "./lib/base/Maps";
+import "./lib/base/Numbers";
+
 export {WaveAudio}						from "./lib/audio/WaveAudio";
 export {WaveAudioData}					from "./lib/audio/WaveAudio";
 
 export {ColorTransform}					from "./lib/base/ColorTransform";
-export {INumberMap}					    from "./lib/base/Maps";
-export {IStringMap}					    from "./lib/base/Maps";
 export {Transform}						from "./lib/base/Transform";
 
 export {AbstractMethodError}			from "./lib/errors/AbstractMethodError";

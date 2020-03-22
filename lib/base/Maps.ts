@@ -1,3 +1,2 @@
-
-export interface IStringMap<T> { [key: string]: T; };
-export interface INumberMap<T> { [key: number]: T; };
+declare type StringMap<T> = {[key: string]: T};
+declare type NumberMap<T> = {[key: number]: T};

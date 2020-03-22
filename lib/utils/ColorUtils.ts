@@ -56,5 +56,22 @@ export class ColorUtils
 	public static ARGBToHexString(argb:number[]):string
 	{
 		return "#" + ColorUtils.componentToHex(argb[0]) + ColorUtils.componentToHex(argb[1]) + ColorUtils.componentToHex(argb[2]) + ColorUtils.componentToHex(argb[3]);
+    }
+    
+	public static interpolateFloat32Color(start:number, end:number, ratio:number){
+
+		var a:number = ( start & 0xff000000 ) >>> 24;
+		var r:number = ( start & 0xff0000 ) >>> 16;
+		var g:number = ( start & 0xff00 ) >>> 8;
+		var b:number = start & 0xff;
+		var a2:number = ( end & 0xff000000 ) >>> 24;
+		var r2:number = ( end & 0xff0000 ) >>> 16;
+		var g2:number = ( end & 0xff00 ) >>> 8;
+		var b2:number = end & 0xff;
+
+		var rs=1-ratio;
+		var re=ratio;
+
+		return (((a*rs+a2*re) << 24) | ((r*rs+r2*re) << 16) | ((g*rs+g2*re) << 8) | (b*rs+b2*re));
 	}
 }

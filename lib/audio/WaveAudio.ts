@@ -21,7 +21,10 @@ export class WaveAudio extends AssetBase
 
 	public get isPlaying():boolean
 	{
-		return this._isPlaying;
+		if(!this._audioChannel)
+			return false;
+		
+		return this._audioChannel.isPlaying();
 	}
 	/**
 	 *

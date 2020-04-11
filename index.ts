@@ -90,7 +90,6 @@ export {ProjectionBase}					from "./lib/projections/ProjectionBase";
 
 export {Keyboard}						from "./lib/ui/Keyboard";
 
-export {BuildMode}						from "./lib/utils/BuildMode";
 export {ByteArray}						from "./lib/utils/ByteArray";
 export {Byte32Array}					from "./lib/utils/Byte32Array";
 export {ByteArrayBase}					from "./lib/utils/ByteArrayBase";

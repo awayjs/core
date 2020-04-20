@@ -114,9 +114,9 @@ export class AssetLibrary
 		AssetLibrary.getBundle().loadData(data, context, ns, parser);
 	}
 
-	public static stopLoad():void
+	public static stop():void
 	{
-		AssetLibrary.getBundle().stopAllLoaders();
+		AssetLibrary.getBundle().stop();
 	}
 
 	public static getLoader():Loader

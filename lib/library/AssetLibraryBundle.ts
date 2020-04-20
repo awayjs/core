@@ -16,6 +16,7 @@ import {LoaderEvent} from "../events/LoaderEvent";
 import {EventDispatcher} from "../events/EventDispatcher";
 import {ParserEvent} from "../events/ParserEvent";
 import {ParserBase}	from "../parsers/ParserBase";
+import { EventBase } from '../events/EventBase';
 
 /**
  * AssetLibraryBundle enforces a multiton pattern and is not intended to be instanced directly.
@@ -36,11 +37,15 @@ export class AssetLibraryBundle extends EventDispatcher
 
 	private _onAssetRenameDelegate:(event:AssetEvent) => void;
 	private _onAssetConflictResolvedDelegate:(event:AssetEvent) => void;
-	private _onLoadCompleteDelegate:(event:LoaderEvent) => void;
+	private _onLoaderStartDelegate:(event:LoaderEvent) => void;
+	private _onLoaderCompleteDelegate:(event:LoaderEvent) => void;
 	private _onTextureSizeErrorDelegate:(event:LoaderEvent) => void;
 	private _onAssetCompleteDelegate:(event:AssetEvent) => void;
-	private _onLoadErrorDelegate:(event:URLLoaderEvent) => boolean;
-	private _onParseErrorDelegate:(event:ParserEvent) => boolean;
+	private _onLoadErrorDelegate:(event:URLLoaderEvent) => void;
+	private _onParseErrorDelegate:(event:ParserEvent) => void;
+	private _errorDelegateSelector:{[index: string]:((event: EventBase) => void)};
+	
+	
 
 	/**
 	 * Creates a new <code>AssetLibraryBundle</code> object.
@@ -58,13 +63,50 @@ export class AssetLibraryBundle extends EventDispatcher
 		this.conflictStrategy = ConflictStrategy.IGNORE.create();
 		this.conflictPrecedence = ConflictPrecedence.FAVOR_NEW;
 
-		this._onAssetRenameDelegate = (event:AssetEvent) => this.onAssetRename(event);
-		this._onAssetConflictResolvedDelegate = (event:AssetEvent) => this.onAssetConflictResolved(event);
-		this._onLoadCompleteDelegate = (event:LoaderEvent) => this.onLoadComplete(event);
-		this._onTextureSizeErrorDelegate = (event:LoaderEvent) => this.onTextureSizeError(event);
-		this._onAssetCompleteDelegate = (event:AssetEvent) => this.onAssetComplete(event);
-		this._onLoadErrorDelegate = (event:URLLoaderEvent) => this.onLoadError(event);
-		this._onParseErrorDelegate = (event:ParserEvent) => this.onParseError(event);
+		this._onAssetRenameDelegate = (event:AssetEvent) => this._onAssetRename(event);
+		this._onAssetConflictResolvedDelegate = (event:AssetEvent) => this._onAssetConflictResolved(event);
+		this._onLoaderStartDelegate = (event:LoaderEvent) => this._onLoaderStart(event);
+		this._onLoaderCompleteDelegate = (event:LoaderEvent) => this._onLoaderComplete(event);
+		this._onTextureSizeErrorDelegate = (event:LoaderEvent) => this._onTextureSizeError(event);
+		this._onAssetCompleteDelegate = (event:AssetEvent) => this._onAssetComplete(event);
+		this._onLoadErrorDelegate = (event:URLLoaderEvent) => this._onLoadError(event);
+		this._onParseErrorDelegate = (event:ParserEvent) => this._onParseError(event);
+
+		this._errorDelegateSelector = {
+			[URLLoaderEvent.LOAD_ERROR]: this._onLoadErrorDelegate,
+			[ParserEvent.PARSE_ERROR]: this._onParseErrorDelegate
+		}
+	}
+
+	/**
+	 * Special addEventListener case for <code>URLLoaderEvent.LOAD_ERROR</code> and <code>ype == ParserEvent.PARSE_ERROR</code>
+	 * 
+	 * @param type 
+	 * @param listener 
+	 */
+	public addEventListener(type:string, listener:(event:EventBase) => void):void
+	{
+		if (type == URLLoaderEvent.LOAD_ERROR || type == ParserEvent.PARSE_ERROR)
+			for (var i:number; i < this._loaderSessions.length; i++)
+				this._loaderSessions[i].addEventListener(type, this._errorDelegateSelector[type]);
+
+		super.addEventListener(type, listener);
+	}
+	
+	/**
+	 * Special removeEventListener case for <code>URLLoaderEvent.LOAD_ERROR</code> and <code>ype == ParserEvent.PARSE_ERROR</code>
+	 * 
+	 * @param type 
+	 * @param listener 
+	 */
+
+	public removeEventListener(type:string, listener:(event:EventBase) => void):void
+	{
+		if (type == URLLoaderEvent.LOAD_ERROR || type == ParserEvent.PARSE_ERROR)
+			for (var i:number; i < this._loaderSessions.length; i++)
+				this._loaderSessions[i].removeEventListener(type, this._errorDelegateSelector[type]);
+
+		super.removeEventListener(type, listener);
 	}
 
 	/**
@@ -204,23 +246,30 @@ export class AssetLibraryBundle extends EventDispatcher
 
 		this._loaderSessions.push(loader);
 
-		loader.addEventListener(LoaderEvent.LOAD_COMPLETE, this._onLoadCompleteDelegate);
+		loader.addEventListener(LoaderEvent.LOADER_START, this._onLoaderStartDelegate);
+		loader.addEventListener(LoaderEvent.LOADER_COMPLETE, this._onLoaderCompleteDelegate);
 		loader.addEventListener(AssetEvent.TEXTURE_SIZE_ERROR, this._onTextureSizeErrorDelegate);
 		loader.addEventListener(AssetEvent.ASSET_COMPLETE, this._onAssetCompleteDelegate);
 
-		// Error are handled separately (see documentation for addErrorHandler)
-		loader._iAddErrorHandler(this._onLoadErrorDelegate);
-		loader._iAddParseErrorHandler(this._onParseErrorDelegate);
+		if (this.hasEventListener(URLLoaderEvent.LOAD_ERROR))
+			loader.addEventListener(URLLoaderEvent.LOAD_ERROR, this._onLoadErrorDelegate);
+	
+		if (this.hasEventListener(ParserEvent.PARSE_ERROR))
+			loader.addEventListener(ParserEvent.PARSE_ERROR, this._onParseErrorDelegate);
 
 		return loader;
 	}
 	
-	public disposeLoader(loader:Loader):void
+	public stopLoader(loader:Loader):void
 	{
 		var index:number = this._loaderSessions.indexOf(loader);
+
+		if (index == -1)
+			throw new Error("loader is not an active session");
+
 		this._loaderSessions.splice(index, 1);
 
-		this.killloaderSession(loader);
+		this._killLoaderSession(loader);
 	}
 
 	/**
@@ -438,11 +487,11 @@ export class AssetLibraryBundle extends EventDispatcher
 		}
 	}
 
-	public stopAllLoaders():void
+	public stop():void
 	{
 		var len:number = this._loaderSessions.length;
 		for (var i:number = 0; i < len; i++)
-			this.killloaderSession(this._loaderSessions[i]);
+			this._killLoaderSession(this._loaderSessions[i]);
 
 		this._loaderSessions = new Array<Loader>();
 	}
@@ -471,40 +520,32 @@ export class AssetLibraryBundle extends EventDispatcher
 	/**
 	 * Called when a an error occurs during loading.
 	 */
-	private onLoadError(event:URLLoaderEvent):boolean
+	private _onLoadError(event:URLLoaderEvent):void
 	{
-		if (this.hasEventListener(URLLoaderEvent.LOAD_ERROR)) {
-			this.dispatchEvent(event);
-			return true;
-		} else {
-			return false;
-		}
+		this.dispatchEvent(event);
 	}
 
 	/**
 	 * Called when a an error occurs during parsing.
 	 */
-	private onParseError(event:ParserEvent):boolean
+	private _onParseError(event:ParserEvent):void
 	{
-		if (this.hasEventListener(ParserEvent.PARSE_ERROR)) {
-			this.dispatchEvent(event);
-			return true;
-		} else {
-			return false;
-		}
+		this.dispatchEvent(event);
 	}
 
-	private onAssetComplete(event:AssetEvent):void
+	private _onAssetComplete(event:AssetEvent):void
 	{
-		// Only add asset to library the first time.
-		if (event.type == AssetEvent.ASSET_COMPLETE)
-			this.addAsset(event.asset.adapter);
+		this.addAsset(event.asset.adapter);
 
 		this.dispatchEvent(event);
-
 	}
 
-	private onTextureSizeError(event:LoaderEvent):void
+	private _onTextureSizeError(event:LoaderEvent):void
+	{
+		this.dispatchEvent(event);
+	}
+
+	private _onLoaderStart(event:LoaderEvent):void
 	{
 		this.dispatchEvent(event);
 	}
@@ -512,25 +553,31 @@ export class AssetLibraryBundle extends EventDispatcher
 	/**
 	 * Called when the resource and all of its dependencies was retrieved.
 	 */
-	private onLoadComplete(event:LoaderEvent):void
+	private _onLoaderComplete(event:LoaderEvent):void
 	{
-		var loader:Loader = <Loader> event.target;
+		this.stopLoader(event.target);
 
 		this.dispatchEvent(event);
-
-		this.disposeLoader(loader);
 	}
 
-	private killloaderSession(loader:Loader):void
+	private _killLoaderSession(loader:Loader):void
 	{
-		loader.removeEventListener(LoaderEvent.LOAD_COMPLETE, this._onLoadCompleteDelegate);
+		loader.removeEventListener(LoaderEvent.LOADER_START, this._onLoaderStartDelegate);
+		loader.removeEventListener(LoaderEvent.LOADER_COMPLETE, this._onLoaderCompleteDelegate);
 		loader.removeEventListener(AssetEvent.TEXTURE_SIZE_ERROR, this._onTextureSizeErrorDelegate);
 		loader.removeEventListener(AssetEvent.ASSET_COMPLETE, this._onAssetCompleteDelegate);
+
+		if (this.hasEventListener(URLLoaderEvent.LOAD_ERROR))
+			loader.removeEventListener(URLLoaderEvent.LOAD_ERROR, this._onLoadErrorDelegate);
+	
+		if (this.hasEventListener(ParserEvent.PARSE_ERROR))
+			loader.removeEventListener(ParserEvent.PARSE_ERROR, this._onParseErrorDelegate);
+
 		loader.stop();
 	}
 
 
-	private onAssetRename(event:AssetEvent):void
+	private _onAssetRename(event:AssetEvent):void
 	{
 		var asset:IAssetAdapter = (<IAsset > event.target).adapter;// TODO: was ev.currentTarget - watch this var
 		var old:IAssetAdapter = this.getAsset(asset.adaptee.assetNamespace, asset.adaptee.name);
@@ -548,7 +595,7 @@ export class AssetLibraryBundle extends EventDispatcher
 		}
 	}
 
-	private onAssetConflictResolved(event:AssetEvent):void
+	private _onAssetConflictResolved(event:AssetEvent):void
 	{
 		this.dispatchEvent(event.clone());
 	}

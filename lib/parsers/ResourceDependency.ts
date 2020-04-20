@@ -12,18 +12,18 @@ export class ResourceDependency
 {
 	private _id:string;
 	private _sub_id:number;
-
 	private _request:URLRequest;
-	private _assets:Array<IAsset>;
+	private _data:any;
 	private _parser:ParserBase;
 	private _parentParser:ParserBase;
-	private _data:any;
 	private _retrieveAsRawData:boolean;
 	private _suppressAssetEvents:boolean;
-	private _dependencies:Array<ResourceDependency>;
 
-	public _iLoader:URLLoader;
-	public _iSuccess:boolean;
+	private _assets:IAsset[] = [];
+	private _dependencies:ResourceDependency[] = [];
+
+	public loader:URLLoader;
+	public success:boolean;
 
 
 	constructor(id:string, request:URLRequest, data:any, parser:ParserBase, parentParser:ParserBase, retrieveAsRawData:boolean = false, suppressAssetEvents:boolean = false, sub_id:number=0)
@@ -36,8 +36,6 @@ export class ResourceDependency
 		this._parentParser = parentParser;
 		this._retrieveAsRawData = retrieveAsRawData;
 		this._suppressAssetEvents = suppressAssetEvents;
-		this._assets = new Array<IAsset>();
-		this._dependencies = new Array<ResourceDependency>();
 	}
 
 	/**
@@ -47,6 +45,10 @@ export class ResourceDependency
 	{
 		return this._id;
 	}
+
+	/**
+	 * 
+	 */
 	public get sub_id():number
 	{
 		return this._sub_id;
@@ -120,7 +122,7 @@ export class ResourceDependency
 	 * @private
 	 * Method to set data after having already created the dependency object, e.g. after load.
 	 */
-	public _iSetData(data:any):void
+	public setData(data:any):void
 	{
 		this._data = data;
 	}
@@ -129,7 +131,7 @@ export class ResourceDependency
 	 * @private
 	 *
 	 */
-	public _iSetParser(parser:ParserBase):void
+	public setParser(parser:ParserBase):void
 	{
 		this._parser = parser;
 	}

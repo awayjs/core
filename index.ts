@@ -60,7 +60,6 @@ export {IDUtil}							from "./lib/library/IDUtil";
 export {IgnoreConflictStrategy}			from "./lib/library/IgnoreConflictStrategy";
 export {Loader}							from "./lib/library/Loader";
 export {LoaderContext}					from "./lib/library/LoaderContext";
-export {LoaderInfo}						from "./lib/library/LoaderInfo";
 export {NumSuffixConflictStrategy}		from "./lib/library/NumSuffixConflictStrategy";
 
 export {AudioManager}					from "./lib/managers/AudioManager";

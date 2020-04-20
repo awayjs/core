@@ -1,5 +1,4 @@
 import {LoaderContext}			from "../library/LoaderContext";
-import {LoaderInfo}				from "../library/LoaderInfo";
 import {URLLoader}				from "../net/URLLoader";
 import {URLLoaderDataFormat}		from "../net/URLLoaderDataFormat";
 import {URLRequest}				from "../net/URLRequest";
@@ -74,15 +73,9 @@ import {ResourceDependency}		from "../parsers/ResourceDependency";
  */
 export class Loader extends EventDispatcher
 {
-	private _bytesLoaded:number;
-	private _bytesTotal:number;
 	private _context:LoaderContext;
-	private _loaderInfo:LoaderInfo;
 	private _uri:string;
 	private _materialMode:number;
-
-	private _errorHandlers:Array<(event:URLLoaderEvent) => boolean>;
-	private _parseErrorHandlers:Array<(event:ParserEvent) => boolean>;
 
 	private _stack:Array<ResourceDependency>;
 	private _baseDependency:ResourceDependency;
@@ -123,7 +116,7 @@ export class Loader extends EventDispatcher
 	 * Loader can autoselect the correct parser to use.
 	 * A parser must have been enabled, to be considered when autoselecting the parser.
 	 *
-	 * @param parsers A Vector of parser classes to enable.
+	 * @param parsers An Array of parser classes to enable.
 	 * @see away.parsers.Parsers
 	 */
 	public static enableParsers(parsers:Array<Object>):void
@@ -141,28 +134,7 @@ export class Loader extends EventDispatcher
 	}
 
 	/**
-	 * Returns a LoaderInfo object corresponding to the object being loaded.
-	 * LoaderInfo objects are shared between the Loader object and the loaded
-	 * content object. The LoaderInfo object supplies loading progress
-	 * information and statistics about the loaded file.
-	 *
-	 * <p>Events related to the load are dispatched by the LoaderInfo object
-	 * referenced by the <code>contentLoaderInfo</code> property of the Loader
-	 * object. The <code>contentLoaderInfo</code> property is set to a valid
-	 * LoaderInfo object, even before the content is loaded, so that you can add
-	 * event listeners to the object prior to the load.</p>
-	 *
-	 * <p>To detect uncaught errors that happen in a loaded SWF, use the
-	 * <code>Loader.uncaughtErrorEvents</code> property, not the
-	 * <code>Loader.contentLoaderInfo.uncaughtErrorEvents</code> property.</p>
-	 */
-	public get loaderInfo():LoaderInfo
-	{
-		return this._loaderInfo;
-	}
-
-	/**
-	 * Create a new ResourceLoadSession object.
+	 * Create a new Loader object.
 	 */
 	constructor(materialMode:number = 0)
 	{
@@ -171,17 +143,15 @@ export class Loader extends EventDispatcher
 		this._materialMode = materialMode;
 
 		this._stack = new Array<ResourceDependency>();
-		this._errorHandlers = new Array<(event:URLLoaderEvent) => boolean>();
-		this._parseErrorHandlers = new Array<(event:ParserEvent) => boolean>();
 
-		this._onReadyForDependenciesDelegate = (event:ParserEvent) => this.onReadyForDependencies(event);
-		this._onParseCompleteDelegate = (event:ParserEvent) => this.onParseComplete(event);
-		this._onParseErrorDelegate = (event:ParserEvent) => this.onParseError(event);
-		this._onLoadProgressDelegate = (event:URLLoaderEvent) => this.onLoadProgress(event);
-		this._onLoadCompleteDelegate = (event:URLLoaderEvent) => this.onLoadComplete(event);
-		this._onLoadErrorDelegate = (event:URLLoaderEvent) => this.onLoadError(event);
-		this._onTextureSizeErrorDelegate = (event:AssetEvent) => this.onTextureSizeError(event);
-		this._onAssetCompleteDelegate = (event:AssetEvent) => this.onAssetComplete(event);
+		this._onReadyForDependenciesDelegate = (event:ParserEvent) => this._onReadyForDependencies(event);
+		this._onParseCompleteDelegate = (event:ParserEvent) => this._onParseComplete(event);
+		this._onParseErrorDelegate = (event:ParserEvent) => this._onParseError(event);
+		this._onLoadProgressDelegate = (event:URLLoaderEvent) => this._onLoadProgress(event);
+		this._onLoadCompleteDelegate = (event:URLLoaderEvent) => this._onLoadComplete(event);
+		this._onLoadErrorDelegate = (event:URLLoaderEvent) => this._onLoadError(event);
+		this._onTextureSizeErrorDelegate = (event:AssetEvent) => this._onTextureSizeError(event);
+		this._onAssetCompleteDelegate = (event:AssetEvent) => this._onAssetComplete(event);
 	}
 
 	/**
@@ -198,8 +168,10 @@ export class Loader extends EventDispatcher
 		this._context = context;
 		this._namespace = ns;
 
+		this.dispatchEvent(new LoaderEvent(LoaderEvent.LOADER_START, this._uri, null, null));
+
 		this._baseDependency = new ResourceDependency('', req, null, parser, null);
-		this.retrieveDependency(this._baseDependency);
+		this._retrieveDependency(this._baseDependency);
 	}
 
 	/**
@@ -212,12 +184,14 @@ export class Loader extends EventDispatcher
 	 */
 	public loadData(data:any, id:string, context:LoaderContext = null, ns:string = null, parser:ParserBase = null):void
 	{
-		this._uri = id;
+		this._uri = ns;
 		this._context = context;
 		this._namespace = ns;
 
+		this.dispatchEvent(new LoaderEvent(LoaderEvent.LOADER_START, this._uri, null, null));
+
 		this._baseDependency = new ResourceDependency(id, null, data, parser, null);
-		this.retrieveDependency(this._baseDependency);
+		this._retrieveDependency(this._baseDependency);
 	}
 
 	/**
@@ -225,14 +199,14 @@ export class Loader extends EventDispatcher
 	 * stack when complete and continues on the top set.
 	 * @param parser The parser that will translate the data into a usable resource.
 	 */
-	private retrieveNext(parser:ParserBase = null):void
+	private _retrieveNext(parser:ParserBase = null):void
 	{
 		if (this._currentDependency.dependencies.length) {
 
 			var next:ResourceDependency = this._currentDependency.dependencies.pop();
 
 			this._stack.push(this._currentDependency);
-			this.retrieveDependency(next);
+			this._retrieveDependency(next);
 
 		} else if (this._currentDependency.parser && this._currentDependency.parser.parsingPaused) {
 
@@ -244,13 +218,13 @@ export class Loader extends EventDispatcher
 
 			this._currentDependency = this._stack.pop();
 
-			if (prev._iSuccess)
+			if (prev.success)
 				prev.resolve();
 
-			this.retrieveNext(parser);
+			this._retrieveNext(parser);
 
 		} else {
-			this.dispatchEvent(new LoaderEvent(LoaderEvent.LOAD_COMPLETE, this._uri, this._baseDependency.parser.content, this._baseDependency.assets));
+			this.dispatchEvent(new LoaderEvent(LoaderEvent.LOADER_COMPLETE, this._uri, this._baseDependency.parser.content, this._baseDependency.assets));
 		}
 	}
 
@@ -258,7 +232,7 @@ export class Loader extends EventDispatcher
 	 * Retrieves a single dependency.
 	 * @param parser The parser that will translate the data into a usable resource.
 	 */
-	private retrieveDependency(dependency:ResourceDependency):void
+	private _retrieveDependency(dependency:ResourceDependency):void
 	{
 		var data:any;
 
@@ -266,10 +240,6 @@ export class Loader extends EventDispatcher
 			this._materialMode = this._context.materialMode;
 
 		this._currentDependency = dependency;
-
-		dependency._iLoader = new URLLoader();
-
-		this.addEventListeners(dependency._iLoader);
 
 		// Get already loaded (or mapped) data if available
 		data = dependency.data;
@@ -280,7 +250,7 @@ export class Loader extends EventDispatcher
 			} else if (this._context.externalAssetMode == LoaderContext.ON_DEMAND && (this.getSuffix(dependency.request.url) == "jpg" || this.getSuffix(dependency.request.url) == "png")) {
 				data = dependency.request;
 				if (!dependency.parser)
-					dependency._iSetParser(this.getParserFromSuffix(dependency.request.url));
+					dependency.setParser(this.getParserFromSuffix(dependency.request.url));
 			}
 		}
 
@@ -288,7 +258,7 @@ export class Loader extends EventDispatcher
 			if (data.constructor === Function)
 				data = new data();
 
-			dependency._iSetData(data);
+			dependency.setData(data);
 
 			if (dependency.retrieveAsRawData) {
 				// No need to parse. The parent parser is expecting this
@@ -296,39 +266,44 @@ export class Loader extends EventDispatcher
 				dependency.resolve();
 
 				// Move on to next dependency
-				this.retrieveNext();
+				this._retrieveNext();
 
 			} else {
-				this.parseDependency(dependency);
+				this._parseDependency(dependency);
 			}
 
 		} else {
+			//setup the loader on the dependency
+			dependency.loader = new URLLoader();
+
+			this._addEventListeners(dependency.loader);
+
 			// Resolve URL and start loading
-			dependency.request.url = this.resolveDependencyUrl(dependency);
+			dependency.request.url = this._resolveDependencyUrl(dependency);
 
 			if (dependency.retrieveAsRawData) {
 				// Always use binary for raw data loading
-				dependency._iLoader.dataFormat = URLLoaderDataFormat.BINARY;
+				dependency.loader.dataFormat = URLLoaderDataFormat.BINARY;
 			} else {
 
 				if (!dependency.parser)
-					dependency._iSetParser(this.getParserFromSuffix(dependency.request.url));
+					dependency.setParser(this.getParserFromSuffix(dependency.request.url));
 
 				if (dependency.parser) {
-					dependency._iLoader.dataFormat = dependency.parser.dataFormat;
+					dependency.loader.dataFormat = dependency.parser.dataFormat;
 				} else {
 					// Always use BINARY for unknown file formats. The thorough
 					// file type check will determine format after load, and if
 					// binary, a text load will have broken the file data.
-					dependency._iLoader.dataFormat = URLLoaderDataFormat.BINARY;
+					dependency.loader.dataFormat = URLLoaderDataFormat.BINARY;
 				}
 			}
 
-			dependency._iLoader.load(dependency.request);
+			dependency.loader.load(dependency.request);
 		}
 	}
 
-	private joinUrl(base:string, end:string):string
+	private _joinUrl(base:string, end:string):string
 	{
 		if (end.charAt(0) == '/' || end.charAt(0) == '\\')
 			end = end.substr(1);
@@ -346,7 +321,7 @@ export class Loader extends EventDispatcher
 
 	}
 
-	private resolveDependencyUrl(dependency:ResourceDependency):string
+	private _resolveDependencyUrl(dependency:ResourceDependency):string
 	{
 		var scheme_re:RegExp;
 		var base:string;
@@ -358,7 +333,7 @@ export class Loader extends EventDispatcher
 
 		// This is the "base" dependency, i.e. the actual requested asset.
 		// We will not try to resolve this since the user can probably be
-		// thrusted to know this URL better than our automatic resolver. :)
+		// trusted to know this URL better than our automatic resolver. :)
 		if (url == this._uri)
 			return url;
 
@@ -369,7 +344,7 @@ export class Loader extends EventDispatcher
 
 		if (url.charAt(0) == '/') {
 			if (this._context && this._context.overrideAbsolutePaths)
-				return this.joinUrl(this._context.dependencyBaseUrl, url); else
+				return this._joinUrl(this._context.dependencyBaseUrl, url); else
 				return url;
 		} else if (scheme_re.test(url)) {
 			// If overriding full URLs, get rid of scheme (e.g. "http://")
@@ -377,7 +352,7 @@ export class Loader extends EventDispatcher
 			if (this._context && this._context.overrideFullURLs) {
 
 				var noscheme_url : string  = url.replace( scheme_re , '' );//url['replace'](scheme_re);
-				return this.joinUrl(this._context.dependencyBaseUrl, <string> noscheme_url);
+				return this._joinUrl(this._context.dependencyBaseUrl, <string> noscheme_url);
 			}
 		}
 
@@ -385,14 +360,14 @@ export class Loader extends EventDispatcher
 		// folder and then concatenate dynamic URL
 		if (this._context && this._context.dependencyBaseUrl) {
 			base = this._context.dependencyBaseUrl;
-			return this.joinUrl(base, url);
+			return this._joinUrl(base, url);
 		} else {
 			base = this._uri.substring(0, this._uri.lastIndexOf('/') + 1);
-			return this.joinUrl(base, url);
+			return this._joinUrl(base, url);
 		}
 	}
 
-	private retrieveParserDependencies():void
+	private _retrieveParserDependencies():void
 	{
 		if (!this._currentDependency)
 			return;
@@ -409,51 +384,36 @@ export class Loader extends EventDispatcher
 
 		this._stack.push(this._currentDependency);
 
-		this.retrieveNext();
+		this._retrieveNext();
 	}
 
-	private resolveParserDependencies():void
+	private _resolveParserDependencies():void
 	{
-		this._currentDependency._iSuccess = true;
+		this._currentDependency.success = true;
 
 		// Retrieve any last dependencies remaining on this parser, or
 		// if none exists, just move on.
 		if (this._currentDependency.parser && this._currentDependency.parser.dependencies.length && (!this._context || this._context.includeDependencies))//context may be null
-			this.retrieveParserDependencies();
+			this._retrieveParserDependencies();
 		else
-			this.retrieveNext();
+			this._retrieveNext();
 	}
 
 	/**
 	 * Called when a single dependency loading failed, and pushes further dependencies onto the stack.
 	 * @param event
 	 */
-	private onLoadError(event:URLLoaderEvent):void
+	private _onLoadError(event:URLLoaderEvent):void
 	{
-		var handled:boolean;
-		var isDependency:boolean = (this._currentDependency != this._baseDependency);
-		var loader:URLLoader = event.urlLoader;
-
-		this.removeEventListeners(loader);
-
 		if (this.hasEventListener(URLLoaderEvent.LOAD_ERROR)) {
+			//pass on the error event for processing
 			this.dispatchEvent(event);
-			handled = true;
-		} else {
-			// TODO: Consider not doing this even when Loader does have it's own LOAD_ERROR listener
-			var i:number, len:number = this._errorHandlers.length;
-			for (i = 0; i < len; i++)
-				if (!handled)
-					handled = this._errorHandlers[i](event);
-		}
 
-		if (handled) {
-
-			//if (isDependency && ! event.isDefaultPrevented()) {
-			if (isDependency) { // TODO: JS / AS3 Change - we don't have isDefaultPrevented - so will this work
-
+			if (this._currentDependency != this._baseDependency) { // TODO: JS / AS3 Change - we don't have isDefaultPrevented - so will this work
+				//execute any placeholder measure for failed loads
 				this._currentDependency.resolveFailure();
-				this.retrieveNext();
+				//goto the next dependency
+				this._retrieveNext();
 
 			} else {
 				// Either this was the base file (last left in the stack) or
@@ -474,31 +434,15 @@ export class Loader extends EventDispatcher
 	 * Called when a dependency parsing failed, and dispatches a <code>ParserEvent.PARSE_ERROR</code>
 	 * @param event
 	 */
-	private onParseError(event:ParserEvent):void
+	private _onParseError(event:ParserEvent):void
 	{
-		var handled:boolean;
-
-		var isDependency:boolean = (this._currentDependency != this._baseDependency);
-
-		var loader:URLLoader = <URLLoader>event.target;
-
-		this.removeEventListeners(loader);
+		//this.removeEventListeners(event.target); TODO: do we need this here? makes no sense to me
 
 		if (this.hasEventListener(ParserEvent.PARSE_ERROR)) {
+			//pass on the error event for processing
 			this.dispatchEvent(event);
-			handled = true;
-		} else {
-			// TODO: Consider not doing this even when Loader does
-			// have it's own LOAD_ERROR listener
-			var i:number, len:number = this._parseErrorHandlers.length;
-
-			for (i = 0; i < len; i++)
-				if (!handled)
-					handled = this._parseErrorHandlers[i](event);
-		}
-
-		if (handled) {
-			this.retrieveNext();
+			//goto the next dependency
+			this._retrieveNext();
 		} else {
 			// Error event was not handled by listeners directly on Loader or
 			// on any of the subscribed loaders (in the list of error handlers.)
@@ -506,7 +450,7 @@ export class Loader extends EventDispatcher
 		}
 	}
 
-	private onAssetComplete(event:AssetEvent):void
+	private _onAssetComplete(event:AssetEvent):void
 	{
 		// Add loaded asset to list of assets retrieved as part
 		// of the current dependency. This list will be inspected
@@ -520,46 +464,46 @@ export class Loader extends EventDispatcher
 			this.dispatchEvent(event);
 	}
 
-	private onReadyForDependencies(event:ParserEvent):void
+	private _onReadyForDependencies(event:ParserEvent):void
 	{
-		var parser:ParserBase = <ParserBase> event.target;
-
 		if (this._context && !this._context.includeDependencies)
-			parser._iResumeParsing();
+			(<ParserBase> event.target)._iResumeParsing();
 		else
-			this.retrieveParserDependencies();
+			this._retrieveParserDependencies();
 	}
 
-	private onLoadProgress(event:URLLoaderEvent):void
+	private _onLoadProgress(event:URLLoaderEvent):void
 	{
 		this.dispatchEvent(event);
 	}
 
 	/**
-	 * Called when a single dependency was parsed, and pushes further dependencies onto the stack.
+	 * Called when a single dependency was loaded, and pushes further dependencies onto the stack.
 	 * @param event
 	 */
-	private onLoadComplete(event:URLLoaderEvent):void
+	private _onLoadComplete(event:URLLoaderEvent):void
 	{
 		var loader:URLLoader = event.urlLoader;
 
-		this.removeEventListeners(loader);
+		this.dispatchEvent(event);
+
+		this._removeEventListeners(loader);
 
 		// Resolve this dependency
-		this._currentDependency._iSetData(loader.data);
+		this._currentDependency.setData(loader.data);
 
 		if (this._currentDependency.retrieveAsRawData) {
 			// No need to parse this data, which should be returned as is
-			this.resolveParserDependencies();
+			this._resolveParserDependencies();
 		} else {
-			this.parseDependency(this._currentDependency);
+			this._parseDependency(this._currentDependency);
 		}
 	}
 
 	/**
 	 * Called when parsing is complete.
 	 */
-	private onParseComplete(event:ParserEvent):void
+	private _onParseComplete(event:ParserEvent):void
 	{
 		var parser:ParserBase = <ParserBase> event.target;
 
@@ -569,28 +513,28 @@ export class Loader extends EventDispatcher
 		parser.removeEventListener(AssetEvent.TEXTURE_SIZE_ERROR, this._onTextureSizeErrorDelegate);
 		parser.removeEventListener(AssetEvent.ASSET_COMPLETE, this._onAssetCompleteDelegate);
 
-		this.resolveParserDependencies();
+		this._resolveParserDependencies();
 	}
 
 	/**
 	 * Called when an image is too large or it's dimensions are not a power of 2
 	 * @param event
 	 */
-	private onTextureSizeError(event:AssetEvent):void
+	private _onTextureSizeError(event:AssetEvent):void
 	{
 		event.asset.name = this._currentDependency.resolveName(event.asset);
 
 		this.dispatchEvent(event);
 	}
 
-	private addEventListeners(loader:URLLoader):void
+	private _addEventListeners(loader:URLLoader):void
 	{
 		loader.addEventListener(URLLoaderEvent.LOAD_PROGRESS, this._onLoadProgressDelegate);
 		loader.addEventListener(URLLoaderEvent.LOAD_COMPLETE, this._onLoadCompleteDelegate);
 		loader.addEventListener(URLLoaderEvent.LOAD_ERROR, this._onLoadErrorDelegate);
 	}
 
-	private removeEventListeners(loader:URLLoader):void
+	private _removeEventListeners(loader:URLLoader):void
 	{
 		loader.removeEventListener(URLLoaderEvent.LOAD_PROGRESS, this._onLoadProgressDelegate);
 		loader.removeEventListener(URLLoaderEvent.LOAD_COMPLETE, this._onLoadCompleteDelegate);
@@ -604,42 +548,14 @@ export class Loader extends EventDispatcher
 
 	private dispose():void
 	{
-		this._errorHandlers = null;
-		this._parseErrorHandlers = null;
 		this._context = null;
 		this._stack = null;
 
-		if (this._currentDependency && this._currentDependency._iLoader)
-			this.removeEventListeners(this._currentDependency._iLoader);
+		if (this._currentDependency && this._currentDependency.loader)
+			this._removeEventListeners(this._currentDependency.loader);
 
 		this._currentDependency = null;
-
 	}
-
-	/**
-	 * @private
-	 * This method is used by other loader classes (e.g. Loader3D and AssetLibraryBundle) to
-	 * add error event listeners to the Loader instance. This system is used instead of
-	 * the regular EventDispatcher system so that the AssetLibrary error handler can be sure
-	 * that if hasEventListener() returns true, it's client code that's listening for the
-	 * event. Secondly, functions added as error handler through this custom method are
-	 * expected to return a boolean value indicating whether the event was handled (i.e.
-	 * whether they in turn had any client code listening for the event.) If no handlers
-	 * return true, the Loader knows that the event wasn't handled and will throw an RTE.
-	 */
-
-	public _iAddParseErrorHandler(handler):void
-	{
-		if (this._parseErrorHandlers.indexOf(handler) < 0)
-			this._parseErrorHandlers.push(handler);
-	}
-
-	public _iAddErrorHandler(handler):void
-	{
-		if (this._errorHandlers.indexOf(handler) < 0)
-			this._errorHandlers.push(handler);
-	}
-
 
 	/**
 	 * Guesses the parser to be used based on the file contents.
@@ -647,7 +563,7 @@ export class Loader extends EventDispatcher
 	 * @param uri The url or id of the object to be parsed.
 	 * @return An instance of the guessed parser.
 	 */
-	private getParserFromData(data:any):ParserBase
+	private _getParserFromData(data:any):ParserBase
 	{
 		var len:number = Loader._parsers.length;
 
@@ -665,14 +581,14 @@ export class Loader extends EventDispatcher
 	 *
 	 * @param The dependency to be parsed.
 	 */
-	private parseDependency(dependency:ResourceDependency):void
+	private _parseDependency(dependency:ResourceDependency):void
 	{
 		var parser:ParserBase = dependency.parser;
 
 		// If no parser has been defined, try to find one by letting
 		// all plugged in parsers inspect the actual data.
 		if (!parser)
-			dependency._iSetParser(parser = this.getParserFromData(dependency.data));
+			dependency.setParser(parser = this._getParserFromData(dependency.data));
 
 		if (parser) {
 			parser.addEventListener(ParserEvent.READY_FOR_DEPENDENCIES, this._onReadyForDependenciesDelegate);
@@ -689,24 +605,13 @@ export class Loader extends EventDispatcher
 			parser.parseAsync(dependency.data);
 
 		} else {
-			var handled:boolean;
 			var message:string = "No parser defined. To enable all parsers for auto-detection, use Parsers.enableAllBundled()";
-			var event:ParserEvent = new ParserEvent(ParserEvent.PARSE_ERROR, message);
+
 			if (this.hasEventListener(ParserEvent.PARSE_ERROR)) {
-				this.dispatchEvent(event);
-				handled = true;
-			} else {
-				// TODO: Consider not doing this even when Loader does
-				// have it's own LOAD_ERROR listener
-				var i:number, len:number = this._parseErrorHandlers.length;
-
-				for (i = 0; i < len; i++)
-					if (!handled)
-						handled = <boolean> this._parseErrorHandlers[i](event);
-			}
-
-			if (handled) {
-				this.retrieveNext();
+				//pass on the error event for processing
+				this.dispatchEvent(new ParserEvent(ParserEvent.PARSE_ERROR, message));
+				//goto the next dependency
+				this._retrieveNext();
 			} else {
 				// Error event was not handled by listeners directly on Loader or
 				// on any of the subscribed loaders (in the list of error handlers.)

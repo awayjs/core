@@ -218,16 +218,9 @@ export class ParserBase extends EventDispatcher
 
 	public _pFinalizeAsset(asset:IAsset, name:string = null):void
 	{
-		var type_event:string;
-		var type_name:string;
-
-		if (name != null)
-			asset.name = name;
-
 		// If the asset has no name, give it
 		// a per-type default name.
-		if (!asset.name)
-			asset.name = asset.assetType;
+		asset.name = name || asset.assetType;
 
 		this.dispatchEvent(new AssetEvent(AssetEvent.ASSET_COMPLETE, asset));
 	}

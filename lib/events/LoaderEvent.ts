@@ -4,9 +4,14 @@ import {EventBase}				from "../events/EventBase";
 export class LoaderEvent extends EventBase
 {
 	/**
+	 * Dispatched when the loading of a session and all of its dependencies is started.
+	 */
+	public static LOADER_START:string = "loaderStart";
+
+	/**
 	 * Dispatched when the loading of a session and all of its dependencies is complete.
 	 */
-	public static LOAD_COMPLETE:string = "loadComplete";
+	public static LOADER_COMPLETE:string = "loaderComplete";
 
 	private _url:string;
 	private _content:IAsset;

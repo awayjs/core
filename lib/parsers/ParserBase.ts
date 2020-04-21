@@ -220,7 +220,7 @@ export class ParserBase extends EventDispatcher
 	{
 		// If the asset has no name, give it
 		// a per-type default name.
-		asset.name = name || asset.assetType;
+		asset.name = name || asset.name || asset.assetType;
 
 		this.dispatchEvent(new AssetEvent(AssetEvent.ASSET_COMPLETE, asset));
 	}

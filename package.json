@@ -43,6 +43,10 @@
     "tslib": "^1.9.0"
   },
   "devDependencies": {
+    "@saji/eslint-plugin-brace-rules": "^0.2.1",
+    "@typescript-eslint/eslint-plugin": "^2.30.0",
+    "@typescript-eslint/parser": "^2.30.0",
+    "eslint": "^6.8.0",
     "rimraf": "^2.5.2",
     "rollup": "^0.36.3",
     "rollup-plugin-includepaths": "^0.2.1",

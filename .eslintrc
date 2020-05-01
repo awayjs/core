@@ -1,0 +1,94 @@
+{
+    "env": {
+        "browser": true,
+        "es6": true
+    },
+    "extends": [
+        "eslint:recommended",
+        "plugin:@typescript-eslint/eslint-recommended"
+    ],
+    "globals": {
+        "Atomics": "readonly",
+        "SharedArrayBuffer": "readonly"
+    },
+    "parser": "@typescript-eslint/parser",
+    "parserOptions": {
+        "ecmaVersion": 2018,
+        "sourceType": "module"
+    },
+    "plugins": [
+        "@typescript-eslint",
+        "@saji/brace-rules"
+    ],
+    "rules": {
+        "brace-style": 0,
+        "@saji/brace-rules/brace-on-same-line": [
+            "error",
+            "1tbs",
+            {
+                "ClassDeclaration": "never",
+                "ExportClass": "never",
+                "ExportClassAnon": "never",
+                "ExportFunctionAnon": "never",
+                "FunctionDeclaration": "never",
+                "MethodDeclaration": "never"
+            }
+        ],
+        "indent": "off",
+        "@typescript-eslint/indent": [
+            "error",
+            "tab"
+        ],
+        "linebreak-style": [
+            "error",
+            "windows"
+        ],
+        "lines-between-class-members": [
+            "error",
+            "always", {
+                "exceptAfterSingleLine": true
+            }
+        ],
+        "@typescript-eslint/member-ordering": [
+            "error",
+            {
+                "default": {
+                    "memberTypes": [
+                        "public-static-field",
+                        "protected-static-field",
+                        "private-static-field",
+
+                        "public-instance-field",
+                        "protected-instance-field",
+                        "private-instance-field",
+
+
+                        "constructor",
+
+
+                        "public-static-method",
+                        "protected-static-method",
+                        "private-static-method",
+
+                        "public-instance-method",
+                        "protected-instance-method",
+                        "private-instance-method"
+                    ],
+                    "order": "alphabetically"
+                }
+            }
+        ],
+        "no-unused-vars": "off",
+        "@typescript-eslint/no-unused-vars": [
+            "error"
+        ],
+        "quotes": [
+            "error",
+            "double"
+        ],
+        "semi": [
+            "error",
+            "always"
+        ]
+    }
+}

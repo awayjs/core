@@ -85,7 +85,7 @@ export class Transform extends EventDispatcher
 	//temp vector used in global to local
 	private _tempVector3D:Vector3D = new Vector3D();
 	private _upVector:Vector3D;
-    
+
 
 
 	private _updateConcatenatedMatrix3D:TransformEvent;
@@ -106,7 +106,7 @@ export class Transform extends EventDispatcher
 	/**
 	 * A ColorTransform object containing values that universally adjust the
 	 * colors in the display object.
-	 * 
+	 *
 	 * @throws TypeError The colorTransform is null when being set
 	 */
 	public get colorTransform():ColorTransform
@@ -171,7 +171,7 @@ export class Transform extends EventDispatcher
 
 			this.dispatchEvent(this._updateConcatenatedMatrix3D || (this._updateConcatenatedMatrix3D = new TransformEvent(TransformEvent.UPDATE_CONCATENATED_MATRIX3D, this)));
 		}
-		
+
 		return this._concatenatedMatrix3D;
 	}
 
@@ -240,25 +240,25 @@ export class Transform extends EventDispatcher
 	 */
 	public get matrix():Matrix
 	{
-		if(!this._matrix)
-			this._matrix=new Matrix(this.matrix3D._rawData[0],
+		if (!this._matrix)
+			this._matrix = new Matrix(this.matrix3D._rawData[0],
 				this.matrix3D._rawData[1],
 				this.matrix3D._rawData[4],
 				this.matrix3D._rawData[5],
 				this.matrix3D._rawData[12],
 				this.matrix3D._rawData[13]);
-		this._matrix.a=this.matrix3D._rawData[0];
-		this._matrix.b=this.matrix3D._rawData[1];
-		this._matrix.c=this.matrix3D._rawData[4];
-		this._matrix.d=this.matrix3D._rawData[5];
-		this._matrix.tx=this.matrix3D._rawData[12];
-		this._matrix.ty=this.matrix3D._rawData[13];
+		this._matrix.a = this.matrix3D._rawData[0];
+		this._matrix.b = this.matrix3D._rawData[1];
+		this._matrix.c = this.matrix3D._rawData[4];
+		this._matrix.d = this.matrix3D._rawData[5];
+		this._matrix.tx = this.matrix3D._rawData[12];
+		this._matrix.ty = this.matrix3D._rawData[13];
 		return this._matrix;
 	}
 
 	public set matrix(value:Matrix)
 	{
-		this._matrix=value;
+		this._matrix = value;
 	}
 
 	/**
@@ -299,7 +299,7 @@ export class Transform extends EventDispatcher
 		targetData[13] = sourceData[13];
 		targetData[14] = sourceData[14];
 		targetData[15] = sourceData[15];
-		
+
 		this.invalidateComponents();
 		this.invalidateConcatenatedMatrix3D();
 	}
@@ -383,28 +383,28 @@ export class Transform extends EventDispatcher
 		this._matrix3D.copyColumnTo(1, this._upVector);
 
 		return this._upVector;
-    }
+	}
 
-    constructor(rawData:Float32Array = null, concatenatedMatrix3D:Matrix3D = null)
+	constructor(rawData:Float32Array = null, concatenatedMatrix3D:Matrix3D = null)
 	{
 		super();
 
 		this._rawData = rawData || new Float32Array(24);
-		
+
 		//create the view for matrix3D
 		this._matrix3D = new Matrix3D(new Float32Array(this._rawData.buffer, 0, 16));
 
 		//create the view for colorTransform
 		this._colorTransform = new ColorTransform(new Float32Array(this._rawData.buffer, 64, 8));
-		
+
 		//create the concatenatedMatrix3D if required
 		this._concatenatedMatrix3D = concatenatedMatrix3D || this._matrix3D;
-		
+
 		if (rawData == null) {
 			this._matrix3D.identity();
 			this._colorTransform.clear();
 		}
-		
+
 		// Cached vector of transformation components used when
 		// recomposing the transform matrix in updateTransform()
 		this._components = new Array<Vector3D>(4);
@@ -414,11 +414,11 @@ export class Transform extends EventDispatcher
 		this._components[3] = this._scale;
 
 		this.invalidateComponents();
-    }
+	}
 
 	/**
-	 * 
-	 * @param value 
+	 *
+	 * @param value
 	 */
 	public append(value:Matrix3D)
 	{
@@ -426,19 +426,19 @@ export class Transform extends EventDispatcher
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	public clearColorTransform():void
 	{
 		if (!this._colorTransform)
 			return;
-		
+
 		this._colorTransform.clear();
 		this.invalidateColorTransform();
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	public clearMatrix3D():void
 	{
@@ -447,7 +447,7 @@ export class Transform extends EventDispatcher
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	public clone():Transform
 	{
@@ -459,8 +459,8 @@ export class Transform extends EventDispatcher
 	}
 
 	/**
-	 * 
-	 * @param transform 
+	 *
+	 * @param transform
 	 */
 	public copyRawDataTo(transform:Transform)
 	{
@@ -504,14 +504,14 @@ export class Transform extends EventDispatcher
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	public dispose():void
 	{
-		
+
 	}
 
-	
+
 	/**
 	 * Converts the `point` object from the Stage(global) coordinates to the
 	 * display object's(local) coordinates.
@@ -589,7 +589,7 @@ export class Transform extends EventDispatcher
 
 		this.dispatchEvent(this._invalidateConcatenatedMatrix3D || (this._invalidateConcatenatedMatrix3D = new TransformEvent(TransformEvent.INVALIDATE_CONCATENATED_MATRIX3D, this)));
 	}
-    
+
 	/**
 	 * Invalidates the 3D transformation matrix, causing it to be updated upon the next request
 	 *
@@ -604,7 +604,7 @@ export class Transform extends EventDispatcher
 			return;
 
 		this._matrix3DDirty = true;
-		
+
 		this.dispatchEvent(this._invalidateMatrix3D || (this._invalidateMatrix3D = new TransformEvent(TransformEvent.INVALIDATE_MATRIX3D, this)));
 	}
 
@@ -620,7 +620,7 @@ export class Transform extends EventDispatcher
 
 		this.dispatchEvent(this._invalidateMatrix3D || (this._invalidateMatrix3D = new TransformEvent(TransformEvent.INVALIDATE_MATRIX3D, this))); //stricty speaking, this should be UPDATE_MATRIX3D
 	}
-	
+
 	/**
 	 * Converts the `point` object from the display object's(local) coordinates
 	 * to the Stage(global) coordinates.
@@ -694,7 +694,7 @@ export class Transform extends EventDispatcher
 	{
 		this.translateLocal(Vector3D.Y_AXIS, -distance);
 	}
-    
+
 	/**
 	 * Moves the 3d object forwards along it's local z axis
 	 *
@@ -806,10 +806,10 @@ export class Transform extends EventDispatcher
 	}
 
 	/**
-	 * 
-	 * @param sx 
-	 * @param sy 
-	 * @param sz 
+	 *
+	 * @param sx
+	 * @param sy
+	 * @param sz
 	 */
 	public scaleTo(sx:number, sy:number, sz:number):void
 	{
@@ -822,12 +822,12 @@ export class Transform extends EventDispatcher
 
 		this.invalidateMatrix3D();
 	}
-	
+
 	/**
-	 * 
-	 * @param sx 
-	 * @param sy 
-	 * @param sz 
+	 *
+	 * @param sx
+	 * @param sy
+	 * @param sz
 	 */
 	public skewTo(sx:number, sy:number, sz:number):void
 	{

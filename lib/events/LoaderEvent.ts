@@ -1,5 +1,6 @@
-import {IAsset}					from "../library/IAsset";
-import {EventBase}				from "../events/EventBase";
+import {IAsset} from "../library/IAsset";
+
+import {EventBase} from "./EventBase";
 
 export class LoaderEvent extends EventBase
 {

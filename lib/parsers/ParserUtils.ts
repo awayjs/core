@@ -1,23 +1,23 @@
-import {ByteArray}				from "../utils/ByteArray";
+import {ByteArray} from "../utils/ByteArray";
 
 export class ParserUtils
 {
 	public static arrayBufferToBase64(data:ArrayBuffer, mimeType:string):string
 	{
-		var byteStr:string = '';
+		var byteStr:string = "";
 		var bytes:Uint8Array = new Uint8Array(data);
 		var len:number = bytes.byteLength;
 
 		for (var i = 0; i < len; i++)
-			byteStr += String.fromCharCode(bytes[ i ])
+			byteStr += String.fromCharCode(bytes[ i ]);
 
 		var base64Image:string = window.btoa(byteStr);
-		return 'data:' + mimeType + ';base64,' + base64Image;
+		return "data:" + mimeType + ";base64," + base64Image;
 	}
 
 	public static arrayBufferToAudio(data:ArrayBuffer, fileType:string):HTMLAudioElement
 	{
-		var str:string = ParserUtils.arrayBufferToBase64(data, 'audio/' + fileType);
+		var str:string = ParserUtils.arrayBufferToBase64(data, "audio/" + fileType);
 		var audio:HTMLAudioElement = <HTMLAudioElement> new Audio();
 		audio.src = str;
 		return audio;
@@ -33,7 +33,7 @@ export class ParserUtils
 	 */
 	public static arrayBufferToImage(data:ArrayBuffer):HTMLImageElement
 	{
-		var str:string = ParserUtils.arrayBufferToBase64(data, 'image/png');
+		var str:string = ParserUtils.arrayBufferToBase64(data, "image/png");
 		var img:HTMLImageElement = <HTMLImageElement> new Image();
 		img.src = str;
 		return img;
@@ -49,7 +49,7 @@ export class ParserUtils
 	 */
 	public static byteArrayToImage(data:ByteArray):HTMLImageElement
 	{
-		var str:string = ParserUtils.arrayBufferToBase64(data.arraybytes, 'image/png');
+		var str:string = ParserUtils.arrayBufferToBase64(data.arraybytes, "image/png");
 		var img:HTMLImageElement = <HTMLImageElement> new Image();
 		img.src = str;
 		return img;
@@ -57,7 +57,7 @@ export class ParserUtils
 
 	public static byteArrayToAudio(data:ByteArray, filetype:string):HTMLAudioElement
 	{
-		var str:string = ParserUtils.arrayBufferToBase64(data.arraybytes, 'audio/' + filetype);
+		var str:string = ParserUtils.arrayBufferToBase64(data.arraybytes, "audio/" + filetype);
 		var audio:HTMLAudioElement = <HTMLAudioElement> new Audio();
 		audio.src = str;
 		return audio;
@@ -73,7 +73,7 @@ export class ParserUtils
 	 */
 	public static blobToImage(data:Blob):HTMLImageElement
 	{
-		var URLObj = window['URL'] || window['webkitURL'];
+		var URLObj = window["URL"] || window["webkitURL"];
 		var src = URLObj.createObjectURL(data);
 		var img:HTMLImageElement = <HTMLImageElement> new Image();
 		img.src = src;
@@ -90,7 +90,7 @@ export class ParserUtils
 	 */
 	public static blobToAudio(data:Blob):HTMLAudioElement
 	{
-		var URLObj = window['URL'] || window['webkitURL'];
+		var URLObj = window["URL"] || window["webkitURL"];
 		var src = URLObj.createObjectURL(data);
 		var img:HTMLAudioElement = <HTMLAudioElement> new Audio();
 		img.src = src;
@@ -124,10 +124,10 @@ export class ParserUtils
 	public static toString(data:any, length:number = 0):string
 	{
 
-		if (typeof data === 'string') {
+		if (typeof data === "string") {
 			var s:string = <string> data;
 
-			if (s['substr'] != null)
+			if (s["substr"] != null)
 				return s.substr(0, s.length);
 		}
 

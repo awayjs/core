@@ -33,13 +33,13 @@ export class IDUtil
 		var j:number;
 
 		for (i = 0; i < 8; i++)
-			uid[index++] = IDUtil.ALPHA_CHAR_CODES[Math.floor(Math.random()*16)];
+			uid[index++] = IDUtil.ALPHA_CHAR_CODES[Math.floor(Math.random() * 16)];
 
 		for (i = 0; i < 3; i++) {
 			uid[index++] = 45; // charCode for "-"
 
 			for (j = 0; j < 4; j++)
-				uid[index++] = IDUtil.ALPHA_CHAR_CODES[Math.floor(Math.random()*16)];
+				uid[index++] = IDUtil.ALPHA_CHAR_CODES[Math.floor(Math.random() * 16)];
 		}
 
 		uid[index++] = 45; // charCode for "-"
@@ -58,7 +58,7 @@ export class IDUtil
 			uid[index++] = timeString.charCodeAt(i);
 
 		for (i = 0; i < 4; i++)
-			uid[index++] = IDUtil.ALPHA_CHAR_CODES[Math.floor(Math.random()*16)];
+			uid[index++] = IDUtil.ALPHA_CHAR_CODES[Math.floor(Math.random() * 16)];
 
 		return String.fromCharCode.apply(null, uid);
 	}

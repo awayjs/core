@@ -20,45 +20,46 @@ export class StreamingAudioChannel
 	private _groupPan:number = 0;
 	private _startTime:number = 0;
 	private _duration:number;
-	
+
 	private _audio:HTMLAudioElement;
 	public onSoundComplete:Function;
-	
+
 	private _mediaSource:MediaSource;
 	private _urlString:string;
 
-	public static stopAllSounds(channelGroup:number=-1){
-		var len: number = StreamingAudioChannel._channels.length;
-		if(channelGroup<0){
-			for (var j: number = 0; j < len; j++) {
+	public static stopAllSounds(channelGroup:number = -1)
+	{
+		var len:number = StreamingAudioChannel._channels.length;
+		if (channelGroup < 0) {
+			for (var j:number = 0; j < len; j++) {
 				StreamingAudioChannel._channels[j].stop();
 			}
-			StreamingAudioChannel._channels.length=0;
+			StreamingAudioChannel._channels.length = 0;
 			return;
 		}
-		var aliveChannels:StreamingAudioChannel[]=[];
-		for (var j: number = 0; j < len; j++) {
-			if(StreamingAudioChannel._channels[j].groupID==channelGroup){
+		var aliveChannels:StreamingAudioChannel[] = [];
+		for (var j:number = 0; j < len; j++) {
+			if (StreamingAudioChannel._channels[j].groupID == channelGroup) {
 				StreamingAudioChannel._channels[j].stop();
-			}
-			else{
-				aliveChannels[aliveChannels.length]=StreamingAudioChannel._channels[j];
+			} else {
+				aliveChannels[aliveChannels.length] = StreamingAudioChannel._channels[j];
 			}
 		}
-		StreamingAudioChannel._channels=aliveChannels;
+		StreamingAudioChannel._channels = aliveChannels;
 	}
 
-	public static setChannelGroupVolume(value:number, channelGroup:number=-1){
-		var len: number = StreamingAudioChannel._channels.length;
-		if(channelGroup<0){
-			for (var j: number = 0; j < len; j++) {
-				StreamingAudioChannel._channels[j].groupVolume=value;
+	public static setChannelGroupVolume(value:number, channelGroup:number = -1)
+	{
+		var len:number = StreamingAudioChannel._channels.length;
+		if (channelGroup < 0) {
+			for (var j:number = 0; j < len; j++) {
+				StreamingAudioChannel._channels[j].groupVolume = value;
 			}
 			return;
 		}
-		for (var j: number = 0; j < len; j++) {
-			if(StreamingAudioChannel._channels[j].groupID==channelGroup){
-				StreamingAudioChannel._channels[j].groupVolume=value;
+		for (var j:number = 0; j < len; j++) {
+			if (StreamingAudioChannel._channels[j].groupID == channelGroup) {
+				StreamingAudioChannel._channels[j].groupVolume = value;
 			}
 		}
 	}
@@ -80,8 +81,9 @@ export class StreamingAudioChannel
 
 	public set groupID(value:number)
 	{
-		this._groupID=value;
+		this._groupID = value;
 	}
+
 	public get groupVolume():number
 	{
 		return this._groupVolume;
@@ -147,11 +149,11 @@ export class StreamingAudioChannel
 		//todo
 	}
 
-	constructor(groupID:number=0, groupVolume:number=1, groupPan:number=1)
+	constructor(groupID:number = 0, groupVolume:number = 1, groupPan:number = 1)
 	{
-		this._groupID=groupID;
-		this._groupVolume=groupVolume;
-		this._groupPan=groupPan;
+		this._groupID = groupID;
+		this._groupVolume = groupVolume;
+		this._groupPan = groupPan;
 
 		this._sourceOpenDelegate = (event) => this._sourceOpen(event);
 		this._updateEndDelegate = (event) => this._updateEnd(event);
@@ -162,7 +164,7 @@ export class StreamingAudioChannel
 		this._updateSource();
 
 	}
-	
+
 	public play(buffer:ArrayBuffer, offset:number = 0, loop:boolean = false):void
 	{
 		this._isPlaying = true;
@@ -177,7 +179,7 @@ export class StreamingAudioChannel
 
 		this._buffer = buffer;
 		this._offset = offset;
-		this._audio.volume = this._groupVolume*this._volume;
+		this._audio.volume = this._groupVolume * this._volume;
 
 		if (!this._isQueuing && !this._isOpening)
 			this._queueBuffer();
@@ -189,18 +191,18 @@ export class StreamingAudioChannel
 		this._isPlaying = false;
 		this._isLooping = false;
 	}
-	
+
 	private _sourceOpen(event):void
 	{
 		this._isOpening = false;
 
 		//TODO: find out how in the name of all that is holy how this can be executed more than once on a MediaSource object
 		if (this._mediaSource.activeSourceBuffers.length) {
-			console.log("ERR: double sourceopen event called")
+			console.log("ERR: double sourceopen event called");
 			return;
 		}
 
-		this._sourceBuffer = this._mediaSource.addSourceBuffer('audio/mpeg');
+		this._sourceBuffer = this._mediaSource.addSourceBuffer("audio/mpeg");
 		this._sourceBuffer.addEventListener("updateend", this._updateEndDelegate);
 
 		if (this._isPlaying)
@@ -237,7 +239,7 @@ export class StreamingAudioChannel
 
 	private _updateSource():void
 	{
-		if(this._mediaSource)
+		if (this._mediaSource)
 			this._disposeSource();
 
 		this._isQueuing = false;

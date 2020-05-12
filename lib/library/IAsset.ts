@@ -38,10 +38,10 @@ export interface IAsset extends IEventDispatcher
 	 */
 	assetPathEquals(name:string, ns:string):boolean;
 
-    /**
+	/**
      *
      */
-    clone():IAsset;
+	clone():IAsset;
 
 	/**
 	 *

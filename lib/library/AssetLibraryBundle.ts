@@ -1,22 +1,24 @@
-import {URLRequest} from "../net/URLRequest";
-import {AssetLibrary} from "../library/AssetLibrary";
-import {AssetLibraryIterator} from "../library/AssetLibraryIterator";
-import {Loader} from "../library/Loader";
-import {LoaderContext} from "../library/LoaderContext";
-import {ConflictPrecedence} from "../library/ConflictPrecedence";
-import {ConflictStrategy} from "../library/ConflictStrategy";
-import {ConflictStrategyBase} from "../library/ConflictStrategyBase";
-import {AssetBase} from "../library/AssetBase";
-import {IAsset} from "../library/IAsset";
-import {IAssetAdapter} from "../library/IAssetAdapter";
 import {ErrorBase} from "../errors/ErrorBase";
 import {AssetEvent} from "../events/AssetEvent";
 import {URLLoaderEvent} from "../events/URLLoaderEvent";
 import {LoaderEvent} from "../events/LoaderEvent";
 import {EventDispatcher} from "../events/EventDispatcher";
 import {ParserEvent} from "../events/ParserEvent";
+import {EventBase} from "../events/EventBase";
+
+import {URLRequest} from "../net/URLRequest";
+
 import {ParserBase}	from "../parsers/ParserBase";
-import { EventBase } from '../events/EventBase';
+
+import {AssetBase} from "./AssetBase";
+import {AssetLibraryIterator} from "./AssetLibraryIterator";
+import {ConflictPrecedence} from "./ConflictPrecedence";
+import {ConflictStrategy} from "./ConflictStrategy";
+import {ConflictStrategyBase} from "./ConflictStrategyBase";
+import {IAsset} from "./IAsset";
+import {IAssetAdapter} from "./IAssetAdapter";
+import {Loader} from "./Loader";
+import {LoaderContext} from "./LoaderContext";
 
 /**
  * AssetLibraryBundle enforces a multiton pattern and is not intended to be instanced directly.
@@ -43,9 +45,9 @@ export class AssetLibraryBundle extends EventDispatcher
 	private _onAssetCompleteDelegate:(event:AssetEvent) => void;
 	private _onLoadErrorDelegate:(event:URLLoaderEvent) => void;
 	private _onParseErrorDelegate:(event:ParserEvent) => void;
-	private _errorDelegateSelector:{[index: string]:((event: EventBase) => void)};
-	
-	
+	private _errorDelegateSelector:{[index:string]:((event:EventBase) => void)};
+
+
 
 	/**
 	 * Creates a new <code>AssetLibraryBundle</code> object.
@@ -75,14 +77,14 @@ export class AssetLibraryBundle extends EventDispatcher
 		this._errorDelegateSelector = {
 			[URLLoaderEvent.LOAD_ERROR]: this._onLoadErrorDelegate,
 			[ParserEvent.PARSE_ERROR]: this._onParseErrorDelegate
-		}
+		};
 	}
 
 	/**
 	 * Special addEventListener case for <code>URLLoaderEvent.LOAD_ERROR</code> and <code>ype == ParserEvent.PARSE_ERROR</code>
-	 * 
-	 * @param type 
-	 * @param listener 
+	 *
+	 * @param type
+	 * @param listener
 	 */
 	public addEventListener(type:string, listener:(event:EventBase) => void):void
 	{
@@ -92,12 +94,12 @@ export class AssetLibraryBundle extends EventDispatcher
 
 		super.addEventListener(type, listener);
 	}
-	
+
 	/**
 	 * Special removeEventListener case for <code>URLLoaderEvent.LOAD_ERROR</code> and <code>ype == ParserEvent.PARSE_ERROR</code>
-	 * 
-	 * @param type 
-	 * @param listener 
+	 *
+	 * @param type
+	 * @param listener
 	 */
 
 	public removeEventListener(type:string, listener:(event:EventBase) => void):void
@@ -118,10 +120,10 @@ export class AssetLibraryBundle extends EventDispatcher
 	 * @param key Defines which multiton instance should be returned.
 	 * @return An instance of the asset library
 	 */
-	public static getInstance(key:string = 'default'):AssetLibraryBundle
+	public static getInstance(key:string = "default"):AssetLibraryBundle
 	{
 		if (!key)
-			key = 'default';
+			key = "default";
 
 		if (!AssetLibraryBundle._iInstances.hasOwnProperty(key))
 			AssetLibraryBundle._iInstances[key] = new AssetLibraryBundle();
@@ -165,7 +167,7 @@ export class AssetLibraryBundle extends EventDispatcher
 	{
 
 		if (!val)
-			throw new ErrorBase('namingStrategy must not be null. To ignore naming, use AssetLibrary.IGNORE');
+			throw new ErrorBase("namingStrategy must not be null. To ignore naming, use AssetLibrary.IGNORE");
 
 		this._strategy = val.create();
 
@@ -237,7 +239,7 @@ export class AssetLibraryBundle extends EventDispatcher
 	 */
 	public loadData(data:any, context:LoaderContext = null, ns:string = null, parser:ParserBase = null):void
 	{
-		this.getLoader().loadData(data, '', context, ns, parser);
+		this.getLoader().loadData(data, "", context, ns, parser);
 	}
 
 	public getLoader():Loader
@@ -253,13 +255,13 @@ export class AssetLibraryBundle extends EventDispatcher
 
 		if (this.hasEventListener(URLLoaderEvent.LOAD_ERROR))
 			loader.addEventListener(URLLoaderEvent.LOAD_ERROR, this._onLoadErrorDelegate);
-	
+
 		if (this.hasEventListener(ParserEvent.PARSE_ERROR))
 			loader.addEventListener(ParserEvent.PARSE_ERROR, this._onParseErrorDelegate);
 
 		return loader;
 	}
-	
+
 	public stopLoader(loader:Loader):void
 	{
 		var index:number = this._loaderSessions.indexOf(loader);
@@ -289,10 +291,12 @@ export class AssetLibraryBundle extends EventDispatcher
 		return this._assetDictionary[ns][name.toString().toLowerCase()];
 
 	}
+
 	public getAllAssets():Array<IAssetAdapter>
 	{
 		return this._assets;
 	}
+
 	/**
 	 * Adds an asset to the asset library, first making sure that it's name is unique
 	 * using the method defined by the <code>conflictStrategy</code> and
@@ -471,19 +475,8 @@ export class AssetLibraryBundle extends EventDispatcher
 			if (this._assetDictionary[asset.adaptee.assetNamespace].hasOwnProperty(asset.adaptee.name.toString().toLowerCase()))
 				delete this._assetDictionary[asset.adaptee.assetNamespace][asset.adaptee.name.toString().toLowerCase()];
 
-			if (autoRemoveEmptyNamespace) {
-
-				var key:string;
-				var empty:boolean = true;
-
-				for (key in this._assetDictionary[asset.adaptee.assetNamespace]) {
-					empty = false;
-					break;
-				}
-
-				if (empty)
-					delete this._assetDictionary[asset.adaptee.assetNamespace];
-			}
+			if (autoRemoveEmptyNamespace && !Object.keys(this._assetDictionary[asset.adaptee.assetNamespace]).length)
+				delete this._assetDictionary[asset.adaptee.assetNamespace];
 		}
 	}
 
@@ -569,7 +562,7 @@ export class AssetLibraryBundle extends EventDispatcher
 
 		if (this.hasEventListener(URLLoaderEvent.LOAD_ERROR))
 			loader.removeEventListener(URLLoaderEvent.LOAD_ERROR, this._onLoadErrorDelegate);
-	
+
 		if (this.hasEventListener(ParserEvent.PARSE_ERROR))
 			loader.removeEventListener(ParserEvent.PARSE_ERROR, this._onParseErrorDelegate);
 

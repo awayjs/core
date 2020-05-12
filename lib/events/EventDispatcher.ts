@@ -1,4 +1,4 @@
-import {EventBase}					from "../events/EventBase";
+import {EventBase} from "./EventBase";
 
 /**
  * Base export class for dispatching events
@@ -98,7 +98,7 @@ export class ListenerObject
 			return;
 
 		this._listeners.push(listener);
-		
+
 		this.numListeners++;
 	}
 
@@ -125,7 +125,7 @@ export class ListenerObject
 		for (this._index = 0; this._index < len && this._index < this.numListeners; this._index++)
 			this._listeners[this._index](event);
 	}
-	
+
 	/**
 	 * get Event Listener Index in array. Returns -1 if no listener is added
 	 * @method getEventListenerIndex
@@ -137,4 +137,3 @@ export class ListenerObject
 		return this._listeners.indexOf(listener);
 	}
 }
-export default EventDispatcher;

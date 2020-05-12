@@ -13,7 +13,7 @@ export class Debug
 
 	public static breakpoint():void
 	{
-		Debug['break']();
+		Debug["break"]();
 	}
 
 	public static throwPIROnKeyWordOnly(str:string, enable:boolean = true):void
@@ -26,7 +26,7 @@ export class Debug
 
 	public static throwPIR(clss:string, fnc:string, msg:string):void
 	{
-		Debug.logPIR('PartialImplementationError ' + clss, fnc, msg);
+		Debug.logPIR("PartialImplementationError " + clss, fnc, msg);
 
 		if (Debug.THROW_ERRORS) {
 			if (Debug.keyword) {
@@ -36,14 +36,14 @@ export class Debug
 					return;
 			}
 
-			throw new PartialImplementationError(clss + '.' + fnc + ': ' + msg);
+			throw new PartialImplementationError(clss + "." + fnc + ": " + msg);
 		}
 	}
 
-	private static logPIR(clss:string, fnc:string, msg:string = ''):void
+	private static logPIR(clss:string, fnc:string, msg:string = ""):void
 	{
 		if (Debug.LOG_PI_ERRORS)
-			console.log(clss + '.' + fnc + ': ' + msg);
+			console.log(clss + "." + fnc + ": " + msg);
 	}
 
 	public static log(...args:any[]):void

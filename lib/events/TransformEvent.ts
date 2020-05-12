@@ -1,5 +1,6 @@
 import {Transform} from "../base/Transform";
-import {EventBase} from "../events/EventBase";
+
+import {EventBase} from "./EventBase";
 
 export class TransformEvent extends EventBase
 {

@@ -1,7 +1,9 @@
-import {ConflictPrecedence}		from "../library/ConflictPrecedence";
-import {IAssetAdapter}					from "../library/IAssetAdapter";
-import {AbstractMethodError}		from "../errors/AbstractMethodError";
-import {AssetEvent}				from "../events/AssetEvent";
+import {AbstractMethodError} from "../errors/AbstractMethodError";
+
+import {AssetEvent} from "../events/AssetEvent";
+
+import {ConflictPrecedence} from "./ConflictPrecedence";
+import {IAssetAdapter} from "./IAssetAdapter";
 
 /**
  * Abstract base export class for naming conflict resolution classes. Extend this to create a
@@ -56,8 +58,8 @@ export class ConflictStrategyBase
 		var winner:IAssetAdapter;
 		var loser:IAssetAdapter;
 
-		winner = (precedence === ConflictPrecedence.FAVOR_NEW)? newAsset : oldAsset;
-		loser = (precedence === ConflictPrecedence.FAVOR_NEW)? oldAsset : newAsset;
+		winner = (precedence === ConflictPrecedence.FAVOR_NEW) ? newAsset : oldAsset;
+		loser = (precedence === ConflictPrecedence.FAVOR_NEW) ? oldAsset : newAsset;
 
 		loser_prev_name = loser.adaptee.name;
 

@@ -1,4 +1,4 @@
-import {IAssetAdapter} from "../library/IAssetAdapter";
+import {IAssetAdapter} from "./IAssetAdapter";
 
 export class AssetLibraryIterator
 {
@@ -17,7 +17,7 @@ export class AssetLibraryIterator
 	public get currentAsset():IAssetAdapter
 	{
 		// Return current, or null if no current
-		return ( this._idx < this._filtered.length )? this._filtered[ this._idx ] : null;
+		return (this._idx < this._filtered.length) ? this._filtered[ this._idx ] : null;
 	}
 
 	public get numAssets():number

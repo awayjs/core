@@ -1,12 +1,12 @@
-import {ConflictStrategyBase}		from "../library/ConflictStrategyBase";
-import {IAssetAdapter}					from "../library/IAssetAdapter";
+import {ConflictStrategyBase} from "./ConflictStrategyBase";
+import {IAssetAdapter} from "./IAssetAdapter";
 
 export class NumSuffixConflictStrategy extends ConflictStrategyBase
 {
 	private _separator:string;
 	private _next_suffix:Object;
 
-	constructor(separator:string = '.')
+	constructor(separator:string = ".")
 	{
 		super();
 

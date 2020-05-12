@@ -15,7 +15,7 @@ export interface IAudioChannel
 	groupID:number;
 
 	onSoundComplete:Function;
-	
+
 	isPlaying():boolean;
 
 	isLooping():boolean;

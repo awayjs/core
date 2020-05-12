@@ -1,7 +1,9 @@
+import {AssetBase} from "../library/AssetBase";
+
 import {IAudioChannel} from "../managers/IAudioChannel";
 import {AudioManager} from "../managers/AudioManager";
-import {AssetBase} from "../library/AssetBase";
-import {ByteArray} from '../utils/ByteArray';
+
+import {ByteArray} from "../utils/ByteArray";
 
 // TODO: Audio should probably be an interface containing play/stop/seek functionality
 export class WaveAudio extends AssetBase
@@ -21,11 +23,12 @@ export class WaveAudio extends AssetBase
 
 	public get isPlaying():boolean
 	{
-		if(!this._audioChannel)
+		if (!this._audioChannel)
 			return false;
-		
+
 		return this._audioChannel.isPlaying();
 	}
+
 	/**
 	 *
 	 * @returns {string}
@@ -60,13 +63,13 @@ export class WaveAudio extends AssetBase
 			this.stop();
 			this.play(0, false);
 		} else {
-			if(this._channelsPlaying > 0)
+			if (this._channelsPlaying > 0)
 				this._channelsPlaying--;
 
-			if(this._channelsPlaying == 0)
+			if (this._channelsPlaying == 0)
 				this._isPlaying = false;
-			
-			if(this._onSoundComplete)
+
+			if (this._onSoundComplete)
 				this._onSoundComplete();
 		}
 	}
@@ -101,9 +104,10 @@ export class WaveAudio extends AssetBase
 
 		var groupVolume:number = AudioManager.getVolume(value);
 
-		for (var i:number=0; i<this._audioChannels.length; i++)
+		for (var i:number = 0; i < this._audioChannels.length; i++)
 			this._audioChannels[i].groupVolume = groupVolume;
 	}
+
 	public get volume():number
 	{
 		return this._volume;
@@ -119,7 +123,7 @@ export class WaveAudio extends AssetBase
 		if (this._audioChannel)
 			this._audioChannel.volume = this._volume;
 
-		for(var i:number=0; i<this._audioChannels.length; i++)
+		for (var i:number = 0; i < this._audioChannels.length; i++)
 			this._audioChannels[i].volume = this._volume;
 	}
 
@@ -147,13 +151,13 @@ export class WaveAudio extends AssetBase
 		super();
 
 		this._data = data;
-		
+
 		this._channelGroup = channelGroup;
 	}
 
 	public dispose():void
 	{
-		this._isPlaying=false;
+		this._isPlaying = false;
 		this.stop();
 	}
 
@@ -172,6 +176,7 @@ export class WaveAudio extends AssetBase
 			this._data.play(this._audioChannel, offset, loop, this.id);
 		}
 	}
+
 	public set onSoundComplete(value:Function)
 	{
 		this._onSoundComplete = value;
@@ -184,7 +189,7 @@ export class WaveAudio extends AssetBase
 	{
 		this._isPlaying = false;
 
-		for (var i:number=0; i<this._audioChannels.length; i++) {
+		for (var i:number = 0; i < this._audioChannels.length; i++) {
 			this._audioChannels[i].stop();
 			delete this._audioChannels[i];
 		}
@@ -236,7 +241,7 @@ export class WaveAudioData
 		if (data instanceof Blob) {
 			this._blob = data;
 		} else {
-			this._buffer = (data instanceof ByteArray)? data.arraybytes : data;
+			this._buffer = (data instanceof ByteArray) ? data.arraybytes : data;
 		}
 	}
 

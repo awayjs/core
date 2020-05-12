@@ -1,4 +1,4 @@
-import {IAudioChannel}			from "../managers/IAudioChannel";
+import {IAudioChannel} from "../managers/IAudioChannel";
 
 export interface IAudioChannelClass
 {

@@ -1,5 +1,5 @@
-import {ConflictStrategyBase}		from "../library/ConflictStrategyBase";
-import {IAssetAdapter}					from "../library/IAssetAdapter";
+import {ConflictStrategyBase} from "./ConflictStrategyBase";
+import {IAssetAdapter} from "./IAssetAdapter";
 
 export class IgnoreConflictStrategy extends ConflictStrategyBase
 {

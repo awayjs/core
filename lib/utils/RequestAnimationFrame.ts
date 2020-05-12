@@ -1,4 +1,4 @@
-import {getTimer}					from "../utils/getTimer";
+import {getTimer} from "./getTimer";
 
 export class RequestAnimationFrame
 {
@@ -21,7 +21,7 @@ export class RequestAnimationFrame
 		this._rafUpdateFunction = () => {
 			if (this._active)
 				this._tick();
-		}
+		};
 
 		this._argsArray.push(this._dt);
 	}
@@ -47,16 +47,16 @@ export class RequestAnimationFrame
 		this._prevTime = this._getTimer();
 		this._active = true;
 
-		if(window) {
+		if (window) {
 			if (window.requestAnimationFrame) {
 				window.requestAnimationFrame(this._rafUpdateFunction);
 			} else {
-				if (window['mozRequestAnimationFrame'])
-					window.requestAnimationFrame = window['mozRequestAnimationFrame'];
-				else if (window['webkitRequestAnimationFrame'])
-					window.requestAnimationFrame = window['webkitRequestAnimationFrame'];
-				else if (window['oRequestAnimationFrame'])
-					window.requestAnimationFrame = window['oRequestAnimationFrame'];
+				if (window["mozRequestAnimationFrame"])
+					window.requestAnimationFrame = window["mozRequestAnimationFrame"];
+				else if (window["webkitRequestAnimationFrame"])
+					window.requestAnimationFrame = window["webkitRequestAnimationFrame"];
+				else if (window["oRequestAnimationFrame"])
+					window.requestAnimationFrame = window["oRequestAnimationFrame"];
 			}
 		}
 	}

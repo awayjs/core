@@ -17,25 +17,25 @@ export class PerspectiveProjection extends ProjectionBase
 	 */
 	public get fieldOfView():number
 	{
-		return Math.atan(0.5/this.scale)*360/Math.PI;
+		return Math.atan(0.5 / this.scale) * 360 / Math.PI;
 	}
 
 	public set fieldOfView(value:number)
 	{
-		this.scale = 0.5/Math.tan(value*Math.PI/360);
+		this.scale = 0.5 / Math.tan(value * Math.PI / 360);
 	}
 
 	/**
-	 * 
-	 * @param position 
-	 * @param target 
+	 *
+	 * @param position
+	 * @param target
 	 */
 	public project(position:Vector3D, target:Vector3D = null):Vector3D
 	{
 		var v:Vector3D = this.viewMatrix3D.transformVector(position, target);
 
-		v.x = v.x/v.w;
-		v.y = -v.y/v.w;
+		v.x = v.x / v.w;
+		v.y = -v.y / v.w;
 
 		//z is remapped to w
 		v.z = v.w;
@@ -45,20 +45,20 @@ export class PerspectiveProjection extends ProjectionBase
 	}
 
 	/**
-	 * 
-	 * @param nX 
-	 * @param nY 
-	 * @param sZ 
-	 * @param target 
+	 *
+	 * @param nX
+	 * @param nY
+	 * @param sZ
+	 * @param target
 	 */
 	public unproject(nX:number, nY:number, sZ:number, target:Vector3D = null):Vector3D
 	{
 		if (target == null)
 			target = new Vector3D();
 
-		target.x = nX*sZ;
-		target.y = -nY*sZ;
-		target.z = (this._far + this._near)/(this._far - this._near)*sZ - 2*this._far*this._near/(this._far - this._near);
+		target.x = nX * sZ;
+		target.y = -nY * sZ;
+		target.z = (this._far + this._near) / (this._far - this._near) * sZ - 2 * this._far * this._near / (this._far - this._near);
 		target.w = sZ;
 
 		this.inverseViewMatrix3D.transformVector(target, target);
@@ -92,24 +92,24 @@ export class PerspectiveProjection extends ProjectionBase
 		super._updateFrustumMatrix3D();
 
 		var raw:Float32Array = this._frustumMatrix3D._rawData;
-		
+
 		var scaleV:number = this._scale;
-		var scaleH:number = this._scale/this._ratio;
+		var scaleH:number = this._scale / this._ratio;
 
-		this._frustumRect.left = 0.5*(this._originX - 1)/scaleH;
-		this._frustumRect.top = 0.5*(this._originY - 1)/scaleV;
+		this._frustumRect.left = 0.5 * (this._originX - 1) / scaleH;
+		this._frustumRect.top = 0.5 * (this._originY - 1) / scaleV;
 
-		this._frustumRect.right = this._frustumRect.left + 1/scaleH;
-		this._frustumRect.bottom = this._frustumRect.top + 1/scaleV;
+		this._frustumRect.right = this._frustumRect.left + 1 / scaleH;
+		this._frustumRect.bottom = this._frustumRect.top + 1 / scaleV;
 
-		raw[0] = 2*scaleH; //2/(right - left);
-		raw[5] = 2*scaleV; //2/(bottom - top);
+		raw[0] = 2 * scaleH; //2/(right - left);
+		raw[5] = 2 * scaleV; //2/(bottom - top);
 		raw[8] = this._originX; //(right + left)/(right - left)
 		raw[9] = this._originY; //(bottom + top)/(bottom - top);
-		raw[10] = (this._far + this._near)/(this._far - this._near);
+		raw[10] = (this._far + this._near) / (this._far - this._near);
 		raw[11] = 1;
 		raw[1] = raw[2] = raw[3] = raw[4] = raw[6] = raw[7] = raw[12] = raw[13] = raw[15] = 0;
-		raw[14] = -2*this._far*this._near/(this._far - this._near);
+		raw[14] = -2 * this._far * this._near / (this._far - this._near);
 
 		if (this._coordinateSystem == CoordinateSystem.RIGHT_HANDED)
 			raw[5] = -raw[5];
@@ -123,10 +123,10 @@ export class PerspectiveProjection extends ProjectionBase
 
 		var rawData:Float32Array = this._frustumMatrix3D._rawData;
 
-		this._near = rawData[14]/(-1 - rawData[10]);
-		this._far = rawData[14]/(1 - rawData[10]);
-		this._scale = rawData[5]/2;
-		this._ratio = 0.5*this._scale/rawData[0];
+		this._near = rawData[14] / (-1 - rawData[10]);
+		this._far = rawData[14] / (1 - rawData[10]);
+		this._scale = rawData[5] / 2;
+		this._ratio = 0.5 * this._scale / rawData[0];
 		this._originX = rawData[8];
 		this._originY = rawData[9];
 	}

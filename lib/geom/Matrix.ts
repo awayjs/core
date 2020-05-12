@@ -1,6 +1,7 @@
-import {Point}					from "../geom/Point";
-import {Vector3D}					from "../geom/Vector3D";
-import {ArgumentError}			from "../errors/ArgumentError";
+import {ArgumentError} from "../errors/ArgumentError";
+
+import {Point} from "./Point";
+import {Vector3D} from "./Vector3D";
 
 /**
  * The Matrix export class represents a transformation matrix that determines how to
@@ -185,16 +186,16 @@ export class Matrix
 	}
 
 
-	public copyRawDataFrom(vector:Float32Array, index:number = 0):void
+	public copyRawDataFrom(vector:Float32Array, offset:number = 0):void
 	{
 		var raw:Float32Array = this.rawData;
 
-		raw[0] = vector[0];
-		raw[1] = vector[1];
-		raw[2] = vector[2];
-		raw[3] = vector[3];
-		raw[4] = vector[4];
-		raw[5] = vector[5];
+		raw[0] = vector[offset + 0];
+		raw[1] = vector[offset + 1];
+		raw[2] = vector[offset + 2];
+		raw[3] = vector[offset + 3];
+		raw[4] = vector[offset + 4];
+		raw[5] = vector[offset + 5];
 	}
 
 	/**
@@ -238,16 +239,16 @@ export class Matrix
 		var d =  m[3] * n[3];
 		var tx = m[4] * n[0] + n[4];
 		var ty = m[5] * n[3] + n[5];
-	
+
 		if (m[1] !== 0.0 || m[2] !== 0.0 || n[1] !== 0.0 || n[2] !== 0.0) {
-		  a  += m[1] * n[2];
-		  d  += m[2] * n[1];
-		  b  += m[0] * n[1] + m[1] * n[3];
-		  c  += m[2] * n[0] + m[3] * n[2];
-		  tx += m[5] * n[2];
-		  ty += m[4] * n[1];
+			a  += m[1] * n[2];
+			d  += m[2] * n[1];
+			b  += m[0] * n[1] + m[1] * n[3];
+			c  += m[2] * n[0] + m[3] * n[2];
+			tx += m[5] * n[2];
+			ty += m[4] * n[1];
 		}
-	
+
 		m[0] = a;
 		m[1] = b;
 		m[2] = c;
@@ -477,7 +478,7 @@ export class Matrix
 	{
 		var raw:Float32Array = this.rawData;
 
-		return new Point(point.x*raw[0] + point.y*raw[2], point.x*raw[1] + point.y*raw[3]);
+		return new Point(point.x * raw[0] + point.y * raw[2], point.x * raw[1] + point.y * raw[3]);
 	}
 
 	/**
@@ -517,18 +518,18 @@ export class Matrix
 		var tx = raw[4];
 		var ty = raw[5];
 		if (b === 0 && c === 0) {
-			var a = raw[0] = 1/raw[0];
-			var d = raw[3] = 1/raw[3];
+			var a = raw[0] = 1 / raw[0];
+			var d = raw[3] = 1 / raw[3];
 			raw[1] = raw[2] = 0;
-			raw[4] = -a*tx;
-			raw[5] = -d*ty;
+			raw[4] = -a * tx;
+			raw[5] = -d * ty;
 
 			return;
 		}
 
 		var a = raw[0];
 		var d = raw[3];
-		var determinant = a*d - b*c;
+		var determinant = a * d - b * c;
 		if (determinant === 0) {
 			this.identity();
 			return;
@@ -538,14 +539,14 @@ export class Matrix
 		 * representable without loss of precision. This is usually only the case for powers of
 		 * two: 1/2, 1/4 ...
 		 */
-		determinant = 1/determinant;
+		determinant = 1 / determinant;
 		var k = 0;
-		k = raw[0] =  d*determinant;
-		b = raw[1] = -b*determinant;
-		c = raw[2] = -c*determinant;
-		d = raw[3] =  a*determinant;
-		raw[4] = -(k*tx + c*ty);
-		raw[5] = -(b*tx + d*ty);
+		k = raw[0] =  d * determinant;
+		b = raw[1] = -b * determinant;
+		c = raw[2] = -c * determinant;
+		d = raw[3] =  a * determinant;
+		raw[4] = -(k * tx + c * ty);
+		raw[5] = -(b * tx + d * ty);
 	}
 
 
@@ -561,13 +562,13 @@ export class Matrix
 	{
 		var result = new Matrix();
 
-		result.a = this.a*matrix.a + this.b*matrix.c;
-		result.b = this.a*matrix.b + this.b*matrix.d;
-		result.c = this.c*matrix.a + this.d*matrix.c;
-		result.d = this.c*matrix.b + this.d*matrix.d;
+		result.a = this.a * matrix.a + this.b * matrix.c;
+		result.b = this.a * matrix.b + this.b * matrix.d;
+		result.c = this.c * matrix.a + this.d * matrix.c;
+		result.d = this.c * matrix.b + this.d * matrix.d;
 
-		result.tx = this.tx*matrix.a + this.ty*matrix.c + matrix.tx;
-		result.ty = this.tx*matrix.b + this.ty*matrix.d + matrix.ty;
+		result.tx = this.tx * matrix.a + this.ty * matrix.c + matrix.tx;
+		result.ty = this.tx * matrix.b + this.ty * matrix.d + matrix.ty;
 
 		return result;
 	}
@@ -595,10 +596,10 @@ export class Matrix
 			var ttx = raw[4];
 			var tty = raw[5];
 
-			raw[0] = ta  * u - tb  * v;
-			raw[1] = ta  * v + tb  * u;
-			raw[2] = tc  * u - td  * v;
-			raw[3] = tc  * v + td  * u;
+			raw[0] = ta * u - tb * v;
+			raw[1] = ta * v + tb * u;
+			raw[2] = tc * u - td * v;
+			raw[3] = tc * v + td * u;
 			raw[4] = ttx * u - tty * v;
 			raw[5] = ttx * v + tty * u;
 		}
@@ -684,7 +685,7 @@ export class Matrix
 	public transformPoint(point:Point):Point
 	{
 		var raw:Float32Array = this.rawData;
-		return new Point(point.x*raw[0] + point.y*raw[2] + raw[4], point.x*raw[1] + point.y*raw[3] + raw[5]);
+		return new Point(point.x * raw[0] + point.y * raw[2] + raw[4], point.x * raw[1] + point.y * raw[3] + raw[5]);
 	}
 
 	/**

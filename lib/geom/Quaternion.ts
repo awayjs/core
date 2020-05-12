@@ -1,6 +1,6 @@
-import {Orientation3D}		from "../geom/Orientation3D";
-import {Matrix3D}				from "../geom/Matrix3D";
-import {Vector3D}				from "../geom/Vector3D";
+import {Orientation3D} from "./Orientation3D";
+import {Matrix3D} from "./Matrix3D";
+import {Vector3D} from "./Vector3D";
 
 /**
  * A Quaternion object which can be used to represent rotations.
@@ -47,7 +47,7 @@ export class Quaternion
 	 */
 	public get magnitude():number
 	{
-		return Math.sqrt(this.w*this.w + this.x*this.x + this.y*this.y + this.z*this.z);
+		return Math.sqrt(this.w * this.w + this.x * this.x + this.y * this.y + this.z * this.z);
 	}
 
 	/**
@@ -61,10 +61,10 @@ export class Quaternion
 		var w1:number = qa.w, x1:number = qa.x, y1:number = qa.y, z1:number = qa.z;
 		var w2:number = qb.w, x2:number = qb.x, y2:number = qb.y, z2:number = qb.z;
 
-		this.w = w1*w2 - x1*x2 - y1*y2 - z1*z2;
-		this.x = w1*x2 + x1*w2 + y1*z2 - z1*y2;
-		this.y = w1*y2 - x1*z2 + y1*w2 + z1*x2;
-		this.z = w1*z2 + x1*y2 - y1*x2 + z1*w2;
+		this.w = w1 * w2 - x1 * x2 - y1 * y2 - z1 * z2;
+		this.x = w1 * x2 + x1 * w2 + y1 * z2 - z1 * y2;
+		this.y = w1 * y2 - x1 * z2 + y1 * w2 + z1 * x2;
+		this.z = w1 * z2 + x1 * y2 - y1 * x2 + z1 * w2;
 	}
 
 	public multiplyVector(vector:Vector3D, target:Quaternion = null):Quaternion
@@ -80,10 +80,10 @@ export class Quaternion
 		var y2:number = vector.y;
 		var z2:number = vector.z;
 
-		target.w = -this.x*x2 - this.y*y2 - this.z*z2;
-		target.x = this.w*x2 + this.y*z2 - this.z*y2;
-		target.y = this.w*y2 - this.x*z2 + this.z*x2;
-		target.z = this.w*z2 + this.x*y2 - this.y*x2;
+		target.w = -this.x * x2 - this.y * y2 - this.z * z2;
+		target.x = this.w * x2 + this.y * z2 - this.z * y2;
+		target.y = this.w * y2 - this.x * z2 + this.z * x2;
+		target.z = this.w * z2 + this.x * y2 - this.y * x2;
 
 		return target;
 	}
@@ -96,12 +96,12 @@ export class Quaternion
 	 */
 	public fromAxisAngle(axis:Vector3D, angle:number):void
 	{
-		var sin_a:number = Math.sin(angle/2);
-		var cos_a:number = Math.cos(angle/2);
+		var sin_a:number = Math.sin(angle / 2);
+		var cos_a:number = Math.cos(angle / 2);
 
-		this.x = axis.x*sin_a;
-		this.y = axis.y*sin_a;
-		this.z = axis.z*sin_a;
+		this.x = axis.x * sin_a;
+		this.y = axis.y * sin_a;
+		this.z = axis.z * sin_a;
 		this.w = cos_a;
 
 		this.normalize();
@@ -117,7 +117,7 @@ export class Quaternion
 	{
 		var w1:number = qa.w, x1:number = qa.x, y1:number = qa.y, z1:number = qa.z;
 		var w2:number = qb.w, x2:number = qb.x, y2:number = qb.y, z2:number = qb.z;
-		var dot:number = w1*w2 + x1*x2 + y1*y2 + z1*z2;
+		var dot:number = w1 * w2 + x1 * x2 + y1 * y2 + z1 * z2;
 
 		// shortest direction
 		if (dot < 0) {
@@ -131,20 +131,20 @@ export class Quaternion
 		if (dot < 0.95) {
 			// interpolate angle linearly
 			var angle:number = Math.acos(dot);
-			var s:number = 1/Math.sin(angle);
-			var s1:number = Math.sin(angle*(1 - t))*s;
-			var s2:number = Math.sin(angle*t)*s;
-			this.w = w1*s1 + w2*s2;
-			this.x = x1*s1 + x2*s2;
-			this.y = y1*s1 + y2*s2;
-			this.z = z1*s1 + z2*s2;
+			var s:number = 1 / Math.sin(angle);
+			var s1:number = Math.sin(angle * (1 - t)) * s;
+			var s2:number = Math.sin(angle * t) * s;
+			this.w = w1 * s1 + w2 * s2;
+			this.x = x1 * s1 + x2 * s2;
+			this.y = y1 * s1 + y2 * s2;
+			this.z = z1 * s1 + z2 * s2;
 		} else {
 			// nearly identical angle, interpolate linearly
-			this.w = w1 + t*(w2 - w1);
-			this.x = x1 + t*(x2 - x1);
-			this.y = y1 + t*(y2 - y1);
-			this.z = z1 + t*(z2 - z1);
-			var len:number = 1.0/Math.sqrt(this.w*this.w + this.x*this.x + this.y*this.y + this.z*this.z);
+			this.w = w1 + t * (w2 - w1);
+			this.x = x1 + t * (x2 - x1);
+			this.y = y1 + t * (y2 - y1);
+			this.z = z1 + t * (z2 - z1);
+			var len:number = 1.0 / Math.sqrt(this.w * this.w + this.x * this.x + this.y * this.y + this.z * this.z);
 			this.w *= len;
 			this.x *= len;
 			this.y *= len;
@@ -165,19 +165,19 @@ export class Quaternion
 		var len:number;
 
 		// shortest direction
-		if (w1*w2 + x1*x2 + y1*y2 + z1*z2 < 0) {
+		if (w1 * w2 + x1 * x2 + y1 * y2 + z1 * z2 < 0) {
 			w2 = -w2;
 			x2 = -x2;
 			y2 = -y2;
 			z2 = -z2;
 		}
 
-		this.w = w1 + t*(w2 - w1);
-		this.x = x1 + t*(x2 - x1);
-		this.y = y1 + t*(y2 - y1);
-		this.z = z1 + t*(z2 - z1);
+		this.w = w1 + t * (w2 - w1);
+		this.x = x1 + t * (x2 - x1);
+		this.y = y1 + t * (y2 - y1);
+		this.z = z1 + t * (z2 - z1);
 
-		len = 1.0/Math.sqrt(this.w*this.w + this.x*this.x + this.y*this.y + this.z*this.z);
+		len = 1.0 / Math.sqrt(this.w * this.w + this.x * this.x + this.y * this.y + this.z * this.z);
 		this.w *= len;
 		this.x *= len;
 		this.y *= len;
@@ -193,15 +193,15 @@ export class Quaternion
 	 */
 	public fromEulerAngles(ax:number, ay:number, az:number):void
 	{
-		var halfX:number = ax*.5, halfY:number = ay*.5, halfZ:number = az*.5;
+		var halfX:number = ax * .5, halfY:number = ay * .5, halfZ:number = az * .5;
 		var cosX:number = Math.cos(halfX), sinX:number = Math.sin(halfX);
 		var cosY:number = Math.cos(halfY), sinY:number = Math.sin(halfY);
 		var cosZ:number = Math.cos(halfZ), sinZ:number = Math.sin(halfZ);
 
-		this.w = cosX*cosY*cosZ + sinX*sinY*sinZ;
-		this.x = sinX*cosY*cosZ - cosX*sinY*sinZ;
-		this.y = cosX*sinY*cosZ + sinX*cosY*sinZ;
-		this.z = cosX*cosY*sinZ - sinX*sinY*cosZ;
+		this.w = cosX * cosY * cosZ + sinX * sinY * sinZ;
+		this.x = sinX * cosY * cosZ - cosX * sinY * sinZ;
+		this.y = cosX * sinY * cosZ + sinX * cosY * sinZ;
+		this.z = cosX * cosY * sinZ - sinX * sinY * cosZ;
 	}
 
 	/**
@@ -219,9 +219,9 @@ export class Quaternion
 
 		}
 
-		target.x = Math.atan2(2*(this.w*this.x + this.y*this.z), 1 - 2*(this.x*this.x + this.y*this.y));
-		target.y = Math.asin(2*(this.w*this.y - this.z*this.x));
-		target.z = Math.atan2(2*(this.w*this.z + this.x*this.y), 1 - 2*(this.y*this.y + this.z*this.z));
+		target.x = Math.atan2(2 * (this.w * this.x + this.y * this.z), 1 - 2 * (this.x * this.x + this.y * this.y));
+		target.y = Math.asin(2 * (this.w * this.y - this.z * this.x));
+		target.z = Math.atan2(2 * (this.w * this.z + this.x * this.y), 1 - 2 * (this.y * this.y + this.z * this.z));
 
 		return target;
 	}
@@ -231,7 +231,7 @@ export class Quaternion
 	 */
 	public normalize(val:number = 1):void
 	{
-		var mag:number = val/Math.sqrt(this.x*this.x + this.y*this.y + this.z*this.z + this.w*this.w);
+		var mag:number = val / Math.sqrt(this.x * this.x + this.y * this.y + this.z * this.z + this.w * this.w);
 
 		this.x *= mag;
 		this.y *= mag;
@@ -256,9 +256,9 @@ export class Quaternion
 	 */
 	public toMatrix3D(target:Matrix3D = null):Matrix3D
 	{
-		var xy2:number = 2.0*this.x*this.y, xz2:number = 2.0*this.x*this.z, xw2:number = 2.0*this.x*this.w;
-		var yz2:number = 2.0*this.y*this.z, yw2:number = 2.0*this.y*this.w, zw2:number = 2.0*this.z*this.w;
-		var xx:number = this.x*this.x, yy:number = this.y*this.y, zz:number = this.z*this.z, ww:number = this.w*this.w;
+		var xy2:number = 2.0 * this.x * this.y, xz2:number = 2.0 * this.x * this.z, xw2:number = 2.0 * this.x * this.w;
+		var yz2:number = 2.0 * this.y * this.z, yw2:number = 2.0 * this.y * this.w, zw2:number = 2.0 * this.z * this.w;
+		var xx:number = this.x * this.x, yy:number = this.y * this.y, zz:number = this.z * this.z, ww:number = this.w * this.w;
 
 		if (!target)
 			target = new Matrix3D();
@@ -305,9 +305,9 @@ export class Quaternion
 	 */
 	public toRawData(target:number[], exclude4thRow:boolean = false):void
 	{
-		var xy2:number = 2.0*this.x*this.y, xz2:number = 2.0*this.x*this.z, xw2:number = 2.0*this.x*this.w;
-		var yz2:number = 2.0*this.y*this.z, yw2:number = 2.0*this.y*this.w, zw2:number = 2.0*this.z*this.w;
-		var xx:number = this.x*this.x, yy:number = this.y*this.y, zz:number = this.z*this.z, ww:number = this.w*this.w;
+		var xy2:number = 2.0 * this.x * this.y, xz2:number = 2.0 * this.x * this.z, xw2:number = 2.0 * this.x * this.w;
+		var yz2:number = 2.0 * this.y * this.z, yw2:number = 2.0 * this.y * this.w, zw2:number = 2.0 * this.z * this.w;
+		var xx:number = this.x * this.x, yy:number = this.y * this.y, zz:number = this.z * this.z, ww:number = this.w * this.w;
 
 		target[0] = xx - yy - zz + ww;
 		target[1] = xy2 - zw2;
@@ -354,14 +354,14 @@ export class Quaternion
 		}
 
 		// p*q'
-		w1 = -this.x*x2 - this.y*y2 - this.z*z2;
-		x1 = this.w*x2 + this.y*z2 - this.z*y2;
-		y1 = this.w*y2 - this.x*z2 + this.z*x2;
-		z1 = this.w*z2 + this.x*y2 - this.y*x2;
+		w1 = -this.x * x2 - this.y * y2 - this.z * z2;
+		x1 = this.w * x2 + this.y * z2 - this.z * y2;
+		y1 = this.w * y2 - this.x * z2 + this.z * x2;
+		z1 = this.w * z2 + this.x * y2 - this.y * x2;
 
-		target.x = -w1*this.x + x1*this.w - y1*this.z + z1*this.y;
-		target.y = -w1*this.y + x1*this.z + y1*this.w - z1*this.x;
-		target.z = -w1*this.z - x1*this.y + y1*this.x + z1*this.w;
+		target.x = -w1 * this.x + x1 * this.w - y1 * this.z + z1 * this.y;
+		target.y = -w1 * this.y + x1 * this.z + y1 * this.w - z1 * this.x;
+		target.z = -w1 * this.z - x1 * this.y + y1 * this.x + z1 * this.w;
 
 		return target;
 	}

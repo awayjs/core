@@ -1,4 +1,4 @@
-import {URLRequestMethod}				from "../net/URLRequestMethod";
+import {URLRequestMethod} from "../net/URLRequestMethod";
 
 export class URLRequest
 {

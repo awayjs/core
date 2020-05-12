@@ -1,5 +1,5 @@
-import {PlaneClassification}	from "../geom/PlaneClassification";
-import {Vector3D}				from "../geom/Vector3D";
+import {PlaneClassification} from "./PlaneClassification";
+import {Vector3D} from "./Vector3D";
 
 export class Plane3D
 {
@@ -77,10 +77,10 @@ export class Plane3D
 		var d2y:number = p2.y - p0.y;
 		var d2z:number = p2.z - p0.z;
 
-		this.a = d1y*d2z - d1z*d2y;
-		this.b = d1z*d2x - d1x*d2z;
-		this.c = d1x*d2y - d1y*d2x;
-		this.d = this.a*p0.x + this.b*p0.y + this.c*p0.z;
+		this.a = d1y * d2z - d1z * d2y;
+		this.b = d1z * d2x - d1x * d2z;
+		this.c = d1x * d2y - d1y * d2x;
+		this.d = this.a * p0.x + this.b * p0.y + this.c * p0.z;
 
 		// not using epsilon, since a plane is infinite and a small incorrection can grow very large
 		if (this.a == 0 && this.b == 0) {
@@ -113,7 +113,7 @@ export class Plane3D
 		this.a = normal.x;
 		this.b = normal.y;
 		this.c = normal.z;
-		this.d = this.a*point.x + this.b*point.y + this.c*point.z;
+		this.d = this.a * point.x + this.b * point.y + this.c * point.z;
 		if (this.a == 0 && this.b == 0) {
 
 			this._iAlignment = Plane3D.ALIGN_XY_AXIS;
@@ -140,7 +140,7 @@ export class Plane3D
 	 */
 	public normalize():Plane3D
 	{
-		var len:number = 1/Math.sqrt(this.a*this.a + this.b*this.b + this.c*this.c);
+		var len:number = 1 / Math.sqrt(this.a * this.a + this.b * this.b + this.c * this.c);
 		this.a *= len;
 		this.b *= len;
 		this.c *= len;
@@ -158,19 +158,17 @@ export class Plane3D
 
 		if (this._iAlignment == Plane3D.ALIGN_YZ_AXIS) {
 
-			return this.a*p.x - this.d;
+			return this.a * p.x - this.d;
 
 		} else if (this._iAlignment == Plane3D.ALIGN_XZ_AXIS) {
-			return this.b*p.y - this.d;
-		}
+			return this.b * p.y - this.d;
+		} else if (this._iAlignment == Plane3D.ALIGN_XY_AXIS) {
 
-		else if (this._iAlignment == Plane3D.ALIGN_XY_AXIS) {
-
-			return this.c*p.z - this.d;
+			return this.c * p.z - this.d;
 
 		} else {
 
-			return this.a*p.x + this.b*p.y + this.c*p.z - this.d;
+			return this.a * p.x + this.b * p.y + this.c * p.z - this.d;
 
 		}
 
@@ -189,14 +187,19 @@ export class Plane3D
 
 		var len:number;
 		if (this._iAlignment == Plane3D.ALIGN_YZ_AXIS)
-			len = this.a*p.x - this.d; else if (this._iAlignment == Plane3D.ALIGN_XZ_AXIS)
-			len = this.b*p.y - this.d; else if (this._iAlignment == Plane3D.ALIGN_XY_AXIS)
-			len = this.c*p.z - this.d; else
-			len = this.a*p.x + this.b*p.y + this.c*p.z - this.d;
+			len = this.a * p.x - this.d;
+		else if (this._iAlignment == Plane3D.ALIGN_XZ_AXIS)
+			len = this.b * p.y - this.d;
+		else if (this._iAlignment == Plane3D.ALIGN_XY_AXIS)
+			len = this.c * p.z - this.d;
+		else
+			len = this.a * p.x + this.b * p.y + this.c * p.z - this.d;
 
 		if (len < -epsilon)
-			return PlaneClassification.BACK; else if (len > epsilon)
-			return PlaneClassification.FRONT; else
+			return PlaneClassification.BACK;
+		else if (len > epsilon)
+			return PlaneClassification.FRONT;
+		else
 			return PlaneClassification.INTERSECT;
 	}
 

@@ -1,4 +1,4 @@
-import {EventBase}				from "../events/EventBase";
+import {EventBase} from "./EventBase";
 
 export class ParserEvent extends EventBase
 {
@@ -7,13 +7,13 @@ export class ParserEvent extends EventBase
 	/**
 	 * Dispatched when parsing of an asset completed.
 	 */
-	public static PARSE_COMPLETE:string = 'parseComplete';
+	public static PARSE_COMPLETE:string = "parseComplete";
 
 	/**
 	 * Dispatched when an error occurs while parsing the data (e.g. because it's
 	 * incorrectly formatted.)
 	 */
-	public static PARSE_ERROR:string = 'parseError';
+	public static PARSE_ERROR:string = "parseError";
 
 
 	/**
@@ -21,10 +21,10 @@ export class ParserEvent extends EventBase
 	 * This is an internal event that should rarely (if ever) be listened for by
 	 * external classes.
 	 */
-	public static READY_FOR_DEPENDENCIES:string = 'readyForDependencies';
+	public static READY_FOR_DEPENDENCIES:string = "readyForDependencies";
 
 
-	constructor(type:string, message:string = '')
+	constructor(type:string, message:string = "")
 	{
 		super(type);
 

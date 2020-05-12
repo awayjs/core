@@ -1,5 +1,6 @@
-import {URLLoader}				from "../net/URLLoader";
-import {EventBase}				from "../events/EventBase";
+import {URLLoader} from "../net/URLLoader";
+
+import {EventBase} from "./EventBase";
 
 export class URLLoaderEvent extends EventBase
 {

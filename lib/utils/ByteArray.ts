@@ -1,4 +1,4 @@
-import {ByteArrayBase}			from "../utils/ByteArrayBase";
+import {ByteArrayBase} from "./ByteArrayBase";
 
 export class ByteArray extends ByteArrayBase
 {
@@ -45,6 +45,7 @@ export class ByteArray extends ByteArrayBase
 		this.position = this.length;
 
 	}
+
 	public writeByteArray(ba:ByteArray):void
 	{
 		this.ensureWriteableSpace(ba.length);
@@ -56,9 +57,10 @@ export class ByteArray extends ByteArrayBase
 		this.position = this.length;
 
 	}
+
 	public getBytesAvailable():number
 	{
-		return ( this.length ) - ( this.position );
+		return (this.length) - (this.position);
 	}
 
 	public ensureSpace(n:number):void
@@ -79,11 +81,13 @@ export class ByteArray extends ByteArrayBase
 	{
 		console.log("writeObject not implemented yet in core/ByteArray");
 	}
+
 	public readObject():any
 	{
 		console.log("readObject not implemented yet in core/ByteArray");
 		return {};
 	}
+
 	public writeByte(b:number):void
 	{
 		this.ensureWriteableSpace(1);
@@ -120,7 +124,7 @@ export class ByteArray extends ByteArrayBase
 		this.position += length;
 
 		if (length + offset > bytes.length)
-			bytes.length += ( length + offset ) - bytes.length;
+			bytes.length += (length + offset) - bytes.length;
 	}
 
 	public writeUnsignedByte(b:number):void
@@ -147,7 +151,7 @@ export class ByteArray extends ByteArrayBase
 	{
 		this.ensureWriteableSpace(2);
 
-		if (( this.position & 1 ) == 0) {
+		if ((this.position & 1) == 0) {
 			var view = new Uint16Array(this.arraybytes);
 			view[ this.position >> 1 ] = (~~b) & 0xffff; // ~~ is cast to int in js...
 		} else {
@@ -202,26 +206,28 @@ export class ByteArray extends ByteArrayBase
 		return value;
 	}
 
-	public writeUTFBytes(s:string) {
+	public writeUTFBytes(s:string)
+	{
 		var escstr = encodeURIComponent(s);
 		var binstr = escstr.replace(/%([0-9A-F]{2})/g, function(match, p1) {
-			return String.fromCharCode(parseInt('0x' + p1));
+			return String.fromCharCode(parseInt("0x" + p1));
 		});
 
-		this.ensureWriteableSpace(4+binstr.length);
+		this.ensureWriteableSpace(4 + binstr.length);
 		this.writeInt(binstr.length);
-		for (var i=0; i<binstr.length; i++){
+		for (var i = 0; i < binstr.length; i++) {
 			this.writeUnsignedByte(binstr.charCodeAt(i)); //todo: there are probably faster ways to do this
 		}
-		if(binstr.length%4){
-			var paddingbytes:number=binstr.length%4;
-			for (var i=0; i<paddingbytes; i++){
+		if (binstr.length % 4) {
+			var paddingbytes:number = binstr.length % 4;
+			for (var i = 0; i < paddingbytes; i++) {
 				this.writeUnsignedByte(0);
 			}
 
 		}
 		return binstr.length;
 	}
+
 	public readInt():number
 	{
 		var data:DataView = new DataView(this.arraybytes);
@@ -257,7 +263,7 @@ export class ByteArray extends ByteArrayBase
 		if (this.position > this.length + 2)
 			throw "ByteArray out of bounds read. Position=" + this.position + ", Length=" + this.length;
 
-		if (( this.position & 1 ) == 0) {
+		if ((this.position & 1) == 0) {
 			var view = new Uint16Array(this.arraybytes);
 			var pa:number = this.position >> 1;
 			this.position += 2;
@@ -276,7 +282,7 @@ export class ByteArray extends ByteArrayBase
 	{
 		this.ensureWriteableSpace(4);
 
-		if (( this.position & 3 ) == 0) {
+		if ((this.position & 3) == 0) {
 			var view = new Uint32Array(this.arraybytes);
 			view[ this.position >> 2 ] = (~~b) & 0xffffffff; // ~~ is cast to int in js...
 		} else {
@@ -296,7 +302,7 @@ export class ByteArray extends ByteArrayBase
 	{
 		this.ensureWriteableSpace(4);
 
-		if (( this.position & 3 ) == 0) {
+		if ((this.position & 3) == 0) {
 			var view = new Int32Array(this.arraybytes);
 			view[ this.position >> 2 ] = (~~b); // ~~ is cast to int in js...
 		} else {
@@ -317,7 +323,7 @@ export class ByteArray extends ByteArrayBase
 		if (this.position > this.length + 4)
 			throw "ByteArray out of bounds read. Position=" + this.position + ", Length=" + this.length;
 
-		if (( this.position & 3 ) == 0) {
+		if ((this.position & 3) == 0) {
 			var view = new Uint32Array(this.arraybytes);
 			var pa:number = this.position >> 2;
 			this.position += 4;
@@ -336,7 +342,7 @@ export class ByteArray extends ByteArrayBase
 	{
 		this.ensureWriteableSpace(4);
 
-		if (( this.position & 3 ) == 0) {
+		if ((this.position & 3) == 0) {
 			var view = new Float32Array(this.arraybytes);
 			view[ this.position >> 2 ] = b;
 		} else {

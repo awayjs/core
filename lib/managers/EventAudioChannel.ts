@@ -1,5 +1,4 @@
-import {ParserUtils}				from "../parsers/ParserUtils";
-import {IAudioChannel}				from "./IAudioChannel";
+import {ParserUtils} from "../parsers/ParserUtils";
 export class EventAudioChannel
 {
 	public static maxChannels:number = 4;
@@ -20,38 +19,39 @@ export class EventAudioChannel
 	public onSoundComplete:Function;
 	private _audio:HTMLAudioElement;
 
-	public static stopAllSounds(channelGroup:number=-1){
-		var len: number = EventAudioChannel._channels.length;
-		if(channelGroup<0){
-			for (var j: number = 0; j < len; j++) {
+	public static stopAllSounds(channelGroup:number = -1)
+	{
+		var len:number = EventAudioChannel._channels.length;
+		if (channelGroup < 0) {
+			for (var j:number = 0; j < len; j++) {
 				EventAudioChannel._channels[j].stop();
 			}
-			EventAudioChannel._channels.length=0;
+			EventAudioChannel._channels.length = 0;
 			return;
 		}
-		var aliveChannels:EventAudioChannel[]=[];
-		for (var j: number = 0; j < len; j++) {
-			if(EventAudioChannel._channels[j].groupID==channelGroup){
+		var aliveChannels:EventAudioChannel[] = [];
+		for (var j:number = 0; j < len; j++) {
+			if (EventAudioChannel._channels[j].groupID == channelGroup) {
 				EventAudioChannel._channels[j].stop();
-			}
-			else{
-				aliveChannels[aliveChannels.length]=EventAudioChannel._channels[j];
+			} else {
+				aliveChannels[aliveChannels.length] = EventAudioChannel._channels[j];
 			}
 		}
-		EventAudioChannel._channels=aliveChannels;
+		EventAudioChannel._channels = aliveChannels;
 	}
 
-	public static setChannelGroupVolume(value:number, channelGroup:number=-1){
-		var len: number = EventAudioChannel._channels.length;
-		if(channelGroup<0){
-			for (var j: number = 0; j < len; j++) {
-				EventAudioChannel._channels[j].groupVolume=value;
+	public static setChannelGroupVolume(value:number, channelGroup:number = -1)
+	{
+		var len:number = EventAudioChannel._channels.length;
+		if (channelGroup < 0) {
+			for (var j:number = 0; j < len; j++) {
+				EventAudioChannel._channels[j].groupVolume = value;
 			}
 			return;
 		}
-		for (var j: number = 0; j < len; j++) {
-			if(EventAudioChannel._channels[j].groupID==channelGroup){
-				EventAudioChannel._channels[j].groupVolume=value;
+		for (var j:number = 0; j < len; j++) {
+			if (EventAudioChannel._channels[j].groupID == channelGroup) {
+				EventAudioChannel._channels[j].groupVolume = value;
 			}
 		}
 	}
@@ -84,8 +84,9 @@ export class EventAudioChannel
 
 	public set groupID(value:number)
 	{
-		this._groupID=value;
+		this._groupID = value;
 	}
+
 	public get groupVolume():number
 	{
 		return this._groupVolume;
@@ -140,16 +141,16 @@ export class EventAudioChannel
 		return false;
 	}
 
-	constructor(groupID:number=0, groupVolume:number=1, groupPan:number=1)
+	constructor(groupID:number = 0, groupVolume:number = 1, groupPan:number = 1)
 	{
-		this._groupID=groupID;
-		this._groupVolume=groupVolume;
-		this._groupPan=groupPan;
+		this._groupID = groupID;
+		this._groupVolume = groupVolume;
+		this._groupPan = groupPan;
 
 		this._audio = new Audio();
 		this._audio.ontimeupdate = (event) => this._onTimeUpdate(event);
 	}
-	
+
 	public play(buffer:ArrayBuffer, offset:number = 0, loop:boolean = false, id:number = 0):void
 	{
 		this._isPlaying = true;
@@ -157,31 +158,31 @@ export class EventAudioChannel
 
 		this._audio.src = EventAudioChannel._base64Cache[id] || (EventAudioChannel._base64Cache[id] = ParserUtils.arrayBufferToBase64(buffer, "audio/mp3"));
 		this._audio.loop = this._isLooping;
-		var thisAudio=this._audio;
-		this._audio.addEventListener('loadedmetadata', function() {
+		var thisAudio = this._audio;
+		this._audio.addEventListener("loadedmetadata", function() {
 			thisAudio.currentTime = offset;
 			thisAudio.play();
 		}, false);
-		this._audio.addEventListener('error', function(err) {
-            console.log("error in audio", err)
+		this._audio.addEventListener("error", function(err) {
+			console.log("error in audio", err);
 		}, false);
-		this._audio.addEventListener('error', function(err) {
-            console.log("error in audio", err)
+		this._audio.addEventListener("error", function(err) {
+			console.log("error in audio", err);
 		}, false);
-		this._audio.addEventListener('canplay', function(err) {
-            console.log("canplay in audio", err)
+		this._audio.addEventListener("canplay", function(err) {
+			console.log("canplay in audio", err);
 		}, false);
-		this._audio.addEventListener('canplaythrough', function(err) {
-            console.log("canplaythrough in audio", err)
+		this._audio.addEventListener("canplaythrough", function(err) {
+			console.log("canplaythrough in audio", err);
 		}, false);
-		this._audio.addEventListener('abort', function(err) {
-            console.log("abort in audio", err)
+		this._audio.addEventListener("abort", function(err) {
+			console.log("abort in audio", err);
 		}, false);
-		this._audio.addEventListener('loadstart', function(err) {
-            console.log("loadstart in audio", err)
+		this._audio.addEventListener("loadstart", function(err) {
+			console.log("loadstart in audio", err);
 		}, false);
-		this._audio.addEventListener('suspend', function(err) {
-            console.log("suspend in audio", err)
+		this._audio.addEventListener("suspend", function(err) {
+			console.log("suspend in audio", err);
 		}, false);
 	}
 
@@ -195,12 +196,12 @@ export class EventAudioChannel
 	private _onTimeUpdate(event):void
 	{
 		//TODO: more accurate end detection
-		if (!this._isLooping && this._audio.duration < this._audio.currentTime - this._startTime + 0.1){
+		if (!this._isLooping && this._audio.duration < this._audio.currentTime - this._startTime + 0.1) {
 
-            if(this.onSoundComplete){
-                this.onSoundComplete();
-            }
+			if (this.onSoundComplete) {
+				this.onSoundComplete();
+			}
 			this.stop();
-        }
+		}
 	}
 }

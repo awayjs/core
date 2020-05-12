@@ -3,7 +3,7 @@ export class LoaderContext
 	public static UNDEFINED:number = 0;
 	public static SINGLEPASS_MATERIALS:number = 1;
 	public static MULTIPASS_MATERIALS:number = 2;
-	
+
 	public static ON_DEMAND:string = "onDemand";
 	public static PRELOADED:string = "preloaded";
 
@@ -27,7 +27,7 @@ export class LoaderContext
 	constructor(includeDependencies:boolean = true, dependencyBaseUrl:string = null)
 	{
 		this._includeDependencies = includeDependencies;
-		this._dependencyBaseUrl = dependencyBaseUrl || '';
+		this._dependencyBaseUrl = dependencyBaseUrl || "";
 		this._embeddedDataByUrl = {};
 		this._remappedUrls = {};
 		this._materialMode = LoaderContext.UNDEFINED;
@@ -75,7 +75,7 @@ export class LoaderContext
 	{
 		this._externalAssetMode = value;
 	}
-	
+
 
 	/**
 	 * A base URL that will be prepended to all relative dependency URLs found in a loaded resource.

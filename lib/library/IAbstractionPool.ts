@@ -1,5 +1,5 @@
-import {IAsset}						from "../library/IAsset";
-import {AbstractionBase}				from "../library/AbstractionBase";
+import {IAsset} from "./IAsset";
+import {AbstractionBase} from "./AbstractionBase";
 
 export interface IAbstractionPool
 {

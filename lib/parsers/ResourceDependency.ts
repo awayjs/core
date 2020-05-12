@@ -1,7 +1,7 @@
-﻿import {IAsset}					from "../library/IAsset";
-import {URLLoader}				from "../net/URLLoader";
-import {URLRequest}				from "../net/URLRequest";
-import {ParserBase}				from "../parsers/ParserBase";
+﻿import {IAsset} from "../library/IAsset";
+import {URLLoader} from "../net/URLLoader";
+import {URLRequest} from "../net/URLRequest";
+import {ParserBase} from "../parsers/ParserBase";
 
 /**
  * ResourceDependency represents the data required to load, parse and resolve additional files ("dependencies")
@@ -26,7 +26,7 @@ export class ResourceDependency
 	public success:boolean;
 
 
-	constructor(id:string, request:URLRequest, data:any, parser:ParserBase, parentParser:ParserBase, retrieveAsRawData:boolean = false, suppressAssetEvents:boolean = false, sub_id:number=0)
+	constructor(id:string, request:URLRequest, data:any, parser:ParserBase, parentParser:ParserBase, retrieveAsRawData:boolean = false, suppressAssetEvents:boolean = false, sub_id:number = 0)
 	{
 		this._id = id;
 		this._sub_id = sub_id;
@@ -47,7 +47,7 @@ export class ResourceDependency
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	public get sub_id():number
 	{

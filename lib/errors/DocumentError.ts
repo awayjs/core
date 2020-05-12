@@ -1,4 +1,4 @@
-import {ErrorBase}				from "../errors/ErrorBase";
+import {ErrorBase} from "./ErrorBase";
 
 export class DocumentError extends ErrorBase
 {

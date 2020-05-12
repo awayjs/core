@@ -22,7 +22,7 @@ export class URLVariables
 
 		var tokens, re = /[?&]?([^=]+)=([^&]*)/g;
 
-		while (tokens = re.exec(source))
+		while ((tokens = re.exec(source)))
 			this._variables[decodeURIComponent(tokens[1])] = decodeURIComponent(tokens[2]);
 	}
 
@@ -32,7 +32,7 @@ export class URLVariables
 	 */
 	public toString():string
 	{
-		return '';
+		return "";
 	}
 
 	/**

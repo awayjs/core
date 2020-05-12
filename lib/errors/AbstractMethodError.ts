@@ -1,4 +1,4 @@
-import {ErrorBase}				from "../errors/ErrorBase";
+import {ErrorBase} from "./ErrorBase";
 
 /**
  * AbstractMethodError is thrown when an abstract method is called. The method in question should be overridden

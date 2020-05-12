@@ -1,9 +1,11 @@
-import {IAsset}					from "../library/IAsset";
-import {IAssetAdapter}					from "../library/IAssetAdapter";
-import {IAssetClass}				from "../library/IAssetClass";
-import {AbstractMethodError}		from "../errors/AbstractMethodError";
-import {AssetEvent}				from "../events/AssetEvent";
-import {EventDispatcher}			from "../events/EventDispatcher";
+import {AbstractMethodError} from "../errors/AbstractMethodError";
+
+import {AssetEvent} from "../events/AssetEvent";
+import {EventDispatcher} from "../events/EventDispatcher";
+
+import {IAsset} from "./IAsset";
+import {IAssetAdapter} from "./IAssetAdapter";
+import {IAssetClass} from "./IAssetClass";
 
 export class AssetBase extends EventDispatcher implements IAsset, IAssetAdapter
 {
@@ -17,7 +19,7 @@ export class AssetBase extends EventDispatcher implements IAsset, IAssetAdapter
 	private _id:number;
 	private _full_path:Array<string>;
 
-	public static DEFAULT_NAMESPACE:string = 'default';
+	public static DEFAULT_NAMESPACE:string = "default";
 
 	constructor(name:string = null)
 	{
@@ -26,7 +28,7 @@ export class AssetBase extends EventDispatcher implements IAsset, IAssetAdapter
 		this._id = AssetBase.ID_COUNT++;
 
 		if (name == null)
-			name = 'null';
+			name = "null";
 
 		this._name = name;
 		this._originalName = name;
@@ -92,7 +94,7 @@ export class AssetBase extends EventDispatcher implements IAsset, IAssetAdapter
 		this._name = val;
 
 		if (this._name == null)
-			this._name = 'null';
+			this._name = "null";
 
 		this.updateFullPath();
 
@@ -129,9 +131,10 @@ export class AssetBase extends EventDispatcher implements IAsset, IAssetAdapter
 	{
 		return this._namespace;
 	}
+
 	public set assetNamespace(value:string)
 	{
-		this._namespace=value? value : AssetBase.DEFAULT_NAMESPACE;
+		this._namespace = value ? value : AssetBase.DEFAULT_NAMESPACE;
 		this.updateFullPath();
 	}
 
@@ -155,8 +158,8 @@ export class AssetBase extends EventDispatcher implements IAsset, IAssetAdapter
 	public resetAssetPath(name:string, ns:string = null, overrideOriginal:boolean = true):void
 	{
 
-		this._name = name? name : 'null';
-		this._namespace = ns? ns : AssetBase.DEFAULT_NAMESPACE;
+		this._name = name ? name : "null";
+		this._namespace = ns ? ns : AssetBase.DEFAULT_NAMESPACE;
 
 		if (overrideOriginal)
 			this._originalName = this._name;
@@ -166,6 +169,6 @@ export class AssetBase extends EventDispatcher implements IAsset, IAssetAdapter
 
 	public updateFullPath():void
 	{
-		this._full_path = [ this._namespace, this._name ];
+		this._full_path = [this._namespace, this._name];
 	}
 }

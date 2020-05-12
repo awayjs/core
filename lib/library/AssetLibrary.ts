@@ -1,12 +1,15 @@
-import {URLRequest} from "../net/URLRequest";
 import {EventBase} from "../events/EventBase";
-import {AssetLibraryBundle} from "../library/AssetLibraryBundle";
-import {AssetLibraryIterator} from "../library/AssetLibraryIterator";
-import {Loader} from "../library/Loader";
-import {LoaderContext} from "../library/LoaderContext";
-import {ConflictStrategyBase} from "../library/ConflictStrategyBase";
-import {IAssetAdapter} from "../library/IAssetAdapter";
+
+import {URLRequest} from "../net/URLRequest";
+
 import {ParserBase} from "../parsers/ParserBase";
+
+import {AssetLibraryBundle} from "./AssetLibraryBundle";
+import {AssetLibraryIterator} from "./AssetLibraryIterator";
+import {ConflictStrategyBase} from "./ConflictStrategyBase";
+import {IAssetAdapter} from "./IAssetAdapter";
+import {Loader} from "./Loader";
+import {LoaderContext} from "./LoaderContext";
 
 /**
  * AssetLibrary enforces a singleton pattern and is not intended to be instanced.
@@ -33,7 +36,7 @@ export class AssetLibrary
 	 * @param key Defines which multiton instance should be returned.
 	 * @return An instance of the asset library
 	 */
-	public static getBundle(key:string = 'default'):AssetLibraryBundle
+	public static getBundle(key:string = "default"):AssetLibraryBundle
 	{
 		return AssetLibraryBundle.getInstance(key);
 	}

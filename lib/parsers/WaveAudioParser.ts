@@ -16,6 +16,7 @@ export class WaveAudioParser extends ParserBase
 	public static processFilename=function(filename):string {
 		return filename;
 	};
+
 	public static supportsType(extension:string):boolean
 	{
 
@@ -30,8 +31,8 @@ export class WaveAudioParser extends ParserBase
 			return false;
 
 		var ba:ByteArray = <ByteArray> data;
-		var filetype : string = WaveAudioParser.parseFileType(ba);
-		return filetype? true : false;
+		var filetype:string = WaveAudioParser.parseFileType(ba);
+		return filetype ? true : false;
 	}
 
 	public _pStartParsing(frameLimit:number):void
@@ -61,7 +62,7 @@ export class WaveAudioParser extends ParserBase
 		// I leave it in, because it might work for mp3 data that i do not have here to test
 		ba.position = 0;
 		if ((ba.readUnsignedShort() & 0xFFE0) == 0xFFE0) {
-			return 'mp3'; // test for MP3 syncword
+			return "mp3"; // test for MP3 syncword
 		}
 
 		// new mp3 detection
@@ -70,22 +71,21 @@ export class WaveAudioParser extends ParserBase
 		// i added the hack: (byte_1 === 255 && byte_2 === 243 && byte_3 === 130) 	to catch those mp3s
 		// todo: find a more foolproof way to detect al mp3 (my hack might collide with detection for other filetypes)
 		ba.position = 0;
-		var byte_1:number=ba.readUnsignedByte();
-		var byte_2:number=ba.readUnsignedByte();
-		var byte_3:number=ba.readUnsignedByte();
+		var byte_1:number = ba.readUnsignedByte();
+		var byte_2:number = ba.readUnsignedByte();
+		var byte_3:number = ba.readUnsignedByte();
 		if ((byte_1 === 73 && byte_2 === 68 && byte_3 === 51)
-			|| (byte_1 === 255 && byte_2 === 251)
-			|| (byte_1 === 255 && byte_2 === 243 && byte_3 === 130)){
-			return 'mp3';
+			|| (byte_1 === 255 && byte_2 === 251) || (byte_1 === 255 && byte_2 === 243 && byte_3 === 130)) {
+			return "mp3";
 		}
-		
-		ba.position = 0;
-		if (ba.readUTFBytes(4) == 'RIFF')
-			return 'wav';
 
 		ba.position = 0;
-		if (ba.readUTFBytes(4) == 'OggS')
-			return 'ogg';
+		if (ba.readUTFBytes(4) == "RIFF")
+			return "wav";
+
+		ba.position = 0;
+		if (ba.readUTFBytes(4) == "OggS")
+			return "ogg";
 
 		ba.position = 0;
 

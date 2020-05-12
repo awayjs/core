@@ -1,5 +1,6 @@
-import {IAsset}					from "../library/IAsset";
-import {EventBase}				from "../events/EventBase";
+import {IAsset} from "../library/IAsset";
+
+import {EventBase} from "./EventBase";
 
 /**
  * @export class away.events.AssetEvent
@@ -19,22 +20,22 @@ export class AssetEvent extends EventBase
 	/**
 	 *
 	 */
-	public static RENAME:string = 'rename';
+	public static RENAME:string = "rename";
 
 	/**
 	 *
 	 */
-	public static ENTER_FRAME:string = 'enterFrame';
+	public static ENTER_FRAME:string = "enterFrame";
 
 	/**
 	 *
 	 */
-	public static EXIT_FRAME:string = 'exitFrame';
+	public static EXIT_FRAME:string = "exitFrame";
 
 	/**
 	 *
 	 */
-	public static ASSET_CONFLICT_RESOLVED:string = 'assetConflictResolved';
+	public static ASSET_CONFLICT_RESOLVED:string = "assetConflictResolved";
 
 	/**
 	 * Dispatched when the loading of an asset and all of its dependencies is complete.
@@ -44,7 +45,7 @@ export class AssetEvent extends EventBase
 	/**
 	 *
 	 */
-	public static TEXTURE_SIZE_ERROR:string = 'textureSizeError';
+	public static TEXTURE_SIZE_ERROR:string = "textureSizeError";
 
 	private _asset:IAsset;
 	private _prevName:string;

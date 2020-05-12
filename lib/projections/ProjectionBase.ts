@@ -7,8 +7,8 @@ import {TransformEvent} from "../events/TransformEvent";
 import {AbstractMethodError} from "../errors/AbstractMethodError";
 
 import {CoordinateSystem} from "./CoordinateSystem";
-import { Rectangle } from '../geom/Rectangle';
-import { Plane3D } from '../geom/Plane3D';
+import {Rectangle} from "../geom/Rectangle";
+import {Plane3D} from "../geom/Plane3D";
 
 export class ProjectionBase extends EventDispatcher
 {
@@ -57,15 +57,15 @@ export class ProjectionBase extends EventDispatcher
 
 		if (this._transform)
 			this._transform.removeEventListener(TransformEvent.INVALIDATE_CONCATENATED_MATRIX3D, this._onInvalidateConcatenatedMatrix3DDelegate);
-		
+
 		this._transform = value;
 
 		if (this._transform)
 			this._transform.addEventListener(TransformEvent.INVALIDATE_CONCATENATED_MATRIX3D, this._onInvalidateConcatenatedMatrix3DDelegate);
-		
+
 		this._invalidateViewMatrix3D();
 	}
-	
+
 	/**
 	 * The handedness of the coordinate system projection. The default is LEFT_HANDED.
 	 */
@@ -91,7 +91,7 @@ export class ProjectionBase extends EventDispatcher
 	{
 		if (this._propertiesDirty)
 			this._updateProperties();
-		
+
 		return this._scale;
 	}
 
@@ -104,7 +104,7 @@ export class ProjectionBase extends EventDispatcher
 
 		this._invalidateFrustumMatrix3D();
 	}
-	
+
 	/**
 	 *
 	 */
@@ -112,7 +112,7 @@ export class ProjectionBase extends EventDispatcher
 	{
 		if (this._propertiesDirty)
 			this._updateProperties();
-		
+
 		return this._ratio;
 	}
 
@@ -127,14 +127,14 @@ export class ProjectionBase extends EventDispatcher
 	}
 
 	/**
-	 * 
+	 *
 	 * @returns {Matrix3D}
 	 */
 	public get frustumMatrix3D():Matrix3D
 	{
 		if (this._frustumMatrix3DDirty)
 			this._updateFrustumMatrix3D();
-		
+
 		return this._frustumMatrix3D;
 	}
 
@@ -146,146 +146,146 @@ export class ProjectionBase extends EventDispatcher
 		this._invalidateProperties();
 	}
 
-	
+
 	/**
-	 * 
+	 *
 	 * @returns {number[]}
 	 */
 	public get viewFrustumCorners():number[]
 	{
 		if (this._viewFrustumCornersDirty) {
-            this._viewFrustumCornersDirty = false;
+			this._viewFrustumCornersDirty = false;
 
 			if (this._frustumMatrix3DDirty)
 				this._updateFrustumMatrix3D();
-			
-            var left:number = this._frustumRect.left;
-            var right:number = this._frustumRect.right;
-            var top:number = this._frustumRect.top;
+
+			var left:number = this._frustumRect.left;
+			var right:number = this._frustumRect.right;
+			var top:number = this._frustumRect.top;
 			var bottom:number = this._frustumRect.bottom;
-			
+
 			if (this._propertiesDirty)
 				this._updateProperties();
 
-            var near:number = this._near;
-            var far:number = this._far;
+			var near:number = this._near;
+			var far:number = this._far;
 
-            this._viewFrustumCorners[0] = this._viewFrustumCorners[9] = near*left;
-            this._viewFrustumCorners[3] = this._viewFrustumCorners[6] = near*right;
-            this._viewFrustumCorners[1] = this._viewFrustumCorners[4] = near*top;
-            this._viewFrustumCorners[7] = this._viewFrustumCorners[10] = near*bottom;
-    
-            this._viewFrustumCorners[12] = this._viewFrustumCorners[21] = far*left;
-            this._viewFrustumCorners[15] = this._viewFrustumCorners[18] = far*right;
-            this._viewFrustumCorners[13] = this._viewFrustumCorners[16] = far*top;
-            this._viewFrustumCorners[19] = this._viewFrustumCorners[22] = far*bottom;
-    
-            this._viewFrustumCorners[2] = this._viewFrustumCorners[5] = this._viewFrustumCorners[8] = this._viewFrustumCorners[11] = near;
-            this._viewFrustumCorners[14] = this._viewFrustumCorners[17] = this._viewFrustumCorners[20] = this._viewFrustumCorners[23] = far;
+			this._viewFrustumCorners[0] = this._viewFrustumCorners[9] = near * left;
+			this._viewFrustumCorners[3] = this._viewFrustumCorners[6] = near * right;
+			this._viewFrustumCorners[1] = this._viewFrustumCorners[4] = near * top;
+			this._viewFrustumCorners[7] = this._viewFrustumCorners[10] = near * bottom;
 
-            this._transform.concatenatedMatrix3D.transformVectors(this._viewFrustumCorners, this._viewFrustumCorners);
-        }
+			this._viewFrustumCorners[12] = this._viewFrustumCorners[21] = far * left;
+			this._viewFrustumCorners[15] = this._viewFrustumCorners[18] = far * right;
+			this._viewFrustumCorners[13] = this._viewFrustumCorners[16] = far * top;
+			this._viewFrustumCorners[19] = this._viewFrustumCorners[22] = far * bottom;
+
+			this._viewFrustumCorners[2] = this._viewFrustumCorners[5] = this._viewFrustumCorners[8] = this._viewFrustumCorners[11] = near;
+			this._viewFrustumCorners[14] = this._viewFrustumCorners[17] = this._viewFrustumCorners[20] = this._viewFrustumCorners[23] = far;
+
+			this._transform.concatenatedMatrix3D.transformVectors(this._viewFrustumCorners, this._viewFrustumCorners);
+		}
 
 		return this._viewFrustumCorners;
 	}
 
 	/**
-	 * 
+	 *
 	 */
-    public get viewFrustumPlanes():Array<Plane3D>
-    {
-        if (this._viewFrustumPlanesDirty) {
-            this._viewFrustumPlanesDirty = false;
+	public get viewFrustumPlanes():Array<Plane3D>
+	{
+		if (this._viewFrustumPlanesDirty) {
+			this._viewFrustumPlanesDirty = false;
 
-            if (!this._viewFrustumPlanes) {
-                this._viewFrustumPlanes = [];
+			if (!this._viewFrustumPlanes) {
+				this._viewFrustumPlanes = [];
 
-                for (var i:number = 0; i < 6; ++i)
-                    this._viewFrustumPlanes[i] = new Plane3D();
-            }
+				for (var i:number = 0; i < 6; ++i)
+					this._viewFrustumPlanes[i] = new Plane3D();
+			}
 
-            var raw:Float32Array = this.viewMatrix3D._rawData;
-            var invLen:number;
+			var raw:Float32Array = this.viewMatrix3D._rawData;
+			var invLen:number;
 
-            var c11:number = raw[0], c12:number = raw[4], c13:number = raw[8], c14:number = raw[12];
-            var c21:number = raw[1], c22:number = raw[5], c23:number = raw[9], c24:number = raw[13];
-            var c31:number = raw[2], c32:number = raw[6], c33:number = raw[10], c34:number = raw[14];
-            var c41:number = raw[3], c42:number = raw[7], c43:number = raw[11], c44:number = raw[15];
+			var c11:number = raw[0], c12:number = raw[4], c13:number = raw[8], c14:number = raw[12];
+			var c21:number = raw[1], c22:number = raw[5], c23:number = raw[9], c24:number = raw[13];
+			var c31:number = raw[2], c32:number = raw[6], c33:number = raw[10], c34:number = raw[14];
+			var c41:number = raw[3], c42:number = raw[7], c43:number = raw[11], c44:number = raw[15];
 
-            var a:number, b:number, c:number, p:Plane3D;
+			var a:number, b:number, c:number, p:Plane3D;
 
-            // left plane
-            p = this._viewFrustumPlanes[0];
-            a = c41 + c11;
-            b = c42 + c12;
-            c = c43 + c13;
-            invLen = 1/Math.sqrt(a*a + b*b + c*c);
-            p.a = a*invLen;
-            p.b = b*invLen;
-            p.c = c*invLen;
-            p.d = -(c44 + c14)*invLen;
+			// left plane
+			p = this._viewFrustumPlanes[0];
+			a = c41 + c11;
+			b = c42 + c12;
+			c = c43 + c13;
+			invLen = 1 / Math.sqrt(a * a + b * b + c * c);
+			p.a = a * invLen;
+			p.b = b * invLen;
+			p.c = c * invLen;
+			p.d = -(c44 + c14) * invLen;
 
-            // right plane
-            p = this._viewFrustumPlanes[1];
-            a = c41 - c11;
-            b = c42 - c12;
-            c = c43 - c13;
-            invLen = 1/Math.sqrt(a*a + b*b + c*c);
-            p.a = a*invLen;
-            p.b = b*invLen;
-            p.c = c*invLen;
-            p.d = (c14 - c44)*invLen;
+			// right plane
+			p = this._viewFrustumPlanes[1];
+			a = c41 - c11;
+			b = c42 - c12;
+			c = c43 - c13;
+			invLen = 1 / Math.sqrt(a * a + b * b + c * c);
+			p.a = a * invLen;
+			p.b = b * invLen;
+			p.c = c * invLen;
+			p.d = (c14 - c44) * invLen;
 
-            // bottom
-            p = this._viewFrustumPlanes[2];
-            a = c41 + c21;
-            b = c42 + c22;
-            c = c43 + c23;
-            invLen = 1/Math.sqrt(a*a + b*b + c*c);
-            p.a = a*invLen;
-            p.b = b*invLen;
-            p.c = c*invLen;
-            p.d = -(c44 + c24)*invLen;
+			// bottom
+			p = this._viewFrustumPlanes[2];
+			a = c41 + c21;
+			b = c42 + c22;
+			c = c43 + c23;
+			invLen = 1 / Math.sqrt(a * a + b * b + c * c);
+			p.a = a * invLen;
+			p.b = b * invLen;
+			p.c = c * invLen;
+			p.d = -(c44 + c24) * invLen;
 
-            // top
-            p = this._viewFrustumPlanes[3];
-            a = c41 - c21;
-            b = c42 - c22;
-            c = c43 - c23;
-            invLen = 1/Math.sqrt(a*a + b*b + c*c);
-            p.a = a*invLen;
-            p.b = b*invLen;
-            p.c = c*invLen;
-            p.d = (c24 - c44)*invLen;
+			// top
+			p = this._viewFrustumPlanes[3];
+			a = c41 - c21;
+			b = c42 - c22;
+			c = c43 - c23;
+			invLen = 1 / Math.sqrt(a * a + b * b + c * c);
+			p.a = a * invLen;
+			p.b = b * invLen;
+			p.c = c * invLen;
+			p.d = (c24 - c44) * invLen;
 
-            // near
-            p = this._viewFrustumPlanes[4];
-            a = c31;
-            b = c32;
-            c = c33;
-            invLen = 1/Math.sqrt(a*a + b*b + c*c);
-            p.a = a*invLen;
-            p.b = b*invLen;
-            p.c = c*invLen;
-            p.d = -c34*invLen;
+			// near
+			p = this._viewFrustumPlanes[4];
+			a = c31;
+			b = c32;
+			c = c33;
+			invLen = 1 / Math.sqrt(a * a + b * b + c * c);
+			p.a = a * invLen;
+			p.b = b * invLen;
+			p.c = c * invLen;
+			p.d = -c34 * invLen;
 
-            // far
-            p = this._viewFrustumPlanes[5];
-            a = c41 - c31;
-            b = c42 - c32;
-            c = c43 - c33;
-            invLen = 1/Math.sqrt(a*a + b*b + c*c);
-            p.a = a*invLen;
-            p.b = b*invLen;
-            p.c = c*invLen;
-            p.d = (c34 - c44)*invLen;
-        }
+			// far
+			p = this._viewFrustumPlanes[5];
+			a = c41 - c31;
+			b = c42 - c32;
+			c = c43 - c33;
+			invLen = 1 / Math.sqrt(a * a + b * b + c * c);
+			p.a = a * invLen;
+			p.b = b * invLen;
+			p.c = c * invLen;
+			p.d = (c34 - c44) * invLen;
+		}
 
-        return this._viewFrustumPlanes;
-    }
-	
+		return this._viewFrustumPlanes;
+	}
+
 	/**
-	 * 
+	 *
 	 * @returns {number}
 	 */
 	public get near():number
@@ -300,14 +300,14 @@ export class ProjectionBase extends EventDispatcher
 	{
 		if (value == this._near)
 			return;
-		
+
 		this._near = value;
-		
+
 		this._invalidateFrustumMatrix3D();
 	}
 
 	/**
-	 * 
+	 *
 	 * @returns {number}
 	 */
 	public get originX():number
@@ -329,7 +329,7 @@ export class ProjectionBase extends EventDispatcher
 	}
 
 	/**
-	 * 
+	 *
 	 * @returns {number}
 	 */
 	public get originY():number
@@ -351,7 +351,7 @@ export class ProjectionBase extends EventDispatcher
 	}
 
 	/**
-	 * 
+	 *
 	 * @returns {number}
 	 */
 	public get far():number
@@ -366,9 +366,9 @@ export class ProjectionBase extends EventDispatcher
 	{
 		if (value == this._far)
 			return;
-		
+
 		this._far = value;
-		
+
 		this._invalidateFrustumMatrix3D();
 	}
 
@@ -381,9 +381,9 @@ export class ProjectionBase extends EventDispatcher
 	}
 
 	/**
-	 * 
-	 * @param position 
-	 * @param target 
+	 *
+	 * @param position
+	 * @param target
 	 */
 	public project(position:Vector3D, target:Vector3D = null):Vector3D
 	{
@@ -391,11 +391,11 @@ export class ProjectionBase extends EventDispatcher
 	}
 
 	/**
-	 * 
-	 * @param nX 
-	 * @param nY 
-	 * @param sZ 
-	 * @param target 
+	 *
+	 * @param nX
+	 * @param nY
+	 * @param sZ
+	 * @param target
 	 */
 	public unproject(nX:number, nY:number, sZ:number, target:Vector3D = null):Vector3D
 	{
@@ -425,7 +425,7 @@ export class ProjectionBase extends EventDispatcher
 			this._inverseViewMatrix3D.copyFrom(this.viewMatrix3D);
 			this._inverseViewMatrix3D.invert();
 		}
-		
+
 		return this._inverseViewMatrix3D;
 	}
 

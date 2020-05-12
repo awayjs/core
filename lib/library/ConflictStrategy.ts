@@ -1,7 +1,7 @@
-import {ConflictStrategyBase}			from "../library/ConflictStrategyBase";
-import {ErrorConflictStrategy}		from "../library/ErrorConflictStrategy";
-import {IgnoreConflictStrategy}		from "../library/IgnoreConflictStrategy";
-import {NumSuffixConflictStrategy}	from "../library/NumSuffixConflictStrategy";
+import {ConflictStrategyBase} from "./ConflictStrategyBase";
+import {ErrorConflictStrategy} from "./ErrorConflictStrategy";
+import {IgnoreConflictStrategy} from "./IgnoreConflictStrategy";
+import {NumSuffixConflictStrategy} from "./NumSuffixConflictStrategy";
 
 /**
  * Enumeration export class for bundled conflict strategies. Set one of these values (or an

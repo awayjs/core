@@ -1,12 +1,13 @@
 import {EventDispatcher} from "../events/EventDispatcher";
-import {Matrix} from "../geom/Matrix";
-import {Matrix3D} from "../geom/Matrix3D";
-import {Rectangle} from "../geom/Rectangle";
-import {Vector3D} from "../geom/Vector3D";
 import {TransformEvent} from "../events/TransformEvent";
 
-import {ColorTransform} from "./ColorTransform";
+import {Matrix} from "../geom/Matrix";
+import {Matrix3D} from "../geom/Matrix3D";
 import {Point} from "../geom/Point";
+import {Rectangle} from "../geom/Rectangle";
+import {Vector3D} from "../geom/Vector3D";
+
+import {ColorTransform} from "./ColorTransform";
 
 /**
  * The Transform class provides access to color adjustment properties and two-
@@ -422,7 +423,7 @@ export class Transform extends EventDispatcher
 	 */
 	public append(value:Matrix3D)
 	{
-		console.log("append not implemented yet in core/Transform");
+		console.log(`append(${value}) is not implemented yet in core/Transform`);
 	}
 
 	/**
@@ -850,9 +851,9 @@ export class Transform extends EventDispatcher
 	public translate(axis:Vector3D, distance:number):void
 	{
 		var x:number = axis.x, y:number = axis.y, z:number = axis.z;
-		var len:number = distance/Math.sqrt(x*x + y*y + z*z);
+		var len:number = distance / Math.sqrt(x * x + y * y + z * z);
 
-		this.matrix3D.appendTranslation(x*len, y*len, z*len);
+		this.matrix3D.appendTranslation(x * len, y * len, z * len);
 
 		this.invalidatePosition();
 	}
@@ -866,9 +867,9 @@ export class Transform extends EventDispatcher
 	public translateLocal(axis:Vector3D, distance:number):void
 	{
 		var x:number = axis.x, y:number = axis.y, z:number = axis.z;
-		var len:number = distance/Math.sqrt(x*x + y*y + z*z);
+		var len:number = distance / Math.sqrt(x * x + y * y + z * z);
 
-		this.matrix3D.prependTranslation(x*len, y*len, z*len);
+		this.matrix3D.prependTranslation(x * len, y * len, z * len);
 
 		this.invalidatePosition();
 	}

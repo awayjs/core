@@ -4,7 +4,7 @@
  * @see away.projections.PerspectiveLens#coordinateSystem
  */
 export enum CoordinateSystem
-{
+	{
 	/**
 	 * Default option, projects to a left-handed coordinate system
 	 */

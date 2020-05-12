@@ -1,4 +1,4 @@
-import {AbstractMethodError}		from "../errors/AbstractMethodError";
+import {AbstractMethodError} from "../errors/AbstractMethodError";
 
 export class ByteArrayBase
 {
@@ -74,7 +74,7 @@ export class ByteArrayBase
 
 	public getBytesAvailable():number
 	{
-		throw new AbstractMethodError('ByteArrayBase, getBytesAvailable() not implemented ');
+		throw new AbstractMethodError("ByteArrayBase, getBytesAvailable() not implemented ");
 	}
 
 	public toString():string
@@ -88,7 +88,7 @@ export class ByteArrayBase
 			count = this.length - this.position;
 		if (count > other.length - other.position)
 			count = other.length - other.position;
-		var co0 = count;
+		var c0 = count;
 		var r:boolean = true;
 		while (r && count >= 4) {
 			count -= 4;
@@ -98,7 +98,7 @@ export class ByteArrayBase
 			count--;
 			if (this.readUnsignedByte() != other.readUnsignedByte()) r = false;
 		}
-		var c0;
+
 		this.position -= (c0 - count);
 		other.position -= (c0 - count);
 		return r;
@@ -106,9 +106,9 @@ export class ByteArrayBase
 
 	public writeBase64String(s:string):void
 	{
-		for (var i:number = 0; i < s.length; i++) {
-			var v = s.charAt(i);
-		}
+		// for (var i:number = 0; i < s.length; i++) {
+		// 	var v = s.charAt(i);
+		// }
 	}
 
 	public dumpToConsole():void
@@ -119,7 +119,7 @@ export class ByteArrayBase
 
 		function asHexString(x, digits)
 		{
-			var lut:Array<string> = [ "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "a", "b", "c", "d", "e", "f" ];
+			var lut:Array<string> = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "a", "b", "c", "d", "e", "f"];
 			var sh:string = "";
 			for (var d:number = 0; d < digits; d++) {
 				sh = lut[(x >> (d << 2)) & 0xf] + sh;

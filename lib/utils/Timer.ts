@@ -1,6 +1,7 @@
-import {ErrorBase}				from "../errors/ErrorBase";
-import {EventDispatcher}			from "../events/EventDispatcher";
-import {TimerEvent}				from "../events/TimerEvent";
+import {ErrorBase} from "../errors/ErrorBase";
+
+import {EventDispatcher} from "../events/EventDispatcher";
+import {TimerEvent} from "../events/TimerEvent";
 
 export class Timer extends EventDispatcher
 {
@@ -81,7 +82,7 @@ export class Timer extends EventDispatcher
 	{
 		this._currentCount++;
 
-		if (( this._repeatCount > 0 ) && this._currentCount >= this._repeatCount) {
+		if ((this._repeatCount > 0) && this._currentCount >= this._repeatCount) {
 
 			this.stop();
 			this.dispatchEvent(new TimerEvent(TimerEvent.TIMER));

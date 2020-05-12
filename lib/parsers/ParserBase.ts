@@ -1,15 +1,15 @@
-import {IAsset}					from "../library/IAsset";
-import {URLRequest}				from "../net/URLRequest";
-import {AbstractMethodError}		from "../errors/AbstractMethodError";
-import {AssetEvent}				from "../events/AssetEvent";
-import {EventDispatcher}			from "../events/EventDispatcher";
-import {ParserEvent}				from "../events/ParserEvent";
-import {TimerEvent}				from "../events/TimerEvent";
-import {ParserUtils}				from "../parsers/ParserUtils";
-import {ResourceDependency}		from "../parsers/ResourceDependency";
-import {ByteArray}				from "../utils/ByteArray";
-import {Timer}					from "../utils/Timer";
-import {getTimer}					from "../utils/getTimer";
+import {IAsset} from "../library/IAsset";
+import {URLRequest} from "../net/URLRequest";
+import {AbstractMethodError} from "../errors/AbstractMethodError";
+import {AssetEvent} from "../events/AssetEvent";
+import {EventDispatcher} from "../events/EventDispatcher";
+import {ParserEvent} from "../events/ParserEvent";
+import {TimerEvent} from "../events/TimerEvent";
+import {ParserUtils} from "../parsers/ParserUtils";
+import {ResourceDependency} from "../parsers/ResourceDependency";
+import {ByteArray} from "../utils/ByteArray";
+import {Timer} from "../utils/Timer";
+import {getTimer} from "../utils/getTimer";
 
 /**
  * <code>ParserBase</code> provides an abstract base export class for objects that convert blocks of data to data structures
@@ -158,12 +158,13 @@ export class ParserBase extends EventDispatcher
 	public parseSync(data:any):IAsset
 	{
 		this._data = data;
-		var state=ParserBase.MORE_TO_PARSE;
-		while(state==ParserBase.MORE_TO_PARSE){
-			state=this._pProceedParsing();
+		var state = ParserBase.MORE_TO_PARSE;
+		while (state == ParserBase.MORE_TO_PARSE) {
+			state = this._pProceedParsing();
 		}
 		return this._pContent;
 	}
+
 	/**
 	 * A list of dependencies that need to be loaded and resolved for the object being parsed.
 	 */
@@ -235,7 +236,7 @@ export class ParserBase extends EventDispatcher
 		throw new AbstractMethodError();
 	}
 
-	public _pDieWithError(message:string = 'Unknown parsing error'):void
+	public _pDieWithError(message:string = "Unknown parsing error"):void
 	{
 		if (this._timer) {
 			this._timer.removeEventListener(TimerEvent.TIMER, this._pOnIntervalDelegate);
@@ -246,7 +247,7 @@ export class ParserBase extends EventDispatcher
 		this.dispatchEvent(new ParserEvent(ParserEvent.PARSE_ERROR, message));
 	}
 
-	public _pAddDependency(id:string, req:URLRequest, parser:ParserBase = null, data:any = null, retrieveAsRawData:boolean = false, suppressErrorEvents:boolean = false, sub_id:number=0):ResourceDependency
+	public _pAddDependency(id:string, req:URLRequest, parser:ParserBase = null, data:any = null, retrieveAsRawData:boolean = false, suppressErrorEvents:boolean = false, sub_id:number = 0):ResourceDependency
 	{
 		var dependency:ResourceDependency = new ResourceDependency(id, req, data, parser, this, retrieveAsRawData, suppressErrorEvents, sub_id);
 		this._dependencies.push(dependency);

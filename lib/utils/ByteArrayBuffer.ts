@@ -1,4 +1,4 @@
-import {ByteArrayBase}			from "../utils/ByteArrayBase";
+import {ByteArrayBase} from "./ByteArrayBase";
 
 export class ByteArrayBuffer extends ByteArrayBase
 {
@@ -67,7 +67,7 @@ export class ByteArrayBuffer extends ByteArrayBase
 		if (this.position + 2 > this.length)
 			throw "ByteArray out of bounds read. Position=" + this.position + ", Length=" + this.length;
 
-		var r:number = this._bytes[ this.position ] | ( this._bytes[ this.position + 1 ] << 8 );
+		var r:number = this._bytes[ this.position ] | (this._bytes[ this.position + 1 ] << 8);
 		this.position += 2;
 		return r;
 	}
@@ -89,7 +89,7 @@ export class ByteArrayBuffer extends ByteArrayBase
 		if (this.position + 4 > this.length) {
 			throw "ByteArray out of bounds read. Position=" + this.position + ", Length=" + this.length;
 		}
-		var r:number = this._bytes[ this.position ] | ( this._bytes[this.position + 1] << 8 ) | ( this._bytes[this.position + 2] << 16 ) | ( this._bytes[this.position + 3] << 24 );
+		var r:number = this._bytes[ this.position ] | (this._bytes[this.position + 1] << 8) | (this._bytes[this.position + 2] << 16) | (this._bytes[this.position + 3] << 24);
 		this.position += 4;
 		return r >>> 0;
 	}
@@ -117,12 +117,12 @@ export class ByteArrayBuffer extends ByteArrayBase
 			sign = 0;
 		}
 		// a float value is now defined as: x = (1+(mantissa*2^-23))*(2^(exponent-127))
-		var exponent:number = Math.log(x)/Math.log(2);  // rough exponent
+		var exponent:number = Math.log(x) / Math.log(2);  // rough exponent
 		exponent = Math.floor(exponent);
-		x = x*Math.pow(2, 23 - exponent);             // normalize to 24 bits
+		x = x * Math.pow(2, 23 - exponent);             // normalize to 24 bits
 		var mantissa = Math.floor(x) - 0x800000;
 		exponent = exponent + 127;
-		return( ( sign << 31 ) >>> 0) | ( exponent << 23 ) | mantissa;
+		return ((sign << 31) >>> 0) | (exponent << 23) | mantissa;
 	}
 
 	public readFloat(b:number):number
@@ -135,9 +135,9 @@ export class ByteArrayBuffer extends ByteArrayBase
 		if (x == 0) {
 			return 0;
 		}
-		var exponent:number = ( x >>> 23 ) & 0xff;
-		var mantissa:number = ( x & 0x7fffff ) | 0x800000;
-		var y = Math.pow(2, ( exponent - 127 ) - 23)*mantissa;
+		var exponent:number = (x >>> 23) & 0xff;
+		var mantissa:number = (x & 0x7fffff) | 0x800000;
+		var y = Math.pow(2, (exponent - 127) - 23) * mantissa;
 		if (x >>> 31 != 0) {
 			y = -y;
 		}

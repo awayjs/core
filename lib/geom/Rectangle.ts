@@ -1,4 +1,4 @@
-import {Point}					from "../geom/Point";
+import {Point} from "./Point";
 
 /**
  * A Rectangle object is an area defined by its position, as indicated by its
@@ -50,15 +50,21 @@ export class Rectangle
 	//for AVM1:
 
 	// for AVM1:
-	public axCallPublicProperty(value1:any, value2:any):any{
+	public axCallPublicProperty(value1:any, value2:any):any
+	{
 		return null;
 	}
-	public axGetPublicProperty(value:any):any{
+
+	public axGetPublicProperty(value:any):any
+	{
 		return null;
 	}
-	public axSetPublicProperty(value:any):any{
+
+	public axSetPublicProperty(value:any):any
+	{
 		return null;
 	}
+
 
 
 	private _size:Point;
@@ -338,7 +344,7 @@ export class Rectangle
 		var raw:Float32Array = this._rawData;
 		var rawRect:Float32Array = rect._rawData;
 
-		return (raw[0] <= rawRect[0] && raw[0] + raw[2] >= rawRect[0] + rawRect[2] && raw[1] <= rawRect[1] && raw[1] + raw[3] >= rawRect[1] + rawRect[3])
+		return (raw[0] <= rawRect[0] && raw[0] + raw[2] >= rawRect[0] + rawRect[2] && raw[1] <= rawRect[1] && raw[1] + raw[3] >= rawRect[1] + rawRect[3]);
 	}
 
 	/**
@@ -376,7 +382,7 @@ export class Rectangle
 		var raw:Float32Array = this._rawData;
 		var rawCompare:Float32Array = toCompare._rawData;
 
-		return (raw[0] == rawCompare[0] && raw[1] == rawCompare[1] && raw[2] == rawCompare[2] && raw[3] == rawCompare[3])
+		return (raw[0] == rawCompare[0] && raw[1] == rawCompare[1] && raw[2] == rawCompare[2] && raw[3] == rawCompare[3]);
 	}
 
 	/**
@@ -396,10 +402,10 @@ export class Rectangle
 	{
 		var raw:Float32Array = this._rawData;
 
-		raw[0] -= dx/2;
-		raw[1] -= dy/2;
-		raw[2] += dx/2;
-		raw[3] += dy/2;
+		raw[0] -= dx / 2;
+		raw[1] -= dy / 2;
+		raw[2] += dx / 2;
+		raw[3] += dy / 2;
 	}
 
 	/**
@@ -418,10 +424,10 @@ export class Rectangle
 	{
 		var raw:Float32Array = this._rawData;
 
-		raw[0] -= point.x/2;
-		raw[1] -= point.y/2;
-		raw[2] += point.x/2;
-		raw[3] += point.y/2;
+		raw[0] -= point.x / 2;
+		raw[1] -= point.y / 2;
+		raw[2] += point.x / 2;
+		raw[3] += point.y / 2;
 	}
 
 	/**
@@ -453,13 +459,13 @@ export class Rectangle
 				rawResult[2] = rawIntersect[0] - raw[0] + rawIntersect[2];
 
 				if (rawResult[2] > raw[2])
-				rawResult[2] = raw[2];
+					rawResult[2] = raw[2];
 			} else {
 				rawResult[0] = rawIntersect[0];
 				rawResult[2] = raw[0] - rawIntersect[0] + raw[2];
 
 				if (rawResult[2] > rawIntersect[2])
-				rawResult[2] = rawIntersect[2];
+					rawResult[2] = rawIntersect[2];
 			}
 
 			if (raw[1] > rawIntersect[1]) {
@@ -467,13 +473,13 @@ export class Rectangle
 				rawResult[3] = rawIntersect[1] - raw[1] + rawIntersect[3];
 
 				if (rawResult[3] > raw[3])
-				rawResult[3] = raw[3];
+					rawResult[3] = raw[3];
 			} else {
 				rawResult[1] = rawIntersect[1];
 				rawResult[3] = raw[1] - rawIntersect[1] + raw[3];
 
 				if (rawResult[3] > rawIntersect[3])
-				rawResult[3] = rawIntersect[3];
+					rawResult[3] = rawIntersect[3];
 			}
 
 			return result;
@@ -616,13 +622,13 @@ export class Rectangle
 			rawTarget[2] = rawUnion[0] - raw[0] + rawUnion[2];
 
 			if (rawTarget[2] < raw[2])
-			rawTarget[2] = raw[2];
+				rawTarget[2] = raw[2];
 		} else {
 			rawTarget[0] = rawUnion[0];
 			rawTarget[2] = raw[0] - rawUnion[0] + raw[2];
 
 			if (rawTarget[2] < rawUnion[2])
-			rawTarget[2] = rawUnion[2];
+				rawTarget[2] = rawUnion[2];
 		}
 
 		if (raw[1] < rawUnion[1]) {
@@ -630,7 +636,7 @@ export class Rectangle
 			rawTarget[3] = rawUnion[1] - raw[1] + rawUnion[3];
 
 			if (rawTarget[3] < raw[3])
-			rawTarget[3] = raw[3];
+				rawTarget[3] = raw[3];
 		} else {
 			rawTarget[1] = rawUnion[1];
 			rawTarget[3] = raw[1] - rawUnion[1] + raw[3];

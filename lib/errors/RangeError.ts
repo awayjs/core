@@ -1,4 +1,4 @@
-import {ErrorBase}				from "../errors/ErrorBase";
+import {ErrorBase} from "./ErrorBase";
 
 /**
  * RangeError is thrown when an index is accessed out of range of the number of

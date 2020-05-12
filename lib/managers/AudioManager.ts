@@ -1,8 +1,8 @@
-import {StreamingAudioChannel}	from "../managers/StreamingAudioChannel";
-import {WebAudioChannel}			from "../managers/WebAudioChannel";
-import {IAudioChannel}			from "../managers/IAudioChannel";
-import {EventAudioChannel}			from "../managers/EventAudioChannel";
-import {IAudioChannelClass}		from "../managers/IAudioChannelClass";
+import {StreamingAudioChannel} from "../managers/StreamingAudioChannel";
+import {WebAudioChannel} from "../managers/WebAudioChannel";
+import {IAudioChannel} from "../managers/IAudioChannel";
+import {EventAudioChannel} from "../managers/EventAudioChannel";
+import {IAudioChannelClass} from "../managers/IAudioChannelClass";
 
 export class AudioManager
 {
@@ -13,14 +13,14 @@ export class AudioManager
 	private static _channelGroupVolumes:number[]=[1];
 	private static _channelGroupPanning:number[]=[0.5];
 
-	public static setVolume(value:number, channelGroup:number=-1):void{
-		if(channelGroup<0){
-			var len: number = AudioManager._channelGroupVolumes.length;
-			for (var j: number = 0; j < len; j++) {
+	public static setVolume(value:number, channelGroup:number = -1):void
+	{
+		if (channelGroup < 0) {
+			var len:number = AudioManager._channelGroupVolumes.length;
+			for (var j:number = 0; j < len; j++) {
 				AudioManager._channelGroupVolumes[j] = value;
 			}
-		}
-		else{
+		} else {
 			AudioManager._channelGroupVolumes[channelGroup] = value;
 		}
 		WebAudioChannel.setChannelGroupVolume(value, channelGroup);
@@ -29,21 +29,22 @@ export class AudioManager
 
 	}
 
-	public static getVolume(channelGroup:number=0):number{
+	public static getVolume(channelGroup:number = 0):number
+	{
 		return AudioManager._channelGroupVolumes[channelGroup];
 	}
 
 	public static setExternalSoundInterface(new_obj:any):number
 	{
-		if(new_obj.startSound == null){
+		if (new_obj.startSound == null) {
 			console.log("Could not set the externalSoundInterface, because it does not provide a 'startSound' function");
 			return;
 		}
-		if(new_obj.stopSound == null){
+		if (new_obj.stopSound == null) {
 			console.log("Could not set the externalSoundInterface, because it does not provide a 'stopSound' function");
 			return;
 		}
-		AudioManager._externalSoundInterface=new_obj;
+		AudioManager._externalSoundInterface = new_obj;
 	}
 
 	public static getExternalSoundInterface():any
@@ -51,7 +52,7 @@ export class AudioManager
 		return AudioManager._externalSoundInterface;
 	}
 
-	public static stopAllSounds() 
+	public static stopAllSounds()
 	{
 		WebAudioChannel.stopAllSounds();
 		StreamingAudioChannel.stopAllSounds();
@@ -59,18 +60,18 @@ export class AudioManager
 		//AudioChannel.stopAllSounds();
 	}
 
-	public static getChannel(byteLength:number, channelGroup:number=0):IAudioChannel
+	public static getChannel(byteLength:number, channelGroup:number = 0):IAudioChannel
 	{
 		//choose best audio channel by bytelength
 		//todo: StreamingAudioChannel doesnt seem to be working. no error, but also no sound is playing
-		var channelClass:IAudioChannelClass = (byteLength > 50000000)? StreamingAudioChannel : WebAudioChannel;
-		if( AudioManager.isIE){
-			channelClass=EventAudioChannel;
+		var channelClass:IAudioChannelClass = (byteLength > 50000000) ? StreamingAudioChannel : WebAudioChannel;
+		if (AudioManager.isIE) {
+			channelClass = EventAudioChannel;
 		}
 		//var channelClass:IAudioChannelClass = WebAudioChannel;
 
 		var i:number = 0;
-		while(channelClass._channels[i] && channelClass._channels[i].isPlaying())
+		while (channelClass._channels[i] && channelClass._channels[i].isPlaying())
 			i++;
 
 		if (i == channelClass.maxChannels) {
@@ -80,9 +81,9 @@ export class AudioManager
 			for (var j:number = 0; j < len; j++) {
 				channel = channelClass._channels[j];
 				if (!channel.isLooping() && !channel.isDecoding()) {
-					channel.groupID=channelGroup;
-					channel.groupVolume=AudioManager._channelGroupVolumes[channelGroup];
-					channel.groupPan=AudioManager._channelGroupPanning[channelGroup];
+					channel.groupID = channelGroup;
+					channel.groupVolume = AudioManager._channelGroupVolumes[channelGroup];
+					channel.groupPan = AudioManager._channelGroupPanning[channelGroup];
 					channelClass._channels.push(channelClass._channels.splice(j, 1)[0]);
 					channel.stop();
 					return channel;

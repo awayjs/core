@@ -54,7 +54,7 @@ export class ObliqueNearPlaneProjection extends ProjectionBase
 	public set plane(value:Plane3D)
 	{
 		this._plane = value;
-		
+
 		this._invalidateFrustumMatrix3D();
 	}
 
@@ -62,12 +62,12 @@ export class ObliqueNearPlaneProjection extends ProjectionBase
 	{
 		if (this._baseProjection)
 			this._baseProjection.removeEventListener(ProjectionEvent.INVALIDATE_FRUSTUM_MATRIX3D, this._onProjectionMatrixChangedDelegate);
-		
+
 		this._baseProjection = value;
 
 		if (this._baseProjection)
 			this._baseProjection.addEventListener(ProjectionEvent.INVALIDATE_FRUSTUM_MATRIX3D, this._onProjectionMatrixChangedDelegate);
-		
+
 		this._invalidateFrustumMatrix3D();
 	}
 
@@ -80,21 +80,21 @@ export class ObliqueNearPlaneProjection extends ProjectionBase
 	public _updateFrustumMatrix3D():void
 	{
 		super._updateFrustumMatrix3D();
-		
+
 		this._frustumMatrix3D.copyFrom(this._baseProjection.frustumMatrix3D);
 
 		var cx:number = this._plane.a;
 		var cy:number = this._plane.b;
 		var cz:number = this._plane.c;
 		var cw:number = -this._plane.d + .05;
-		var signX:number = cx >= 0? 1 : -1;
-		var signY:number = cy >= 0? 1 : -1;
+		var signX:number = cx >= 0 ? 1 : -1;
+		var signY:number = cy >= 0 ? 1 : -1;
 		var p:Vector3D = new Vector3D(signX, signY, 1, 1);
 		var inverse:Matrix3D = this._frustumMatrix3D.clone();
 		inverse.invert();
 		var q:Vector3D = inverse.transformVector(p);
 		this._frustumMatrix3D.copyRowTo(3, p);
-		var a:number = (q.x*p.x + q.y*p.y + q.z*p.z + q.w*p.w)/(cx*q.x + cy*q.y + cz*q.z + cw*q.w);
-		this._frustumMatrix3D.copyRowFrom(2, new Vector3D(cx*a, cy*a, cz*a, cw*a));
+		var a:number = (q.x * p.x + q.y * p.y + q.z * p.z + q.w * p.w) / (cx * q.x + cy * q.y + cz * q.z + cw * q.w);
+		this._frustumMatrix3D.copyRowFrom(2, new Vector3D(cx * a, cy * a, cz * a, cw * a));
 	}
 }

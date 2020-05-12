@@ -1,4 +1,4 @@
-import {EventBase}				from "../events/EventBase";
+import {EventBase} from "./EventBase";
 
 export class TimerEvent extends EventBase
 {
@@ -18,5 +18,3 @@ export class TimerEvent extends EventBase
 
 	}
 }
-
-export default TimerEvent

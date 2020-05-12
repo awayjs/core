@@ -1,14 +1,17 @@
-import {LoaderContext}			from "../library/LoaderContext";
-import {URLLoader}				from "../net/URLLoader";
-import {URLLoaderDataFormat}		from "../net/URLLoaderDataFormat";
-import {URLRequest}				from "../net/URLRequest";
-import {AssetEvent}				from "../events/AssetEvent";
-import {EventDispatcher}			from "../events/EventDispatcher";
-import {URLLoaderEvent}			from "../events/URLLoaderEvent";
-import {LoaderEvent}				from "../events/LoaderEvent";
-import {ParserEvent}				from "../events/ParserEvent";
-import {ParserBase}				from "../parsers/ParserBase";
-import {ResourceDependency}		from "../parsers/ResourceDependency";
+import {AssetEvent} from "../events/AssetEvent";
+import {EventDispatcher} from "../events/EventDispatcher";
+import {URLLoaderEvent} from "../events/URLLoaderEvent";
+import {LoaderEvent} from "../events/LoaderEvent";
+import {ParserEvent} from "../events/ParserEvent";
+
+import {URLLoader} from "../net/URLLoader";
+import {URLLoaderDataFormat} from "../net/URLLoaderDataFormat";
+import {URLRequest} from "../net/URLRequest";
+
+import {ParserBase} from "../parsers/ParserBase";
+import {ResourceDependency} from "../parsers/ResourceDependency";
+
+import {LoaderContext} from "./LoaderContext";
 
 
 
@@ -170,7 +173,7 @@ export class Loader extends EventDispatcher
 
 		this.dispatchEvent(new LoaderEvent(LoaderEvent.LOADER_START, this._uri, null, null));
 
-		this._baseDependency = new ResourceDependency('', req, null, parser, null);
+		this._baseDependency = new ResourceDependency("", req, null, parser, null);
 		this._retrieveDependency(this._baseDependency);
 	}
 
@@ -305,19 +308,19 @@ export class Loader extends EventDispatcher
 
 	private _joinUrl(base:string, end:string):string
 	{
-		if (end.charAt(0) == '/' || end.charAt(0) == '\\')
+		if (end.charAt(0) == "/" || end.charAt(0) == "\\")
 			end = end.substr(1);
 
-		if (end.charAt(0) == '.')
+		if (end.charAt(0) == ".")
 			end = end.substr(2);
 
 		if (base.length == 0)
 			return end;
 
-		if (base.charAt(base.length - 1) == '/' || base.charAt(base.length - 1) == '\\')
+		if (base.charAt(base.length - 1) == "/" || base.charAt(base.length - 1) == "\\")
 			base = base.substr(0, base.length - 1);
 
-		return base.concat('/', end);
+		return base.concat("/", end);
 
 	}
 
@@ -340,18 +343,19 @@ export class Loader extends EventDispatcher
 
 		// Absolute URL? Check if starts with slash or a URL
 		// scheme definition (e.g. ftp://, http://, file://)
-		scheme_re = new RegExp('/^[a-zA-Z]{3,4}:\/\//');
+		scheme_re = new RegExp("/^[a-zA-Z]{3,4}:///");
 
-		if (url.charAt(0) == '/') {
+		if (url.charAt(0) == "/") {
 			if (this._context && this._context.overrideAbsolutePaths)
-				return this._joinUrl(this._context.dependencyBaseUrl, url); else
+				return this._joinUrl(this._context.dependencyBaseUrl, url);
+			else
 				return url;
 		} else if (scheme_re.test(url)) {
 			// If overriding full URLs, get rid of scheme (e.g. "http://")
 			// and replace with the dependencyBaseUrl defined by user.
 			if (this._context && this._context.overrideFullURLs) {
 
-				var noscheme_url : string  = url.replace( scheme_re , '' );//url['replace'](scheme_re);
+				var noscheme_url:string  = url.replace(scheme_re , "");//url['replace'](scheme_re);
 				return this._joinUrl(this._context.dependencyBaseUrl, <string> noscheme_url);
 			}
 		}
@@ -362,7 +366,7 @@ export class Loader extends EventDispatcher
 			base = this._context.dependencyBaseUrl;
 			return this._joinUrl(base, url);
 		} else {
-			base = this._uri.substring(0, this._uri.lastIndexOf('/') + 1);
+			base = this._uri.substring(0, this._uri.lastIndexOf("/") + 1);
 			return this._joinUrl(base, url);
 		}
 	}
@@ -643,7 +647,7 @@ export class Loader extends EventDispatcher
 	private getSuffix(url:string):string
 	{
 		// Get rid of query string if any and extract extension
-		var base:string = (url.indexOf('?') > 0)? url.split('?')[0] : url;
-		return base.substr(base.lastIndexOf('.') + 1).toLowerCase();
+		var base:string = (url.indexOf("?") > 0) ? url.split("?")[0] : url;
+		return base.substr(base.lastIndexOf(".") + 1).toLowerCase();
 	}
 }

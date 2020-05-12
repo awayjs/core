@@ -1,7 +1,8 @@
-import {AssetEvent}					from "../events/AssetEvent";
-import {EventDispatcher}				from "../events/EventDispatcher";
-import {IAbstractionPool}				from "../library/IAbstractionPool";
-import {IAsset}						from "../library/IAsset";
+import {AssetEvent} from "../events/AssetEvent";
+import {EventDispatcher} from "../events/EventDispatcher";
+
+import {IAbstractionPool} from "./IAbstractionPool";
+import {IAsset} from "./IAsset";
 
 /**
  *
@@ -43,7 +44,7 @@ export class AbstractionBase extends EventDispatcher
 			this._asset.removeEventListener(AssetEvent.CLEAR, this._onClearDelegate);
 			this._asset.removeEventListener(AssetEvent.INVALIDATE, this._onInvalidateDelegate);
 		}
-		
+
 		this._pool.clearAbstraction(this._asset);
 		this._pool = null;
 		this._asset = null;

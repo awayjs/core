@@ -139,7 +139,7 @@ export class Vector3D
 	public get lengthSquared():number
 	{
 		var raw:Float32Array = this._rawData;
-		return raw[0]*raw[0] + raw[1]*raw[1] + raw[2]*raw[2];
+		return raw[0] * raw[0] + raw[1] * raw[1] + raw[2] * raw[2];
 	}
 
 	/**
@@ -204,7 +204,7 @@ export class Vector3D
 	 */
 	public static angleBetween(a:Vector3D, b:Vector3D):number
 	{
-		return Math.acos(a.dotProduct(b)/(a.length*b.length));
+		return Math.acos(a.dotProduct(b) / (a.length * b.length));
 	}
 
 	/**
@@ -226,7 +226,7 @@ export class Vector3D
 		var rawA:Float32Array = a._rawData;
 		var rawB:Float32Array = b._rawData;
 
-		return new Vector3D(rawA[0]*ascl + rawB[0]*bscl, rawA[1]*ascl + rawB[1]*bscl, rawA[2]*ascl + rawB[2]*bscl);
+		return new Vector3D(rawA[0] * ascl + rawB[0] * bscl, rawA[1] * ascl + rawB[1] * bscl, rawA[2] * ascl + rawB[2] * bscl);
 	}
 
 	/**
@@ -272,9 +272,9 @@ export class Vector3D
 		var rawA:Float32Array = a._rawData;
 		var rawT:Float32Array = t._rawData;
 
-		rawT[0] = raw[1]*rawA[2] - raw[2]*rawA[1];
-		rawT[1] = raw[2]*rawA[0] - raw[0]*rawA[2];
-		rawT[2] = raw[0]*rawA[1] - raw[1]*rawA[0];
+		rawT[0] = raw[1] * rawA[2] - raw[2] * rawA[1];
+		rawT[1] = raw[2] * rawA[0] - raw[0] * rawA[2];
+		rawT[2] = raw[0] * rawA[1] - raw[1] * rawA[0];
 
 		return t;
 	}
@@ -318,7 +318,7 @@ export class Vector3D
 		var x:number = rawPt1[0] - rawPt2[0];
 		var y:number = rawPt1[1] - rawPt2[1];
 		var z:number = rawPt1[2] - rawPt2[2];
-		return Math.sqrt(x*x + y*y + z*z);
+		return Math.sqrt(x * x + y * y + z * z);
 	}
 
 	/**
@@ -353,7 +353,7 @@ export class Vector3D
 		var raw:Float32Array = this._rawData;
 		var rawA:Float32Array = a._rawData;
 
-		return raw[0]*rawA[0] + raw[1]*rawA[1] + raw[2]*rawA[2];
+		return raw[0] * rawA[0] + raw[1] * rawA[1] + raw[2] * rawA[2];
 	}
 
 	/**
@@ -377,9 +377,9 @@ export class Vector3D
 		var raw:Float32Array = this._rawData;
 		var rawToCompare:Float32Array = toCompare._rawData;
 
-		return (raw[0] == rawToCompare[0] && raw[1] == rawToCompare[1] && raw[2] == rawToCompare[2] && (!allFour || raw[3] == rawToCompare[3] ));
+		return (raw[0] == rawToCompare[0] && raw[1] == rawToCompare[1] && raw[2] == rawToCompare[2] && (!allFour || raw[3] == rawToCompare[3]));
 	}
-	
+
 	/**
 	 * Converts the current vector to an identity or unit vector.
 	 */
@@ -449,9 +449,7 @@ export class Vector3D
 		var rawToCompare:Float32Array = toCompare._rawData;
 
 		return ((Math.abs(raw[0] - rawToCompare[0]) < tolerance)
-				&& (Math.abs(raw[1] - rawToCompare[1]) < tolerance)
-				&& (Math.abs(raw[2] - rawToCompare[2]) < tolerance)
-				&& (!allFour || Math.abs(raw[3] - rawToCompare[3]) < tolerance));
+				&& (Math.abs(raw[1] - rawToCompare[1]) < tolerance) && (Math.abs(raw[2] - rawToCompare[2]) < tolerance) && (!allFour || Math.abs(raw[3] - rawToCompare[3]) < tolerance));
 	}
 
 	/**
@@ -483,7 +481,7 @@ export class Vector3D
 
 		if (len) {
 			var raw:Float32Array = this._rawData;
-			var invLength = thickness/len;
+			var invLength = thickness / len;
 			raw[0] *= invLength;
 			raw[1] *= invLength;
 			raw[2] *= invLength;

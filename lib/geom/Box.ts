@@ -1,4 +1,4 @@
-import {Vector3D}					from "../geom/Vector3D";
+import {Vector3D} from "./Vector3D";
 
 /**
  * A Box object is an area defined by its position, as indicated by its
@@ -326,7 +326,7 @@ export class Box
 	 */
 	public containsBox(box:Box):boolean
 	{
-		return (this.x <= box.x && this.x + this.width >= box.x + box.width && this.y <= box.y && this.y + this.height >= box.y + box.height && this.z <= box.z && this.z + this.depth >= box.z + box.depth)
+		return (this.x <= box.x && this.x + this.width >= box.x + box.width && this.y <= box.y && this.y + this.height >= box.y + box.height && this.z <= box.z && this.z + this.depth >= box.z + box.depth);
 	}
 
 	/**
@@ -360,7 +360,7 @@ export class Box
 	 */
 	public equals(toCompare:Box):boolean
 	{
-		return (this.x == toCompare.x && this.y == toCompare.y && this.z == toCompare.z && this.width == toCompare.width && this.height == toCompare.height && this.depth == toCompare.depth)
+		return (this.x == toCompare.x && this.y == toCompare.y && this.z == toCompare.z && this.width == toCompare.width && this.height == toCompare.height && this.depth == toCompare.depth);
 	}
 
 	/**
@@ -382,12 +382,12 @@ export class Box
 	 */
 	public inflate(dx:number, dy:number, dz:number):void
 	{
-		this.x -= dx/2;
-		this.y -= dy/2;
-		this.z -= dz/2;
-		this.width += dx/2;
-		this.height += dy/2;
-		this.depth += dz/2;
+		this.x -= dx / 2;
+		this.y -= dy / 2;
+		this.z -= dz / 2;
+		this.width += dx / 2;
+		this.height += dy / 2;
+		this.depth += dz / 2;
 	}
 
 	/**
@@ -406,12 +406,12 @@ export class Box
 	 */
 	public inflatePoint(delta:Vector3D):void
 	{
-		this.x -= delta.x/2;
-		this.y -= delta.y/2;
-		this.z -= delta.z/2;
-		this.width += delta.x/2;
-		this.height += delta.y/2;
-		this.depth += delta.z/2;
+		this.x -= delta.x / 2;
+		this.y -= delta.y / 2;
+		this.z -= delta.z / 2;
+		this.width += delta.x / 2;
+		this.height += delta.y / 2;
+		this.depth += delta.z / 2;
 	}
 
 	/**
@@ -503,9 +503,9 @@ export class Box
 		if (this.containsPoint(position))
 			return 0;
 
-		var halfExtentsX:number = this.width/2;
-		var halfExtentsY:number = this.height/2;
-		var halfExtentsZ:number = this.depth/2;
+		var halfExtentsX:number = this.width / 2;
+		var halfExtentsY:number = this.height / 2;
+		var halfExtentsZ:number = this.depth / 2;
 
 		var centerX:number = this.x + halfExtentsX;
 		var centerY:number = this.y + halfExtentsY;
@@ -527,10 +527,10 @@ export class Box
 		// ray-plane tests
 		var intersects:boolean;
 		if (vx < 0) {
-			rayEntryDistance = ( halfExtentsX - px )/vx;
+			rayEntryDistance = (halfExtentsX - px) / vx;
 			if (rayEntryDistance > 0) {
-				iy = py + rayEntryDistance*vy;
-				iz = pz + rayEntryDistance*vz;
+				iy = py + rayEntryDistance * vy;
+				iz = pz + rayEntryDistance * vz;
 				if (iy > -halfExtentsY && iy < halfExtentsY && iz > -halfExtentsZ && iz < halfExtentsZ) {
 					if (targetNormal) {
 						targetNormal.x = 1;
@@ -543,10 +543,10 @@ export class Box
 			}
 		}
 		if (!intersects && vx > 0) {
-			rayEntryDistance = ( -halfExtentsX - px )/vx;
+			rayEntryDistance = (-halfExtentsX - px) / vx;
 			if (rayEntryDistance > 0) {
-				iy = py + rayEntryDistance*vy;
-				iz = pz + rayEntryDistance*vz;
+				iy = py + rayEntryDistance * vy;
+				iz = pz + rayEntryDistance * vz;
 				if (iy > -halfExtentsY && iy < halfExtentsY && iz > -halfExtentsZ && iz < halfExtentsZ) {
 					if (targetNormal) {
 						targetNormal.x = -1;
@@ -559,10 +559,10 @@ export class Box
 			}
 		}
 		if (!intersects && vy < 0) {
-			rayEntryDistance = ( halfExtentsY - py )/vy;
+			rayEntryDistance = (halfExtentsY - py) / vy;
 			if (rayEntryDistance > 0) {
-				ix = px + rayEntryDistance*vx;
-				iz = pz + rayEntryDistance*vz;
+				ix = px + rayEntryDistance * vx;
+				iz = pz + rayEntryDistance * vz;
 				if (ix > -halfExtentsX && ix < halfExtentsX && iz > -halfExtentsZ && iz < halfExtentsZ) {
 					if (targetNormal) {
 						targetNormal.x = 0;
@@ -575,10 +575,10 @@ export class Box
 			}
 		}
 		if (!intersects && vy > 0) {
-			rayEntryDistance = ( -halfExtentsY - py )/vy;
+			rayEntryDistance = (-halfExtentsY - py) / vy;
 			if (rayEntryDistance > 0) {
-				ix = px + rayEntryDistance*vx;
-				iz = pz + rayEntryDistance*vz;
+				ix = px + rayEntryDistance * vx;
+				iz = pz + rayEntryDistance * vz;
 				if (ix > -halfExtentsX && ix < halfExtentsX && iz > -halfExtentsZ && iz < halfExtentsZ) {
 					if (targetNormal) {
 						targetNormal.x = 0;
@@ -591,10 +591,10 @@ export class Box
 			}
 		}
 		if (!intersects && vz < 0) {
-			rayEntryDistance = ( halfExtentsZ - pz )/vz;
+			rayEntryDistance = (halfExtentsZ - pz) / vz;
 			if (rayEntryDistance > 0) {
-				ix = px + rayEntryDistance*vx;
-				iy = py + rayEntryDistance*vy;
+				ix = px + rayEntryDistance * vx;
+				iy = py + rayEntryDistance * vy;
 				if (iy > -halfExtentsY && iy < halfExtentsY && ix > -halfExtentsX && ix < halfExtentsX) {
 					if (targetNormal) {
 						targetNormal.x = 0;
@@ -607,10 +607,10 @@ export class Box
 			}
 		}
 		if (!intersects && vz > 0) {
-			rayEntryDistance = ( -halfExtentsZ - pz )/vz;
+			rayEntryDistance = (-halfExtentsZ - pz) / vz;
 			if (rayEntryDistance > 0) {
-				ix = px + rayEntryDistance*vx;
-				iy = py + rayEntryDistance*vy;
+				ix = px + rayEntryDistance * vx;
+				iy = py + rayEntryDistance * vy;
 				if (iy > -halfExtentsY && iy < halfExtentsY && ix > -halfExtentsX && ix < halfExtentsX) {
 					if (targetNormal) {
 						targetNormal.x = 0;
@@ -623,7 +623,7 @@ export class Box
 			}
 		}
 
-		return intersects? rayEntryDistance : -1;
+		return intersects ? rayEntryDistance : -1;
 	}
 
 	/**
@@ -771,31 +771,31 @@ export class Box
 		if (this.x < toUnion.x) {
 			width = toUnion.x - this.x + toUnion.width;
 			target.x = this.x;
-			target.width = (width < this.width)? this.width : width;
+			target.width = (width < this.width) ? this.width : width;
 		} else {
 			width = this.x - toUnion.x + this.width;
 			target.x = toUnion.x;
-			target.width = (width < toUnion.width)? toUnion.width : width;
+			target.width = (width < toUnion.width) ? toUnion.width : width;
 		}
 
 		if (this.y < toUnion.y) {
 			height = toUnion.y - this.y + toUnion.height;
 			target.y = this.y;
-			target.height = (height < this.height)? this.height : height;
+			target.height = (height < this.height) ? this.height : height;
 		} else {
 			height = this.y - toUnion.y + this.height;
 			target.y = toUnion.y;
-			target.height = (height < toUnion.height)? toUnion.height : height;
+			target.height = (height < toUnion.height) ? toUnion.height : height;
 		}
 
 		if (this.z < toUnion.z) {
 			depth = toUnion.z - this.z + toUnion.depth;
 			target.z = this.z;
-			target.depth = (depth < this.depth)? this.depth : depth;
+			target.depth = (depth < this.depth) ? this.depth : depth;
 		} else {
 			depth = this.z - toUnion.z + this.depth;
 			target.z = toUnion.z;
-			target.depth = (depth < toUnion.depth)? toUnion.depth : depth;
+			target.depth = (depth < toUnion.depth) ? toUnion.depth : depth;
 		}
 
 		return target;

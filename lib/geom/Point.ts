@@ -55,7 +55,7 @@ export class Point
 	 */
 	public get length():number
 	{
-		return Math.sqrt(this._rawData[0]*this._rawData[0] + this._rawData[1]*this._rawData[1]);
+		return Math.sqrt(this._rawData[0] * this._rawData[0] + this._rawData[1] * this._rawData[1]);
 	}
 
 	/**
@@ -125,7 +125,7 @@ export class Point
 		var len:number = this.length;
 
 		if ((this.x !== 0 || this.y !== 0) && len) {
-			var relativeThickness:number = thickness/len;
+			var relativeThickness:number = thickness / len;
 			this._rawData[0] *= relativeThickness;
 			this._rawData[1] *= relativeThickness;
 		}
@@ -190,7 +190,7 @@ export class Point
 		var dx:number = pt2.x - pt1.x;
 		var dy:number = pt2.y - pt1.y;
 
-		return (dx === 0) ? Math.abs(dy) : (dy === 0) ? Math.abs(dx) : Math.sqrt(dx*dx + dy*dy);
+		return (dx === 0) ? Math.abs(dy) : (dy === 0) ? Math.abs(dx) : Math.sqrt(dx * dx + dy * dy);
 	}
 
 	/**
@@ -214,11 +214,11 @@ export class Point
 	 */
 	public static interpolate(pt1:Point, pt2:Point, f:number):Point
 	{
-		var f1: number = 1 - f;
+		var f1:number = 1 - f;
 		var raw1:Float32Array = pt1._rawData;
 		var raw2:Float32Array = pt2._rawData;
 
-    	return new Point(raw1[0]*f + raw2[0]*f1, raw1[1]*f + raw2[1]*f1);
+		return new Point(raw1[0] * f + raw2[0] * f1, raw1[1] * f + raw2[1] * f1);
 	}
 
 	/**
@@ -230,6 +230,6 @@ export class Point
 	 */
 	public static polar(len:number, angle:number):Point
 	{
-		return new Point(len*Math.cos(angle), len*Math.sin(angle));
+		return new Point(len * Math.cos(angle), len * Math.sin(angle));
 	}
 }

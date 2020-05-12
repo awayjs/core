@@ -1,5 +1,6 @@
-import {EventBase} from "../events/EventBase";
 import {ProjectionBase} from "../projections/ProjectionBase";
+
+import {EventBase} from "./EventBase";
 
 export class ProjectionEvent extends EventBase
 {

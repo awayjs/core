@@ -1,4 +1,4 @@
-import {EventBase}				from "../events/EventBase";
+import {EventBase} from "./EventBase";
 
 /**
  * Base interface for dispatching events
@@ -38,5 +38,5 @@ export interface IEventDispatcher
 	 * @param {Function} Callback function
 	 * @param {Object} Target object listener is added to
 	 */
-	hasEventListener(type:string, listener?:(event:EventBase) => void) : boolean;
+	hasEventListener(type:string, listener?:(event:EventBase) => void):boolean;
 }

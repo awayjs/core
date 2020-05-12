@@ -1,9 +1,9 @@
-import {URLLoaderDataFormat}			from "../net/URLLoaderDataFormat";
-import {URLRequest}					from "../net/URLRequest";
-import {URLRequestMethod}				from "../net/URLRequestMethod";
-import {URLVariables}					from "../net/URLVariables";
-import {EventDispatcher}				from "../events/EventDispatcher";
-import {URLLoaderEvent}				from "../events/URLLoaderEvent";
+import {URLLoaderDataFormat} from "../net/URLLoaderDataFormat";
+import {URLRequest} from "../net/URLRequest";
+import {URLRequestMethod} from "../net/URLRequestMethod";
+import {URLVariables} from "../net/URLVariables";
+import {EventDispatcher} from "../events/EventDispatcher";
+import {URLLoaderEvent} from "../events/URLLoaderEvent";
 
 /**
  * The URLLoader is used to load a single file, as part of a resource.
@@ -47,7 +47,7 @@ export class URLLoader extends EventDispatcher
 	public get url():string
 	{
 
-		return this._request? this._request.url : '';
+		return this._request ? this._request.url : "";
 	}
 
 	/**
@@ -112,7 +112,8 @@ export class URLLoader extends EventDispatcher
 			this.getRequest(request);
 	}
 
-	public isSupported():boolean {
+	public isSupported():boolean
+	{
 		return window != null;
 	}
 
@@ -156,7 +157,7 @@ export class URLLoader extends EventDispatcher
 				break;
 
 			case URLLoaderDataFormat.BINARY:
-				xhr.responseType = '';
+				xhr.responseType = "";
 				break;
 
 			default:
@@ -193,7 +194,7 @@ export class URLLoader extends EventDispatcher
 				var urlVars:URLVariables = <URLVariables> request.data;
 
 				try {
-					this._XHR.responseType = 'text';
+					this._XHR.responseType = "text";
 					this._XHR.send(urlVars.formData);
 				} catch (e /* <XMLHttpRequestException> */) {
 					this.handleXmlHttpRequestException(e);
@@ -220,7 +221,7 @@ export class URLLoader extends EventDispatcher
 	{
 		switch (error.code) {
 
-		/******************************************************************************************************************************************************************************************************
+			/******************************************************************************************************************************************************************************************************
 		 *
 		 *  XMLHttpRequestException { message: "NETWORK_ERR: XMLHttpRequest Exception 101", name: "NETWORK_ERR", code: 101, stack: "Error: A network error occurred in synchronous req…",NETWORK_ERR: 101… }
 		 *  code: 101 , message: "NETWORK_ERR: XMLHttpRequest Exception 101" ,  name: "NETWORK_ERR"
@@ -281,7 +282,7 @@ export class URLLoader extends EventDispatcher
 
 		var tokens, re = /[?&]?([^=]+)=([^&]*)/g;
 
-		while (tokens = re.exec(source))
+		while ((tokens = re.exec(source)))
 			result[decodeURIComponent(tokens[1])] = decodeURIComponent(tokens[2]);
 
 		return result;

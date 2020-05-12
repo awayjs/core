@@ -1,4 +1,4 @@
-import {ColorUtils}			from "../utils/ColorUtils";
+import {ColorUtils} from "../utils/ColorUtils";
 
 /**
  * The ColorTransform export class lets you adjust the color values in a display
@@ -44,7 +44,7 @@ export class ColorTransform
 {
 	public _rawData:Float32Array;
 
-	public concat(second: ColorTransform):void
+	public concat(second:ColorTransform):void
 	{
 		this._rawData[0] *= second._rawData[0];
 		this._rawData[1] *= second._rawData[1];
@@ -189,7 +189,7 @@ export class ColorTransform
 	 */
 	public get color():number
 	{
-		return((this._rawData[4] << 16) | ( this._rawData[5] << 8) | this._rawData[6]);
+		return ((this._rawData[4] << 16) | (this._rawData[5] << 8) | this._rawData[6]);
 	}
 
 	public set color(value:number)
@@ -259,29 +259,29 @@ export class ColorTransform
 		targetData[7] = sourceData[7];
 	}
 
-    public clear()
-    {
-        this._rawData[0] = 1;
-        this._rawData[1] = 1;
-        this._rawData[2] = 1;
-        this._rawData[3] = 1;
-        this._rawData[4] = 0;
-        this._rawData[5] = 0;
-        this._rawData[6] = 0;
-        this._rawData[7] = 0;
-    }
+	public clear()
+	{
+		this._rawData[0] = 1;
+		this._rawData[1] = 1;
+		this._rawData[2] = 1;
+		this._rawData[3] = 1;
+		this._rawData[4] = 0;
+		this._rawData[5] = 0;
+		this._rawData[6] = 0;
+		this._rawData[7] = 0;
+	}
 
-    public clone():ColorTransform
-    {
+	public clone():ColorTransform
+	{
 		var colorTransform:ColorTransform = new ColorTransform();
 
 		colorTransform.copyFrom(this);
-		
-		return colorTransform;
-    }
 
-    public copyFrom(source:ColorTransform)
-    {
+		return colorTransform;
+	}
+
+	public copyFrom(source:ColorTransform)
+	{
 		var sourceData = source._rawData, targetData = this._rawData;
 
 		targetData[0] = sourceData[0];
@@ -292,26 +292,26 @@ export class ColorTransform
 		targetData[5] = sourceData[5];
 		targetData[6] = sourceData[6];
 		targetData[7] = sourceData[7];
-    }
+	}
 
-    public copyTo(target:ColorTransform)
-    {
+	public copyTo(target:ColorTransform)
+	{
 		target.copyFrom(this);
-    }
+	}
 
-    public prepend(ct:ColorTransform)
-    {
-        this._rawData[4] += ct._rawData[4] * this._rawData[0];
-        this._rawData[5] += ct._rawData[5] * this._rawData[1];
-        this._rawData[6] += ct._rawData[6] * this._rawData[2];
-        this._rawData[7] += ct._rawData[7] * this._rawData[3];
+	public prepend(ct:ColorTransform)
+	{
+		this._rawData[4] += ct._rawData[4] * this._rawData[0];
+		this._rawData[5] += ct._rawData[5] * this._rawData[1];
+		this._rawData[6] += ct._rawData[6] * this._rawData[2];
+		this._rawData[7] += ct._rawData[7] * this._rawData[3];
 
-        this.redMultiplier *= ct.redMultiplier;
-        this.greenMultiplier *= ct.greenMultiplier;
-        this.blueMultiplier *= ct.blueMultiplier;
-        this.alphaMultiplier *= ct.alphaMultiplier;
-    }
-	
+		this.redMultiplier *= ct.redMultiplier;
+		this.greenMultiplier *= ct.greenMultiplier;
+		this.blueMultiplier *= ct.blueMultiplier;
+		this.alphaMultiplier *= ct.alphaMultiplier;
+	}
+
 	public _isRenderable():boolean
 	{
 		return this._rawData[3] != 0 || this._rawData[7] > 0;

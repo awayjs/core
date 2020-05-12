@@ -21,7 +21,8 @@
         "@saji/brace-rules"
     ],
     "rules": {
-        "brace-style": 0,
+        "array-bracket-spacing": "error",
+        "brace-style": "off",
         "@saji/brace-rules/brace-on-same-line": [
             "error",
             "1tbs",
@@ -39,6 +40,7 @@
             "error",
             "tab"
         ],
+        "keyword-spacing": "error",
         "linebreak-style": [
             "error",
             "windows"
@@ -49,46 +51,68 @@
                 "exceptAfterSingleLine": true
             }
         ],
-        "@typescript-eslint/member-ordering": [
-            "error",
-            {
-                "default": {
-                    "memberTypes": [
-                        "public-static-field",
-                        "protected-static-field",
-                        "private-static-field",
+        // "@typescript-eslint/member-ordering": [
+        //     "error",
+        //     {
+        //         "default": {
+        //             "memberTypes": [
+        //                 "public-static-field",
+        //                 "protected-static-field",
+        //                 "private-static-field",
 
-                        "public-instance-field",
-                        "protected-instance-field",
-                        "private-instance-field",
-
-
-                        "constructor",
+        //                 "public-instance-field",
+        //                 "protected-instance-field",
+        //                 "private-instance-field",
 
 
-                        "public-static-method",
-                        "protected-static-method",
-                        "private-static-method",
+        //                 "constructor",
 
-                        "public-instance-method",
-                        "protected-instance-method",
-                        "private-instance-method"
-                    ],
-                    "order": "alphabetically"
-                }
-            }
-        ],
+
+        //                 "public-static-method",
+        //                 "protected-static-method",
+        //                 "private-static-method",
+
+        //                 "public-instance-method",
+        //                 "protected-instance-method",
+        //                 "private-instance-method"
+        //             ],
+        //             "order": "alphabetically"
+        //         }
+        //     }
+        // ],
         "no-unused-vars": "off",
         "@typescript-eslint/no-unused-vars": [
-            "error"
-        ],
-        "quotes": [
             "error",
-            "double"
+            {
+                "args": "none"
+            }
         ],
-        "semi": [
+        "no-prototype-builtins": "off",
+        "no-trailing-spaces": "error",
+        "object-curly-spacing": "error",
+        "quotes": "error",
+        "semi": "error",
+        "space-before-blocks": "error",
+        "space-in-parens": "error",
+        "space-infix-ops": [
             "error",
-            "always"
+            {
+                "int32Hint": true
+            }
+        ],
+        "space-unary-ops": "error",
+        "@typescript-eslint/type-annotation-spacing": [
+            "error",
+            {
+                "before": false,
+                "after": false,
+                "overrides": {
+                    "arrow": {
+                        "before": true,
+                        "after": true
+                    }
+                }
+            }
         ]
     }
 }

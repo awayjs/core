@@ -282,10 +282,10 @@ export class Transform extends EventDispatcher
 
 	public set matrix3D(val:Matrix3D)
 	{
-		if(!val) {
+		if (!val) {
 			this._matrix3D.identity();
 		} else {
-		
+
 			const sourceData = val._rawData;
 			const targetData = this._matrix3D._rawData;
 

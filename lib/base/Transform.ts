@@ -282,24 +282,30 @@ export class Transform extends EventDispatcher
 
 	public set matrix3D(val:Matrix3D)
 	{
-		var sourceData:Float32Array = val._rawData, targetData:Float32Array = this._matrix3D._rawData;
+		if(!val) {
+			this._matrix3D.identity();
+		} else {
+		
+			const sourceData = val._rawData;
+			const targetData = this._matrix3D._rawData;
 
-		targetData[0] = sourceData[0];
-		targetData[1] = sourceData[1];
-		targetData[2] = sourceData[2];
-		targetData[3] = sourceData[3];
-		targetData[4] = sourceData[4];
-		targetData[5] = sourceData[5];
-		targetData[6] = sourceData[6];
-		targetData[7] = sourceData[7];
-		targetData[8] = sourceData[8];
-		targetData[9] = sourceData[9];
-		targetData[10] = sourceData[10];
-		targetData[11] = sourceData[11];
-		targetData[12] = sourceData[12];
-		targetData[13] = sourceData[13];
-		targetData[14] = sourceData[14];
-		targetData[15] = sourceData[15];
+			targetData[0] = sourceData[0];
+			targetData[1] = sourceData[1];
+			targetData[2] = sourceData[2];
+			targetData[3] = sourceData[3];
+			targetData[4] = sourceData[4];
+			targetData[5] = sourceData[5];
+			targetData[6] = sourceData[6];
+			targetData[7] = sourceData[7];
+			targetData[8] = sourceData[8];
+			targetData[9] = sourceData[9];
+			targetData[10] = sourceData[10];
+			targetData[11] = sourceData[11];
+			targetData[12] = sourceData[12];
+			targetData[13] = sourceData[13];
+			targetData[14] = sourceData[14];
+			targetData[15] = sourceData[15];
+		}
 
 		this.invalidateComponents();
 		this.invalidateConcatenatedMatrix3D();

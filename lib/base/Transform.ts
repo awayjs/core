@@ -239,8 +239,11 @@ export class Transform extends EventDispatcher
 	 *
 	 * @throws TypeError The matrix is null when being set
 	 */
-	public get matrix():Matrix
+	public get matrix(): Matrix
 	{
+		console.warn('deprecated! matrix3D cannot  be converted to 2D matrix, get matrix3D instead');
+		return null;
+		/*
 		if (!this._matrix)
 			this._matrix = new Matrix(this.matrix3D._rawData[0],
 				this.matrix3D._rawData[1],
@@ -255,11 +258,14 @@ export class Transform extends EventDispatcher
 		this._matrix.tx = this.matrix3D._rawData[12];
 		this._matrix.ty = this.matrix3D._rawData[13];
 		return this._matrix;
+		*/
 	}
 
-	public set matrix(value:Matrix)
+	public set matrix(value: Matrix)
 	{
-		this._matrix = value;
+		
+		console.warn('deprecated. 2d matrix can`n convert to 3D matrix, set matrix3D instead');
+		// this._matrix = value;
 	}
 
 	/**

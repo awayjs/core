@@ -243,11 +243,11 @@ export class Transform extends EventDispatcher
 	{
 		// console.warn("deprecated! matrix3D cannot  be converted to 2D matrix, get matrix3D instead");
 		// return null;
-		
+
 		if (!this._matrix) {
 			this._matrix = new Matrix();
 		}
-		
+
 		if (this._matrix3DDirty)
 			this.updateMatrix3D();
 
@@ -257,13 +257,13 @@ export class Transform extends EventDispatcher
 		this._matrix.d = this._matrix3D._rawData[5];
 		this._matrix.tx = this._matrix3D._rawData[12];
 		this._matrix.ty = this._matrix3D._rawData[13];
-		
+
 		return this._matrix;
 	}
 
 	public set matrix(value:Matrix)
 	{
-		if(!value) {
+		if (!value) {
 			return;
 		}
 
@@ -277,7 +277,7 @@ export class Transform extends EventDispatcher
 		this._matrix3D._rawData[5] = value.d;
 		this._matrix3D._rawData[12] = value.tx;
 		this._matrix3D._rawData[13] = value.ty;
-		
+
 		this.invalidateComponents();
 		this.invalidateConcatenatedMatrix3D();
 	}

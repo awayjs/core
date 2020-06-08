@@ -251,12 +251,12 @@ export class Transform extends EventDispatcher
 		if (this._matrix3DDirty)
 			this.updateMatrix3D();
 
-		this._matrix.a = this.matrix3D._rawData[0];
-		this._matrix.b = this.matrix3D._rawData[1];
-		this._matrix.c = this.matrix3D._rawData[4];
-		this._matrix.d = this.matrix3D._rawData[5];
-		this._matrix.tx = this.matrix3D._rawData[12];
-		this._matrix.ty = this.matrix3D._rawData[13];
+		this._matrix.a = this._matrix3D._rawData[0];
+		this._matrix.b = this._matrix3D._rawData[1];
+		this._matrix.c = this._matrix3D._rawData[4];
+		this._matrix.d = this._matrix3D._rawData[5];
+		this._matrix.tx = this._matrix3D._rawData[12];
+		this._matrix.ty = this._matrix3D._rawData[13];
 		
 		return this._matrix;
 	}
@@ -269,13 +269,14 @@ export class Transform extends EventDispatcher
 
 		// console.warn("deprecated. 2d matrix can`n convert to 3D matrix, set matrix3D instead");
 		// this._matrix = value;
-		
-		this.matrix3D._rawData[0] = this._matrix.a;
-		this.matrix3D._rawData[1] = this._matrix.b;
-		this.matrix3D._rawData[4] = this._matrix.c;
-		this.matrix3D._rawData[5] = this._matrix.d;
-		this.matrix3D._rawData[12] = this._matrix.tx;
-		this.matrix3D._rawData[13] = this._matrix.ty;
+		this._matrix3D.identity();
+
+		this._matrix3D._rawData[0] = value.a;
+		this._matrix3D._rawData[1] = value.b;
+		this._matrix3D._rawData[4] = value.c;
+		this._matrix3D._rawData[5] = value.d;
+		this._matrix3D._rawData[12] = value.tx;
+		this._matrix3D._rawData[13] = value.ty;
 		
 		this.invalidateComponents();
 		this.invalidateConcatenatedMatrix3D();

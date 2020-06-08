@@ -241,31 +241,44 @@ export class Transform extends EventDispatcher
 	 */
 	public get matrix():Matrix
 	{
-		console.warn("deprecated! matrix3D cannot  be converted to 2D matrix, get matrix3D instead");
-		return null;
-		/*
-		if (!this._matrix)
-			this._matrix = new Matrix(this.matrix3D._rawData[0],
-				this.matrix3D._rawData[1],
-				this.matrix3D._rawData[4],
-				this.matrix3D._rawData[5],
-				this.matrix3D._rawData[12],
-				this.matrix3D._rawData[13]);
+		// console.warn("deprecated! matrix3D cannot  be converted to 2D matrix, get matrix3D instead");
+		// return null;
+		
+		if (!this._matrix) {
+			this._matrix = new Matrix();
+		}
+		
+		if (this._matrix3DDirty)
+			this.updateMatrix3D();
+
 		this._matrix.a = this.matrix3D._rawData[0];
 		this._matrix.b = this.matrix3D._rawData[1];
 		this._matrix.c = this.matrix3D._rawData[4];
 		this._matrix.d = this.matrix3D._rawData[5];
 		this._matrix.tx = this.matrix3D._rawData[12];
 		this._matrix.ty = this.matrix3D._rawData[13];
+		
 		return this._matrix;
-		*/
 	}
 
 	public set matrix(value:Matrix)
 	{
+		if(!value) {
+			return;
+		}
 
-		console.warn("deprecated. 2d matrix can`n convert to 3D matrix, set matrix3D instead");
+		// console.warn("deprecated. 2d matrix can`n convert to 3D matrix, set matrix3D instead");
 		// this._matrix = value;
+		
+		this.matrix3D._rawData[0] = this._matrix.a;
+		this.matrix3D._rawData[1] = this._matrix.b;
+		this.matrix3D._rawData[4] = this._matrix.c;
+		this.matrix3D._rawData[5] = this._matrix.d;
+		this.matrix3D._rawData[12] = this._matrix.tx;
+		this.matrix3D._rawData[13] = this._matrix.ty;
+		
+		this.invalidateComponents();
+		this.invalidateConcatenatedMatrix3D();
 	}
 
 	/**

@@ -27,4 +27,7 @@ export class EventBase
 	{
 		return new EventBase(this.type);
 	}
+	
+	public _iAllowedToPropagate:boolean = true;
+	public _iAllowedToImmediatlyPropagate:boolean = true;
 }

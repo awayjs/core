@@ -122,9 +122,9 @@ export class ListenerObject
 	public dispatchEvent(event:EventBase):void
 	{
 		var len:number = this.numListeners;
-		for (this._index = 0; this._index < len && this._index < this.numListeners; this._index++){
+		for (this._index = 0; this._index < len && this._index < this.numListeners; this._index++) {
 			this._listeners[this._index](event);
-			if(!event._iAllowedToImmediatlyPropagate){
+			if (!event._iAllowedToImmediatlyPropagate) {
 				break;
 			}
 		}

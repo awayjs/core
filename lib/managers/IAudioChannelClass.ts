@@ -1,13 +1,13 @@
-import {IAudioChannel} from "../managers/IAudioChannel";
+import { IAudioChannel } from '../managers/IAudioChannel';
 
 export interface IAudioChannelClass
 {
-	maxChannels:number;
+	maxChannels: number;
 
-	_channels:Array<IAudioChannel>;
+	_channels: Array<IAudioChannel>;
 
 	/**
 	 *
 	 */
-	new(channelGroupID:number, channelGroupVolume:number, channelGroupPan:number):IAudioChannel;
+	new(channelGroupID: number, channelGroupVolume: number, channelGroupPan: number): IAudioChannel;
 }

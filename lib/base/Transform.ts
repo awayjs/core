@@ -1,13 +1,13 @@
-import {EventDispatcher} from "../events/EventDispatcher";
-import {TransformEvent} from "../events/TransformEvent";
+import { EventDispatcher } from '../events/EventDispatcher';
+import { TransformEvent } from '../events/TransformEvent';
 
-import {Matrix} from "../geom/Matrix";
-import {Matrix3D} from "../geom/Matrix3D";
-import {Point} from "../geom/Point";
-import {Rectangle} from "../geom/Rectangle";
-import {Vector3D} from "../geom/Vector3D";
+import { Matrix } from '../geom/Matrix';
+import { Matrix3D } from '../geom/Matrix3D';
+import { Point } from '../geom/Point';
+import { Rectangle } from '../geom/Rectangle';
+import { Vector3D } from '../geom/Vector3D';
 
-import {ColorTransform} from "./ColorTransform";
+import { ColorTransform } from './ColorTransform';
 
 /**
  * The Transform class provides access to color adjustment properties and two-
@@ -58,44 +58,40 @@ import {ColorTransform} from "./ColorTransform";
  * changes. For more control over the perspective transformation, create a
  * perspective projection Matrix3D object.
  */
-export class Transform extends EventDispatcher
-{
-	private _backVector:Vector3D;
-	private _colorTransform:ColorTransform;
-	private _components:Array<Vector3D>;
-	private _componentsDirty:boolean;
-	private _concatenatedMatrix3D:Matrix3D;
-	private _concatenatedMatrix3DDirty:boolean;
-	private _downVector:Vector3D;
-	private _forwardVector:Vector3D;
-	private _invalidateColorTransform:TransformEvent;
-	private _invalidateConcatenatedMatrix3D:TransformEvent;
-	private _invalidateMatrix3D:TransformEvent;
-	private _inverseConcatenatedMatrix3D:Matrix3D = new Matrix3D();
-	private _inverseConcatenatedMatrix3DDirty:boolean;
-	private _leftVector:Vector3D;
-	private _matrix:Matrix=null;
-	private _matrix3D:Matrix3D;
-	private _matrix3DDirty:boolean;
-	private _pixelBounds:Rectangle;
-	private _rawData:Float32Array;
-	private _rightVector:Vector3D;
-	private _rotation:Vector3D = new Vector3D();
-	private _scale:Vector3D = new Vector3D(1, 1, 1);
-	private _skew:Vector3D = new Vector3D();
+export class Transform extends EventDispatcher {
+	private _backVector: Vector3D;
+	private _colorTransform: ColorTransform;
+	private _components: Array<Vector3D>;
+	private _componentsDirty: boolean;
+	private _concatenatedMatrix3D: Matrix3D;
+	private _concatenatedMatrix3DDirty: boolean;
+	private _downVector: Vector3D;
+	private _forwardVector: Vector3D;
+	private _invalidateColorTransform: TransformEvent;
+	private _invalidateConcatenatedMatrix3D: TransformEvent;
+	private _invalidateMatrix3D: TransformEvent;
+	private _inverseConcatenatedMatrix3D: Matrix3D = new Matrix3D();
+	private _inverseConcatenatedMatrix3DDirty: boolean;
+	private _leftVector: Vector3D;
+	private _matrix: Matrix=null;
+	private _matrix3D: Matrix3D;
+	private _matrix3DDirty: boolean;
+	private _pixelBounds: Rectangle;
+	private _rawData: Float32Array;
+	private _rightVector: Vector3D;
+	private _rotation: Vector3D = new Vector3D();
+	private _scale: Vector3D = new Vector3D(1, 1, 1);
+	private _skew: Vector3D = new Vector3D();
 	//temp vector used in global to local
-	private _tempVector3D:Vector3D = new Vector3D();
-	private _upVector:Vector3D;
+	private _tempVector3D: Vector3D = new Vector3D();
+	private _upVector: Vector3D;
 
-
-
-	private _updateConcatenatedMatrix3D:TransformEvent;
+	private _updateConcatenatedMatrix3D: TransformEvent;
 
 	/**
 	 *
 	 */
-	public get backVector():Vector3D
-	{
+	public get backVector(): Vector3D {
 		if (!this._backVector)
 			this._backVector = new Vector3D();
 
@@ -110,15 +106,13 @@ export class Transform extends EventDispatcher
 	 *
 	 * @throws TypeError The colorTransform is null when being set
 	 */
-	public get colorTransform():ColorTransform
-	{
+	public get colorTransform(): ColorTransform {
 		return this._colorTransform;
 	}
 
-	public set colorTransform(val:ColorTransform)
-	{
+	public set colorTransform(val: ColorTransform) {
 		if (val) {
-			var sourceData:Float32Array = val._rawData, targetData:Float32Array = this._colorTransform._rawData;
+			const sourceData: Float32Array = val._rawData, targetData: Float32Array = this._colorTransform._rawData;
 
 			targetData[0] = sourceData[0];
 			targetData[1] = sourceData[1];
@@ -131,7 +125,6 @@ export class Transform extends EventDispatcher
 		} else {
 			this._colorTransform.clear();
 		}
-
 
 		this.invalidateColorTransform();
 	}
@@ -147,8 +140,7 @@ export class Transform extends EventDispatcher
 	 * coordinates to window coordinates, which may not be the same coordinate
 	 * space as that of the Stage.
      */
-	public get concatenatedMatrix():Matrix
-	{
+	public get concatenatedMatrix(): Matrix {
 		return null;
 	}
 
@@ -163,8 +155,7 @@ export class Transform extends EventDispatcher
 	 * coordinates to window coordinates, which may not be the same coordinate
 	 * space as that of the Scene.
 	 */
-	public get concatenatedMatrix3D():Matrix3D
-	{
+	public get concatenatedMatrix3D(): Matrix3D {
 		if (this._concatenatedMatrix3DDirty) {
 			this._concatenatedMatrix3DDirty = false;
 			if (this._concatenatedMatrix3D == this._matrix3D && this._matrix3DDirty) //in cases where concatenated matrix has not been supplied
@@ -176,12 +167,10 @@ export class Transform extends EventDispatcher
 		return this._concatenatedMatrix3D;
 	}
 
-
 	/**
 	 *
 	 */
-	public get inverseConcatenatedMatrix3D():Matrix3D
-	{
+	public get inverseConcatenatedMatrix3D(): Matrix3D {
 		if (this._inverseConcatenatedMatrix3DDirty) {
 			this._inverseConcatenatedMatrix3DDirty = false;
 			this._inverseConcatenatedMatrix3D.copyFrom(this.concatenatedMatrix3D);
@@ -194,8 +183,7 @@ export class Transform extends EventDispatcher
 	/**
 	 *
 	 */
-	public get downVector():Vector3D
-	{
+	public get downVector(): Vector3D {
 		if (!this._downVector)
 			this._downVector = new Vector3D();
 
@@ -207,8 +195,7 @@ export class Transform extends EventDispatcher
 	/**
 	 *
 	 */
-	public get forwardVector():Vector3D
-	{
+	public get forwardVector(): Vector3D {
 		if (!this._forwardVector)
 			this._forwardVector = new Vector3D();
 
@@ -220,8 +207,7 @@ export class Transform extends EventDispatcher
 	/**
 	 *
 	 */
-	public get leftVector():Vector3D
-	{
+	public get leftVector(): Vector3D {
 		if (!this._leftVector)
 			this._leftVector = new Vector3D();
 
@@ -239,8 +225,7 @@ export class Transform extends EventDispatcher
 	 *
 	 * @throws TypeError The matrix is null when being set
 	 */
-	public get matrix():Matrix
-	{
+	public get matrix(): Matrix {
 		// console.warn("deprecated! matrix3D cannot  be converted to 2D matrix, get matrix3D instead");
 		// return null;
 
@@ -261,8 +246,7 @@ export class Transform extends EventDispatcher
 		return this._matrix;
 	}
 
-	public set matrix(value:Matrix)
-	{
+	public set matrix(value: Matrix) {
 		if (!value) {
 			return;
 		}
@@ -292,16 +276,14 @@ export class Transform extends EventDispatcher
 	 * property is `null`. And if the `matrix3D` property is set to a value(not
 	 * `null`), the `matrix` property is `null`.
 	 */
-	public get matrix3D():Matrix3D
-	{
+	public get matrix3D(): Matrix3D {
 		if (this._matrix3DDirty)
 			this.updateMatrix3D();
 
 		return this._matrix3D;
 	}
 
-	public set matrix3D(val:Matrix3D)
-	{
+	public set matrix3D(val: Matrix3D) {
 		if (!val) {
 			this._matrix3D.identity();
 		} else {
@@ -335,8 +317,7 @@ export class Transform extends EventDispatcher
 	 * A Rectangle object that defines the bounding rectangle of the display
 	 * object on the stage.
 	 */
-	public get pixelBounds():Rectangle
-	{
+	public get pixelBounds(): Rectangle {
 		return this._pixelBounds;
 	}
 
@@ -344,16 +325,14 @@ export class Transform extends EventDispatcher
 	 * Defines the position of the 3d object, relative to the local coordinates
 	 * of the parent `ObjectContainer3D`.
 	 */
-	public get position():Vector3D
-	{
+	public get position(): Vector3D {
 		return this._matrix3D.position;
 	}
 
 	/**
 	 *
 	 */
-	public get rightVector():Vector3D
-	{
+	public get rightVector(): Vector3D {
 		if (!this._rightVector)
 			this._rightVector = new Vector3D();
 
@@ -366,8 +345,7 @@ export class Transform extends EventDispatcher
 	 * Defines the rotation of the 3d object, relative to the local coordinates
 	 * of the parent `ObjectContainer3D` .
 	 */
-	public get rotation():Vector3D
-	{
+	public get rotation(): Vector3D {
 		if (this._componentsDirty)
 			this._updateComponents();
 
@@ -378,8 +356,7 @@ export class Transform extends EventDispatcher
 	 * Defines the scale of the 3d object, relative to the local coordinates of
 	 * the parent `ObjectContainer3D` .
 	 */
-	public get scale():Vector3D
-	{
+	public get scale(): Vector3D {
 		if (this._componentsDirty)
 			this._updateComponents();
 
@@ -390,20 +367,17 @@ export class Transform extends EventDispatcher
 	 * Defines the scale of the 3d object, relative to the local coordinates of
 	 * the parent `ObjectContainer3D` .
 	 */
-	public get skew():Vector3D
-	{
+	public get skew(): Vector3D {
 		if (this._componentsDirty)
 			this._updateComponents();
 
 		return this._skew;
 	}
 
-
 	/**
 	 *
 	 */
-	public get upVector():Vector3D
-	{
+	public get upVector(): Vector3D {
 		if (!this._upVector)
 			this._upVector = new Vector3D();
 
@@ -412,8 +386,7 @@ export class Transform extends EventDispatcher
 		return this._upVector;
 	}
 
-	constructor(rawData:Float32Array = null, concatenatedMatrix3D:Matrix3D = null)
-	{
+	constructor(rawData: Float32Array = null, concatenatedMatrix3D: Matrix3D = null) {
 		super();
 
 		this._rawData = rawData || new Float32Array(24);
@@ -447,16 +420,14 @@ export class Transform extends EventDispatcher
 	 *
 	 * @param value
 	 */
-	public append(value:Matrix3D)
-	{
+	public append(value: Matrix3D) {
 		console.log(`append(${value}) is not implemented yet in core/Transform`);
 	}
 
 	/**
 	 *
 	 */
-	public clearColorTransform():void
-	{
+	public clearColorTransform(): void {
 		if (!this._colorTransform)
 			return;
 
@@ -467,8 +438,7 @@ export class Transform extends EventDispatcher
 	/**
 	 *
 	 */
-	public clearMatrix3D():void
-	{
+	public clearMatrix3D(): void {
 		this._matrix3D.identity();
 		this.invalidateComponents();
 	}
@@ -476,9 +446,8 @@ export class Transform extends EventDispatcher
 	/**
 	 *
 	 */
-	public clone():Transform
-	{
-		var transform:Transform = new Transform();
+	public clone(): Transform {
+		const transform: Transform = new Transform();
 
 		this.copyRawDataTo(transform);
 
@@ -489,13 +458,12 @@ export class Transform extends EventDispatcher
 	 *
 	 * @param transform
 	 */
-	public copyRawDataTo(transform:Transform)
-	{
+	public copyRawDataTo(transform: Transform) {
 		if (this._matrix3DDirty)
 			this.updateMatrix3D();
 
-		var targetData = transform._rawData;
-		var sourceData = this._rawData;
+		const targetData = transform._rawData;
+		const sourceData = this._rawData;
 
 		//Matrix3D data
 		targetData[0] = sourceData[0];
@@ -533,11 +501,9 @@ export class Transform extends EventDispatcher
 	/**
 	 *
 	 */
-	public dispose():void
-	{
+	public dispose(): void {
 
 	}
-
 
 	/**
 	 * Converts the `point` object from the Stage(global) coordinates to the
@@ -554,12 +520,11 @@ export class Transform extends EventDispatcher
 	 *              specifies the _x_ and _y_ coordinates as properties.
 	 * @return A Point object with coordinates relative to the display object.
 	 */
-	public globalToLocal(point:Point, target:Point = null):Point
-	{
+	public globalToLocal(point: Point, target: Point = null): Point {
 		this._tempVector3D.setTo(point.x, point.y, 0);
 		//console.log("this._tempVector3D", this._tempVector3D);
 		//console.log("this._transform.inverseConcatenatedMatrix3D", this._transform.inverseConcatenatedMatrix3D);
-		var pos:Vector3D = this.inverseConcatenatedMatrix3D.transformVector(this._tempVector3D, this._tempVector3D);
+		const pos: Vector3D = this.inverseConcatenatedMatrix3D.transformVector(this._tempVector3D, this._tempVector3D);
 
 		//console.log("pos", pos);
 		if (!target)
@@ -589,25 +554,21 @@ export class Transform extends EventDispatcher
 	 * @return A Vector3D object with coordinates relative to the three-dimensional
 	 *         display object.
 	 */
-	public globalToLocal3D(position:Vector3D):Vector3D
-	{
+	public globalToLocal3D(position: Vector3D): Vector3D {
 		return this.inverseConcatenatedMatrix3D.transformVector(position);
 	}
 
-	public invalidateColorTransform():void
-	{
+	public invalidateColorTransform(): void {
 		this.dispatchEvent(this._invalidateColorTransform || (this._invalidateColorTransform = new TransformEvent(TransformEvent.INVALIDATE_COLOR_TRANSFORM, this)));
 	}
 
-	public invalidateComponents():void
-	{
+	public invalidateComponents(): void {
 		this.invalidatePosition();
 
 		this._componentsDirty = true;
 	}
 
-	public invalidateConcatenatedMatrix3D():void
-	{
+	public invalidateConcatenatedMatrix3D(): void {
 		if (this._concatenatedMatrix3DDirty)
 			return;
 
@@ -622,8 +583,7 @@ export class Transform extends EventDispatcher
 	 *
 	 * @private
 	 */
-	public invalidateMatrix3D():void
-	{
+	public invalidateMatrix3D(): void {
 		if (this._concatenatedMatrix3D == this._matrix3D)
 			this.invalidateConcatenatedMatrix3D();
 
@@ -638,8 +598,7 @@ export class Transform extends EventDispatcher
 	/**
 	 *
 	 */
-	public invalidatePosition():void
-	{
+	public invalidatePosition(): void {
 		if (this._concatenatedMatrix3D == this._matrix3D)
 			this.invalidateConcatenatedMatrix3D();
 
@@ -670,10 +629,9 @@ export class Transform extends EventDispatcher
 	 *              class, specifying the _x_ and _y_ coordinates as properties.
 	 * @return A Point object with coordinates relative to the Stage.
 	 */
-	public localToGlobal(point:Point, target:Point = null):Point
-	{
+	public localToGlobal(point: Point, target: Point = null): Point {
 		this._tempVector3D.setTo(point.x, point.y, 0);
-		var pos:Vector3D = this.concatenatedMatrix3D.transformVector(this._tempVector3D, this._tempVector3D);
+		const pos: Vector3D = this.concatenatedMatrix3D.transformVector(this._tempVector3D, this._tempVector3D);
 
 		if (!target)
 			target = new Point();
@@ -692,12 +650,11 @@ export class Transform extends EventDispatcher
      * @param upAxis An optional vector used to define the desired up
      *               orientation of the 3d object after rotation has occurred.
      */
-	public lookAt(position:Vector3D, upAxis:Vector3D = null):void
-	{
+	public lookAt(position: Vector3D, upAxis: Vector3D = null): void {
 		if (upAxis == null)
 			upAxis = Vector3D.Y_AXIS;
 
-		var vec:Vector3D = Matrix3D.getPointAtMatrix(new Vector3D(), position.subtract(this._matrix3D.position), upAxis, Matrix3D.CALCULATION_MATRIX).decompose()[1];
+		const vec: Vector3D = Matrix3D.getPointAtMatrix(new Vector3D(), position.subtract(this._matrix3D.position), upAxis, Matrix3D.CALCULATION_MATRIX).decompose()[1];
 
 		this.rotateTo(vec.x, vec.y, vec.z);
 	}
@@ -707,8 +664,7 @@ export class Transform extends EventDispatcher
 	 *
 	 * @param    distance    The length of the movement
 	 */
-	public moveBackward(distance:number):void
-	{
+	public moveBackward(distance: number): void {
 		this.translateLocal(Vector3D.Z_AXIS, -distance);
 	}
 
@@ -717,8 +673,7 @@ export class Transform extends EventDispatcher
 	 *
 	 * @param    distance    The length of the movement
 	 */
-	public moveDown(distance:number):void
-	{
+	public moveDown(distance: number): void {
 		this.translateLocal(Vector3D.Y_AXIS, -distance);
 	}
 
@@ -727,8 +682,7 @@ export class Transform extends EventDispatcher
 	 *
 	 * @param    distance    The length of the movement
 	 */
-	public moveForward(distance:number):void
-	{
+	public moveForward(distance: number): void {
 		this.translateLocal(Vector3D.Z_AXIS, distance);
 	}
 
@@ -738,8 +692,7 @@ export class Transform extends EventDispatcher
 	 * @param    distance    The length of the movement
 	 */
 
-	public moveLeft(distance:number):void
-	{
+	public moveLeft(distance: number): void {
 		this.translateLocal(Vector3D.X_AXIS, -distance);
 	}
 
@@ -748,8 +701,7 @@ export class Transform extends EventDispatcher
 	 *
 	 * @param    distance    The length of the movement
 	 */
-	public moveRight(distance:number):void
-	{
+	public moveRight(distance: number): void {
 		this.translateLocal(Vector3D.X_AXIS, distance);
 	}
 
@@ -761,8 +713,7 @@ export class Transform extends EventDispatcher
 	 * @param    dz        The amount of movement along the local z axis.
 	 */
 
-	public moveTo(dx:number, dy:number, dz:number):void
-	{
+	public moveTo(dx: number, dy: number, dz: number): void {
 		this._matrix3D._rawData[12] = dx;
 		this._matrix3D._rawData[13] = dy;
 		this._matrix3D._rawData[14] = dz;
@@ -775,8 +726,7 @@ export class Transform extends EventDispatcher
 	 *
 	 * @param    distance    The length of the movement
 	 */
-	public moveUp(distance:number):void
-	{
+	public moveUp(distance: number): void {
 		this.translateLocal(Vector3D.Y_AXIS, distance);
 	}
 
@@ -785,8 +735,7 @@ export class Transform extends EventDispatcher
 	 *
 	 * @param    angle        The amount of rotation in degrees
 	 */
-	public pitch(angle:number):void
-	{
+	public pitch(angle: number): void {
 		this.rotate(Vector3D.X_AXIS, angle);
 	}
 
@@ -795,8 +744,7 @@ export class Transform extends EventDispatcher
 	 *
 	 * @param    angle        The amount of rotation in degrees
 	 */
-	public roll(angle:number):void
-	{
+	public roll(angle: number): void {
 		this.rotate(Vector3D.Z_AXIS, angle);
 	}
 
@@ -806,8 +754,7 @@ export class Transform extends EventDispatcher
 	 * @param    axis        The vector defining the axis of rotation
 	 * @param    angle        The amount of rotation in degrees
 	 */
-	public rotate(axis:Vector3D, angle:number):void
-	{
+	public rotate(axis: Vector3D, angle: number): void {
 		this.matrix3D.prependRotation(angle, axis);
 
 		this.invalidateComponents();
@@ -820,8 +767,7 @@ export class Transform extends EventDispatcher
 	 * @param ay The angle in degrees of the rotation around the y axis.
 	 * @param az The angle in degrees of the rotation around the z axis.
 	 */
-	public rotateTo(ax:number, ay:number, az:number):void
-	{
+	public rotateTo(ax: number, ay: number, az: number): void {
 		if (this._componentsDirty)
 			this._updateComponents();
 
@@ -838,8 +784,7 @@ export class Transform extends EventDispatcher
 	 * @param sy
 	 * @param sz
 	 */
-	public scaleTo(sx:number, sy:number, sz:number):void
-	{
+	public scaleTo(sx: number, sy: number, sz: number): void {
 		if (this._componentsDirty)
 			this._updateComponents();
 
@@ -856,8 +801,7 @@ export class Transform extends EventDispatcher
 	 * @param sy
 	 * @param sz
 	 */
-	public skewTo(sx:number, sy:number, sz:number):void
-	{
+	public skewTo(sx: number, sy: number, sz: number): void {
 		if (this._componentsDirty)
 			this._updateComponents();
 
@@ -874,10 +818,9 @@ export class Transform extends EventDispatcher
 	 * @param axis     The vector defining the axis of movement.
 	 * @param distance The length of the movement.
 	 */
-	public translate(axis:Vector3D, distance:number):void
-	{
-		var x:number = axis.x, y:number = axis.y, z:number = axis.z;
-		var len:number = distance / Math.sqrt(x * x + y * y + z * z);
+	public translate(axis: Vector3D, distance: number): void {
+		const x: number = axis.x, y: number = axis.y, z: number = axis.z;
+		const len: number = distance / Math.sqrt(x * x + y * y + z * z);
 
 		this.matrix3D.appendTranslation(x * len, y * len, z * len);
 
@@ -890,10 +833,9 @@ export class Transform extends EventDispatcher
 	 * @param axis     The vector defining the axis of movement.
 	 * @param distance The length of the movement.
 	 */
-	public translateLocal(axis:Vector3D, distance:number):void
-	{
-		var x:number = axis.x, y:number = axis.y, z:number = axis.z;
-		var len:number = distance / Math.sqrt(x * x + y * y + z * z);
+	public translateLocal(axis: Vector3D, distance: number): void {
+		const x: number = axis.x, y: number = axis.y, z: number = axis.z;
+		const len: number = distance / Math.sqrt(x * x + y * y + z * z);
 
 		this.matrix3D.prependTranslation(x * len, y * len, z * len);
 
@@ -903,8 +845,7 @@ export class Transform extends EventDispatcher
 	/**
 	 *
 	 */
-	public updateMatrix3D():void
-	{
+	public updateMatrix3D(): void {
 		this._matrix3D.recompose(this._components);
 
 		this._matrix3DDirty = false;
@@ -915,15 +856,13 @@ export class Transform extends EventDispatcher
 	 *
 	 * @param angle The amount of rotation in degrees
 	 */
-	public yaw(angle:number):void
-	{
+	public yaw(angle: number): void {
 		this.rotate(Vector3D.Y_AXIS, angle);
 	}
 
-	private _updateComponents():void
-	{
-		var elements:Array<Vector3D> = this._matrix3D.decompose();
-		var vec:Vector3D;
+	private _updateComponents(): void {
+		const elements: Array<Vector3D> = this._matrix3D.decompose();
+		let vec: Vector3D;
 
 		vec = elements[1];
 

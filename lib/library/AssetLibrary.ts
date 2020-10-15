@@ -1,29 +1,27 @@
-import {EventBase} from "../events/EventBase";
+import { EventBase } from '../events/EventBase';
 
-import {URLRequest} from "../net/URLRequest";
+import { URLRequest } from '../net/URLRequest';
 
-import {ParserBase} from "../parsers/ParserBase";
+import { ParserBase } from '../parsers/ParserBase';
 
-import {AssetLibraryBundle} from "./AssetLibraryBundle";
-import {AssetLibraryIterator} from "./AssetLibraryIterator";
-import {ConflictStrategyBase} from "./ConflictStrategyBase";
-import {IAssetAdapter} from "./IAssetAdapter";
-import {Loader} from "./Loader";
-import {LoaderContext} from "./LoaderContext";
+import { AssetLibraryBundle } from './AssetLibraryBundle';
+import { AssetLibraryIterator } from './AssetLibraryIterator';
+import { ConflictStrategyBase } from './ConflictStrategyBase';
+import { IAssetAdapter } from './IAssetAdapter';
+import { Loader } from './Loader';
+import { LoaderContext } from './LoaderContext';
 
 /**
  * AssetLibrary enforces a singleton pattern and is not intended to be instanced.
  * It's purpose is to allow access to the default library bundle through a set of static shortcut methods.
  * If you are interested in creating multiple library bundles, please use the <code>getBundle()</code> method.
  */
-export class AssetLibrary
-{
+export class AssetLibrary {
 	/**
 	 * Creates a new <code>AssetLibrary</code> object.
 	 *
 	 */
-	constructor()
-	{
+	constructor() {
 	}
 
 	//*/
@@ -36,24 +34,21 @@ export class AssetLibrary
 	 * @param key Defines which multiton instance should be returned.
 	 * @return An instance of the asset library
 	 */
-	public static getBundle(key:string = "default"):AssetLibraryBundle
-	{
+	public static getBundle(key: string = 'default'): AssetLibraryBundle {
 		return AssetLibraryBundle.getInstance(key);
 	}
 
 	/**
 	 *
 	 */
-	public static enableParser(parserClass):void
-	{
+	public static enableParser(parserClass): void {
 		Loader.enableParser(parserClass);
 	}
 
 	/**
 	 *
 	 */
-	public static enableParsers(parserClasses:Array<Object>):void
-	{
+	public static enableParsers(parserClasses: Array<Object>): void {
 		Loader.enableParsers(parserClasses);
 	}
 
@@ -62,13 +57,11 @@ export class AssetLibrary
 	 *
 	 * @see AssetLibraryBundle.conflictStrategy
 	 */
-	public static get conflictStrategy():ConflictStrategyBase
-	{
+	public static get conflictStrategy(): ConflictStrategyBase {
 		return AssetLibrary.getBundle().conflictStrategy;
 	}
 
-	public static set conflictStrategy(val:ConflictStrategyBase)
-	{
+	public static set conflictStrategy(val: ConflictStrategyBase) {
 		AssetLibrary.getBundle().conflictStrategy = val;
 	}
 
@@ -77,13 +70,11 @@ export class AssetLibrary
 	 *
 	 * @see AssetLibraryBundle.conflictPrecedence
 	 */
-	public static get conflictPrecedence():string
-	{
+	public static get conflictPrecedence(): string {
 		return AssetLibrary.getBundle().conflictPrecedence;
 	}
 
-	public static set conflictPrecedence(val:string)
-	{
+	public static set conflictPrecedence(val: string) {
 		AssetLibrary.getBundle().conflictPrecedence = val;
 	}
 
@@ -92,8 +83,7 @@ export class AssetLibrary
 	 *
 	 * @see AssetLibraryBundle.createIterator()
 	 */
-	public static createIterator(assetTypeFilter:string = null, namespaceFilter:string = null, filterFunc = null):AssetLibraryIterator
-	{
+	public static createIterator(assetTypeFilter: string = null, namespaceFilter: string = null, filterFunc = null): AssetLibraryIterator {
 		return AssetLibrary.getBundle().createIterator(assetTypeFilter, namespaceFilter, filterFunc);
 	}
 
@@ -102,8 +92,7 @@ export class AssetLibrary
 	 *
 	 * @see AssetLibraryBundle.load()
 	 */
-	public static load(req:URLRequest, context:LoaderContext = null, ns:string = null, parser:ParserBase = null):void
-	{
+	public static load(req: URLRequest, context: LoaderContext = null, ns: string = null, parser: ParserBase = null): void {
 		AssetLibrary.getBundle().load(req, context, ns, parser);
 	}
 
@@ -112,18 +101,15 @@ export class AssetLibrary
 	 *
 	 * @see AssetLibraryBundle.loadData()
 	 */
-	public static loadData(data:any, context:LoaderContext = null, ns:string = null, parser:ParserBase = null):void
-	{
+	public static loadData(data: any, context: LoaderContext = null, ns: string = null, parser: ParserBase = null): void {
 		AssetLibrary.getBundle().loadData(data, context, ns, parser);
 	}
 
-	public static stop():void
-	{
+	public static stop(): void {
 		AssetLibrary.getBundle().stop();
 	}
 
-	public static getLoader():Loader
-	{
+	public static getLoader(): Loader {
 		return AssetLibrary.getBundle().getLoader();
 	}
 
@@ -132,8 +118,7 @@ export class AssetLibrary
 	 *
 	 * @see AssetLibraryBundle.getAsset()
 	 */
-	public static getAsset(name:string, ns:string = null):IAssetAdapter
-	{
+	public static getAsset(name: string, ns: string = null): IAssetAdapter {
 		return AssetLibrary.getBundle().getAsset(name, ns);
 	}
 
@@ -142,24 +127,21 @@ export class AssetLibrary
 	 *
 	 * @see AssetLibraryBundle.getAsset()
 	 */
-	public static getAllAssets():Array<IAssetAdapter>
-	{
+	public static getAllAssets(): Array<IAssetAdapter> {
 		return AssetLibrary.getBundle().getAllAssets();
 	}
 
 	/**
 	 * Short-hand for addEventListener() method on default asset library bundle.
 	 */
-	public static addEventListener(type:string, listener:(event:EventBase) => void):void
-	{
+	public static addEventListener(type: string, listener: (event: EventBase) => void): void {
 		AssetLibrary.getBundle().addEventListener(type, listener);
 	}
 
 	/**
 	 * Short-hand for removeEventListener() method on default asset library bundle.
 	 */
-	public static removeEventListener(type:string, listener:(event:EventBase) => void):void
-	{
+	public static removeEventListener(type: string, listener: (event: EventBase) => void): void {
 		AssetLibrary.getBundle().removeEventListener(type, listener);
 	}
 
@@ -182,8 +164,7 @@ export class AssetLibrary
 	 *
 	 * @see AssetLibraryBundle.addAsset()
 	 */
-	public static addAsset(asset:IAssetAdapter):void
-	{
+	public static addAsset(asset: IAssetAdapter): void {
 		AssetLibrary.getBundle().addAsset(asset);
 	}
 
@@ -195,8 +176,7 @@ export class AssetLibrary
 	 *
 	 * @see AssetLibraryBundle.removeAsset()
 	 */
-	public static removeAsset(asset:IAssetAdapter, dispose:boolean = true):void
-	{
+	public static removeAsset(asset: IAssetAdapter, dispose: boolean = true): void {
 		AssetLibrary.getBundle().removeAsset(asset, dispose);
 	}
 
@@ -209,8 +189,7 @@ export class AssetLibrary
 	 *
 	 * @see AssetLibraryBundle.removeAssetByName()
 	 */
-	public static removeAssetByName(name:string, ns:string = null, dispose:boolean = true):IAssetAdapter
-	{
+	public static removeAssetByName(name: string, ns: string = null, dispose: boolean = true): IAssetAdapter {
 		return AssetLibrary.getBundle().removeAssetByName(name, ns, dispose);
 	}
 
@@ -221,8 +200,7 @@ export class AssetLibrary
 	 *
 	 * @see AssetLibraryBundle.removeAllAssets()
 	 */
-	public static removeAllAssets(dispose:boolean = true):void
-	{
+	public static removeAllAssets(dispose: boolean = true): void {
 		AssetLibrary.getBundle().removeAllAssets(dispose);
 	}
 
@@ -231,8 +209,7 @@ export class AssetLibrary
 	 *
 	 * @see AssetLibraryBundle.removeNamespaceAssets()
 	 */
-	public static removeNamespaceAssets(ns:string = null, dispose:boolean = true):void
-	{
+	public static removeNamespaceAssets(ns: string = null, dispose: boolean = true): void {
 		AssetLibrary.getBundle().removeNamespaceAssets(ns, dispose);
 	}
 }

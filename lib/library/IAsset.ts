@@ -1,47 +1,47 @@
-import {IEventDispatcher} from "../events/IEventDispatcher";
+import { IEventDispatcher } from '../events/IEventDispatcher';
 
-import {IAssetAdapter} from "./IAssetAdapter";
+import { IAssetAdapter } from './IAssetAdapter';
 
 export interface IAsset extends IEventDispatcher
 {
-	adapter:IAssetAdapter;
+	adapter: IAssetAdapter;
 
 	/**
 	 *
 	 */
-	name:string;
+	name: string;
 
 	/**
 	 *
 	 */
-	id:number;
+	id: number;
 
 	/**
 	 *
 	 */
-	assetNamespace:string;
+	assetNamespace: string;
 
 	/**
 	 *
 	 */
-	assetType:string;
+	assetType: string;
 
 	/**
 	 *
 	 */
-	assetFullPath:Array<string>;
+	assetFullPath: Array<string>;
 
 	/**
 	 *
 	 * @param name
 	 * @param ns
 	 */
-	assetPathEquals(name:string, ns:string):boolean;
+	assetPathEquals(name: string, ns: string): boolean;
 
 	/**
      *
      */
-	clone():IAsset;
+	clone(): IAsset;
 
 	/**
 	 *
@@ -57,7 +57,7 @@ export interface IAsset extends IEventDispatcher
 	 *
 	 * @param IAssetClass
 	 */
-	isAsset(IAssetClass):boolean;
+	isAsset(IAssetClass): boolean;
 
 	/**
 	 *
@@ -65,5 +65,5 @@ export interface IAsset extends IEventDispatcher
 	 * @param ns
 	 * @param overrideOriginal
 	 */
-	resetAssetPath(name:string, ns:string, overrideOriginal?:boolean):void;
+	resetAssetPath(name: string, ns: string, overrideOriginal?: boolean): void;
 }

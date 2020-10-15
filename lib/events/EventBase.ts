@@ -1,21 +1,19 @@
-export class EventBase
-{
+export class EventBase {
 	/**
 	 * Type of event
 	 * @property type
 	 * @type String
 	 */
-	public type:string = undefined;
+	public type: string = undefined;
 
 	/**
 	 * Reference to target object
 	 * @property target
 	 * @type Object
 	 */
-	public target:any = undefined;
+	public target: any = undefined;
 
-	constructor(type:string)
-	{
+	constructor(type: string) {
 		this.type = type;
 	}
 
@@ -23,11 +21,10 @@ export class EventBase
 	 * Clones the current event.
 	 * @return An exact duplicate of the current event.
 	 */
-	public clone():EventBase
-	{
+	public clone(): EventBase {
 		return new EventBase(this.type);
 	}
 
-	public _iAllowedToPropagate:boolean = true;
-	public _iAllowedToImmediatlyPropagate:boolean = true;
+	public _iAllowedToPropagate: boolean = true;
+	public _iAllowedToImmediatlyPropagate: boolean = true;
 }

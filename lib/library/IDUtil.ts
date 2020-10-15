@@ -1,5 +1,4 @@
-export class IDUtil
-{
+export class IDUtil {
 	/**
 	 *  @private
 	 *  Char codes for 0123456789ABCDEF
@@ -24,13 +23,12 @@ export class IDUtil
 	 *  @playerversion AIR 1.1
 	 *  @productversion Flex 3
 	 */
-	public static createUID():string
-	{
-		var uid = new Array(36);
-		var index:number = 0;
+	public static createUID(): string {
+		const uid = new Array(36);
+		let index: number = 0;
 
-		var i:number;
-		var j:number;
+		let i: number;
+		let j: number;
 
 		for (i = 0; i < 8; i++)
 			uid[index++] = IDUtil.ALPHA_CHAR_CODES[Math.floor(Math.random() * 16)];
@@ -44,7 +42,7 @@ export class IDUtil
 
 		uid[index++] = 45; // charCode for "-"
 
-		var time:number = new Date().getTime();
+		const time: number = new Date().getTime();
 		// Note: time is the number of milliseconds since 1970,
 		// which is currently more than one trillion.
 		// We use the low 8 hex digits of this number in the UID.
@@ -52,7 +50,7 @@ export class IDUtil
 		// Jan 1-4, 1970 (in which case this number could have only
 		// 1-7 hex digits), we pad on the left with 7 zeros
 		// before taking the low digits.
-		var timeString:string = ("0000000" + time.toString(16).toUpperCase()).substr(-8);
+		const timeString: string = ('0000000' + time.toString(16).toUpperCase()).substr(-8);
 
 		for (i = 0; i < 8; i++)
 			uid[index++] = timeString.charCodeAt(i);

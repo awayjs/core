@@ -1,36 +1,34 @@
-import {ParserUtils} from "../parsers/ParserUtils";
-export class EventAudioChannel
-{
-	public static maxChannels:number = 4;
+import { ParserUtils } from '../parsers/ParserUtils';
+export class EventAudioChannel {
+	public static maxChannels: number = 4;
 
-	public static _channels:Array<EventAudioChannel> = new Array<EventAudioChannel>();
+	public static _channels: Array<EventAudioChannel> = new Array<EventAudioChannel>();
 
-	public static _base64Cache:Object = new Object();
+	public static _base64Cache: Object = new Object();
 
-	private _isPlaying:boolean = false;
-	private _isLooping:boolean = false;
-	private _volume:number;
-	private _groupID:number = 0;
-	private _groupVolume:number = 1;
-	private _groupPan:number = 0;
-	private _startTime:number = 0;
-	private _duration:number;
+	private _isPlaying: boolean = false;
+	private _isLooping: boolean = false;
+	private _volume: number;
+	private _groupID: number = 0;
+	private _groupVolume: number = 1;
+	private _groupPan: number = 0;
+	private _startTime: number = 0;
+	private _duration: number;
 
-	public onSoundComplete:Function;
-	private _audio:HTMLAudioElement;
+	public onSoundComplete: Function;
+	private _audio: HTMLAudioElement;
 
-	public static stopAllSounds(channelGroup:number = -1)
-	{
-		var len:number = EventAudioChannel._channels.length;
+	public static stopAllSounds(channelGroup: number = -1) {
+		const len: number = EventAudioChannel._channels.length;
 		if (channelGroup < 0) {
-			for (var j:number = 0; j < len; j++) {
+			for (var j: number = 0; j < len; j++) {
 				EventAudioChannel._channels[j].stop();
 			}
 			EventAudioChannel._channels.length = 0;
 			return;
 		}
-		var aliveChannels:EventAudioChannel[] = [];
-		for (var j:number = 0; j < len; j++) {
+		const aliveChannels: EventAudioChannel[] = [];
+		for (var j: number = 0; j < len; j++) {
 			if (EventAudioChannel._channels[j].groupID == channelGroup) {
 				EventAudioChannel._channels[j].stop();
 			} else {
@@ -40,60 +38,51 @@ export class EventAudioChannel
 		EventAudioChannel._channels = aliveChannels;
 	}
 
-	public static setChannelGroupVolume(value:number, channelGroup:number = -1)
-	{
-		var len:number = EventAudioChannel._channels.length;
+	public static setChannelGroupVolume(value: number, channelGroup: number = -1) {
+		const len: number = EventAudioChannel._channels.length;
 		if (channelGroup < 0) {
-			for (var j:number = 0; j < len; j++) {
+			for (var j: number = 0; j < len; j++) {
 				EventAudioChannel._channels[j].groupVolume = value;
 			}
 			return;
 		}
-		for (var j:number = 0; j < len; j++) {
+		for (var j: number = 0; j < len; j++) {
 			if (EventAudioChannel._channels[j].groupID == channelGroup) {
 				EventAudioChannel._channels[j].groupVolume = value;
 			}
 		}
 	}
 
-	public get duration():number
-	{
+	public get duration(): number {
 		return this._duration;
 	}
 
-	public get currentTime():number
-	{
+	public get currentTime(): number {
 		return this._audio.currentTime - this._startTime;
 	}
 
-	public get pan():number
-	{
+	public get pan(): number {
 		//todo
 		return 0;
 	}
 
-	public set pan(value:number)
-	{
+	public set pan(value: number) {
 		//todo
 	}
 
-	public get groupID():number
-	{
+	public get groupID(): number {
 		return this._groupID;
 	}
 
-	public set groupID(value:number)
-	{
+	public set groupID(value: number) {
 		this._groupID = value;
 	}
 
-	public get groupVolume():number
-	{
+	public get groupVolume(): number {
 		return this._groupVolume;
 	}
 
-	public set groupVolume(value:number)
-	{
+	public set groupVolume(value: number) {
 		if (this._groupVolume == value)
 			return;
 
@@ -102,22 +91,18 @@ export class EventAudioChannel
 		this._audio.volume = this._groupVolume * this._volume;
 	}
 
-	public get groupPan():number
-	{
+	public get groupPan(): number {
 		return this._groupPan;
 	}
 
-	public set groupPan(value:number)
-	{
+	public set groupPan(value: number) {
 	}
 
-	public get volume():number
-	{
+	public get volume(): number {
 		return this._volume;
 	}
 
-	public set volume(value:number)
-	{
+	public set volume(value: number) {
 		if (this._volume == value)
 			return;
 
@@ -126,23 +111,19 @@ export class EventAudioChannel
 		this._audio.volume = this._volume;
 	}
 
-	public isPlaying():boolean
-	{
+	public isPlaying(): boolean {
 		return this._isPlaying;
 	}
 
-	public isLooping():boolean
-	{
+	public isLooping(): boolean {
 		return this._isLooping;
 	}
 
-	public isDecoding():boolean
-	{
+	public isDecoding(): boolean {
 		return false;
 	}
 
-	constructor(groupID:number = 0, groupVolume:number = 1, groupPan:number = 1)
-	{
+	constructor(groupID: number = 0, groupVolume: number = 1, groupPan: number = 1) {
 		this._groupID = groupID;
 		this._groupVolume = groupVolume;
 		this._groupPan = groupPan;
@@ -151,50 +132,47 @@ export class EventAudioChannel
 		this._audio.ontimeupdate = (event) => this._onTimeUpdate(event);
 	}
 
-	public play(buffer:ArrayBuffer, offset:number = 0, loop:boolean = false, id:number = 0):void
-	{
+	public play(buffer: ArrayBuffer, offset: number = 0, loop: boolean = false, id: number = 0): void {
 		this._isPlaying = true;
 		this._isLooping = loop;
 
-		this._audio.src = EventAudioChannel._base64Cache[id] || (EventAudioChannel._base64Cache[id] = ParserUtils.arrayBufferToBase64(buffer, "audio/mp3"));
+		this._audio.src = EventAudioChannel._base64Cache[id] || (EventAudioChannel._base64Cache[id] = ParserUtils.arrayBufferToBase64(buffer, 'audio/mp3'));
 		this._audio.loop = this._isLooping;
-		var thisAudio = this._audio;
-		this._audio.addEventListener("loadedmetadata", function() {
+		const thisAudio = this._audio;
+		this._audio.addEventListener('loadedmetadata', function() {
 			thisAudio.currentTime = offset;
 			thisAudio.play();
 		}, false);
-		this._audio.addEventListener("error", function(err) {
-			console.log("error in audio", err);
+		this._audio.addEventListener('error', function(err) {
+			console.log('error in audio', err);
 		}, false);
-		this._audio.addEventListener("error", function(err) {
-			console.log("error in audio", err);
+		this._audio.addEventListener('error', function(err) {
+			console.log('error in audio', err);
 		}, false);
-		this._audio.addEventListener("canplay", function(err) {
-			console.log("canplay in audio", err);
+		this._audio.addEventListener('canplay', function(err) {
+			console.log('canplay in audio', err);
 		}, false);
-		this._audio.addEventListener("canplaythrough", function(err) {
-			console.log("canplaythrough in audio", err);
+		this._audio.addEventListener('canplaythrough', function(err) {
+			console.log('canplaythrough in audio', err);
 		}, false);
-		this._audio.addEventListener("abort", function(err) {
-			console.log("abort in audio", err);
+		this._audio.addEventListener('abort', function(err) {
+			console.log('abort in audio', err);
 		}, false);
-		this._audio.addEventListener("loadstart", function(err) {
-			console.log("loadstart in audio", err);
+		this._audio.addEventListener('loadstart', function(err) {
+			console.log('loadstart in audio', err);
 		}, false);
-		this._audio.addEventListener("suspend", function(err) {
-			console.log("suspend in audio", err);
+		this._audio.addEventListener('suspend', function(err) {
+			console.log('suspend in audio', err);
 		}, false);
 	}
 
-	public stop():void
-	{
+	public stop(): void {
 		this._audio.pause();
 		this._isPlaying = false;
 		this._isLooping = false;
 	}
 
-	private _onTimeUpdate(event):void
-	{
+	private _onTimeUpdate(event): void {
 		//TODO: more accurate end detection
 		if (!this._isLooping && this._audio.duration < this._audio.currentTime - this._startTime + 0.1) {
 

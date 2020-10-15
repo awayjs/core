@@ -1,22 +1,21 @@
-import {IAsset} from "../library/IAsset";
+import { IAsset } from '../library/IAsset';
 
-import {EventBase} from "./EventBase";
+import { EventBase } from './EventBase';
 
-export class LoaderEvent extends EventBase
-{
+export class LoaderEvent extends EventBase {
 	/**
 	 * Dispatched when the loading of a session and all of its dependencies is started.
 	 */
-	public static LOADER_START:string = "loaderStart";
+	public static LOADER_START: string = 'loaderStart';
 
 	/**
 	 * Dispatched when the loading of a session and all of its dependencies is complete.
 	 */
-	public static LOADER_COMPLETE:string = "loaderComplete";
+	public static LOADER_COMPLETE: string = 'loaderComplete';
 
-	private _url:string;
-	private _content:IAsset;
-	private _assets:IAsset[];
+	private _url: string;
+	private _content: IAsset;
+	private _assets: IAsset[];
 
 	/**
 	 * Create a new LoaderEvent object.
@@ -25,8 +24,7 @@ export class LoaderEvent extends EventBase
 	 * @param url The url of the loaded resource.
 	 * @param assets The assets of the loaded resource.
 	 */
-	constructor(type:string, url:string = null, content:IAsset = null, assets:Array<IAsset> = null)
-	{
+	constructor(type: string, url: string = null, content: IAsset = null, assets: Array<IAsset> = null) {
 		super(type);
 
 		this._url = url;
@@ -37,24 +35,21 @@ export class LoaderEvent extends EventBase
 	/**
 	 * The content returned if the resource has been loaded inside a <code>Loader</code> object.
 	 */
-	public get content():IAsset
-	{
+	public get content(): IAsset {
 		return this._content;
 	}
 
 	/**
 	 * The url of the loaded resource.
 	 */
-	public get url():string
-	{
+	public get url(): string {
 		return this._url;
 	}
 
 	/**
 	 * The error string on loadError.
 	 */
-	public get assets():IAsset[]
-	{
+	public get assets(): IAsset[] {
 		return this._assets;
 	}
 
@@ -62,8 +57,7 @@ export class LoaderEvent extends EventBase
 	 * Clones the current event.
 	 * @return An exact duplicate of the current event.
 	 */
-	public clone():LoaderEvent
-	{
+	public clone(): LoaderEvent {
 		return new LoaderEvent(this.type, this._url, this._content, this._assets);
 	}
 }

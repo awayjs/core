@@ -1,25 +1,22 @@
-import {ConflictStrategyBase} from "./ConflictStrategyBase";
-import {IAssetAdapter} from "./IAssetAdapter";
+import { ConflictStrategyBase } from './ConflictStrategyBase';
+import { IAssetAdapter } from './IAssetAdapter';
 
-export class NumSuffixConflictStrategy extends ConflictStrategyBase
-{
-	private _separator:string;
-	private _next_suffix:Object;
+export class NumSuffixConflictStrategy extends ConflictStrategyBase {
+	private _separator: string;
+	private _next_suffix: Object;
 
-	constructor(separator:string = ".")
-	{
+	constructor(separator: string = '.') {
 		super();
 
 		this._separator = separator;
 		this._next_suffix = {};
 	}
 
-	public resolveConflict(changedAsset:IAssetAdapter, oldAsset:IAssetAdapter, assetsDictionary:Object, precedence:string):void
-	{
-		var orig:string;
-		var new_name:string;
-		var base:string;
-		var suffix:number;
+	public resolveConflict(changedAsset: IAssetAdapter, oldAsset: IAssetAdapter, assetsDictionary: Object, precedence: string): void {
+		let orig: string;
+		let new_name: string;
+		let base: string;
+		let suffix: number;
 
 		orig = changedAsset.adaptee.name;
 
@@ -61,8 +58,7 @@ export class NumSuffixConflictStrategy extends ConflictStrategyBase
 
 	}
 
-	public create():ConflictStrategyBase
-	{
+	public create(): ConflictStrategyBase {
 		return new NumSuffixConflictStrategy(this._separator);
 	}
 }

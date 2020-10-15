@@ -20,41 +20,35 @@
  * <p>You can use the <code>new Point()</code> constructor to create a Point
  * object.</p>
  */
-export class Point
-{
-	public _rawData:Float32Array = new Float32Array(2);
+export class Point {
+	public _rawData: Float32Array = new Float32Array(2);
 
 	/**
 	 * The horizontal coordinate of the point. The default value is 0.
 	 */
-	public get x():number
-	{
+	public get x(): number {
 		return this._rawData[0];
 	}
 
-	public set x(value:number)
-	{
+	public set x(value: number) {
 		this._rawData[0] = value;
 	}
 
 	/**
 	 * The vertical coordinate of the point. The default value is 0.
 	 */
-	public get y():number
-	{
+	public get y(): number {
 		return this._rawData[1];
 	}
 
-	public set y(value:number)
-	{
+	public set y(value: number) {
 		this._rawData[1] = value;
 	}
 
 	/**
 	 * The length of the line segment from(0,0) to this point.
 	 */
-	public get length():number
-	{
+	public get length(): number {
 		return Math.sqrt(this._rawData[0] * this._rawData[0] + this._rawData[1] * this._rawData[1]);
 	}
 
@@ -65,8 +59,7 @@ export class Point
 	 * @param x The horizontal coordinate.
 	 * @param y The vertical coordinate.
 	 */
-	constructor(x:number = 0, y:number = 0)
-	{
+	constructor(x: number = 0, y: number = 0) {
 		this._rawData[0] = x;
 		this._rawData[1] = y;
 	}
@@ -78,8 +71,7 @@ export class Point
 	 * @param v The point to be added.
 	 * @return The new point.
 	 */
-	public add(v:Point):Point
-	{
+	public add(v: Point): Point {
 		return new Point(this._rawData[0] + v._rawData[0], this._rawData[1] + v._rawData[1]);
 	}
 
@@ -88,13 +80,11 @@ export class Point
 	 *
 	 * @return The new Point object.
 	 */
-	public clone():Point
-	{
+	public clone(): Point {
 		return new Point(this.x, this.y);
 	}
 
-	public copyFrom(sourcePoint:Point):void
-	{
+	public copyFrom(sourcePoint: Point): void {
 		this._rawData[0] = sourcePoint._rawData[0];
 		this._rawData[1] = sourcePoint._rawData[1];
 	}
@@ -107,8 +97,7 @@ export class Point
 	 * @return A value of <code>true</code> if the object is equal to this Point
 	 *         object; <code>false</code> if it is not equal.
 	 */
-	public equals(toCompare:Point):boolean
-	{
+	public equals(toCompare: Point): boolean {
 		return (this._rawData[0] === toCompare._rawData[0] && this._rawData[1] == toCompare._rawData[1]);
 	}
 
@@ -120,12 +109,11 @@ export class Point
 	 *                 (0,5), and you normalize it to 1, the point returned is
 	 *                  at(0,1).
 	 */
-	public normalize(thickness:number = 1):void
-	{
-		var len:number = this.length;
+	public normalize(thickness: number = 1): void {
+		const len: number = this.length;
 
 		if ((this.x !== 0 || this.y !== 0) && len) {
-			var relativeThickness:number = thickness / len;
+			const relativeThickness: number = thickness / len;
 			this._rawData[0] *= relativeThickness;
 			this._rawData[1] *= relativeThickness;
 		}
@@ -141,14 +129,12 @@ export class Point
 	 *           <i>x</i>.
 	 * @param dy The amount by which to offset the vertical coordinate, <i>y</i>.
 	 */
-	public offset(dx:number, dy:number):void
-	{
+	public offset(dx: number, dy: number): void {
 		this._rawData[0] += dx;
 		this._rawData[1] += dy;
 	}
 
-	public setTo(xa:number, ya:number):void
-	{
+	public setTo(xa: number, ya: number): void {
 		this._rawData[0] = xa;
 		this._rawData[1] = ya;
 	}
@@ -160,8 +146,7 @@ export class Point
 	 * @param v The point to be subtracted.
 	 * @return The new point.
 	 */
-	public subtract(v:Point):Point
-	{
+	public subtract(v: Point): Point {
 		return new Point(this.x - v.x, this.y - v.y);
 	}
 
@@ -173,9 +158,8 @@ export class Point
 	 *
 	 * @return The string representation of the coordinates.
 	 */
-	public toString():string
-	{
-		return "[Point] (x=" + this.x + ", y=" + this.y + ")";
+	public toString(): string {
+		return '[Point] (x=' + this.x + ', y=' + this.y + ')';
 	}
 
 	/**
@@ -185,10 +169,9 @@ export class Point
 	 * @param pt2 The second point.
 	 * @return The distance between the first and second points.
 	 */
-	public static distance(pt1:Point, pt2:Point):number
-	{
-		var dx:number = pt2.x - pt1.x;
-		var dy:number = pt2.y - pt1.y;
+	public static distance(pt1: Point, pt2: Point): number {
+		const dx: number = pt2.x - pt1.x;
+		const dy: number = pt2.y - pt1.y;
 
 		return (dx === 0) ? Math.abs(dy) : (dy === 0) ? Math.abs(dx) : Math.sqrt(dx * dx + dy * dy);
 	}
@@ -212,11 +195,10 @@ export class Point
 	 *            <code>pt2</code> is returned.
 	 * @return The new, interpolated point.
 	 */
-	public static interpolate(pt1:Point, pt2:Point, f:number):Point
-	{
-		var f1:number = 1 - f;
-		var raw1:Float32Array = pt1._rawData;
-		var raw2:Float32Array = pt2._rawData;
+	public static interpolate(pt1: Point, pt2: Point, f: number): Point {
+		const f1: number = 1 - f;
+		const raw1: Float32Array = pt1._rawData;
+		const raw2: Float32Array = pt2._rawData;
 
 		return new Point(raw1[0] * f + raw2[0] * f1, raw1[1] * f + raw2[1] * f1);
 	}
@@ -228,8 +210,7 @@ export class Point
 	 * @param angle The angle, in radians, of the polar pair.
 	 * @return The Cartesian point.
 	 */
-	public static polar(len:number, angle:number):Point
-	{
+	public static polar(len: number, angle: number): Point {
 		return new Point(len * Math.cos(angle), len * Math.sin(angle));
 	}
 }

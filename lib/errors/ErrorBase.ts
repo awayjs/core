@@ -1,12 +1,10 @@
-export class ErrorBase
-{
+export class ErrorBase {
 
-	private _errorID:number = 0;   //Contains the reference number associated with the specific error message.
-	private _messsage:string = "";  //Contains the message associated with the Error object.
-	private _name:string = "";  // Contains the name of the Error object.
+	private _errorID: number = 0;   //Contains the reference number associated with the specific error message.
+	private _messsage: string = '';  //Contains the message associated with the Error object.
+	private _name: string = '';  // Contains the name of the Error object.
 
-	constructor(message:string = "", id:number = 0, name:string = "")
-	{
+	constructor(message: string = '', id: number = 0, name: string = '') {
 
 		this._messsage = message;
 		this._name = name;
@@ -18,8 +16,7 @@ export class ErrorBase
 	 *
 	 * @returns {string}
 	 */
-	public get message():string
-	{
+	public get message(): string {
 		return this._messsage;
 	}
 
@@ -27,8 +24,7 @@ export class ErrorBase
 	 *
 	 * @param value
 	 */
-	public set message(value:string)
-	{
+	public set message(value: string) {
 		this._messsage = value;
 	}
 
@@ -36,8 +32,7 @@ export class ErrorBase
 	 *
 	 * @returns {string}
 	 */
-	public get name():string
-	{
+	public get name(): string {
 
 		return this._name;
 
@@ -47,8 +42,7 @@ export class ErrorBase
 	 *
 	 * @param value
 	 */
-	public set name(value:string)
-	{
+	public set name(value: string) {
 
 		this._name = value;
 
@@ -58,8 +52,7 @@ export class ErrorBase
 	 *
 	 * @returns {number}
 	 */
-	public get errorID():number
-	{
+	public get errorID(): number {
 
 		return this._errorID;
 

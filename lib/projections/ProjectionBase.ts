@@ -1,57 +1,52 @@
-import {Transform} from "../base/Transform";
-import {Matrix3D} from "../geom/Matrix3D";
-import {Vector3D} from "../geom/Vector3D";
-import {EventDispatcher} from "../events/EventDispatcher";
-import {ProjectionEvent} from "../events/ProjectionEvent";
-import {TransformEvent} from "../events/TransformEvent";
-import {AbstractMethodError} from "../errors/AbstractMethodError";
+import { Transform } from '../base/Transform';
+import { Matrix3D } from '../geom/Matrix3D';
+import { Vector3D } from '../geom/Vector3D';
+import { EventDispatcher } from '../events/EventDispatcher';
+import { ProjectionEvent } from '../events/ProjectionEvent';
+import { TransformEvent } from '../events/TransformEvent';
+import { AbstractMethodError } from '../errors/AbstractMethodError';
 
-import {CoordinateSystem} from "./CoordinateSystem";
-import {Rectangle} from "../geom/Rectangle";
-import {Plane3D} from "../geom/Plane3D";
+import { CoordinateSystem } from './CoordinateSystem';
+import { Rectangle } from '../geom/Rectangle';
+import { Plane3D } from '../geom/Plane3D';
 
-export class ProjectionBase extends EventDispatcher
-{
-	protected _viewMatrix3D:Matrix3D = new Matrix3D();
-	protected _inverseViewMatrix3D:Matrix3D = new Matrix3D();
-	protected _frustumMatrix3D:Matrix3D = new Matrix3D();
-	protected _near:number = 20;
-	protected _far:number = 3000;
-	protected _scale:number = 1;
-	protected _ratio:number = 1;
-	protected _transform:Transform;
-	protected _coordinateSystem:CoordinateSystem;
-	protected _originX:number = 0;
-	protected _originY:number = 0;
-	protected _frustumRect:Rectangle = new Rectangle();
-	private _viewFrustumCorners:number[] = [];
-	private _viewFrustumPlanes:Array<Plane3D>;
+export class ProjectionBase extends EventDispatcher {
+	protected _viewMatrix3D: Matrix3D = new Matrix3D();
+	protected _inverseViewMatrix3D: Matrix3D = new Matrix3D();
+	protected _frustumMatrix3D: Matrix3D = new Matrix3D();
+	protected _near: number = 20;
+	protected _far: number = 3000;
+	protected _scale: number = 1;
+	protected _ratio: number = 1;
+	protected _transform: Transform;
+	protected _coordinateSystem: CoordinateSystem;
+	protected _originX: number = 0;
+	protected _originY: number = 0;
+	protected _frustumRect: Rectangle = new Rectangle();
+	private _viewFrustumCorners: number[] = [];
+	private _viewFrustumPlanes: Array<Plane3D>;
 
-	private _propertiesDirty:boolean;
-	private _viewMatrix3DDirty:boolean = true;
-	private _inverseViewMatrix3DDirty:boolean = true;
-	protected _frustumMatrix3DDirty:boolean = true;
-	private _viewFrustumCornersDirty:boolean = true;
-	private _viewFrustumPlanesDirty:boolean = true;
-	private _onInvalidateConcatenatedMatrix3DDelegate:(event:TransformEvent) => void;
+	private _propertiesDirty: boolean;
+	private _viewMatrix3DDirty: boolean = true;
+	private _inverseViewMatrix3DDirty: boolean = true;
+	protected _frustumMatrix3DDirty: boolean = true;
+	private _viewFrustumCornersDirty: boolean = true;
+	private _viewFrustumPlanesDirty: boolean = true;
+	private _onInvalidateConcatenatedMatrix3DDelegate: (event: TransformEvent) => void;
 
-
-	constructor(coordinateSystem:CoordinateSystem = CoordinateSystem.LEFT_HANDED)
-	{
+	constructor(coordinateSystem: CoordinateSystem = CoordinateSystem.LEFT_HANDED) {
 		super();
 
 		this._coordinateSystem = coordinateSystem;
 
-		this._onInvalidateConcatenatedMatrix3DDelegate = (event:TransformEvent) => this._onInvalidateConcatenatedMatrix3D(event);
+		this._onInvalidateConcatenatedMatrix3DDelegate = (event: TransformEvent) => this._onInvalidateConcatenatedMatrix3D(event);
 	}
 
-	public get transform():Transform
-	{
+	public get transform(): Transform {
 		return this._transform;
 	}
 
-	public set transform(value:Transform)
-	{
+	public set transform(value: Transform) {
 		if (this._transform == value)
 			return;
 
@@ -69,13 +64,11 @@ export class ProjectionBase extends EventDispatcher
 	/**
 	 * The handedness of the coordinate system projection. The default is LEFT_HANDED.
 	 */
-	public get coordinateSystem():CoordinateSystem
-	{
+	public get coordinateSystem(): CoordinateSystem {
 		return this._coordinateSystem;
 	}
 
-	public set coordinateSystem(value:CoordinateSystem)
-	{
+	public set coordinateSystem(value: CoordinateSystem) {
 		if (this._coordinateSystem == value)
 			return;
 
@@ -87,16 +80,14 @@ export class ProjectionBase extends EventDispatcher
 	/**
 	 *
 	 */
-	public get scale():number
-	{
+	public get scale(): number {
 		if (this._propertiesDirty)
 			this._updateProperties();
 
 		return this._scale;
 	}
 
-	public set scale(value:number)
-	{
+	public set scale(value: number) {
 		if (this._scale == value)
 			return;
 
@@ -108,16 +99,14 @@ export class ProjectionBase extends EventDispatcher
 	/**
 	 *
 	 */
-	public get ratio():number
-	{
+	public get ratio(): number {
 		if (this._propertiesDirty)
 			this._updateProperties();
 
 		return this._ratio;
 	}
 
-	public set ratio(value:number)
-	{
+	public set ratio(value: number) {
 		if (this._ratio == value)
 			return;
 
@@ -130,45 +119,41 @@ export class ProjectionBase extends EventDispatcher
 	 *
 	 * @returns {Matrix3D}
 	 */
-	public get frustumMatrix3D():Matrix3D
-	{
+	public get frustumMatrix3D(): Matrix3D {
 		if (this._frustumMatrix3DDirty)
 			this._updateFrustumMatrix3D();
 
 		return this._frustumMatrix3D;
 	}
 
-	public set frustumMatrix3D(value:Matrix3D)
-	{
+	public set frustumMatrix3D(value: Matrix3D) {
 		this._frustumMatrix3D = value;
 
 		this._invalidateViewMatrix3D();
 		this._invalidateProperties();
 	}
 
-
 	/**
 	 *
 	 * @returns {number[]}
 	 */
-	public get viewFrustumCorners():number[]
-	{
+	public get viewFrustumCorners(): number[] {
 		if (this._viewFrustumCornersDirty) {
 			this._viewFrustumCornersDirty = false;
 
 			if (this._frustumMatrix3DDirty)
 				this._updateFrustumMatrix3D();
 
-			var left:number = this._frustumRect.left;
-			var right:number = this._frustumRect.right;
-			var top:number = this._frustumRect.top;
-			var bottom:number = this._frustumRect.bottom;
+			const left: number = this._frustumRect.left;
+			const right: number = this._frustumRect.right;
+			const top: number = this._frustumRect.top;
+			const bottom: number = this._frustumRect.bottom;
 
 			if (this._propertiesDirty)
 				this._updateProperties();
 
-			var near:number = this._near;
-			var far:number = this._far;
+			const near: number = this._near;
+			const far: number = this._far;
 
 			this._viewFrustumCorners[0] = this._viewFrustumCorners[9] = near * left;
 			this._viewFrustumCorners[3] = this._viewFrustumCorners[6] = near * right;
@@ -192,27 +177,26 @@ export class ProjectionBase extends EventDispatcher
 	/**
 	 *
 	 */
-	public get viewFrustumPlanes():Array<Plane3D>
-	{
+	public get viewFrustumPlanes(): Array<Plane3D> {
 		if (this._viewFrustumPlanesDirty) {
 			this._viewFrustumPlanesDirty = false;
 
 			if (!this._viewFrustumPlanes) {
 				this._viewFrustumPlanes = [];
 
-				for (var i:number = 0; i < 6; ++i)
+				for (let i: number = 0; i < 6; ++i)
 					this._viewFrustumPlanes[i] = new Plane3D();
 			}
 
-			var raw:Float32Array = this.viewMatrix3D._rawData;
-			var invLen:number;
+			const raw: Float32Array = this.viewMatrix3D._rawData;
+			let invLen: number;
 
-			var c11:number = raw[0], c12:number = raw[4], c13:number = raw[8], c14:number = raw[12];
-			var c21:number = raw[1], c22:number = raw[5], c23:number = raw[9], c24:number = raw[13];
-			var c31:number = raw[2], c32:number = raw[6], c33:number = raw[10], c34:number = raw[14];
-			var c41:number = raw[3], c42:number = raw[7], c43:number = raw[11], c44:number = raw[15];
+			const c11: number = raw[0], c12: number = raw[4], c13: number = raw[8], c14: number = raw[12];
+			const c21: number = raw[1], c22: number = raw[5], c23: number = raw[9], c24: number = raw[13];
+			const c31: number = raw[2], c32: number = raw[6], c33: number = raw[10], c34: number = raw[14];
+			const c41: number = raw[3], c42: number = raw[7], c43: number = raw[11], c44: number = raw[15];
 
-			var a:number, b:number, c:number, p:Plane3D;
+			let a: number, b: number, c: number, p: Plane3D;
 
 			// left plane
 			p = this._viewFrustumPlanes[0];
@@ -288,16 +272,14 @@ export class ProjectionBase extends EventDispatcher
 	 *
 	 * @returns {number}
 	 */
-	public get near():number
-	{
+	public get near(): number {
 		if (this._propertiesDirty)
 			this._updateProperties();
 
 		return this._near;
 	}
 
-	public set near(value:number)
-	{
+	public set near(value: number) {
 		if (value == this._near)
 			return;
 
@@ -310,16 +292,14 @@ export class ProjectionBase extends EventDispatcher
 	 *
 	 * @returns {number}
 	 */
-	public get originX():number
-	{
+	public get originX(): number {
 		if (this._propertiesDirty)
 			this._updateProperties();
 
 		return this._originX;
 	}
 
-	public set originX(value:number)
-	{
+	public set originX(value: number) {
 		if (this._originX == value)
 			return;
 
@@ -332,16 +312,14 @@ export class ProjectionBase extends EventDispatcher
 	 *
 	 * @returns {number}
 	 */
-	public get originY():number
-	{
+	public get originY(): number {
 		if (this._propertiesDirty)
 			this._updateProperties();
 
 		return this._originY;
 	}
 
-	public set originY(value:number)
-	{
+	public set originY(value: number) {
 		if (this._originY == value)
 			return;
 
@@ -354,16 +332,14 @@ export class ProjectionBase extends EventDispatcher
 	 *
 	 * @returns {number}
 	 */
-	public get far():number
-	{
+	public get far(): number {
 		if (this._propertiesDirty)
 			this._updateProperties();
 
 		return this._far;
 	}
 
-	public set far(value:number)
-	{
+	public set far(value: number) {
 		if (value == this._far)
 			return;
 
@@ -372,8 +348,7 @@ export class ProjectionBase extends EventDispatcher
 		this._invalidateFrustumMatrix3D();
 	}
 
-	public get frustumRect():Rectangle
-	{
+	public get frustumRect(): Rectangle {
 		if (this._frustumMatrix3DDirty)
 			this._updateFrustumMatrix3D();
 
@@ -385,8 +360,7 @@ export class ProjectionBase extends EventDispatcher
 	 * @param position
 	 * @param target
 	 */
-	public project(position:Vector3D, target:Vector3D = null):Vector3D
-	{
+	public project(position: Vector3D, target: Vector3D = null): Vector3D {
 		throw new AbstractMethodError();
 	}
 
@@ -397,13 +371,11 @@ export class ProjectionBase extends EventDispatcher
 	 * @param sZ
 	 * @param target
 	 */
-	public unproject(nX:number, nY:number, sZ:number, target:Vector3D = null):Vector3D
-	{
+	public unproject(nX: number, nY: number, sZ: number, target: Vector3D = null): Vector3D {
 		throw new AbstractMethodError();
 	}
 
-	public get viewMatrix3D():Matrix3D
-	{
+	public get viewMatrix3D(): Matrix3D {
 		if (this._viewMatrix3DDirty) {
 			this._viewMatrix3DDirty = false;
 
@@ -418,8 +390,7 @@ export class ProjectionBase extends EventDispatcher
 		return this._viewMatrix3D;
 	}
 
-	public get inverseViewMatrix3D():Matrix3D
-	{
+	public get inverseViewMatrix3D(): Matrix3D {
 		if (this._inverseViewMatrix3DDirty) {
 			this._inverseViewMatrix3DDirty = false;
 			this._inverseViewMatrix3D.copyFrom(this.viewMatrix3D);
@@ -429,18 +400,15 @@ export class ProjectionBase extends EventDispatcher
 		return this._inverseViewMatrix3D;
 	}
 
-	public clone():ProjectionBase
-	{
+	public clone(): ProjectionBase {
 		throw new AbstractMethodError();
 	}
 
-	private _invalidateProperties():void
-	{
+	private _invalidateProperties(): void {
 		this._propertiesDirty = true;
 	}
 
-	private _invalidateViewMatrix3D():void
-	{
+	private _invalidateViewMatrix3D(): void {
 		this._viewMatrix3DDirty = true;
 		this._inverseViewMatrix3DDirty = true;
 		this._viewFrustumCornersDirty = true;
@@ -449,8 +417,7 @@ export class ProjectionBase extends EventDispatcher
 		this.dispatchEvent(new ProjectionEvent(ProjectionEvent.INVALIDATE_VIEW_MATRIX3D, this));
 	}
 
-	protected _invalidateFrustumMatrix3D():void
-	{
+	protected _invalidateFrustumMatrix3D(): void {
 		if (this._propertiesDirty)
 			this._updateProperties();
 
@@ -461,18 +428,15 @@ export class ProjectionBase extends EventDispatcher
 		this._invalidateViewMatrix3D();
 	}
 
-	protected _updateFrustumMatrix3D():void
-	{
+	protected _updateFrustumMatrix3D(): void {
 		this._frustumMatrix3DDirty = false;
 	}
 
-	protected _updateProperties():void
-	{
+	protected _updateProperties(): void {
 		this._propertiesDirty = false;
 	}
 
-	private _onInvalidateConcatenatedMatrix3D(event:TransformEvent):void
-	{
+	private _onInvalidateConcatenatedMatrix3D(event: TransformEvent): void {
 		this._invalidateViewMatrix3D();
 	}
 }

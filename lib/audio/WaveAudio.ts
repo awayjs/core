@@ -1,28 +1,26 @@
-import {AssetBase} from "../library/AssetBase";
+import { AssetBase } from '../library/AssetBase';
 
-import {IAudioChannel} from "../managers/IAudioChannel";
-import {AudioManager} from "../managers/AudioManager";
+import { IAudioChannel } from '../managers/IAudioChannel';
+import { AudioManager } from '../managers/AudioManager';
 
-import {ByteArray} from "../utils/ByteArray";
+import { ByteArray } from '../utils/ByteArray';
 
 // TODO: Audio should probably be an interface containing play/stop/seek functionality
-export class WaveAudio extends AssetBase
-{
-	public static assetType:string = "[asset WaveAudio]";
+export class WaveAudio extends AssetBase {
+	public static assetType: string = '[asset WaveAudio]';
 
-	private _audioChannel:IAudioChannel;
-	private _volume:number = 1;
-	private _pan:number = 0;
-	private _data:WaveAudioData;
-	private _channelGroup:number;
-	private _onSoundComplete:Function;
-	private _audioChannels:IAudioChannel[] = [];
-	private _loopsToPlay:number = 0;
-	private _isPlaying:boolean = false;
-	private _channelsPlaying:number = 0;
+	private _audioChannel: IAudioChannel;
+	private _volume: number = 1;
+	private _pan: number = 0;
+	private _data: WaveAudioData;
+	private _channelGroup: number;
+	private _onSoundComplete: Function;
+	private _audioChannels: IAudioChannel[] = [];
+	private _loopsToPlay: number = 0;
+	private _isPlaying: boolean = false;
+	private _channelsPlaying: number = 0;
 
-	public get isPlaying():boolean
-	{
+	public get isPlaying(): boolean {
 		if (!this._audioChannel)
 			return false;
 
@@ -33,18 +31,15 @@ export class WaveAudio extends AssetBase
 	 *
 	 * @returns {string}
 	 */
-	public get assetType():string
-	{
+	public get assetType(): string {
 		return WaveAudio.assetType;
 	}
 
-	public get loopsToPlay():number
-	{
+	public get loopsToPlay(): number {
 		return this._loopsToPlay;
 	}
 
-	public set loopsToPlay(value:number)
-	{
+	public set loopsToPlay(value: number) {
 		if (this._loopsToPlay == value)
 			return;
 
@@ -54,9 +49,7 @@ export class WaveAudio extends AssetBase
 			this._audioChannel.onSoundComplete = () => this._soundCompleteInternal();
 	}
 
-
-	private _soundCompleteInternal():void
-	{
+	private _soundCompleteInternal(): void {
 		this._loopsToPlay--;
 
 		if (this._loopsToPlay > 0) {
@@ -74,13 +67,11 @@ export class WaveAudio extends AssetBase
 		}
 	}
 
-	public get pan():number
-	{
+	public get pan(): number {
 		return this._pan;
 	}
 
-	public set pan(value:number)
-	{
+	public set pan(value: number) {
 		if (this._pan == value)
 			return;
 
@@ -90,31 +81,27 @@ export class WaveAudio extends AssetBase
 			this._audioChannel.pan = this._pan;
 	}
 
-	public get channelGroup():number
-	{
+	public get channelGroup(): number {
 		return this._channelGroup;
 	}
 
-	public set channelGroup(value:number)
-	{
+	public set channelGroup(value: number) {
 		if (this._channelGroup == value)
 			return;
 
 		this._channelGroup = value;
 
-		var groupVolume:number = AudioManager.getVolume(value);
+		const groupVolume: number = AudioManager.getVolume(value);
 
-		for (var i:number = 0; i < this._audioChannels.length; i++)
+		for (let i: number = 0; i < this._audioChannels.length; i++)
 			this._audioChannels[i].groupVolume = groupVolume;
 	}
 
-	public get volume():number
-	{
+	public get volume(): number {
 		return this._volume;
 	}
 
-	public set volume(value:number)
-	{
+	public set volume(value: number) {
 		if (this._volume == value)
 			return;
 
@@ -123,20 +110,18 @@ export class WaveAudio extends AssetBase
 		if (this._audioChannel)
 			this._audioChannel.volume = this._volume;
 
-		for (var i:number = 0; i < this._audioChannels.length; i++)
+		for (let i: number = 0; i < this._audioChannels.length; i++)
 			this._audioChannels[i].volume = this._volume;
 	}
 
-	public get currentTime():number
-	{
+	public get currentTime(): number {
 		if (this._audioChannel)
 			return this._audioChannel.currentTime;
 
 		return 0;
 	}
 
-	public get duration():number
-	{
+	public get duration(): number {
 		if (this._audioChannel)
 			return this._audioChannel.duration;
 
@@ -146,8 +131,7 @@ export class WaveAudio extends AssetBase
 	/**
 	 *
 	 */
-	constructor(data:WaveAudioData, channelGroup:number = 0)
-	{
+	constructor(data: WaveAudioData, channelGroup: number = 0) {
 		super();
 
 		this._data = data;
@@ -155,18 +139,15 @@ export class WaveAudio extends AssetBase
 		this._channelGroup = channelGroup;
 	}
 
-	public dispose():void
-	{
+	public dispose(): void {
 		this._isPlaying = false;
 		this.stop();
 	}
 
-	public play(offset:number, loop:boolean = false):void
-	{
+	public play(offset: number, loop: boolean = false): void {
 		this._isPlaying = true;
 
 		this._audioChannel = AudioManager.getChannel(this._data.size, this.channelGroup);
-
 
 		if (this._audioChannel) {
 			this._channelsPlaying++;
@@ -177,19 +158,17 @@ export class WaveAudio extends AssetBase
 		}
 	}
 
-	public set onSoundComplete(value:Function)
-	{
+	public set onSoundComplete(value: Function) {
 		this._onSoundComplete = value;
 
 		if (this._audioChannel)
 			this._audioChannel.onSoundComplete = () => this._soundCompleteInternal();
 	}
 
-	public stop():void
-	{
+	public stop(): void {
 		this._isPlaying = false;
 
-		for (var i:number = 0; i < this._audioChannels.length; i++) {
+		for (let i: number = 0; i < this._audioChannels.length; i++) {
 			this._audioChannels[i].stop();
 			delete this._audioChannels[i];
 		}
@@ -200,9 +179,8 @@ export class WaveAudio extends AssetBase
 		this._audioChannel = null;
 	}
 
-	public clone():WaveAudio
-	{
-		var newInstance:WaveAudio = new WaveAudio(this._data);
+	public clone(): WaveAudio {
+		const newInstance: WaveAudio = new WaveAudio(this._data);
 
 		newInstance.name = this.name;
 
@@ -210,34 +188,30 @@ export class WaveAudio extends AssetBase
 	}
 }
 
-export class WaveAudioData
-{
-	private _loading:boolean;
-	private _blob:Blob;
-	private _buffer:ArrayBuffer;
+export class WaveAudioData {
+	private _loading: boolean;
+	private _blob: Blob;
+	private _buffer: ArrayBuffer;
 
-	public get size():number
-	{
+	public get size(): number {
 		if (this._buffer)
 			return this._buffer.byteLength;
 
 		return this._blob.size;
 	}
 
-	public play(audioChannel:IAudioChannel, offset:number, loop:boolean, id:number):void
-	{
+	public play(audioChannel: IAudioChannel, offset: number, loop: boolean, id: number): void {
 		if (this._buffer) {
 			audioChannel.play(this._buffer, offset, loop, id);
 		} else if (!this._loading) {
 			this._loading = true;
-			var fileReader = new FileReader();
+			const fileReader = new FileReader();
 			fileReader.onload = (event) => this._blobConverted(event, audioChannel, offset, loop, id);
 			fileReader.readAsArrayBuffer(this._blob);
 		}
 	}
 
-	constructor(data:ArrayBuffer | ByteArray | Blob)
-	{
+	constructor(data: ArrayBuffer | ByteArray | Blob) {
 		if (data instanceof Blob) {
 			this._blob = data;
 		} else {
@@ -245,8 +219,7 @@ export class WaveAudioData
 		}
 	}
 
-	private _blobConverted(event, audioChannel:IAudioChannel, offset:number, loop:boolean, id:number)
-	{
+	private _blobConverted(event, audioChannel: IAudioChannel, offset: number, loop: boolean, id: number) {
 		this._buffer = event.target.result;
 
 		audioChannel.play(this._buffer, offset, loop, id);

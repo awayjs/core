@@ -1,7 +1,7 @@
-import {ArgumentError} from "../errors/ArgumentError";
+import { ArgumentError } from '../errors/ArgumentError';
 
-import {Point} from "./Point";
-import {Vector3D} from "./Vector3D";
+import { Point } from './Point';
+import { Vector3D } from './Vector3D';
 
 /**
  * The Matrix export class represents a transformation matrix that determines how to
@@ -58,21 +58,18 @@ import {Vector3D} from "./Vector3D";
  * <p>Use the <code>new Matrix()</code> constructor to create a Matrix object
  * before you can call the methods of the Matrix object.</p>
  */
-export class Matrix
-{
-	public rawData:Float32Array = new Float32Array(6);
+export class Matrix {
+	public rawData: Float32Array = new Float32Array(6);
 
 	/**
 	 * The value that affects the positioning of pixels along the <i>x</i> axis
 	 * when scaling or rotating an image.
 	 */
-	public get a():number
-	{
+	public get a(): number {
 		return this.rawData[0];
 	}
 
-	public set a(value:number)
-	{
+	public set a(value: number) {
 		this.rawData[0] = value;
 	}
 
@@ -80,13 +77,11 @@ export class Matrix
 	 * The value that affects the positioning of pixels along the <i>y</i> axis
 	 * when rotating or skewing an image.
 	 */
-	public get b():number
-	{
+	public get b(): number {
 		return this.rawData[1];
 	}
 
-	public set b(value:number)
-	{
+	public set b(value: number) {
 		this.rawData[1] = value;
 	}
 
@@ -94,13 +89,11 @@ export class Matrix
 	 * The value that affects the positioning of pixels along the <i>x</i> axis
 	 * when rotating or skewing an image.
 	 */
-	public get c():number
-	{
+	public get c(): number {
 		return this.rawData[2];
 	}
 
-	public set c(value:number)
-	{
+	public set c(value: number) {
 		this.rawData[2] = value;
 	}
 
@@ -108,39 +101,33 @@ export class Matrix
 	 * The value that affects the positioning of pixels along the <i>y</i> axis
 	 * when scaling or rotating an image.
 	 */
-	public get d():number
-	{
+	public get d(): number {
 		return this.rawData[3];
 	}
 
-	public set d(value:number)
-	{
+	public set d(value: number) {
 		this.rawData[3] = value;
 	}
 
 	/**
 	 * The distance by which to translate each point along the <i>x</i> axis.
 	 */
-	public get tx():number
-	{
+	public get tx(): number {
 		return this.rawData[4];
 	}
 
-	public set tx(value:number)
-	{
+	public set tx(value: number) {
 		this.rawData[4] = value;
 	}
 
 	/**
 	 * The distance by which to translate each point along the <i>y</i> axis.
 	 */
-	public get ty():number
-	{
+	public get ty(): number {
 		return this.rawData[5];
 	}
 
-	public set ty(value:number)
-	{
+	public set ty(value: number) {
 		this.rawData[5] = value;
 	}
 
@@ -167,14 +154,13 @@ export class Matrix
 	 * @param ty The distance by which to translate each point along the <i>y</i>
 	 *           axis.
 	 */
-	constructor(rawData?:Float32Array);
-	constructor(a?:number, b?:number, c?:number, d?:number, tx?:number, ty?:number);
-	constructor(a:number | Float32Array = 1, b:number = 0, c:number = 0, d:number = 1, tx:number = 0, ty:number = 0)
-	{
+	constructor(rawData?: Float32Array);
+	constructor(a?: number, b?: number, c?: number, d?: number, tx?: number, ty?: number);
+	constructor(a: number | Float32Array = 1, b: number = 0, c: number = 0, d: number = 1, tx: number = 0, ty: number = 0) {
 		if (a instanceof Float32Array) {
 			this.copyRawDataFrom(a);
 		} else {
-			var raw:Float32Array = this.rawData;
+			const raw: Float32Array = this.rawData;
 
 			raw[0] = Number(a);
 			raw[1] = b;
@@ -185,10 +171,8 @@ export class Matrix
 		}
 	}
 
-
-	public copyRawDataFrom(vector:Float32Array, offset:number = 0):void
-	{
-		var raw:Float32Array = this.rawData;
+	public copyRawDataFrom(vector: Float32Array, offset: number = 0): void {
+		const raw: Float32Array = this.rawData;
 
 		raw[0] = vector[offset + 0];
 		raw[1] = vector[offset + 1];
@@ -204,9 +188,8 @@ export class Matrix
 	 *
 	 * @return A Matrix object.
 	 */
-	public clone():Matrix
-	{
-		var raw:Float32Array = this.rawData;
+	public clone(): Matrix {
+		const raw: Float32Array = this.rawData;
 
 		return new Matrix(raw[0], raw[1], raw[2], raw[3], raw[4], raw[5]);
 	}
@@ -229,16 +212,15 @@ export class Matrix
 	 *
 	 * @param matrix The matrix to be concatenated to the source matrix.
 	 */
-	public concat(matrix:Matrix):void
-	{
-		var m:Float32Array = this.rawData;
-		var n:Float32Array = matrix.rawData;
-		var a =  m[0] * n[0];
-		var b =  0.0;
-		var c =  0.0;
-		var d =  m[3] * n[3];
-		var tx = m[4] * n[0] + n[4];
-		var ty = m[5] * n[3] + n[5];
+	public concat(matrix: Matrix): void {
+		const m: Float32Array = this.rawData;
+		const n: Float32Array = matrix.rawData;
+		let a =  m[0] * n[0];
+		let b =  0.0;
+		let c =  0.0;
+		let d =  m[3] * n[3];
+		let tx = m[4] * n[0] + n[4];
+		let ty = m[5] * n[3] + n[5];
 
 		if (m[1] !== 0.0 || m[2] !== 0.0 || n[1] !== 0.0 || n[2] !== 0.0) {
 			a  += m[1] * n[2];
@@ -264,13 +246,12 @@ export class Matrix
 	 * @param column   The column from which to copy the data from.
 	 * @param vector3D The Vector3D object from which to copy the data.
 	 */
-	public copyColumnFrom(column:number, vector3D:Vector3D):void
-	{
-		var raw:Float32Array = this.rawData;
-		var rawVector3D:Float32Array = vector3D._rawData;
+	public copyColumnFrom(column: number, vector3D: Vector3D): void {
+		const raw: Float32Array = this.rawData;
+		const rawVector3D: Float32Array = vector3D._rawData;
 
 		if (column > 2) {
-			throw "Column " + column + " out of bounds (2)";
+			throw 'Column ' + column + ' out of bounds (2)';
 		} else if (column == 0) {
 			raw[0] = rawVector3D[0];
 			raw[1] = rawVector3D[1];
@@ -290,13 +271,12 @@ export class Matrix
 	 * @param column   The column from which to copy the data from.
 	 * @param vector3D The Vector3D object from which to copy the data.
 	 */
-	public copyColumnTo(column:number, vector3D:Vector3D):void
-	{
-		var raw:Float32Array = this.rawData;
-		var rawVector3D:Float32Array = vector3D._rawData;
+	public copyColumnTo(column: number, vector3D: Vector3D): void {
+		const raw: Float32Array = this.rawData;
+		const rawVector3D: Float32Array = vector3D._rawData;
 
 		if (column > 2) {
-			throw new ArgumentError("ArgumentError, Column " + column + " out of bounds [0, ..., 2]");
+			throw new ArgumentError('ArgumentError, Column ' + column + ' out of bounds [0, ..., 2]');
 		} else if (column == 0) {
 			rawVector3D[0] = raw[0];
 			rawVector3D[1] = raw[1];
@@ -318,10 +298,9 @@ export class Matrix
 	 *
 	 * @param sourceMatrix The Matrix object from which to copy the data.
 	 */
-	public copyFrom(sourceMatrix:Matrix):void
-	{
-		var raw:Float32Array = this.rawData;
-		var sourceRaw:Float32Array = sourceMatrix.rawData;
+	public copyFrom(sourceMatrix: Matrix): void {
+		const raw: Float32Array = this.rawData;
+		const sourceRaw: Float32Array = sourceMatrix.rawData;
 
 		raw[0] = sourceRaw[0];
 		raw[1] = sourceRaw[1];
@@ -337,13 +316,12 @@ export class Matrix
 	 * @param row      The row from which to copy the data from.
 	 * @param vector3D The Vector3D object from which to copy the data.
 	 */
-	public copyRowFrom(row:number, vector3D:Vector3D):void
-	{
-		var raw:Float32Array = this.rawData;
-		var rawVector3D:Float32Array = vector3D._rawData;
+	public copyRowFrom(row: number, vector3D: Vector3D): void {
+		const raw: Float32Array = this.rawData;
+		const rawVector3D: Float32Array = vector3D._rawData;
 
 		if (row > 2) {
-			throw new ArgumentError("ArgumentError, Row " + row + " out of bounds [0, ..., 2]");
+			throw new ArgumentError('ArgumentError, Row ' + row + ' out of bounds [0, ..., 2]');
 		} else if (row == 0) {
 			raw[0] = rawVector3D[0];
 			raw[2] = rawVector3D[1];
@@ -362,13 +340,12 @@ export class Matrix
 	 * @param row      The row from which to copy the data from.
 	 * @param vector3D The Vector3D object from which to copy the data.
 	 */
-	public copyRowTo(row:number, vector3D:Vector3D):void
-	{
-		var raw:Float32Array = this.rawData;
-		var rawVector3D:Float32Array = vector3D._rawData;
+	public copyRowTo(row: number, vector3D: Vector3D): void {
+		const raw: Float32Array = this.rawData;
+		const rawVector3D: Float32Array = vector3D._rawData;
 
 		if (row > 2) {
-			throw new ArgumentError("ArgumentError, Row " + row + " out of bounds [0, ..., 2]");
+			throw new ArgumentError('ArgumentError, Row ' + row + ' out of bounds [0, ..., 2]');
 		} else if (row == 0) {
 			rawVector3D[0] = raw[0];
 			rawVector3D[1] = raw[2];
@@ -402,13 +379,12 @@ export class Matrix
 	 * @param ty       The number of pixels to translate(move) down along the
 	 *                 <i>y</i> axis.
 	 */
-	public createBox(scaleX:number, scaleY:number, rotation:number = 0, tx:number = 0, ty:number = 0):void
-	{
-		var raw:Float32Array = this.rawData;
+	public createBox(scaleX: number, scaleY: number, rotation: number = 0, tx: number = 0, ty: number = 0): void {
+		const raw: Float32Array = this.rawData;
 
 		if (rotation !== 0) {
-			var u = Math.cos(rotation);
-			var v = Math.sin(rotation);
+			const u = Math.cos(rotation);
+			const v = Math.sin(rotation);
 			raw[0] =  u * scaleX;
 			raw[1] =  v * scaleY;
 			raw[2] = -v * scaleX;
@@ -457,8 +433,7 @@ export class Matrix
 	 *                 <i>y</i> axis. This value is offset by half of the
 	 *                 <code>height</code> parameter.
 	 */
-	public createGradientBox(width:number, height:number, rotation:number = 0, tx:number = 0, ty:number = 0):void
-	{
+	public createGradientBox(width: number, height: number, rotation: number = 0, tx: number = 0, ty: number = 0): void {
 		this.createBox(width / 1638.4, height / 1638.4, rotation, tx + width / 2, ty + height / 2);
 	}
 
@@ -474,9 +449,8 @@ export class Matrix
 	 *              transformation.
 	 * @return The point resulting from applying the matrix transformation.
 	 */
-	public deltaTransformPoint(point:Point):Point
-	{
-		var raw:Float32Array = this.rawData;
+	public deltaTransformPoint(point: Point): Point {
+		const raw: Float32Array = this.rawData;
 
 		return new Point(point.x * raw[0] + point.y * raw[2], point.x * raw[1] + point.y * raw[3]);
 	}
@@ -494,9 +468,8 @@ export class Matrix
 	 * <p>In matrix notation, the identity matrix looks like this:</p>
 	 *
 	 */
-	public identity():void
-	{
-		var raw:Float32Array = this.rawData;
+	public identity(): void {
+		const raw: Float32Array = this.rawData;
 		raw[0] = 1;
 		raw[1] = 0;
 		raw[2] = 0;
@@ -510,13 +483,12 @@ export class Matrix
 	 * an inverted matrix to an object to undo the transformation performed when
 	 * applying the original matrix.
 	 */
-	public invert():void
-	{
-		var raw = this.rawData;
-		var b  = raw[1];
-		var c  = raw[2];
-		var tx = raw[4];
-		var ty = raw[5];
+	public invert(): void {
+		const raw = this.rawData;
+		let b  = raw[1];
+		let c  = raw[2];
+		const tx = raw[4];
+		const ty = raw[5];
 		if (b === 0 && c === 0) {
 			var a = raw[0] = 1 / raw[0];
 			var d = raw[3] = 1 / raw[3];
@@ -529,7 +501,7 @@ export class Matrix
 
 		var a = raw[0];
 		var d = raw[3];
-		var determinant = a * d - b * c;
+		let determinant = a * d - b * c;
 		if (determinant === 0) {
 			this.identity();
 			return;
@@ -540,7 +512,7 @@ export class Matrix
 		 * two: 1/2, 1/4 ...
 		 */
 		determinant = 1 / determinant;
-		var k = 0;
+		let k = 0;
 		k = raw[0] =  d * determinant;
 		b = raw[1] = -b * determinant;
 		c = raw[2] = -c * determinant;
@@ -548,7 +520,6 @@ export class Matrix
 		raw[4] = -(k * tx + c * ty);
 		raw[5] = -(b * tx + d * ty);
 	}
-
 
 	/**
 	 * Returns a new Matrix object that is a clone of this matrix, with an exact
@@ -558,9 +529,8 @@ export class Matrix
 	 *               transformation.
 	 * @return A Matrix object.
 	 */
-	public multiply(matrix:Matrix):Matrix
-	{
-		var result = new Matrix();
+	public multiply(matrix: Matrix): Matrix {
+		const result = new Matrix();
 
 		result.a = this.a * matrix.a + this.b * matrix.c;
 		result.b = this.a * matrix.b + this.b * matrix.d;
@@ -583,18 +553,17 @@ export class Matrix
 	 *
 	 * @param angle The rotation angle in radians.
 	 */
-	public rotate(angle:number):void
-	{
+	public rotate(angle: number): void {
 		if (angle !== 0) {
-			var raw:Float32Array = this.rawData;
-			var u = Math.cos(angle);
-			var v = Math.sin(angle);
-			var ta = raw[0];
-			var tb = raw[1];
-			var tc = raw[2];
-			var td = raw[3];
-			var ttx = raw[4];
-			var tty = raw[5];
+			const raw: Float32Array = this.rawData;
+			const u = Math.cos(angle);
+			const v = Math.sin(angle);
+			const ta = raw[0];
+			const tb = raw[1];
+			const tc = raw[2];
+			const td = raw[3];
+			const ttx = raw[4];
+			const tty = raw[5];
 
 			raw[0] = ta * u - tb * v;
 			raw[1] = ta * v + tb * u;
@@ -618,9 +587,8 @@ export class Matrix
 	 * @param sx A multiplier used to scale the object along the <i>x</i> axis.
 	 * @param sy A multiplier used to scale the object along the <i>y</i> axis.
 	 */
-	public scale(sx:number, sy:number):void
-	{
-		var raw:Float32Array = this.rawData;
+	public scale(sx: number, sy: number): void {
+		const raw: Float32Array = this.rawData;
 
 		if (sx !== 1) {
 			raw[0] *= sx;
@@ -650,9 +618,8 @@ export class Matrix
 	 * @param ty The distance by which to translate each point along the <i>y</i>
 	 *           axis.
 	 */
-	public setTo(a:number, b:number, c:number, d:number, tx:number, ty:number):void
-	{
-		var raw:Float32Array = this.rawData;
+	public setTo(a: number, b: number, c: number, d: number, tx: number, ty: number): void {
+		const raw: Float32Array = this.rawData;
 
 		raw[0] = a;
 		raw[2] = b;
@@ -669,9 +636,8 @@ export class Matrix
 	 *         object: <code>a</code>, <code>b</code>, <code>c</code>,
 	 *         <code>d</code>, <code>tx</code>, and <code>ty</code>.
 	 */
-	public toString():string
-	{
-		return "[Matrix] (a=" + this.a + ", b=" + this.b + ", c=" + this.c + ", d=" + this.d + ", tx=" + this.tx + ", ty=" + this.ty + ")";
+	public toString(): string {
+		return '[Matrix] (a=' + this.a + ', b=' + this.b + ', c=' + this.c + ', d=' + this.d + ', tx=' + this.tx + ', ty=' + this.ty + ')';
 	}
 
 	/**
@@ -682,9 +648,8 @@ export class Matrix
 	 *              transformation.
 	 * @return The point resulting from applying the Matrix transformation.
 	 */
-	public transformPoint(point:Point):Point
-	{
-		var raw:Float32Array = this.rawData;
+	public transformPoint(point: Point): Point {
+		const raw: Float32Array = this.rawData;
 		return new Point(point.x * raw[0] + point.y * raw[2] + raw[4], point.x * raw[1] + point.y * raw[3] + raw[5]);
 	}
 
@@ -696,8 +661,7 @@ export class Matrix
 	 *           pixels.
 	 * @param dy The amount of movement down along the <i>y</i> axis, in pixels.
 	 */
-	public translate(dx:number, dy:number):void
-	{
+	public translate(dx: number, dy: number): void {
 		this.rawData[4] += dx;
 		this.rawData[5] += dy;
 	}

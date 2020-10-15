@@ -1,60 +1,57 @@
-export class WebAudioChannel
-{
-	public static maxChannels:number = 64; // for icycle: 128;
+export class WebAudioChannel {
+	public static maxChannels: number = 64; // for icycle: 128;
 
-	public static _channels:Array<WebAudioChannel> = new Array<WebAudioChannel>();
+	public static _channels: Array<WebAudioChannel> = new Array<WebAudioChannel>();
 
-	public static _decodeCache:Object = new Object();
-	public static _errorCache:Object = new Object();
+	public static _decodeCache: Object = new Object();
+	public static _errorCache: Object = new Object();
 
 	public static _audioCtx;
 
-	public static getAudioContext()
-	{
-		if (!WebAudioChannel._audioCtx && (window["AudioContext"] || window["webkitAudioContext"]))
-			WebAudioChannel._audioCtx = new (window["AudioContext"] || window["webkitAudioContext"])();
+	public static getAudioContext() {
+		if (!WebAudioChannel._audioCtx && (window['AudioContext'] || window['webkitAudioContext']))
+			WebAudioChannel._audioCtx = new (window['AudioContext'] || window['webkitAudioContext'])();
 
-		if (WebAudioChannel._audioCtx && WebAudioChannel._audioCtx.state == "suspended")
+		if (WebAudioChannel._audioCtx && WebAudioChannel._audioCtx.state == 'suspended')
 			WebAudioChannel._audioCtx.resume();
 
 		return WebAudioChannel._audioCtx;
 	}
 
 	private _audioCtx;
-	private _usingNativePanner:boolean;
+	private _usingNativePanner: boolean;
 
 	private _gainNode;
 	private _pannerNode;
 	private _source;
 
-	private _isPlaying:boolean = false;
-	private _isLooping:boolean = false;
-	private _isDecoding:boolean = false;
-	private _currentTime:number;
-	private _id:number;
-	private _volume:number = 1;
-	private _pan:number = 0;
-	private _groupID:number = 0;
-	private _groupVolume:number = 1;
-	private _groupPan:number = 0;
-	private _startTime:number = 0;
-	private _duration:number;
-	public onSoundComplete:Function;
+	private _isPlaying: boolean = false;
+	private _isLooping: boolean = false;
+	private _isDecoding: boolean = false;
+	private _currentTime: number;
+	private _id: number;
+	private _volume: number = 1;
+	private _pan: number = 0;
+	private _groupID: number = 0;
+	private _groupVolume: number = 1;
+	private _groupPan: number = 0;
+	private _startTime: number = 0;
+	private _duration: number;
+	public onSoundComplete: Function;
 
-	private _onEndedDelegate:(event:any) => void;
+	private _onEndedDelegate: (event: any) => void;
 
-	public static stopAllSounds(channelGroup:number = -1)
-	{
-		var len:number = WebAudioChannel._channels.length;
+	public static stopAllSounds(channelGroup: number = -1) {
+		const len: number = WebAudioChannel._channels.length;
 		if (channelGroup < 0) {
-			for (var j:number = 0; j < len; j++) {
+			for (var j: number = 0; j < len; j++) {
 				WebAudioChannel._channels[j].stop();
 			}
 			WebAudioChannel._channels.length = 0;
 			return;
 		}
-		var aliveChannels:WebAudioChannel[] = [];
-		for (var j:number = 0; j < len; j++) {
+		const aliveChannels: WebAudioChannel[] = [];
+		for (var j: number = 0; j < len; j++) {
 			if (WebAudioChannel._channels[j].groupID == channelGroup) {
 				WebAudioChannel._channels[j].stop();
 			} else {
@@ -64,52 +61,45 @@ export class WebAudioChannel
 		WebAudioChannel._channels = aliveChannels;
 	}
 
-	public static setChannelGroupVolume(value:number, channelGroup:number = -1)
-	{
-		var len:number = WebAudioChannel._channels.length;
+	public static setChannelGroupVolume(value: number, channelGroup: number = -1) {
+		const len: number = WebAudioChannel._channels.length;
 		if (channelGroup < 0) {
-			for (var j:number = 0; j < len; j++) {
+			for (var j: number = 0; j < len; j++) {
 				WebAudioChannel._channels[j].groupVolume = value;
 			}
 			return;
 		}
-		for (var j:number = 0; j < len; j++) {
+		for (var j: number = 0; j < len; j++) {
 			if (WebAudioChannel._channels[j].groupID == channelGroup) {
 				WebAudioChannel._channels[j].groupVolume = value;
 			}
 		}
 	}
 
-	public get duration():number
-	{
+	public get duration(): number {
 		return this._duration;
 	}
 
-	public get currentTime():number
-	{
+	public get currentTime(): number {
 		if (this._isDecoding) {
 			return this._currentTime;
 		}
 		return this._audioCtx.currentTime - this._startTime;
 	}
 
-	public get groupID():number
-	{
+	public get groupID(): number {
 		return this._groupID;
 	}
 
-	public set groupID(value:number)
-	{
+	public set groupID(value: number) {
 		this._groupID = value;
 	}
 
-	public get groupVolume():number
-	{
+	public get groupVolume(): number {
 		return this._groupVolume;
 	}
 
-	public set groupVolume(value:number)
-	{
+	public set groupVolume(value: number) {
 		if (this._groupVolume == value)
 			return;
 
@@ -118,22 +108,18 @@ export class WebAudioChannel
 		this._gainNode.gain.value = this._groupVolume * this._volume;
 	}
 
-	public get groupPan():number
-	{
+	public get groupPan(): number {
 		return this._groupPan;
 	}
 
-	public set groupPan(value:number)
-	{
+	public set groupPan(value: number) {
 	}
 
-	public get volume():number
-	{
+	public get volume(): number {
 		return this._volume;
 	}
 
-	public set volume(value:number)
-	{
+	public set volume(value: number) {
 		if (this._volume == value)
 			return;
 
@@ -142,13 +128,11 @@ export class WebAudioChannel
 		this._gainNode.gain.value = this._groupVolume * this._volume;
 	}
 
-	public get pan():number
-	{
+	public get pan(): number {
 		return this._pan;
 	}
 
-	public set pan(value:number)
-	{
+	public set pan(value: number) {
 		if (this._pan == value)
 			return;
 
@@ -160,30 +144,26 @@ export class WebAudioChannel
 			this._pannerNode.setPosition(Math.sin(this._pan * (Math.PI / 2)), 0, Math.cos(this._pan * (Math.PI / 2)));
 	}
 
-	public isPlaying():boolean
-	{
+	public isPlaying(): boolean {
 		return this._isPlaying;
 	}
 
-	public isLooping():boolean
-	{
+	public isLooping(): boolean {
 		return this._isLooping;
 	}
 
-	public isDecoding():boolean
-	{
+	public isDecoding(): boolean {
 		return this._isDecoding;
 	}
 
-	constructor(groupID:number = 0, groupVolume:number = 1, groupPan:number = 1)
-	{
+	constructor(groupID: number = 0, groupVolume: number = 1, groupPan: number = 1) {
 		this._groupID = groupID;
 		this._groupVolume = groupVolume;
 		this._groupPan = groupPan;
 
 		this._audioCtx = WebAudioChannel.getAudioContext();
 
-		this._usingNativePanner = typeof this._audioCtx.createStereoPanner === "function";
+		this._usingNativePanner = typeof this._audioCtx.createStereoPanner === 'function';
 
 		this._gainNode = this._audioCtx.createGain();
 		this._gainNode.gain.value = this._groupVolume * this._volume;
@@ -198,12 +178,10 @@ export class WebAudioChannel
 		this._gainNode.connect(this._pannerNode);
 		this._pannerNode.connect(this._audioCtx.destination);
 
-
 		this._onEndedDelegate = (event) => this._onEnded(event);
 	}
 
-	public play(buffer:ArrayBuffer, offset:number = 0, loop:boolean = false, id:number = 0):void
-	{
+	public play(buffer: ArrayBuffer, offset: number = 0, loop: boolean = false, id: number = 0): void {
 		this._isPlaying = true;
 		this._isLooping = loop;
 
@@ -222,8 +200,7 @@ export class WebAudioChannel
 			this.stop();
 	}
 
-	public stop():void
-	{
+	public stop(): void {
 		// for AVM1 it is a bug to stop a audio thats currently decoding.
 		// when we call stopAllASounds() during audio-decode, this audio should still play
 		//if(this._isDecoding){
@@ -240,8 +217,7 @@ export class WebAudioChannel
 			this._disposeSource();
 	}
 
-	public _onDecodeComplete(buffer):void
-	{
+	public _onDecodeComplete(buffer): void {
 		if (!this._isPlaying)
 			return;
 
@@ -273,28 +249,25 @@ export class WebAudioChannel
 			// TODO: offset / startTime make problem in dino-run game:
 			this._source.start(this._audioCtx.currentTime, this._currentTime);
 		} catch (error) {
-			console.log("Error starting audio: " + error);
+			console.log('Error starting audio: ' + error);
 			this._disposeSource();
 		}
 	}
 
-	public _onError(event):void
-	{
-		console.log("Error with decoding audio data");
+	public _onError(event): void {
+		console.log('Error with decoding audio data');
 		WebAudioChannel._errorCache[this._id] = true;
 		this.stop();
 	}
 
-	private _onEnded(event):void
-	{
+	private _onEnded(event): void {
 		if (this.onSoundComplete) {
 			this.onSoundComplete();
 		}
 		this.stop();
 	}
 
-	private _disposeSource():void
-	{
+	private _disposeSource(): void {
 		//clean up
 		this._source.onended = null;
 		this._source.stop(this._audioCtx.currentTime);
@@ -305,26 +278,26 @@ export class WebAudioChannel
 	}
 }
 
-var audioCtx = WebAudioChannel.getAudioContext();
+const audioCtx = WebAudioChannel.getAudioContext();
 
 // context state at this time is `undefined` in iOS8 Safari
-if (audioCtx && audioCtx.state === "suspended") {
+if (audioCtx && audioCtx.state === 'suspended') {
 	var resume = () => {
 		audioCtx.resume();
 
 		//create empty buffer
-		var buffer = audioCtx.createBuffer(1, 1, 22050);
-		var source = audioCtx.createBufferSource();
+		const buffer = audioCtx.createBuffer(1, 1, 22050);
+		const source = audioCtx.createBufferSource();
 		source.buffer = buffer;
 		source.connect(audioCtx.destination);
 		source.start();
 
 		setTimeout(() => {
-			if (audioCtx.state === "running") {
-				document.removeEventListener("mousedown", resume, false);
+			if (audioCtx.state === 'running') {
+				document.removeEventListener('mousedown', resume, false);
 			}
 		}, 0);
 	};
 
-	document.addEventListener("mousedown", resume, false);
+	document.addEventListener('mousedown', resume, false);
 }

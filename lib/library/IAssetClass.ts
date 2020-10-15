@@ -1,4 +1,4 @@
 export interface IAssetClass
 {
-	assetType:string;
+	assetType: string;
 }

@@ -1,9 +1,9 @@
-import {URLLoaderDataFormat} from "../net/URLLoaderDataFormat";
-import {URLRequest} from "../net/URLRequest";
-import {URLRequestMethod} from "../net/URLRequestMethod";
-import {URLVariables} from "../net/URLVariables";
-import {EventDispatcher} from "../events/EventDispatcher";
-import {URLLoaderEvent} from "../events/URLLoaderEvent";
+import { URLLoaderDataFormat } from '../net/URLLoaderDataFormat';
+import { URLRequest } from '../net/URLRequest';
+import { URLRequestMethod } from '../net/URLRequestMethod';
+import { URLVariables } from '../net/URLVariables';
+import { EventDispatcher } from '../events/EventDispatcher';
+import { URLLoaderEvent } from '../events/URLLoaderEvent';
 
 /**
  * The URLLoader is used to load a single file, as part of a resource.
@@ -15,49 +15,44 @@ import {URLLoaderEvent} from "../events/URLLoaderEvent";
  * @see Loader
  * @see away.library.AssetLibrary
  */
-export class URLLoader extends EventDispatcher
-{
-	private _XHR:XMLHttpRequest;
-	private _status:number;
-	private _bytesLoaded:number = 0;
-	private _bytesTotal:number = 0;
-	private _dataFormat:string = URLLoaderDataFormat.TEXT;
-	private _loadError:boolean = false;
+export class URLLoader extends EventDispatcher {
+	private _XHR: XMLHttpRequest;
+	private _status: number;
+	private _bytesLoaded: number = 0;
+	private _bytesTotal: number = 0;
+	private _dataFormat: string = URLLoaderDataFormat.TEXT;
+	private _loadError: boolean = false;
 
-	private _request:URLRequest;
-	private _data:any;
+	private _request: URLRequest;
+	private _data: any;
 
-	private _loadStartEvent:URLLoaderEvent;
-	private _loadErrorEvent:URLLoaderEvent;
-	private _loadCompleteEvent:URLLoaderEvent;
-	private _progressEvent:URLLoaderEvent;
-	private _statusEvent:URLLoaderEvent;
+	private _loadStartEvent: URLLoaderEvent;
+	private _loadErrorEvent: URLLoaderEvent;
+	private _loadCompleteEvent: URLLoaderEvent;
+	private _progressEvent: URLLoaderEvent;
+	private _statusEvent: URLLoaderEvent;
 
 	/**
 	 * Creates a new URLLoader object.
 	 */
-	constructor()
-	{
+	constructor() {
 		super();
 	}
 
 	/**
 	 *
 	 */
-	public get url():string
-	{
+	public get url(): string {
 
-		return this._request ? this._request.url : "";
+		return this._request ? this._request.url : '';
 	}
 
 	/**
 	 *
 	 */
-	public get data():any
-	{
+	public get data(): any {
 		return this._data;
 	}
-
 
 	/**
 	 *
@@ -67,13 +62,11 @@ export class URLLoader extends EventDispatcher
 	 *
 	 * @param format
 	 */
-	public set dataFormat(format:string)
-	{
+	public set dataFormat(format: string) {
 		this._dataFormat = format;
 	}
 
-	public get dataFormat():string
-	{
+	public get dataFormat(): string {
 		return this._dataFormat;
 	}
 
@@ -81,8 +74,7 @@ export class URLLoader extends EventDispatcher
 	 *
 	 * @returns {number}
 	 */
-	public get bytesLoaded():number
-	{
+	public get bytesLoaded(): number {
 		return this._bytesLoaded;
 	}
 
@@ -90,8 +82,7 @@ export class URLLoader extends EventDispatcher
 	 *
 	 * @returns {number}
 	 */
-	public get bytesTotal():number
-	{
+	public get bytesTotal(): number {
 		return this._bytesTotal;
 	}
 
@@ -100,8 +91,7 @@ export class URLLoader extends EventDispatcher
 	 *
 	 * @param request The URLRequest object containing the URL of the object to be loaded.
 	 */
-	public load(request:URLRequest):void
-	{
+	public load(request: URLRequest): void {
 		this._request = request;
 
 		this.initXHR();
@@ -112,16 +102,14 @@ export class URLLoader extends EventDispatcher
 			this.getRequest(request);
 	}
 
-	public isSupported():boolean
-	{
+	public isSupported(): boolean {
 		return window != null;
 	}
 
 	/**
 	 *
 	 */
-	public close():void
-	{
+	public close(): void {
 		this._XHR.abort();
 
 		this.disposeXHR();
@@ -130,8 +118,7 @@ export class URLLoader extends EventDispatcher
 	/**
 	 *
 	 */
-	public dispose():void
-	{
+	public dispose(): void {
 		if (this._XHR)
 			this._XHR.abort();
 
@@ -143,8 +130,7 @@ export class URLLoader extends EventDispatcher
 	 * @param xhr
 	 * @param responseType
 	 */
-	private setResponseType(xhr:XMLHttpRequest, responseType:string):void
-	{
+	private setResponseType(xhr: XMLHttpRequest, responseType: string): void {
 		switch (responseType) {
 			case URLLoaderDataFormat.ARRAY_BUFFER:
 			case URLLoaderDataFormat.BLOB:
@@ -157,7 +143,7 @@ export class URLLoader extends EventDispatcher
 				break;
 
 			case URLLoaderDataFormat.BINARY:
-				xhr.responseType = "";
+				xhr.responseType = '';
 				break;
 
 			default:
@@ -168,8 +154,7 @@ export class URLLoader extends EventDispatcher
 	 *
 	 * @param request {URLRequest}
 	 */
-	private getRequest(request:URLRequest):void
-	{
+	private getRequest(request: URLRequest): void {
 		try {
 			this._XHR.open(request.method, request.url, request.async);
 			this.setResponseType(this._XHR, this._dataFormat);
@@ -183,18 +168,17 @@ export class URLLoader extends EventDispatcher
 	 *
 	 * @param request {URLRequest}
 	 */
-	private postRequest(request:URLRequest):void
-	{
+	private postRequest(request: URLRequest): void {
 		this._loadError = false;
 
 		this._XHR.open(request.method, request.url, request.async);
 
 		if (request.data != null) {
 			if (request.data instanceof URLVariables) {
-				var urlVars:URLVariables = <URLVariables> request.data;
+				const urlVars: URLVariables = <URLVariables> request.data;
 
 				try {
-					this._XHR.responseType = "text";
+					this._XHR.responseType = 'text';
 					this._XHR.send(urlVars.formData);
 				} catch (e /* <XMLHttpRequestException> */) {
 					this.handleXmlHttpRequestException(e);
@@ -217,8 +201,7 @@ export class URLLoader extends EventDispatcher
 	 *
 	 * @param error {XMLHttpRequestException}
 	 */
-	private handleXmlHttpRequestException(error:any /* <XMLHttpRequestException> */):void
-	{
+	private handleXmlHttpRequestException(error: any /* <XMLHttpRequestException> */): void {
 		switch (error.code) {
 
 			/******************************************************************************************************************************************************************************************************
@@ -237,27 +220,25 @@ export class URLLoader extends EventDispatcher
 	/**
 	 *
 	 */
-	private initXHR():void
-	{
+	private initXHR(): void {
 		if (!this._XHR) {
 			this._XHR = new XMLHttpRequest();
 
-			this._XHR.onloadstart = (event:ProgressEvent) => this.onLoadStart(event);                 // loadstart	        - When the request starts.
-			this._XHR.onprogress = (event:ProgressEvent) => this.onProgress(event);	                // progress	            - While loading and sending data.
-			this._XHR.onabort = (event:ProgressEvent) => this.onAbort(event);	                        // abort	            - When the request has been aborted, either by invoking the abort() method or navigating away from the page.
-			this._XHR.onerror = (event:ProgressEvent) => this.onLoadError(event);                     // error	            - When the request has failed.
-			this._XHR.onload = (event:Event) => this.onLoadComplete(event);                   // load	                - When the request has successfully completed.
-			this._XHR.ontimeout = (event:Event) => this.onTimeOut(event);                     // timeout	            - When the author specified timeout has passed before the request could complete.
-			this._XHR.onloadend = (event:ProgressEvent) => this.onLoadEnd(event);                     // loadend	            - When the request has completed, regardless of whether or not it was successful.
-			this._XHR.onreadystatechange = (event:Event) => this.onReadyStateChange(event);   // onreadystatechange   - When XHR state changes
+			this._XHR.onloadstart = (event: ProgressEvent) => this.onLoadStart(event);                 // loadstart	        - When the request starts.
+			this._XHR.onprogress = (event: ProgressEvent) => this.onProgress(event);	                // progress	            - While loading and sending data.
+			this._XHR.onabort = (event: ProgressEvent) => this.onAbort(event);	                        // abort	            - When the request has been aborted, either by invoking the abort() method or navigating away from the page.
+			this._XHR.onerror = (event: ProgressEvent) => this.onLoadError(event);                     // error	            - When the request has failed.
+			this._XHR.onload = (event: Event) => this.onLoadComplete(event);                   // load	                - When the request has successfully completed.
+			this._XHR.ontimeout = (event: Event) => this.onTimeOut(event);                     // timeout	            - When the author specified timeout has passed before the request could complete.
+			this._XHR.onloadend = (event: ProgressEvent) => this.onLoadEnd(event);                     // loadend	            - When the request has completed, regardless of whether or not it was successful.
+			this._XHR.onreadystatechange = (event: Event) => this.onReadyStateChange(event);   // onreadystatechange   - When XHR state changes
 		}
 	}
 
 	/**
 	 *
 	 */
-	private disposeXHR():void
-	{
+	private disposeXHR(): void {
 		if (this._XHR !== null) {
 			this._XHR.onloadstart = null;
 			this._XHR.onprogress = null;
@@ -274,13 +255,12 @@ export class URLLoader extends EventDispatcher
 	 *
 	 * @param source
 	 */
-	public decodeURLVariables(source:string):Object
-	{
-		var result:Object = new Object();
+	public decodeURLVariables(source: string): Object {
+		const result: Object = new Object();
 
-		source = source.split("+").join(" ");
+		source = source.split('+').join(' ');
 
-		var tokens, re = /[?&]?([^=]+)=([^&]*)/g;
+		let tokens, re = /[?&]?([^=]+)=([^&]*)/g;
 
 		while ((tokens = re.exec(source)))
 			result[decodeURIComponent(tokens[1])] = decodeURIComponent(tokens[2]);
@@ -294,8 +274,7 @@ export class URLLoader extends EventDispatcher
 	 * When XHR state changes
 	 * @param event
 	 */
-	private onReadyStateChange(event:Event):void
-	{
+	private onReadyStateChange(event: Event): void {
 		if (this._XHR.readyState == 4) {
 			this._status = this._XHR.status;
 			if (this._status == 404) {
@@ -312,8 +291,7 @@ export class URLLoader extends EventDispatcher
 	 * When the request has completed, regardless of whether or not it was successful.
 	 * @param event
 	 */
-	private onLoadEnd(event:ProgressEvent):void
-	{
+	private onLoadEnd(event: ProgressEvent): void {
 		if (this._loadError === true)
 			return;
 	}
@@ -322,8 +300,7 @@ export class URLLoader extends EventDispatcher
 	 * When the author specified timeout has passed before the request could complete.
 	 * @param event
 	 */
-	private onTimeOut(event:Event):void
-	{
+	private onTimeOut(event: Event): void {
 		//TODO: Timeout not currently implemented ( also not part of AS3 API )
 	}
 
@@ -331,8 +308,7 @@ export class URLLoader extends EventDispatcher
 	 * When the request has been aborted, either by invoking the abort() method or navigating away from the page.
 	 * @param event
 	 */
-	private onAbort(event:ProgressEvent):void
-	{
+	private onAbort(event: ProgressEvent): void {
 		// TODO: investigate whether this needs to be an IOError
 	}
 
@@ -340,8 +316,7 @@ export class URLLoader extends EventDispatcher
 	 * While loading and sending data.
 	 * @param event
 	 */
-	private onProgress(event:ProgressEvent):void
-	{
+	private onProgress(event: ProgressEvent): void {
 		this._bytesTotal = event.total;
 		this._bytesLoaded = event.loaded;
 
@@ -352,8 +327,7 @@ export class URLLoader extends EventDispatcher
 	 * When the request starts.
 	 * @param event
 	 */
-	private onLoadStart(event:ProgressEvent):void
-	{
+	private onLoadStart(event: ProgressEvent): void {
 		this.dispatchEvent(this._loadStartEvent || (this._loadStartEvent = new URLLoaderEvent(URLLoaderEvent.LOAD_START, this)));
 	}
 
@@ -361,8 +335,7 @@ export class URLLoader extends EventDispatcher
 	 * When the request has successfully completed.
 	 * @param event
 	 */
-	private onLoadComplete(event:Event):void
-	{
+	private onLoadComplete(event: Event): void {
 		if (this._loadError === true)
 			return;
 
@@ -393,8 +366,7 @@ export class URLLoader extends EventDispatcher
 	 * When the request has failed. ( due to network issues ).
 	 * @param event
 	 */
-	private onLoadError(event:Event):void
-	{
+	private onLoadError(event: Event): void {
 		this._loadError = true;
 
 		this.dispatchEvent(this._loadErrorEvent || (this._loadErrorEvent  = new URLLoaderEvent(URLLoaderEvent.LOAD_ERROR, this)));

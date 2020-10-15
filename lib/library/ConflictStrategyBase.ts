@@ -1,9 +1,9 @@
-import {AbstractMethodError} from "../errors/AbstractMethodError";
+import { AbstractMethodError } from '../errors/AbstractMethodError';
 
-import {AssetEvent} from "../events/AssetEvent";
+import { AssetEvent } from '../events/AssetEvent';
 
-import {ConflictPrecedence} from "./ConflictPrecedence";
-import {IAssetAdapter} from "./IAssetAdapter";
+import { ConflictPrecedence } from './ConflictPrecedence';
+import { IAssetAdapter } from './IAssetAdapter';
 
 /**
  * Abstract base export class for naming conflict resolution classes. Extend this to create a
@@ -22,19 +22,16 @@ import {IAssetAdapter} from "./IAssetAdapter";
  * @see away.library.ErrorConflictStrategy
  * @see away.library.NumSuffixConflictStrategy
  */
-export class ConflictStrategyBase
-{
+export class ConflictStrategyBase {
 
-	constructor()
-	{
+	constructor() {
 	}
 
 	/**
 	 * Resolve a naming conflict between two assets. Must be implemented by concrete strategy
 	 * classes.
 	 */
-	public resolveConflict(changedAsset:IAssetAdapter, oldAsset:IAssetAdapter, assetsDictionary:Object, precedence:string):void
-	{
+	public resolveConflict(changedAsset: IAssetAdapter, oldAsset: IAssetAdapter, assetsDictionary: Object, precedence: string): void {
 		throw new AbstractMethodError();
 	}
 
@@ -43,8 +40,7 @@ export class ConflictStrategyBase
 	 * make sure the same strategy instance is not used in all AssetLibrary instances, which
 	 * would break any state caching that happens inside the strategy class.
 	 */
-	public create():ConflictStrategyBase
-	{
+	public create(): ConflictStrategyBase {
 		throw new AbstractMethodError();
 	}
 
@@ -52,11 +48,10 @@ export class ConflictStrategyBase
 	 * Provided as a convenience method for all conflict strategy classes, as a way to finalize
 	 * the conflict resolution by applying the new names and dispatching the correct events.
 	 */
-	public _pUpdateNames(ns:string, nonConflictingName:string, oldAsset:IAssetAdapter, newAsset:IAssetAdapter, assetsDictionary:Object, precedence:string):void
-	{
-		var loser_prev_name:string;
-		var winner:IAssetAdapter;
-		var loser:IAssetAdapter;
+	public _pUpdateNames(ns: string, nonConflictingName: string, oldAsset: IAssetAdapter, newAsset: IAssetAdapter, assetsDictionary: Object, precedence: string): void {
+		let loser_prev_name: string;
+		let winner: IAssetAdapter;
+		let loser: IAssetAdapter;
 
 		winner = (precedence === ConflictPrecedence.FAVOR_NEW) ? newAsset : oldAsset;
 		loser = (precedence === ConflictPrecedence.FAVOR_NEW) ? oldAsset : newAsset;

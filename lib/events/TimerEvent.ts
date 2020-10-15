@@ -1,19 +1,17 @@
-import {EventBase} from "./EventBase";
+import { EventBase } from './EventBase';
 
-export class TimerEvent extends EventBase
-{
+export class TimerEvent extends EventBase {
 	/**
 	 *
 	 */
-	public static TIMER:string = "timer";
+	public static TIMER: string = 'timer';
 
 	/**
 	 *
 	 */
-	public static TIMER_COMPLETE:string = "timerComplete";
+	public static TIMER_COMPLETE: string = 'timerComplete';
 
-	constructor(type:string)
-	{
+	constructor(type: string) {
 		super(type);
 
 	}

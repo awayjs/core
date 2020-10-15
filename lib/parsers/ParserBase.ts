@@ -1,15 +1,15 @@
-import {IAsset} from "../library/IAsset";
-import {URLRequest} from "../net/URLRequest";
-import {AbstractMethodError} from "../errors/AbstractMethodError";
-import {AssetEvent} from "../events/AssetEvent";
-import {EventDispatcher} from "../events/EventDispatcher";
-import {ParserEvent} from "../events/ParserEvent";
-import {TimerEvent} from "../events/TimerEvent";
-import {ParserUtils} from "../parsers/ParserUtils";
-import {ResourceDependency} from "../parsers/ResourceDependency";
-import {ByteArray} from "../utils/ByteArray";
-import {Timer} from "../utils/Timer";
-import {getTimer} from "../utils/getTimer";
+import { IAsset } from '../library/IAsset';
+import { URLRequest } from '../net/URLRequest';
+import { AbstractMethodError } from '../errors/AbstractMethodError';
+import { AssetEvent } from '../events/AssetEvent';
+import { EventDispatcher } from '../events/EventDispatcher';
+import { ParserEvent } from '../events/ParserEvent';
+import { TimerEvent } from '../events/TimerEvent';
+import { ParserUtils } from '../parsers/ParserUtils';
+import { ResourceDependency } from '../parsers/ResourceDependency';
+import { ByteArray } from '../utils/ByteArray';
+import { Timer } from '../utils/Timer';
+import { getTimer } from '../utils/getTimer';
 
 /**
  * <code>ParserBase</code> provides an abstract base export class for objects that convert blocks of data to data structures
@@ -30,16 +30,15 @@ import {getTimer} from "../utils/getTimer";
  *
  * @see Loader
  */
-export class ParserBase extends EventDispatcher
-{
-	public _isParsing:boolean;
-	public _iFileName:string;
-	private _dataFormat:string;
-	private _data:any;
-	private _frameLimit:number;
-	private _lastFrameTime:number;
-	private _pOnIntervalDelegate:(event:TimerEvent) => void;
-	public _pContent:IAsset;
+export class ParserBase extends EventDispatcher {
+	public _isParsing: boolean;
+	public _iFileName: string;
+	private _dataFormat: string;
+	private _data: any;
+	private _frameLimit: number;
+	private _lastFrameTime: number;
+	private _pOnIntervalDelegate: (event: TimerEvent) => void;
+	public _pContent: IAsset;
 
 	//----------------------------------------------------------------------------------------------------------------------------------------------------------------
 	// TODO: add error checking for the following ( could cause a problem if this function is not implemented )
@@ -49,33 +48,30 @@ export class ParserBase extends EventDispatcher
 	//* Indicates whether or not a given file extension is supported by the parser.
 	//----------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-	public static supportsType(extension:string):boolean
-	{
+	public static supportsType(extension: string): boolean {
 		throw new AbstractMethodError();
 	}
 
-	private _dependencies:Array<ResourceDependency>;
-	private _parsingPaused:boolean;
-	private _parsingComplete:boolean;
-	private _parsingFailure:boolean;
-	private _timer:Timer;
-	private _materialMode:number;
+	private _dependencies: Array<ResourceDependency>;
+	private _parsingPaused: boolean;
+	private _parsingComplete: boolean;
+	private _parsingFailure: boolean;
+	private _timer: Timer;
+	private _materialMode: number;
 
 	/**
 	 * Returned by <code>proceedParsing</code> to indicate no more parsing is needed.
 	 */
-	public static PARSING_DONE:boolean = true;
+	public static PARSING_DONE: boolean = true;
 	/* Protected */
 
 	/**
 	 * Returned by <code>proceedParsing</code> to indicate more parsing is needed, allowing asynchronous parsing.
 	 */
-	public static MORE_TO_PARSE:boolean = false;
+	public static MORE_TO_PARSE: boolean = false;
 	/* Protected */
 
-
-	public get content():IAsset
-	{
+	public get content(): IAsset {
 		return this._pContent;
 	}
 
@@ -85,57 +81,48 @@ export class ParserBase extends EventDispatcher
 	 *
 	 * @see away.loading.parsers.ParserDataFormat
 	 */
-	constructor(format:string)
-	{
+	constructor(format: string) {
 		super();
 
 		this._materialMode = 0;
 		this._dataFormat = format;
 		this._dependencies = new Array<ResourceDependency>();
 
-		this._pOnIntervalDelegate = (event:TimerEvent) => this._pOnInterval(event);
+		this._pOnIntervalDelegate = (event: TimerEvent) => this._pOnInterval(event);
 	}
 
-	public set parsingFailure(b:boolean)
-	{
+	public set parsingFailure(b: boolean) {
 		this._parsingFailure = b;
 	}
 
-	public get parsingFailure():boolean
-	{
+	public get parsingFailure(): boolean {
 		return this._parsingFailure;
 	}
 
-	public get parsingPaused():boolean
-	{
+	public get parsingPaused(): boolean {
 		return this._parsingPaused;
 	}
 
-	public get parsingComplete():boolean
-	{
+	public get parsingComplete(): boolean {
 		return this._parsingComplete;
 	}
 
-	public set materialMode(newMaterialMode:number)
-	{
+	public set materialMode(newMaterialMode: number) {
 		this._materialMode = newMaterialMode;
 	}
 
-	public get materialMode():number
-	{
+	public get materialMode(): number {
 		return this._materialMode;
 	}
 
-	public get data():any
-	{
+	public get data(): any {
 		return this._data;
 	}
 
 	/**
 	 * The data format of the file data to be parsed. Options are <code>URLLoaderDataFormat.BINARY</code>, <code>URLLoaderDataFormat.ARRAY_BUFFER</code>, <code>URLLoaderDataFormat.BLOB</code>, <code>URLLoaderDataFormat.VARIABLES</code> or <code>URLLoaderDataFormat.TEXT</code>.
 	 */
-	public get dataFormat():string
-	{
+	public get dataFormat(): string {
 		return this._dataFormat;
 	}
 
@@ -149,16 +136,14 @@ export class ParserBase extends EventDispatcher
 	 * actual time spent on a frame can exceed this number since time-checks can
 	 * only be performed between logical sections of the parsing procedure.
 	 */
-	public parseAsync(data:any, frameLimit:number = 30):void
-	{
+	public parseAsync(data: any, frameLimit: number = 30): void {
 		this._data = data;
 		this._pStartParsing(frameLimit);
 	}
 
-	public parseSync(data:any):IAsset
-	{
+	public parseSync(data: any): IAsset {
 		this._data = data;
-		var state = ParserBase.MORE_TO_PARSE;
+		let state = ParserBase.MORE_TO_PARSE;
 		while (state == ParserBase.MORE_TO_PARSE) {
 			state = this._pProceedParsing();
 		}
@@ -168,8 +153,7 @@ export class ParserBase extends EventDispatcher
 	/**
 	 * A list of dependencies that need to be loaded and resolved for the object being parsed.
 	 */
-	public get dependencies():Array<ResourceDependency>
-	{
+	public get dependencies(): Array<ResourceDependency> {
 		return this._dependencies;
 	}
 
@@ -180,8 +164,7 @@ export class ParserBase extends EventDispatcher
 	 *
 	 * @param resourceDependency The dependency to be resolved.
 	 */
-	public _iResolveDependency(resourceDependency:ResourceDependency):void
-	{
+	public _iResolveDependency(resourceDependency: ResourceDependency): void {
 		throw new AbstractMethodError();
 	}
 
@@ -190,8 +173,7 @@ export class ParserBase extends EventDispatcher
 	 *
 	 * @param resourceDependency The dependency to be resolved.
 	 */
-	public _iResolveDependencyFailure(resourceDependency:ResourceDependency):void
-	{
+	public _iResolveDependencyFailure(resourceDependency: ResourceDependency): void {
 		throw new AbstractMethodError();
 	}
 
@@ -200,13 +182,11 @@ export class ParserBase extends EventDispatcher
 	 *
 	 * @param resourceDependency The dependency to be resolved.
 	 */
-	public _iResolveDependencyName(resourceDependency:ResourceDependency, asset:IAsset):string
-	{
+	public _iResolveDependencyName(resourceDependency: ResourceDependency, asset: IAsset): string {
 		return asset.name;
 	}
 
-	public _iResumeParsing():void
-	{
+	public _iResumeParsing(): void {
 		this._parsingPaused = false;
 
 		if (this._timer)
@@ -217,8 +197,7 @@ export class ParserBase extends EventDispatcher
 			this._pOnInterval();
 	}
 
-	public _pFinalizeAsset(asset:IAsset, name:string = null):void
-	{
+	public _pFinalizeAsset(asset: IAsset, name: string = null): void {
 		// If the asset has no name, give it
 		// a per-type default name.
 		asset.name = name || asset.name || asset.assetType;
@@ -231,13 +210,11 @@ export class ParserBase extends EventDispatcher
 	 * @return Whether or not more data needs to be parsed. Can be <code>ParserBase.ParserBase.PARSING_DONE</code> or
 	 * <code>ParserBase.ParserBase.MORE_TO_PARSE</code>.
 	 */
-	public _pProceedParsing():boolean
-	{
+	public _pProceedParsing(): boolean {
 		throw new AbstractMethodError();
 	}
 
-	public _pDieWithError(message:string = "Unknown parsing error"):void
-	{
+	public _pDieWithError(message: string = 'Unknown parsing error'): void {
 		if (this._timer) {
 			this._timer.removeEventListener(TimerEvent.TIMER, this._pOnIntervalDelegate);
 			this._timer.stop();
@@ -247,23 +224,20 @@ export class ParserBase extends EventDispatcher
 		this.dispatchEvent(new ParserEvent(ParserEvent.PARSE_ERROR, message));
 	}
 
-	public _pAddDependency(id:string, req:URLRequest, parser:ParserBase = null, data:any = null, retrieveAsRawData:boolean = false, suppressErrorEvents:boolean = false, sub_id:number = 0):ResourceDependency
-	{
-		var dependency:ResourceDependency = new ResourceDependency(id, req, data, parser, this, retrieveAsRawData, suppressErrorEvents, sub_id);
+	public _pAddDependency(id: string, req: URLRequest, parser: ParserBase = null, data: any = null, retrieveAsRawData: boolean = false, suppressErrorEvents: boolean = false, sub_id: number = 0): ResourceDependency {
+		const dependency: ResourceDependency = new ResourceDependency(id, req, data, parser, this, retrieveAsRawData, suppressErrorEvents, sub_id);
 		this._dependencies.push(dependency);
 
 		return dependency;
 	}
 
-	public _pPauseAndRetrieveDependencies():void
-	{
+	public _pPauseAndRetrieveDependencies(): void {
 		this._pPauseParsing();
 
 		this.dispatchEvent(new ParserEvent(ParserEvent.READY_FOR_DEPENDENCIES));
 	}
 
-	public _pPauseParsing():void
-	{
+	public _pPauseParsing(): void {
 		if (this._timer)
 			this._timer.stop();
 
@@ -274,16 +248,14 @@ export class ParserBase extends EventDispatcher
 	 * Tests whether or not there is still time left for parsing within the maximum allowed time frame per session.
 	 * @return True if there is still time left, false if the maximum allotted time was exceeded and parsing should be interrupted.
 	 */
-	public _pHasTime():boolean
-	{
+	public _pHasTime(): boolean {
 		return ((getTimer() - this._lastFrameTime) < this._frameLimit);
 	}
 
 	/**
 	 * Called when the parsing pause interval has passed and parsing can proceed.
 	 */
-	public _pOnInterval(event:TimerEvent = null):void
-	{
+	public _pOnInterval(event: TimerEvent = null): void {
 		this._lastFrameTime = getTimer();
 		this._isParsing = true;
 
@@ -297,8 +269,7 @@ export class ParserBase extends EventDispatcher
 	 * Initializes the parsing of data.
 	 * @param frameLimit The maximum duration of a parsing session.
 	 */
-	public _pStartParsing(frameLimit:number):void
-	{
+	public _pStartParsing(frameLimit: number): void {
 		this._frameLimit = frameLimit;
 		this._timer = new Timer(this._frameLimit, 0);
 		this._timer.addEventListener(TimerEvent.TIMER, this._pOnIntervalDelegate);
@@ -311,8 +282,7 @@ export class ParserBase extends EventDispatcher
 	/**
 	 * Finish parsing the data.
 	 */
-	public _pFinishParsing():void
-	{
+	public _pFinishParsing(): void {
 		if (this._timer) {
 			this._timer.removeEventListener(TimerEvent.TIMER, this._pOnIntervalDelegate);
 			this._timer.stop();
@@ -330,8 +300,7 @@ export class ParserBase extends EventDispatcher
 	 * @returns {string}
 	 * @private
 	 */
-	public _pGetTextData():string
-	{
+	public _pGetTextData(): string {
 		return ParserUtils.toString(this._data);
 	}
 
@@ -340,8 +309,7 @@ export class ParserBase extends EventDispatcher
 	 * @returns {ByteArray}
 	 * @private
 	 */
-	public _pGetByteData():ByteArray
-	{
+	public _pGetByteData(): ByteArray {
 		return ParserUtils.toByteArray(this._data);
 	}
 
@@ -350,8 +318,7 @@ export class ParserBase extends EventDispatcher
 	 * @returns {any}
 	 * @private
 	 */
-	public _pGetData():any
-	{
+	public _pGetData(): any {
 		return this._data;
 	}
 

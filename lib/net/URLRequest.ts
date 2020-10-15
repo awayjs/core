@@ -1,7 +1,6 @@
-import {URLRequestMethod} from "../net/URLRequestMethod";
+import { URLRequestMethod } from '../net/URLRequestMethod';
 
-export class URLRequest
-{
+export class URLRequest {
 	/*
 	 * The MIME content type of the content in the the data property.
 	 * @type {string}
@@ -12,7 +11,7 @@ export class URLRequest
 	 * Object containing data to be transmited with URL Request ( URL Variables / binary / string )
 	 *
 	 */
-	public data:any;
+	public data: any;
 
 	/**
 	 *
@@ -21,25 +20,24 @@ export class URLRequest
 	 *
 	 * @type {string}
 	 */
-	public method:string = URLRequestMethod.GET;
+	public method: string = URLRequestMethod.GET;
 
 	/**
 	 * Use asynchronous XMLHttpRequest
 	 * @type {boolean}
 	 */
-	public async:boolean = true;
+	public async: boolean = true;
 
 	/**
 	 *
 	 */
-	private _url:string;
+	private _url: string;
 
 	/**
 
 	 * @param url
 	 */
-	constructor(url:string = null)
-	{
+	constructor(url: string = null) {
 		this._url = url;
 	}
 
@@ -47,8 +45,7 @@ export class URLRequest
 	 *
 	 * @returns {string}
 	 */
-	public get url():string
-	{
+	public get url(): string {
 		return this._url;
 	}
 
@@ -56,16 +53,14 @@ export class URLRequest
 	 *
 	 * @param value
 	 */
-	public set url(value:string)
-	{
+	public set url(value: string) {
 		this._url = value;
 	}
 
 	/**
 	 * dispose
 	 */
-	public dispose():void
-	{
+	public dispose(): void {
 		this.data = null;
 		this._url = null;
 	}

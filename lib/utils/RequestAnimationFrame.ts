@@ -1,19 +1,17 @@
-import {getTimer} from "./getTimer";
+import { getTimer } from './getTimer';
 
-export class RequestAnimationFrame
-{
-	private _callback:Function;
-	private _callbackContext:Object;
-	private _active:boolean = false;
-	private _rafUpdateFunction:any;
-	private _prevTime:number;
-	private _dt:number;
-	private _currentTime:number;
-	private _argsArray:Array<any> = new Array();
-	private _getTimer:Function;
+export class RequestAnimationFrame {
+	private _callback: Function;
+	private _callbackContext: Object;
+	private _active: boolean = false;
+	private _rafUpdateFunction: any;
+	private _prevTime: number;
+	private _dt: number;
+	private _currentTime: number;
+	private _argsArray: Array<any> = new Array();
+	private _getTimer: Function;
 
-	constructor(callback:Function, callbackContext:Object)
-	{
+	constructor(callback: Function, callbackContext: Object) {
 		this._getTimer = getTimer;
 
 		this.setCallback(callback, callbackContext);
@@ -33,8 +31,7 @@ export class RequestAnimationFrame
 	 * @param callback
 	 * @param callbackContext
 	 */
-	public setCallback(callback:Function, callbackContext:Object):void
-	{
+	public setCallback(callback: Function, callbackContext: Object): void {
 		this._callback = callback;
 		this._callbackContext = callbackContext;
 	}
@@ -42,8 +39,7 @@ export class RequestAnimationFrame
 	/**
 	 *
 	 */
-	public start():void
-	{
+	public start(): void {
 		this._prevTime = this._getTimer();
 		this._active = true;
 
@@ -51,12 +47,12 @@ export class RequestAnimationFrame
 			if (window.requestAnimationFrame) {
 				window.requestAnimationFrame(this._rafUpdateFunction);
 			} else {
-				if (window["mozRequestAnimationFrame"])
-					window.requestAnimationFrame = window["mozRequestAnimationFrame"];
-				else if (window["webkitRequestAnimationFrame"])
-					window.requestAnimationFrame = window["webkitRequestAnimationFrame"];
-				else if (window["oRequestAnimationFrame"])
-					window.requestAnimationFrame = window["oRequestAnimationFrame"];
+				if (window['mozRequestAnimationFrame'])
+					window.requestAnimationFrame = window['mozRequestAnimationFrame'];
+				else if (window['webkitRequestAnimationFrame'])
+					window.requestAnimationFrame = window['webkitRequestAnimationFrame'];
+				else if (window['oRequestAnimationFrame'])
+					window.requestAnimationFrame = window['oRequestAnimationFrame'];
 			}
 		}
 	}
@@ -64,8 +60,7 @@ export class RequestAnimationFrame
 	/**
 	 *
 	 */
-	public stop():void
-	{
+	public stop(): void {
 		this._active = false;
 	}
 
@@ -75,8 +70,7 @@ export class RequestAnimationFrame
 	 *
 	 * @returns {boolean}
 	 */
-	public get active():boolean
-	{
+	public get active(): boolean {
 		return this._active;
 	}
 
@@ -86,8 +80,7 @@ export class RequestAnimationFrame
 	 *
 	 * @private
 	 */
-	private _tick():void
-	{
+	private _tick(): void {
 		this._currentTime = this._getTimer();
 		this._dt = this._currentTime - this._prevTime;
 		this._argsArray[0] = this._dt;
@@ -97,6 +90,5 @@ export class RequestAnimationFrame
 
 		this._prevTime = this._currentTime;
 	}
-
 
 }

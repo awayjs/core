@@ -1,8 +1,8 @@
-import {IAsset} from "./IAsset";
+import { IAsset } from './IAsset';
 
 export interface IAssetAdapter
 {
-	adaptee:IAsset;
+	adaptee: IAsset;
 
 	dispose();
 }

@@ -1,4 +1,4 @@
-import {Point} from "./Point";
+import { Point } from './Point';
 
 /**
  * A Rectangle object is an area defined by its position, as indicated by its
@@ -44,45 +44,37 @@ import {Point} from "./Point";
  * display object. To draw a rectangular Shape object onscreen, use the
  * <code>drawRect()</code> method of the Graphics class.</p>
  */
-export class Rectangle
-{
-	public _rawData:Float32Array = new Float32Array(4);
+export class Rectangle {
+	public _rawData: Float32Array = new Float32Array(4);
 	//for AVM1:
 
 	// for AVM1:
-	public axCallPublicProperty(value1:any, value2:any):any
-	{
+	public axCallPublicProperty(value1: any, value2: any): any {
 		return null;
 	}
 
-	public axGetPublicProperty(value:any):any
-	{
+	public axGetPublicProperty(value: any): any {
 		return null;
 	}
 
-	public axSetPublicProperty(value:any):any
-	{
+	public axSetPublicProperty(value: any): any {
 		return null;
 	}
 
-
-
-	private _size:Point;
-	private _bottomRight:Point;
-	private _topLeft:Point;
+	private _size: Point;
+	private _bottomRight: Point;
+	private _topLeft: Point;
 
 	/**
 	 * The height of the rectangle, in pixels. Changing the <code>height</code>
 	 * value of a Rectangle object has no effect on the <code>x</code>,
 	 * <code>y</code>, and <code>width</code> properties.
 	 */
-	public get height():number
-	{
+	public get height(): number {
 		return this._rawData[3];
 	}
 
-	public set height(value:number)
-	{
+	public set height(value: number) {
 		this._rawData[3] = value;
 	}
 
@@ -91,13 +83,11 @@ export class Rectangle
 	 * value of a Rectangle object has no effect on the <code>x</code>,
 	 * <code>y</code>, and <code>height</code> properties.
 	 */
-	public get width():number
-	{
+	public get width(): number {
 		return this._rawData[2];
 	}
 
-	public set width(value:number)
-	{
+	public set width(value: number) {
 		this._rawData[2] = value;
 	}
 
@@ -110,13 +100,11 @@ export class Rectangle
 	 * <p>The value of the <code>x</code> property is equal to the value of the
 	 * <code>left</code> property.</p>
 	 */
-	public get x():number
-	{
+	public get x(): number {
 		return this._rawData[0];
 	}
 
-	public set x(value:number)
-	{
+	public set x(value: number) {
 		this._rawData[0] = value;
 	}
 
@@ -129,26 +117,22 @@ export class Rectangle
 	 * <p>The value of the <code>y</code> property is equal to the value of the
 	 * <code>top</code> property.</p>
 	 */
-	public get y():number
-	{
+	public get y(): number {
 		return this._rawData[1];
 	}
 
-	public set y(value:number)
-	{
+	public set y(value: number) {
 		this._rawData[1] = value;
 	}
 
 	/**
 	 * The sum of the <code>y</code> and <code>height</code> properties.
 	 */
-	public get bottom():number
-	{
+	public get bottom(): number {
 		return this._rawData[1] + this._rawData[3];
 	}
 
-	public set bottom(val:number)
-	{
+	public set bottom(val: number) {
 		this._rawData[3] = val - this._rawData[1];
 	}
 
@@ -156,8 +140,7 @@ export class Rectangle
 	 * The location of the Rectangle object's bottom-right corner, determined by
 	 * the values of the <code>right</code> and <code>bottom</code> properties.
 	 */
-	public get bottomRight():Point
-	{
+	public get bottomRight(): Point {
 		if (this._bottomRight == null)
 			this._bottomRight = new Point();
 
@@ -177,13 +160,11 @@ export class Rectangle
 	 * <p>The value of the <code>left</code> property is equal to the value of
 	 * the <code>x</code> property.</p>
 	 */
-	public get left():number
-	{
+	public get left(): number {
 		return this._rawData[0];
 	}
 
-	public set left(val:number)
-	{
+	public set left(val: number) {
 		this._rawData[2] += this._rawData[0] - val;
 		this._rawData[0] = val;
 	}
@@ -191,13 +172,11 @@ export class Rectangle
 	/**
 	 * The sum of the <code>x</code> and <code>width</code> properties.
 	 */
-	public get right():number
-	{
+	public get right(): number {
 		return this._rawData[0] + this._rawData[2];
 	}
 
-	public set right(val:number)
-	{
+	public set right(val: number) {
 		this._rawData[2] = val - this._rawData[0];
 	}
 
@@ -205,8 +184,7 @@ export class Rectangle
 	 * The size of the Rectangle object, expressed as a Point object with the
 	 * values of the <code>width</code> and <code>height</code> properties.
 	 */
-	public get size():Point
-	{
+	public get size(): Point {
 		if (this._size == null)
 			this._size = new Point();
 
@@ -226,13 +204,11 @@ export class Rectangle
 	 * <p>The value of the <code>top</code> property is equal to the value of the
 	 * <code>y</code> property.</p>
 	 */
-	public get top():number
-	{
+	public get top(): number {
 		return this._rawData[1];
 	}
 
-	public set top(val:number)
-	{
+	public set top(val: number) {
 		this._rawData[3] += (this._rawData[1] - val);
 		this._rawData[1] = val;
 	}
@@ -241,8 +217,7 @@ export class Rectangle
 	 * The location of the Rectangle object's top-left corner, determined by the
 	 * <i>x</i> and <i>y</i> coordinates of the point.
 	 */
-	public get topLeft():Point
-	{
+	public get topLeft(): Point {
 		if (this._topLeft == null)
 			this._topLeft = new Point();
 
@@ -267,9 +242,8 @@ export class Rectangle
 	 * @param width  The width of the rectangle, in pixels.
 	 * @param height The height of the rectangle, in pixels.
 	 */
-	constructor(x:number = 0, y:number = 0, width:number = 0, height:number = 0)
-	{
-		var raw:Float32Array = this._rawData;
+	constructor(x: number = 0, y: number = 0, width: number = 0, height: number = 0) {
+		const raw: Float32Array = this._rawData;
 
 		raw[0] = x;
 		raw[1] = y;
@@ -286,9 +260,8 @@ export class Rectangle
 	 *         <code>x</code>, <code>y</code>, <code>width</code>, and
 	 *         <code>height</code> properties as the original Rectangle object.
 	 */
-	public clone():Rectangle
-	{
-		var raw:Float32Array = this._rawData;
+	public clone(): Rectangle {
+		const raw: Float32Array = this._rawData;
 
 		return new Rectangle(raw[0], raw[1], raw[2], raw[3]);
 	}
@@ -302,9 +275,8 @@ export class Rectangle
 	 * @return A value of <code>true</code> if the Rectangle object contains the
 	 *         specified point; otherwise <code>false</code>.
 	 */
-	public contains(x:number, y:number):boolean
-	{
-		var raw:Float32Array = this._rawData;
+	public contains(x: number, y: number): boolean {
+		const raw: Float32Array = this._rawData;
 
 		return (raw[0] <= x && raw[0] + raw[2] >= x && raw[1] <= y && raw[1] + raw[3] >= y);
 	}
@@ -320,10 +292,9 @@ export class Rectangle
 	 * @return A value of <code>true</code> if the Rectangle object contains the
 	 *         specified point; otherwise <code>false</code>.
 	 */
-	public containsPoint(point:Point):boolean
-	{
-		var raw:Float32Array = this._rawData;
-		var rawPoint:Float32Array = point._rawData;
+	public containsPoint(point: Point): boolean {
+		const raw: Float32Array = this._rawData;
+		const rawPoint: Float32Array = point._rawData;
 
 		return (raw[0] <= rawPoint[0] && raw[0] + raw[2] >= rawPoint[0] && raw[1] <= rawPoint[1] && raw[1] + raw[3] >= rawPoint[1]);
 	}
@@ -339,10 +310,9 @@ export class Rectangle
 	 *         specify is contained by this Rectangle object; otherwise
 	 *         <code>false</code>.
 	 */
-	public containsRect(rect:Rectangle):boolean
-	{
-		var raw:Float32Array = this._rawData;
-		var rawRect:Float32Array = rect._rawData;
+	public containsRect(rect: Rectangle): boolean {
+		const raw: Float32Array = this._rawData;
+		const rawRect: Float32Array = rect._rawData;
 
 		return (raw[0] <= rawRect[0] && raw[0] + raw[2] >= rawRect[0] + rawRect[2] && raw[1] <= rawRect[1] && raw[1] + raw[3] >= rawRect[1] + rawRect[3]);
 	}
@@ -353,10 +323,9 @@ export class Rectangle
 	 *
 	 * @param sourceRect The Rectangle object from which to copy the data.
 	 */
-	public copyFrom(sourceRect:Rectangle):void
-	{
-		var raw:Float32Array = this._rawData;
-		var rawSource:Float32Array = sourceRect._rawData;
+	public copyFrom(sourceRect: Rectangle): void {
+		const raw: Float32Array = this._rawData;
+		const rawSource: Float32Array = sourceRect._rawData;
 
 		raw[0] = rawSource[0];
 		raw[1] = rawSource[1];
@@ -377,10 +346,9 @@ export class Rectangle
 	 *         and <code>height</code> properties as this Rectangle object;
 	 *         otherwise <code>false</code>.
 	 */
-	public equals(toCompare:Rectangle):boolean
-	{
-		var raw:Float32Array = this._rawData;
-		var rawCompare:Float32Array = toCompare._rawData;
+	public equals(toCompare: Rectangle): boolean {
+		const raw: Float32Array = this._rawData;
+		const rawCompare: Float32Array = toCompare._rawData;
 
 		return (raw[0] == rawCompare[0] && raw[1] == rawCompare[1] && raw[2] == rawCompare[2] && raw[3] == rawCompare[3]);
 	}
@@ -398,9 +366,8 @@ export class Rectangle
 	 *           Rectangle. The following equation is used to calculate the new
 	 *           height and position of the rectangle:
 	 */
-	public inflate(dx:number, dy:number):void
-	{
-		var raw:Float32Array = this._rawData;
+	public inflate(dx: number, dy: number): void {
+		const raw: Float32Array = this._rawData;
 
 		raw[0] -= dx / 2;
 		raw[1] -= dy / 2;
@@ -420,9 +387,8 @@ export class Rectangle
 	 *              The <code>y</code> property is used to increase the vertical
 	 *              dimension of the Rectangle object.
 	 */
-	public inflatePoint(point:Point):void
-	{
-		var raw:Float32Array = this._rawData;
+	public inflatePoint(point: Point): void {
+		const raw: Float32Array = this._rawData;
 
 		raw[0] -= point.x / 2;
 		raw[1] -= point.y / 2;
@@ -445,14 +411,13 @@ export class Rectangle
 	 *         <code>y</code>, <code>width</code>, and <code>height</code>
 	 *         properties set to 0.
 	 */
-	public intersection(toIntersect:Rectangle):Rectangle
-	{
-		var raw:Float32Array = this._rawData;
-		var rawIntersect:Float32Array = toIntersect._rawData;
+	public intersection(toIntersect: Rectangle): Rectangle {
+		const raw: Float32Array = this._rawData;
+		const rawIntersect: Float32Array = toIntersect._rawData;
 
 		if (this.intersects(toIntersect)) {
-			var result:Rectangle = new Rectangle();
-			var rawResult:Float32Array = result._rawData;
+			const result: Rectangle = new Rectangle();
+			const rawResult: Float32Array = result._rawData;
 
 			if (raw[0] > rawIntersect[0]) {
 				rawResult[0] = raw[0];
@@ -500,10 +465,9 @@ export class Rectangle
 	 * @return A value of <code>true</code> if the specified object intersects
 	 *         with this Rectangle object; otherwise <code>false</code>.
 	 */
-	public intersects(toIntersect:Rectangle):boolean
-	{
-		var raw:Float32Array = this._rawData;
-		var rawIntersect:Float32Array = toIntersect._rawData;
+	public intersects(toIntersect: Rectangle): boolean {
+		const raw: Float32Array = this._rawData;
+		const rawIntersect: Float32Array = toIntersect._rawData;
 
 		return (raw[0] + raw[2] > rawIntersect[0] && raw[0] < rawIntersect[0] + rawIntersect[2] && raw[1] + raw[3] > rawIntersect[1] && raw[1] < rawIntersect[1] + rawIntersect[3]);
 	}
@@ -514,9 +478,8 @@ export class Rectangle
 	 * @return A value of <code>true</code> if the Rectangle object's width or
 	 *         height is less than or equal to 0; otherwise <code>false</code>.
 	 */
-	public isEmpty():boolean
-	{
-		var raw:Float32Array = this._rawData;
+	public isEmpty(): boolean {
+		const raw: Float32Array = this._rawData;
 
 		return (raw[0] == 0 && raw[1] == 0 && raw[2] == 0 && raw[3] == 0);
 	}
@@ -528,8 +491,7 @@ export class Rectangle
 	 * @param dx Moves the <i>x</i> value of the Rectangle object by this amount.
 	 * @param dy Moves the <i>y</i> value of the Rectangle object by this amount.
 	 */
-	public offset(dx:number, dy:number):void
-	{
+	public offset(dx: number, dy: number): void {
 		this._rawData[0] += dx;
 		this._rawData[1] += dy;
 	}
@@ -541,8 +503,7 @@ export class Rectangle
 	 *
 	 * @param point A Point object to use to offset this Rectangle object.
 	 */
-	public offsetPoint(point:Point):void
-	{
+	public offsetPoint(point: Point): void {
 		this._rawData[0] += point.x;
 		this._rawData[1] += point.y;
 	}
@@ -555,9 +516,8 @@ export class Rectangle
 	 * <code>width</code>, and <code>height</code> properties to 0.</p>
 	 *
 	 */
-	public setEmpty():void
-	{
-		var raw:Float32Array = this._rawData;
+	public setEmpty(): void {
+		const raw: Float32Array = this._rawData;
 
 		raw[0] = 0;
 		raw[1] = 0;
@@ -575,9 +535,8 @@ export class Rectangle
 	 * @param widtha  The width of the rectangle, in pixels.
 	 * @param heighta The height of the rectangle, in pixels.
 	 */
-	public setTo(xa:number, ya:number, widtha:number, heighta:number):void
-	{
-		var raw:Float32Array = this._rawData;
+	public setTo(xa: number, ya: number, widtha: number, heighta: number): void {
+		const raw: Float32Array = this._rawData;
 
 		raw[0] = xa;
 		raw[1] = ya;
@@ -593,9 +552,8 @@ export class Rectangle
 	 *         the Rectangle object: <code>x</code>, <code>y</code>,
 	 *         <code>width</code>, and <code>height</code>.
 	 */
-	public toString():string
-	{
-		return "[Rectangle] (x=" + this.x + ", y=" + this.y + ", width=" + this.width + ", height=" + this.height + ")";
+	public toString(): string {
+		return '[Rectangle] (x=' + this.x + ', y=' + this.y + ', width=' + this.width + ', height=' + this.height + ')';
 	}
 
 	/**
@@ -609,13 +567,12 @@ export class Rectangle
 	 * @param toUnion A Rectangle object to add to this Rectangle object.
 	 * @return A new Rectangle object that is the union of the two rectangles.
 	 */
-	public union(toUnion:Rectangle):Rectangle
-	{
-		var raw:Float32Array = this._rawData;
-		var rawUnion:Float32Array = toUnion._rawData;
+	public union(toUnion: Rectangle): Rectangle {
+		const raw: Float32Array = this._rawData;
+		const rawUnion: Float32Array = toUnion._rawData;
 
-		var target:Rectangle = new Rectangle();
-		var rawTarget:Float32Array = target._rawData;
+		const target: Rectangle = new Rectangle();
+		const rawTarget: Float32Array = target._rawData;
 
 		if (raw[0] < rawUnion[0]) {
 			rawTarget[0] = raw[0];

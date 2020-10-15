@@ -1,9 +1,7 @@
-export class PoissonLookup
-{
-	public static _distributions:Array<Array<number>>;
+export class PoissonLookup {
+	public static _distributions: Array<Array<number>>;
 
-	public static initDistributions():void
-	{
+	public static initDistributions(): void {
 		// precalculated for best control
 		this._distributions = new Array<Array<number>>();
 		this._distributions[0] = new Array<number>(0.3082841, 0.4320919);
@@ -40,8 +38,7 @@ export class PoissonLookup
 		this._distributions[31] = new Array<number>(-0.4206714, -0.5613642, -0.8733016, -0.3373051, -0.1046226, -0.2902999, -0.1318562, -0.8434365, 0.1145093, -0.5962623, -0.4965627, -0.1873259, -0.5011808, -0.8546229, -0.7165636, -0.5743566, 0.1090901, 0.2017643, 0.3404809, -0.220455, -0.1989015, 0.2372122, -0.4538706, 0.0979171, 0.4514146, -0.572846, 0.2314168, -0.8514503, -0.4247236, 0.5650803, -0.943347, 0.04514639, -0.1309718, 0.5221877, -0.7004157, 0.4561877, 0.6306441, 0.04448673, 0.4301621, 0.5766876, 0.1078042, 0.7245752, 0.3875354, 0.2794483, 0.702876, -0.2924213, 0.7360667, -0.6210318, 0.7486517, 0.6531103, 0.4898235, 0.8591025, 0.6549174, 0.3854057, -0.2596106, 0.7916998, 0.9251194, -0.05296265, -0.5620695, 0.820877, -0.01228026, 0.9937211, 0.9612103, 0.2628758);
 	}
 
-	public static getDistribution(n:number /*int*/):Array<number>
-	{
+	public static getDistribution(n: number /*int*/): Array<number> {
 		if (!this._distributions)
 			this.initDistributions();
 

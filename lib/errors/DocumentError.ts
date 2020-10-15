@@ -1,11 +1,9 @@
-import {ErrorBase} from "./ErrorBase";
+import { ErrorBase } from './ErrorBase';
 
-export class DocumentError extends ErrorBase
-{
-	public static DOCUMENT_DOES_NOT_EXIST:string = "documentDoesNotExist";
+export class DocumentError extends ErrorBase {
+	public static DOCUMENT_DOES_NOT_EXIST: string = 'documentDoesNotExist';
 
-	constructor(message:string = "DocumentError", id:number = 0)
-	{
+	constructor(message: string = 'DocumentError', id: number = 0) {
 		super(message, id);
 	}
 }

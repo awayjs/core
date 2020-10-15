@@ -1,21 +1,20 @@
-export class LoaderContext
-{
-	public static UNDEFINED:number = 0;
-	public static SINGLEPASS_MATERIALS:number = 1;
-	public static MULTIPASS_MATERIALS:number = 2;
+export class LoaderContext {
+	public static UNDEFINED: number = 0;
+	public static SINGLEPASS_MATERIALS: number = 1;
+	public static MULTIPASS_MATERIALS: number = 2;
 
-	public static ON_DEMAND:string = "onDemand";
-	public static PRELOADED:string = "preloaded";
+	public static ON_DEMAND: string = 'onDemand';
+	public static PRELOADED: string = 'preloaded';
 
-	private _includeDependencies:boolean;
-	private _dependencyBaseUrl:string;
-	private _embeddedDataByUrl:Object;
-	private _remappedUrls:Object;
-	private _materialMode:number;
-	private _externalAssetMode:string;
+	private _includeDependencies: boolean;
+	private _dependencyBaseUrl: string;
+	private _embeddedDataByUrl: Object;
+	private _remappedUrls: Object;
+	private _materialMode: number;
+	private _externalAssetMode: string;
 
-	private _overrideAbsPath:boolean;
-	private _overrideFullUrls:boolean;
+	private _overrideAbsPath: boolean;
+	private _overrideFullUrls: boolean;
 
 	/**
 	 * LoaderContext provides configuration for the Loader load() and parse() operations.
@@ -24,10 +23,9 @@ export class LoaderContext
 	 *
 	 * @see away.loading.Loader
 	 */
-	constructor(includeDependencies:boolean = true, dependencyBaseUrl:string = null)
-	{
+	constructor(includeDependencies: boolean = true, dependencyBaseUrl: string = null) {
 		this._includeDependencies = includeDependencies;
-		this._dependencyBaseUrl = dependencyBaseUrl || "";
+		this._dependencyBaseUrl = dependencyBaseUrl || '';
 		this._embeddedDataByUrl = {};
 		this._remappedUrls = {};
 		this._materialMode = LoaderContext.UNDEFINED;
@@ -38,13 +36,11 @@ export class LoaderContext
 	 * Defines whether dependencies (all files except the one at the URL given to the load() or
 	 * parseData() operations) should be automatically loaded. Defaults to true.
 	 */
-	public get includeDependencies():boolean
-	{
+	public get includeDependencies(): boolean {
 		return this._includeDependencies;
 	}
 
-	public set includeDependencies(val:boolean)
-	{
+	public set includeDependencies(val: boolean) {
 		this._includeDependencies = val;
 	}
 
@@ -56,38 +52,31 @@ export class LoaderContext
 	 * 2 (Force MultiPass) - All Parsers will create MultiPassMaterials
 	 *
 	 */
-	public get materialMode():number
-	{
+	public get materialMode(): number {
 		return this._materialMode;
 	}
 
-	public set materialMode(value:number)
-	{
+	public set materialMode(value: number) {
 		this._materialMode = value;
 	}
 
-	public get externalAssetMode():string
-	{
+	public get externalAssetMode(): string {
 		return this._externalAssetMode;
 	}
 
-	public set externalAssetMode(value:string)
-	{
+	public set externalAssetMode(value: string) {
 		this._externalAssetMode = value;
 	}
-
 
 	/**
 	 * A base URL that will be prepended to all relative dependency URLs found in a loaded resource.
 	 * Absolute paths will not be affected by the value of this property.
 	 */
-	public get dependencyBaseUrl():string
-	{
+	public get dependencyBaseUrl(): string {
 		return this._dependencyBaseUrl;
 	}
 
-	public set dependencyBaseUrl(val:string)
-	{
+	public set dependencyBaseUrl(val: string) {
 		this._dependencyBaseUrl = val;
 	}
 
@@ -96,13 +85,11 @@ export class LoaderContext
 	 * with the dependencyBaseUrl defined in this context. If this is true, and the base path is
 	 * "base", /path/to/asset.jpg will be resolved as base/path/to/asset.jpg.
 	 */
-	public get overrideAbsolutePaths():boolean
-	{
+	public get overrideAbsolutePaths(): boolean {
 		return this._overrideAbsPath;
 	}
 
-	public set overrideAbsolutePaths(val:boolean)
-	{
+	public set overrideAbsolutePaths(val: boolean) {
 		this._overrideAbsPath = val;
 	}
 
@@ -111,13 +98,11 @@ export class LoaderContext
 	 * overridden with the dependencyBaseUrl defined in this context. If this is true, and the base
 	 * path is "base", http://example.com/path/to/asset.jpg will be resolved as base/path/to/asset.jpg.
 	 */
-	public get overrideFullURLs():boolean
-	{
+	public get overrideFullURLs(): boolean {
 		return this._overrideFullUrls;
 	}
 
-	public set overrideFullURLs(val:boolean)
-	{
+	public set overrideFullURLs(val: boolean) {
 		this._overrideFullUrls = val;
 	}
 
@@ -131,8 +116,7 @@ export class LoaderContext
 	 *
 	 * @see mapUrlToData()
 	 */
-	public mapUrl(originalUrl:string, newUrl:string):void
-	{
+	public mapUrl(originalUrl: string, newUrl: string): void {
 		this._remappedUrls[originalUrl] = newUrl;
 	}
 
@@ -143,8 +127,7 @@ export class LoaderContext
 	 * @param originalUrl The original URL which is referenced in the loaded resource.
 	 * @param data The embedded data. Can be ByteArray or a export class which can be used to create a bytearray.
 	 */
-	public mapUrlToData(originalUrl:string, data:any):void
-	{
+	public mapUrlToData(originalUrl: string, data: any): void {
 		this._embeddedDataByUrl[originalUrl] = data;
 	}
 
@@ -152,8 +135,7 @@ export class LoaderContext
 	 * @private
 	 * Defines whether embedded data has been mapped to a particular URL.
 	 */
-	public _iHasDataForUrl(url:string):boolean
-	{
+	public _iHasDataForUrl(url: string): boolean {
 		return this._embeddedDataByUrl.hasOwnProperty(url);
 	}
 
@@ -161,8 +143,7 @@ export class LoaderContext
 	 * @private
 	 * Returns embedded data for a particular URL.
 	 */
-	public _iGetDataForUrl(url:string):any
-	{
+	public _iGetDataForUrl(url: string): any {
 		return this._embeddedDataByUrl[url];
 	}
 
@@ -170,8 +151,7 @@ export class LoaderContext
 	 * @private
 	 * Defines whether a replacement URL has been mapped to a particular URL.
 	 */
-	public _iHasMappingForUrl(url:string):boolean
-	{
+	public _iHasMappingForUrl(url: string): boolean {
 		return this._remappedUrls.hasOwnProperty(url);
 	}
 
@@ -179,8 +159,7 @@ export class LoaderContext
 	 * @private
 	 * Returns new (replacement) URL for a particular original URL.
 	 */
-	public _iGetRemappedUrl(originalUrl:string):string
-	{
+	public _iGetRemappedUrl(originalUrl: string): string {
 		return this._remappedUrls[originalUrl];
 	}
 }

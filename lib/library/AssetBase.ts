@@ -1,34 +1,32 @@
-import {AbstractMethodError} from "../errors/AbstractMethodError";
+import { AbstractMethodError } from '../errors/AbstractMethodError';
 
-import {AssetEvent} from "../events/AssetEvent";
-import {EventDispatcher} from "../events/EventDispatcher";
+import { AssetEvent } from '../events/AssetEvent';
+import { EventDispatcher } from '../events/EventDispatcher';
 
-import {IAsset} from "./IAsset";
-import {IAssetAdapter} from "./IAssetAdapter";
-import {IAssetClass} from "./IAssetClass";
+import { IAsset } from './IAsset';
+import { IAssetAdapter } from './IAssetAdapter';
+import { IAssetClass } from './IAssetClass';
 
-export class AssetBase extends EventDispatcher implements IAsset, IAssetAdapter
-{
-	public static ID_COUNT:number = 0;
+export class AssetBase extends EventDispatcher implements IAsset, IAssetAdapter {
+	public static ID_COUNT: number = 0;
 
-	public _symbol:any;
-	public _adapter:IAssetAdapter;
-	private _originalName:string;
-	private _namespace:string;
-	private _name:string;
-	private _id:number;
-	private _full_path:Array<string>;
+	public _symbol: any;
+	public _adapter: IAssetAdapter;
+	private _originalName: string;
+	private _namespace: string;
+	private _name: string;
+	private _id: number;
+	private _full_path: Array<string>;
 
-	public static DEFAULT_NAMESPACE:string = "default";
+	public static DEFAULT_NAMESPACE: string = 'default';
 
-	constructor(name:string = null)
-	{
+	constructor(name: string = null) {
 		super();
 
 		this._id = AssetBase.ID_COUNT++;
 
 		if (name == null)
-			name = "null";
+			name = 'null';
 
 		this._name = name;
 		this._originalName = name;
@@ -36,8 +34,7 @@ export class AssetBase extends EventDispatcher implements IAsset, IAssetAdapter
 		this.updateFullPath();
 	}
 
-	public get adaptee():AssetBase
-	{
+	public get adaptee(): AssetBase {
 		return this;
 	}
 
@@ -45,21 +42,18 @@ export class AssetBase extends EventDispatcher implements IAsset, IAssetAdapter
 	 * adapter is used to provide MovieClip to scripts taken from different platforms
 	 * setter typically managed by factory. getter defaults to AwayJS class
 	 */
-	public get adapter():IAssetAdapter
-	{
+	public get adapter(): IAssetAdapter {
 		return this._adapter || this;
 	}
 
-	public set adapter(value:IAssetAdapter)
-	{
+	public set adapter(value: IAssetAdapter) {
 		this._adapter = value;
 	}
 
 	/**
 	 *
 	 */
-	public get assetType():string
-	{
+	public get assetType(): string {
 		throw new AbstractMethodError();
 	}
 
@@ -68,33 +62,29 @@ export class AssetBase extends EventDispatcher implements IAsset, IAssetAdapter
 	 * it was found. This may not be the same as <code>name</code>, which may
 	 * have changed due to of a name conflict.
 	 */
-	public get originalName():string
-	{
+	public get originalName(): string {
 		return this._originalName;
 	}
 
 	/**
 	 * A unique id for the asset, used to identify assets in an associative array
 	 */
-	public get id():number
-	{
+	public get id(): number {
 		return this._id;
 	}
 
-	public get name():string
-	{
+	public get name(): string {
 		return this._name;
 	}
 
-	public set name(val:string)
-	{
-		var prev:string;
+	public set name(val: string) {
+		let prev: string;
 
 		prev = this._name;
 		this._name = val;
 
 		if (this._name == null)
-			this._name = "null";
+			this._name = 'null';
 
 		this.updateFullPath();
 
@@ -104,61 +94,49 @@ export class AssetBase extends EventDispatcher implements IAsset, IAssetAdapter
 	/**
 	 *
 	 */
-	public invalidate():void
-	{
+	public invalidate(): void {
 		this.dispatchEvent(new AssetEvent(AssetEvent.INVALIDATE, this));
 	}
 
 	/**
 	 * @inheritDoc
 	 */
-	public dispose():void
-	{
+	public dispose(): void {
 		throw new AbstractMethodError();
 	}
 
-	public clone():AssetBase
-	{
+	public clone(): AssetBase {
 		throw new AbstractMethodError();
 	}
 
-	public clear():void
-	{
+	public clear(): void {
 		this.dispatchEvent(new AssetEvent(AssetEvent.CLEAR, this));
 	}
 
-	public get assetNamespace():string
-	{
+	public get assetNamespace(): string {
 		return this._namespace;
 	}
 
-	public set assetNamespace(value:string)
-	{
+	public set assetNamespace(value: string) {
 		this._namespace = value ? value : AssetBase.DEFAULT_NAMESPACE;
 		this.updateFullPath();
 	}
 
-
-	public get assetFullPath():Array<string>
-	{
+	public get assetFullPath(): Array<string> {
 		return this._full_path;
 	}
 
-	public assetPathEquals(name:string, ns:string):boolean
-	{
+	public assetPathEquals(name: string, ns: string): boolean {
 		return (this._name == name && (!ns || this._namespace == ns));
 	}
 
-
-	public isAsset(assetClass:IAssetClass):boolean
-	{
+	public isAsset(assetClass: IAssetClass): boolean {
 		return this.assetType == assetClass.assetType;
 	}
 
-	public resetAssetPath(name:string, ns:string = null, overrideOriginal:boolean = true):void
-	{
+	public resetAssetPath(name: string, ns: string = null, overrideOriginal: boolean = true): void {
 
-		this._name = name ? name : "null";
+		this._name = name ? name : 'null';
 		this._namespace = ns ? ns : AssetBase.DEFAULT_NAMESPACE;
 
 		if (overrideOriginal)
@@ -167,8 +145,7 @@ export class AssetBase extends EventDispatcher implements IAsset, IAssetAdapter
 		this.updateFullPath();
 	}
 
-	public updateFullPath():void
-	{
+	public updateFullPath(): void {
 		this._full_path = [this._namespace, this._name];
 	}
 }

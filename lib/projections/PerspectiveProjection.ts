@@ -1,12 +1,10 @@
-import {Vector3D} from "../geom/Vector3D";
+import { Vector3D } from '../geom/Vector3D';
 
-import {CoordinateSystem} from "./CoordinateSystem";
-import {ProjectionBase} from "./ProjectionBase";
+import { CoordinateSystem } from './CoordinateSystem';
+import { ProjectionBase } from './ProjectionBase';
 
-export class PerspectiveProjection extends ProjectionBase
-{
-	constructor(fieldOfView:number = 60, coordinateSystem:CoordinateSystem = CoordinateSystem.LEFT_HANDED)
-	{
+export class PerspectiveProjection extends ProjectionBase {
+	constructor(fieldOfView: number = 60, coordinateSystem: CoordinateSystem = CoordinateSystem.LEFT_HANDED) {
 		super(coordinateSystem);
 
 		this.fieldOfView = fieldOfView;
@@ -15,13 +13,11 @@ export class PerspectiveProjection extends ProjectionBase
 	/**
 	 *
 	 */
-	public get fieldOfView():number
-	{
+	public get fieldOfView(): number {
 		return Math.atan(0.5 / this.scale) * 360 / Math.PI;
 	}
 
-	public set fieldOfView(value:number)
-	{
+	public set fieldOfView(value: number) {
 		this.scale = 0.5 / Math.tan(value * Math.PI / 360);
 	}
 
@@ -30,9 +26,8 @@ export class PerspectiveProjection extends ProjectionBase
 	 * @param position
 	 * @param target
 	 */
-	public project(position:Vector3D, target:Vector3D = null):Vector3D
-	{
-		var v:Vector3D = this.viewMatrix3D.transformVector(position, target);
+	public project(position: Vector3D, target: Vector3D = null): Vector3D {
+		const v: Vector3D = this.viewMatrix3D.transformVector(position, target);
 
 		v.x = v.x / v.w;
 		v.y = -v.y / v.w;
@@ -51,8 +46,7 @@ export class PerspectiveProjection extends ProjectionBase
 	 * @param sZ
 	 * @param target
 	 */
-	public unproject(nX:number, nY:number, sZ:number, target:Vector3D = null):Vector3D
-	{
+	public unproject(nX: number, nY: number, sZ: number, target: Vector3D = null): Vector3D {
 		if (target == null)
 			target = new Vector3D();
 
@@ -72,9 +66,8 @@ export class PerspectiveProjection extends ProjectionBase
 	 *
 	 * @returns {PerspectiveProjection}
 	 */
-	public clone():ProjectionBase
-	{
-		var clone:PerspectiveProjection = new PerspectiveProjection(this.fieldOfView, this._coordinateSystem);
+	public clone(): ProjectionBase {
+		const clone: PerspectiveProjection = new PerspectiveProjection(this.fieldOfView, this._coordinateSystem);
 
 		clone._near = this._near;
 		clone._far = this._far;
@@ -87,14 +80,13 @@ export class PerspectiveProjection extends ProjectionBase
 	 *
 	 * @private
 	 */
-	protected _updateFrustumMatrix3D():void
-	{
+	protected _updateFrustumMatrix3D(): void {
 		super._updateFrustumMatrix3D();
 
-		var raw:Float32Array = this._frustumMatrix3D._rawData;
+		const raw: Float32Array = this._frustumMatrix3D._rawData;
 
-		var scaleV:number = this._scale;
-		var scaleH:number = this._scale / this._ratio;
+		const scaleV: number = this._scale;
+		const scaleH: number = this._scale / this._ratio;
 
 		this._frustumRect.left = 0.5 * (this._originX - 1) / scaleH;
 		this._frustumRect.top = 0.5 * (this._originY - 1) / scaleV;
@@ -117,11 +109,10 @@ export class PerspectiveProjection extends ProjectionBase
 		this._frustumMatrix3D.invalidatePosition();
 	}
 
-	protected _updateProperties():void
-	{
+	protected _updateProperties(): void {
 		super._updateProperties();
 
-		var rawData:Float32Array = this._frustumMatrix3D._rawData;
+		const rawData: Float32Array = this._frustumMatrix3D._rawData;
 
 		this._near = rawData[14] / (-1 - rawData[10]);
 		this._far = rawData[14] / (1 - rawData[10]);

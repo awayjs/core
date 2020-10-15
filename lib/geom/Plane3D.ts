@@ -1,41 +1,39 @@
-import {PlaneClassification} from "./PlaneClassification";
-import {Vector3D} from "./Vector3D";
+import { PlaneClassification } from './PlaneClassification';
+import { Vector3D } from './Vector3D';
 
-export class Plane3D
-{
+export class Plane3D {
 	/**
 	 * The A coefficient of this plane. (Also the x dimension of the plane normal)
 	 */
-	public a:number;
+	public a: number;
 
 	/**
 	 * The B coefficient of this plane. (Also the y dimension of the plane normal)
 	 */
-	public b:number;
+	public b: number;
 
 	/**
 	 * The C coefficient of this plane. (Also the z dimension of the plane normal)
 	 */
-	public c:number;
+	public c: number;
 
 	/**
 	 * The D coefficient of this plane. (Also the inverse dot product between normal and point)
 	 */
-	public d:number;
+	public d: number;
 
-	public _iAlignment:number;
+	public _iAlignment: number;
 
 	// indicates the alignment of the plane
-	public static ALIGN_ANY:number = 0;
-	public static ALIGN_XY_AXIS:number = 1;
-	public static ALIGN_YZ_AXIS:number = 2;
-	public static ALIGN_XZ_AXIS:number = 3;
+	public static ALIGN_ANY: number = 0;
+	public static ALIGN_XY_AXIS: number = 1;
+	public static ALIGN_YZ_AXIS: number = 2;
+	public static ALIGN_XZ_AXIS: number = 3;
 
 	/**
 	 * Create a Plane3D with ABCD coefficients
 	 */
-	constructor(a:number = 0, b:number = 0, c:number = 0, d:number = 0)
-	{
+	constructor(a: number = 0, b: number = 0, c: number = 0, d: number = 0) {
 		this.a = a;
 		this.b = b;
 		this.c = c;
@@ -67,15 +65,14 @@ export class Plane3D
 	 * @param p1 Vector3D
 	 * @param p2 Vector3D
 	 */
-	public fromPoints(p0:Vector3D, p1:Vector3D, p2:Vector3D):void
-	{
-		var d1x:number = p1.x - p0.x;
-		var d1y:number = p1.y - p0.y;
-		var d1z:number = p1.z - p0.z;
+	public fromPoints(p0: Vector3D, p1: Vector3D, p2: Vector3D): void {
+		const d1x: number = p1.x - p0.x;
+		const d1y: number = p1.y - p0.y;
+		const d1z: number = p1.z - p0.z;
 
-		var d2x:number = p2.x - p0.x;
-		var d2y:number = p2.y - p0.y;
-		var d2z:number = p2.z - p0.z;
+		const d2x: number = p2.x - p0.x;
+		const d2y: number = p2.y - p0.y;
+		const d2z: number = p2.z - p0.z;
 
 		this.a = d1y * d2z - d1z * d2y;
 		this.b = d1z * d2x - d1x * d2z;
@@ -108,8 +105,7 @@ export class Plane3D
 	 * @param normal Vector3D
 	 * @param point  Vector3D
 	 */
-	public fromNormalAndPoint(normal:Vector3D, point:Vector3D):void
-	{
+	public fromNormalAndPoint(normal: Vector3D, point: Vector3D): void {
 		this.a = normal.x;
 		this.b = normal.y;
 		this.c = normal.z;
@@ -138,9 +134,8 @@ export class Plane3D
 	 * Normalize this Plane3D
 	 * @return Plane3D This Plane3D.
 	 */
-	public normalize():Plane3D
-	{
-		var len:number = 1 / Math.sqrt(this.a * this.a + this.b * this.b + this.c * this.c);
+	public normalize(): Plane3D {
+		const len: number = 1 / Math.sqrt(this.a * this.a + this.b * this.b + this.c * this.c);
 		this.a *= len;
 		this.b *= len;
 		this.c *= len;
@@ -153,8 +148,7 @@ export class Plane3D
 	 * @param p Vector3D
 	 * @returns Number
 	 */
-	public distance(p:Vector3D):number
-	{
+	public distance(p: Vector3D): number {
 
 		if (this._iAlignment == Plane3D.ALIGN_YZ_AXIS) {
 
@@ -179,13 +173,12 @@ export class Plane3D
 	 * @param p Vector3D
 	 * @return int Plane3.FRONT or Plane3D.BACK or Plane3D.INTERSECT
 	 */
-	public classifyPoint(p:Vector3D, epsilon:number = 0.01):number
-	{
+	public classifyPoint(p: Vector3D, epsilon: number = 0.01): number {
 		// check NaN
 		if (this.d != this.d)
 			return PlaneClassification.FRONT;
 
-		var len:number;
+		let len: number;
 		if (this._iAlignment == Plane3D.ALIGN_YZ_AXIS)
 			len = this.a * p.x - this.d;
 		else if (this._iAlignment == Plane3D.ALIGN_XZ_AXIS)
@@ -203,8 +196,7 @@ export class Plane3D
 			return PlaneClassification.INTERSECT;
 	}
 
-	public toString():string
-	{
-		return "Plane3D [a:" + this.a + ", b:" + this.b + ", c:" + this.c + ", d:" + this.d + "]";
+	public toString(): string {
+		return 'Plane3D [a:' + this.a + ', b:' + this.b + ', c:' + this.c + ', d:' + this.d + ']';
 	}
 }

@@ -1,4 +1,4 @@
-import {Vector3D} from "./Vector3D";
+import { Vector3D } from './Vector3D';
 
 /**
  * A Box object is an area defined by its position, as indicated by its
@@ -28,32 +28,31 @@ import {Vector3D} from "./Vector3D";
  * <p><b>Note:</b> The Box export class does not define a cubic Shape
  * display object.
  */
-export class Box
-{
-	private _size:Vector3D;
-	private _bottomRightBack:Vector3D;
-	private _topLeftFront:Vector3D;
+export class Box {
+	private _size: Vector3D;
+	private _bottomRightBack: Vector3D;
+	private _topLeftFront: Vector3D;
 
 	/**
 	 * The height of the box, in pixels. Changing the <code>height</code> value
 	 * of a Box object has no effect on the <code>x</code>, <code>y</code>,
 	 * <code>z</code>, <code>depth</code> and <code>width</code> properties.
 	 */
-	public height:number;
+	public height: number;
 
 	/**
 	 * The width of the box, in pixels. Changing the <code>width</code> value
 	 * of a Box object has no effect on the <code>x</code>, <code>y</code>,
 	 * <code>z</code>, <code>depth</code> and <code>height</code> properties.
 	 */
-	public width:number;
+	public width: number;
 
 	/**
 	 * The deoth of the box, in pixels. Changing the <code>depth</code> value
 	 * of a Box object has no effect on the <code>x</code>, <code>y</code>,
 	 * <code>z</code>, <code>width</code> and <code>height</code> properties.
 	 */
-	public depth:number;
+	public depth: number;
 
 	/**
 	 * The <i>x</i> coordinate of the top-left-front corner of the box.
@@ -64,7 +63,7 @@ export class Box
 	 * <p>The value of the <code>x</code> property is equal to the value of the
 	 * <code>left</code> property.</p>
 	 */
-	public x:number;
+	public x: number;
 
 	/**
 	 * The <i>y</i> coordinate of the top-left-front corner of the box.
@@ -75,7 +74,7 @@ export class Box
 	 * <p>The value of the <code>y</code> property is equal to the value of the
 	 * <code>top</code> property.</p>
 	 */
-	public y:number;
+	public y: number;
 
 	/**
 	 * The <i>y</i> coordinate of the top-left-front corner of the box.
@@ -86,31 +85,27 @@ export class Box
 	 * <p>The value of the <code>z</code> property is equal to the value of the
 	 * <code>front</code> property.</p>
 	 */
-	public z:number
+	public z: number
 
 	/**
 	 * The sum of the <code>z</code> and <code>height</code> properties.
 	 */
-	public get back():number
-	{
+	public get back(): number {
 		return this.z + this.depth;
 	}
 
-	public set back(val:number)
-	{
+	public set back(val: number) {
 		this.depth = val - this.z;
 	}
 
 	/**
 	 * The sum of the <code>y</code> and <code>height</code> properties.
 	 */
-	public get bottom():number
-	{
+	public get bottom(): number {
 		return this.y + this.height;
 	}
 
-	public set bottom(val:number)
-	{
+	public set bottom(val: number) {
 		this.height = val - this.y;
 	}
 
@@ -118,8 +113,7 @@ export class Box
 	 * The location of the Box object's bottom-right corner, determined by the
 	 * values of the <code>right</code> and <code>bottom</code> properties.
 	 */
-	public get bottomRightBack():Vector3D
-	{
+	public get bottomRightBack(): Vector3D {
 		if (this._bottomRightBack == null)
 			this._bottomRightBack = new Vector3D();
 
@@ -141,13 +135,11 @@ export class Box
 	 * <p>The value of the <code>left</code> property is equal to the value of
 	 * the <code>x</code> property.</p>
 	 */
-	public get front():number
-	{
+	public get front(): number {
 		return this.z;
 	}
 
-	public set front(val:number)
-	{
+	public set front(val: number) {
 		this.depth += this.z - val;
 		this.z = val;
 	}
@@ -162,13 +154,11 @@ export class Box
 	 * <p>The value of the <code>left</code> property is equal to the value of
 	 * the <code>x</code> property.</p>
 	 */
-	public get left():number
-	{
+	public get left(): number {
 		return this.x;
 	}
 
-	public set left(val:number)
-	{
+	public set left(val: number) {
 		this.width += this.x - val;
 		this.x = val;
 	}
@@ -176,13 +166,11 @@ export class Box
 	/**
 	 * The sum of the <code>x</code> and <code>width</code> properties.
 	 */
-	public get right():number
-	{
+	public get right(): number {
 		return this.x + this.width;
 	}
 
-	public set right(val:number)
-	{
+	public set right(val: number) {
 		this.width = val - this.x;
 	}
 
@@ -191,8 +179,7 @@ export class Box
 	 * values of the <code>width</code>, <code>height</code> and
 	 * <code>depth</code> properties.
 	 */
-	public get size():Vector3D
-	{
+	public get size(): Vector3D {
 		if (this._size == null)
 			this._size = new Vector3D();
 
@@ -213,13 +200,11 @@ export class Box
 	 * <p>The value of the <code>top</code> property is equal to the value of the
 	 * <code>y</code> property.</p>
 	 */
-	public get top():number
-	{
+	public get top(): number {
 		return this.y;
 	}
 
-	public set top(val:number)
-	{
+	public set top(val: number) {
 		this.height += (this.y - val);
 		this.y = val;
 	}
@@ -228,8 +213,7 @@ export class Box
 	 * The location of the Box object's top-left-front corner, determined by the
 	 * <i>x</i>, <i>y</i> and <i>z</i> coordinates of the point.
 	 */
-	public get topLeftFront():Vector3D
-	{
+	public get topLeftFront(): Vector3D {
 		if (this._topLeftFront == null)
 			this._topLeftFront = new Vector3D();
 
@@ -258,8 +242,7 @@ export class Box
 	 * @param height The height of the box, in pixels.
 	 * @param depth The depth of the box, in pixels.
 	 */
-	constructor(x:number = 0, y:number = 0, z:number = 0, width:number = 0, height:number = 0, depth:number = 0)
-	{
+	constructor(x: number = 0, y: number = 0, z: number = 0, width: number = 0, height: number = 0, depth: number = 0) {
 		this.x = x;
 		this.y = y;
 		this.z = z;
@@ -278,8 +261,7 @@ export class Box
 	 *         <code>height</code> and <code>depth</code> properties as the
 	 *         original Box object.
 	 */
-	public clone():Box
-	{
+	public clone(): Box {
 		return new Box(this.x, this.y, this.z, this.width, this.height, this.depth);
 	}
 
@@ -293,8 +275,7 @@ export class Box
 	 * @return A value of <code>true</code> if the Box object contains the
 	 *         specified position; otherwise <code>false</code>.
 	 */
-	public contains(x:number, y:number, z:number):boolean
-	{
+	public contains(x: number, y: number, z: number): boolean {
 		return (this.x <= x && this.x + this.width >= x && this.y <= y && this.y + this.height >= y && this.z <= z && this.z + this.depth >= z);
 	}
 
@@ -309,8 +290,7 @@ export class Box
 	 * @return A value of <code>true</code> if the Box object contains the
 	 *         specified position; otherwise <code>false</code>.
 	 */
-	public containsPoint(position:Vector3D):boolean
-	{
+	public containsPoint(position: Vector3D): boolean {
 		return (this.x <= position.x && this.x + this.width >= position.x && this.y <= position.y && this.y + this.height >= position.y && this.z <= position.z && this.z + this.depth >= position.z);
 	}
 
@@ -324,8 +304,7 @@ export class Box
 	 * @return A value of <code>true</code> if the Box object that you specify
 	 *         is contained by this Box object; otherwise <code>false</code>.
 	 */
-	public containsBox(box:Box):boolean
-	{
+	public containsBox(box: Box): boolean {
 		return (this.x <= box.x && this.x + this.width >= box.x + box.width && this.y <= box.y && this.y + this.height >= box.y + box.height && this.z <= box.z && this.z + this.depth >= box.z + box.depth);
 	}
 
@@ -335,8 +314,7 @@ export class Box
 	 *
 	 * @param sourceBox The Box object from which to copy the data.
 	 */
-	public copyFrom(sourceBox:Box):void
-	{
+	public copyFrom(sourceBox: Box): void {
 		this.x = sourceBox.x;
 		this.y = sourceBox.y;
 		this.z = sourceBox.z;
@@ -358,8 +336,7 @@ export class Box
 	 *         <code>width</code>, <code>height</code> and <code>depth</code>
 	 *         properties as this Box object; otherwise <code>false</code>.
 	 */
-	public equals(toCompare:Box):boolean
-	{
+	public equals(toCompare: Box): boolean {
 		return (this.x == toCompare.x && this.y == toCompare.y && this.z == toCompare.z && this.width == toCompare.width && this.height == toCompare.height && this.depth == toCompare.depth);
 	}
 
@@ -380,8 +357,7 @@ export class Box
 	 *           object. The following equation is used to calculate the new
 	 *           depth and position of the box:
 	 */
-	public inflate(dx:number, dy:number, dz:number):void
-	{
+	public inflate(dx: number, dy: number, dz: number): void {
 		this.x -= dx / 2;
 		this.y -= dy / 2;
 		this.z -= dz / 2;
@@ -404,8 +380,7 @@ export class Box
 	 *              The <code>z</code> property is used to increase the
 	 *              longitudinal dimension of the Box object.
 	 */
-	public inflatePoint(delta:Vector3D):void
-	{
+	public inflatePoint(delta: Vector3D): void {
 		this.x -= delta.x / 2;
 		this.y -= delta.y / 2;
 		this.z -= delta.z / 2;
@@ -428,10 +403,9 @@ export class Box
 	 *         <code>z</code>, <code>width</code>,  <code>height</code>, and
 	 *         <code>depth</code> properties set to 0.
 	 */
-	public intersection(toIntersect:Box):Box
-	{
+	public intersection(toIntersect: Box): Box {
 		if (this.intersects(toIntersect)) {
-			var i:Box = new Box();
+			const i: Box = new Box();
 
 			if (this.x > toIntersect.x) {
 				i.x = this.x;
@@ -460,7 +434,6 @@ export class Box
 				if (i.height > toIntersect.height)
 					i.height = toIntersect.height;
 			}
-
 
 			if (this.z > toIntersect.z) {
 				i.z = this.z;
@@ -493,39 +466,37 @@ export class Box
 	 * @return A value of <code>true</code> if the specified object intersects
 	 *         with this Box object; otherwise <code>false</code>.
 	 */
-	public intersects(toIntersect:Box):boolean
-	{
+	public intersects(toIntersect: Box): boolean {
 		return (this.x + this.width >= toIntersect.x && this.x <= toIntersect.x + toIntersect.width && this.y + this.height >= toIntersect.y && this.y <= toIntersect.y + toIntersect.height && this.z + this.depth >= toIntersect.z && this.z <= toIntersect.z + toIntersect.depth);
 	}
 
-	public rayIntersection(position:Vector3D, direction:Vector3D, targetNormal:Vector3D = null):number
-	{
+	public rayIntersection(position: Vector3D, direction: Vector3D, targetNormal: Vector3D = null): number {
 		if (this.containsPoint(position))
 			return 0;
 
-		var halfExtentsX:number = this.width / 2;
-		var halfExtentsY:number = this.height / 2;
-		var halfExtentsZ:number = this.depth / 2;
+		const halfExtentsX: number = this.width / 2;
+		const halfExtentsY: number = this.height / 2;
+		const halfExtentsZ: number = this.depth / 2;
 
-		var centerX:number = this.x + halfExtentsX;
-		var centerY:number = this.y + halfExtentsY;
-		var centerZ:number = this.z + halfExtentsZ;
+		const centerX: number = this.x + halfExtentsX;
+		const centerY: number = this.y + halfExtentsY;
+		const centerZ: number = this.z + halfExtentsZ;
 
-		var px:number = position.x - centerX;
-		var py:number = position.y - centerY;
-		var pz:number = position.z - centerZ;
+		const px: number = position.x - centerX;
+		const py: number = position.y - centerY;
+		const pz: number = position.z - centerZ;
 
-		var vx:number = direction.x;
-		var vy:number = direction.y;
-		var vz:number = direction.z;
+		const vx: number = direction.x;
+		const vy: number = direction.y;
+		const vz: number = direction.z;
 
-		var ix:number;
-		var iy:number;
-		var iz:number;
-		var rayEntryDistance:number;
+		let ix: number;
+		let iy: number;
+		let iz: number;
+		let rayEntryDistance: number;
 
 		// ray-plane tests
-		var intersects:boolean;
+		let intersects: boolean;
 		if (vx < 0) {
 			rayEntryDistance = (halfExtentsX - px) / vx;
 			if (rayEntryDistance > 0) {
@@ -633,9 +604,8 @@ export class Box
 	 * @param target An optional Vector3D to store the result to prevent creating a new object.
 	 * @return
 	 */
-	public closestPointToPoint(point:Vector3D, target:Vector3D = null):Vector3D
-	{
-		var p:number;
+	public closestPointToPoint(point: Vector3D, target: Vector3D = null): Vector3D {
+		let p: number;
 
 		if (target == null)
 			target = new Vector3D();
@@ -672,8 +642,7 @@ export class Box
 	 * @param dy Moves the <i>y</i> value of the Box object by this amount.
 	 * @param dz Moves the <i>z</i> value of the Box object by this amount.
 	 */
-	public offset(dx:number, dy:number, dz:number):void
-	{
+	public offset(dx: number, dy: number, dz: number): void {
 		this.x += dx;
 		this.y += dy;
 		this.z += dz;
@@ -686,8 +655,7 @@ export class Box
 	 *
 	 * @param position A Vector3D object to use to offset this Box object.
 	 */
-	public offsetPosition(position:Vector3D):void
-	{
+	public offsetPosition(position: Vector3D): void {
 		this.x += position.x;
 		this.y += position.y;
 		this.z += position.z;
@@ -702,8 +670,7 @@ export class Box
 	 * <code>depth</code> properties to 0.</p>
 	 *
 	 */
-	public identity():void
-	{
+	public identity(): void {
 		this.x = 0;
 		this.y = 0;
 		this.z = 0;
@@ -725,8 +692,7 @@ export class Box
 	 * @param heighta The height of the box, in pixels.
 	 * @param deptha  The depth of the box, in pixels.
 	 */
-	public setTo(xa:number, ya:number, za:number, widtha:number, heighta:number, deptha:number):void
-	{
+	public setTo(xa: number, ya: number, za: number, widtha: number, heighta: number, deptha: number): void {
 		this.x = xa;
 		this.y = ya;
 		this.z = za;
@@ -743,9 +709,8 @@ export class Box
 	 *         the Box object: <code>x</code>, <code>y</code>, <code>z</code>,
 	 *         <code>width</code>, <code>height</code>, and <code>depth</code>.
 	 */
-	public toString():string
-	{
-		return "[Box] (x=" + this.x + ", y=" + this.y + ", z=" + this.z + ", width=" + this.width + ", height=" + this.height + ", depth=" + this.depth + ")";
+	public toString(): string {
+		return '[Box] (x=' + this.x + ', y=' + this.y + ', z=' + this.z + ', width=' + this.width + ', height=' + this.height + ', depth=' + this.depth + ')';
 	}
 
 	/**
@@ -755,11 +720,10 @@ export class Box
 	 * @param toUnion A Box object to add to this Box object.
 	 * @return A new Box object that is the union of the two boxes.
 	 */
-	public union(toUnion:Box, target:Box = null):Box
-	{
-		var width:number;
-		var height:number;
-		var depth:number;
+	public union(toUnion: Box, target: Box = null): Box {
+		let width: number;
+		let height: number;
+		let depth: number;
 		if (target == null)
 			target = new Box();
 

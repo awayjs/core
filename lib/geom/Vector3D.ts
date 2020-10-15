@@ -24,36 +24,33 @@
  * object's orientation. Here is a representation of Vector3D elements in
  * matrix notation:</p>
  */
-export class Vector3D
-{
-	public _rawData:Float32Array = new Float32Array(4);
+export class Vector3D {
+	public _rawData: Float32Array = new Float32Array(4);
 
 	/**
 	 * The x axis defined as a Vector3D object with coordinates (1,0,0).
 	 */
-	public static X_AXIS:Vector3D = new Vector3D(1, 0, 0);
+	public static X_AXIS: Vector3D = new Vector3D(1, 0, 0);
 
 	/**
 	 * The y axis defined as a Vector3D object with coordinates (0,1,0).
 	 */
-	public static Y_AXIS:Vector3D = new Vector3D(0, 1, 0);
+	public static Y_AXIS: Vector3D = new Vector3D(0, 1, 0);
 
 	/**
 	 * The z axis defined as a Vector3D object with coordinates (0,0,1).
 	 */
-	public static Z_AXIS:Vector3D = new Vector3D(0, 0, 1);
+	public static Z_AXIS: Vector3D = new Vector3D(0, 0, 1);
 
 	/**
 	 * The first element of a Vector3D object, such as the x coordinate of
 	 * a point in the three-dimensional space. The default value is 0.
 	 */
-	public get x():number
-	{
+	public get x(): number {
 		return this._rawData[0];
 	}
 
-	public set x(value:number)
-	{
+	public set x(value: number) {
 		this._rawData[0] = value;
 	}
 
@@ -61,13 +58,11 @@ export class Vector3D
 	 *The second element of a Vector3D object, such as the y coordinate of
 	 * a point in the three-dimensional space. The default value is 0.
 	 */
-	public get y():number
-	{
+	public get y(): number {
 		return this._rawData[1];
 	}
 
-	public set y(value:number)
-	{
+	public set y(value: number) {
 		this._rawData[1] = value;
 	}
 
@@ -75,13 +70,11 @@ export class Vector3D
 	 * The third element of a Vector3D object, such as the z coordinate of
 	 * a point in the three-dimensional space. The default value is 0.
 	 */
-	public get z():number
-	{
+	public get z(): number {
 		return this._rawData[2];
 	}
 
-	public set z(value:number)
-	{
+	public set z(value: number) {
 		this._rawData[2] = value;
 	}
 
@@ -108,13 +101,11 @@ export class Vector3D
 	 * use the <code>Vector3D.project()</code> method to divide the first
 	 * three elements of a Vector3D object by its fourth element.</p>
 	 */
-	public get w():number
-	{
+	public get w(): number {
 		return this._rawData[3];
 	}
 
-	public set w(value:number)
-	{
+	public set w(value: number) {
 		this._rawData[3] = value;
 	}
 
@@ -124,8 +115,7 @@ export class Vector3D
 	 * property is ignored. A unit vector has a length or magnitude of
 	 * one.
 	 */
-	public get length():number
-	{
+	public get length(): number {
 		return Math.sqrt(this.lengthSquared);
 	}
 
@@ -136,9 +126,8 @@ export class Vector3D
 	 * slower <code>Math.sqrt()</code> method call of the
 	 * <code>Vector3D.length()</code> method.
 	 */
-	public get lengthSquared():number
-	{
-		var raw:Float32Array = this._rawData;
+	public get lengthSquared(): number {
+		const raw: Float32Array = this._rawData;
 		return raw[0] * raw[0] + raw[1] * raw[1] + raw[2] * raw[2];
 	}
 
@@ -153,9 +142,8 @@ export class Vector3D
 	 * @param w An optional element for additional data such as the angle
 	 *          of rotation.
 	 */
-	constructor(x:number = 0, y:number = 0, z:number = 0, w:number = 1)
-	{
-		var raw:Float32Array = this._rawData;
+	constructor(x: number = 0, y: number = 0, z: number = 0, w: number = 1) {
+		const raw: Float32Array = this._rawData;
 
 		raw[0] = x;
 		raw[1] = y;
@@ -177,10 +165,9 @@ export class Vector3D
 	 * point of the first vector and the end point of the second vector.
 	 * </p>
 	 */
-	public add(a:Vector3D):Vector3D
-	{
-		var raw:Float32Array = this._rawData;
-		var rawA:Float32Array = a._rawData;
+	public add(a: Vector3D): Vector3D {
+		const raw: Float32Array = this._rawData;
+		const rawA: Float32Array = a._rawData;
 
 		return new Vector3D(raw[0] + rawA[0], raw[1] + rawA[1], raw[2] + rawA[2]);
 	}
@@ -202,8 +189,7 @@ export class Vector3D
 	 * @param b The second Vector3D object.
 	 * @returns The angle between two Vector3D objects.
 	 */
-	public static angleBetween(a:Vector3D, b:Vector3D):number
-	{
+	public static angleBetween(a: Vector3D, b: Vector3D): number {
 		return Math.acos(a.dotProduct(b) / (a.length * b.length));
 	}
 
@@ -214,17 +200,15 @@ export class Vector3D
 	 * @returns A new Vector3D object that is a copy of the current
 	 * Vector3D object.
 	 */
-	public clone():Vector3D
-	{
-		var raw:Float32Array = this._rawData;
+	public clone(): Vector3D {
+		const raw: Float32Array = this._rawData;
 
 		return new Vector3D(raw[0], raw[1], raw[2], raw[3]);
 	}
 
-	public static combine(a:Vector3D, b:Vector3D, ascl:number, bscl:number):Vector3D
-	{
-		var rawA:Float32Array = a._rawData;
-		var rawB:Float32Array = b._rawData;
+	public static combine(a: Vector3D, b: Vector3D, ascl: number, bscl: number): Vector3D {
+		const rawA: Float32Array = a._rawData;
+		const rawB: Float32Array = b._rawData;
 
 		return new Vector3D(rawA[0] * ascl + rawB[0] * bscl, rawA[1] * ascl + rawB[1] * bscl, rawA[2] * ascl + rawB[2] * bscl);
 	}
@@ -235,10 +219,9 @@ export class Vector3D
 	 *
 	 * @param src The Vector3D object from which to copy the data.
 	 */
-	public copyFrom(src:Vector3D):void
-	{
-		var raw:Float32Array = this._rawData;
-		var rawSrc:Float32Array = src._rawData;
+	public copyFrom(src: Vector3D): void {
+		const raw: Float32Array = this._rawData;
+		const rawSrc: Float32Array = src._rawData;
 
 		raw[0] = rawSrc[0];
 		raw[1] = rawSrc[1];
@@ -263,14 +246,13 @@ export class Vector3D
 	 *          Vector3D object and the Vector3D object specified as the
 	 *          parameter.
 	 */
-	public crossProduct(a:Vector3D, t:Vector3D = null):Vector3D
-	{
+	public crossProduct(a: Vector3D, t: Vector3D = null): Vector3D {
 		if (t == null)
 			t = new Vector3D();
 
-		var raw:Float32Array = this._rawData;
-		var rawA:Float32Array = a._rawData;
-		var rawT:Float32Array = t._rawData;
+		const raw: Float32Array = this._rawData;
+		const rawA: Float32Array = a._rawData;
+		const rawT: Float32Array = t._rawData;
 
 		rawT[0] = raw[1] * rawA[2] - raw[2] * rawA[1];
 		rawT[1] = raw[2] * rawA[0] - raw[0] * rawA[2];
@@ -290,10 +272,9 @@ export class Vector3D
 	 * @param a The Vector3D object containing the values to subtract from
 	 *          the current Vector3D object.
 	 */
-	public decrementBy(a:Vector3D):void
-	{
-		var raw:Float32Array = this._rawData;
-		var rawA:Float32Array = a._rawData;
+	public decrementBy(a: Vector3D): void {
+		const raw: Float32Array = this._rawData;
+		const rawA: Float32Array = a._rawData;
 
 		raw[0] -= rawA[0];
 		raw[1] -= rawA[1];
@@ -310,14 +291,13 @@ export class Vector3D
 	 * @param pt2 A Vector3D object as the second three-dimensional point.
 	 * @returns The distance between two Vector3D objects.
 	 */
-	public static distance(pt1:Vector3D, pt2:Vector3D):number
-	{
-		var rawPt1:Float32Array = pt1._rawData;
-		var rawPt2:Float32Array = pt2._rawData;
+	public static distance(pt1: Vector3D, pt2: Vector3D): number {
+		const rawPt1: Float32Array = pt1._rawData;
+		const rawPt2: Float32Array = pt2._rawData;
 
-		var x:number = rawPt1[0] - rawPt2[0];
-		var y:number = rawPt1[1] - rawPt2[1];
-		var z:number = rawPt1[2] - rawPt2[2];
+		const x: number = rawPt1[0] - rawPt2[0];
+		const y: number = rawPt1[1] - rawPt2[1];
+		const z: number = rawPt1[2] - rawPt2[2];
 		return Math.sqrt(x * x + y * y + z * z);
 	}
 
@@ -348,10 +328,9 @@ export class Vector3D
 	 * @see away.geom.Vector3D#crossProduct()
 	 * @see away.geom.Vector3D#normalize()
 	 */
-	public dotProduct(a:Vector3D):number
-	{
-		var raw:Float32Array = this._rawData;
-		var rawA:Float32Array = a._rawData;
+	public dotProduct(a: Vector3D): number {
+		const raw: Float32Array = this._rawData;
+		const rawA: Float32Array = a._rawData;
 
 		return raw[0] * rawA[0] + raw[1] * rawA[1] + raw[2] * rawA[2];
 	}
@@ -372,10 +351,9 @@ export class Vector3D
 	 * @returns A value of true if the specified Vector3D object is equal
 	 *          to the current Vector3D object; false if it is not equal.
 	 */
-	public equals(toCompare:Vector3D, allFour:boolean = false):boolean
-	{
-		var raw:Float32Array = this._rawData;
-		var rawToCompare:Float32Array = toCompare._rawData;
+	public equals(toCompare: Vector3D, allFour: boolean = false): boolean {
+		const raw: Float32Array = this._rawData;
+		const rawToCompare: Float32Array = toCompare._rawData;
 
 		return (raw[0] == rawToCompare[0] && raw[1] == rawToCompare[1] && raw[2] == rawToCompare[2] && (!allFour || raw[3] == rawToCompare[3]));
 	}
@@ -383,9 +361,8 @@ export class Vector3D
 	/**
 	 * Converts the current vector to an identity or unit vector.
 	 */
-	public identity():void
-	{
-		var raw:Float32Array = this._rawData;
+	public identity(): void {
+		const raw: Float32Array = this._rawData;
 
 		raw[0] = 0;
 		raw[1] = 0;
@@ -403,10 +380,9 @@ export class Vector3D
 	 * @param a The Vector3D object to be added to the current Vector3D
 	 *          object.
 	 */
-	public incrementBy(a:Vector3D):void
-	{
-		var raw:Float32Array = this._rawData;
-		var rawA:Float32Array = a._rawData;
+	public incrementBy(a: Vector3D): void {
+		const raw: Float32Array = this._rawData;
+		const rawA: Float32Array = a._rawData;
 
 		raw[0] += rawA[0];
 		raw[1] += rawA[1];
@@ -443,10 +419,9 @@ export class Vector3D
 	 *
 	 * @see away.geom.Vector3D#equals()
 	 */
-	public nearEquals(toCompare:Vector3D, tolerance:number, allFour:boolean = true):boolean
-	{
-		var raw:Float32Array = this._rawData;
-		var rawToCompare:Float32Array = toCompare._rawData;
+	public nearEquals(toCompare: Vector3D, tolerance: number, allFour: boolean = true): boolean {
+		const raw: Float32Array = this._rawData;
+		const rawToCompare: Float32Array = toCompare._rawData;
 
 		return ((Math.abs(raw[0] - rawToCompare[0]) < tolerance)
 				&& (Math.abs(raw[1] - rawToCompare[1]) < tolerance) && (Math.abs(raw[2] - rawToCompare[2]) < tolerance) && (!allFour || Math.abs(raw[3] - rawToCompare[3]) < tolerance));
@@ -458,9 +433,8 @@ export class Vector3D
 	 * the x, y, and z properties of the current Vector3D object is changed
 	 * to -x, -y, and -z.
 	 */
-	public negate():void
-	{
-		var raw:Float32Array = this._rawData;
+	public negate(): void {
+		const raw: Float32Array = this._rawData;
 
 		raw[0] = -raw[0];
 		raw[1] = -raw[1];
@@ -475,13 +449,12 @@ export class Vector3D
 	 *                  Vector3D object is (0,3,4), and you normalize it to
 	 *                  1, the point returned is at(0,0.6,0.8).
 	 */
-	public normalize(thickness:number = 1):number
-	{
-		var len:number = this.length;
+	public normalize(thickness: number = 1): number {
+		const len: number = this.length;
 
 		if (len) {
-			var raw:Float32Array = this._rawData;
-			var invLength = thickness / len;
+			const raw: Float32Array = this._rawData;
+			const invLength = thickness / len;
 			raw[0] *= invLength;
 			raw[1] *= invLength;
 			raw[2] *= invLength;
@@ -502,9 +475,8 @@ export class Vector3D
 	 * <code>w</code> property. Use the <code>Matrix3D.rawData</code>
 	 * property to create a projection Matrix3D object.</p>
 	 */
-	public project():void
-	{
-		var raw:Float32Array = this._rawData;
+	public project(): void {
+		const raw: Float32Array = this._rawData;
 
 		raw[0] /= raw[3];
 		raw[1] /= raw[3];
@@ -521,9 +493,8 @@ export class Vector3D
 	 *
 	 * @param s A multiplier (scalar) used to scale a Vector3D object.
 	 */
-	public scaleBy(s:number):void
-	{
-		var raw:Float32Array = this._rawData;
+	public scaleBy(s: number): void {
+		const raw: Float32Array = this._rawData;
 
 		raw[0] *= s;
 		raw[1] *= s;
@@ -537,9 +508,8 @@ export class Vector3D
 	 * @param ya The second element, such as the y coordinate.
 	 * @param za The third element, such as the z coordinate.
 	 */
-	public setTo(xa:number, ya:number, za:number, wa:number = 1):void
-	{
-		var raw:Float32Array = this._rawData;
+	public setTo(xa: number, ya: number, za: number, wa: number = 1): void {
+		const raw: Float32Array = this._rawData;
 
 		raw[0] = xa;
 		raw[1] = ya;
@@ -561,10 +531,9 @@ export class Vector3D
 	 *
 	 * @see away.geom.Vector3D#decrementBy()
 	 */
-	public subtract(a:Vector3D):Vector3D
-	{
-		var raw:Float32Array = this._rawData;
-		var rawA:Float32Array = a._rawData;
+	public subtract(a: Vector3D): Vector3D {
+		const raw: Float32Array = this._rawData;
+		const rawA: Float32Array = a._rawData;
 
 		return new Vector3D(raw[0] - rawA[0], raw[1] - rawA[1], raw[2] - rawA[2]);
 	}
@@ -573,10 +542,9 @@ export class Vector3D
 	 * Returns a string representation of the current Vector3D object. The
 	 * string contains the values of the x, y, and z properties.
 	 */
-	public toString():string
-	{
-		var raw:Float32Array = this._rawData;
+	public toString(): string {
+		const raw: Float32Array = this._rawData;
 
-		return "[Vector3D] (x:" + raw[0] + " ,y:" + raw[1] + ", z" + raw[2] + ", w:" + raw[3] + ")";
+		return '[Vector3D] (x:' + raw[0] + ' ,y:' + raw[1] + ', z' + raw[2] + ', w:' + raw[3] + ')';
 	}
 }

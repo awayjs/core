@@ -1,19 +1,17 @@
-import {AssetEvent} from "../events/AssetEvent";
-import {EventDispatcher} from "../events/EventDispatcher";
-import {URLLoaderEvent} from "../events/URLLoaderEvent";
-import {LoaderEvent} from "../events/LoaderEvent";
-import {ParserEvent} from "../events/ParserEvent";
+import { AssetEvent } from '../events/AssetEvent';
+import { EventDispatcher } from '../events/EventDispatcher';
+import { URLLoaderEvent } from '../events/URLLoaderEvent';
+import { LoaderEvent } from '../events/LoaderEvent';
+import { ParserEvent } from '../events/ParserEvent';
 
-import {URLLoader} from "../net/URLLoader";
-import {URLLoaderDataFormat} from "../net/URLLoaderDataFormat";
-import {URLRequest} from "../net/URLRequest";
+import { URLLoader } from '../net/URLLoader';
+import { URLLoaderDataFormat } from '../net/URLLoaderDataFormat';
+import { URLRequest } from '../net/URLRequest';
 
-import {ParserBase} from "../parsers/ParserBase";
-import {ResourceDependency} from "../parsers/ResourceDependency";
+import { ParserBase } from '../parsers/ParserBase';
+import { ResourceDependency } from '../parsers/ResourceDependency';
 
-import {LoaderContext} from "./LoaderContext";
-
-
+import { LoaderContext } from './LoaderContext';
 
 /**
  * Dispatched when any asset finishes parsing. Also see specific events for each
@@ -23,14 +21,12 @@ import {LoaderContext} from "./LoaderContext";
  */
 //[Event(name="assetComplete", type="away3d.events.AssetEvent")]
 
-
 /**
  * Dispatched when a full resource (including dependencies) finishes loading.
  *
  * @eventType away.events.LoaderEvent
  */
 //[Event(name="resourceComplete", type="away3d.events.LoaderEvent")]
-
 
 /**
  * Dispatched when a single dependency (which may be the main file of a resource)
@@ -40,14 +36,12 @@ import {LoaderContext} from "./LoaderContext";
  */
 //[Event(name="dependencyComplete", type="away3d.events.LoaderEvent")]
 
-
 /**
  * Dispatched when an error occurs during loading. I
  *
  * @eventType away.events.LoaderEvent
  */
 //[Event(name="loadError", type="away3d.events.LoaderEvent")]
-
 
 /**
  * Dispatched when an error occurs during parsing.
@@ -74,28 +68,27 @@ import {LoaderContext} from "./LoaderContext";
  *
  * @see away.library.AssetLibrary
  */
-export class Loader extends EventDispatcher
-{
-	private _context:LoaderContext;
-	private _uri:string;
-	private _materialMode:number;
+export class Loader extends EventDispatcher {
+	private _context: LoaderContext;
+	private _uri: string;
+	private _materialMode: number;
 
-	private _stack:Array<ResourceDependency>;
-	private _baseDependency:ResourceDependency;
-	private _currentDependency:ResourceDependency;
-	private _namespace:string;
+	private _stack: Array<ResourceDependency>;
+	private _baseDependency: ResourceDependency;
+	private _currentDependency: ResourceDependency;
+	private _namespace: string;
 
-	private _onReadyForDependenciesDelegate:(event:ParserEvent) => void;
-	private _onParseCompleteDelegate:(event:ParserEvent) => void;
-	private _onParseErrorDelegate:(event:ParserEvent) => void;
-	private _onLoadProgressDelegate:(event:URLLoaderEvent) => void;
-	private _onLoadCompleteDelegate:(event:URLLoaderEvent) => void;
-	private _onLoadErrorDelegate:(event:URLLoaderEvent) => void;
-	private _onTextureSizeErrorDelegate:(event:AssetEvent) => void;
-	private _onAssetCompleteDelegate:(event:AssetEvent) => void;
+	private _onReadyForDependenciesDelegate: (event: ParserEvent) => void;
+	private _onParseCompleteDelegate: (event: ParserEvent) => void;
+	private _onParseErrorDelegate: (event: ParserEvent) => void;
+	private _onLoadProgressDelegate: (event: URLLoaderEvent) => void;
+	private _onLoadCompleteDelegate: (event: URLLoaderEvent) => void;
+	private _onLoadErrorDelegate: (event: URLLoaderEvent) => void;
+	private _onTextureSizeErrorDelegate: (event: AssetEvent) => void;
+	private _onAssetCompleteDelegate: (event: AssetEvent) => void;
 
 	// Image parser only parser that is added by default, to save file size.
-	private static _parsers:Array<any> = new Array<any>();
+	private static _parsers: Array<any> = new Array<any>();
 
 	/**
 	 * Enables a specific parser.
@@ -107,8 +100,7 @@ export class Loader extends EventDispatcher
 	 *
 	 * @see away.parsers.Parsers
 	 */
-	public static enableParser(parser):void
-	{
+	public static enableParser(parser): void {
 		if (Loader._parsers.indexOf(parser) < 0)
 			Loader._parsers.push(parser);
 	}
@@ -122,39 +114,36 @@ export class Loader extends EventDispatcher
 	 * @param parsers An Array of parser classes to enable.
 	 * @see away.parsers.Parsers
 	 */
-	public static enableParsers(parsers:Array<Object>):void
-	{
-		for (var c:number = 0; c < parsers.length; c++)
+	public static enableParsers(parsers: Array<Object>): void {
+		for (let c: number = 0; c < parsers.length; c++)
 			Loader.enableParser(parsers[ c ]);
 	}
 
 	/**
 	 * Returns the base dependency of the loader
 	 */
-	public get baseDependency():ResourceDependency
-	{
+	public get baseDependency(): ResourceDependency {
 		return this._baseDependency;
 	}
 
 	/**
 	 * Create a new Loader object.
 	 */
-	constructor(materialMode:number = 0)
-	{
+	constructor(materialMode: number = 0) {
 		super();
 
 		this._materialMode = materialMode;
 
 		this._stack = new Array<ResourceDependency>();
 
-		this._onReadyForDependenciesDelegate = (event:ParserEvent) => this._onReadyForDependencies(event);
-		this._onParseCompleteDelegate = (event:ParserEvent) => this._onParseComplete(event);
-		this._onParseErrorDelegate = (event:ParserEvent) => this._onParseError(event);
-		this._onLoadProgressDelegate = (event:URLLoaderEvent) => this._onLoadProgress(event);
-		this._onLoadCompleteDelegate = (event:URLLoaderEvent) => this._onLoadComplete(event);
-		this._onLoadErrorDelegate = (event:URLLoaderEvent) => this._onLoadError(event);
-		this._onTextureSizeErrorDelegate = (event:AssetEvent) => this._onTextureSizeError(event);
-		this._onAssetCompleteDelegate = (event:AssetEvent) => this._onAssetComplete(event);
+		this._onReadyForDependenciesDelegate = (event: ParserEvent) => this._onReadyForDependencies(event);
+		this._onParseCompleteDelegate = (event: ParserEvent) => this._onParseComplete(event);
+		this._onParseErrorDelegate = (event: ParserEvent) => this._onParseError(event);
+		this._onLoadProgressDelegate = (event: URLLoaderEvent) => this._onLoadProgress(event);
+		this._onLoadCompleteDelegate = (event: URLLoaderEvent) => this._onLoadComplete(event);
+		this._onLoadErrorDelegate = (event: URLLoaderEvent) => this._onLoadError(event);
+		this._onTextureSizeErrorDelegate = (event: AssetEvent) => this._onTextureSizeError(event);
+		this._onAssetCompleteDelegate = (event: AssetEvent) => this._onAssetComplete(event);
 	}
 
 	/**
@@ -165,15 +154,14 @@ export class Loader extends EventDispatcher
 	 * @param ns An optional namespace string under which the file is to be loaded, allowing the differentiation of two resources with identical assets
 	 * @param parser An optional parser object for translating the loaded data into a usable resource. If not provided, Loader will attempt to auto-detect the file type.
 	 */
-	public load(req:URLRequest, context:LoaderContext = null, ns:string = null, parser:ParserBase = null):void
-	{
-		this._uri = req.url = req.url.replace(/\\/g, "/");
+	public load(req: URLRequest, context: LoaderContext = null, ns: string = null, parser: ParserBase = null): void {
+		this._uri = req.url = req.url.replace(/\\/g, '/');
 		this._context = context;
 		this._namespace = ns;
 
 		this.dispatchEvent(new LoaderEvent(LoaderEvent.LOADER_START, this._uri, null, null));
 
-		this._baseDependency = new ResourceDependency("", req, null, parser, null);
+		this._baseDependency = new ResourceDependency('', req, null, parser, null);
 		this._retrieveDependency(this._baseDependency);
 	}
 
@@ -185,8 +173,7 @@ export class Loader extends EventDispatcher
 	 * @param ns An optional namespace string under which the file is to be loaded, allowing the differentiation of two resources with identical assets
 	 * @param parser An optional parser object for translating the loaded data into a usable resource. If not provided, Loader will attempt to auto-detect the file type.
 	 */
-	public loadData(data:any, id:string, context:LoaderContext = null, ns:string = null, parser:ParserBase = null):void
-	{
+	public loadData(data: any, id: string, context: LoaderContext = null, ns: string = null, parser: ParserBase = null): void {
 		this._uri = ns;
 		this._context = context;
 		this._namespace = ns;
@@ -202,11 +189,10 @@ export class Loader extends EventDispatcher
 	 * stack when complete and continues on the top set.
 	 * @param parser The parser that will translate the data into a usable resource.
 	 */
-	private _retrieveNext(parser:ParserBase = null):void
-	{
+	private _retrieveNext(parser: ParserBase = null): void {
 		if (this._currentDependency.dependencies.length) {
 
-			var next:ResourceDependency = this._currentDependency.dependencies.pop();
+			const next: ResourceDependency = this._currentDependency.dependencies.pop();
 
 			this._stack.push(this._currentDependency);
 			this._retrieveDependency(next);
@@ -217,7 +203,7 @@ export class Loader extends EventDispatcher
 
 		} else if (this._stack && this._stack.length) {
 
-			var prev:ResourceDependency = this._currentDependency;
+			const prev: ResourceDependency = this._currentDependency;
 
 			this._currentDependency = this._stack.pop();
 
@@ -235,9 +221,8 @@ export class Loader extends EventDispatcher
 	 * Retrieves a single dependency.
 	 * @param parser The parser that will translate the data into a usable resource.
 	 */
-	private _retrieveDependency(dependency:ResourceDependency):void
-	{
-		var data:any;
+	private _retrieveDependency(dependency: ResourceDependency): void {
+		let data: any;
 
 		if (this._context && this._context.materialMode != 0)
 			this._materialMode = this._context.materialMode;
@@ -250,7 +235,7 @@ export class Loader extends EventDispatcher
 		if (this._context && dependency.request) {
 			if (this._context._iHasDataForUrl(dependency.request.url)) {
 				data = this._context._iGetDataForUrl(dependency.request.url);
-			} else if (this._context.externalAssetMode == LoaderContext.ON_DEMAND && (this.getSuffix(dependency.request.url) == "jpg" || this.getSuffix(dependency.request.url) == "png")) {
+			} else if (this._context.externalAssetMode == LoaderContext.ON_DEMAND && (this.getSuffix(dependency.request.url) == 'jpg' || this.getSuffix(dependency.request.url) == 'png')) {
 				data = dependency.request;
 				if (!dependency.parser)
 					dependency.setParser(this.getParserFromSuffix(dependency.request.url));
@@ -306,29 +291,27 @@ export class Loader extends EventDispatcher
 		}
 	}
 
-	private _joinUrl(base:string, end:string):string
-	{
-		if (end.charAt(0) == "/" || end.charAt(0) == "\\")
+	private _joinUrl(base: string, end: string): string {
+		if (end.charAt(0) == '/' || end.charAt(0) == '\\')
 			end = end.substr(1);
 
-		if (end.charAt(0) == ".")
+		if (end.charAt(0) == '.')
 			end = end.substr(2);
 
 		if (base.length == 0)
 			return end;
 
-		if (base.charAt(base.length - 1) == "/" || base.charAt(base.length - 1) == "\\")
+		if (base.charAt(base.length - 1) == '/' || base.charAt(base.length - 1) == '\\')
 			base = base.substr(0, base.length - 1);
 
-		return base.concat("/", end);
+		return base.concat('/', end);
 
 	}
 
-	private _resolveDependencyUrl(dependency:ResourceDependency):string
-	{
-		var scheme_re:RegExp;
-		var base:string;
-		var url:string = dependency.request.url;
+	private _resolveDependencyUrl(dependency: ResourceDependency): string {
+		let scheme_re: RegExp;
+		let base: string;
+		const url: string = dependency.request.url;
 
 		// Has the user re-mapped this URL?
 		if (this._context && this._context._iHasMappingForUrl(url))
@@ -340,12 +323,11 @@ export class Loader extends EventDispatcher
 		if (url == this._uri)
 			return url;
 
-
 		// Absolute URL? Check if starts with slash or a URL
 		// scheme definition (e.g. ftp://, http://, file://)
-		scheme_re = new RegExp("/^[a-zA-Z]{3,4}:///");
+		scheme_re = new RegExp('/^[a-zA-Z]{3,4}:///');
 
-		if (url.charAt(0) == "/") {
+		if (url.charAt(0) == '/') {
 			if (this._context && this._context.overrideAbsolutePaths)
 				return this._joinUrl(this._context.dependencyBaseUrl, url);
 			else
@@ -355,7 +337,7 @@ export class Loader extends EventDispatcher
 			// and replace with the dependencyBaseUrl defined by user.
 			if (this._context && this._context.overrideFullURLs) {
 
-				var noscheme_url:string  = url.replace(scheme_re , "");//url['replace'](scheme_re);
+				const noscheme_url: string  = url.replace(scheme_re , '');//url['replace'](scheme_re);
 				return this._joinUrl(this._context.dependencyBaseUrl, <string> noscheme_url);
 			}
 		}
@@ -366,18 +348,17 @@ export class Loader extends EventDispatcher
 			base = this._context.dependencyBaseUrl;
 			return this._joinUrl(base, url);
 		} else {
-			base = this._uri.substring(0, this._uri.lastIndexOf("/") + 1);
+			base = this._uri.substring(0, this._uri.lastIndexOf('/') + 1);
 			return this._joinUrl(base, url);
 		}
 	}
 
-	private _retrieveParserDependencies():void
-	{
+	private _retrieveParserDependencies(): void {
 		if (!this._currentDependency)
 			return;
 
-		var parserDependancies = this._currentDependency.parser.dependencies;
-		var i:number, len:number = parserDependancies.length;
+		const parserDependancies = this._currentDependency.parser.dependencies;
+		let i: number, len: number = parserDependancies.length;
 
 		for (i = 0; i < len; i++)
 			this._currentDependency.dependencies[i] = parserDependancies[i];
@@ -391,8 +372,7 @@ export class Loader extends EventDispatcher
 		this._retrieveNext();
 	}
 
-	private _resolveParserDependencies():void
-	{
+	private _resolveParserDependencies(): void {
 		this._currentDependency.success = true;
 
 		// Retrieve any last dependencies remaining on this parser, or
@@ -407,8 +387,7 @@ export class Loader extends EventDispatcher
 	 * Called when a single dependency loading failed, and pushes further dependencies onto the stack.
 	 * @param event
 	 */
-	private _onLoadError(event:URLLoaderEvent):void
-	{
+	private _onLoadError(event: URLLoaderEvent): void {
 		if (this.hasEventListener(URLLoaderEvent.LOAD_ERROR)) {
 			//pass on the error event for processing
 			this.dispatchEvent(event);
@@ -438,8 +417,7 @@ export class Loader extends EventDispatcher
 	 * Called when a dependency parsing failed, and dispatches a <code>ParserEvent.PARSE_ERROR</code>
 	 * @param event
 	 */
-	private _onParseError(event:ParserEvent):void
-	{
+	private _onParseError(event: ParserEvent): void {
 		//this.removeEventListeners(event.target); TODO: do we need this here? makes no sense to me
 
 		if (this.hasEventListener(ParserEvent.PARSE_ERROR)) {
@@ -454,8 +432,7 @@ export class Loader extends EventDispatcher
 		}
 	}
 
-	private _onAssetComplete(event:AssetEvent):void
-	{
+	private _onAssetComplete(event: AssetEvent): void {
 		// Add loaded asset to list of assets retrieved as part
 		// of the current dependency. This list will be inspected
 		// by the parent parser when dependency is resolved
@@ -468,16 +445,14 @@ export class Loader extends EventDispatcher
 			this.dispatchEvent(event);
 	}
 
-	private _onReadyForDependencies(event:ParserEvent):void
-	{
+	private _onReadyForDependencies(event: ParserEvent): void {
 		if (this._context && !this._context.includeDependencies)
 			(<ParserBase> event.target)._iResumeParsing();
 		else
 			this._retrieveParserDependencies();
 	}
 
-	private _onLoadProgress(event:URLLoaderEvent):void
-	{
+	private _onLoadProgress(event: URLLoaderEvent): void {
 		this.dispatchEvent(event);
 	}
 
@@ -485,9 +460,8 @@ export class Loader extends EventDispatcher
 	 * Called when a single dependency was loaded, and pushes further dependencies onto the stack.
 	 * @param event
 	 */
-	private _onLoadComplete(event:URLLoaderEvent):void
-	{
-		var loader:URLLoader = event.urlLoader;
+	private _onLoadComplete(event: URLLoaderEvent): void {
+		const loader: URLLoader = event.urlLoader;
 
 		this.dispatchEvent(event);
 
@@ -507,9 +481,8 @@ export class Loader extends EventDispatcher
 	/**
 	 * Called when parsing is complete.
 	 */
-	private _onParseComplete(event:ParserEvent):void
-	{
-		var parser:ParserBase = <ParserBase> event.target;
+	private _onParseComplete(event: ParserEvent): void {
+		const parser: ParserBase = <ParserBase> event.target;
 
 		parser.removeEventListener(ParserEvent.READY_FOR_DEPENDENCIES, this._onReadyForDependenciesDelegate);
 		parser.removeEventListener(ParserEvent.PARSE_COMPLETE, this._onParseCompleteDelegate);
@@ -524,34 +497,29 @@ export class Loader extends EventDispatcher
 	 * Called when an image is too large or it's dimensions are not a power of 2
 	 * @param event
 	 */
-	private _onTextureSizeError(event:AssetEvent):void
-	{
+	private _onTextureSizeError(event: AssetEvent): void {
 		event.asset.name = this._currentDependency.resolveName(event.asset);
 
 		this.dispatchEvent(event);
 	}
 
-	private _addEventListeners(loader:URLLoader):void
-	{
+	private _addEventListeners(loader: URLLoader): void {
 		loader.addEventListener(URLLoaderEvent.LOAD_PROGRESS, this._onLoadProgressDelegate);
 		loader.addEventListener(URLLoaderEvent.LOAD_COMPLETE, this._onLoadCompleteDelegate);
 		loader.addEventListener(URLLoaderEvent.LOAD_ERROR, this._onLoadErrorDelegate);
 	}
 
-	private _removeEventListeners(loader:URLLoader):void
-	{
+	private _removeEventListeners(loader: URLLoader): void {
 		loader.removeEventListener(URLLoaderEvent.LOAD_PROGRESS, this._onLoadProgressDelegate);
 		loader.removeEventListener(URLLoaderEvent.LOAD_COMPLETE, this._onLoadCompleteDelegate);
 		loader.removeEventListener(URLLoaderEvent.LOAD_ERROR, this._onLoadErrorDelegate);
 	}
 
-	public stop():void
-	{
+	public stop(): void {
 		this.dispose();
 	}
 
-	private dispose():void
-	{
+	private dispose(): void {
 		this._context = null;
 		this._stack = null;
 
@@ -567,27 +535,24 @@ export class Loader extends EventDispatcher
 	 * @param uri The url or id of the object to be parsed.
 	 * @return An instance of the guessed parser.
 	 */
-	private _getParserFromData(data:any):ParserBase
-	{
-		var len:number = Loader._parsers.length;
+	private _getParserFromData(data: any): ParserBase {
+		const len: number = Loader._parsers.length;
 
 		// go in reverse order to allow application override of default parser added in away.proper
-		for (var i:number = len - 1; i >= 0; i--)
+		for (let i: number = len - 1; i >= 0; i--)
 			if (Loader._parsers[i].supportsData(data))
 				return new Loader._parsers[i]();
 
 		return null;
 	}
 
-
 	/**
 	 * Initiates parsing of the loaded dependency.
 	 *
 	 * @param The dependency to be parsed.
 	 */
-	private _parseDependency(dependency:ResourceDependency):void
-	{
-		var parser:ParserBase = dependency.parser;
+	private _parseDependency(dependency: ResourceDependency): void {
+		let parser: ParserBase = dependency.parser;
 
 		// If no parser has been defined, try to find one by letting
 		// all plugged in parsers inspect the actual data.
@@ -609,7 +574,7 @@ export class Loader extends EventDispatcher
 			parser.parseAsync(dependency.data);
 
 		} else {
-			var message:string = "No parser defined. To enable all parsers for auto-detection, use Parsers.enableAllBundled()";
+			const message: string = 'No parser defined. To enable all parsers for auto-detection, use Parsers.enableAllBundled()';
 
 			if (this.hasEventListener(ParserEvent.PARSE_ERROR)) {
 				//pass on the error event for processing
@@ -628,15 +593,14 @@ export class Loader extends EventDispatcher
 	 * Guesses the parser to be used based on the file extension.
 	 * @return An instance of the guessed parser.
 	 */
-	private getParserFromSuffix(url:string):ParserBase
-	{
-		var fileExtension:string = this.getSuffix(url);
+	private getParserFromSuffix(url: string): ParserBase {
+		const fileExtension: string = this.getSuffix(url);
 
-		var len:number = Loader._parsers.length;
+		const len: number = Loader._parsers.length;
 
 		// go in reverse order to allow application override of default parser added in away.proper
-		for (var i:number = len - 1; i >= 0; i--) {
-			var parserClass:any = Loader._parsers[i];
+		for (let i: number = len - 1; i >= 0; i--) {
+			const parserClass: any = Loader._parsers[i];
 			if (parserClass.supportsType(fileExtension))
 				return new parserClass();
 		}
@@ -644,10 +608,9 @@ export class Loader extends EventDispatcher
 		return null;
 	}
 
-	private getSuffix(url:string):string
-	{
+	private getSuffix(url: string): string {
 		// Get rid of query string if any and extract extension
-		var base:string = (url.indexOf("?") > 0) ? url.split("?")[0] : url;
-		return base.substr(base.lastIndexOf(".") + 1).toLowerCase();
+		const base: string = (url.indexOf('?') > 0) ? url.split('?')[0] : url;
+		return base.substr(base.lastIndexOf('.') + 1).toLowerCase();
 	}
 }

@@ -1,31 +1,30 @@
-import {Orientation3D} from "./Orientation3D";
-import {Matrix3D} from "./Matrix3D";
-import {Vector3D} from "./Vector3D";
+import { Orientation3D } from './Orientation3D';
+import { Matrix3D } from './Matrix3D';
+import { Vector3D } from './Vector3D';
 
 /**
  * A Quaternion object which can be used to represent rotations.
  */
-export class Quaternion
-{
+export class Quaternion {
 	/**
 	 * The x value of the quaternion.
 	 */
-	public x:number = 0;
+	public x: number = 0;
 
 	/**
 	 * The y value of the quaternion.
 	 */
-	public y:number = 0;
+	public y: number = 0;
 
 	/**
 	 * The z value of the quaternion.
 	 */
-	public z:number = 0;
+	public z: number = 0;
 
 	/**
 	 * The w value of the quaternion.
 	 */
-	public w:number = 1;
+	public w: number = 1;
 
 	/**
 	 * Creates a new Quaternion object.
@@ -34,8 +33,7 @@ export class Quaternion
 	 * @param z The z value of the quaternion.
 	 * @param w The w value of the quaternion.
 	 */
-	constructor(x:number = 0, y:number = 0, z:number = 0, w:number = 1)
-	{
+	constructor(x: number = 0, y: number = 0, z: number = 0, w: number = 1) {
 		this.x = x;
 		this.y = y;
 		this.z = z;
@@ -45,8 +43,7 @@ export class Quaternion
 	/**
 	 * Returns the magnitude of the quaternion object.
 	 */
-	public get magnitude():number
-	{
+	public get magnitude(): number {
 		return Math.sqrt(this.w * this.w + this.x * this.x + this.y * this.y + this.z * this.z);
 	}
 
@@ -56,10 +53,9 @@ export class Quaternion
 	 * @param    qa    The first quaternion in the multiplication.
 	 * @param    qb    The second quaternion in the multiplication.
 	 */
-	public multiply(qa:Quaternion, qb:Quaternion):void
-	{
-		var w1:number = qa.w, x1:number = qa.x, y1:number = qa.y, z1:number = qa.z;
-		var w2:number = qb.w, x2:number = qb.x, y2:number = qb.y, z2:number = qb.z;
+	public multiply(qa: Quaternion, qb: Quaternion): void {
+		const w1: number = qa.w, x1: number = qa.x, y1: number = qa.y, z1: number = qa.z;
+		const w2: number = qb.w, x2: number = qb.x, y2: number = qb.y, z2: number = qb.z;
 
 		this.w = w1 * w2 - x1 * x2 - y1 * y2 - z1 * z2;
 		this.x = w1 * x2 + x1 * w2 + y1 * z2 - z1 * y2;
@@ -67,18 +63,16 @@ export class Quaternion
 		this.z = w1 * z2 + x1 * y2 - y1 * x2 + z1 * w2;
 	}
 
-	public multiplyVector(vector:Vector3D, target:Quaternion = null):Quaternion
-	{
+	public multiplyVector(vector: Vector3D, target: Quaternion = null): Quaternion {
 		//target ||= new Quaternion();
 		if (target === null) {
 			target = new Quaternion();
 
 		}
 
-
-		var x2:number = vector.x;
-		var y2:number = vector.y;
-		var z2:number = vector.z;
+		const x2: number = vector.x;
+		const y2: number = vector.y;
+		const z2: number = vector.z;
 
 		target.w = -this.x * x2 - this.y * y2 - this.z * z2;
 		target.x = this.w * x2 + this.y * z2 - this.z * y2;
@@ -94,10 +88,9 @@ export class Quaternion
 	 * @param    axis    The axis around which to rotate
 	 * @param    angle    The angle in radians of the rotation.
 	 */
-	public fromAxisAngle(axis:Vector3D, angle:number):void
-	{
-		var sin_a:number = Math.sin(angle / 2);
-		var cos_a:number = Math.cos(angle / 2);
+	public fromAxisAngle(axis: Vector3D, angle: number): void {
+		const sin_a: number = Math.sin(angle / 2);
+		const cos_a: number = Math.cos(angle / 2);
 
 		this.x = axis.x * sin_a;
 		this.y = axis.y * sin_a;
@@ -113,11 +106,10 @@ export class Quaternion
 	 * @param qb The second quaternion to interpolate.
 	 * @param t The interpolation weight, a value between 0 and 1.
 	 */
-	public slerp(qa:Quaternion, qb:Quaternion, t:number):void
-	{
-		var w1:number = qa.w, x1:number = qa.x, y1:number = qa.y, z1:number = qa.z;
-		var w2:number = qb.w, x2:number = qb.x, y2:number = qb.y, z2:number = qb.z;
-		var dot:number = w1 * w2 + x1 * x2 + y1 * y2 + z1 * z2;
+	public slerp(qa: Quaternion, qb: Quaternion, t: number): void {
+		const w1: number = qa.w, x1: number = qa.x, y1: number = qa.y, z1: number = qa.z;
+		let w2: number = qb.w, x2: number = qb.x, y2: number = qb.y, z2: number = qb.z;
+		let dot: number = w1 * w2 + x1 * x2 + y1 * y2 + z1 * z2;
 
 		// shortest direction
 		if (dot < 0) {
@@ -130,10 +122,10 @@ export class Quaternion
 
 		if (dot < 0.95) {
 			// interpolate angle linearly
-			var angle:number = Math.acos(dot);
-			var s:number = 1 / Math.sin(angle);
-			var s1:number = Math.sin(angle * (1 - t)) * s;
-			var s2:number = Math.sin(angle * t) * s;
+			const angle: number = Math.acos(dot);
+			const s: number = 1 / Math.sin(angle);
+			const s1: number = Math.sin(angle * (1 - t)) * s;
+			const s2: number = Math.sin(angle * t) * s;
 			this.w = w1 * s1 + w2 * s2;
 			this.x = x1 * s1 + x2 * s2;
 			this.y = y1 * s1 + y2 * s2;
@@ -144,7 +136,7 @@ export class Quaternion
 			this.x = x1 + t * (x2 - x1);
 			this.y = y1 + t * (y2 - y1);
 			this.z = z1 + t * (z2 - z1);
-			var len:number = 1.0 / Math.sqrt(this.w * this.w + this.x * this.x + this.y * this.y + this.z * this.z);
+			const len: number = 1.0 / Math.sqrt(this.w * this.w + this.x * this.x + this.y * this.y + this.z * this.z);
 			this.w *= len;
 			this.x *= len;
 			this.y *= len;
@@ -158,11 +150,10 @@ export class Quaternion
 	 * @param qb The second quaternion to interpolate.
 	 * @param t The interpolation weight, a value between 0 and 1.
 	 */
-	public lerp(qa:Quaternion, qb:Quaternion, t:number):void
-	{
-		var w1:number = qa.w, x1:number = qa.x, y1:number = qa.y, z1:number = qa.z;
-		var w2:number = qb.w, x2:number = qb.x, y2:number = qb.y, z2:number = qb.z;
-		var len:number;
+	public lerp(qa: Quaternion, qb: Quaternion, t: number): void {
+		const w1: number = qa.w, x1: number = qa.x, y1: number = qa.y, z1: number = qa.z;
+		let w2: number = qb.w, x2: number = qb.x, y2: number = qb.y, z2: number = qb.z;
+		let len: number;
 
 		// shortest direction
 		if (w1 * w2 + x1 * x2 + y1 * y2 + z1 * z2 < 0) {
@@ -191,12 +182,11 @@ export class Quaternion
 	 * @param    ay        The angle in radians of the rotation around the ay axis.
 	 * @param    az        The angle in radians of the rotation around the az axis.
 	 */
-	public fromEulerAngles(ax:number, ay:number, az:number):void
-	{
-		var halfX:number = ax * .5, halfY:number = ay * .5, halfZ:number = az * .5;
-		var cosX:number = Math.cos(halfX), sinX:number = Math.sin(halfX);
-		var cosY:number = Math.cos(halfY), sinY:number = Math.sin(halfY);
-		var cosZ:number = Math.cos(halfZ), sinZ:number = Math.sin(halfZ);
+	public fromEulerAngles(ax: number, ay: number, az: number): void {
+		const halfX: number = ax * .5, halfY: number = ay * .5, halfZ: number = az * .5;
+		const cosX: number = Math.cos(halfX), sinX: number = Math.sin(halfX);
+		const cosY: number = Math.cos(halfY), sinY: number = Math.sin(halfY);
+		const cosZ: number = Math.cos(halfZ), sinZ: number = Math.sin(halfZ);
 
 		this.w = cosX * cosY * cosZ + sinX * sinY * sinZ;
 		this.x = sinX * cosY * cosZ - cosX * sinY * sinZ;
@@ -209,8 +199,7 @@ export class Quaternion
 	 * @param target An optional Vector3D object to contain the Euler angles. If not provided, a new object is created.
 	 * @return The Vector3D containing the Euler angles.
 	 */
-	public toEulerAngles(target:Vector3D = null):Vector3D
-	{
+	public toEulerAngles(target: Vector3D = null): Vector3D {
 
 		//target ||= new Vector3D();
 		if (target === null) {
@@ -229,9 +218,8 @@ export class Quaternion
 	/**
 	 * Normalises the quaternion object.
 	 */
-	public normalize(val:number = 1):void
-	{
-		var mag:number = val / Math.sqrt(this.x * this.x + this.y * this.y + this.z * this.z + this.w * this.w);
+	public normalize(val: number = 1): void {
+		const mag: number = val / Math.sqrt(this.x * this.x + this.y * this.y + this.z * this.z + this.w * this.w);
 
 		this.x *= mag;
 		this.y *= mag;
@@ -244,9 +232,8 @@ export class Quaternion
 	 *
 	 * @return A string representation of the quaternion object.
 	 */
-	public toString():string
-	{
-		return "{x:" + this.x + " y:" + this.y + " z:" + this.z + " w:" + this.w + "}";
+	public toString(): string {
+		return '{x:' + this.x + ' y:' + this.y + ' z:' + this.z + ' w:' + this.w + '}';
 	}
 
 	/**
@@ -254,16 +241,15 @@ export class Quaternion
 	 * @param target An optional Matrix3D container to store the transformation in. If not provided, a new object is created.
 	 * @return A Matrix3D object representing an equivalent rotation.
 	 */
-	public toMatrix3D(target:Matrix3D = null):Matrix3D
-	{
-		var xy2:number = 2.0 * this.x * this.y, xz2:number = 2.0 * this.x * this.z, xw2:number = 2.0 * this.x * this.w;
-		var yz2:number = 2.0 * this.y * this.z, yw2:number = 2.0 * this.y * this.w, zw2:number = 2.0 * this.z * this.w;
-		var xx:number = this.x * this.x, yy:number = this.y * this.y, zz:number = this.z * this.z, ww:number = this.w * this.w;
+	public toMatrix3D(target: Matrix3D = null): Matrix3D {
+		const xy2: number = 2.0 * this.x * this.y, xz2: number = 2.0 * this.x * this.z, xw2: number = 2.0 * this.x * this.w;
+		const yz2: number = 2.0 * this.y * this.z, yw2: number = 2.0 * this.y * this.w, zw2: number = 2.0 * this.z * this.w;
+		const xx: number = this.x * this.x, yy: number = this.y * this.y, zz: number = this.z * this.z, ww: number = this.w * this.w;
 
 		if (!target)
 			target = new Matrix3D();
 
-		var rawData:Float32Array = target._rawData;
+		const rawData: Float32Array = target._rawData;
 
 		rawData[0] = xx - yy - zz + ww;
 		rawData[4] = xy2 - zw2;
@@ -289,9 +275,8 @@ export class Quaternion
 	 * Extracts a quaternion rotation matrix out of a given Matrix3D object.
 	 * @param matrix The Matrix3D out of which the rotation will be extracted.
 	 */
-	public fromMatrix(matrix:Matrix3D):void
-	{
-		var v:Vector3D = matrix.decompose(Orientation3D.QUATERNION)[1];
+	public fromMatrix(matrix: Matrix3D): void {
+		const v: Vector3D = matrix.decompose(Orientation3D.QUATERNION)[1];
 		this.x = v.x;
 		this.y = v.y;
 		this.z = v.z;
@@ -303,11 +288,10 @@ export class Quaternion
 	 * @param target The Vector.&lt;Number&gt; to contain the raw matrix data.
 	 * @param exclude4thRow If true, the last row will be omitted, and a 4x3 matrix will be generated instead of a 4x4.
 	 */
-	public toRawData(target:number[], exclude4thRow:boolean = false):void
-	{
-		var xy2:number = 2.0 * this.x * this.y, xz2:number = 2.0 * this.x * this.z, xw2:number = 2.0 * this.x * this.w;
-		var yz2:number = 2.0 * this.y * this.z, yw2:number = 2.0 * this.y * this.w, zw2:number = 2.0 * this.z * this.w;
-		var xx:number = this.x * this.x, yy:number = this.y * this.y, zz:number = this.z * this.z, ww:number = this.w * this.w;
+	public toRawData(target: number[], exclude4thRow: boolean = false): void {
+		const xy2: number = 2.0 * this.x * this.y, xz2: number = 2.0 * this.x * this.z, xw2: number = 2.0 * this.x * this.w;
+		const yz2: number = 2.0 * this.y * this.z, yw2: number = 2.0 * this.y * this.w, zw2: number = 2.0 * this.z * this.w;
+		const xx: number = this.x * this.x, yy: number = this.y * this.y, zz: number = this.z * this.z, ww: number = this.w * this.w;
 
 		target[0] = xx - yy - zz + ww;
 		target[1] = xy2 - zw2;
@@ -330,8 +314,7 @@ export class Quaternion
 	 * Clones the quaternion.
 	 * @return An exact duplicate of the current Quaternion.
 	 */
-	public clone():Quaternion
-	{
+	public clone(): Quaternion {
 		return new Quaternion(this.x, this.y, this.z, this.w);
 	}
 
@@ -341,10 +324,9 @@ export class Quaternion
 	 * @param target An optional Vector3D object that will contain the rotated coordinates. If not provided, a new object will be created.
 	 * @return A Vector3D object containing the rotated point.
 	 */
-	public rotatePoint(vector:Vector3D, target:Vector3D = null):Vector3D
-	{
-		var x1:number, y1:number, z1:number, w1:number;
-		var x2:number = vector.x, y2:number = vector.y, z2:number = vector.z;
+	public rotatePoint(vector: Vector3D, target: Vector3D = null): Vector3D {
+		let x1: number, y1: number, z1: number, w1: number;
+		const x2: number = vector.x, y2: number = vector.y, z2: number = vector.z;
 
 		//target ||= new Vector3D();
 		if (target === null) {
@@ -370,8 +352,7 @@ export class Quaternion
 	 * Copies the data from a quaternion into this instance.
 	 * @param q The quaternion to copy from.
 	 */
-	public copyFrom(q:Quaternion):void
-	{
+	public copyFrom(q: Quaternion): void {
 		this.x = q.x;
 		this.y = q.y;
 		this.z = q.z;

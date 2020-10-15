@@ -1,9 +1,8 @@
-declare var SIMD:any;
+declare let SIMD: any;
 
 /**
  *
  */
-export class Extensions
-{
-	public static SIMD:boolean = Boolean(typeof (SIMD) !== "undefined");
+export class Extensions {
+	public static SIMD: boolean = Boolean(typeof (SIMD) !== 'undefined');
 }

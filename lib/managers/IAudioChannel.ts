@@ -1,28 +1,28 @@
 export interface IAudioChannel
 {
-	duration:number;
+	duration: number;
 
-	currentTime:number;
+	currentTime: number;
 
-	volume:number;
+	volume: number;
 
-	pan:number;
+	pan: number;
 
-	groupVolume:number;
+	groupVolume: number;
 
-	groupPan:number;
+	groupPan: number;
 
-	groupID:number;
+	groupID: number;
 
-	onSoundComplete:Function;
+	onSoundComplete: Function;
 
-	isPlaying():boolean;
+	isPlaying(): boolean;
 
-	isLooping():boolean;
+	isLooping(): boolean;
 
-	isDecoding():boolean;
+	isDecoding(): boolean;
 
-	play(buffer:ArrayBuffer, offset?:number, loop?:boolean, id?:number);
+	play(buffer: ArrayBuffer, offset?: number, loop?: boolean, id?: number);
 
 	stop();
 }

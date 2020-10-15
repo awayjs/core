@@ -1,13 +1,11 @@
-export class URLVariables
-{
-	private _variables:Object = new Object();
+export class URLVariables {
+	private _variables: Object = new Object();
 
 	/**
 	 *
 	 * @param source
 	 */
-	constructor(source:string = null)
-	{
+	constructor(source: string = null) {
 		if (source !== null)
 			this.decode(source);
 	}
@@ -16,11 +14,10 @@ export class URLVariables
 	 *
 	 * @param source
 	 */
-	public decode(source:string):void
-	{
-		source = source.split("+").join(" ");
+	public decode(source: string): void {
+		source = source.split('+').join(' ');
 
-		var tokens, re = /[?&]?([^=]+)=([^&]*)/g;
+		let tokens, re = /[?&]?([^=]+)=([^&]*)/g;
 
 		while ((tokens = re.exec(source)))
 			this._variables[decodeURIComponent(tokens[1])] = decodeURIComponent(tokens[2]);
@@ -30,17 +27,15 @@ export class URLVariables
 	 *
 	 * @returns {string}
 	 */
-	public toString():string
-	{
-		return "";
+	public toString(): string {
+		return '';
 	}
 
 	/**
 	 *
 	 * @returns {Object}
 	 */
-	public get variables():Object
-	{
+	public get variables(): Object {
 		return this._variables;
 	}
 
@@ -48,11 +43,10 @@ export class URLVariables
 	 *
 	 * @returns {Object}
 	 */
-	public get formData():FormData
-	{
-		var fd:FormData = new FormData();
+	public get formData(): FormData {
+		const fd: FormData = new FormData();
 
-		for (var s in this._variables)
+		for (const s in this._variables)
 			fd.append(s, this._variables[s]);
 
 		return fd;
@@ -62,8 +56,7 @@ export class URLVariables
 	 *
 	 * @returns {Object}
 	 */
-	public set variables(obj:Object)
-	{
+	public set variables(obj: Object) {
 		this._variables = obj;
 	}
 }

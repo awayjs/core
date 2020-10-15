@@ -1,6 +1,6 @@
-import {AbstractionBase} from "./AbstractionBase";
-import {IAbstractionPool} from "./IAbstractionPool";
-import {IAsset} from "./IAsset";
+import { AbstractionBase } from './AbstractionBase';
+import { IAbstractionPool } from './IAbstractionPool';
+import { IAsset } from './IAsset';
 
 /**
  * IImageObjectClass is an interface for the constructable class definition ITextureObject that is used to
@@ -13,5 +13,5 @@ export interface IAbstractionClass
 	/**
 	 *
 	 */
-	new(asset:IAsset, pool:IAbstractionPool):AbstractionBase;
+	new(asset: IAsset, pool: IAbstractionPool): AbstractionBase;
 }

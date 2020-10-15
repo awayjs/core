@@ -1,34 +1,32 @@
-import {ArgumentError} from "../errors/ArgumentError";
+import { ArgumentError } from '../errors/ArgumentError';
 
-import {Box} from "./Box";
-import {MathConsts} from "./MathConsts";
-import {Orientation3D} from "./Orientation3D";
-import {Plane3D} from "./Plane3D";
-import {Quaternion} from "./Quaternion";
-import {Sphere} from "./Sphere";
-import {Vector3D} from "./Vector3D";
+import { Box } from './Box';
+import { MathConsts } from './MathConsts';
+import { Orientation3D } from './Orientation3D';
+import { Plane3D } from './Plane3D';
+import { Quaternion } from './Quaternion';
+import { Sphere } from './Sphere';
+import { Vector3D } from './Vector3D';
 
-export class Matrix3D
-{
+export class Matrix3D {
 	/**
 	 * A reference to a Matrix3D to be used as a temporary data container, preventing object creation.
 	 */
-	public static CALCULATION_MATRIX:Matrix3D = new Matrix3D();
+	public static CALCULATION_MATRIX: Matrix3D = new Matrix3D();
 
-	private static _tempMatrix:Matrix3D = new Matrix3D();
+	private static _tempMatrix: Matrix3D = new Matrix3D();
 
-	static getAxisRotationMatrix(x:number, y:number, z:number, degrees:number, target:Matrix3D = null):Matrix3D
-	{
+	static getAxisRotationMatrix(x: number, y: number, z: number, degrees: number, target: Matrix3D = null): Matrix3D {
 		if (target == null)
 			target = new Matrix3D();
 
-		var targetData:Float32Array = target._rawData;
+		const targetData: Float32Array = target._rawData;
 
-		var rad = degrees * MathConsts.DEGREES_TO_RADIANS;
-		var c:number = Math.cos(rad);
-		var s:number = Math.sin(rad);
-		var t:number = 1 - c;
-		var tmp1:number, tmp2:number;
+		const rad = degrees * MathConsts.DEGREES_TO_RADIANS;
+		const c: number = Math.cos(rad);
+		const s: number = Math.sin(rad);
+		const t: number = 1 - c;
+		let tmp1: number, tmp2: number;
 
 		targetData[0] = c + x * x * t;
 		targetData[5] = c + y * y * t;
@@ -60,16 +58,15 @@ export class Matrix3D
 		return target;
 	}
 
-	public static getPointAtMatrix(pos:Vector3D, dir:Vector3D, up:Vector3D, target:Matrix3D = null):Matrix3D
-	{
-		var dirN:Vector3D;
-		var upN:Vector3D;
-		var lftN:Vector3D;
+	public static getPointAtMatrix(pos: Vector3D, dir: Vector3D, up: Vector3D, target: Matrix3D = null): Matrix3D {
+		let dirN: Vector3D;
+		let upN: Vector3D;
+		let lftN: Vector3D;
 
 		if (target == null)
 			target = new Matrix3D();
 
-		var targetData:Float32Array = target._rawData;
+		const targetData: Float32Array = target._rawData;
 
 		dirN = dir.clone();
 		dirN.normalize();
@@ -119,29 +116,28 @@ export class Matrix3D
 	 *
 	 * @param    quarternion    The quarterion object to convert.
 	 */
-	public static getQuaternionMatrix(quarternion:Quaternion, target:Matrix3D = null):Matrix3D
-	{
+	public static getQuaternionMatrix(quarternion: Quaternion, target: Matrix3D = null): Matrix3D {
 		if (target == null)
 			target = new Matrix3D();
 
-		var targetData:Float32Array = target._rawData;
+		const targetData: Float32Array = target._rawData;
 
-		var x:number = quarternion.x;
-		var y:number = quarternion.y;
-		var z:number = quarternion.z;
-		var w:number = quarternion.w;
+		const x: number = quarternion.x;
+		const y: number = quarternion.y;
+		const z: number = quarternion.z;
+		const w: number = quarternion.w;
 
-		var xx:number = x * x;
-		var xy:number = x * y;
-		var xz:number = x * z;
-		var xw:number = x * w;
+		const xx: number = x * x;
+		const xy: number = x * y;
+		const xz: number = x * z;
+		const xw: number = x * w;
 
-		var yy:number = y * y;
-		var yz:number = y * z;
-		var yw:number = y * w;
+		const yy: number = y * y;
+		const yz: number = y * z;
+		const yw: number = y * w;
 
-		var zz:number = z * z;
-		var zw:number = z * w;
+		const zz: number = z * z;
+		const zw: number = z * w;
 
 		targetData[0] = 1 - 2 * (yy + zz);
 		targetData[1] = 2 * (xy + zw);
@@ -169,12 +165,11 @@ export class Matrix3D
 	/**
 	 * Returns a boolean value representing whether there is any difference between the two given 3d matrices.
 	 */
-	public static compare(m1:Matrix3D, m2:Matrix3D):boolean
-	{
-		var r1:Float32Array = m1._rawData;
-		var r2:Float32Array = m2._rawData;
+	public static compare(m1: Matrix3D, m2: Matrix3D): boolean {
+		const r1: Float32Array = m1._rawData;
+		const r2: Float32Array = m2._rawData;
 
-		for (var i:number = 0; i < 16; ++i)
+		for (let i: number = 0; i < 16; ++i)
 			if (r1[i] != r2[i])
 				return false;
 
@@ -187,19 +182,18 @@ export class Matrix3D
 	 * <p>An exception is thrown if the _rawData property is set to a matrix that is not invertible. The Matrix3D
 	 * object must be invertible. If a non-invertible matrix is needed, create a subexport class of the Matrix3D object.</p>
 	 */
-	public _rawData:Float32Array;
+	public _rawData: Float32Array;
 
-	private _position:Vector3D = new Vector3D();
-	private _positionDirty:boolean = true;
+	private _position: Vector3D = new Vector3D();
+	private _positionDirty: boolean = true;
 
-	private _components:Array<Vector3D>;
+	private _components: Array<Vector3D>;
 
 	/**
 	 * [read-only] A number that determines whether a matrix is invertible.
 	 */
-	public get determinant():number
-	{
-		var raw:Float32Array = this._rawData;
+	public get determinant(): number {
+		const raw: Float32Array = this._rawData;
 
 		return ((raw[0] * raw[5] - raw[4] * raw[1]) * (raw[10] * raw[15] - raw[14] * raw[11])
 			- (raw[0] * raw[9] - raw[8] * raw[1]) * (raw[6] * raw[15] - raw[14] * raw[7])
@@ -213,8 +207,7 @@ export class Matrix3D
 	 * A Vector3D object that holds the position, the 3D coordinate (x,y,z) of a display object within the
 	 * transformation's frame of reference.
 	 */
-	public get position():Vector3D
-	{
+	public get position(): Vector3D {
 		if (this._positionDirty) {
 			this._positionDirty = false;
 			this._position.x = this._rawData[12];
@@ -228,8 +221,7 @@ export class Matrix3D
 	/**
 	 * Creates a Matrix3D object.
 	 */
-	constructor(rawData:Float32Array = null)
-	{
+	constructor(rawData: Float32Array = null) {
 		if (rawData != null) {
 			this._rawData = rawData;
 		} else {
@@ -241,43 +233,42 @@ export class Matrix3D
 	/**
 	 * Appends the matrix by multiplying another Matrix3D object by the current Matrix3D object.
 	 */
-	public append(lhs:Matrix3D):void
-	{
-		var raw:Float32Array = this._rawData;
-		var rawLhs:Float32Array = lhs._rawData;
+	public append(lhs: Matrix3D): void {
+		const raw: Float32Array = this._rawData;
+		const rawLhs: Float32Array = lhs._rawData;
 
-		var m111:number = raw[0];
-		var m112:number = raw[1];
-		var m113:number = raw[2];
-		var m114:number = raw[3];
-		var m121:number = raw[4];
-		var m122:number = raw[5];
-		var m123:number = raw[6];
-		var m124:number = raw[7];
-		var m131:number = raw[8];
-		var m132:number = raw[9];
-		var m133:number = raw[10];
-		var m134:number = raw[11];
-		var m141:number = raw[12];
-		var m142:number = raw[13];
-		var m143:number = raw[14];
-		var m144:number = raw[15];
-		var m211:number = rawLhs[0];
-		var m212:number = rawLhs[1];
-		var m213:number = rawLhs[2];
-		var m214:number = rawLhs[3];
-		var m221:number = rawLhs[4];
-		var m222:number = rawLhs[5];
-		var m223:number = rawLhs[6];
-		var m224:number = rawLhs[7];
-		var m231:number = rawLhs[8];
-		var m232:number = rawLhs[9];
-		var m233:number = rawLhs[10];
-		var m234:number = rawLhs[11];
-		var m241:number = rawLhs[12];
-		var m242:number = rawLhs[13];
-		var m243:number = rawLhs[14];
-		var m244:number = rawLhs[15];
+		const m111: number = raw[0];
+		const m112: number = raw[1];
+		const m113: number = raw[2];
+		const m114: number = raw[3];
+		const m121: number = raw[4];
+		const m122: number = raw[5];
+		const m123: number = raw[6];
+		const m124: number = raw[7];
+		const m131: number = raw[8];
+		const m132: number = raw[9];
+		const m133: number = raw[10];
+		const m134: number = raw[11];
+		const m141: number = raw[12];
+		const m142: number = raw[13];
+		const m143: number = raw[14];
+		const m144: number = raw[15];
+		const m211: number = rawLhs[0];
+		const m212: number = rawLhs[1];
+		const m213: number = rawLhs[2];
+		const m214: number = rawLhs[3];
+		const m221: number = rawLhs[4];
+		const m222: number = rawLhs[5];
+		const m223: number = rawLhs[6];
+		const m224: number = rawLhs[7];
+		const m231: number = rawLhs[8];
+		const m232: number = rawLhs[9];
+		const m233: number = rawLhs[10];
+		const m234: number = rawLhs[11];
+		const m241: number = rawLhs[12];
+		const m242: number = rawLhs[13];
+		const m243: number = rawLhs[14];
+		const m244: number = rawLhs[15];
 
 		raw[0] = m111 * m211 + m112 * m221 + m113 * m231 + m114 * m241;
 		raw[1] = m111 * m212 + m112 * m222 + m113 * m232 + m114 * m242;
@@ -305,20 +296,18 @@ export class Matrix3D
 	/**
 	 * Appends an incremental rotation to a Matrix3D object.
 	 */
-	public appendRotation(degrees:number, axis:Vector3D):void
-	{
+	public appendRotation(degrees: number, axis: Vector3D): void {
 		this.append(Matrix3D.getAxisRotationMatrix(axis.x, axis.y, axis.z, degrees, Matrix3D._tempMatrix));
 	}
 
 	/**
 	 * Appends an incremental skew change along the x, y, and z axes to a Matrix3D object.
 	 */
-	public appendSkew(xSkew:number, ySkew:number, zSkew:number):void
-	{
+	public appendSkew(xSkew: number, ySkew: number, zSkew: number): void {
 		if (xSkew == 0 && ySkew == 0 && zSkew == 0)
 			return;
 
-		var rawData:Float32Array = Matrix3D._tempMatrix._rawData;
+		const rawData: Float32Array = Matrix3D._tempMatrix._rawData;
 
 		rawData[0] = 1;
 		rawData[1] = 0;
@@ -346,12 +335,11 @@ export class Matrix3D
 	/**
 	 * Appends an incremental scale change along the x, y, and z axes to a Matrix3D object.
 	 */
-	public appendScale(xScale:number, yScale:number, zScale:number):void
-	{
+	public appendScale(xScale: number, yScale: number, zScale: number): void {
 		if (xScale == 1 && yScale == 1 && zScale == 1)
 			return;
 
-		var rawData:Float32Array = Matrix3D._tempMatrix._rawData;
+		const rawData: Float32Array = Matrix3D._tempMatrix._rawData;
 
 		rawData[0] = xScale;
 		rawData[1] = 0;
@@ -379,11 +367,10 @@ export class Matrix3D
 	/**
 	*Appends an incremental translation, a repositioning along the x, y, and z axes, to a Matrix3D object.
 	 */
-	public appendTranslation(x:number, y:number, z:number):void
-	{
-		var raw:Float32Array = this._rawData;
+	public appendTranslation(x: number, y: number, z: number): void {
+		const raw: Float32Array = this._rawData;
 
-		var m41 = raw[3], m42 = raw[7], m43 = raw[11], m44 = raw[15];
+		const m41 = raw[3], m42 = raw[7], m43 = raw[11], m44 = raw[15];
 
 		raw[0 ] += x * m41;
 		raw[1 ] += y * m41;
@@ -407,9 +394,8 @@ export class Matrix3D
 	/**
 	 * Returns a new Matrix3D object that is an exact copy of the current Matrix3D object.
 	 */
-	public clone():Matrix3D
-	{
-		var matrix3D:Matrix3D = new Matrix3D();
+	public clone(): Matrix3D {
+		const matrix3D: Matrix3D = new Matrix3D();
 
 		matrix3D.copyFrom(this);
 
@@ -419,13 +405,12 @@ export class Matrix3D
 	/**
 	 * Copies a Vector3D object into specific column of the calling Matrix3D object.
 	 */
-	public copyColumnFrom(column:number, vector3D:Vector3D):void
-	{
+	public copyColumnFrom(column: number, vector3D: Vector3D): void {
 		if (column < 0 || column > 3)
-			throw new ArgumentError("ArgumentError, Column " + column + " out of bounds [0, ..., 3]");
+			throw new ArgumentError('ArgumentError, Column ' + column + ' out of bounds [0, ..., 3]');
 
-		var targetData:Float32Array = this._rawData;
-		var vectorData:Float32Array = vector3D._rawData;
+		const targetData: Float32Array = this._rawData;
+		const vectorData: Float32Array = vector3D._rawData;
 
 		column *= 4;
 		targetData[column] = vectorData[0];
@@ -439,15 +424,14 @@ export class Matrix3D
 	/**
 	 * Copies specific column of the calling Matrix3D object into the Vector3D object.
 	 */
-	public copyColumnTo(column:number, vector3D:Vector3D, negate:boolean = false):void
-	{
+	public copyColumnTo(column: number, vector3D: Vector3D, negate: boolean = false): void {
 		if (column < 0 || column > 3)
-			throw new ArgumentError("ArgumentError, Column " + column + " out of bounds [0, ..., 3]");
+			throw new ArgumentError('ArgumentError, Column ' + column + ' out of bounds [0, ..., 3]');
 
 		column *= 4;
 
-		var sourceData:Float32Array = this._rawData;
-		var vectorData:Float32Array = vector3D._rawData;
+		const sourceData: Float32Array = this._rawData;
+		const vectorData: Float32Array = vector3D._rawData;
 
 		if (negate) {
 			vectorData[0] = -sourceData[column];
@@ -465,9 +449,8 @@ export class Matrix3D
 	/**
 	 * Copies all of the matrix data from the source Matrix3D object into the calling Matrix3D object.
 	 */
-	public copyFrom(source:Matrix3D, transpose:boolean = false):void
-	{
-		var sourceData = source._rawData, targetData = this._rawData;
+	public copyFrom(source: Matrix3D, transpose: boolean = false): void {
+		const sourceData = source._rawData, targetData = this._rawData;
 
 		targetData[0] = sourceData[0];
 		targetData[5] = sourceData[5];
@@ -508,14 +491,12 @@ export class Matrix3D
 	/**
 	 * Copies this Matrix3D object into a destination Matrix3D object.
 	 */
-	public copyTo(target:Matrix3D, transpose:boolean = false):void
-	{
+	public copyTo(target: Matrix3D, transpose: boolean = false): void {
 		target.copyFrom(this, transpose);
 	}
 
-	public copyRawDataFrom(sourceData:Float32Array, offset:number = 0, transpose:boolean = false):void
-	{
-		var targetData = this._rawData;
+	public copyRawDataFrom(sourceData: Float32Array, offset: number = 0, transpose: boolean = false): void {
+		const targetData = this._rawData;
 
 		targetData[0] = sourceData[offset + 0];
 		targetData[5] = sourceData[offset + 5];
@@ -553,9 +534,8 @@ export class Matrix3D
 		this._positionDirty = true;
 	}
 
-	public copyRawDataTo(targetData:Float32Array, offset:number = 0, transpose:boolean = false):void
-	{
-		var sourceData = this._rawData;
+	public copyRawDataTo(targetData: Float32Array, offset: number = 0, transpose: boolean = false): void {
+		const sourceData = this._rawData;
 
 		targetData[offset] = sourceData[0];
 		targetData[offset + 5] = sourceData[5];
@@ -594,13 +574,12 @@ export class Matrix3D
 	/**
 	 * Copies a Vector3D object into specific row of the calling Matrix3D object.
 	 */
-	public copyRowFrom(row:number, vector3D:Vector3D):void
-	{
+	public copyRowFrom(row: number, vector3D: Vector3D): void {
 		if (row < 0 || row > 3)
-			throw new ArgumentError("ArgumentError, Row " + row + " out of bounds [0, ..., 3]");
+			throw new ArgumentError('ArgumentError, Row ' + row + ' out of bounds [0, ..., 3]');
 
-		var targetData:Float32Array = this._rawData;
-		var vectorData:Float32Array = vector3D._rawData;
+		const targetData: Float32Array = this._rawData;
+		const vectorData: Float32Array = vector3D._rawData;
 
 		targetData[row] = vectorData[0];
 		targetData[row + 4] = vectorData[1];
@@ -613,13 +592,12 @@ export class Matrix3D
 	/**
 	 * Copies specific row of the calling Matrix3D object into the Vector3D object.
 	 */
-	public copyRowTo(row:number, vector3D:Vector3D, negate:boolean = false):void
-	{
+	public copyRowTo(row: number, vector3D: Vector3D, negate: boolean = false): void {
 		if (row < 0 || row > 3)
-			throw new ArgumentError("ArgumentError, Row " + row + " out of bounds [0, ..., 3]");
+			throw new ArgumentError('ArgumentError, Row ' + row + ' out of bounds [0, ..., 3]');
 
-		var sourceData:Float32Array = this._rawData;
-		var vectorData:Float32Array = vector3D._rawData;
+		const sourceData: Float32Array = this._rawData;
+		const vectorData: Float32Array = vector3D._rawData;
 
 		if (negate) {
 			vectorData[0] = -sourceData[row];
@@ -637,17 +615,16 @@ export class Matrix3D
 	/**
 	 * Returns the transformation matrix's translation, rotation, and scale settings as a Vector of three Vector3D objects.
 	 */
-	public decompose(orientationStyle:string = "eulerAngles"):Vector3D[]
-	{
+	public decompose(orientationStyle: string = 'eulerAngles'): Vector3D[] {
 		if (this._components == null)
 			this._components = [new Vector3D(), new Vector3D(), new Vector3D(), new Vector3D()];
 
-		var colX:Vector3D = new Vector3D(this._rawData[0], this._rawData[1], this._rawData[2]);
-		var colY:Vector3D = new Vector3D(this._rawData[4], this._rawData[5], this._rawData[6]);
-		var colZ:Vector3D = new Vector3D(this._rawData[8], this._rawData[9], this._rawData[10]);
+		const colX: Vector3D = new Vector3D(this._rawData[0], this._rawData[1], this._rawData[2]);
+		let colY: Vector3D = new Vector3D(this._rawData[4], this._rawData[5], this._rawData[6]);
+		let colZ: Vector3D = new Vector3D(this._rawData[8], this._rawData[9], this._rawData[10]);
 
-		var scale:Vector3D = this._components[3];
-		var skew:Vector3D = this._components[2];
+		const scale: Vector3D = this._components[3];
+		const skew: Vector3D = this._components[2];
 
 		//compute X scale factor and normalise colX
 		scale.x = colX.length;
@@ -683,14 +660,14 @@ export class Matrix3D
 			colZ.z = -colZ.z;
 		}
 
-		var rot = this._components[1];
+		const rot = this._components[1];
 
 		switch (orientationStyle) {
 			case Orientation3D.AXIS_ANGLE:
 
 				rot.w = Math.acos((colX.x + colY.y + colZ.z - 1) / 2);
 
-				var len:number = Math.sqrt((colY.z - colZ.y) * (colY.z - colZ.y) + (colZ.x - colX.z) * (colZ.x - colX.z) + (colX.y - colY.x) * (colX.y - colY.x));
+				var len: number = Math.sqrt((colY.z - colZ.y) * (colY.z - colZ.y) + (colZ.x - colX.z) * (colZ.x - colX.z) + (colX.y - colY.x) * (colX.y - colY.x));
 				rot.x = (colY.z - colZ.y) / len;
 				rot.y = (colZ.x - colX.z) / len;
 				rot.z = (colX.y - colY.x) / len;
@@ -753,17 +730,16 @@ export class Matrix3D
 	 * Uses the transformation matrix without its translation elements to transform a Vector3D object from one space
 	 * coordinate to another.
 	 */
-	public deltaTransformVector(v:Vector3D, t:Vector3D = null):Vector3D
-	{
-		var x:number = v.x;
-		var y:number = v.y;
-		var z:number = v.z;
+	public deltaTransformVector(v: Vector3D, t: Vector3D = null): Vector3D {
+		const x: number = v.x;
+		const y: number = v.y;
+		const z: number = v.z;
 
 		if (!t)
 			t = new Vector3D();
 
-		var raw:Float32Array = this._rawData;
-		var rawT:Float32Array = t._rawData;
+		const raw: Float32Array = this._rawData;
+		const rawT: Float32Array = t._rawData;
 
 		rawT[0] = x * raw[0] + y * raw[4] + z * raw[8];
 		rawT[1] = x * raw[1] + y * raw[5] + z * raw[9];
@@ -773,29 +749,28 @@ export class Matrix3D
 		return t;
 	}
 
-	public deltaTransformVectors(vin:Array<number>, vout:Array<number>):void
-	{
-		var raw:Float32Array = this._rawData;
+	public deltaTransformVectors(vin: Array<number>, vout: Array<number>): void {
+		const raw: Float32Array = this._rawData;
 
-		var a:number = raw[0];
-		var e:number = raw[1];
-		var i:number = raw[2];
+		const a: number = raw[0];
+		const e: number = raw[1];
+		const i: number = raw[2];
 
-		var b:number = raw[4];
-		var f:number = raw[5];
-		var j:number = raw[6];
+		const b: number = raw[4];
+		const f: number = raw[5];
+		const j: number = raw[6];
 
-		var c:number = raw[8];
-		var g:number = raw[9];
-		var k:number = raw[10];
+		const c: number = raw[8];
+		const g: number = raw[9];
+		const k: number = raw[10];
 
-		var outIndex:number = 0;
-		var length:number = vin.length;
+		let outIndex: number = 0;
+		const length: number = vin.length;
 
-		for (var index:number = 0; index < length; index += 3) {
-			var x:number = vin[index];
-			var y:number = vin[index + 1];
-			var z:number = vin[index + 2];
+		for (let index: number = 0; index < length; index += 3) {
+			const x: number = vin[index];
+			const y: number = vin[index + 1];
+			const z: number = vin[index + 2];
 			vout[outIndex++] = a * x + b * y + c * z;
 			vout[outIndex++] = e * x + f * y + g * z;
 			vout[outIndex++] = i * x + j * y + k * z;
@@ -805,9 +780,8 @@ export class Matrix3D
 	/**
 	 * Converts the current matrix to an identity or unit matrix.
 	 */
-	public identity():void
-	{
-		var raw:Float32Array = this._rawData;
+	public identity(): void {
+		const raw: Float32Array = this._rawData;
 
 		raw[0] = 1;
 		raw[1] = 0;
@@ -832,30 +806,29 @@ export class Matrix3D
 	/**
 	 * Inverts the current matrix.
 	 */
-	public invert():boolean
-	{
-		var d = this.determinant;
-		var invertable:boolean = Math.abs(d) > 0.00000000001;
-		var raw:Float32Array = this._rawData;
+	public invert(): boolean {
+		let d = this.determinant;
+		const invertable: boolean = Math.abs(d) > 0.00000000001;
+		const raw: Float32Array = this._rawData;
 
 		if (invertable) {
 			d = 1 / d;
-			var m11:number = raw[0];
-			var m12:number = raw[1];
-			var m13:number = raw[2];
-			var m14:number = raw[3];
-			var m21:number = raw[4];
-			var m22:number = raw[5];
-			var m23:number = raw[6];
-			var m24:number = raw[7];
-			var m31:number = raw[8];
-			var m32:number = raw[9];
-			var m33:number = raw[10];
-			var m34:number = raw[11];
-			var m41:number = raw[12];
-			var m42:number = raw[13];
-			var m43:number = raw[14];
-			var m44:number = raw[15];
+			const m11: number = raw[0];
+			const m12: number = raw[1];
+			const m13: number = raw[2];
+			const m14: number = raw[3];
+			const m21: number = raw[4];
+			const m22: number = raw[5];
+			const m23: number = raw[6];
+			const m24: number = raw[7];
+			const m31: number = raw[8];
+			const m32: number = raw[9];
+			const m33: number = raw[10];
+			const m34: number = raw[11];
+			const m41: number = raw[12];
+			const m42: number = raw[13];
+			const m43: number = raw[14];
+			const m44: number = raw[15];
 
 			raw[0] = d * (m22 * (m33 * m44 - m43 * m34) - m32 * (m23 * m44 - m43 * m24) + m42 * (m23 * m34 - m33 * m24));
 			raw[1] = -d * (m12 * (m33 * m44 - m43 * m34) - m32 * (m13 * m44 - m43 * m14) + m42 * (m13 * m34 - m33 * m14));
@@ -880,9 +853,8 @@ export class Matrix3D
 		return invertable;
 	}
 
-	public isIdentity():boolean
-	{
-		var raw:Float32Array = this._rawData;
+	public isIdentity(): boolean {
+		const raw: Float32Array = this._rawData;
 
 		if (raw[0] == 1 &&
 			raw[1] == 0 &&
@@ -908,44 +880,43 @@ export class Matrix3D
 	/**
 	 * Prepends a matrix by multiplying the current Matrix3D object by another Matrix3D object.
 	 */
-	public prepend(rhs:Matrix3D):void
-	{
-		var raw:Float32Array = this._rawData;
-		var rawRhs:Float32Array = rhs._rawData;
+	public prepend(rhs: Matrix3D): void {
+		const raw: Float32Array = this._rawData;
+		const rawRhs: Float32Array = rhs._rawData;
 
-		var m111:number = rawRhs[0];
-		var m112:number = rawRhs[1];
-		var m113:number = rawRhs[2];
-		var m114:number = rawRhs[3];
-		var m121:number = rawRhs[4];
-		var m122:number = rawRhs[5];
-		var m123:number = rawRhs[6];
-		var m124:number = rawRhs[7];
-		var m131:number = rawRhs[8];
-		var m132:number = rawRhs[9];
-		var m133:number = rawRhs[10];
-		var m134:number = rawRhs[11];
-		var m141:number = rawRhs[12];
-		var m142:number = rawRhs[13];
-		var m143:number = rawRhs[14];
-		var m144:number = rawRhs[15];
+		const m111: number = rawRhs[0];
+		const m112: number = rawRhs[1];
+		const m113: number = rawRhs[2];
+		const m114: number = rawRhs[3];
+		const m121: number = rawRhs[4];
+		const m122: number = rawRhs[5];
+		const m123: number = rawRhs[6];
+		const m124: number = rawRhs[7];
+		const m131: number = rawRhs[8];
+		const m132: number = rawRhs[9];
+		const m133: number = rawRhs[10];
+		const m134: number = rawRhs[11];
+		const m141: number = rawRhs[12];
+		const m142: number = rawRhs[13];
+		const m143: number = rawRhs[14];
+		const m144: number = rawRhs[15];
 
-		var m211:number = raw[0];
-		var m212:number = raw[1];
-		var m213:number = raw[2];
-		var m214:number = raw[3];
-		var m221:number = raw[4];
-		var m222:number = raw[5];
-		var m223:number = raw[6];
-		var m224:number = raw[7];
-		var m231:number = raw[8];
-		var m232:number = raw[9];
-		var m233:number = raw[10];
-		var m234:number = raw[11];
-		var m241:number = raw[12];
-		var m242:number = raw[13];
-		var m243:number = raw[14];
-		var m244:number = raw[15];
+		const m211: number = raw[0];
+		const m212: number = raw[1];
+		const m213: number = raw[2];
+		const m214: number = raw[3];
+		const m221: number = raw[4];
+		const m222: number = raw[5];
+		const m223: number = raw[6];
+		const m224: number = raw[7];
+		const m231: number = raw[8];
+		const m232: number = raw[9];
+		const m233: number = raw[10];
+		const m234: number = raw[11];
+		const m241: number = raw[12];
+		const m242: number = raw[13];
+		const m243: number = raw[14];
+		const m244: number = raw[15];
 
 		raw[0] = m111 * m211 + m112 * m221 + m113 * m231 + m114 * m241;
 		raw[1] = m111 * m212 + m112 * m222 + m113 * m232 + m114 * m242;
@@ -973,7 +944,7 @@ export class Matrix3D
 	/**
 	 * Prepends an incremental rotation to a Matrix3D object.
 	 */
-	public prependRotation(degrees:number, axis:Vector3D) //, pivot:Vector3D = null ):void
+	public prependRotation(degrees: number, axis: Vector3D) //, pivot:Vector3D = null ):void
 	{
 		this.prepend(Matrix3D.getAxisRotationMatrix(axis.x, axis.y, axis.z, degrees, Matrix3D._tempMatrix));
 	}
@@ -981,12 +952,11 @@ export class Matrix3D
 	/**
 	 * Prepends an incremental scale change along the x, y, and z axes to a Matrix3D object.
 	 */
-	public prependScale(xScale:number, yScale:number, zScale:number):void
-	{
+	public prependScale(xScale: number, yScale: number, zScale: number): void {
 		if (xScale == 1 && yScale == 1 && zScale == 1)
 			return;
 
-		var rawData:Float32Array = Matrix3D._tempMatrix._rawData;
+		const rawData: Float32Array = Matrix3D._tempMatrix._rawData;
 
 		rawData[0] = xScale;
 		rawData[1] = 0;
@@ -1014,9 +984,8 @@ export class Matrix3D
 	/**
 	 * Prepends an incremental translation, a repositioning along the x, y, and z axes, to a Matrix3D object.
 	 */
-	public prependTranslation(x:number, y:number, z:number):void
-	{
-		var rawData:Float32Array = Matrix3D._tempMatrix._rawData;
+	public prependTranslation(x: number, y: number, z: number): void {
+		const rawData: Float32Array = Matrix3D._tempMatrix._rawData;
 
 		rawData[0] = 1;
 		rawData[1] = 0;
@@ -1045,30 +1014,29 @@ export class Matrix3D
 	/**
 	 * Sets the transformation matrix's translation, rotation, and scale settings.
 	 */
-	public recompose(components:Vector3D[]):boolean
-	{
-		var pos:Vector3D = components[0] || this.position;
+	public recompose(components: Vector3D[]): boolean {
+		const pos: Vector3D = components[0] || this.position;
 
 		this.identity();
-		var scale:Vector3D = components[3];
+		const scale: Vector3D = components[3];
 		if (scale && (scale.x != 1 || scale.y != 1 || scale.z != 1))
 			this.appendScale(scale.x, scale.y, scale.z);
 
-		var skew:Vector3D = components[2];
+		const skew: Vector3D = components[2];
 		if (skew && (skew.x != 0 || skew.y != 0 || skew.z != 0))
 			this.appendSkew(skew.x, skew.y, skew.z);
 
-		var sin:number;
-		var cos:number;
-		var rawData:Float32Array = Matrix3D._tempMatrix._rawData;
+		let sin: number;
+		let cos: number;
+		const rawData: Float32Array = Matrix3D._tempMatrix._rawData;
 		rawData[12] = 0;
 		rawData[13] = 0;
 		rawData[14] = 0;
 		rawData[15] = 0;
 
-		var rotation:Vector3D = components[1];
+		const rotation: Vector3D = components[1];
 		if (rotation) {
-			var angle:number = -rotation.x;
+			let angle: number = -rotation.x;
 			if (angle != 0) {
 				sin = Math.sin(angle);
 				cos = Math.cos(angle);
@@ -1148,16 +1116,14 @@ export class Matrix3D
 		return true;
 	}
 
-
-	public reflect(plane:Plane3D):void
-	{
-		var a:number = plane.a, b:number = plane.b, c:number = plane.c, d:number = plane.d;
-		var ab2:number = -2 * a * b;
-		var ac2:number = -2 * a * c;
-		var bc2:number = -2 * b * c;
+	public reflect(plane: Plane3D): void {
+		const a: number = plane.a, b: number = plane.b, c: number = plane.c, d: number = plane.d;
+		const ab2: number = -2 * a * b;
+		const ac2: number = -2 * a * c;
+		const bc2: number = -2 * b * c;
 
 		// reflection matrix
-		var rawData:Float32Array = this._rawData;
+		const rawData: Float32Array = this._rawData;
 		rawData[0] = 1 - 2 * a * a;
 		rawData[4] = ab2;
 		rawData[8] = ac2;
@@ -1178,32 +1144,31 @@ export class Matrix3D
 		this._positionDirty = true;
 	}
 
-	public transformBox(box:Box, target:Box = null):Box
-	{
+	public transformBox(box: Box, target: Box = null): Box {
 		if (box == null)
-			throw new ArgumentError("ArgumentError, box cannot be null");
+			throw new ArgumentError('ArgumentError, box cannot be null');
 
 		if (!target)
 			target = new Box();
 
-		var hx:number = box.width / 2;
-		var hy:number = box.height / 2;
-		var hz:number = box.depth / 2;
-		var cx:number = box.x + hx;
-		var cy:number = box.y + hy;
-		var cz:number = box.z + hz;
+		const hx: number = box.width / 2;
+		const hy: number = box.height / 2;
+		const hz: number = box.depth / 2;
+		const cx: number = box.x + hx;
+		const cy: number = box.y + hy;
+		const cz: number = box.z + hz;
 
-		var m11:number = this._rawData[0], m12:number = this._rawData[4], m13:number = this._rawData[8], m14:number = this._rawData[12];
-		var m21:number = this._rawData[1], m22:number = this._rawData[5], m23:number = this._rawData[9], m24:number = this._rawData[13];
-		var m31:number = this._rawData[2], m32:number = this._rawData[6], m33:number = this._rawData[10], m34:number = this._rawData[14];
+		const m11: number = this._rawData[0], m12: number = this._rawData[4], m13: number = this._rawData[8], m14: number = this._rawData[12];
+		const m21: number = this._rawData[1], m22: number = this._rawData[5], m23: number = this._rawData[9], m24: number = this._rawData[13];
+		const m31: number = this._rawData[2], m32: number = this._rawData[6], m33: number = this._rawData[10], m34: number = this._rawData[14];
 
-		var centerX:number = cx * m11 + cy * m12 + cz * m13 + m14;
-		var centerY:number = cx * m21 + cy * m22 + cz * m23 + m24;
-		var centerZ:number = cx * m31 + cy * m32 + cz * m33 + m34;
+		const centerX: number = cx * m11 + cy * m12 + cz * m13 + m14;
+		const centerY: number = cx * m21 + cy * m22 + cz * m23 + m24;
+		const centerZ: number = cx * m31 + cy * m32 + cz * m33 + m34;
 
-		var halfExtentsX:number = Math.max(Math.abs(hx * m11 + hy * m12 + hz * m13), Math.abs(-hx * m11 + hy * m12 + hz * m13), Math.abs(hx * m11 - hy * m12 + hz * m13), Math.abs(hx * m11 + hy * m12 - hz * m13));
-		var halfExtentsY:number = Math.max(Math.abs(hx * m21 + hy * m22 + hz * m23), Math.abs(-hx * m21 + hy * m22 + hz * m23), Math.abs(hx * m21 - hy * m22 + hz * m23), Math.abs(hx * m21 + hy * m22 - hz * m23));
-		var halfExtentsZ:number = Math.max(Math.abs(hx * m31 + hy * m32 + hz * m33), Math.abs(-hx * m31 + hy * m32 + hz * m33), Math.abs(hx * m31 - hy * m32 + hz * m33), Math.abs(hx * m31 + hy * m32 - hz * m33));
+		const halfExtentsX: number = Math.max(Math.abs(hx * m11 + hy * m12 + hz * m13), Math.abs(-hx * m11 + hy * m12 + hz * m13), Math.abs(hx * m11 - hy * m12 + hz * m13), Math.abs(hx * m11 + hy * m12 - hz * m13));
+		const halfExtentsY: number = Math.max(Math.abs(hx * m21 + hy * m22 + hz * m23), Math.abs(-hx * m21 + hy * m22 + hz * m23), Math.abs(hx * m21 - hy * m22 + hz * m23), Math.abs(hx * m21 + hy * m22 - hz * m23));
+		const halfExtentsZ: number = Math.max(Math.abs(hx * m31 + hy * m32 + hz * m33), Math.abs(-hx * m31 + hy * m32 + hz * m33), Math.abs(hx * m31 - hy * m32 + hz * m33), Math.abs(hx * m31 + hy * m32 - hz * m33));
 
 		target.width = halfExtentsX * 2;
 		target.height = halfExtentsY * 2;
@@ -1216,13 +1181,12 @@ export class Matrix3D
 		return target;
 	}
 
-	public transformSphere(sphere:Sphere, target:Sphere = null):Sphere
-	{
+	public transformSphere(sphere: Sphere, target: Sphere = null): Sphere {
 		//TODO: use a better solution than this
 		if (sphere == null)
-			throw new ArgumentError("ArgumentError, sphere cannot be null");
+			throw new ArgumentError('ArgumentError, sphere cannot be null');
 
-		var box:Box = new Box(sphere.x - sphere.radius, sphere.y - sphere.radius, sphere.z - sphere.radius, sphere.radius * 2, sphere.radius * 2, sphere.radius * 2);
+		const box: Box = new Box(sphere.x - sphere.radius, sphere.y - sphere.radius, sphere.z - sphere.radius, sphere.radius * 2, sphere.radius * 2, sphere.radius * 2);
 
 		this.transformBox(box, box);
 
@@ -1238,22 +1202,20 @@ export class Matrix3D
 		return target;
 	}
 
-
-	public transformVector(vector:Vector3D, target:Vector3D = null):Vector3D
-	{
+	public transformVector(vector: Vector3D, target: Vector3D = null): Vector3D {
 		if (vector == null)
-			throw new ArgumentError("ArgumentError, vector cannot be null");
+			throw new ArgumentError('ArgumentError, vector cannot be null');
 
-		var x:number = vector.x;
-		var y:number = vector.y;
-		var z:number = vector.z;
-		var w:number = vector.w;
+		const x: number = vector.x;
+		const y: number = vector.y;
+		const z: number = vector.z;
+		const w: number = vector.w;
 
 		if (!target)
 			target = new Vector3D();
 
-		var raw:Float32Array = this._rawData;
-		var rawTarget:Float32Array = target._rawData;
+		const raw: Float32Array = this._rawData;
+		const rawTarget: Float32Array = target._rawData;
 
 		rawTarget[0] = x * raw[0] + y * raw[4] + z * raw[8] + w * raw[12];
 		rawTarget[1] = x * raw[1] + y * raw[5] + z * raw[9] + w * raw[13];
@@ -1266,11 +1228,10 @@ export class Matrix3D
 	/**
 	 * Uses the transformation matrix to transform a Vector of Numbers from one coordinate space to another.
 	 */
-	public transformVectors(vin:number[], vout:number[]):void
-	{
-		var i:number = 0;
-		var x:number = 0, y:number = 0, z:number = 0;
-		var raw:Float32Array = this._rawData;
+	public transformVectors(vin: number[], vout: number[]): void {
+		let i: number = 0;
+		let x: number = 0, y: number = 0, z: number = 0;
+		const raw: Float32Array = this._rawData;
 
 		while (i + 3 <= vin.length) {
 			x = vin[i];
@@ -1286,10 +1247,9 @@ export class Matrix3D
 	/**
 	 * Converts the current Matrix3D object to a matrix where the rows and columns are swapped.
 	 */
-	public transpose():void
-	{
-		var raw:Float32Array = this._rawData;
-		var rawTemp:Float32Array = Matrix3D._tempMatrix._rawData;
+	public transpose(): void {
+		const raw: Float32Array = this._rawData;
+		const rawTemp: Float32Array = Matrix3D._tempMatrix._rawData;
 
 		this.copyRawDataTo(rawTemp, 0, true);
 
@@ -1309,19 +1269,16 @@ export class Matrix3D
 		this._positionDirty = true;
 	}
 
-	public invalidatePosition():void
-	{
+	public invalidatePosition(): void {
 		this._positionDirty = true;
 	}
 
-	public toFixed(decimalPlace:number):string
-	{
-		var magnitude:number = Math.pow(10, decimalPlace);
-		return "matrix3d(" + Math.round(this._rawData[0] * magnitude) / magnitude + "," + Math.round(this._rawData[1] * magnitude) / magnitude + "," + Math.round(this._rawData[2] * magnitude) / magnitude + "," + Math.round(this._rawData[3] * magnitude) / magnitude + "," + Math.round(this._rawData[4] * magnitude) / magnitude + "," + Math.round(this._rawData[5] * magnitude) / magnitude + "," + Math.round(this._rawData[6] * magnitude) / magnitude + "," + Math.round(this._rawData[7] * magnitude) / magnitude + "," + Math.round(this._rawData[8] * magnitude) / magnitude + "," + Math.round(this._rawData[9] * magnitude) / magnitude + "," + Math.round(this._rawData[10] * magnitude) / magnitude + "," + Math.round(this._rawData[11] * magnitude) / magnitude + "," + Math.round(this._rawData[12] * magnitude) / magnitude + "," + Math.round(this._rawData[13] * magnitude) / magnitude + "," + Math.round(this._rawData[14] * magnitude) / magnitude + "," + Math.round(this._rawData[15] * magnitude) / magnitude + ")";
+	public toFixed(decimalPlace: number): string {
+		const magnitude: number = Math.pow(10, decimalPlace);
+		return 'matrix3d(' + Math.round(this._rawData[0] * magnitude) / magnitude + ',' + Math.round(this._rawData[1] * magnitude) / magnitude + ',' + Math.round(this._rawData[2] * magnitude) / magnitude + ',' + Math.round(this._rawData[3] * magnitude) / magnitude + ',' + Math.round(this._rawData[4] * magnitude) / magnitude + ',' + Math.round(this._rawData[5] * magnitude) / magnitude + ',' + Math.round(this._rawData[6] * magnitude) / magnitude + ',' + Math.round(this._rawData[7] * magnitude) / magnitude + ',' + Math.round(this._rawData[8] * magnitude) / magnitude + ',' + Math.round(this._rawData[9] * magnitude) / magnitude + ',' + Math.round(this._rawData[10] * magnitude) / magnitude + ',' + Math.round(this._rawData[11] * magnitude) / magnitude + ',' + Math.round(this._rawData[12] * magnitude) / magnitude + ',' + Math.round(this._rawData[13] * magnitude) / magnitude + ',' + Math.round(this._rawData[14] * magnitude) / magnitude + ',' + Math.round(this._rawData[15] * magnitude) / magnitude + ')';
 	}
 
-	public toString():string
-	{
-		return "matrix3d(" + Math.round(this._rawData[0] * 1000) / 1000 + "," + Math.round(this._rawData[1] * 1000) / 1000 + "," + Math.round(this._rawData[2] * 1000) / 1000 + "," + Math.round(this._rawData[3] * 1000) / 1000 + "," + Math.round(this._rawData[4] * 1000) / 1000 + "," + Math.round(this._rawData[5] * 1000) / 1000 + "," + Math.round(this._rawData[6] * 1000) / 1000 + "," + Math.round(this._rawData[7] * 1000) / 1000 + "," + Math.round(this._rawData[8] * 1000) / 1000 + "," + Math.round(this._rawData[9] * 1000) / 1000 + "," + Math.round(this._rawData[10] * 1000) / 1000 + "," + Math.round(this._rawData[11] * 1000) / 1000 + "," + Math.round(this._rawData[12] * 1000) / 1000 + "," + Math.round(this._rawData[13] * 1000) / 1000 + "," + Math.round(this._rawData[14] * 1000) / 1000 + "," + Math.round(this._rawData[15] * 1000) / 1000 + ")";
+	public toString(): string {
+		return 'matrix3d(' + Math.round(this._rawData[0] * 1000) / 1000 + ',' + Math.round(this._rawData[1] * 1000) / 1000 + ',' + Math.round(this._rawData[2] * 1000) / 1000 + ',' + Math.round(this._rawData[3] * 1000) / 1000 + ',' + Math.round(this._rawData[4] * 1000) / 1000 + ',' + Math.round(this._rawData[5] * 1000) / 1000 + ',' + Math.round(this._rawData[6] * 1000) / 1000 + ',' + Math.round(this._rawData[7] * 1000) / 1000 + ',' + Math.round(this._rawData[8] * 1000) / 1000 + ',' + Math.round(this._rawData[9] * 1000) / 1000 + ',' + Math.round(this._rawData[10] * 1000) / 1000 + ',' + Math.round(this._rawData[11] * 1000) / 1000 + ',' + Math.round(this._rawData[12] * 1000) / 1000 + ',' + Math.round(this._rawData[13] * 1000) / 1000 + ',' + Math.round(this._rawData[14] * 1000) / 1000 + ',' + Math.round(this._rawData[15] * 1000) / 1000 + ')';
 	}
 }

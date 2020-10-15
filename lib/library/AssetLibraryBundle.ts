@@ -1,61 +1,57 @@
-import {ErrorBase} from "../errors/ErrorBase";
-import {AssetEvent} from "../events/AssetEvent";
-import {URLLoaderEvent} from "../events/URLLoaderEvent";
-import {LoaderEvent} from "../events/LoaderEvent";
-import {EventDispatcher} from "../events/EventDispatcher";
-import {ParserEvent} from "../events/ParserEvent";
-import {EventBase} from "../events/EventBase";
+import { ErrorBase } from '../errors/ErrorBase';
+import { AssetEvent } from '../events/AssetEvent';
+import { URLLoaderEvent } from '../events/URLLoaderEvent';
+import { LoaderEvent } from '../events/LoaderEvent';
+import { EventDispatcher } from '../events/EventDispatcher';
+import { ParserEvent } from '../events/ParserEvent';
+import { EventBase } from '../events/EventBase';
 
-import {URLRequest} from "../net/URLRequest";
+import { URLRequest } from '../net/URLRequest';
 
-import {ParserBase}	from "../parsers/ParserBase";
+import { ParserBase }	from '../parsers/ParserBase';
 
-import {AssetBase} from "./AssetBase";
-import {AssetLibraryIterator} from "./AssetLibraryIterator";
-import {ConflictPrecedence} from "./ConflictPrecedence";
-import {ConflictStrategy} from "./ConflictStrategy";
-import {ConflictStrategyBase} from "./ConflictStrategyBase";
-import {IAsset} from "./IAsset";
-import {IAssetAdapter} from "./IAssetAdapter";
-import {Loader} from "./Loader";
-import {LoaderContext} from "./LoaderContext";
+import { AssetBase } from './AssetBase';
+import { AssetLibraryIterator } from './AssetLibraryIterator';
+import { ConflictPrecedence } from './ConflictPrecedence';
+import { ConflictStrategy } from './ConflictStrategy';
+import { ConflictStrategyBase } from './ConflictStrategyBase';
+import { IAsset } from './IAsset';
+import { IAssetAdapter } from './IAssetAdapter';
+import { Loader } from './Loader';
+import { LoaderContext } from './LoaderContext';
 
 /**
  * AssetLibraryBundle enforces a multiton pattern and is not intended to be instanced directly.
  * Its purpose is to create a container for 3D data management, both before and after parsing.
  * If you are interested in creating multiple library bundles, please use the <code>getInstance()</code> method.
  */
-export class AssetLibraryBundle extends EventDispatcher
-{
-	public static _iInstances:Object = new Object();
+export class AssetLibraryBundle extends EventDispatcher {
+	public static _iInstances: Object = new Object();
 
-	private _loaderSessions:Array<Loader>;
-	private _strategy:ConflictStrategyBase;
-	private _strategyPreference:string;
-	private _assets:Array<IAssetAdapter>;
-	private _assetDictionary:Object;
-	private _assetDictDirty:boolean;
-	private _loaderSessionsGarbage:Array<Loader> = new Array<Loader>();
+	private _loaderSessions: Array<Loader>;
+	private _strategy: ConflictStrategyBase;
+	private _strategyPreference: string;
+	private _assets: Array<IAssetAdapter>;
+	private _assetDictionary: Object;
+	private _assetDictDirty: boolean;
+	private _loaderSessionsGarbage: Array<Loader> = new Array<Loader>();
 
-	private _onAssetRenameDelegate:(event:AssetEvent) => void;
-	private _onAssetConflictResolvedDelegate:(event:AssetEvent) => void;
-	private _onLoaderStartDelegate:(event:LoaderEvent) => void;
-	private _onLoaderCompleteDelegate:(event:LoaderEvent) => void;
-	private _onTextureSizeErrorDelegate:(event:LoaderEvent) => void;
-	private _onAssetCompleteDelegate:(event:AssetEvent) => void;
-	private _onLoadErrorDelegate:(event:URLLoaderEvent) => void;
-	private _onParseErrorDelegate:(event:ParserEvent) => void;
-	private _errorDelegateSelector:{[index:string]:((event:EventBase) => void)};
-
-
+	private _onAssetRenameDelegate: (event: AssetEvent) => void;
+	private _onAssetConflictResolvedDelegate: (event: AssetEvent) => void;
+	private _onLoaderStartDelegate: (event: LoaderEvent) => void;
+	private _onLoaderCompleteDelegate: (event: LoaderEvent) => void;
+	private _onTextureSizeErrorDelegate: (event: LoaderEvent) => void;
+	private _onAssetCompleteDelegate: (event: AssetEvent) => void;
+	private _onLoadErrorDelegate: (event: URLLoaderEvent) => void;
+	private _onParseErrorDelegate: (event: ParserEvent) => void;
+	private _errorDelegateSelector: {[index: string]: ((event: EventBase) => void)};
 
 	/**
 	 * Creates a new <code>AssetLibraryBundle</code> object.
 	 *
 	 * @param me A multiton enforcer for the AssetLibraryBundle ensuring it cannnot be instanced.
 	 */
-	constructor()
-	{
+	constructor() {
 		super();
 
 		this._assets = new Array<IAssetAdapter>();//new Vector.<IAsset>;
@@ -65,14 +61,14 @@ export class AssetLibraryBundle extends EventDispatcher
 		this.conflictStrategy = ConflictStrategy.IGNORE.create();
 		this.conflictPrecedence = ConflictPrecedence.FAVOR_NEW;
 
-		this._onAssetRenameDelegate = (event:AssetEvent) => this._onAssetRename(event);
-		this._onAssetConflictResolvedDelegate = (event:AssetEvent) => this._onAssetConflictResolved(event);
-		this._onLoaderStartDelegate = (event:LoaderEvent) => this._onLoaderStart(event);
-		this._onLoaderCompleteDelegate = (event:LoaderEvent) => this._onLoaderComplete(event);
-		this._onTextureSizeErrorDelegate = (event:LoaderEvent) => this._onTextureSizeError(event);
-		this._onAssetCompleteDelegate = (event:AssetEvent) => this._onAssetComplete(event);
-		this._onLoadErrorDelegate = (event:URLLoaderEvent) => this._onLoadError(event);
-		this._onParseErrorDelegate = (event:ParserEvent) => this._onParseError(event);
+		this._onAssetRenameDelegate = (event: AssetEvent) => this._onAssetRename(event);
+		this._onAssetConflictResolvedDelegate = (event: AssetEvent) => this._onAssetConflictResolved(event);
+		this._onLoaderStartDelegate = (event: LoaderEvent) => this._onLoaderStart(event);
+		this._onLoaderCompleteDelegate = (event: LoaderEvent) => this._onLoaderComplete(event);
+		this._onTextureSizeErrorDelegate = (event: LoaderEvent) => this._onTextureSizeError(event);
+		this._onAssetCompleteDelegate = (event: AssetEvent) => this._onAssetComplete(event);
+		this._onLoadErrorDelegate = (event: URLLoaderEvent) => this._onLoadError(event);
+		this._onParseErrorDelegate = (event: ParserEvent) => this._onParseError(event);
 
 		this._errorDelegateSelector = {
 			[URLLoaderEvent.LOAD_ERROR]: this._onLoadErrorDelegate,
@@ -86,10 +82,9 @@ export class AssetLibraryBundle extends EventDispatcher
 	 * @param type
 	 * @param listener
 	 */
-	public addEventListener(type:string, listener:(event:EventBase) => void):void
-	{
+	public addEventListener(type: string, listener: (event: EventBase) => void): void {
 		if (type == URLLoaderEvent.LOAD_ERROR || type == ParserEvent.PARSE_ERROR)
-			for (var i:number; i < this._loaderSessions.length; i++)
+			for (var i: number; i < this._loaderSessions.length; i++)
 				this._loaderSessions[i].addEventListener(type, this._errorDelegateSelector[type]);
 
 		super.addEventListener(type, listener);
@@ -102,10 +97,9 @@ export class AssetLibraryBundle extends EventDispatcher
 	 * @param listener
 	 */
 
-	public removeEventListener(type:string, listener:(event:EventBase) => void):void
-	{
+	public removeEventListener(type: string, listener: (event: EventBase) => void): void {
 		if (type == URLLoaderEvent.LOAD_ERROR || type == ParserEvent.PARSE_ERROR)
-			for (var i:number; i < this._loaderSessions.length; i++)
+			for (var i: number; i < this._loaderSessions.length; i++)
 				this._loaderSessions[i].removeEventListener(type, this._errorDelegateSelector[type]);
 
 		super.removeEventListener(type, listener);
@@ -120,10 +114,9 @@ export class AssetLibraryBundle extends EventDispatcher
 	 * @param key Defines which multiton instance should be returned.
 	 * @return An instance of the asset library
 	 */
-	public static getInstance(key:string = "default"):AssetLibraryBundle
-	{
+	public static getInstance(key: string = 'default'): AssetLibraryBundle {
 		if (!key)
-			key = "default";
+			key = 'default';
 
 		if (!AssetLibraryBundle._iInstances.hasOwnProperty(key))
 			AssetLibraryBundle._iInstances[key] = new AssetLibraryBundle();
@@ -135,16 +128,14 @@ export class AssetLibraryBundle extends EventDispatcher
 	/**
 	 *
 	 */
-	public enableParser(parserClass:Object):void
-	{
+	public enableParser(parserClass: Object): void {
 		Loader.enableParser(parserClass);
 	}
 
 	/**
 	 *
 	 */
-	public enableParsers(parserClasses:Object[]):void
-	{
+	public enableParsers(parserClasses: Object[]): void {
 		Loader.enableParsers(parserClasses);
 	}
 
@@ -158,16 +149,14 @@ export class AssetLibraryBundle extends EventDispatcher
 	 * @see naming.ConflictStrategy
 	 * @see AssetLibrary.conflictPrecedence
 	 */
-	public get conflictStrategy():ConflictStrategyBase
-	{
+	public get conflictStrategy(): ConflictStrategyBase {
 		return this._strategy;
 	}
 
-	public set conflictStrategy(val:ConflictStrategyBase)
-	{
+	public set conflictStrategy(val: ConflictStrategyBase) {
 
 		if (!val)
-			throw new ErrorBase("namingStrategy must not be null. To ignore naming, use AssetLibrary.IGNORE");
+			throw new ErrorBase('namingStrategy must not be null. To ignore naming, use AssetLibrary.IGNORE');
 
 		this._strategy = val.create();
 
@@ -185,13 +174,11 @@ export class AssetLibraryBundle extends EventDispatcher
 	 * @see away.library.ConflictPrecedence
 	 * @see away.library.ConflictStrategy
 	 */
-	public get conflictPrecedence():string
-	{
+	public get conflictPrecedence(): string {
 		return this._strategyPreference;
 	}
 
-	public set conflictPrecedence(val:string)
-	{
+	public set conflictPrecedence(val: string) {
 		this._strategyPreference = val;
 	}
 
@@ -209,8 +196,7 @@ export class AssetLibraryBundle extends EventDispatcher
 	 *
 	 * @see away.library.AssetType
 	 */
-	public createIterator(assetTypeFilter:string = null, namespaceFilter:string = null, filterFunc = null):AssetLibraryIterator
-	{
+	public createIterator(assetTypeFilter: string = null, namespaceFilter: string = null, filterFunc = null): AssetLibraryIterator {
 		return new AssetLibraryIterator(this._assets, assetTypeFilter, namespaceFilter, filterFunc);
 	}
 
@@ -223,8 +209,7 @@ export class AssetLibraryBundle extends EventDispatcher
 	 * @param parser An optional parser object for translating the loaded data into a usable resource. If not provided, Loader will attempt to auto-detect the file type.
 	 * @return A handle to the retrieved resource.
 	 */
-	public load(req:URLRequest, context:LoaderContext = null, ns:string = null, parser:ParserBase = null):void
-	{
+	public load(req: URLRequest, context: LoaderContext = null, ns: string = null, parser: ParserBase = null): void {
 		this.getLoader().load(req, context, ns, parser);
 	}
 
@@ -237,14 +222,12 @@ export class AssetLibraryBundle extends EventDispatcher
 	 * @param parser An optional parser object for translating the loaded data into a usable resource. If not provided, Loader will attempt to auto-detect the file type.
 	 * @return A handle to the retrieved resource.
 	 */
-	public loadData(data:any, context:LoaderContext = null, ns:string = null, parser:ParserBase = null):void
-	{
-		this.getLoader().loadData(data, "", context, ns, parser);
+	public loadData(data: any, context: LoaderContext = null, ns: string = null, parser: ParserBase = null): void {
+		this.getLoader().loadData(data, '', context, ns, parser);
 	}
 
-	public getLoader():Loader
-	{
-		var loader:Loader = new Loader();
+	public getLoader(): Loader {
+		const loader: Loader = new Loader();
 
 		this._loaderSessions.push(loader);
 
@@ -262,12 +245,11 @@ export class AssetLibraryBundle extends EventDispatcher
 		return loader;
 	}
 
-	public stopLoader(loader:Loader):void
-	{
-		var index:number = this._loaderSessions.indexOf(loader);
+	public stopLoader(loader: Loader): void {
+		const index: number = this._loaderSessions.indexOf(loader);
 
 		if (index == -1)
-			throw new Error("loader is not an active session");
+			throw new Error('loader is not an active session');
 
 		this._loaderSessions.splice(index, 1);
 
@@ -277,8 +259,7 @@ export class AssetLibraryBundle extends EventDispatcher
 	/**
 	 *
 	 */
-	public getAsset(name:string, ns:string = null):IAssetAdapter
-	{
+	public getAsset(name: string, ns: string = null): IAssetAdapter {
 		if (this._assetDictDirty)
 			this.rehashAssetDict();
 
@@ -292,8 +273,7 @@ export class AssetLibraryBundle extends EventDispatcher
 
 	}
 
-	public getAllAssets():Array<IAssetAdapter>
-	{
+	public getAllAssets(): Array<IAssetAdapter> {
 		return this._assets;
 	}
 
@@ -302,10 +282,9 @@ export class AssetLibraryBundle extends EventDispatcher
 	 * using the method defined by the <code>conflictStrategy</code> and
 	 * <code>conflictPrecedence</code> properties.
 	 */
-	public addAsset(asset:IAssetAdapter):void
-	{
-		var ns:string;
-		var old:IAssetAdapter;
+	public addAsset(asset: IAssetAdapter): void {
+		let ns: string;
+		let old: IAssetAdapter;
 
 		// Bail if asset has already been added.
 		if (this._assets.indexOf(asset) >= 0)
@@ -340,9 +319,8 @@ export class AssetLibraryBundle extends EventDispatcher
 	 * @param asset The asset which should be removed from this library.
 	 * @param dispose Defines whether the assets should also be disposed.
 	 */
-	public removeAsset(asset:IAssetAdapter, dispose:boolean = true):void
-	{
-		var idx:number;
+	public removeAsset(asset: IAssetAdapter, dispose: boolean = true): void {
+		let idx: number;
 
 		this.removeAssetFromDict(asset);
 
@@ -367,9 +345,8 @@ export class AssetLibraryBundle extends EventDispatcher
 	 *
 	 * @see away.library.AssetLibrary.removeAsset()
 	 */
-	public removeAssetByName(name:string, ns:string = null, dispose:boolean = true):IAssetAdapter
-	{
-		var asset:IAssetAdapter = this.getAsset(name, ns);
+	public removeAssetByName(name: string, ns: string = null, dispose: boolean = true): IAssetAdapter {
+		const asset: IAssetAdapter = this.getAsset(name, ns);
 
 		if (asset)
 			this.removeAsset(asset, dispose);
@@ -383,12 +360,11 @@ export class AssetLibraryBundle extends EventDispatcher
 	 *
 	 * @param dispose Defines whether the assets should also be disposed.
 	 */
-	public removeAllAssets(dispose:boolean = true):void
-	{
+	public removeAllAssets(dispose: boolean = true): void {
 		if (dispose) {
-			var asset:IAssetAdapter;
-			var len:number = this._assets.length;
-			for (var c:number = 0; c < len; c++) {
+			let asset: IAssetAdapter;
+			const len: number = this._assets.length;
+			for (let c: number = 0; c < len; c++) {
 				asset = this._assets[c];
 				asset.dispose();
 			}
@@ -408,11 +384,10 @@ export class AssetLibraryBundle extends EventDispatcher
 	 *
 	 * @see away.library.AssetLibrary.removeAsset()
 	 */
-	public removeNamespaceAssets(ns:string = null, dispose:boolean = true):void
-	{
-		var idx:number = 0;
-		var asset:IAssetAdapter;
-		var old_assets:IAssetAdapter[];
+	public removeNamespaceAssets(ns: string = null, dispose: boolean = true): void {
+		let idx: number = 0;
+		let asset: IAssetAdapter;
+		let old_assets: IAssetAdapter[];
 
 		// Empty the assets vector after having stored a copy of it.
 		// The copy will be filled with all assets which weren't removed.
@@ -422,8 +397,8 @@ export class AssetLibraryBundle extends EventDispatcher
 		if (ns == null)
 			ns = AssetBase.DEFAULT_NAMESPACE;
 
-		var len:number = old_assets.length;
-		for (var d:number = 0; d < len; d++) {
+		const len: number = old_assets.length;
+		for (let d: number = 0; d < len; d++) {
 			asset = old_assets[d];
 
 			// Remove from dict if in the supplied namespace. If not,
@@ -466,8 +441,7 @@ export class AssetLibraryBundle extends EventDispatcher
 			delete this._assetDictionary[ns];
 	}
 
-	private removeAssetFromDict(asset:IAssetAdapter, autoRemoveEmptyNamespace:boolean = true):void
-	{
+	private removeAssetFromDict(asset: IAssetAdapter, autoRemoveEmptyNamespace: boolean = true): void {
 		if (this._assetDictDirty)
 			this.rehashAssetDict();
 
@@ -480,23 +454,21 @@ export class AssetLibraryBundle extends EventDispatcher
 		}
 	}
 
-	public stop():void
-	{
-		var len:number = this._loaderSessions.length;
-		for (var i:number = 0; i < len; i++)
+	public stop(): void {
+		const len: number = this._loaderSessions.length;
+		for (let i: number = 0; i < len; i++)
 			this._killLoaderSession(this._loaderSessions[i]);
 
 		this._loaderSessions = new Array<Loader>();
 	}
 
-	private rehashAssetDict():void
-	{
-		var asset:IAssetAdapter;
+	private rehashAssetDict(): void {
+		let asset: IAssetAdapter;
 
 		this._assetDictionary = {};
 
-		var len:number = this._assets.length;
-		for (var c:number = 0; c < len; c++) {
+		const len: number = this._assets.length;
+		for (let c: number = 0; c < len; c++) {
 			asset = this._assets[c];
 
 			if (!this._assetDictionary.hasOwnProperty(asset.adaptee.assetNamespace))
@@ -513,48 +485,41 @@ export class AssetLibraryBundle extends EventDispatcher
 	/**
 	 * Called when a an error occurs during loading.
 	 */
-	private _onLoadError(event:URLLoaderEvent):void
-	{
+	private _onLoadError(event: URLLoaderEvent): void {
 		this.dispatchEvent(event);
 	}
 
 	/**
 	 * Called when a an error occurs during parsing.
 	 */
-	private _onParseError(event:ParserEvent):void
-	{
+	private _onParseError(event: ParserEvent): void {
 		this.dispatchEvent(event);
 	}
 
-	private _onAssetComplete(event:AssetEvent):void
-	{
+	private _onAssetComplete(event: AssetEvent): void {
 		this.addAsset(event.asset.adapter);
 
 		this.dispatchEvent(event);
 	}
 
-	private _onTextureSizeError(event:LoaderEvent):void
-	{
+	private _onTextureSizeError(event: LoaderEvent): void {
 		this.dispatchEvent(event);
 	}
 
-	private _onLoaderStart(event:LoaderEvent):void
-	{
+	private _onLoaderStart(event: LoaderEvent): void {
 		this.dispatchEvent(event);
 	}
 
 	/**
 	 * Called when the resource and all of its dependencies was retrieved.
 	 */
-	private _onLoaderComplete(event:LoaderEvent):void
-	{
+	private _onLoaderComplete(event: LoaderEvent): void {
 		this.stopLoader(event.target);
 
 		this.dispatchEvent(event);
 	}
 
-	private _killLoaderSession(loader:Loader):void
-	{
+	private _killLoaderSession(loader: Loader): void {
 		loader.removeEventListener(LoaderEvent.LOADER_START, this._onLoaderStartDelegate);
 		loader.removeEventListener(LoaderEvent.LOADER_COMPLETE, this._onLoaderCompleteDelegate);
 		loader.removeEventListener(AssetEvent.TEXTURE_SIZE_ERROR, this._onTextureSizeErrorDelegate);
@@ -569,16 +534,14 @@ export class AssetLibraryBundle extends EventDispatcher
 		loader.stop();
 	}
 
-
-	private _onAssetRename(event:AssetEvent):void
-	{
-		var asset:IAssetAdapter = (<IAsset > event.target).adapter;// TODO: was ev.currentTarget - watch this var
-		var old:IAssetAdapter = this.getAsset(asset.adaptee.assetNamespace, asset.adaptee.name);
+	private _onAssetRename(event: AssetEvent): void {
+		const asset: IAssetAdapter = (<IAsset > event.target).adapter;// TODO: was ev.currentTarget - watch this var
+		const old: IAssetAdapter = this.getAsset(asset.adaptee.assetNamespace, asset.adaptee.name);
 
 		if (old != null) {
 			this._strategy.resolveConflict(asset, old, this._assetDictionary[asset.adaptee.assetNamespace], this._strategyPreference);
 		} else {
-			var dict:Object = this._assetDictionary[event.asset.assetNamespace];
+			const dict: Object = this._assetDictionary[event.asset.assetNamespace];
 
 			if (dict == null)
 				return;
@@ -588,8 +551,7 @@ export class AssetLibraryBundle extends EventDispatcher
 		}
 	}
 
-	private _onAssetConflictResolved(event:AssetEvent):void
-	{
+	private _onAssetConflictResolved(event: AssetEvent): void {
 		this.dispatchEvent(event.clone());
 	}
 }

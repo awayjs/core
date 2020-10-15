@@ -1,8 +1,8 @@
-import {IAsset} from "./IAsset";
-import {AbstractionBase} from "./AbstractionBase";
+import { IAsset } from './IAsset';
+import { AbstractionBase } from './AbstractionBase';
 
 export interface IAbstractionPool
 {
-	getAbstraction(asset:IAsset):AbstractionBase;
-	clearAbstraction(asset:IAsset);
+	getAbstraction(asset: IAsset): AbstractionBase;
+	clearAbstraction(asset: IAsset);
 }

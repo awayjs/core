@@ -17,24 +17,11 @@
         "sourceType": "module"
     },
     "plugins": [
-        "@typescript-eslint",
-        "@saji/brace-rules"
-    ],
+        "@typescript-eslint"
+        ],
     "rules": {
         "array-bracket-spacing": "error",
-        "brace-style": "off",
-        "@saji/brace-rules/brace-on-same-line": [
-            "error",
-            "1tbs",
-            {
-                "ClassDeclaration": "never",
-                "ExportClass": "never",
-                "ExportClassAnon": "never",
-                "ExportFunctionAnon": "never",
-                "FunctionDeclaration": "never",
-                "MethodDeclaration": "never"
-            }
-        ],
+        "brace-style": ["error", "1tbs", { "allowSingleLine": true }],
         "indent": "off",
         "@typescript-eslint/indent": [
             "error",
@@ -59,19 +46,13 @@
         //                 "public-static-field",
         //                 "protected-static-field",
         //                 "private-static-field",
-
         //                 "public-instance-field",
         //                 "protected-instance-field",
         //                 "private-instance-field",
-
-
         //                 "constructor",
-
-
         //                 "public-static-method",
         //                 "protected-static-method",
         //                 "private-static-method",
-
         //                 "public-instance-method",
         //                 "protected-instance-method",
         //                 "private-instance-method"
@@ -89,9 +70,14 @@
         ],
         "no-prototype-builtins": "off",
         "no-trailing-spaces": "error",
-        "object-curly-spacing": "error",
-        "quotes": "error",
+        "object-curly-spacing": ["error", "always"],
+        "quotes": ["error", "single"],
         "semi": "error",
+        "no-var": "warn",
+        "prefer-const": "warn",
+        "prefer-rest-params": "warn",
+        "prefer-spread": "warn",
+        "max-len": ["warn", { "code": 120 }],
         "space-before-blocks": "error",
         "space-in-parens": "error",
         "space-infix-ops": [
@@ -100,12 +86,13 @@
                 "int32Hint": true
             }
         ],
+        "no-multiple-empty-lines": ["error", { "max": 1, "maxEOF": 0 }],
         "space-unary-ops": "error",
         "@typescript-eslint/type-annotation-spacing": [
             "error",
             {
                 "before": false,
-                "after": false,
+                "after": true,
                 "overrides": {
                     "arrow": {
                         "before": true,

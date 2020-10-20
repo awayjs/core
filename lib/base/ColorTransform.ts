@@ -180,9 +180,13 @@ export class ColorTransform {
 		this._rawData[5] = argb[2];  //(value >> 8) & 0xFF;
 		this._rawData[6] = argb[3];  //value & 0xFF;
 
-		this._rawData[0] = 1;
-		this._rawData[1] = 1;
-		this._rawData[2] = 1;
+		/*
+		* ZERO!!! Because this is overidded color.
+		* This means that sprite will be rendered only with this color
+		*/
+		this._rawData[0] = 0;
+		this._rawData[1] = 0;
+		this._rawData[2] = 0;
 	}
 
 	/**
@@ -206,9 +210,13 @@ export class ColorTransform {
 	 * @param alphaOffset     The offset for alpha transparency channel value, in
 	 *                        the range from -255 to 255.
 	 */
+	/* eslint-disable */
 	constructor(rawData: Float32Array);
 	constructor(redMultiplier?: number, greenMultiplier?: number, blueMultiplier?: number, alphaMultiplier?: number, redOffset?: number, greenOffset?: number, blueOffset?: number, alphaOffset?: number);
-	constructor(redMultiplier: number | Float32Array = 1, greenMultiplier: number = 1, blueMultiplier: number = 1, alphaMultiplier: number = 1, redOffset: number = 0, greenOffset: number = 0, blueOffset: number = 0, alphaOffset: number = 0) {
+	constructor(redMultiplier: number | Float32Array = 1, greenMultiplier: number = 1, blueMultiplier: number = 1, alphaMultiplier: number = 1, redOffset: number = 0, greenOffset: number = 0, blueOffset: number = 0, alphaOffset: number = 0) 
+	{
+	/* eslint-enable */
+
 		if (redMultiplier instanceof Float32Array) {
 			this._rawData = redMultiplier;
 		} else {

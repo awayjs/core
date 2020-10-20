@@ -59,22 +59,20 @@ export class Matrix3D {
 	}
 
 	public static getPointAtMatrix(pos: Vector3D, dir: Vector3D, up: Vector3D, target: Matrix3D = null): Matrix3D {
-		let dirN: Vector3D;
 		let upN: Vector3D;
-		let lftN: Vector3D;
 
 		if (target == null)
 			target = new Matrix3D();
 
 		const targetData: Float32Array = target._rawData;
 
-		dirN = dir.clone();
+		const dirN = dir.clone();
 		dirN.normalize();
 
 		upN = up.clone();
 		upN.normalize();
 
-		lftN = upN.crossProduct(dirN);
+		const lftN = upN.crossProduct(dirN);
 		lftN.normalize();
 
 		if (lftN.length < 0.05) {
@@ -180,7 +178,8 @@ export class Matrix3D {
 	 * A Vector of 16 Numbers, where every four elements is a column of a 4x4 matrix.
 	 *
 	 * <p>An exception is thrown if the _rawData property is set to a matrix that is not invertible. The Matrix3D
-	 * object must be invertible. If a non-invertible matrix is needed, create a subexport class of the Matrix3D object.</p>
+	 * object must be invertible. If a non-invertible matrix is needed,
+	 * create a subexport class of the Matrix3D object.</p>
 	 */
 	public _rawData: Float32Array;
 
@@ -613,7 +612,8 @@ export class Matrix3D {
 	}
 
 	/**
-	 * Returns the transformation matrix's translation, rotation, and scale settings as a Vector of three Vector3D objects.
+	 * Returns the transformation matrix's translation, rotation, and scale
+	 * settings as a Vector of three Vector3D objects.
 	 */
 	public decompose(orientationStyle: string = 'eulerAngles'): Vector3D[] {
 		if (this._components == null)
@@ -663,19 +663,21 @@ export class Matrix3D {
 		const rot = this._components[1];
 
 		switch (orientationStyle) {
-			case Orientation3D.AXIS_ANGLE:
-
+			case Orientation3D.AXIS_ANGLE: {
 				rot.w = Math.acos((colX.x + colY.y + colZ.z - 1) / 2);
 
-				var len: number = Math.sqrt((colY.z - colZ.y) * (colY.z - colZ.y) + (colZ.x - colX.z) * (colZ.x - colX.z) + (colX.y - colY.x) * (colX.y - colY.x));
+				const len: number = Math.sqrt(
+					(colY.z - colZ.y) * (colY.z - colZ.y) +
+					(colZ.x - colX.z) * (colZ.x - colX.z) +
+					(colX.y - colY.x) * (colX.y - colY.x));
 				rot.x = (colY.z - colZ.y) / len;
 				rot.y = (colZ.x - colX.z) / len;
 				rot.z = (colX.y - colY.x) / len;
 
 				break;
-			case Orientation3D.QUATERNION:
-
-				var tr = colX.x + colY.y + colZ.z;
+			}
+			case Orientation3D.QUATERNION: {
+				const tr = colX.x + colY.y + colZ.z;
 
 				if (tr > 0) {
 					rot.w = Math.sqrt(1 + tr) / 2;
@@ -704,6 +706,7 @@ export class Matrix3D {
 				}
 
 				break;
+			}
 			case Orientation3D.EULER_ANGLES:
 
 				rot.y = Math.asin(-colX.z);
@@ -830,6 +833,7 @@ export class Matrix3D {
 			const m43: number = raw[14];
 			const m44: number = raw[15];
 
+			/* eslint-disable */
 			raw[0] = d * (m22 * (m33 * m44 - m43 * m34) - m32 * (m23 * m44 - m43 * m24) + m42 * (m23 * m34 - m33 * m24));
 			raw[1] = -d * (m12 * (m33 * m44 - m43 * m34) - m32 * (m13 * m44 - m43 * m14) + m42 * (m13 * m34 - m33 * m14));
 			raw[2] = d * (m12 * (m23 * m44 - m43 * m24) - m22 * (m13 * m44 - m43 * m14) + m42 * (m13 * m24 - m23 * m14));
@@ -846,6 +850,7 @@ export class Matrix3D {
 			raw[13] = d * (m11 * (m32 * m43 - m42 * m33) - m31 * (m12 * m43 - m42 * m13) + m41 * (m12 * m33 - m32 * m13));
 			raw[14] = -d * (m11 * (m22 * m43 - m42 * m23) - m21 * (m12 * m43 - m42 * m13) + m41 * (m12 * m23 - m22 * m13));
 			raw[15] = d * (m11 * (m22 * m33 - m32 * m23) - m21 * (m12 * m33 - m32 * m13) + m31 * (m12 * m23 - m22 * m13));
+			/* eslint-enable */
 		}
 
 		this._positionDirty = true;
@@ -944,8 +949,8 @@ export class Matrix3D {
 	/**
 	 * Prepends an incremental rotation to a Matrix3D object.
 	 */
-	public prependRotation(degrees: number, axis: Vector3D) //, pivot:Vector3D = null ):void
-	{
+	public prependRotation(degrees: number, axis: Vector3D)  //, pivot:Vector3D = null ):void
+	{ 	// eslint-disable-line
 		this.prepend(Matrix3D.getAxisRotationMatrix(axis.x, axis.y, axis.z, degrees, Matrix3D._tempMatrix));
 	}
 
@@ -1158,17 +1163,45 @@ export class Matrix3D {
 		const cy: number = box.y + hy;
 		const cz: number = box.z + hz;
 
-		const m11: number = this._rawData[0], m12: number = this._rawData[4], m13: number = this._rawData[8], m14: number = this._rawData[12];
-		const m21: number = this._rawData[1], m22: number = this._rawData[5], m23: number = this._rawData[9], m24: number = this._rawData[13];
-		const m31: number = this._rawData[2], m32: number = this._rawData[6], m33: number = this._rawData[10], m34: number = this._rawData[14];
+		const
+			m11: number = this._rawData[0],
+			m12: number = this._rawData[4],
+			m13: number = this._rawData[8],
+			m14: number = this._rawData[12];
+
+		const
+			m21: number = this._rawData[1],
+			m22: number = this._rawData[5],
+			m23: number = this._rawData[9],
+			m24: number = this._rawData[13];
+
+		const
+			m31: number = this._rawData[2],
+			m32: number = this._rawData[6],
+			m33: number = this._rawData[10],
+			m34: number = this._rawData[14];
 
 		const centerX: number = cx * m11 + cy * m12 + cz * m13 + m14;
 		const centerY: number = cx * m21 + cy * m22 + cz * m23 + m24;
 		const centerZ: number = cx * m31 + cy * m32 + cz * m33 + m34;
 
-		const halfExtentsX: number = Math.max(Math.abs(hx * m11 + hy * m12 + hz * m13), Math.abs(-hx * m11 + hy * m12 + hz * m13), Math.abs(hx * m11 - hy * m12 + hz * m13), Math.abs(hx * m11 + hy * m12 - hz * m13));
-		const halfExtentsY: number = Math.max(Math.abs(hx * m21 + hy * m22 + hz * m23), Math.abs(-hx * m21 + hy * m22 + hz * m23), Math.abs(hx * m21 - hy * m22 + hz * m23), Math.abs(hx * m21 + hy * m22 - hz * m23));
-		const halfExtentsZ: number = Math.max(Math.abs(hx * m31 + hy * m32 + hz * m33), Math.abs(-hx * m31 + hy * m32 + hz * m33), Math.abs(hx * m31 - hy * m32 + hz * m33), Math.abs(hx * m31 + hy * m32 - hz * m33));
+		const halfExtentsX: number = Math.max(
+			Math.abs(hx * m11 + hy * m12 + hz * m13),
+			Math.abs(-hx * m11 + hy * m12 + hz * m13),
+			Math.abs(hx * m11 - hy * m12 + hz * m13),
+			Math.abs(hx * m11 + hy * m12 - hz * m13));
+
+		const halfExtentsY: number = Math.max(
+			Math.abs(hx * m21 + hy * m22 + hz * m23),
+			Math.abs(-hx * m21 + hy * m22 + hz * m23),
+			Math.abs(hx * m21 - hy * m22 + hz * m23),
+			Math.abs(hx * m21 + hy * m22 - hz * m23));
+
+		const halfExtentsZ: number = Math.max(
+			Math.abs(hx * m31 + hy * m32 + hz * m33),
+			Math.abs(-hx * m31 + hy * m32 + hz * m33),
+			Math.abs(hx * m31 - hy * m32 + hz * m33),
+			Math.abs(hx * m31 + hy * m32 - hz * m33));
 
 		target.width = halfExtentsX * 2;
 		target.height = halfExtentsY * 2;
@@ -1186,7 +1219,13 @@ export class Matrix3D {
 		if (sphere == null)
 			throw new ArgumentError('ArgumentError, sphere cannot be null');
 
-		const box: Box = new Box(sphere.x - sphere.radius, sphere.y - sphere.radius, sphere.z - sphere.radius, sphere.radius * 2, sphere.radius * 2, sphere.radius * 2);
+		const box: Box = new Box(
+			sphere.x - sphere.radius, // x
+			sphere.y - sphere.radius, // y
+			sphere.z - sphere.radius, // z
+			sphere.radius * 2, // w
+			sphere.radius * 2, // h
+			sphere.radius * 2); // d
 
 		this.transformBox(box, box);
 
@@ -1275,10 +1314,40 @@ export class Matrix3D {
 
 	public toFixed(decimalPlace: number): string {
 		const magnitude: number = Math.pow(10, decimalPlace);
-		return 'matrix3d(' + Math.round(this._rawData[0] * magnitude) / magnitude + ',' + Math.round(this._rawData[1] * magnitude) / magnitude + ',' + Math.round(this._rawData[2] * magnitude) / magnitude + ',' + Math.round(this._rawData[3] * magnitude) / magnitude + ',' + Math.round(this._rawData[4] * magnitude) / magnitude + ',' + Math.round(this._rawData[5] * magnitude) / magnitude + ',' + Math.round(this._rawData[6] * magnitude) / magnitude + ',' + Math.round(this._rawData[7] * magnitude) / magnitude + ',' + Math.round(this._rawData[8] * magnitude) / magnitude + ',' + Math.round(this._rawData[9] * magnitude) / magnitude + ',' + Math.round(this._rawData[10] * magnitude) / magnitude + ',' + Math.round(this._rawData[11] * magnitude) / magnitude + ',' + Math.round(this._rawData[12] * magnitude) / magnitude + ',' + Math.round(this._rawData[13] * magnitude) / magnitude + ',' + Math.round(this._rawData[14] * magnitude) / magnitude + ',' + Math.round(this._rawData[15] * magnitude) / magnitude + ')';
+		return 'matrix3d(' + Math.round(this._rawData[0] * magnitude) / magnitude +
+				',' + Math.round(this._rawData[1] * magnitude) / magnitude +
+				',' + Math.round(this._rawData[2] * magnitude) / magnitude +
+				',' + Math.round(this._rawData[3] * magnitude) / magnitude +
+				',' + Math.round(this._rawData[4] * magnitude) / magnitude +
+				',' + Math.round(this._rawData[5] * magnitude) / magnitude +
+				',' + Math.round(this._rawData[6] * magnitude) / magnitude +
+				',' + Math.round(this._rawData[7] * magnitude) / magnitude +
+				',' + Math.round(this._rawData[8] * magnitude) / magnitude +
+				',' + Math.round(this._rawData[9] * magnitude) / magnitude +
+				',' + Math.round(this._rawData[10] * magnitude) / magnitude +
+				',' + Math.round(this._rawData[11] * magnitude) / magnitude +
+				',' + Math.round(this._rawData[12] * magnitude) / magnitude +
+				',' + Math.round(this._rawData[13] * magnitude) / magnitude +
+				',' + Math.round(this._rawData[14] * magnitude) / magnitude +
+				',' + Math.round(this._rawData[15] * magnitude) / magnitude + ')';
 	}
 
 	public toString(): string {
-		return 'matrix3d(' + Math.round(this._rawData[0] * 1000) / 1000 + ',' + Math.round(this._rawData[1] * 1000) / 1000 + ',' + Math.round(this._rawData[2] * 1000) / 1000 + ',' + Math.round(this._rawData[3] * 1000) / 1000 + ',' + Math.round(this._rawData[4] * 1000) / 1000 + ',' + Math.round(this._rawData[5] * 1000) / 1000 + ',' + Math.round(this._rawData[6] * 1000) / 1000 + ',' + Math.round(this._rawData[7] * 1000) / 1000 + ',' + Math.round(this._rawData[8] * 1000) / 1000 + ',' + Math.round(this._rawData[9] * 1000) / 1000 + ',' + Math.round(this._rawData[10] * 1000) / 1000 + ',' + Math.round(this._rawData[11] * 1000) / 1000 + ',' + Math.round(this._rawData[12] * 1000) / 1000 + ',' + Math.round(this._rawData[13] * 1000) / 1000 + ',' + Math.round(this._rawData[14] * 1000) / 1000 + ',' + Math.round(this._rawData[15] * 1000) / 1000 + ')';
+		return 'matrix3d(' + Math.round(this._rawData[0] * 1000) / 1000 +
+				',' + Math.round(this._rawData[1] * 1000) / 1000 +
+				',' + Math.round(this._rawData[2] * 1000) / 1000 +
+				',' + Math.round(this._rawData[3] * 1000) / 1000 +
+				',' + Math.round(this._rawData[4] * 1000) / 1000 +
+				',' + Math.round(this._rawData[5] * 1000) / 1000 +
+				',' + Math.round(this._rawData[6] * 1000) / 1000 +
+				',' + Math.round(this._rawData[7] * 1000) / 1000 +
+				',' + Math.round(this._rawData[8] * 1000) / 1000 +
+				',' + Math.round(this._rawData[9] * 1000) / 1000 +
+				',' + Math.round(this._rawData[10] * 1000) / 1000 +
+				',' + Math.round(this._rawData[11] * 1000) / 1000 +
+				',' + Math.round(this._rawData[12] * 1000) / 1000 +
+				',' + Math.round(this._rawData[13] * 1000) / 1000 +
+				',' + Math.round(this._rawData[14] * 1000) / 1000 +
+				',' + Math.round(this._rawData[15] * 1000) / 1000 + ')';
 	}
 }

@@ -158,10 +158,16 @@ export class Transform extends EventDispatcher {
 	public get concatenatedMatrix3D(): Matrix3D {
 		if (this._concatenatedMatrix3DDirty) {
 			this._concatenatedMatrix3DDirty = false;
-			if (this._concatenatedMatrix3D == this._matrix3D && this._matrix3DDirty) //in cases where concatenated matrix has not been supplied
+
+			//in cases where concatenated matrix has not been supplied
+			if (this._concatenatedMatrix3D == this._matrix3D && this._matrix3DDirty)
 				this.updateMatrix3D();
 
-			this.dispatchEvent(this._updateConcatenatedMatrix3D || (this._updateConcatenatedMatrix3D = new TransformEvent(TransformEvent.UPDATE_CONCATENATED_MATRIX3D, this)));
+			if (!this._updateConcatenatedMatrix3D) {
+				this._updateConcatenatedMatrix3D = new TransformEvent(TransformEvent.UPDATE_CONCATENATED_MATRIX3D,this);
+			}
+
+			this.dispatchEvent(this._updateConcatenatedMatrix3D);
 		}
 
 		return this._concatenatedMatrix3D;
@@ -559,7 +565,11 @@ export class Transform extends EventDispatcher {
 	}
 
 	public invalidateColorTransform(): void {
-		this.dispatchEvent(this._invalidateColorTransform || (this._invalidateColorTransform = new TransformEvent(TransformEvent.INVALIDATE_COLOR_TRANSFORM, this)));
+		if (!this._invalidateColorTransform) {
+			this._invalidateColorTransform = new TransformEvent(TransformEvent.INVALIDATE_COLOR_TRANSFORM, this);
+		}
+
+		this.dispatchEvent(this._invalidateColorTransform);
 	}
 
 	public invalidateComponents(): void {
@@ -575,7 +585,12 @@ export class Transform extends EventDispatcher {
 		this._concatenatedMatrix3DDirty = true;
 		this._inverseConcatenatedMatrix3DDirty = true;
 
-		this.dispatchEvent(this._invalidateConcatenatedMatrix3D || (this._invalidateConcatenatedMatrix3D = new TransformEvent(TransformEvent.INVALIDATE_CONCATENATED_MATRIX3D, this)));
+		if (!this._invalidateConcatenatedMatrix3D) {
+			this._invalidateConcatenatedMatrix3D =
+				new TransformEvent(TransformEvent.INVALIDATE_CONCATENATED_MATRIX3D, this);
+		}
+
+		this.dispatchEvent(this._invalidateConcatenatedMatrix3D);
 	}
 
 	/**
@@ -592,7 +607,11 @@ export class Transform extends EventDispatcher {
 
 		this._matrix3DDirty = true;
 
-		this.dispatchEvent(this._invalidateMatrix3D || (this._invalidateMatrix3D = new TransformEvent(TransformEvent.INVALIDATE_MATRIX3D, this)));
+		if (!this._invalidateMatrix3D) {
+			this._invalidateMatrix3D = new TransformEvent(TransformEvent.INVALIDATE_MATRIX3D, this);
+		}
+
+		this.dispatchEvent(this._invalidateMatrix3D);
 	}
 
 	/**
@@ -604,7 +623,11 @@ export class Transform extends EventDispatcher {
 
 		this._matrix3D.invalidatePosition();
 
-		this.dispatchEvent(this._invalidateMatrix3D || (this._invalidateMatrix3D = new TransformEvent(TransformEvent.INVALIDATE_MATRIX3D, this))); //stricty speaking, this should be UPDATE_MATRIX3D
+		if (!this._invalidateMatrix3D) {
+			this._invalidateMatrix3D = new TransformEvent(TransformEvent.INVALIDATE_MATRIX3D, this);
+		}
+
+		this.dispatchEvent(this._invalidateMatrix3D); //stricty speaking, this should be UPDATE_MATRIX3D
 	}
 
 	/**
@@ -654,7 +677,9 @@ export class Transform extends EventDispatcher {
 		if (upAxis == null)
 			upAxis = Vector3D.Y_AXIS;
 
-		const vec: Vector3D = Matrix3D.getPointAtMatrix(new Vector3D(), position.subtract(this._matrix3D.position), upAxis, Matrix3D.CALCULATION_MATRIX).decompose()[1];
+		const vec: Vector3D = Matrix3D.getPointAtMatrix(
+			new Vector3D(), position.subtract(this._matrix3D.position), upAxis, Matrix3D.CALCULATION_MATRIX)
+			.decompose()[1];
 
 		this.rotateTo(vec.x, vec.y, vec.z);
 	}

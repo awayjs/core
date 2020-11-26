@@ -1,8 +1,8 @@
 import { IAsset } from './IAsset';
 import { AbstractionBase } from './AbstractionBase';
+import { IEventDispatcher } from '../events/IEventDispatcher';
 
 export interface IAbstractionPool
 {
-	getAbstraction(asset: IAsset): AbstractionBase;
-	clearAbstraction(asset: IAsset);
+	readonly id:number;
 }

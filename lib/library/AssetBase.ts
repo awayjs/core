@@ -2,6 +2,9 @@ import { AbstractMethodError } from '../errors/AbstractMethodError';
 
 import { AssetEvent } from '../events/AssetEvent';
 import { EventDispatcher } from '../events/EventDispatcher';
+import { AbstractionBase } from './AbstractionBase';
+import { IAbstractionClass } from './IAbstractionClass';
+import { IAbstractionPool } from './IAbstractionPool';
 
 import { IAsset } from './IAsset';
 import { IAssetAdapter } from './IAssetAdapter';
@@ -17,6 +20,7 @@ export class AssetBase extends EventDispatcher implements IAsset, IAssetAdapter 
 	private _name: string;
 	private _id: number;
 	private _full_path: Array<string>;
+	private _abstractionPool:Object = {};
 
 	public static DEFAULT_NAMESPACE: string = 'default';
 
@@ -147,5 +151,13 @@ export class AssetBase extends EventDispatcher implements IAsset, IAssetAdapter 
 
 	public updateFullPath(): void {
 		this._full_path = [this._namespace, this._name];
+	}
+
+	public getAbstraction(abstractionGroup: IAbstractionPool, abstractionClass: IAbstractionClass): AbstractionBase {
+		return this._abstractionPool[abstractionGroup.id] || (this._abstractionPool[abstractionGroup.id] = new abstractionClass(this, abstractionGroup));
+	}
+
+	public clearAbstraction(abstractionGroup: IAbstractionPool) {
+		delete this._abstractionPool[abstractionGroup.id];
 	}
 }

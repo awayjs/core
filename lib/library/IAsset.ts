@@ -1,4 +1,7 @@
 import { IEventDispatcher } from '../events/IEventDispatcher';
+import { AbstractionBase } from './AbstractionBase';
+import { IAbstractionClass } from './IAbstractionClass';
+import { IAbstractionPool } from './IAbstractionPool';
 
 import { IAssetAdapter } from './IAssetAdapter';
 
@@ -50,11 +53,6 @@ export interface IAsset extends IEventDispatcher
 
 	/**
 	 *
-	 */
-	clear();
-
-	/**
-	 *
 	 * @param IAssetClass
 	 */
 	isAsset(IAssetClass): boolean;
@@ -66,4 +64,7 @@ export interface IAsset extends IEventDispatcher
 	 * @param overrideOriginal
 	 */
 	resetAssetPath(name: string, ns: string, overrideOriginal?: boolean): void;
+
+	getAbstraction(abstractionGroup: IAbstractionPool, abstractionClass: IAbstractionClass): AbstractionBase;
+	clearAbstraction(abstractionGroup: IAbstractionPool);
 }

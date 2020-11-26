@@ -4,5 +4,5 @@ import { IEventDispatcher } from '../events/IEventDispatcher';
 
 export interface IAbstractionPool
 {
-	readonly id:number;
+	readonly id: number;
 }

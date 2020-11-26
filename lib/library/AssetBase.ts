@@ -20,7 +20,7 @@ export class AssetBase extends EventDispatcher implements IAsset, IAssetAdapter 
 	private _name: string;
 	private _id: number;
 	private _full_path: Array<string>;
-	private _abstractionPool:Object = {};
+	private _abstractionPool: Object = {};
 
 	public static DEFAULT_NAMESPACE: string = 'default';
 

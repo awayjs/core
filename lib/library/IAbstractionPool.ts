@@ -1,8 +1,7 @@
-import { IAsset } from './IAsset';
-import { AbstractionBase } from './AbstractionBase';
-import { IEventDispatcher } from '../events/IEventDispatcher';
+import { IAbstractionClass } from './IAbstractionClass';
 
 export interface IAbstractionPool
 {
+	readonly abstractionClassPool?: Record<string, IAbstractionClass>;
 	readonly id: number;
 }

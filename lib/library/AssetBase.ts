@@ -20,7 +20,7 @@ export class AssetBase extends EventDispatcher implements IAsset, IAssetAdapter 
 	private _name: string;
 	private _id: number;
 	private _full_path: Array<string>;
-	private _abstractionPool: Object = {};
+	private _abstractionPool: Record<number, AbstractionBase> = {};
 
 	public static DEFAULT_NAMESPACE: string = 'default';
 
@@ -82,9 +82,7 @@ export class AssetBase extends EventDispatcher implements IAsset, IAssetAdapter 
 	}
 
 	public set name(val: string) {
-		let prev: string;
-
-		prev = this._name;
+		const prev = this._name;
 		this._name = val;
 
 		if (this._name == null)
@@ -153,8 +151,18 @@ export class AssetBase extends EventDispatcher implements IAsset, IAssetAdapter 
 		this._full_path = [this._namespace, this._name];
 	}
 
-	public getAbstraction(abstractionGroup: IAbstractionPool, abstractionClass: IAbstractionClass): AbstractionBase {
-		return this._abstractionPool[abstractionGroup.id] || (this._abstractionPool[abstractionGroup.id] = new abstractionClass(this, abstractionGroup));
+	public getAbstraction <T extends AbstractionBase> (
+		abstractionGroup: IAbstractionPool, abstractionClass?: IAbstractionClass): T {
+
+		const abstr = <T> this._abstractionPool[abstractionGroup.id];
+
+		if (abstr) {
+			return abstr;
+		}
+
+		const abstractionCtr = abstractionClass || abstractionGroup.abstractionClassPool[this.assetType];
+
+		return this._abstractionPool[abstractionGroup.id] = new abstractionCtr(this, abstractionGroup) as T;
 	}
 
 	public clearAbstraction(abstractionGroup: IAbstractionPool) {

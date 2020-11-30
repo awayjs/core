@@ -65,6 +65,6 @@ export interface IAsset extends IEventDispatcher
 	 */
 	resetAssetPath(name: string, ns: string, overrideOriginal?: boolean): void;
 
-	getAbstraction(abstractionGroup: IAbstractionPool, abstractionClass: IAbstractionClass): AbstractionBase;
+	getAbstraction(abstractionGroup: IAbstractionPool): AbstractionBase;
 	clearAbstraction(abstractionGroup: IAbstractionPool);
 }

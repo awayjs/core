@@ -151,21 +151,11 @@ export class AssetBase extends EventDispatcher implements IAsset, IAssetAdapter 
 		this._full_path = [this._namespace, this._name];
 	}
 
-	public getAbstraction <T extends AbstractionBase> (
-		abstractionGroup: IAbstractionPool, abstractionClass?: IAbstractionClass): T {
-
-		const abstr = <T> this._abstractionPool[abstractionGroup.id];
-
-		if (abstr) {
-			return abstr;
-		}
-
-		const abstractionCtr = abstractionClass || abstractionGroup.abstractionClassPool[this.assetType];
-
-		return this._abstractionPool[abstractionGroup.id] = new abstractionCtr(this, abstractionGroup) as T;
+	public getAbstraction <T extends AbstractionBase>(pool: IAbstractionPool): T {
+		return <T> (this._abstractionPool[pool.id] || (this._abstractionPool[pool.id] = new (pool.requestAbstraction(this))(this, pool)));
 	}
 
-	public clearAbstraction(abstractionGroup: IAbstractionPool) {
-		delete this._abstractionPool[abstractionGroup.id];
+	public clearAbstraction(pool: IAbstractionPool) {
+		delete this._abstractionPool[pool.id];
 	}
 }

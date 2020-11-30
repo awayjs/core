@@ -5,5 +5,5 @@ export interface IAbstractionPool
 {
 	readonly id: number;
 
-	requestAbstraction(asset: IAsset):IAbstractionClass;
+	requestAbstraction(asset: IAsset): IAbstractionClass;
 }

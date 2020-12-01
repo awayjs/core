@@ -33,11 +33,13 @@ export class AudioManager {
 
 	public static setExternalSoundInterface(new_obj: any): number {
 		if (new_obj.startSound == null) {
-			console.log('Could not set the externalSoundInterface, because it does not provide a \'startSound\' function');
+			console.log('Could not set the externalSoundInterface, ' +
+						'because it does not provide a \'startSound\' function');
 			return;
 		}
 		if (new_obj.stopSound == null) {
-			console.log('Could not set the externalSoundInterface, because it does not provide a \'stopSound\' function');
+			console.log('Could not set the externalSoundInterface, ' +
+						'because it does not provide a \'stopSound\' function');
 			return;
 		}
 		AudioManager._externalSoundInterface = new_obj;
@@ -87,7 +89,9 @@ export class AudioManager {
 			return null;
 		}
 
-		return  (channelClass._channels[i] = new channelClass(channelGroup, AudioManager._channelGroupVolumes[channelGroup], AudioManager._channelGroupPanning[channelGroup]));
+		return  (channelClass._channels[i] = new channelClass(channelGroup,
+			AudioManager._channelGroupVolumes[channelGroup],
+			AudioManager._channelGroupPanning[channelGroup]));
 	}
 
 }

@@ -37,7 +37,9 @@ export class Byte32Array {
 		if (byteLength == -1)
 			byteLength = byte32Array.byteLength - byte32Array.bytePosition;
 
-		byte32Array.writeInt32Array(this._int32Array.subarray(this.bytePosition / 4, (this.bytePosition + byteLength) / 4));
+		byte32Array.writeInt32Array(
+			this._int32Array.subarray(this.bytePosition / 4, (this.bytePosition + byteLength) / 4)
+		);
 
 		this.bytePosition += byteLength;
 	}
@@ -73,15 +75,21 @@ export class Byte32Array {
 	}
 
 	public readFloat32Array(float32Array: Float32Array): void {
-		float32Array.set(this._float32Array.subarray(this.bytePosition / 4, this.bytePosition / 4 + float32Array.length));
+		float32Array.set(
+			this._float32Array.subarray(this.bytePosition / 4, this.bytePosition / 4 + float32Array.length)
+		);
 	}
 
 	public readInt32Array(int32Array: Int32Array): void {
-		int32Array.set(this._int32Array.subarray(this.bytePosition / 4, this.bytePosition / 4 + int32Array.length));
+		int32Array.set(
+			this._int32Array.subarray(this.bytePosition / 4, this.bytePosition / 4 + int32Array.length)
+		);
 	}
 
 	public readUint32Array(uint32Array: Uint32Array): void {
-		uint32Array.set(this._uint32Array.subarray(this.bytePosition / 4, this.bytePosition / 4 + uint32Array.length));
+		uint32Array.set(
+			this._uint32Array.subarray(this.bytePosition / 4, this.bytePosition / 4 + uint32Array.length)
+		);
 	}
 
 	public getBytesAvailable(): number {
@@ -104,19 +112,25 @@ export class Byte32Array {
 
 			} else if (c < 0xE0) {
 
-				value += String.fromCharCode(((c & 0x3F) << 6) | (data.getUint8(this.bytePosition++) & 0x7F));
+				value += String.fromCharCode(((c & 0x3F) << 6)
+											| (data.getUint8(this.bytePosition++) & 0x7F));
 
 			} else if (c < 0xF0) {
 
-				var c2 = data.getUint8(this.bytePosition++);
-				value += String.fromCharCode(((c & 0x1F) << 12) | ((c2 & 0x7F) << 6) | (data.getUint8(this.bytePosition++) & 0x7F));
+				const c2 = data.getUint8(this.bytePosition++);
+				value += String.fromCharCode(((c & 0x1F) << 12)
+											| ((c2 & 0x7F) << 6)
+											| (data.getUint8(this.bytePosition++) & 0x7F));
 
 			} else {
 
-				var c2 = data.getUint8(this.bytePosition++);
+				const c2 = data.getUint8(this.bytePosition++);
 				const c3 = data.getUint8(this.bytePosition++);
 
-				value += String.fromCharCode(((c & 0x0F) << 18) | ((c2 & 0x7F) << 12) | ((c3 << 6) & 0x7F) | (data.getUint8(this.bytePosition++) & 0x7F));
+				value += String.fromCharCode(((c & 0x0F) << 18)
+											| ((c2 & 0x7F) << 12)
+											| ((c3 << 6) & 0x7F)
+											| (data.getUint8(this.bytePosition++) & 0x7F));
 
 			}
 
@@ -133,7 +147,7 @@ export class Byte32Array {
 
 		if (binstr.length % 4) {
 			const padding: number = 4 - (binstr.length % 4);
-			for (var i = 0; i < padding; i++)
+			for (let i = 0; i < padding; i++)
 				binstr += ' ';
 		}
 
@@ -141,8 +155,11 @@ export class Byte32Array {
 
 		this.writeInt(binstr.length);
 
-		for (var i = 0; i < binstr.length; i += 4)
-			this.writeUnsignedInt((binstr.charCodeAt(i + 3) << 24) | (binstr.charCodeAt(i + 2) << 16) | (binstr.charCodeAt(i + 1) << 8) | binstr.charCodeAt(i));
+		for (let i = 0; i < binstr.length; i += 4)
+			this.writeUnsignedInt((binstr.charCodeAt(i + 3) << 24)
+								| (binstr.charCodeAt(i + 2) << 16)
+								| (binstr.charCodeAt(i + 1) << 8)
+								| binstr.charCodeAt(i));
 
 		return binstr.length;
 	}

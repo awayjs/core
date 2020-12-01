@@ -1,6 +1,5 @@
 import { IEventDispatcher } from '../events/IEventDispatcher';
 import { AbstractionBase } from './AbstractionBase';
-import { IAbstractionClass } from './IAbstractionClass';
 import { IAbstractionPool } from './IAbstractionPool';
 
 import { IAssetAdapter } from './IAssetAdapter';

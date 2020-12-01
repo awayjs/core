@@ -17,9 +17,9 @@ export class LoaderContext {
 	private _overrideFullUrls: boolean;
 
 	/**
-	 * LoaderContext provides configuration for the Loader load() and parse() operations.
-	 * Use it to configure how (and if) dependencies are loaded, or to map dependency URLs to
-	 * embedded data.
+	 * LoaderContext provides configuration for the Loader load() and parse()
+	 * operations. Use it to configure how (and if) dependencies are loaded, or
+	 * to map dependency URLs to embedded data.
 	 *
 	 * @see away.loading.Loader
 	 */
@@ -33,8 +33,9 @@ export class LoaderContext {
 	}
 
 	/**
-	 * Defines whether dependencies (all files except the one at the URL given to the load() or
-	 * parseData() operations) should be automatically loaded. Defaults to true.
+	 * Defines whether dependencies (all files except the one at the URL given
+	 * to the load() or parseData() operations) should be automatically loaded.
+	 * Defaults to true.
 	 */
 	public get includeDependencies(): boolean {
 		return this._includeDependencies;
@@ -45,11 +46,12 @@ export class LoaderContext {
 	}
 
 	/**
-	 * MaterialMode defines, if the Parser should create SinglePass or MultiPass Materials
-	 * Options:
-	 * 0 (Default / undefined) - All Parsers will create SinglePassMaterials, but the AWD2.1parser will create Materials as they are defined in the file
-	 * 1 (Force SinglePass) - All Parsers create SinglePassMaterials
-	 * 2 (Force MultiPass) - All Parsers will create MultiPassMaterials
+	 * MaterialMode defines, if the Parser should create SinglePass or MultiPass
+	 * Materials Options: 0 (Default / undefined) - All Parsers will create
+	 * SinglePassMaterials, but the AWD2.1parser will create Materials as they
+	 * are defined in the file 1 (Force SinglePass) - All Parsers create
+	 * SinglePassMaterials 2 (Force MultiPass) - All Parsers will create
+	 * MultiPassMaterials
 	 *
 	 */
 	public get materialMode(): number {
@@ -69,8 +71,9 @@ export class LoaderContext {
 	}
 
 	/**
-	 * A base URL that will be prepended to all relative dependency URLs found in a loaded resource.
-	 * Absolute paths will not be affected by the value of this property.
+	 * A base URL that will be prepended to all relative dependency URLs found
+	 * in a loaded resource. Absolute paths will not be affected by the value of
+	 * this property.
 	 */
 	public get dependencyBaseUrl(): string {
 		return this._dependencyBaseUrl;
@@ -81,9 +84,10 @@ export class LoaderContext {
 	}
 
 	/**
-	 * Defines whether absolute paths (defined as paths that begin with a "/") should be overridden
-	 * with the dependencyBaseUrl defined in this context. If this is true, and the base path is
-	 * "base", /path/to/asset.jpg will be resolved as base/path/to/asset.jpg.
+	 * Defines whether absolute paths (defined as paths that begin with a "/")
+	 * should be overridden with the dependencyBaseUrl defined in this context.
+	 * If this is true, and the base path is "base", /path/to/asset.jpg will be
+	 * resolved as base/path/to/asset.jpg.
 	 */
 	public get overrideAbsolutePaths(): boolean {
 		return this._overrideAbsPath;
@@ -94,9 +98,11 @@ export class LoaderContext {
 	}
 
 	/**
-	 * Defines whether "full" URLs (defined as a URL that includes a scheme, e.g. http://) should be
-	 * overridden with the dependencyBaseUrl defined in this context. If this is true, and the base
-	 * path is "base", http://example.com/path/to/asset.jpg will be resolved as base/path/to/asset.jpg.
+	 * Defines whether "full" URLs (defined as a URL that includes a scheme,
+	 * e.g. http://) should be overridden with the dependencyBaseUrl defined in
+	 * this context. If this is true, and the base path is "base",
+	 * http://example.com/path/to/asset.jpg will be resolved as
+	 * base/path/to/asset.jpg.
 	 */
 	public get overrideFullURLs(): boolean {
 		return this._overrideFullUrls;
@@ -107,11 +113,13 @@ export class LoaderContext {
 	}
 
 	/**
-	 * Map a URL to another URL, so that files that are referred to by the original URL will instead
-	 * be loaded from the new URL. Use this when your file structure does not match the one that is
-	 * expected by the loaded file.
+	 * Map a URL to another URL, so that files that are referred to by the
+	 * original URL will instead be loaded from the new URL. Use this when your
+	 * file structure does not match the one that is expected by the loaded
+	 * file.
 	 *
-	 * @param originalUrl The original URL which is referenced in the loaded resource.
+	 * @param originalUrl The original URL which is referenced in the loaded
+	 * resource.
 	 * @param newUrl The URL from which away.should load the resource instead.
 	 *
 	 * @see mapUrlToData()
@@ -121,11 +129,14 @@ export class LoaderContext {
 	}
 
 	/**
-	 * Map a URL to embedded data, so that instead of trying to load a dependency from the URL at
-	 * which it's referenced, the dependency data will be retrieved straight from the memory instead.
+	 * Map a URL to embedded data, so that instead of trying to load a
+	 * dependency from the URL at which it's referenced, the dependency data
+	 * will be retrieved straight from the memory instead.
 	 *
-	 * @param originalUrl The original URL which is referenced in the loaded resource.
-	 * @param data The embedded data. Can be ByteArray or a export class which can be used to create a bytearray.
+	 * @param originalUrl The original URL which is referenced in the loaded
+	 * resource.
+	 * @param data The embedded data. Can be ByteArray or a export class which
+	 * can be used to create a bytearray.
 	 */
 	public mapUrlToData(originalUrl: string, data: any): void {
 		this._embeddedDataByUrl[originalUrl] = data;

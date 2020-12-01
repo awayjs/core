@@ -6,9 +6,10 @@ import { ConflictPrecedence } from './ConflictPrecedence';
 import { IAssetAdapter } from './IAssetAdapter';
 
 /**
- * Abstract base export class for naming conflict resolution classes. Extend this to create a
- * strategy export class which the asset library can use to resolve asset naming conflicts, or
- * use one of the bundled concrete strategy classes:
+ * Abstract base export class for naming conflict resolution classes. Extend
+ * this to create a strategy export class which the asset library can use to
+ * resolve asset naming conflicts, or use one of the bundled concrete strategy
+ * classes:
  *
  * <ul>
  *   <li>IgnoreConflictStrategy (ConflictStrategy.IGNORE)</li>
@@ -28,35 +29,42 @@ export class ConflictStrategyBase {
 	}
 
 	/**
-	 * Resolve a naming conflict between two assets. Must be implemented by concrete strategy
-	 * classes.
+	 * Resolve a naming conflict between two assets. Must be implemented by
+	 * concrete strategy classes.
 	 */
-	public resolveConflict(changedAsset: IAssetAdapter, oldAsset: IAssetAdapter, assetsDictionary: Object, precedence: string): void {
+	public resolveConflict(changedAsset: IAssetAdapter,
+		oldAsset: IAssetAdapter,
+		assetsDictionary: Object,
+		precedence: string): void {
 		throw new AbstractMethodError();
 	}
 
 	/**
-	 * Create instance of this conflict strategy. Used internally by the AssetLibrary to
-	 * make sure the same strategy instance is not used in all AssetLibrary instances, which
-	 * would break any state caching that happens inside the strategy class.
+	 * Create instance of this conflict strategy. Used internally by the
+	 * AssetLibrary to make sure the same strategy instance is not used in all
+	 * AssetLibrary instances, which would break any state caching that happens
+	 * inside the strategy class.
 	 */
 	public create(): ConflictStrategyBase {
 		throw new AbstractMethodError();
 	}
 
 	/**
-	 * Provided as a convenience method for all conflict strategy classes, as a way to finalize
-	 * the conflict resolution by applying the new names and dispatching the correct events.
+	 * Provided as a convenience method for all conflict strategy classes, as a
+	 * way to finalize the conflict resolution by applying the new names and
+	 * dispatching the correct events.
 	 */
-	public _pUpdateNames(ns: string, nonConflictingName: string, oldAsset: IAssetAdapter, newAsset: IAssetAdapter, assetsDictionary: Object, precedence: string): void {
-		let loser_prev_name: string;
-		let winner: IAssetAdapter;
-		let loser: IAssetAdapter;
+	public _pUpdateNames(ns: string,
+		nonConflictingName: string,
+		oldAsset: IAssetAdapter,
+		newAsset: IAssetAdapter,
+		assetsDictionary: Object,
+		precedence: string): void {
 
-		winner = (precedence === ConflictPrecedence.FAVOR_NEW) ? newAsset : oldAsset;
-		loser = (precedence === ConflictPrecedence.FAVOR_NEW) ? oldAsset : newAsset;
+		const winner: IAssetAdapter = (precedence === ConflictPrecedence.FAVOR_NEW) ? newAsset : oldAsset;
+		const loser: IAssetAdapter = (precedence === ConflictPrecedence.FAVOR_NEW) ? oldAsset : newAsset;
 
-		loser_prev_name = loser.adaptee.name;
+		const loser_prev_name: string = loser.adaptee.name;
 
 		assetsDictionary[winner.adaptee.name] = winner;
 		assetsDictionary[nonConflictingName] = loser;

@@ -156,7 +156,12 @@ export class Matrix {
 	 */
 	constructor(rawData?: Float32Array);
 	constructor(a?: number, b?: number, c?: number, d?: number, tx?: number, ty?: number);
-	constructor(a: number | Float32Array = 1, b: number = 0, c: number = 0, d: number = 1, tx: number = 0, ty: number = 0) {
+	constructor(a: number | Float32Array = 1,
+		b: number = 0,
+		c: number = 0,
+		d: number = 1,
+		tx: number = 0,
+		ty: number = 0) {
 		if (a instanceof Float32Array) {
 			this.copyRawDataFrom(a);
 		} else {
@@ -433,7 +438,11 @@ export class Matrix {
 	 *                 <i>y</i> axis. This value is offset by half of the
 	 *                 <code>height</code> parameter.
 	 */
-	public createGradientBox(width: number, height: number, rotation: number = 0, tx: number = 0, ty: number = 0): void {
+	public createGradientBox(width: number,
+		height: number,
+		rotation: number = 0,
+		tx: number = 0, ty:
+		number = 0): void {
 		this.createBox(width / 1638.4, height / 1638.4, rotation, tx + width / 2, ty + height / 2);
 	}
 
@@ -490,8 +499,8 @@ export class Matrix {
 		const tx = raw[4];
 		const ty = raw[5];
 		if (b === 0 && c === 0) {
-			var a = raw[0] = 1 / raw[0];
-			var d = raw[3] = 1 / raw[3];
+			const a = raw[0] = 1 / raw[0];
+			const d = raw[3] = 1 / raw[3];
 			raw[1] = raw[2] = 0;
 			raw[4] = -a * tx;
 			raw[5] = -d * ty;
@@ -499,8 +508,8 @@ export class Matrix {
 			return;
 		}
 
-		var a = raw[0];
-		var d = raw[3];
+		const a = raw[0];
+		let d = raw[3];
 		let determinant = a * d - b * c;
 		if (determinant === 0) {
 			this.identity();
@@ -637,7 +646,12 @@ export class Matrix {
 	 *         <code>d</code>, <code>tx</code>, and <code>ty</code>.
 	 */
 	public toString(): string {
-		return '[Matrix] (a=' + this.a + ', b=' + this.b + ', c=' + this.c + ', d=' + this.d + ', tx=' + this.tx + ', ty=' + this.ty + ')';
+		return '[Matrix] (a=' + this.a
+			+ ', b=' + this.b
+			+ ', c=' + this.c
+			+ ', d=' + this.d
+			+ ', tx=' + this.tx
+			+ ', ty=' + this.ty + ')';
 	}
 
 	/**

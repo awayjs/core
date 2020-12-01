@@ -48,10 +48,11 @@ export class Quaternion {
 	}
 
 	/**
-	 * Fills the quaternion object with the result from a multiplication of two quaternion objects.
+	 * Fills the quaternion object with the result from a multiplication of two
+	 * quaternion objects.
 	 *
-	 * @param    qa    The first quaternion in the multiplication.
-	 * @param    qb    The second quaternion in the multiplication.
+	 * @param qa The first quaternion in the multiplication.
+	 * @param qb The second quaternion in the multiplication.
 	 */
 	public multiply(qa: Quaternion, qb: Quaternion): void {
 		const w1: number = qa.w, x1: number = qa.x, y1: number = qa.y, z1: number = qa.z;
@@ -83,10 +84,11 @@ export class Quaternion {
 	}
 
 	/**
-	 * Fills the quaternion object with values representing the given rotation around a vector.
+	 * Fills the quaternion object with values representing the given rotation
+	 * around a vector.
 	 *
-	 * @param    axis    The axis around which to rotate
-	 * @param    angle    The angle in radians of the rotation.
+	 * @param axis The axis around which to rotate
+	 * @param angle The angle in radians of the rotation.
 	 */
 	public fromAxisAngle(axis: Vector3D, angle: number): void {
 		const sin_a: number = Math.sin(angle / 2);
@@ -101,7 +103,9 @@ export class Quaternion {
 	}
 
 	/**
-	 * Spherically interpolates between two quaternions, providing an interpolation between rotations with constant angle change rate.
+	 * Spherically interpolates between two quaternions, providing an
+	 * interpolation between rotations with constant angle change rate.
+	 *
 	 * @param qa The first quaternion to interpolate.
 	 * @param qb The second quaternion to interpolate.
 	 * @param t The interpolation weight, a value between 0 and 1.
@@ -153,7 +157,6 @@ export class Quaternion {
 	public lerp(qa: Quaternion, qb: Quaternion, t: number): void {
 		const w1: number = qa.w, x1: number = qa.x, y1: number = qa.y, z1: number = qa.z;
 		let w2: number = qb.w, x2: number = qb.x, y2: number = qb.y, z2: number = qb.z;
-		let len: number;
 
 		// shortest direction
 		if (w1 * w2 + x1 * x2 + y1 * y2 + z1 * z2 < 0) {
@@ -168,7 +171,7 @@ export class Quaternion {
 		this.y = y1 + t * (y2 - y1);
 		this.z = z1 + t * (z2 - z1);
 
-		len = 1.0 / Math.sqrt(this.w * this.w + this.x * this.x + this.y * this.y + this.z * this.z);
+		const len: number = 1.0 / Math.sqrt(this.w * this.w + this.x * this.x + this.y * this.y + this.z * this.z);
 		this.w *= len;
 		this.x *= len;
 		this.y *= len;
@@ -176,11 +179,12 @@ export class Quaternion {
 	}
 
 	/**
-	 * Fills the quaternion object with values representing the given euler rotation.
+	 * Fills the quaternion object with values representing the given euler
+	 * rotation.
 	 *
-	 * @param    ax        The angle in radians of the rotation around the ax axis.
-	 * @param    ay        The angle in radians of the rotation around the ay axis.
-	 * @param    az        The angle in radians of the rotation around the az axis.
+	 * @param ax The angle in radians of the rotation around the ax axis.
+	 * @param ay The angle in radians of the rotation around the ay axis.
+	 * @param az The angle in radians of the rotation around the az axis.
 	 */
 	public fromEulerAngles(ax: number, ay: number, az: number): void {
 		const halfX: number = ax * .5, halfY: number = ay * .5, halfZ: number = az * .5;
@@ -195,8 +199,11 @@ export class Quaternion {
 	}
 
 	/**
-	 * Fills a target Vector3D object with the Euler angles that form the rotation represented by this quaternion.
-	 * @param target An optional Vector3D object to contain the Euler angles. If not provided, a new object is created.
+	 * Fills a target Vector3D object with the Euler angles that form the
+	 * rotation represented by this quaternion.
+	 *
+	 * @param target An optional Vector3D object to contain the Euler angles. If
+	 * not provided, a new object is created.
 	 * @return The Vector3D containing the Euler angles.
 	 */
 	public toEulerAngles(target: Vector3D = null): Vector3D {
@@ -237,14 +244,26 @@ export class Quaternion {
 	}
 
 	/**
-	 * Converts the quaternion to a Matrix3D object representing an equivalent rotation.
-	 * @param target An optional Matrix3D container to store the transformation in. If not provided, a new object is created.
+	 * Converts the quaternion to a Matrix3D object representing an equivalent
+	 * rotation.
+	 *
+	 * @param target An optional Matrix3D container to store the transformation
+	 * in. If not provided, a new object is created.
 	 * @return A Matrix3D object representing an equivalent rotation.
 	 */
 	public toMatrix3D(target: Matrix3D = null): Matrix3D {
-		const xy2: number = 2.0 * this.x * this.y, xz2: number = 2.0 * this.x * this.z, xw2: number = 2.0 * this.x * this.w;
-		const yz2: number = 2.0 * this.y * this.z, yw2: number = 2.0 * this.y * this.w, zw2: number = 2.0 * this.z * this.w;
-		const xx: number = this.x * this.x, yy: number = this.y * this.y, zz: number = this.z * this.z, ww: number = this.w * this.w;
+		const xy2: number = 2.0 * this.x * this.y;
+		const xz2: number = 2.0 * this.x * this.z;
+		const xw2: number = 2.0 * this.x * this.w;
+
+		const yz2: number = 2.0 * this.y * this.z;
+		const yw2: number = 2.0 * this.y * this.w;
+		const zw2: number = 2.0 * this.z * this.w;
+
+		const xx: number = this.x * this.x;
+		const yy: number = this.y * this.y;
+		const zz: number = this.z * this.z;
+		const ww: number = this.w * this.w;
 
 		if (!target)
 			target = new Matrix3D();
@@ -284,14 +303,26 @@ export class Quaternion {
 	}
 
 	/**
-	 * Converts the quaternion to a Vector.&lt;Number&gt; matrix representation of a rotation equivalent to this quaternion.
+	 * Converts the quaternion to a Vector.&lt;Number&gt; matrix representation
+	 * of a rotation equivalent to this quaternion.
+	 *
 	 * @param target The Vector.&lt;Number&gt; to contain the raw matrix data.
-	 * @param exclude4thRow If true, the last row will be omitted, and a 4x3 matrix will be generated instead of a 4x4.
+	 * @param exclude4thRow If true, the last row will be omitted, and a 4x3
+	 * matrix will be generated instead of a 4x4.
 	 */
 	public toRawData(target: number[], exclude4thRow: boolean = false): void {
-		const xy2: number = 2.0 * this.x * this.y, xz2: number = 2.0 * this.x * this.z, xw2: number = 2.0 * this.x * this.w;
-		const yz2: number = 2.0 * this.y * this.z, yw2: number = 2.0 * this.y * this.w, zw2: number = 2.0 * this.z * this.w;
-		const xx: number = this.x * this.x, yy: number = this.y * this.y, zz: number = this.z * this.z, ww: number = this.w * this.w;
+		const xy2: number = 2.0 * this.x * this.y;
+		const xz2: number = 2.0 * this.x * this.z;
+		const xw2: number = 2.0 * this.x * this.w;
+
+		const yz2: number = 2.0 * this.y * this.z;
+		const yw2: number = 2.0 * this.y * this.w;
+		const zw2: number = 2.0 * this.z * this.w;
+
+		const xx: number = this.x * this.x;
+		const yy: number = this.y * this.y;
+		const zz: number = this.z * this.z;
+		const ww: number = this.w * this.w;
 
 		target[0] = xx - yy - zz + ww;
 		target[1] = xy2 - zw2;
@@ -320,12 +351,13 @@ export class Quaternion {
 
 	/**
 	 * Rotates a point.
+	 *
 	 * @param vector The Vector3D object to be rotated.
-	 * @param target An optional Vector3D object that will contain the rotated coordinates. If not provided, a new object will be created.
+	 * @param target An optional Vector3D object that will contain the rotated
+	 * coordinates. If not provided, a new object will be created.
 	 * @return A Vector3D object containing the rotated point.
 	 */
 	public rotatePoint(vector: Vector3D, target: Vector3D = null): Vector3D {
-		let x1: number, y1: number, z1: number, w1: number;
 		const x2: number = vector.x, y2: number = vector.y, z2: number = vector.z;
 
 		//target ||= new Vector3D();
@@ -336,10 +368,10 @@ export class Quaternion {
 		}
 
 		// p*q'
-		w1 = -this.x * x2 - this.y * y2 - this.z * z2;
-		x1 = this.w * x2 + this.y * z2 - this.z * y2;
-		y1 = this.w * y2 - this.x * z2 + this.z * x2;
-		z1 = this.w * z2 + this.x * y2 - this.y * x2;
+		const w1: number = -this.x * x2 - this.y * y2 - this.z * z2;
+		const x1: number = this.w * x2 + this.y * z2 - this.z * y2;
+		const y1: number = this.w * y2 - this.x * z2 + this.z * x2;
+		const z1: number = this.w * z2 + this.x * y2 - this.y * x2;
 
 		target.x = -w1 * this.x + x1 * this.w - y1 * this.z + z1 * this.y;
 		target.y = -w1 * this.y + x1 * this.z + y1 * this.w - z1 * this.x;

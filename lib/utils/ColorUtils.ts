@@ -42,11 +42,16 @@ export class ColorUtils {
 	}
 
 	public static RGBToHexString(argb: number[]): string {
-		return '#' + ColorUtils.componentToHex(argb[1]) + ColorUtils.componentToHex(argb[2]) + ColorUtils.componentToHex(argb[3]);
+		return '#' + ColorUtils.componentToHex(argb[1]) +
+			ColorUtils.componentToHex(argb[2]) +
+			ColorUtils.componentToHex(argb[3]);
 	}
 
 	public static ARGBToHexString(argb: number[]): string {
-		return '#' + ColorUtils.componentToHex(argb[0]) + ColorUtils.componentToHex(argb[1]) + ColorUtils.componentToHex(argb[2]) + ColorUtils.componentToHex(argb[3]);
+		return '#' + ColorUtils.componentToHex(argb[0]) +
+			ColorUtils.componentToHex(argb[1]) +
+			ColorUtils.componentToHex(argb[2]) +
+			ColorUtils.componentToHex(argb[3]);
 	}
 
 	public static interpolateFloat32Color(start: number, end: number, ratio: number) {
@@ -63,6 +68,9 @@ export class ColorUtils {
 		const rs = 1 - ratio;
 		const re = ratio;
 
-		return (((a * rs + a2 * re) << 24) | ((r * rs + r2 * re) << 16) | ((g * rs + g2 * re) << 8) | (b * rs + b2 * re));
+		return (((a * rs + a2 * re) << 24) |
+			((r * rs + r2 * re) << 16) |
+			((g * rs + g2 * re) << 8) |
+			(b * rs + b2 * re));
 	}
 }

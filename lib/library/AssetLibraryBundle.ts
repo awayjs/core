@@ -21,9 +21,10 @@ import { Loader } from './Loader';
 import { LoaderContext } from './LoaderContext';
 
 /**
- * AssetLibraryBundle enforces a multiton pattern and is not intended to be instanced directly.
- * Its purpose is to create a container for 3D data management, both before and after parsing.
- * If you are interested in creating multiple library bundles, please use the <code>getInstance()</code> method.
+ * AssetLibraryBundle enforces a multiton pattern and is not intended to be
+ * instanced directly. Its purpose is to create a container for 3D data
+ * management, both before and after parsing. If you are interested in creating
+ * multiple library bundles, please use the <code>getInstance()</code> method.
  */
 export class AssetLibraryBundle extends EventDispatcher {
 	public static _iInstances: Object = new Object();
@@ -77,21 +78,24 @@ export class AssetLibraryBundle extends EventDispatcher {
 	}
 
 	/**
-	 * Special addEventListener case for <code>URLLoaderEvent.LOAD_ERROR</code> and <code>ype == ParserEvent.PARSE_ERROR</code>
+	 * Special addEventListener case for <code>URLLoaderEvent.LOAD_ERROR</code>
+	 * and <code>ype == ParserEvent.PARSE_ERROR</code>
 	 *
 	 * @param type
 	 * @param listener
 	 */
 	public addEventListener(type: string, listener: (event: EventBase) => void): void {
 		if (type == URLLoaderEvent.LOAD_ERROR || type == ParserEvent.PARSE_ERROR)
-			for (var i: number; i < this._loaderSessions.length; i++)
+			for (let i: number; i < this._loaderSessions.length; i++)
 				this._loaderSessions[i].addEventListener(type, this._errorDelegateSelector[type]);
 
 		super.addEventListener(type, listener);
 	}
 
 	/**
-	 * Special removeEventListener case for <code>URLLoaderEvent.LOAD_ERROR</code> and <code>ype == ParserEvent.PARSE_ERROR</code>
+	 * Special removeEventListener case for
+	 * <code>URLLoaderEvent.LOAD_ERROR</code> and <code>ype ==
+	 * ParserEvent.PARSE_ERROR</code>
 	 *
 	 * @param type
 	 * @param listener
@@ -99,16 +103,17 @@ export class AssetLibraryBundle extends EventDispatcher {
 
 	public removeEventListener(type: string, listener: (event: EventBase) => void): void {
 		if (type == URLLoaderEvent.LOAD_ERROR || type == ParserEvent.PARSE_ERROR)
-			for (var i: number; i < this._loaderSessions.length; i++)
+			for (let i: number; i < this._loaderSessions.length; i++)
 				this._loaderSessions[i].removeEventListener(type, this._errorDelegateSelector[type]);
 
 		super.removeEventListener(type, listener);
 	}
 
 	/**
-	 * Returns an AssetLibraryBundle instance. If no key is given, returns the default bundle instance (which is
-	 * similar to using the AssetLibraryBundle as a singleton.) To keep several separated library bundles,
-	 * pass a string key to this method to define which bundle should be returned. This is
+	 * Returns an AssetLibraryBundle instance. If no key is given, returns the
+	 * default bundle instance (which is similar to using the AssetLibraryBundle
+	 * as a singleton.) To keep several separated library bundles, pass a string
+	 * key to this method to define which bundle should be returned. This is
 	 * referred to as using the AssetLibrary as a multiton.
 	 *
 	 * @param key Defines which multiton instance should be returned.
@@ -140,11 +145,12 @@ export class AssetLibraryBundle extends EventDispatcher {
 	}
 
 	/**
-	 * Defines which strategy should be used for resolving naming conflicts, when two library
-	 * assets are given the same name. By default, <code>ConflictStrategy.APPEND_NUM_SUFFIX</code>
-	 * is used which means that a numeric suffix is appended to one of the assets. The
-	 * <code>conflictPrecedence</code> property defines which of the two conflicting assets will
-	 * be renamed.
+	 * Defines which strategy should be used for resolving naming conflicts,
+	 * when two library assets are given the same name. By default,
+	 * <code>ConflictStrategy.APPEND_NUM_SUFFIX</code> is used which means that
+	 * a numeric suffix is appended to one of the assets. The
+	 * <code>conflictPrecedence</code> property defines which of the two
+	 * conflicting assets will be renamed.
 	 *
 	 * @see naming.ConflictStrategy
 	 * @see AssetLibrary.conflictPrecedence
@@ -163,13 +169,15 @@ export class AssetLibraryBundle extends EventDispatcher {
 	}
 
 	/**
-	 * Defines which asset should have precedence when resolving a naming conflict between
-	 * two assets of which one has just been renamed by the user or by a parser. By default
-	 * <code>ConflictPrecedence.FAVOR_NEW</code> is used, meaning that the newly renamed
-	 * asset will keep it's new name while the older asset gets renamed to not conflict.
+	 * Defines which asset should have precedence when resolving a naming
+	 * conflict between two assets of which one has just been renamed by the
+	 * user or by a parser. By default <code>ConflictPrecedence.FAVOR_NEW</code>
+	 * is used, meaning that the newly renamed asset will keep it's new name
+	 * while the older asset gets renamed to not conflict.
 	 *
-	 * This property is ignored for conflict strategies that do not actually rename an
-	 * asset automatically, such as ConflictStrategy.IGNORE and ConflictStrategy.THROW_ERROR.
+	 * This property is ignored for conflict strategies that do not actually
+	 * rename an asset automatically, such as ConflictStrategy.IGNORE and
+	 * ConflictStrategy.THROW_ERROR.
 	 *
 	 * @see away.library.ConflictPrecedence
 	 * @see away.library.ConflictStrategy
@@ -183,30 +191,41 @@ export class AssetLibraryBundle extends EventDispatcher {
 	}
 
 	/**
-	 * Create an AssetLibraryIterator instance that can be used to iterate over the assets
-	 * in this asset library instance. The iterator can filter assets on asset type and/or
-	 * namespace. A "null" filter value means no filter of that type is used.
+	 * Create an AssetLibraryIterator instance that can be used to iterate over
+	 * the assets in this asset library instance. The iterator can filter assets
+	 * on asset type and/or namespace. A "null" filter value means no filter of
+	 * that type is used.
 	 *
-	 * @param assetTypeFilter Asset type to filter on (from the AssetType enum class.) Use
-	 * null to not filter on asset type.
-	 * @param namespaceFilter Namespace to filter on. Use null to not filter on namespace.
-	 * @param filterFunc Callback function to use when deciding whether an asset should be
-	 * included in the iteration or not. This needs to be a function that takes a single
-	 * parameter of type IAsset and returns a boolean where true means it should be included.
+	 * @param assetTypeFilter Asset type to filter on (from the AssetType enum
+	 * class.) Use null to not filter on asset type.
+	 * @param namespaceFilter Namespace to filter on. Use null to not filter on
+	 * namespace.
+	 * @param filterFunc Callback function to use when deciding whether an asset
+	 * should be included in the iteration or not. This needs to be a function
+	 * that takes a single parameter of type IAsset and returns a boolean where
+	 * true means it should be included.
 	 *
 	 * @see away.library.AssetType
 	 */
-	public createIterator(assetTypeFilter: string = null, namespaceFilter: string = null, filterFunc = null): AssetLibraryIterator {
+	public createIterator(assetTypeFilter: string = null,
+		namespaceFilter: string = null,
+		filterFunc = null): AssetLibraryIterator {
 		return new AssetLibraryIterator(this._assets, assetTypeFilter, namespaceFilter, filterFunc);
 	}
 
 	/**
 	 * Loads a file and (optionally) all of its dependencies.
 	 *
-	 * @param req The URLRequest object containing the URL of the file to be loaded.
-	 * @param context An optional context object providing additional parameters for loading
-	 * @param ns An optional namespace string under which the file is to be loaded, allowing the differentiation of two resources with identical assets
-	 * @param parser An optional parser object for translating the loaded data into a usable resource. If not provided, Loader will attempt to auto-detect the file type.
+	 * @param req The URLRequest object containing the URL of the file to be
+	 * loaded.
+	 * @param context An optional context object providing additional parameters
+	 * for loading
+	 * @param ns An optional namespace string under which the file is to be
+	 * loaded, allowing the differentiation of two resources with identical
+	 * assets
+	 * @param parser An optional parser object for translating the loaded data
+	 * into a usable resource. If not provided, Loader will attempt to
+	 * auto-detect the file type.
 	 * @return A handle to the retrieved resource.
 	 */
 	public load(req: URLRequest, context: LoaderContext = null, ns: string = null, parser: ParserBase = null): void {
@@ -217,9 +236,14 @@ export class AssetLibraryBundle extends EventDispatcher {
 	 * Loads a resource from existing data in memory.
 	 *
 	 * @param data The data object containing all resource information.
-	 * @param context An optional context object providing additional parameters for loading
-	 * @param ns An optional namespace string under which the file is to be loaded, allowing the differentiation of two resources with identical assets
-	 * @param parser An optional parser object for translating the loaded data into a usable resource. If not provided, Loader will attempt to auto-detect the file type.
+	 * @param context An optional context object providing additional parameters
+	 * for loading
+	 * @param ns An optional namespace string under which the file is to be
+	 * loaded, allowing the differentiation of two resources with identical
+	 * assets
+	 * @param parser An optional parser object for translating the loaded data
+	 * into a usable resource. If not provided, Loader will attempt to
+	 * auto-detect the file type.
 	 * @return A handle to the retrieved resource.
 	 */
 	public loadData(data: any, context: LoaderContext = null, ns: string = null, parser: ParserBase = null): void {
@@ -278,20 +302,17 @@ export class AssetLibraryBundle extends EventDispatcher {
 	}
 
 	/**
-	 * Adds an asset to the asset library, first making sure that it's name is unique
-	 * using the method defined by the <code>conflictStrategy</code> and
+	 * Adds an asset to the asset library, first making sure that it's name is
+	 * unique using the method defined by the <code>conflictStrategy</code> and
 	 * <code>conflictPrecedence</code> properties.
 	 */
 	public addAsset(asset: IAssetAdapter): void {
-		let ns: string;
-		let old: IAssetAdapter;
-
 		// Bail if asset has already been added.
 		if (this._assets.indexOf(asset) >= 0)
 			return;
 
-		old = this.getAsset(asset.adaptee.name, asset.adaptee.assetNamespace);
-		ns = asset.adaptee.assetNamespace || AssetBase.DEFAULT_NAMESPACE;
+		const old: IAssetAdapter = this.getAsset(asset.adaptee.name, asset.adaptee.assetNamespace);
+		const ns: string = asset.adaptee.assetNamespace || AssetBase.DEFAULT_NAMESPACE;
 
 		if (old != null)
 			this._strategy.resolveConflict(asset, old, this._assetDictionary[ns], this._strategyPreference);
@@ -312,22 +333,20 @@ export class AssetLibraryBundle extends EventDispatcher {
 	}
 
 	/**
-	 * Removes an asset from the library, and optionally disposes that asset by calling
-	 * it's disposeAsset() method (which for most assets is implemented as a default
-	 * version of that type's dispose() method.
+	 * Removes an asset from the library, and optionally disposes that asset by
+	 * calling it's disposeAsset() method (which for most assets is implemented
+	 * as a default version of that type's dispose() method.
 	 *
 	 * @param asset The asset which should be removed from this library.
 	 * @param dispose Defines whether the assets should also be disposed.
 	 */
 	public removeAsset(asset: IAssetAdapter, dispose: boolean = true): void {
-		let idx: number;
-
 		this.removeAssetFromDict(asset);
 
 		asset.adaptee.removeEventListener(AssetEvent.RENAME, this._onAssetRenameDelegate);
 		asset.adaptee.removeEventListener(AssetEvent.ASSET_CONFLICT_RESOLVED, this._onAssetConflictResolvedDelegate);
 
-		idx = this._assets.indexOf(asset);
+		const idx: number = this._assets.indexOf(asset);
 
 		if (idx >= 0)
 			this._assets.splice(idx, 1);
@@ -355,8 +374,8 @@ export class AssetLibraryBundle extends EventDispatcher {
 	}
 
 	/**
-	 * Removes all assets from the asset library, optionally disposing them as they
-	 * are removed.
+	 * Removes all assets from the asset library, optionally disposing them as
+	 * they are removed.
 	 *
 	 * @param dispose Defines whether the assets should also be disposed.
 	 */
@@ -387,11 +406,10 @@ export class AssetLibraryBundle extends EventDispatcher {
 	public removeNamespaceAssets(ns: string = null, dispose: boolean = true): void {
 		let idx: number = 0;
 		let asset: IAssetAdapter;
-		let old_assets: IAssetAdapter[];
 
 		// Empty the assets vector after having stored a copy of it.
 		// The copy will be filled with all assets which weren't removed.
-		old_assets = this._assets.concat();
+		const old_assets: IAssetAdapter[] = this._assets.concat();
 		this._assets.length = 0;
 
 		if (ns == null)
@@ -445,12 +463,14 @@ export class AssetLibraryBundle extends EventDispatcher {
 		if (this._assetDictDirty)
 			this.rehashAssetDict();
 
-		if (this._assetDictionary.hasOwnProperty(asset.adaptee.assetNamespace)) {
-			if (this._assetDictionary[asset.adaptee.assetNamespace].hasOwnProperty(asset.adaptee.name.toString().toLowerCase()))
-				delete this._assetDictionary[asset.adaptee.assetNamespace][asset.adaptee.name.toString().toLowerCase()];
+		const assetNamespace: string = asset.adaptee.assetNamespace;
 
-			if (autoRemoveEmptyNamespace && !Object.keys(this._assetDictionary[asset.adaptee.assetNamespace]).length)
-				delete this._assetDictionary[asset.adaptee.assetNamespace];
+		if (this._assetDictionary.hasOwnProperty(assetNamespace)) {
+			if (this._assetDictionary[assetNamespace].hasOwnProperty(asset.adaptee.name.toString().toLowerCase()))
+				delete this._assetDictionary[assetNamespace][asset.adaptee.name.toString().toLowerCase()];
+
+			if (autoRemoveEmptyNamespace && !Object.keys(this._assetDictionary[assetNamespace]).length)
+				delete this._assetDictionary[assetNamespace];
 		}
 	}
 
@@ -464,17 +484,19 @@ export class AssetLibraryBundle extends EventDispatcher {
 
 	private rehashAssetDict(): void {
 		let asset: IAssetAdapter;
+		let assetNamespace: string;
 
 		this._assetDictionary = {};
 
 		const len: number = this._assets.length;
 		for (let c: number = 0; c < len; c++) {
 			asset = this._assets[c];
+			assetNamespace = asset.adaptee.assetNamespace;
 
-			if (!this._assetDictionary.hasOwnProperty(asset.adaptee.assetNamespace))
-				this._assetDictionary[asset.adaptee.assetNamespace] = {};
+			if (!this._assetDictionary.hasOwnProperty(assetNamespace))
+				this._assetDictionary[assetNamespace] = {};
 
-			this._assetDictionary[asset.adaptee.assetNamespace][asset.adaptee.name.toString().toLowerCase()] = asset;
+			this._assetDictionary[assetNamespace][asset.adaptee.name.toString().toLowerCase()] = asset;
 
 		}
 
@@ -539,7 +561,10 @@ export class AssetLibraryBundle extends EventDispatcher {
 		const old: IAssetAdapter = this.getAsset(asset.adaptee.assetNamespace, asset.adaptee.name);
 
 		if (old != null) {
-			this._strategy.resolveConflict(asset, old, this._assetDictionary[asset.adaptee.assetNamespace], this._strategyPreference);
+			this._strategy.resolveConflict(asset,
+				old,
+				this._assetDictionary[asset.adaptee.assetNamespace],
+				this._strategyPreference);
 		} else {
 			const dict: Object = this._assetDictionary[event.asset.assetNamespace];
 

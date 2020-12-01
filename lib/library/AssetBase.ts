@@ -3,7 +3,6 @@ import { AbstractMethodError } from '../errors/AbstractMethodError';
 import { AssetEvent } from '../events/AssetEvent';
 import { EventDispatcher } from '../events/EventDispatcher';
 import { AbstractionBase } from './AbstractionBase';
-import { IAbstractionClass } from './IAbstractionClass';
 import { IAbstractionPool } from './IAbstractionPool';
 
 import { IAsset } from './IAsset';
@@ -152,7 +151,8 @@ export class AssetBase extends EventDispatcher implements IAsset, IAssetAdapter 
 	}
 
 	public getAbstraction <T extends AbstractionBase>(pool: IAbstractionPool): T {
-		return <T> (this._abstractionPool[pool.id] || (this._abstractionPool[pool.id] = new (pool.requestAbstraction(this))(this, pool)));
+		return <T> this._abstractionPool[pool.id]
+			|| <T> (this._abstractionPool[pool.id] = new (pool.requestAbstraction(this))(this, pool));
 	}
 
 	public clearAbstraction(pool: IAbstractionPool) {

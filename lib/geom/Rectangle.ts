@@ -278,7 +278,10 @@ export class Rectangle {
 	public contains(x: number, y: number): boolean {
 		const raw: Float32Array = this._rawData;
 
-		return (raw[0] <= x && raw[0] + raw[2] >= x && raw[1] <= y && raw[1] + raw[3] >= y);
+		return (raw[0] <= x &&
+				raw[0] + raw[2] >= x &&
+				raw[1] <= y &&
+				raw[1] + raw[3] >= y);
 	}
 
 	/**
@@ -296,7 +299,10 @@ export class Rectangle {
 		const raw: Float32Array = this._rawData;
 		const rawPoint: Float32Array = point._rawData;
 
-		return (raw[0] <= rawPoint[0] && raw[0] + raw[2] >= rawPoint[0] && raw[1] <= rawPoint[1] && raw[1] + raw[3] >= rawPoint[1]);
+		return (raw[0] <= rawPoint[0] &&
+				raw[0] + raw[2] >= rawPoint[0] &&
+				raw[1] <= rawPoint[1] &&
+				raw[1] + raw[3] >= rawPoint[1]);
 	}
 
 	/**
@@ -314,7 +320,10 @@ export class Rectangle {
 		const raw: Float32Array = this._rawData;
 		const rawRect: Float32Array = rect._rawData;
 
-		return (raw[0] <= rawRect[0] && raw[0] + raw[2] >= rawRect[0] + rawRect[2] && raw[1] <= rawRect[1] && raw[1] + raw[3] >= rawRect[1] + rawRect[3]);
+		return (raw[0] <= rawRect[0] &&
+				raw[0] + raw[2] >= rawRect[0] + rawRect[2] &&
+				raw[1] <= rawRect[1] &&
+				raw[1] + raw[3] >= rawRect[1] + rawRect[3]);
 	}
 
 	/**
@@ -350,7 +359,10 @@ export class Rectangle {
 		const raw: Float32Array = this._rawData;
 		const rawCompare: Float32Array = toCompare._rawData;
 
-		return (raw[0] == rawCompare[0] && raw[1] == rawCompare[1] && raw[2] == rawCompare[2] && raw[3] == rawCompare[3]);
+		return (raw[0] == rawCompare[0] &&
+				raw[1] == rawCompare[1] &&
+				raw[2] == rawCompare[2] &&
+				raw[3] == rawCompare[3]);
 	}
 
 	/**
@@ -469,7 +481,10 @@ export class Rectangle {
 		const raw: Float32Array = this._rawData;
 		const rawIntersect: Float32Array = toIntersect._rawData;
 
-		return (raw[0] + raw[2] > rawIntersect[0] && raw[0] < rawIntersect[0] + rawIntersect[2] && raw[1] + raw[3] > rawIntersect[1] && raw[1] < rawIntersect[1] + rawIntersect[3]);
+		return (raw[0] + raw[2] > rawIntersect[0] &&
+				raw[0] < rawIntersect[0] + rawIntersect[2] &&
+				raw[1] + raw[3] > rawIntersect[1] &&
+				raw[1] < rawIntersect[1] + rawIntersect[3]);
 	}
 
 	/**

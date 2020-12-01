@@ -204,13 +204,13 @@ export class URLLoader extends EventDispatcher {
 	private handleXmlHttpRequestException(error: any /* <XMLHttpRequestException> */): void {
 		switch (error.code) {
 
-			/******************************************************************************************************************************************************************************************************
-		 *
-		 *  XMLHttpRequestException { message: "NETWORK_ERR: XMLHttpRequest Exception 101", name: "NETWORK_ERR", code: 101, stack: "Error: A network error occurred in synchronous req…",NETWORK_ERR: 101… }
-		 *  code: 101 , message: "NETWORK_ERR: XMLHttpRequest Exception 101" ,  name: "NETWORK_ERR"
-		 *
-		 ******************************************************************************************************************************************************************************************************/
-
+			/***********************************************************************************************************
+			 *
+			 * XMLHttpRequestException { message: "NETWORK_ERR: XMLHttpRequest Exception 101", name: "NETWORK_ERR",
+			 * code: 101, stack: "Error: A network error occurred in synchronous req…",NETWORK_ERR: 101… }
+			 * code: 101 , message: "NETWORK_ERR: XMLHttpRequest Exception 101" ,  name: "NETWORK_ERR"
+			 *
+			 **********************************************************************************************************/
 			case 101:
 				// Note: onLoadError event throws IO_ERROR event - this case is already Covered
 				break;
@@ -224,14 +224,23 @@ export class URLLoader extends EventDispatcher {
 		if (!this._XHR) {
 			this._XHR = new XMLHttpRequest();
 
-			this._XHR.onloadstart = (event: ProgressEvent) => this.onLoadStart(event);                 // loadstart	        - When the request starts.
-			this._XHR.onprogress = (event: ProgressEvent) => this.onProgress(event);	                // progress	            - While loading and sending data.
-			this._XHR.onabort = (event: ProgressEvent) => this.onAbort(event);	                        // abort	            - When the request has been aborted, either by invoking the abort() method or navigating away from the page.
-			this._XHR.onerror = (event: ProgressEvent) => this.onLoadError(event);                     // error	            - When the request has failed.
-			this._XHR.onload = (event: Event) => this.onLoadComplete(event);                   // load	                - When the request has successfully completed.
-			this._XHR.ontimeout = (event: Event) => this.onTimeOut(event);                     // timeout	            - When the author specified timeout has passed before the request could complete.
-			this._XHR.onloadend = (event: ProgressEvent) => this.onLoadEnd(event);                     // loadend	            - When the request has completed, regardless of whether or not it was successful.
-			this._XHR.onreadystatechange = (event: Event) => this.onReadyStateChange(event);   // onreadystatechange   - When XHR state changes
+			// loadstart- When the request starts.
+			this._XHR.onloadstart = (event: ProgressEvent) => this.onLoadStart(event);
+			//progress - While loading and sending data.
+			this._XHR.onprogress = (event: ProgressEvent) => this.onProgress(event);
+			//abort - When the request has been aborted, either by invoking the abort() method or navigating away from
+			//the page.
+			this._XHR.onabort = (event: ProgressEvent) => this.onAbort(event);
+			// error - When the request has failed.
+			this._XHR.onerror = (event: ProgressEvent) => this.onLoadError(event);
+			// load - When the request has successfully completed.
+			this._XHR.onload = (event: Event) => this.onLoadComplete(event);
+			// timeout - When the author specified timeout has passed before the request could complete.
+			this._XHR.ontimeout = (event: Event) => this.onTimeOut(event);
+			// loadend - When the request has completed, regardless of whether or not it was successful.
+			this._XHR.onloadend = (event: ProgressEvent) => this.onLoadEnd(event);
+			// onreadystatechange   - When XHR state changes
+			this._XHR.onreadystatechange = (event: Event) => this.onReadyStateChange(event);
 		}
 	}
 
@@ -260,7 +269,8 @@ export class URLLoader extends EventDispatcher {
 
 		source = source.split('+').join(' ');
 
-		let tokens, re = /[?&]?([^=]+)=([^&]*)/g;
+		const re = /[?&]?([^=]+)=([^&]*)/g;
+		let tokens;
 
 		while ((tokens = re.exec(source)))
 			result[decodeURIComponent(tokens[1])] = decodeURIComponent(tokens[2]);
@@ -280,10 +290,12 @@ export class URLLoader extends EventDispatcher {
 			if (this._status == 404) {
 				this._loadError = true;
 
-				this.dispatchEvent(this._loadErrorEvent || (this._loadErrorEvent = new URLLoaderEvent(URLLoaderEvent.LOAD_ERROR, this)));
+				this.dispatchEvent(this._loadErrorEvent
+								|| (this._loadErrorEvent = new URLLoaderEvent(URLLoaderEvent.LOAD_ERROR, this)));
 			}
 
-			this.dispatchEvent(this._statusEvent || (this._statusEvent = new URLLoaderEvent(URLLoaderEvent.HTTP_STATUS, this)));
+			this.dispatchEvent(this._statusEvent
+							|| (this._statusEvent = new URLLoaderEvent(URLLoaderEvent.HTTP_STATUS, this)));
 		}
 	}
 
@@ -320,7 +332,8 @@ export class URLLoader extends EventDispatcher {
 		this._bytesTotal = event.total;
 		this._bytesLoaded = event.loaded;
 
-		this.dispatchEvent(this._progressEvent || (this._progressEvent = new URLLoaderEvent(URLLoaderEvent.LOAD_PROGRESS, this)));
+		this.dispatchEvent(this._progressEvent
+						|| (this._progressEvent = new URLLoaderEvent(URLLoaderEvent.LOAD_PROGRESS, this)));
 	}
 
 	/**
@@ -328,7 +341,8 @@ export class URLLoader extends EventDispatcher {
 	 * @param event
 	 */
 	private onLoadStart(event: ProgressEvent): void {
-		this.dispatchEvent(this._loadStartEvent || (this._loadStartEvent = new URLLoaderEvent(URLLoaderEvent.LOAD_START, this)));
+		this.dispatchEvent(this._loadStartEvent
+						|| (this._loadStartEvent = new URLLoaderEvent(URLLoaderEvent.LOAD_START, this)));
 	}
 
 	/**
@@ -359,7 +373,8 @@ export class URLLoader extends EventDispatcher {
 				break;
 		}
 
-		this.dispatchEvent(this._loadCompleteEvent || (this._loadCompleteEvent = new URLLoaderEvent(URLLoaderEvent.LOAD_COMPLETE, this)));
+		this.dispatchEvent(this._loadCompleteEvent
+						|| (this._loadCompleteEvent = new URLLoaderEvent(URLLoaderEvent.LOAD_COMPLETE, this)));
 	}
 
 	/**
@@ -369,6 +384,7 @@ export class URLLoader extends EventDispatcher {
 	private onLoadError(event: Event): void {
 		this._loadError = true;
 
-		this.dispatchEvent(this._loadErrorEvent || (this._loadErrorEvent  = new URLLoaderEvent(URLLoaderEvent.LOAD_ERROR, this)));
+		this.dispatchEvent(this._loadErrorEvent
+						|| (this._loadErrorEvent  = new URLLoaderEvent(URLLoaderEvent.LOAD_ERROR, this)));
 	}
 }

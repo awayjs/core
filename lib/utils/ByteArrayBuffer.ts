@@ -79,7 +79,10 @@ export class ByteArrayBuffer extends ByteArrayBase {
 		if (this.position + 4 > this.length) {
 			throw 'ByteArray out of bounds read. Position=' + this.position + ', Length=' + this.length;
 		}
-		const r: number = this._bytes[ this.position ] | (this._bytes[this.position + 1] << 8) | (this._bytes[this.position + 2] << 16) | (this._bytes[this.position + 3] << 24);
+		const r: number = this._bytes[ this.position ] |
+						(this._bytes[this.position + 1] << 8) |
+						(this._bytes[this.position + 2] << 16) |
+						(this._bytes[this.position + 3] << 24);
 		this.position += 4;
 		return r >>> 0;
 	}

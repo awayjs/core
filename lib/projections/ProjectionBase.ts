@@ -39,7 +39,8 @@ export class ProjectionBase extends EventDispatcher {
 
 		this._coordinateSystem = coordinateSystem;
 
-		this._onInvalidateConcatenatedMatrix3DDelegate = (event: TransformEvent) => this._onInvalidateConcatenatedMatrix3D(event);
+		this._onInvalidateConcatenatedMatrix3DDelegate =
+			(event: TransformEvent) => this._onInvalidateConcatenatedMatrix3D(event);
 	}
 
 	public get transform(): Transform {
@@ -51,12 +52,14 @@ export class ProjectionBase extends EventDispatcher {
 			return;
 
 		if (this._transform)
-			this._transform.removeEventListener(TransformEvent.INVALIDATE_CONCATENATED_MATRIX3D, this._onInvalidateConcatenatedMatrix3DDelegate);
+			this._transform.removeEventListener(TransformEvent.INVALIDATE_CONCATENATED_MATRIX3D,
+				this._onInvalidateConcatenatedMatrix3DDelegate);
 
 		this._transform = value;
 
 		if (this._transform)
-			this._transform.addEventListener(TransformEvent.INVALIDATE_CONCATENATED_MATRIX3D, this._onInvalidateConcatenatedMatrix3DDelegate);
+			this._transform.addEventListener(TransformEvent.INVALIDATE_CONCATENATED_MATRIX3D,
+				this._onInvalidateConcatenatedMatrix3DDelegate);
 
 		this._invalidateViewMatrix3D();
 	}
@@ -154,21 +157,22 @@ export class ProjectionBase extends EventDispatcher {
 
 			const near: number = this._near;
 			const far: number = this._far;
+			const vfc: number[] = this._viewFrustumCorners;
 
-			this._viewFrustumCorners[0] = this._viewFrustumCorners[9] = near * left;
-			this._viewFrustumCorners[3] = this._viewFrustumCorners[6] = near * right;
-			this._viewFrustumCorners[1] = this._viewFrustumCorners[4] = near * top;
-			this._viewFrustumCorners[7] = this._viewFrustumCorners[10] = near * bottom;
+			vfc[0] = vfc[9] = near * left;
+			vfc[3] = vfc[6] = near * right;
+			vfc[1] = vfc[4] = near * top;
+			vfc[7] = vfc[10] = near * bottom;
 
-			this._viewFrustumCorners[12] = this._viewFrustumCorners[21] = far * left;
-			this._viewFrustumCorners[15] = this._viewFrustumCorners[18] = far * right;
-			this._viewFrustumCorners[13] = this._viewFrustumCorners[16] = far * top;
-			this._viewFrustumCorners[19] = this._viewFrustumCorners[22] = far * bottom;
+			vfc[12] = vfc[21] = far * left;
+			vfc[15] = vfc[18] = far * right;
+			vfc[13] = vfc[16] = far * top;
+			vfc[19] = vfc[22] = far * bottom;
 
-			this._viewFrustumCorners[2] = this._viewFrustumCorners[5] = this._viewFrustumCorners[8] = this._viewFrustumCorners[11] = near;
-			this._viewFrustumCorners[14] = this._viewFrustumCorners[17] = this._viewFrustumCorners[20] = this._viewFrustumCorners[23] = far;
+			vfc[2] = vfc[5] = vfc[8] = vfc[11] = near;
+			vfc[14] = vfc[17] = vfc[20] = vfc[23] = far;
 
-			this._transform.concatenatedMatrix3D.transformVectors(this._viewFrustumCorners, this._viewFrustumCorners);
+			this._transform.concatenatedMatrix3D.transformVectors(vfc, vfc);
 		}
 
 		return this._viewFrustumCorners;

@@ -210,7 +210,9 @@ export class Vector3D {
 		const rawA: Float32Array = a._rawData;
 		const rawB: Float32Array = b._rawData;
 
-		return new Vector3D(rawA[0] * ascl + rawB[0] * bscl, rawA[1] * ascl + rawB[1] * bscl, rawA[2] * ascl + rawB[2] * bscl);
+		return new Vector3D(rawA[0] * ascl + rawB[0] * bscl,
+			rawA[1] * ascl + rawB[1] * bscl,
+			rawA[2] * ascl + rawB[2] * bscl);
 	}
 
 	/**
@@ -355,7 +357,10 @@ export class Vector3D {
 		const raw: Float32Array = this._rawData;
 		const rawToCompare: Float32Array = toCompare._rawData;
 
-		return (raw[0] == rawToCompare[0] && raw[1] == rawToCompare[1] && raw[2] == rawToCompare[2] && (!allFour || raw[3] == rawToCompare[3]));
+		return (raw[0] == rawToCompare[0] &&
+				raw[1] == rawToCompare[1] &&
+				raw[2] == rawToCompare[2] &&
+				(!allFour || raw[3] == rawToCompare[3]));
 	}
 
 	/**
@@ -423,8 +428,10 @@ export class Vector3D {
 		const raw: Float32Array = this._rawData;
 		const rawToCompare: Float32Array = toCompare._rawData;
 
-		return ((Math.abs(raw[0] - rawToCompare[0]) < tolerance)
-				&& (Math.abs(raw[1] - rawToCompare[1]) < tolerance) && (Math.abs(raw[2] - rawToCompare[2]) < tolerance) && (!allFour || Math.abs(raw[3] - rawToCompare[3]) < tolerance));
+		return ((Math.abs(raw[0] - rawToCompare[0]) < tolerance) &&
+				(Math.abs(raw[1] - rawToCompare[1]) < tolerance) &&
+				(Math.abs(raw[2] - rawToCompare[2]) < tolerance) &&
+				(!allFour || Math.abs(raw[3] - rawToCompare[3]) < tolerance));
 	}
 
 	/**

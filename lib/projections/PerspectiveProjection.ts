@@ -52,7 +52,8 @@ export class PerspectiveProjection extends ProjectionBase {
 
 		target.x = nX * sZ;
 		target.y = -nY * sZ;
-		target.z = (this._far + this._near) / (this._far - this._near) * sZ - 2 * this._far * this._near / (this._far - this._near);
+		target.z = (this._far + this._near) / (this._far - this._near) * sZ
+					- 2 * this._far * this._near / (this._far - this._near);
 		target.w = sZ;
 
 		this.inverseViewMatrix3D.transformVector(target, target);

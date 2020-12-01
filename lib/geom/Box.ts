@@ -276,7 +276,11 @@ export class Box {
 	 *         specified position; otherwise <code>false</code>.
 	 */
 	public contains(x: number, y: number, z: number): boolean {
-		return (this.x <= x && this.x + this.width >= x && this.y <= y && this.y + this.height >= y && this.z <= z && this.z + this.depth >= z);
+		return (
+			this.x <= x && this.x + this.width >= x
+			&& this.y <= y && this.y + this.height >= y
+			&& this.z <= z && this.z + this.depth >= z
+		);
 	}
 
 	/**
@@ -291,7 +295,11 @@ export class Box {
 	 *         specified position; otherwise <code>false</code>.
 	 */
 	public containsPoint(position: Vector3D): boolean {
-		return (this.x <= position.x && this.x + this.width >= position.x && this.y <= position.y && this.y + this.height >= position.y && this.z <= position.z && this.z + this.depth >= position.z);
+		return (
+			this.x <= position.x && this.x + this.width >= position.x
+			&& this.y <= position.y && this.y + this.height >= position.y
+			&& this.z <= position.z && this.z + this.depth >= position.z
+		);
 	}
 
 	/**
@@ -305,7 +313,11 @@ export class Box {
 	 *         is contained by this Box object; otherwise <code>false</code>.
 	 */
 	public containsBox(box: Box): boolean {
-		return (this.x <= box.x && this.x + this.width >= box.x + box.width && this.y <= box.y && this.y + this.height >= box.y + box.height && this.z <= box.z && this.z + this.depth >= box.z + box.depth);
+		return (
+			this.x <= box.x && this.x + this.width >= box.x + box.width
+			&& this.y <= box.y && this.y + this.height >= box.y + box.height
+			&& this.z <= box.z && this.z + this.depth >= box.z + box.depth
+		);
 	}
 
 	/**
@@ -337,7 +349,10 @@ export class Box {
 	 *         properties as this Box object; otherwise <code>false</code>.
 	 */
 	public equals(toCompare: Box): boolean {
-		return (this.x == toCompare.x && this.y == toCompare.y && this.z == toCompare.z && this.width == toCompare.width && this.height == toCompare.height && this.depth == toCompare.depth);
+		return (
+			this.x == toCompare.x && this.y == toCompare.y && this.z == toCompare.z
+			&& this.width == toCompare.width && this.height == toCompare.height && this.depth == toCompare.depth
+		);
 	}
 
 	/**
@@ -467,7 +482,11 @@ export class Box {
 	 *         with this Box object; otherwise <code>false</code>.
 	 */
 	public intersects(toIntersect: Box): boolean {
-		return (this.x + this.width >= toIntersect.x && this.x <= toIntersect.x + toIntersect.width && this.y + this.height >= toIntersect.y && this.y <= toIntersect.y + toIntersect.height && this.z + this.depth >= toIntersect.z && this.z <= toIntersect.z + toIntersect.depth);
+		return (
+			this.x + this.width >= toIntersect.x && this.x <= toIntersect.x + toIntersect.width
+			&& this.y + this.height >= toIntersect.y && this.y <= toIntersect.y + toIntersect.height
+			&& this.z + this.depth >= toIntersect.z && this.z <= toIntersect.z + toIntersect.depth
+		);
 	}
 
 	public rayIntersection(position: Vector3D, direction: Vector3D, targetNormal: Vector3D = null): number {
@@ -598,10 +617,12 @@ export class Box {
 	}
 
 	/**
-	 * Finds the closest point on the Box to another given point. This can be used for maximum error calculations for content within a given Box.
+	 * Finds the closest point on the Box to another given point. This can be
+	 * used for maximum error calculations for content within a given Box.
 	 *
 	 * @param point The point for which to find the closest point on the Box
-	 * @param target An optional Vector3D to store the result to prevent creating a new object.
+	 * @param target An optional Vector3D to store the result to prevent
+	 * creating a new object.
 	 * @return
 	 */
 	public closestPointToPoint(point: Vector3D, target: Vector3D = null): Vector3D {
@@ -710,7 +731,9 @@ export class Box {
 	 *         <code>width</code>, <code>height</code>, and <code>depth</code>.
 	 */
 	public toString(): string {
-		return '[Box] (x=' + this.x + ', y=' + this.y + ', z=' + this.z + ', width=' + this.width + ', height=' + this.height + ', depth=' + this.depth + ')';
+		return '[Box] (x=' + this.x + ', y=' + this.y + ', z='
+			+ this.z + ', width=' + this.width + ', height='
+			+ this.height + ', depth=' + this.depth + ')';
 	}
 
 	/**

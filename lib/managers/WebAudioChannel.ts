@@ -44,14 +44,14 @@ export class WebAudioChannel {
 	public static stopAllSounds(channelGroup: number = -1) {
 		const len: number = WebAudioChannel._channels.length;
 		if (channelGroup < 0) {
-			for (var j: number = 0; j < len; j++) {
+			for (let j: number = 0; j < len; j++) {
 				WebAudioChannel._channels[j].stop();
 			}
 			WebAudioChannel._channels.length = 0;
 			return;
 		}
 		const aliveChannels: WebAudioChannel[] = [];
-		for (var j: number = 0; j < len; j++) {
+		for (let j: number = 0; j < len; j++) {
 			if (WebAudioChannel._channels[j].groupID == channelGroup) {
 				WebAudioChannel._channels[j].stop();
 			} else {
@@ -64,12 +64,12 @@ export class WebAudioChannel {
 	public static setChannelGroupVolume(value: number, channelGroup: number = -1) {
 		const len: number = WebAudioChannel._channels.length;
 		if (channelGroup < 0) {
-			for (var j: number = 0; j < len; j++) {
+			for (let j: number = 0; j < len; j++) {
 				WebAudioChannel._channels[j].groupVolume = value;
 			}
 			return;
 		}
-		for (var j: number = 0; j < len; j++) {
+		for (let j: number = 0; j < len; j++) {
 			if (WebAudioChannel._channels[j].groupID == channelGroup) {
 				WebAudioChannel._channels[j].groupVolume = value;
 			}
@@ -168,7 +168,9 @@ export class WebAudioChannel {
 		this._gainNode = this._audioCtx.createGain();
 		this._gainNode.gain.value = this._groupVolume * this._volume;
 
-		this._pannerNode = this._usingNativePanner ? this._audioCtx.createStereoPanner() : this._audioCtx.createPanner();
+		this._pannerNode = this._usingNativePanner ?
+			this._audioCtx.createStereoPanner() :
+			this._audioCtx.createPanner();
 
 		if (this._usingNativePanner)
 			this._pannerNode.pan.value = this._pan;
@@ -195,7 +197,10 @@ export class WebAudioChannel {
 		if (WebAudioChannel._decodeCache[id])
 			this._onDecodeComplete(WebAudioChannel._decodeCache[id]);
 		else if (!WebAudioChannel._errorCache[id])
-			this._audioCtx.decodeAudioData(buffer, (buffer) => this._onDecodeComplete(buffer), (event) => this._onError(event));
+			this._audioCtx.decodeAudioData(
+				buffer,
+				(buffer) => this._onDecodeComplete(buffer), (event) => this._onError(event)
+			);
 		else
 			this.stop();
 	}
@@ -238,14 +243,15 @@ export class WebAudioChannel {
 		this._duration = buffer.duration;
 		this._pan = 0;
 		this._startTime = this._audioCtx.currentTime - this._currentTime;
-		//console.log("play with offset time decode complete", this._audioCtx.currentTime, this._currentTime, this._startTime)
 		this._source.onended = this._onEndedDelegate;
 		try {
 			this._gainNode.gain.value = this._groupVolume * this._volume;
 			if (this._usingNativePanner)
 				this._pannerNode.pan.value = this._pan;
 			else
-				this._pannerNode.setPosition(Math.sin(this._pan * (Math.PI / 2)), 0, Math.cos(this._pan * (Math.PI / 2)));
+				this._pannerNode.setPosition(Math.sin(this._pan * (Math.PI / 2)),
+					0,
+					Math.cos(this._pan * (Math.PI / 2)));
 			// TODO: offset / startTime make problem in dino-run game:
 			this._source.start(this._audioCtx.currentTime, this._currentTime);
 		} catch (error) {
@@ -282,7 +288,7 @@ const audioCtx = WebAudioChannel.getAudioContext();
 
 // context state at this time is `undefined` in iOS8 Safari
 if (audioCtx && audioCtx.state === 'suspended') {
-	var resume = () => {
+	const resume = () => {
 		audioCtx.resume();
 
 		//create empty buffer

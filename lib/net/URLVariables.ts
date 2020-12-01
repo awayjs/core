@@ -17,7 +17,8 @@ export class URLVariables {
 	public decode(source: string): void {
 		source = source.split('+').join(' ');
 
-		let tokens, re = /[?&]?([^=]+)=([^&]*)/g;
+		const re = /[?&]?([^=]+)=([^&]*)/g;
+		let tokens;
 
 		while ((tokens = re.exec(source)))
 			this._variables[decodeURIComponent(tokens[1])] = decodeURIComponent(tokens[2]);

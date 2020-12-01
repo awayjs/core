@@ -24,7 +24,14 @@ export class ResourceDependency {
 	public loader: URLLoader;
 	public success: boolean;
 
-	constructor(id: string, request: URLRequest, data: any, parser: ParserBase, parentParser: ParserBase, retrieveAsRawData: boolean = false, suppressAssetEvents: boolean = false, sub_id: number = 0) {
+	constructor(id: string,
+		request: URLRequest,
+		data: any,
+		parser: ParserBase,
+		parentParser: ParserBase,
+		retrieveAsRawData: boolean = false,
+		suppressAssetEvents: boolean = false,
+		sub_id: number = 0) {
 		this._id = id;
 		this._sub_id = sub_id;
 		this._request = request;

@@ -5,7 +5,8 @@ export class Keyboard {
 	public static A: number /*uint*/ = 65;
 
 	/**
-	 * Constant associated with the key code value for the Alternate (Option) key  (18).
+	 * Constant associated with the key code value for the Alternate (Option)
+	 * key  (18).
 	 */
 	public static ALTERNATE: number /*uint*/ = 18;
 
@@ -746,87 +747,104 @@ export class Keyboard {
 	public static NUMBER_9: number /*uint*/ = 57;
 
 	/**
-	 * Constant associated with the pseudo-key code for the the number pad (21). Use to set numpad modifier on key equivalents
+	 * Constant associated with the pseudo-key code for the the number pad (21).
+	 * Use to set numpad modifier on key equivalents
 	 */
 	public static NUMPAD: number /*uint*/ = 21;
 
 	/**
-	 * Constant associated with the key code value for the number 0 key on the number pad (96).
+	 * Constant associated with the key code value for the number 0 key on the
+	 * number pad (96).
 	 */
 	public static NUMPAD_0: number /*uint*/ = 96;
 
 	/**
-	 * Constant associated with the key code value for the number 1 key on the number pad (97).
+	 * Constant associated with the key code value for the number 1 key on the
+	 * number pad (97).
 	 */
 	public static NUMPAD_1: number /*uint*/ = 97;
 
 	/**
-	 * Constant associated with the key code value for the number 2 key on the number pad (98).
+	 * Constant associated with the key code value for the number 2 key on the
+	 * number pad (98).
 	 */
 	public static NUMPAD_2: number /*uint*/ = 98;
 
 	/**
-	 * Constant associated with the key code value for the number 3 key on the number pad (99).
+	 * Constant associated with the key code value for the number 3 key on the
+	 * number pad (99).
 	 */
 	public static NUMPAD_3: number /*uint*/ = 99;
 
 	/**
-	 * Constant associated with the key code value for the number 4 key on the number pad (100).
+	 * Constant associated with the key code value for the number 4 key on the
+	 * number pad (100).
 	 */
 	public static NUMPAD_4: number /*uint*/ = 100;
 
 	/**
-	 * Constant associated with the key code value for the number 5 key on the number pad (101).
+	 * Constant associated with the key code value for the number 5 key on the
+	 * number pad (101).
 	 */
 	public static NUMPAD_5: number /*uint*/ = 101;
 
 	/**
-	 * Constant associated with the key code value for the number 6 key on the number pad (102).
+	 * Constant associated with the key code value for the number 6 key on the
+	 * number pad (102).
 	 */
 	public static NUMPAD_6: number /*uint*/ = 102;
 
 	/**
-	 * Constant associated with the key code value for the number 7 key on the number pad (103).
+	 * Constant associated with the key code value for the number 7 key on the
+	 * number pad (103).
 	 */
 	public static NUMPAD_7: number /*uint*/ = 103;
 
 	/**
-	 * Constant associated with the key code value for the number 8 key on the number pad (104).
+	 * Constant associated with the key code value for the number 8 key on the
+	 * number pad (104).
 	 */
 	public static NUMPAD_8: number /*uint*/ = 104;
 
 	/**
-	 * Constant associated with the key code value for the number 9 key on the number pad (105).
+	 * Constant associated with the key code value for the number 9 key on the
+	 * number pad (105).
 	 */
 	public static NUMPAD_9: number /*uint*/ = 105;
 
 	/**
-	 * Constant associated with the key code value for the addition key on the number pad (107).
+	 * Constant associated with the key code value for the addition key on the
+	 * number pad (107).
 	 */
 	public static NUMPAD_ADD: number /*uint*/ = 107;
 
 	/**
-	 * Constant associated with the key code value for the decimal key on the number pad (110).
+	 * Constant associated with the key code value for the decimal key on the
+	 * number pad (110).
 	 */
 	public static NUMPAD_DECIMAL: number /*uint*/ = 110;
 
 	/**
-	 * Constant associated with the key code value for the division key on the number pad (111).
+	 * Constant associated with the key code value for the division key on the
+	 * number pad (111).
 	 */
 	public static NUMPAD_DIVIDE: number /*uint*/ = 111;
 
 	/**
-	 * Constant associated with the key code value for the Enter key on the number pad (108).
+	 * Constant associated with the key code value for the Enter key on the
+	 * number pad (108).
 	 */
 	public static NUMPAD_ENTER: number /*uint*/ = 108;
 
 	/**
-	 * Constant associated with the key code value for the multiplication key on the number pad (106).
+	 * Constant associated with the key code value for the multiplication key on
+	 * the number pad (106).
 	 */
 	public static NUMPAD_MULTIPLY: number /*uint*/ = 106;
 
 	/**
-	 * Constant associated with the key code value for the subtraction key on the number pad (109).
+	 * Constant associated with the key code value for the subtraction key on
+	 * the number pad (109).
 	 */
 	public static NUMPAD_SUBTRACT: number /*uint*/ = 109;
 

@@ -125,7 +125,8 @@ export class ByteArrayBase {
 		return ByteArrayBase.internalGetBase64String(count, this.readUnsignedByte, this);
 	}
 
-	public static internalGetBase64String(count, getUnsignedByteFunc, self): string { // return base64 string of the next count bytes
+	// return base64 string of the next count bytes
+	public static internalGetBase64String(count, getUnsignedByteFunc, self): string {
 		let r: string = '';
 		let b0, b1, b2, enc1, enc2, enc3, enc4;
 		const base64Key = ByteArrayBase.Base64Key;

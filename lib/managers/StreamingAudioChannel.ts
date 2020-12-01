@@ -29,14 +29,14 @@ export class StreamingAudioChannel {
 	public static stopAllSounds(channelGroup: number = -1) {
 		const len: number = StreamingAudioChannel._channels.length;
 		if (channelGroup < 0) {
-			for (var j: number = 0; j < len; j++) {
+			for (let j: number = 0; j < len; j++) {
 				StreamingAudioChannel._channels[j].stop();
 			}
 			StreamingAudioChannel._channels.length = 0;
 			return;
 		}
 		const aliveChannels: StreamingAudioChannel[] = [];
-		for (var j: number = 0; j < len; j++) {
+		for (let j: number = 0; j < len; j++) {
 			if (StreamingAudioChannel._channels[j].groupID == channelGroup) {
 				StreamingAudioChannel._channels[j].stop();
 			} else {
@@ -49,12 +49,12 @@ export class StreamingAudioChannel {
 	public static setChannelGroupVolume(value: number, channelGroup: number = -1) {
 		const len: number = StreamingAudioChannel._channels.length;
 		if (channelGroup < 0) {
-			for (var j: number = 0; j < len; j++) {
+			for (let j: number = 0; j < len; j++) {
 				StreamingAudioChannel._channels[j].groupVolume = value;
 			}
 			return;
 		}
-		for (var j: number = 0; j < len; j++) {
+		for (let j: number = 0; j < len; j++) {
 			if (StreamingAudioChannel._channels[j].groupID == channelGroup) {
 				StreamingAudioChannel._channels[j].groupVolume = value;
 			}
@@ -174,7 +174,8 @@ export class StreamingAudioChannel {
 	private _sourceOpen(event): void {
 		this._isOpening = false;
 
-		//TODO: find out how in the name of all that is holy how this can be executed more than once on a MediaSource object
+		//TODO: find out how in the name of all that is holy how this can be
+		//executed more than once on a MediaSource object
 		if (this._mediaSource.activeSourceBuffers.length) {
 			console.log('ERR: double sourceopen event called');
 			return;

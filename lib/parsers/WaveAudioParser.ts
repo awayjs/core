@@ -8,9 +8,10 @@ export class WaveAudioParser extends ParserBase {
 		super(URLLoaderDataFormat.BLOB);
 	}
 
-	/*
-		this static property can be set with a function that that will be called on each filename before adding it to the library
-	*/
+	/**
+	 * this static property can be set with a function that that will be called
+	 * on each filename before adding it to the library
+	 */
 	public static processFilename=function(filename): string {
 		return filename;
 	};

@@ -21,14 +21,14 @@ export class EventAudioChannel {
 	public static stopAllSounds(channelGroup: number = -1) {
 		const len: number = EventAudioChannel._channels.length;
 		if (channelGroup < 0) {
-			for (var j: number = 0; j < len; j++) {
+			for (let j: number = 0; j < len; j++) {
 				EventAudioChannel._channels[j].stop();
 			}
 			EventAudioChannel._channels.length = 0;
 			return;
 		}
 		const aliveChannels: EventAudioChannel[] = [];
-		for (var j: number = 0; j < len; j++) {
+		for (let j: number = 0; j < len; j++) {
 			if (EventAudioChannel._channels[j].groupID == channelGroup) {
 				EventAudioChannel._channels[j].stop();
 			} else {
@@ -41,12 +41,12 @@ export class EventAudioChannel {
 	public static setChannelGroupVolume(value: number, channelGroup: number = -1) {
 		const len: number = EventAudioChannel._channels.length;
 		if (channelGroup < 0) {
-			for (var j: number = 0; j < len; j++) {
+			for (let j: number = 0; j < len; j++) {
 				EventAudioChannel._channels[j].groupVolume = value;
 			}
 			return;
 		}
-		for (var j: number = 0; j < len; j++) {
+		for (let j: number = 0; j < len; j++) {
 			if (EventAudioChannel._channels[j].groupID == channelGroup) {
 				EventAudioChannel._channels[j].groupVolume = value;
 			}
@@ -136,7 +136,8 @@ export class EventAudioChannel {
 		this._isPlaying = true;
 		this._isLooping = loop;
 
-		this._audio.src = EventAudioChannel._base64Cache[id] || (EventAudioChannel._base64Cache[id] = ParserUtils.arrayBufferToBase64(buffer, 'audio/mp3'));
+		this._audio.src = EventAudioChannel._base64Cache[id]
+						|| (EventAudioChannel._base64Cache[id] = ParserUtils.arrayBufferToBase64(buffer, 'audio/mp3'));
 		this._audio.loop = this._isLooping;
 		const thisAudio = this._audio;
 		this._audio.addEventListener('loadedmetadata', function() {

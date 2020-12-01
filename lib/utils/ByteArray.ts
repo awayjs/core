@@ -135,10 +135,10 @@ export class ByteArray extends ByteArrayBase {
 		this.ensureWriteableSpace(2);
 
 		if ((this.position & 1) == 0) {
-			var view = new Uint16Array(this.arraybytes);
+			const view = new Uint16Array(this.arraybytes);
 			view[ this.position >> 1 ] = (~~b) & 0xffff; // ~~ is cast to int in js...
 		} else {
-			var view = new Uint16Array(this.unalignedarraybytestemp, 0, 1);
+			const view = new Uint16Array(this.unalignedarraybytestemp, 0, 1);
 			view[0] = (~~b) & 0xffff;
 			const view2 = new Uint8Array(this.arraybytes, this.position, 2);
 			const view3 = new Uint8Array(this.unalignedarraybytestemp, 0, 2);
@@ -171,15 +171,20 @@ export class ByteArray extends ByteArrayBase {
 
 			} else if (c < 0xF0) {
 
-				var c2 = data.getUint8(this.position++);
-				value += String.fromCharCode(((c & 0x1F) << 12) | ((c2 & 0x7F) << 6) | (data.getUint8(this.position++) & 0x7F));
+				const c2 = data.getUint8(this.position++);
+				value += String.fromCharCode(((c & 0x1F) << 12)
+											| ((c2 & 0x7F) << 6)
+											| (data.getUint8(this.position++) & 0x7F));
 
 			} else {
 
-				var c2 = data.getUint8(this.position++);
+				const c2 = data.getUint8(this.position++);
 				const c3 = data.getUint8(this.position++);
 
-				value += String.fromCharCode(((c & 0x0F) << 18) | ((c2 & 0x7F) << 12) | ((c3 << 6) & 0x7F) | (data.getUint8(this.position++) & 0x7F));
+				value += String.fromCharCode(((c & 0x0F) << 18)
+											| ((c2 & 0x7F) << 12)
+											| ((c3 << 6) & 0x7F)
+											| (data.getUint8(this.position++) & 0x7F));
 
 			}
 
@@ -196,12 +201,12 @@ export class ByteArray extends ByteArrayBase {
 
 		this.ensureWriteableSpace(4 + binstr.length);
 		this.writeInt(binstr.length);
-		for (var i = 0; i < binstr.length; i++) {
+		for (let i = 0; i < binstr.length; i++) {
 			this.writeUnsignedByte(binstr.charCodeAt(i)); //todo: there are probably faster ways to do this
 		}
 		if (binstr.length % 4) {
 			const paddingbytes: number = binstr.length % 4;
-			for (var i = 0; i < paddingbytes; i++) {
+			for (let i = 0; i < paddingbytes; i++) {
 				this.writeUnsignedByte(0);
 			}
 
@@ -241,12 +246,12 @@ export class ByteArray extends ByteArrayBase {
 			throw 'ByteArray out of bounds read. Position=' + this.position + ', Length=' + this.length;
 
 		if ((this.position & 1) == 0) {
-			var view = new Uint16Array(this.arraybytes);
+			const view = new Uint16Array(this.arraybytes);
 			const pa: number = this.position >> 1;
 			this.position += 2;
 			return view[ pa ];
 		} else {
-			var view = new Uint16Array(this.unalignedarraybytestemp, 0, 1);
+			const view = new Uint16Array(this.unalignedarraybytestemp, 0, 1);
 			const view2 = new Uint8Array(this.arraybytes, this.position, 2);
 			const view3 = new Uint8Array(this.unalignedarraybytestemp, 0, 2);
 			view3.set(view2);
@@ -259,10 +264,10 @@ export class ByteArray extends ByteArrayBase {
 		this.ensureWriteableSpace(4);
 
 		if ((this.position & 3) == 0) {
-			var view = new Uint32Array(this.arraybytes);
+			const view = new Uint32Array(this.arraybytes);
 			view[ this.position >> 2 ] = (~~b) & 0xffffffff; // ~~ is cast to int in js...
 		} else {
-			var view = new Uint32Array(this.unalignedarraybytestemp, 0, 1);
+			const view = new Uint32Array(this.unalignedarraybytestemp, 0, 1);
 			view[0] = (~~b) & 0xffffffff;
 			const view2 = new Uint8Array(this.arraybytes, this.position, 4);
 			const view3 = new Uint8Array(this.unalignedarraybytestemp, 0, 4);
@@ -278,10 +283,10 @@ export class ByteArray extends ByteArrayBase {
 		this.ensureWriteableSpace(4);
 
 		if ((this.position & 3) == 0) {
-			var view = new Int32Array(this.arraybytes);
+			const view = new Int32Array(this.arraybytes);
 			view[ this.position >> 2 ] = (~~b); // ~~ is cast to int in js...
 		} else {
-			var view = new Int32Array(this.unalignedarraybytestemp, 0, 1);
+			const view = new Int32Array(this.unalignedarraybytestemp, 0, 1);
 			view[0] = (~~b);
 			const view2 = new Uint8Array(this.arraybytes, this.position, 4);
 			const view3 = new Uint8Array(this.unalignedarraybytestemp, 0, 4);
@@ -298,12 +303,12 @@ export class ByteArray extends ByteArrayBase {
 			throw 'ByteArray out of bounds read. Position=' + this.position + ', Length=' + this.length;
 
 		if ((this.position & 3) == 0) {
-			var view = new Uint32Array(this.arraybytes);
+			const view = new Uint32Array(this.arraybytes);
 			const pa: number = this.position >> 2;
 			this.position += 4;
 			return view[ pa ];
 		} else {
-			var view = new Uint32Array(this.unalignedarraybytestemp, 0, 1);
+			const view = new Uint32Array(this.unalignedarraybytestemp, 0, 1);
 			const view2 = new Uint8Array(this.arraybytes, this.position, 4);
 			const view3 = new Uint8Array(this.unalignedarraybytestemp, 0, 4);
 			view3.set(view2);
@@ -316,10 +321,10 @@ export class ByteArray extends ByteArrayBase {
 		this.ensureWriteableSpace(4);
 
 		if ((this.position & 3) == 0) {
-			var view = new Float32Array(this.arraybytes);
+			const view = new Float32Array(this.arraybytes);
 			view[ this.position >> 2 ] = b;
 		} else {
-			var view = new Float32Array(this.unalignedarraybytestemp, 0, 1);
+			const view = new Float32Array(this.unalignedarraybytestemp, 0, 1);
 			view[0] = b;
 			const view2 = new Uint8Array(this.arraybytes, this.position, 4);
 			const view3 = new Uint8Array(this.unalignedarraybytestemp, 0, 4);
@@ -336,12 +341,12 @@ export class ByteArray extends ByteArrayBase {
 			throw 'ByteArray out of bounds read. Positon=' + this.position + ', Length=' + this.length;
 
 		if ((this.position & 3) == 0) {
-			var view = new Float32Array(this.arraybytes);
+			const view = new Float32Array(this.arraybytes);
 			const pa = this.position >> 2;
 			this.position += 4;
 			return view[pa];
 		} else {
-			var view = new Float32Array(this.unalignedarraybytestemp, 0, 1);
+			const view = new Float32Array(this.unalignedarraybytestemp, 0, 1);
 			const view2 = new Uint8Array(this.arraybytes, this.position, 4);
 			const view3 = new Uint8Array(this.unalignedarraybytestemp, 0, 4);
 			view3.set(view2);

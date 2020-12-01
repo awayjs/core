@@ -12,9 +12,10 @@ import { Loader } from './Loader';
 import { LoaderContext } from './LoaderContext';
 
 /**
- * AssetLibrary enforces a singleton pattern and is not intended to be instanced.
- * It's purpose is to allow access to the default library bundle through a set of static shortcut methods.
- * If you are interested in creating multiple library bundles, please use the <code>getBundle()</code> method.
+ * AssetLibrary enforces a singleton pattern and is not intended to be
+ * instanced. It's purpose is to allow access to the default library bundle
+ * through a set of static shortcut methods. If you are interested in creating
+ * multiple library bundles, please use the <code>getBundle()</code> method.
  */
 export class AssetLibrary {
 	/**
@@ -24,11 +25,11 @@ export class AssetLibrary {
 	constructor() {
 	}
 
-	//*/
 	/**
-	 * Returns an AssetLibrary bundle instance. If no key is given, returns the default bundle (which is
-	 * similar to using the AssetLibraryBundle as a singleton). To keep several separated library bundles,
-	 * pass a string key to this method to define which bundle should be returned. This is
+	 * Returns an AssetLibrary bundle instance. If no key is given, returns the
+	 * default bundle (which is similar to using the AssetLibraryBundle as a
+	 * singleton). To keep several separated library bundles, pass a string key
+	 * to this method to define which bundle should be returned. This is
 	 * referred to as using the AssetLibraryBundle as a multiton.
 	 *
 	 * @param key Defines which multiton instance should be returned.
@@ -83,7 +84,9 @@ export class AssetLibrary {
 	 *
 	 * @see AssetLibraryBundle.createIterator()
 	 */
-	public static createIterator(assetTypeFilter: string = null, namespaceFilter: string = null, filterFunc = null): AssetLibraryIterator {
+	public static createIterator(assetTypeFilter: string = null,
+		namespaceFilter: string = null,
+		filterFunc = null): AssetLibraryIterator {
 		return AssetLibrary.getBundle().createIterator(assetTypeFilter, namespaceFilter, filterFunc);
 	}
 
@@ -92,7 +95,10 @@ export class AssetLibrary {
 	 *
 	 * @see AssetLibraryBundle.load()
 	 */
-	public static load(req: URLRequest, context: LoaderContext = null, ns: string = null, parser: ParserBase = null): void {
+	public static load(req: URLRequest,
+		context: LoaderContext = null,
+		ns: string = null,
+		parser: ParserBase = null): void {
 		AssetLibrary.getBundle().load(req, context, ns, parser);
 	}
 
@@ -101,7 +107,10 @@ export class AssetLibrary {
 	 *
 	 * @see AssetLibraryBundle.loadData()
 	 */
-	public static loadData(data: any, context: LoaderContext = null, ns: string = null, parser: ParserBase = null): void {
+	public static loadData(data: any,
+		context: LoaderContext = null,
+		ns: string = null,
+		parser: ParserBase = null): void {
 		AssetLibrary.getBundle().loadData(data, context, ns, parser);
 	}
 

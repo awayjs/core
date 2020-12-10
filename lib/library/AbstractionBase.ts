@@ -3,6 +3,7 @@ import { EventDispatcher } from '../events/EventDispatcher';
 
 import { IAbstractionPool } from './IAbstractionPool';
 import { IAsset } from './IAsset';
+import { UUID } from './UUID';
 
 /**
  *
@@ -18,7 +19,13 @@ export class AbstractionBase extends EventDispatcher {
 
 	protected _invalid: boolean = true;
 
-	public static ID_COUNT: number = 0;
+	public static get ID_COUNT() {
+		return UUID.Next();
+	}
+
+	public static set ID_COUNT(v: number) {
+		// nothing
+	}
 
 	constructor(asset: IAsset, pool: IAbstractionPool) {
 		super();

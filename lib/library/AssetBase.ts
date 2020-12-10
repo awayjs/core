@@ -8,9 +8,9 @@ import { IAbstractionPool } from './IAbstractionPool';
 import { IAsset } from './IAsset';
 import { IAssetAdapter } from './IAssetAdapter';
 import { IAssetClass } from './IAssetClass';
+import { UUID } from './UUID';
 
 export class AssetBase extends EventDispatcher implements IAsset, IAssetAdapter {
-	public static ID_COUNT: number = 0;
 
 	public _symbol: any;
 	public _adapter: IAssetAdapter;
@@ -26,7 +26,7 @@ export class AssetBase extends EventDispatcher implements IAsset, IAssetAdapter 
 	constructor(name: string = null) {
 		super();
 
-		this._id = AssetBase.ID_COUNT++;
+		this._id = UUID.Next();
 
 		if (name == null)
 			name = 'null';

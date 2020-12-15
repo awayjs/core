@@ -44,6 +44,9 @@ export class ProjectionBase extends EventDispatcher {
 	}
 
 	public get transform(): Transform {
+		if (!this._transform)
+			this.transform = new Transform();
+
 		return this._transform;
 	}
 
@@ -172,7 +175,8 @@ export class ProjectionBase extends EventDispatcher {
 			vfc[2] = vfc[5] = vfc[8] = vfc[11] = near;
 			vfc[14] = vfc[17] = vfc[20] = vfc[23] = far;
 
-			this._transform.concatenatedMatrix3D.transformVectors(vfc, vfc);
+			if (this._transform)
+				this._transform.concatenatedMatrix3D.transformVectors(vfc, vfc);
 		}
 
 		return this._viewFrustumCorners;

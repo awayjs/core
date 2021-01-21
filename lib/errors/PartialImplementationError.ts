@@ -1,8 +1,8 @@
 import { ErrorBase } from './ErrorBase';
 
 /**
- * AbstractMethodError is thrown when an abstract method is called. The method in question should be overridden
- * by a concrete subclass.
+ * PartialImplementationError is thrown when function was called that is not implemented yet.
+ * it should never be used directly, but only by using Debug.throwPIR function
  */
 export class PartialImplementationError extends ErrorBase {
 	/**

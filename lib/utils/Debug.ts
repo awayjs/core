@@ -1,12 +1,14 @@
 import { PartialImplementationError }	from '../errors/PartialImplementationError';
 
+const ERRORS_LOGGED = {};
 /**
  *
  */
 export class Debug {
-	public static THROW_ERRORS: boolean = true;
+	public static THROW_ERRORS: boolean = false;
 	public static ENABLE_LOG: boolean = true;
 	public static LOG_PI_ERRORS: boolean = true;
+	public static LOG_PI_ERRORS_ONLY_ONCE: boolean = true;
 
 	private static keyword: string = null;
 
@@ -22,6 +24,14 @@ export class Debug {
 	}
 
 	public static throwPIR(clss: string, fnc: string, msg: string): void {
+
+		if (this.LOG_PI_ERRORS_ONLY_ONCE) {
+			const errorID = clss + fnc;
+			if (ERRORS_LOGGED[errorID])
+				return;
+			ERRORS_LOGGED[errorID] = true;
+		}
+
 		Debug.logPIR('PartialImplementationError ' + clss, fnc, msg);
 
 		if (Debug.THROW_ERRORS) {
@@ -37,8 +47,12 @@ export class Debug {
 	}
 
 	private static logPIR(clss: string, fnc: string, msg: string = ''): void {
-		if (Debug.LOG_PI_ERRORS)
-			console.log(clss + '.' + fnc + ': ' + msg);
+		if (Debug.LOG_PI_ERRORS) {
+			let message = clss + '.' + fnc;
+			if (msg)
+				message += ': ' + msg;
+			console.log(message);
+		}
 	}
 
 	public static log(...args: any[]): void {

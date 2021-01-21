@@ -51,7 +51,7 @@ export class Debug {
 			let message = clss + '.' + fnc;
 			if (msg)
 				message += ': ' + msg;
-			console.log(message);
+			console.warn(message);
 		}
 	}
 

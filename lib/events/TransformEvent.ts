@@ -13,16 +13,6 @@ export class TransformEvent extends EventBase {
 	/**
 	 *
 	 */
-	public static INVALIDATE_CONCATENATED_MATRIX3D: string = 'invalidateConcatenatedMatrix3D';
-
-	/**
-	 *
-	 */
-	public static UPDATE_CONCATENATED_MATRIX3D: string = 'updateConcatenatedMatrix3D';
-
-	/**
-	 *
-	 */
 	public static INVALIDATE_COLOR_TRANSFORM: string = 'invalidateColorTransform';
 
 	/**

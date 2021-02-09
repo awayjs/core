@@ -1,5 +1,6 @@
 import { AssetEvent } from '../events/AssetEvent';
 import { EventDispatcher } from '../events/EventDispatcher';
+import { AssetBase } from './AssetBase';
 
 import { IAbstractionPool } from './IAbstractionPool';
 import { IAsset } from './IAsset';
@@ -9,7 +10,7 @@ import { UUID } from './UUID';
  *
  * @export class away.pool.AbstractionBase
  */
-export class AbstractionBase extends EventDispatcher {
+export class AbstractionBase extends AssetBase {
 	public _onClearDelegate: (event: AssetEvent) => void;
 	public _onInvalidateDelegate: (event: AssetEvent) => void;
 

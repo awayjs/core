@@ -63,15 +63,12 @@ export class Transform extends EventDispatcher {
 	private _colorTransform: ColorTransform;
 	private _components: Array<Vector3D>;
 	private _componentsDirty: boolean;
-	private _concatenatedMatrix3D: Matrix3D;
-	private _concatenatedMatrix3DDirty: boolean;
 	private _downVector: Vector3D;
 	private _forwardVector: Vector3D;
 	private _invalidateColorTransform: TransformEvent;
-	private _invalidateConcatenatedMatrix3D: TransformEvent;
 	private _invalidateMatrix3D: TransformEvent;
-	private _inverseConcatenatedMatrix3D: Matrix3D = new Matrix3D();
-	private _inverseConcatenatedMatrix3DDirty: boolean;
+	private _inverseMatrix3D: Matrix3D = new Matrix3D();
+	private _inverseMatrix3DDirty: boolean;
 	private _leftVector: Vector3D;
 	private _matrix: Matrix=null;
 	private _matrix3D: Matrix3D;
@@ -83,10 +80,7 @@ export class Transform extends EventDispatcher {
 	private _scale: Vector3D = new Vector3D(1, 1, 1);
 	private _skew: Vector3D = new Vector3D();
 	//temp vector used in global to local
-	private _tempVector3D: Vector3D = new Vector3D();
 	private _upVector: Vector3D;
-
-	private _updateConcatenatedMatrix3D: TransformEvent;
 
 	/**
 	 *
@@ -130,60 +124,16 @@ export class Transform extends EventDispatcher {
 	}
 
 	/**
-	 * A Matrix object representing the combined transformation matrixes of the
-	 * display object and all of its parent objects, back to the root level. If
-	 * different transformation matrixes have been applied at different levels,
-	 * all of those matrixes are concatenated into one matrix for this property.
-	 * Also, for resizeable SWF content running in the browser, this property
-	 * factors in the difference between stage coordinates and window
-	 * coordinates due to window resizing. Thus, the property converts local
-	 * coordinates to window coordinates, which may not be the same coordinate
-	 * space as that of the Stage.
-     */
-	public get concatenatedMatrix(): Matrix {
-		return null;
-	}
-
-	/**
-	 * A Matrix object representing the combined transformation matrixes of the
-	 * display object and all of its parent objects, back to the root level. If
-	 * different transformation matrixes have been applied at different levels,
-	 * all of those matrixes are concatenated into one matrix for this property.
-	 * Also, for resizeable SWF content running in the browser, this property
-	 * factors in the difference between stage coordinates and window
-	 * coordinates due to window resizing. Thus, the property converts local
-	 * coordinates to window coordinates, which may not be the same coordinate
-	 * space as that of the Scene.
-	 */
-	public get concatenatedMatrix3D(): Matrix3D {
-		if (this._concatenatedMatrix3DDirty) {
-			this._concatenatedMatrix3DDirty = false;
-
-			//in cases where concatenated matrix has not been supplied
-			if (this._concatenatedMatrix3D == this._matrix3D && this._matrix3DDirty)
-				this.updateMatrix3D();
-
-			if (!this._updateConcatenatedMatrix3D) {
-				this._updateConcatenatedMatrix3D = new TransformEvent(TransformEvent.UPDATE_CONCATENATED_MATRIX3D,this);
-			}
-
-			this.dispatchEvent(this._updateConcatenatedMatrix3D);
-		}
-
-		return this._concatenatedMatrix3D;
-	}
-
-	/**
 	 *
 	 */
-	public get inverseConcatenatedMatrix3D(): Matrix3D {
-		if (this._inverseConcatenatedMatrix3DDirty) {
-			this._inverseConcatenatedMatrix3DDirty = false;
-			this._inverseConcatenatedMatrix3D.copyFrom(this.concatenatedMatrix3D);
-			this._inverseConcatenatedMatrix3D.invert();
+	public get inverseMatrix3D(): Matrix3D {
+		if (this._inverseMatrix3DDirty) {
+			this._inverseMatrix3DDirty = false;
+			this._inverseMatrix3D.copyFrom(this.matrix3D);
+			this._inverseMatrix3D.invert();
 		}
 
-		return this._inverseConcatenatedMatrix3D;
+		return this._inverseMatrix3D;
 	}
 
 	/**
@@ -269,7 +219,7 @@ export class Transform extends EventDispatcher {
 		this._matrix3D._rawData[13] = value.ty;
 
 		this.invalidateComponents();
-		this.invalidateConcatenatedMatrix3D();
+		this._inverseMatrix3DDirty = true;
 	}
 
 	/**
@@ -316,7 +266,7 @@ export class Transform extends EventDispatcher {
 		}
 
 		this.invalidateComponents();
-		this.invalidateConcatenatedMatrix3D();
+		this._inverseMatrix3DDirty = true;
 	}
 
 	/**
@@ -392,7 +342,7 @@ export class Transform extends EventDispatcher {
 		return this._upVector;
 	}
 
-	constructor(rawData: Float32Array = null, concatenatedMatrix3D: Matrix3D = null) {
+	constructor(rawData: Float32Array = null) {
 		super();
 
 		this._rawData = rawData || new Float32Array(24);
@@ -402,9 +352,6 @@ export class Transform extends EventDispatcher {
 
 		//create the view for colorTransform
 		this._colorTransform = new ColorTransform(new Float32Array(this._rawData.buffer, 64, 8));
-
-		//create the concatenatedMatrix3D if required
-		this._concatenatedMatrix3D = concatenatedMatrix3D || this._matrix3D;
 
 		if (rawData == null) {
 			this._matrix3D.identity();
@@ -511,59 +458,6 @@ export class Transform extends EventDispatcher {
 
 	}
 
-	/**
-	 * Converts the `point` object from the Stage(global) coordinates to the
-	 * display object's(local) coordinates.
-	 *
-	 * To use this method, first create an instance of the Point class. The _x_
-	 * and _y_ values that you assign represent global coordinates because they
-	 * relate to the origin(0,0) of the main display area. Then pass the Point
-	 * instance as the parameter to the `globalToLocal()` method. The method
-	 * returns a new Point object with _x_ and _y_ values that relate to the
-	 * origin of the display object instead of the origin of the Stage.
-	 *
-	 * @param point An object created with the Point class. The Point object
-	 *              specifies the _x_ and _y_ coordinates as properties.
-	 * @return A Point object with coordinates relative to the display object.
-	 */
-	public globalToLocal(point: Point, target: Point = null): Point {
-		this._tempVector3D.setTo(point.x, point.y, 0);
-		//console.log("this._tempVector3D", this._tempVector3D);
-		//console.log("this._transform.inverseConcatenatedMatrix3D", this._transform.inverseConcatenatedMatrix3D);
-		const pos: Vector3D = this.inverseConcatenatedMatrix3D.transformVector(this._tempVector3D, this._tempVector3D);
-
-		//console.log("pos", pos);
-		if (!target)
-			target = new Point();
-
-		target.x = pos.x;
-		target.y = pos.y;
-
-		return target;
-	}
-
-	/**
-	 * Converts a two-dimensional point from the Scene(global) coordinates to a
-	 * three-dimensional display object's(local) coordinates.
-	 *
-	 * <p>To use this method, first create an instance of the Vector3D class. The x,
-	 * y and z values that you assign to the Vector3D object represent global
-	 * coordinates because they are relative to the origin(0,0,0) of the scene. Then
-	 * pass the Vector3D object to the <code>globalToLocal3D()</code> method as the
-	 * <code>position</code> parameter.
-	 * The method returns three-dimensional coordinates as a Vector3D object
-	 * containing <code>x</code>, <code>y</code>, and <code>z</code> values that
-	 * are relative to the origin of the three-dimensional display object.</p>
-	 *
-	 * @param point A Vector3D object representing global x, y and z coordinates in
-	 *              the scene.
-	 * @return A Vector3D object with coordinates relative to the three-dimensional
-	 *         display object.
-	 */
-	public globalToLocal3D(position: Vector3D): Vector3D {
-		return this.inverseConcatenatedMatrix3D.transformVector(position);
-	}
-
 	public invalidateColorTransform(): void {
 		if (!this._invalidateColorTransform) {
 			this._invalidateColorTransform = new TransformEvent(TransformEvent.INVALIDATE_COLOR_TRANSFORM, this);
@@ -578,38 +472,20 @@ export class Transform extends EventDispatcher {
 		this._componentsDirty = true;
 	}
 
-	public invalidateConcatenatedMatrix3D(): void {
-		if (this._concatenatedMatrix3DDirty)
-			return;
-
-		this._concatenatedMatrix3DDirty = true;
-		this._inverseConcatenatedMatrix3DDirty = true;
-
-		if (!this._invalidateConcatenatedMatrix3D) {
-			this._invalidateConcatenatedMatrix3D =
-				new TransformEvent(TransformEvent.INVALIDATE_CONCATENATED_MATRIX3D, this);
-		}
-
-		this.dispatchEvent(this._invalidateConcatenatedMatrix3D);
-	}
-
 	/**
 	 * Invalidates the 3D transformation matrix, causing it to be updated upon the next request
 	 *
 	 * @private
 	 */
 	public invalidateMatrix3D(): void {
-		if (this._concatenatedMatrix3D == this._matrix3D)
-			this.invalidateConcatenatedMatrix3D();
-
+		this._inverseMatrix3DDirty = true;
 		if (this._matrix3DDirty)
 			return;
 
 		this._matrix3DDirty = true;
 
-		if (!this._invalidateMatrix3D) {
+		if (!this._invalidateMatrix3D)
 			this._invalidateMatrix3D = new TransformEvent(TransformEvent.INVALIDATE_MATRIX3D, this);
-		}
 
 		this.dispatchEvent(this._invalidateMatrix3D);
 	}
@@ -618,51 +494,13 @@ export class Transform extends EventDispatcher {
 	 *
 	 */
 	public invalidatePosition(): void {
-		if (this._concatenatedMatrix3D == this._matrix3D)
-			this.invalidateConcatenatedMatrix3D();
-
+		this._inverseMatrix3DDirty = true;
 		this._matrix3D.invalidatePosition();
 
-		if (!this._invalidateMatrix3D) {
+		if (!this._invalidateMatrix3D)
 			this._invalidateMatrix3D = new TransformEvent(TransformEvent.INVALIDATE_MATRIX3D, this);
-		}
 
-		this.dispatchEvent(this._invalidateMatrix3D); //stricty speaking, this should be UPDATE_MATRIX3D
-	}
-
-	/**
-	 * Converts the `point` object from the display object's(local) coordinates
-	 * to the Stage(global) coordinates.
-	 *
-	 * This method allows you to convert any given _x_ and _y_ coordinates from
-	 * values that are relative to the origin(0,0) of a specific display
-	 * object(local coordinates) to values that are relative to the origin of
-	 * the Stage(global coordinates).
-	 *
-	 * To use this method, first create an instance of the Point class. The _x_
-	 * and _y_ values that you assign represent local coordinates because they
-	 * relate to the origin of the display object.
-	 *
-	 * You then pass the Point instance that you created as the parameter to the
-	 * `localToGlobal()` method. The method returns a new Point object with _x_
-	 * and _y_ values that relate to the origin of the Stage instead of the
-	 * origin of the display object.
-	 *
-	 * @param point The name or identifier of a point created with the Point
-	 *              class, specifying the _x_ and _y_ coordinates as properties.
-	 * @return A Point object with coordinates relative to the Stage.
-	 */
-	public localToGlobal(point: Point, target: Point = null): Point {
-		this._tempVector3D.setTo(point.x, point.y, 0);
-		const pos: Vector3D = this.concatenatedMatrix3D.transformVector(this._tempVector3D, this._tempVector3D);
-
-		if (!target)
-			target = new Point();
-
-		target.x = pos.x;
-		target.y = pos.y;
-
-		return target;
+		this.dispatchEvent(this._invalidateMatrix3D);
 	}
 
 	/**

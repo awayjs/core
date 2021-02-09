@@ -17,16 +17,20 @@ export class AssetBase extends EventDispatcher implements IAsset, IAssetAdapter 
 	private _originalName: string;
 	private _namespace: string;
 	private _name: string;
-	private _id: number;
 	private _full_path: Array<string>;
 	private _abstractionPool: Record<number, AbstractionBase> = {};
 
 	public static DEFAULT_NAMESPACE: string = 'default';
 
+	/**
+	 * A unique id for the asset, used to identify assets in an associative array
+	 */
+	public readonly id: number;
+
 	constructor(name: string = null) {
 		super();
 
-		this._id = UUID.Next();
+		this.id = UUID.Next();
 
 		if (name == null)
 			name = 'null';
@@ -67,13 +71,6 @@ export class AssetBase extends EventDispatcher implements IAsset, IAssetAdapter 
 	 */
 	public get originalName(): string {
 		return this._originalName;
-	}
-
-	/**
-	 * A unique id for the asset, used to identify assets in an associative array
-	 */
-	public get id(): number {
-		return this._id;
 	}
 
 	public get name(): string {

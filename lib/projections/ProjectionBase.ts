@@ -55,13 +55,13 @@ export class ProjectionBase extends EventDispatcher {
 			return;
 
 		if (this._transform)
-			this._transform.removeEventListener(TransformEvent.INVALIDATE_CONCATENATED_MATRIX3D,
+			this._transform.removeEventListener(TransformEvent.INVALIDATE_MATRIX3D,
 				this._onInvalidateConcatenatedMatrix3DDelegate);
 
 		this._transform = value;
 
 		if (this._transform)
-			this._transform.addEventListener(TransformEvent.INVALIDATE_CONCATENATED_MATRIX3D,
+			this._transform.addEventListener(TransformEvent.INVALIDATE_MATRIX3D,
 				this._onInvalidateConcatenatedMatrix3DDelegate);
 
 		this._invalidateViewMatrix3D();
@@ -176,7 +176,7 @@ export class ProjectionBase extends EventDispatcher {
 			vfc[14] = vfc[17] = vfc[20] = vfc[23] = far;
 
 			if (this._transform)
-				this._transform.concatenatedMatrix3D.transformVectors(vfc, vfc);
+				this._transform.matrix3D.transformVectors(vfc, vfc);
 		}
 
 		return this._viewFrustumCorners;
@@ -388,7 +388,7 @@ export class ProjectionBase extends EventDispatcher {
 			this._viewMatrix3DDirty = false;
 
 			if (this._transform) {
-				this._viewMatrix3D.copyFrom(this._transform.inverseConcatenatedMatrix3D);
+				this._viewMatrix3D.copyFrom(this._transform.inverseMatrix3D);
 				this._viewMatrix3D.append(this.frustumMatrix3D);
 			} else {
 				this._viewMatrix3D.copyFrom(this.frustumMatrix3D);

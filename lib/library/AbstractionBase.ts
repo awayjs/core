@@ -1,5 +1,4 @@
 import { AssetEvent } from '../events/AssetEvent';
-import { EventDispatcher } from '../events/EventDispatcher';
 import { AssetBase } from './AssetBase';
 
 import { IAbstractionPool } from './IAbstractionPool';

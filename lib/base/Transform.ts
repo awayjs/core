@@ -3,7 +3,6 @@ import { TransformEvent } from '../events/TransformEvent';
 
 import { Matrix } from '../geom/Matrix';
 import { Matrix3D } from '../geom/Matrix3D';
-import { Point } from '../geom/Point';
 import { Rectangle } from '../geom/Rectangle';
 import { Vector3D } from '../geom/Vector3D';
 

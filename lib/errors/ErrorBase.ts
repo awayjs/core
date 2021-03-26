@@ -1,10 +1,11 @@
-export class ErrorBase {
+export class ErrorBase extends Error {
 
 	private _errorID: number = 0;   //Contains the reference number associated with the specific error message.
 	private _messsage: string = '';  //Contains the message associated with the Error object.
 	private _name: string = '';  // Contains the name of the Error object.
 
 	constructor(message: string = '', id: number = 0, name: string = '') {
+		super(message);
 
 		this._messsage = message;
 		this._name = name;

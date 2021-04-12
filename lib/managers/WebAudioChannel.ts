@@ -5,8 +5,7 @@ export class WebAudioChannel {
 
 	public static _decodeCache: Object = new Object();
 	public static _errorCache: Object = new Object();
-
-	public static _audioCtx;
+	public static _audioCtx: AudioContext;
 
 	public static getAudioContext() {
 		if (!WebAudioChannel._audioCtx && (window['AudioContext'] || window['webkitAudioContext']))
@@ -18,12 +17,12 @@ export class WebAudioChannel {
 		return WebAudioChannel._audioCtx;
 	}
 
-	private _audioCtx;
+	private _audioCtx: AudioContext;
 	private _usingNativePanner: boolean;
 
-	private _gainNode;
-	private _pannerNode;
-	private _source;
+	private _gainNode: GainNode;
+	private _pannerNode: PannerNode | StereoPannerNode;
+	private _source: AudioBufferSourceNode;
 
 	private _isPlaying: boolean = false;
 	private _isLooping: boolean = false;
@@ -31,7 +30,7 @@ export class WebAudioChannel {
 	private _currentTime: number;
 	private _id: number;
 	private _volume: number = 1;
-	private _pan: number = 0;
+	private _pan: number = -1;
 	private _groupID: number = 0;
 	private _groupVolume: number = 1;
 	private _groupPan: number = 0;
@@ -138,10 +137,12 @@ export class WebAudioChannel {
 
 		this._pan = value;
 
-		if (this._usingNativePanner)
+		if (this._pannerNode instanceof window.StereoPannerNode) {
 			this._pannerNode.pan.value = this._pan;
-		else
-			this._pannerNode.setPosition(Math.sin(this._pan * (Math.PI / 2)), 0, Math.cos(this._pan * (Math.PI / 2)));
+		} else {
+			const pan = this._pan * (Math.PI / 2);
+			this._pannerNode.setPosition(Math.sin(pan), 0,Math.cos(pan));
+		}
 	}
 
 	public isPlaying(): boolean {
@@ -172,10 +173,7 @@ export class WebAudioChannel {
 			this._audioCtx.createStereoPanner() :
 			this._audioCtx.createPanner();
 
-		if (this._usingNativePanner)
-			this._pannerNode.pan.value = this._pan;
-		else
-			this._pannerNode.setPosition(Math.sin(this._pan * (Math.PI / 2)), 0, Math.cos(this._pan * (Math.PI / 2)));
+		this.pan = 0;
 
 		this._gainNode.connect(this._pannerNode);
 		this._pannerNode.connect(this._audioCtx.destination);
@@ -199,15 +197,21 @@ export class WebAudioChannel {
 		this._isDecoding = true;
 		buffer = buffer.slice(0);
 		//fast path for short sounds
-		if (WebAudioChannel._decodeCache[id])
+		if (WebAudioChannel._decodeCache[id]) {
 			this._onDecodeComplete(WebAudioChannel._decodeCache[id]);
-		else if (!WebAudioChannel._errorCache[id])
-			this._audioCtx.decodeAudioData(
-				buffer,
-				(buffer) => this._onDecodeComplete(buffer), (event) => this._onError(event)
-			);
-		else
+		} else if (!WebAudioChannel._errorCache[id]) {
+			try {
+				this._audioCtx.decodeAudioData(
+					buffer,
+					(buffer) => this._onDecodeComplete(buffer),
+					(event) => this._onError(event)
+				);
+			} catch (e) {
+				this._onError(e);
+			}
+		} else {
 			this.stop();
+		}
 	}
 
 	public stop(): void {
@@ -227,17 +231,17 @@ export class WebAudioChannel {
 			this._disposeSource();
 	}
 
-	public _onDecodeComplete(buffer): void {
+	public _onDecodeComplete(buffer: AudioBuffer): void {
 		if (!this._isPlaying)
 			return;
 
 		this._isDecoding = false;
 
-		//if (buffer.duration < 2) //cache all buffers?
-		WebAudioChannel._decodeCache[this._id] = buffer;
-
 		if (this._source)
 			this._disposeSource();
+
+		//if (buffer.duration < 2) //cache all buffers?
+		WebAudioChannel._decodeCache[this._id] = buffer;
 
 		this._source = this._audioCtx.createBufferSource();
 
@@ -249,14 +253,18 @@ export class WebAudioChannel {
 		this._pan = 0;
 		this._startTime = this._audioCtx.currentTime - this._currentTime;
 		this._source.onended = this._onEndedDelegate;
+
 		try {
-			this._gainNode.gain.value = this._groupVolume * this._volume;
-			if (this._usingNativePanner)
-				this._pannerNode.pan.value = this._pan;
-			else
-				this._pannerNode.setPosition(Math.sin(this._pan * (Math.PI / 2)),
-					0,
-					Math.cos(this._pan * (Math.PI / 2)));
+			// retrig setter by reset cache
+			const vol = this._groupVolume;
+			const pan = this._pan;
+
+			this._groupVolume = -1;
+			this._pan = -1;
+
+			this.groupVolume = vol;
+			this.pan = pan;
+
 			// TODO: offset / startTime make problem in dino-run game:
 			this._source.start(this._audioCtx.currentTime, this._currentTime);
 		} catch (error) {
@@ -265,13 +273,13 @@ export class WebAudioChannel {
 		}
 	}
 
-	public _onError(event): void {
-		console.log('Error with decoding audio data');
+	public _onError(_event: any): void {
+		console.log('Error with decoding audio data:', _event);
 		WebAudioChannel._errorCache[this._id] = true;
 		this.stop();
 	}
 
-	private _onEnded(event): void {
+	private _onEnded(_event: any): void {
 		if (this.onSoundComplete) {
 			this.onSoundComplete();
 		}

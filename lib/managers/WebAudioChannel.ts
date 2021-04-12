@@ -187,6 +187,11 @@ export class WebAudioChannel {
 		this._isPlaying = true;
 		this._isLooping = loop;
 
+		if (buffer.byteLength === 0) {
+			console.warn('[WabAudioChannel] Input buffer is empty');
+			return;
+		}
+
 		this._currentTime = offset;
 		//console.log("play with offset time", offset)
 		this._id = id;

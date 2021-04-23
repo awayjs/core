@@ -26,7 +26,7 @@
     "prebuild": "npm run clean:dist",
     "build": "npm run tsc:build && npm run rollup && npm run uglifyjs",
     "copyVersionToIndex": "node ./copyVersionToIndex && git add ./index.ts && git commit -m \"update version number in index.ts\"",
-    "preversion": "npm run gitdiff && npm run eslint:commit",
+    "preversion": "npm run gitdiff && npm run eslint:commit || exit 0",
     "version": "npm run copyVersionToIndex && npm run build",
     "postversion": "git push && git push --tags && npm publish"
   },

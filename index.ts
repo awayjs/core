@@ -1,5 +1,5 @@
 
-console.debug("AwayJS - Core - 0.9.23");
+console.debug("AwayJS - Core - 0.9.24");
 
 import "./lib/base/Maps";
 import "./lib/base/Numbers";

@@ -137,8 +137,8 @@ export class WebAudioChannel {
 
 		this._pan = value;
 
-		if (this._pannerNode instanceof window.StereoPannerNode) {
-			this._pannerNode.pan.value = this._pan;
+		if (this._usingNativePanner) {
+			(<StereoPannerNode> this._pannerNode).pan.value = this._pan;
 		} else {
 			const pan = this._pan * (Math.PI / 2);
 			this._pannerNode.setPosition(Math.sin(pan), 0,Math.cos(pan));

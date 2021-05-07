@@ -1,5 +1,6 @@
 import { ParserUtils } from '../parsers/ParserUtils';
-export class EventAudioChannel {
+import { IAudioChannel } from './IAudioChannel';
+export class EventAudioChannel implements IAudioChannel {
 	public static maxChannels: number = 4;
 
 	public static _channels: Array<EventAudioChannel> = new Array<EventAudioChannel>();

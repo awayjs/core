@@ -1,4 +1,6 @@
-export class StreamingAudioChannel {
+import { IAudioChannel } from './IAudioChannel';
+
+export class StreamingAudioChannel implements IAudioChannel {
 	public static maxChannels: number = 4;
 
 	public static _channels: Array<StreamingAudioChannel> = new Array<StreamingAudioChannel>();

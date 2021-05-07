@@ -181,17 +181,21 @@ export class WaveAudio extends AssetBase {
 
 	public clone(): WaveAudio {
 		const newInstance: WaveAudio = new WaveAudio(this._data);
-
 		newInstance.name = this.name;
-
 		return newInstance;
 	}
 }
 
+export interface IWaveAudioMeta {
+	samplesCount?: number; // real samples count, required for MP3 looping
+	sampleRate?: number; // original rate, MUST BE SETTED when startOffset is present
+	startOffset?: number; // silent region, for mp3 looping, in samples
+}
 export class WaveAudioData {
 	private _loading: boolean;
 	private _blob: Blob;
 	private _buffer: ArrayBuffer;
+	public readonly meta?: IWaveAudioMeta;
 
 	public get size(): number {
 		if (this._buffer)
@@ -202,7 +206,7 @@ export class WaveAudioData {
 
 	public play(audioChannel: IAudioChannel, offset: number, loop: boolean, id: number): void {
 		if (this._buffer) {
-			audioChannel.play(this._buffer, offset, loop, id);
+			audioChannel.play(this._buffer, offset, loop, id, this.meta);
 		} else if (!this._loading) {
 			this._loading = true;
 			const fileReader = new FileReader();
@@ -211,17 +215,23 @@ export class WaveAudioData {
 		}
 	}
 
-	constructor(data: ArrayBuffer | ByteArray | Blob) {
+	constructor(data: ArrayBuffer | ByteArray | Blob, meta?: IWaveAudioMeta) {
 		if (data instanceof Blob) {
 			this._blob = data;
+		} else if (data instanceof ByteArray) {
+			this._buffer = data.arraybytes;
+		} else if (ArrayBuffer.isView(data)) {
+			this._buffer = data.buffer;
 		} else {
-			this._buffer = (data instanceof ByteArray) ? data.arraybytes : data;
+			this._buffer = data;
 		}
+
+		this.meta = meta;
 	}
 
 	private _blobConverted(event, audioChannel: IAudioChannel, offset: number, loop: boolean, id: number) {
 		this._buffer = event.target.result;
 
-		audioChannel.play(this._buffer, offset, loop, id);
+		audioChannel.play(this._buffer, offset, loop, id, this.meta);
 	}
 }

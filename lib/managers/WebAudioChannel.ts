@@ -1,4 +1,7 @@
-export class WebAudioChannel {
+import { IWaveAudioMeta } from '../audio/WaveAudio';
+import { IAudioChannel } from './IAudioChannel';
+
+export class WebAudioChannel implements IAudioChannel {
 	public static maxChannels: number = 64; // for icycle: 128;
 
 	public static _channels: Array<WebAudioChannel> = new Array<WebAudioChannel>();
@@ -7,9 +10,19 @@ export class WebAudioChannel {
 	public static _errorCache: Object = new Object();
 	public static _audioCtx: AudioContext;
 
+	public static getOfflineContext (channels: number = 1, samples: number = 0, rate: number = 44100) {
+		// eslint-disable-next-line max-len
+		const Context = <typeof OfflineAudioContext> (self.OfflineAudioContext || (<any>self).webkitOfflineAudioContext);
+
+		return Context ? new Context(channels, samples, rate) : null;
+	}
+
 	public static getAudioContext() {
-		if (!WebAudioChannel._audioCtx && (window['AudioContext'] || window['webkitAudioContext']))
-			WebAudioChannel._audioCtx = new (window['AudioContext'] || window['webkitAudioContext'])();
+		// eslint-disable-next-line max-len
+		const Context = <typeof AudioContext> (self.AudioContext || (<any>self).webkitAudioContext);
+
+		if (!WebAudioChannel._audioCtx && Context)
+			WebAudioChannel._audioCtx = new Context();
 
 		if (WebAudioChannel._audioCtx && WebAudioChannel._audioCtx.state == 'suspended')
 			WebAudioChannel._audioCtx.resume();
@@ -36,6 +49,7 @@ export class WebAudioChannel {
 	private _groupPan: number = 0;
 	private _startTime: number = 0;
 	private _duration: number;
+
 	public onSoundComplete: Function;
 
 	private _onEndedDelegate: (event: any) => void;
@@ -181,34 +195,30 @@ export class WebAudioChannel {
 		this._onEndedDelegate = (event) => this._onEnded(event);
 	}
 
-	public play(buffer: ArrayBuffer, offset: number = 0, loop: boolean = false, id: number = 0): void {
-		this._isPlaying = true;
-		this._isLooping = loop;
+	public play(
+		buffer: ArrayBuffer,
+		offset: number = 0,
+		loop: boolean = false,
+		id: number = 0,
+		meta?: IWaveAudioMeta
+	): void {
 
 		if (buffer.byteLength === 0) {
 			console.warn('[WabAudioChannel] Input buffer is empty');
 			return;
 		}
 
+		this._isPlaying = true;
+		this._isLooping = loop;
 		this._currentTime = offset;
-		//console.log("play with offset time", offset)
 		this._id = id;
-
 		this._isDecoding = true;
-		buffer = buffer.slice(0);
+
 		//fast path for short sounds
 		if (WebAudioChannel._decodeCache[id]) {
-			this._onDecodeComplete(WebAudioChannel._decodeCache[id]);
+			this.executeBuffer(WebAudioChannel._decodeCache[id]);
 		} else if (!WebAudioChannel._errorCache[id]) {
-			try {
-				this._audioCtx.decodeAudioData(
-					buffer,
-					(buffer) => this._onDecodeComplete(buffer),
-					(event) => this._onError(event)
-				);
-			} catch (e) {
-				this._onError(e);
-			}
+			this._decodeAndExecute(buffer, meta);
 		} else {
 			this.stop();
 		}
@@ -231,20 +241,63 @@ export class WebAudioChannel {
 			this._disposeSource();
 	}
 
-	public _onDecodeComplete(buffer: AudioBuffer): void {
+	private _decodeAndExecute(buffer: ArrayBuffer, meta?: IWaveAudioMeta) {
+		let ctx: AudioContext | OfflineAudioContext = this._audioCtx;
+
+		// try to transcode to RIGHT target
+		// with RIGHT sample rate, to increse quality
+		try {
+			if (meta && meta.sampleRate && meta.sampleRate !== this._audioCtx.sampleRate && meta.samplesCount) {
+				ctx = WebAudioChannel.getOfflineContext(2, meta.samplesCount + meta.startOffset, meta.sampleRate);
+			}
+		} catch (e) {
+			console.warn('[WebAudioChanell] Error when try create Offline Context:',e.message, meta);
+		}
+
+		const promise = ctx.decodeAudioData(
+			buffer.slice(0),
+			(buffer) => this._onDecodeComplete(buffer, meta),
+			(event) => this._onError(event)
+		);
+
+		// when decodeAudioData is Promise - it not emit error to callback, need catch promise
+		// @ts-ignore
+		if (promise instanceof self.Promise) {
+			promise.catch((e) => this._onError(e));
+		}
+	}
+
+	public _onDecodeComplete(buffer: AudioBuffer, meta: IWaveAudioMeta): void {
+		if (!WebAudioChannel._decodeCache[this._id]) {
+
+			// transform mp3 buffer, because it has silent regions
+			// IS VERY IMPORTANT FOR FLASH
+			if (meta && meta.startOffset > 0) {
+				buffer = this.removeSilent(
+					buffer,
+					meta.startOffset,
+					meta.samplesCount,
+					meta.sampleRate
+				);
+			}
+
+			WebAudioChannel._decodeCache[this._id] = buffer;
+		}
+
+		buffer = WebAudioChannel._decodeCache[this._id];
+
 		if (!this._isPlaying)
 			return;
 
-		this._isDecoding = false;
+		this.executeBuffer(buffer);
+	}
 
+	private executeBuffer (buffer: AudioBuffer) {
 		if (this._source)
 			this._disposeSource();
 
-		//if (buffer.duration < 2) //cache all buffers?
-		WebAudioChannel._decodeCache[this._id] = buffer;
-
+		this._isDecoding = false;
 		this._source = this._audioCtx.createBufferSource();
-
 		this._source.loop = this._isLooping;
 		this._source.connect(this._gainNode);
 
@@ -268,14 +321,17 @@ export class WebAudioChannel {
 			// TODO: offset / startTime make problem in dino-run game:
 			this._source.start(this._audioCtx.currentTime, this._currentTime);
 		} catch (error) {
-			console.log('Error starting audio: ' + error);
+			console.warn('[WebAudioChannel] Error starting audio: ' + error);
 			this._disposeSource();
 		}
 	}
 
 	public _onError(_event: any): void {
-		console.log('Error with decoding audio data:', _event);
+		console.warn('[WebAudioChannel] Error with decoding audio data:', _event);
+
 		WebAudioChannel._errorCache[this._id] = true;
+
+		this._isDecoding = false;
 		this.stop();
 	}
 
@@ -283,6 +339,7 @@ export class WebAudioChannel {
 		if (this.onSoundComplete) {
 			this.onSoundComplete();
 		}
+
 		this.stop();
 	}
 
@@ -291,9 +348,39 @@ export class WebAudioChannel {
 		this._source.onended = null;
 		this._source.stop(this._audioCtx.currentTime);
 		this._source.disconnect();
-		// delete this._source.buffer;
-		// delete this._source;
 		this._source = null;
+	}
+
+	private removeSilent (
+		buffer: AudioBuffer,
+		begin: number = 0,
+		length: number = 0,
+		originalRate: number = 0
+	): AudioBuffer {
+
+		length = length || buffer.length;
+		originalRate = originalRate || buffer.sampleRate;
+
+		// we should transform to buffer rate
+		begin = Math.ceil ((buffer.sampleRate * begin) / originalRate);
+		length = ((buffer.sampleRate * length) / originalRate) | 0;
+
+		const end = Math.min(buffer.length, length + begin);
+
+		const res = this._audioCtx.createBuffer(
+			buffer.numberOfChannels,
+			length,
+			buffer.sampleRate,
+		);
+
+		for (let i = 0; i < buffer.numberOfChannels; i++) {
+			// interate over channels and copy part of channel
+			res.copyToChannel(
+				buffer.getChannelData(i).subarray(begin, end), i, 0
+			);
+		}
+
+		return res;
 	}
 }
 

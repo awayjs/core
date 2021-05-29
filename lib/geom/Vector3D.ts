@@ -206,13 +206,17 @@ export class Vector3D {
 		return new Vector3D(raw[0], raw[1], raw[2], raw[3]);
 	}
 
-	public static combine(a: Vector3D, b: Vector3D, ascl: number, bscl: number): Vector3D {
+	public static combine(a: Vector3D, b: Vector3D, ascl: number, bscl: number, target?: Vector3D): Vector3D {
 		const rawA: Float32Array = a._rawData;
 		const rawB: Float32Array = b._rawData;
 
-		return new Vector3D(rawA[0] * ascl + rawB[0] * bscl,
+		target = target || new Vector3D();
+		target.setTo(
+			rawA[0] * ascl + rawB[0] * bscl,
 			rawA[1] * ascl + rawB[1] * bscl,
-			rawA[2] * ascl + rawB[2] * bscl);
+			rawA[2] * ascl + rawB[2] * bscl, 1);
+
+		return target;
 	}
 
 	/**

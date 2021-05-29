@@ -611,6 +611,10 @@ export class Matrix3D {
 		}
 	}
 
+	private static COL_X = new Vector3D();
+	private static COL_Y = new Vector3D();
+	private static COL_Z = new Vector3D();
+
 	/**
 	 * Returns the transformation matrix's translation, rotation, and scale
 	 * settings as a Vector of three Vector3D objects.
@@ -619,12 +623,18 @@ export class Matrix3D {
 		if (this._components == null)
 			this._components = [new Vector3D(), new Vector3D(), new Vector3D(), new Vector3D()];
 
-		const colX: Vector3D = new Vector3D(this._rawData[0], this._rawData[1], this._rawData[2]);
-		let colY: Vector3D = new Vector3D(this._rawData[4], this._rawData[5], this._rawData[6]);
-		let colZ: Vector3D = new Vector3D(this._rawData[8], this._rawData[9], this._rawData[10]);
+		/// use TMP for avoid realocation
+		const colX =  Matrix3D.COL_X;
+		colX.setTo(this._rawData[0], this._rawData[1], this._rawData[2]);
 
-		const scale: Vector3D = this._components[3];
-		const skew: Vector3D = this._components[2];
+		const colY = Matrix3D.COL_Y;
+		colY.setTo(this._rawData[4], this._rawData[5], this._rawData[6]);
+
+		const colZ = Matrix3D.COL_Z;
+		colZ.setTo(this._rawData[8], this._rawData[9], this._rawData[10]);
+
+		const scale = this._components[3];
+		const skew = this._components[2];
 
 		//compute X scale factor and normalise colX
 		scale.x = colX.length;
@@ -632,7 +642,7 @@ export class Matrix3D {
 
 		//compute XY shear factor and make colY orthogonal to colX
 		skew.x = colX.dotProduct(colY);
-		colY = Vector3D.combine(colY, colX, 1, -skew.x);
+		Vector3D.combine(colY, colX, 1, -skew.x, colY);
 
 		//compute Y scale factor and normalise colY
 		scale.y = colY.length;
@@ -641,9 +651,9 @@ export class Matrix3D {
 
 		//compute XZ and YZ shears and make colZ orthogonal to colX and colY
 		skew.y = colX.dotProduct(colZ);
-		colZ = Vector3D.combine(colZ, colX, 1, -skew.y);
+		Vector3D.combine(colZ, colX, 1, -skew.y, colZ);
 		skew.z = colY.dotProduct(colZ);
-		colZ = Vector3D.combine(colZ, colY, 1, -skew.z);
+		Vector3D.combine(colZ, colY, 1, -skew.z, colZ);
 
 		//compute Z scale and normalise colZ
 		scale.z = colZ.length;

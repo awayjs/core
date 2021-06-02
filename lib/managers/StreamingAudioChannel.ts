@@ -148,6 +148,11 @@ export class StreamingAudioChannel implements IAudioChannel {
 
 	}
 
+	public restart(): boolean {
+		console.warn('[StreamingAudioChannel] Restart not implemented');
+		return  false;
+	}
+
 	public play(buffer: ArrayBuffer, offset: number = 0, loop: boolean = false): void {
 		this._isPlaying = true;
 

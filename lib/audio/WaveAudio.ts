@@ -144,7 +144,7 @@ export class WaveAudio extends AssetBase {
 		this.stop();
 	}
 
-	public play(offset: number, loop: boolean = false): void {
+	public play(offset: number, loop: boolean = false): IAudioChannel {
 		this._isPlaying = true;
 
 		this._audioChannel = AudioManager.getChannel(this._data.size, this.channelGroup);
@@ -156,6 +156,8 @@ export class WaveAudio extends AssetBase {
 			this._audioChannel.onSoundComplete = () => this._soundCompleteInternal();
 			this._data.play(this._audioChannel, offset, loop, this.id);
 		}
+
+		return  this._audioChannel;
 	}
 
 	public set onSoundComplete(value: Function) {

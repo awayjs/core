@@ -133,6 +133,11 @@ export class EventAudioChannel implements IAudioChannel {
 		this._audio.ontimeupdate = (event) => this._onTimeUpdate(event);
 	}
 
+	public restart() {
+		this._audio && this._audio.play();
+		return this._isPlaying = !!this._audio;
+	}
+
 	public play(buffer: ArrayBuffer, offset: number = 0, loop: boolean = false, id: number = 0): void {
 		this._isPlaying = true;
 		this._isLooping = loop;
@@ -177,11 +182,11 @@ export class EventAudioChannel implements IAudioChannel {
 	private _onTimeUpdate(event): void {
 		//TODO: more accurate end detection
 		if (!this._isLooping && this._audio.duration < this._audio.currentTime - this._startTime + 0.1) {
+			this.stop();
 
 			if (this.onSoundComplete) {
 				this.onSoundComplete();
 			}
-			this.stop();
 		}
 	}
 }

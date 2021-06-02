@@ -195,6 +195,14 @@ export class WebAudioChannel implements IAudioChannel {
 		this._onEndedDelegate = (event) => this._onEnded(event);
 	}
 
+	public restart() {
+		const buffer = WebAudioChannel._decodeCache[this._id];
+
+		buffer && this.executeBuffer(buffer);
+
+		return this._isPlaying = !!buffer;
+	}
+
 	public play(
 		buffer: ArrayBuffer,
 		offset: number = 0,
@@ -336,11 +344,11 @@ export class WebAudioChannel implements IAudioChannel {
 	}
 
 	private _onEnded(_event: any): void {
+		this.stop();
+
 		if (this.onSoundComplete) {
 			this.onSoundComplete();
 		}
-
-		this.stop();
 	}
 
 	private _disposeSource(): void {

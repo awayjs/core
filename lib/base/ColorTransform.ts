@@ -41,6 +41,16 @@ import { ColorUtils } from '../utils/ColorUtils';
  * that are attached to the movie clip.</p>
  */
 export class ColorTransform {
+
+	private _isDirty = false;
+	public get isDirty() {
+		return this._isDirty;
+	}
+
+	public get isIdentity() {
+		return !this._isDirty;
+	}
+
 	public _rawData: Float32Array;
 
 	public concat(second: ColorTransform): void {
@@ -52,6 +62,8 @@ export class ColorTransform {
 		this._rawData[5] += second._rawData[5];
 		this._rawData[6] += second._rawData[6];
 		this._rawData[7] += second._rawData[7];
+
+		this._isDirty = this._isDirty || second._isDirty;
 	}
 
 	/**
@@ -69,6 +81,8 @@ export class ColorTransform {
 
 	public set alphaMultiplier(value: number) {
 		this._rawData[3] = value;
+
+		this._isDirty = this._isDirty || value !== 1;
 	}
 
 	/**
@@ -82,6 +96,8 @@ export class ColorTransform {
 
 	public set alphaOffset(value: number) {
 		this._rawData[7] = value;
+
+		this._isDirty = this._isDirty || value !== 0;
 	}
 
 	/**
@@ -93,6 +109,8 @@ export class ColorTransform {
 
 	public set blueMultiplier(value: number) {
 		this._rawData[2] = value;
+
+		this._isDirty = this._isDirty || value !== 1;
 	}
 
 	/**
@@ -105,6 +123,8 @@ export class ColorTransform {
 
 	public set blueOffset(value: number) {
 		this._rawData[6] = value;
+
+		this._isDirty = this._isDirty || value !== 0;
 	}
 
 	/**
@@ -116,6 +136,8 @@ export class ColorTransform {
 
 	public set greenMultiplier(value: number) {
 		this._rawData[1] = value;
+
+		this._isDirty = this._isDirty || value !== 1;
 	}
 
 	/**
@@ -128,6 +150,8 @@ export class ColorTransform {
 
 	public set greenOffset(value: number) {
 		this._rawData[5] = value;
+
+		this._isDirty = this._isDirty || value !== 0;
 	}
 
 	/**
@@ -139,6 +163,8 @@ export class ColorTransform {
 
 	public set redMultiplier(value: number) {
 		this._rawData[0] = value;
+
+		this._isDirty = this._isDirty || value !== 1;
 	}
 
 	/**
@@ -151,6 +177,8 @@ export class ColorTransform {
 
 	public set redOffset(value: number) {
 		this._rawData[4] = value;
+
+		this._isDirty = this._isDirty || value !== 0;
 	}
 
 	/**
@@ -187,6 +215,8 @@ export class ColorTransform {
 		this._rawData[0] = 0;
 		this._rawData[1] = 0;
 		this._rawData[2] = 0;
+
+		this._isDirty = true;
 	}
 
 	/**
@@ -243,6 +273,9 @@ export class ColorTransform {
 		targetData[5] = sourceData[5];
 		targetData[6] = sourceData[6];
 		targetData[7] = sourceData[7];
+
+		// todo deep check
+		this._isDirty = true;
 	}
 
 	public clear() {
@@ -254,6 +287,8 @@ export class ColorTransform {
 		this._rawData[5] = 0;
 		this._rawData[6] = 0;
 		this._rawData[7] = 0;
+
+		this._isDirty = false;
 	}
 
 	public clone(): ColorTransform {
@@ -275,6 +310,8 @@ export class ColorTransform {
 		targetData[5] = sourceData[5];
 		targetData[6] = sourceData[6];
 		targetData[7] = sourceData[7];
+
+		this._isDirty = source._isDirty;
 	}
 
 	public copyTo(target: ColorTransform) {
@@ -291,6 +328,8 @@ export class ColorTransform {
 		this.greenMultiplier *= ct.greenMultiplier;
 		this.blueMultiplier *= ct.blueMultiplier;
 		this.alphaMultiplier *= ct.alphaMultiplier;
+
+		this._isDirty = this._isDirty || ct._isDirty;
 	}
 
 	public _isRenderable(): boolean {

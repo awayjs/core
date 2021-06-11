@@ -96,11 +96,11 @@ export abstract class BaseAudioChannel extends EventDispatcher implements IAudio
 	 * @protected
 	 */
 	protected tryRestartLoop(): boolean {
+		this._loops--;
+
 		if (this._loops <= 0) {
 			return  false;
 		}
-
-		this._loops--;
 
 		if (this.restart()) {
 			return true;

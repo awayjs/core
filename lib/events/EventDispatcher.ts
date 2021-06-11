@@ -7,7 +7,7 @@ import { EventBase } from './EventBase';
 *
 */
 export class EventDispatcher {
-	private _listenerObjects: Array<ListenerObject> = new Array<ListenerObject>();
+	private _listenerObjects: Record<string, ListenerObject> = {};
 	private _t: any;
 
 	constructor(target: any = null) {
@@ -17,8 +17,8 @@ export class EventDispatcher {
 	/**
 	 * Add an event listener
 	 * @method addEventListener
-	 * @param {String} Name of event to add a listener for
-	 * @param {Function} Callback function
+	 * @param {String} type of event to add a listener for
+	 * @param {Function} listener function
 	 */
 	public addEventListener(type: string, listener: (event: EventBase) => void): void {
 		let l: ListenerObject = this._listenerObjects[type];
@@ -32,8 +32,8 @@ export class EventDispatcher {
 	/**
 	 * Remove an event listener
 	 * @method removeEventListener
-	 * @param {String} Name of event to remove a listener for
-	 * @param {Function} Callback function
+	 * @param {String} type of event to remove a listener for
+	 * @param {Function} listener function
 	 */
 	public removeEventListener(type: string, listener: (event: EventBase) => void): void {
 		const l: ListenerObject = this._listenerObjects[type];
@@ -49,7 +49,7 @@ export class EventDispatcher {
 	/**
 	 * Dispatch an event
 	 * @method dispatchEvent
-	 * @param {Event} Event to dispatch
+	 * @param {Event} event to dispatch
 	 */
 	public dispatchEvent(event: EventBase): void {
 		const l: ListenerObject = this._listenerObjects[event.type];
@@ -63,8 +63,8 @@ export class EventDispatcher {
 	/**
 	 * check if an object has an event listener assigned to it
 	 * @method hasListener
-	 * @param {String} Name of event to remove a listener for
-	 * @param {Function} Callback function
+	 * @param {String} type of event to remove a listener for
+	 * @param {Function} listener function
 	 */
 	public hasEventListener(type: string, listener?: (event: EventBase) => void): boolean {
 		if (this._listenerObjects[type] === undefined)
@@ -74,6 +74,10 @@ export class EventDispatcher {
 			return this._listenerObjects[type].getEventListenerIndex(listener) !== -1;
 
 		return this._listenerObjects[type].numListeners > 0;
+	}
+
+	protected removeAllEventListeners() {
+		this._listenerObjects = {};
 	}
 }
 
@@ -123,8 +127,7 @@ export class ListenerObject {
 	/**
 	 * get Event Listener Index in array. Returns -1 if no listener is added
 	 * @method getEventListenerIndex
-	 * @param {String} Name of event to remove a listener for
-	 * @param {Function} Callback function
+	 * @param {Function} listener function
 	 */
 	public getEventListenerIndex(listener: (event: EventBase) => void): number {
 		return this._listeners.indexOf(listener);

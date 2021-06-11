@@ -1,8 +1,8 @@
-import { StreamingAudioChannel } from '../managers/StreamingAudioChannel';
-import { WebAudioChannel } from '../managers/WebAudioChannel';
-import { IAudioChannel } from '../managers/IAudioChannel';
-import { EventAudioChannel } from '../managers/EventAudioChannel';
-import { IAudioChannelClass } from '../managers/IAudioChannelClass';
+import { StreamingAudioChannel } from './StreamingAudioChannel';
+import { WebAudioChannel } from './WebAudioChannel';
+import { IAudioChannel } from './IAudioChannel';
+import { EventAudioChannel } from './EventAudioChannel';
+import { IAudioChannelClass } from './IAudioChannelClass';
 
 export class AudioManager {
 	private static isIE: boolean=!!navigator.userAgent.match(/Trident/g) || !!navigator.userAgent.match(/MSIE/g);

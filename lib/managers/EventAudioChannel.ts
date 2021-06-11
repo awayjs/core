@@ -1,11 +1,12 @@
 import { ParserUtils } from '../parsers/ParserUtils';
-import { IAudioChannel } from './IAudioChannel';
-export class EventAudioChannel implements IAudioChannel {
+import { BaseAudioChannel } from './BaseAudioChannel';
+
+export class EventAudioChannel extends BaseAudioChannel {
 	public static maxChannels: number = 4;
 
 	public static _channels: Array<EventAudioChannel> = new Array<EventAudioChannel>();
 
-	public static _base64Cache: Object = new Object();
+	public static _base64Cache: Record<string, string> = {};
 
 	private _isPlaying: boolean = false;
 	private _isLooping: boolean = false;
@@ -16,7 +17,6 @@ export class EventAudioChannel implements IAudioChannel {
 	private _startTime: number = 0;
 	private _duration: number;
 
-	public onSoundComplete: Function;
 	private _audio: HTMLAudioElement;
 
 	public static stopAllSounds(channelGroup: number = -1) {
@@ -125,6 +125,8 @@ export class EventAudioChannel implements IAudioChannel {
 	}
 
 	constructor(groupID: number = 0, groupVolume: number = 1, groupPan: number = 1) {
+		super();
+
 		this._groupID = groupID;
 		this._groupVolume = groupVolume;
 		this._groupPan = groupPan;
@@ -134,8 +136,21 @@ export class EventAudioChannel implements IAudioChannel {
 	}
 
 	public restart() {
-		this._audio && this._audio.play();
-		return this._isPlaying = !!this._audio;
+		this._isPlaying = false;
+
+		if (this._stopped) {
+			throw 'You can\'t restart channel that was fully stopped';
+		}
+
+		if (!this._audio) {
+			return false;
+		}
+
+		this._isPlaying = true;
+		this._audio.play();
+		this.dispatchRestart();
+
+		return true;
 	}
 
 	public play(buffer: ArrayBuffer, offset: number = 0, loop: boolean = false, id: number = 0): void {
@@ -150,43 +165,52 @@ export class EventAudioChannel implements IAudioChannel {
 			thisAudio.currentTime = offset;
 			thisAudio.play();
 		}, false);
-		this._audio.addEventListener('error', function(err) {
+		this._audio.addEventListener('error', (err) => {
 			console.log('error in audio', err);
+			this.dispatchStop(true);
 		}, false);
-		this._audio.addEventListener('error', function(err) {
-			console.log('error in audio', err);
-		}, false);
-		this._audio.addEventListener('canplay', function(err) {
+
+		this._audio.addEventListener('canplay', (err) => {
 			console.log('canplay in audio', err);
 		}, false);
+
 		this._audio.addEventListener('canplaythrough', function(err) {
 			console.log('canplaythrough in audio', err);
 		}, false);
-		this._audio.addEventListener('abort', function(err) {
+
+		this._audio.addEventListener('abort', (err) => {
 			console.log('abort in audio', err);
+			this.dispatchStop(true);
 		}, false);
+
 		this._audio.addEventListener('loadstart', function(err) {
 			console.log('loadstart in audio', err);
 		}, false);
+
 		this._audio.addEventListener('suspend', function(err) {
 			console.log('suspend in audio', err);
 		}, false);
 	}
 
-	public stop(): void {
+	private stopInternally (emitComplete = false): void {
 		this._audio.pause();
 		this._isPlaying = false;
 		this._isLooping = false;
+
+		if (emitComplete) {
+			this.dispatchComplete();
+		}
+	}
+
+	public stop(): void {
+		this.stopInternally(false);
+		this.dispatchStop(false);
 	}
 
 	private _onTimeUpdate(event): void {
 		//TODO: more accurate end detection
 		if (!this._isLooping && this._audio.duration < this._audio.currentTime - this._startTime + 0.1) {
-			this.stop();
-
-			if (this.onSoundComplete) {
-				this.onSoundComplete();
-			}
+			this.stopInternally(true);
 		}
 	}
 }

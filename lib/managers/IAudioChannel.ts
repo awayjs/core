@@ -1,3 +1,5 @@
+import { WaveAudio } from '../audio/WaveAudio';
+
 export interface IAudioChannel
 {
 	duration: number;
@@ -15,6 +17,8 @@ export interface IAudioChannel
 	groupID: number;
 
 	onSoundComplete: Function;
+
+	owner: WaveAudio;
 
 	isPlaying(): boolean;
 

@@ -1,6 +1,6 @@
-import { IAudioChannel } from './IAudioChannel';
+import { BaseAudioChannel } from './BaseAudioChannel';
 
-export class StreamingAudioChannel implements IAudioChannel {
+export class StreamingAudioChannel extends BaseAudioChannel {
 	public static maxChannels: number = 4;
 
 	public static _channels: Array<StreamingAudioChannel> = new Array<StreamingAudioChannel>();
@@ -23,7 +23,6 @@ export class StreamingAudioChannel implements IAudioChannel {
 	private _duration: number;
 
 	private _audio: HTMLAudioElement;
-	public onSoundComplete: Function;
 
 	private _mediaSource: MediaSource;
 	private _urlString: string;
@@ -134,6 +133,8 @@ export class StreamingAudioChannel implements IAudioChannel {
 	}
 
 	constructor(groupID: number = 0, groupVolume: number = 1, groupPan: number = 1) {
+		super();
+
 		this._groupID = groupID;
 		this._groupVolume = groupVolume;
 		this._groupPan = groupPan;
@@ -172,10 +173,19 @@ export class StreamingAudioChannel implements IAudioChannel {
 			this._queueBuffer();
 	}
 
-	public stop(): void {
+	private stopInternally(emitComplete = false) {
 		this._audio.pause();
 		this._isPlaying = false;
 		this._isLooping = false;
+
+		if (emitComplete) {
+			this.dispatchComplete();
+		}
+	}
+
+	public stop(): void {
+		this.stopInternally(false);
+		this.dispatchStop(false);
 	}
 
 	private _sourceOpen(event): void {
@@ -185,6 +195,7 @@ export class StreamingAudioChannel implements IAudioChannel {
 		//executed more than once on a MediaSource object
 		if (this._mediaSource.activeSourceBuffers.length) {
 			console.log('ERR: double sourceopen event called');
+			this.dispatchStop(true);
 			return;
 		}
 
@@ -216,8 +227,9 @@ export class StreamingAudioChannel implements IAudioChannel {
 
 	private _onTimeUpdate(event): void {
 		//TODO: more accurate end detection
-		if (!this._isLooping && this._duration < this._audio.currentTime - this._startTime + 0.1)
-			this.stop();
+		if (!this._isLooping && this._duration < this._audio.currentTime - this._startTime + 0.1) {
+			this.stopInternally(true);
+		}
 	}
 
 	private _updateSource(): void {

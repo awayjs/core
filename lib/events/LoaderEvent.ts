@@ -22,6 +22,7 @@ export class LoaderEvent extends EventBase {
 	 *
 	 * @param type The event type.
 	 * @param url The url of the loaded resource.
+	 * @param content The asset of the loaded resource.
 	 * @param assets The assets of the loaded resource.
 	 */
 	constructor(type: string, url: string = null, content: IAsset = null, assets: Array<IAsset> = null) {

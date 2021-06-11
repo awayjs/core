@@ -1,13 +1,13 @@
 import { IWaveAudioMeta } from '../audio/WaveAudio';
-import { IAudioChannel } from './IAudioChannel';
+import { BaseAudioChannel } from './BaseAudioChannel';
 
-export class WebAudioChannel implements IAudioChannel {
+export class WebAudioChannel extends BaseAudioChannel {
 	public static maxChannels: number = 64; // for icycle: 128;
 
 	public static _channels: Array<WebAudioChannel> = new Array<WebAudioChannel>();
 
-	public static _decodeCache: Object = new Object();
-	public static _errorCache: Object = new Object();
+	public static _decodeCache: Record<string, AudioBuffer> = {};
+	public static _errorCache: Record<string, any> = {};
 	public static _audioCtx: AudioContext;
 
 	public static getOfflineContext (channels: number = 1, samples: number = 0, rate: number = 44100) {
@@ -49,8 +49,6 @@ export class WebAudioChannel implements IAudioChannel {
 	private _groupPan: number = 0;
 	private _startTime: number = 0;
 	private _duration: number;
-
-	public onSoundComplete: Function;
 
 	private _onEndedDelegate: (event: any) => void;
 
@@ -172,6 +170,8 @@ export class WebAudioChannel implements IAudioChannel {
 	}
 
 	constructor(groupID: number = 0, groupVolume: number = 1, groupPan: number = 1) {
+		super();
+
 		this._groupID = groupID;
 		this._groupVolume = groupVolume;
 		this._groupPan = groupPan;
@@ -195,12 +195,24 @@ export class WebAudioChannel implements IAudioChannel {
 		this._onEndedDelegate = (event) => this._onEnded(event);
 	}
 
-	public restart() {
+	public restart(): boolean {
+		this._isPlaying = false;
+
+		if (this._stopped) {
+			throw 'You can\'t restart channel that was fully stopped';
+		}
+
 		const buffer = WebAudioChannel._decodeCache[this._id];
 
-		buffer && this.executeBuffer(buffer);
+		if (!buffer) {
+			return  false;
+		}
 
-		return this._isPlaying = !!buffer;
+		this._isPlaying = true;
+		this.executeBuffer(buffer);
+		this.dispatchRestart();
+
+		return true;
 	}
 
 	public play(
@@ -228,11 +240,12 @@ export class WebAudioChannel implements IAudioChannel {
 		} else if (!WebAudioChannel._errorCache[id]) {
 			this._decodeAndExecute(buffer, meta);
 		} else {
-			this.stop();
+			this.stopInternally(false);
+			this.dispatchStop(true);
 		}
 	}
 
-	public stop(): void {
+	private stopInternally(emitComplete = true) {
 		// for AVM1 it is a bug to stop a audio thats currently decoding.
 		// when we call stopAllASounds() during audio-decode, this audio should still play
 		//if(this._isDecoding){
@@ -245,21 +258,31 @@ export class WebAudioChannel implements IAudioChannel {
 		this._isLooping = false;
 		this._isDecoding = false;
 
-		if (this._source)
+		if (this._source) {
 			this._disposeSource();
+		}
+
+		if (emitComplete) {
+			this.dispatchComplete();
+		}
+	}
+
+	public stop(): void {
+		this.stopInternally(false);
+		this.dispatchStop(false);
 	}
 
 	private _decodeAndExecute(buffer: ArrayBuffer, meta?: IWaveAudioMeta) {
 		let ctx: AudioContext | OfflineAudioContext = this._audioCtx;
 
 		// try to transcode to RIGHT target
-		// with RIGHT sample rate, to increse quality
+		// with RIGHT sample rate, to increase quality
 		try {
 			if (meta && meta.sampleRate && meta.sampleRate !== this._audioCtx.sampleRate && meta.samplesCount) {
 				ctx = WebAudioChannel.getOfflineContext(2, meta.samplesCount + meta.startOffset, meta.sampleRate);
 			}
 		} catch (e) {
-			console.warn('[WebAudioChanell] Error when try create Offline Context:',e.message, meta);
+			console.warn('[WebAudioChannel] Error when try create Offline Context:',e.message, meta);
 		}
 
 		const promise = ctx.decodeAudioData(
@@ -330,6 +353,8 @@ export class WebAudioChannel implements IAudioChannel {
 			this._source.start(this._audioCtx.currentTime, this._currentTime);
 		} catch (error) {
 			console.warn('[WebAudioChannel] Error starting audio: ' + error);
+
+			this.dispatchStop(true);
 			this._disposeSource();
 		}
 	}
@@ -340,15 +365,13 @@ export class WebAudioChannel implements IAudioChannel {
 		WebAudioChannel._errorCache[this._id] = true;
 
 		this._isDecoding = false;
-		this.stop();
+		this.stopInternally(false);
+		this.dispatchStop(true);
 	}
 
 	private _onEnded(_event: any): void {
-		this.stop();
-
-		if (this.onSoundComplete) {
-			this.onSoundComplete();
-		}
+		// we dispatch STOP only for manually stopped and if channel still alive
+		this.stopInternally(true);
 	}
 
 	private _disposeSource(): void {

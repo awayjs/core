@@ -9,8 +9,6 @@ export class StreamingAudioChannel extends BaseAudioChannel {
 	private _updateEndDelegate: (event) => void;
 	private _sourceBuffer: SourceBuffer;
 	private _sourceDirty: boolean;
-	private _isPlaying: boolean = false;
-	private _isLooping: boolean = false;
 	private _isQueuing: boolean;
 	private _isOpening: boolean;
 	private _buffer: ArrayBuffer;
@@ -146,7 +144,6 @@ export class StreamingAudioChannel extends BaseAudioChannel {
 		this._audio.ontimeupdate = (event) => this._onTimeUpdate(event);
 
 		this._updateSource();
-
 	}
 
 	public restart(): boolean {
@@ -154,11 +151,12 @@ export class StreamingAudioChannel extends BaseAudioChannel {
 		return  false;
 	}
 
-	public play(buffer: ArrayBuffer, offset: number = 0, loop: boolean = false): void {
+	public play(buffer: ArrayBuffer, offset: number = 0, loop: boolean | number = false): void {
+		super.play(buffer, offset, loop, 0);
 		this._isPlaying = true;
 
-		if (this._isLooping || this._isLooping != loop) {
-			this._isLooping = loop;
+		if (this._isLooping || this._isLooping != this.loops > 0) {
+			this._isLooping = this.loops > 0;
 			this._sourceDirty = true;
 		}
 
@@ -178,9 +176,7 @@ export class StreamingAudioChannel extends BaseAudioChannel {
 		this._isPlaying = false;
 		this._isLooping = false;
 
-		if (emitComplete) {
-			this.dispatchComplete();
-		}
+		super.completeInternally(emitComplete, emitComplete);
 	}
 
 	public stop(): void {

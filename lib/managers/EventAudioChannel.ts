@@ -8,8 +8,6 @@ export class EventAudioChannel extends BaseAudioChannel {
 
 	public static _base64Cache: Record<string, string> = {};
 
-	private _isPlaying: boolean = false;
-	private _isLooping: boolean = false;
 	private _volume: number;
 	private _groupID: number = 0;
 	private _groupVolume: number = 1;
@@ -153,13 +151,15 @@ export class EventAudioChannel extends BaseAudioChannel {
 		return true;
 	}
 
-	public play(buffer: ArrayBuffer, offset: number = 0, loop: boolean = false, id: number = 0): void {
+	public play(buffer: ArrayBuffer, offset: number = 0, loop: boolean | number = false, id: number = 0): void {
+		super.play(buffer, offset, loop, id);
+
 		this._isPlaying = true;
-		this._isLooping = loop;
+		this._isLooping = this.loops > 0;
 
 		this._audio.src = EventAudioChannel._base64Cache[id]
 						|| (EventAudioChannel._base64Cache[id] = ParserUtils.arrayBufferToBase64(buffer, 'audio/mp3'));
-		this._audio.loop = this._isLooping;
+		//this._audio.loop = this._isLooping;
 		const thisAudio = this._audio;
 		this._audio.addEventListener('loadedmetadata', function() {
 			thisAudio.currentTime = offset;
@@ -197,9 +197,7 @@ export class EventAudioChannel extends BaseAudioChannel {
 		this._isPlaying = false;
 		this._isLooping = false;
 
-		if (emitComplete) {
-			this.dispatchComplete();
-		}
+		super.completeInternally(emitComplete, emitComplete);
 	}
 
 	public stop(): void {

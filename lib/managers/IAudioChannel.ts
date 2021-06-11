@@ -26,9 +26,9 @@ export interface IAudioChannel
 
 	isDecoding(): boolean;
 
-	play(buffer: ArrayBuffer, offset?: number, loop?: boolean, id?: number, meta?: any): void;
+	play(buffer: ArrayBuffer, offset?: number, loop?: boolean | number, id?: number, meta?: any): void;
 
-	restart(): boolean;
+	/*restart(): boolean;*/
 
 	stop(): void;
 }

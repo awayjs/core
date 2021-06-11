@@ -3,9 +3,7 @@ import { BaseAudioChannel } from './BaseAudioChannel';
 
 export class WebAudioChannel extends BaseAudioChannel {
 	public static maxChannels: number = 64; // for icycle: 128;
-
 	public static _channels: Array<WebAudioChannel> = new Array<WebAudioChannel>();
-
 	public static _decodeCache: Record<string, AudioBuffer> = {};
 	public static _errorCache: Record<string, any> = {};
 	public static _audioCtx: AudioContext;
@@ -37,11 +35,7 @@ export class WebAudioChannel extends BaseAudioChannel {
 	private _pannerNode: PannerNode | StereoPannerNode;
 	private _source: AudioBufferSourceNode;
 
-	private _isPlaying: boolean = false;
-	private _isLooping: boolean = false;
-	private _isDecoding: boolean = false;
 	private _currentTime: number;
-	private _id: number;
 	private _volume: number = 1;
 	private _pan: number = -1;
 	private _groupID: number = 0;
@@ -157,18 +151,6 @@ export class WebAudioChannel extends BaseAudioChannel {
 		}
 	}
 
-	public isPlaying(): boolean {
-		return this._isPlaying;
-	}
-
-	public isLooping(): boolean {
-		return this._isLooping;
-	}
-
-	public isDecoding(): boolean {
-		return this._isDecoding;
-	}
-
 	constructor(groupID: number = 0, groupVolume: number = 1, groupPan: number = 1) {
 		super();
 
@@ -218,7 +200,7 @@ export class WebAudioChannel extends BaseAudioChannel {
 	public play(
 		buffer: ArrayBuffer,
 		offset: number = 0,
-		loop: boolean = false,
+		loop: boolean | number = false,
 		id: number = 0,
 		meta?: IWaveAudioMeta
 	): void {
@@ -228,10 +210,10 @@ export class WebAudioChannel extends BaseAudioChannel {
 			return;
 		}
 
+		super.play(buffer, offset, loop, id, meta);
+
 		this._isPlaying = true;
-		this._isLooping = loop;
 		this._currentTime = offset;
-		this._id = id;
 		this._isDecoding = true;
 
 		//fast path for short sounds
@@ -262,9 +244,8 @@ export class WebAudioChannel extends BaseAudioChannel {
 			this._disposeSource();
 		}
 
-		if (emitComplete) {
-			this.dispatchComplete();
-		}
+		// will be try restart
+		super.completeInternally(emitComplete, emitComplete);
 	}
 
 	public stop(): void {
@@ -329,7 +310,7 @@ export class WebAudioChannel extends BaseAudioChannel {
 
 		this._isDecoding = false;
 		this._source = this._audioCtx.createBufferSource();
-		this._source.loop = this._isLooping;
+		//this._source.loop = this._isLooping;
 		this._source.connect(this._gainNode);
 
 		this._source.buffer = buffer;

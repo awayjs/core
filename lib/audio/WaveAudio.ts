@@ -42,7 +42,6 @@ export class WaveAudio extends AssetBase {
 		channel.removeEventListener(BaseAudioChannel.COMPLETE, this.onChannelCompleteStopError);
 		channel.removeEventListener(BaseAudioChannel.STOP, this.onChannelCompleteStopError);
 		channel.removeEventListener(BaseAudioChannel.ERROR, this.onChannelCompleteStopError);
-		channel.removeEventListener(BaseAudioChannel.RESTART, this.onChannelRestart);
 	}
 
 	private attachChannel(channel: BaseAudioChannel) {
@@ -54,23 +53,6 @@ export class WaveAudio extends AssetBase {
 		channel.addEventListener(BaseAudioChannel.COMPLETE, this.onChannelCompleteStopError);
 		channel.addEventListener(BaseAudioChannel.STOP, this.onChannelCompleteStopError);
 		channel.addEventListener(BaseAudioChannel.ERROR, this.onChannelCompleteStopError);
-		channel.addEventListener(BaseAudioChannel.RESTART, this.onChannelRestart);
-	}
-
-	private onChannelRestart(e: EventBase) {
-		const channel = <BaseAudioChannel> e.target;
-		const index = this._audioChannels.indexOf(channel);
-
-		if (index === -1) {
-			this.attachChannel(channel);
-			this._audioChannels.push(channel);
-		}
-
-		if (!this._audioChannel) {
-			this._audioChannel = channel;
-		}
-
-		this._channelsPlaying++;
 	}
 
 	private onChannelCompleteStopError(e: EventBase): void {
@@ -78,12 +60,8 @@ export class WaveAudio extends AssetBase {
 		const index = this._audioChannels.indexOf(channel);
 
 		if (index >= 0) {
-			// detach if channel was stopped by Stop or Error, it can't be restarted
-			if (channel.stopped) {
-				this.detachChannel(channel);
-				this._audioChannels.splice(index, 1);
-			}
-
+			this.detachChannel(channel);
+			this._audioChannels.splice(index, 1);
 			this._channelsPlaying--;
 		}
 
@@ -168,7 +146,6 @@ export class WaveAudio extends AssetBase {
 
 		this._channelGroup = channelGroup;
 
-		this.onChannelRestart = this.onChannelRestart.bind(this);
 		this.onChannelCompleteStopError = this.onChannelCompleteStopError.bind(this);
 	}
 
@@ -177,7 +154,7 @@ export class WaveAudio extends AssetBase {
 		this.stop();
 	}
 
-	public play(offset: number, loop: boolean = false): BaseAudioChannel {
+	public play(offset: number, loop: boolean | number = false): BaseAudioChannel {
 		this._isPlaying = true;
 
 		this._audioChannel = <BaseAudioChannel> AudioManager.getChannel(this._data.size, this.channelGroup);
@@ -251,7 +228,7 @@ export class WaveAudioData {
 		return this._blob.size;
 	}
 
-	public play(audioChannel: BaseAudioChannel, offset: number, loop: boolean, id: number): void {
+	public play(audioChannel: BaseAudioChannel, offset: number, loop: boolean | number, id: number): void {
 		if (this._buffer) {
 			audioChannel.play(this._buffer, offset, loop, id, this.meta);
 		} else if (!this._loading) {
@@ -276,7 +253,7 @@ export class WaveAudioData {
 		this.meta = meta;
 	}
 
-	private _blobConverted(event, audioChannel: BaseAudioChannel, offset: number, loop: boolean, id: number) {
+	private _blobConverted(event, audioChannel: BaseAudioChannel, offset: number, loop: boolean | number, id: number) {
 		this._buffer = event.target.result;
 
 		audioChannel.play(this._buffer, offset, loop, id, this.meta);

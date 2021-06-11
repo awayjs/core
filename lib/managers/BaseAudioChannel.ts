@@ -27,7 +27,17 @@ export abstract class BaseAudioChannel extends EventDispatcher implements IAudio
 		return this._stopped;
 	}
 
-	protected  _stopped: boolean = false;
+	protected _stopped: boolean = false;
+
+	protected _loops: number = 0;
+
+	protected _id: number = -1;
+
+	protected _isLooping: boolean = false;
+
+	protected _isPlaying: boolean = false;
+
+	protected _isDecoding: boolean = false;
 
 	/**
 	 * @deprecated This is deprecated, use a `addEventListener`
@@ -41,26 +51,74 @@ export abstract class BaseAudioChannel extends EventDispatcher implements IAudio
 		this.addEventListener(BaseAudioChannel.COMPLETE, v);
 	}
 
-	public abstract isDecoding(): boolean;
+	public isLooping() {
+		return this._isLooping;
+	}
 
-	public abstract isLooping(): boolean;
+	public isPlaying() {
+		return this._isPlaying;
+	}
 
-	public abstract isPlaying(): boolean;
+	public isDecoding(): boolean {
+		return this._isDecoding;
+	}
 
-	public abstract play(
+	public play(
 		buffer: ArrayBuffer,
 		offset?: number,
-		loop?: boolean,
+		loop?: boolean | number,
 		id?: number,
 		meta?: any
-	): void;
-
-	public abstract restart(): boolean;
+	): void {
+		this.loops = loop;
+		this._id = id || -1;
+		this._isLooping = this.loops > 0;
+	}
 
 	public abstract stop(): void;
 
+	protected abstract restart(): boolean;
+
+	protected set loops (v: number | boolean) {
+		this._loops = typeof v === 'number' ? v : v ? 1000 : 0;
+	}
+
+	protected get loops() {
+		return this._loops;
+	}
+
 	protected dispatchRestart(): void {
 		this.dispatchEvent(BaseAudioChannel.RESTART_EVENT);
+	}
+
+	/**
+	 * Check loop and try restart it
+	 * @protected
+	 */
+	protected tryRestartLoop(): boolean {
+		if (this._loops <= 0) {
+			return  false;
+		}
+
+		this._loops--;
+
+		if (this.restart()) {
+			return true;
+		}
+
+		this._loops = 0;
+
+		return false;
+	}
+
+	protected completeInternally (dispatchComplete = true, tryRestart = true) {
+		if (tryRestart && this.tryRestartLoop()) {
+			return;
+		}
+
+		if (dispatchComplete) {
+			this.dispatchEvent(BaseAudioChannel.COMPLETE_EVENT);
+		}
 	}
 
 	protected dispatchComplete() {

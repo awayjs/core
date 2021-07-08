@@ -218,6 +218,8 @@ export class Transform extends EventDispatcher {
 		this._matrix3D._rawData[13] = value.ty;
 
 		this.invalidateComponents();
+
+		this._matrix3DDirty = false;
 		this._inverseMatrix3DDirty = true;
 	}
 
@@ -265,6 +267,7 @@ export class Transform extends EventDispatcher {
 		}
 
 		this.invalidateComponents();
+		this._matrix3DDirty = false;
 		this._inverseMatrix3DDirty = true;
 	}
 

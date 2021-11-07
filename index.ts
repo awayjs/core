@@ -105,6 +105,8 @@ export { Timer }							from './lib/utils/Timer';
 export { XmlUtils }							from './lib/utils/XmlUtils';
 export { AsyncServicesLibrary }				from './lib/utils/AsyncServicesLibrary';
 
+export { ConfigManager }					from './lib/managers/ConfigManager';
+
 import { Loader } 							from './lib/library/Loader';
 import { WaveAudioParser } 					from './lib/parsers/WaveAudioParser';
 

@@ -143,10 +143,12 @@ export class ConfigManager extends EventDispatcher {
 	 * @param jsonObject
 	 * @param quiet - no emit change event, only create stores
 	 */
-	public static deserialize(jsonObject: Record<string, IConfigStore>, quiet = true) {
-		const manager = ConfigManager.instance;
+	public deserialize(jsonObject: Record<string, IConfigStore> | string, quiet = true) {
+		jsonObject = typeof jsonObject === 'string' ? JSON.parse(jsonObject) :  jsonObject;
 
-		for (const key in jsonObject) {
+		const manager = this;
+
+		for (const key in jsonObject as object) {
 			const value = jsonObject[key];
 
 			if (!value || typeof value !== 'object' || !jsonObject.hasOwnProperty(key)) {
@@ -159,7 +161,9 @@ export class ConfigManager extends EventDispatcher {
 				manager.set(key, value);
 			}
 		}
+	}
 
-		return manager;
+	public static deserialize(jsonObject: Record<string, IConfigStore>, quiet = true) {
+		return ConfigManager.instance.deserialize(jsonObject, quiet);
 	}
 }

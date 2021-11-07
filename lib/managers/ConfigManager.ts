@@ -36,7 +36,8 @@ export class ConfigManager extends EventDispatcher {
 	): void {
 
 		if (setter) {
-			console.debug('[ConfigManager] Setters is deprecated, use `set(storeName, propName, value) instead`');
+			// eslint-disable-next-line max-len
+			console.debug(`[ConfigManager] Setters is deprecated, use 'set('${storeName}', '${prop}', ${newValue}) instead'`);
 		}
 
 		this.dispatchEvent(
@@ -97,7 +98,7 @@ export class ConfigManager extends EventDispatcher {
 	 * @param objOrName
 	 * @param valueOrNone
 	 */
-	public set(storeName: string, objOrName: IConfigStore | string, valueOrNone?: any): boolean {
+	public set<T extends IConfigStore>(storeName: string, objOrName: Partial<T> | string, valueOrNone?: any): boolean {
 		if (!(storeName in this._lib)) {
 			this.addStore(storeName, {});
 		}

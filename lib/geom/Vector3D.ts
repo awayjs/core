@@ -1,3 +1,6 @@
+// @ts-ignore: require for webpack
+const loader = require("../../../../awayfl-player/assembly/index");
+
 /**
  * The Vector3D export class represents a point or a location in the three-dimensional
  * space using the Cartesian coordinates x, y, and z. As in a two-dimensional

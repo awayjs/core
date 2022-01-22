@@ -5,9 +5,17 @@ for (let i = 0; i < 1000; i++) {
 }
 
 /** Allocate a Vec3, alternatively allocate a new managed object. */
-export function Vector3D_allocate(): StaticArray<f32> {
-  if (vecpool.length == 0) return new StaticArray<f32>(4);
-  return vecpool.pop();
+export function Vector3D_allocate(x: f32, y: f32, z: f32, w: f32): StaticArray<f32> {
+  let vec = vecpool.length == 0
+    ? new StaticArray<f32>(4)
+    : vecpool.pop();
+
+  unchecked(vec[0] = x);
+  unchecked(vec[1] = y);
+  unchecked(vec[2] = z);
+  unchecked(vec[3] = w);
+
+  return vec;
 }
 
 /** Free a Vec3 and add it back to the pool. */

@@ -1,5 +1,5 @@
 // @ts-ignore: require for webpack
-const loader = require("../../../../awayfl-player/assembly/index");
+import assembly from "@awayjs/assembly";
 
 /**
  * The Vector3D export class represents a point or a location in the three-dimensional
@@ -28,7 +28,7 @@ const loader = require("../../../../awayfl-player/assembly/index");
  * matrix notation:</p>
  */
 export class Vector3D {
-	public _rawData: Float32Array = new Float32Array(4);
+	public _rawData: Float32Array;
 
 	/**
 	 * The x axis defined as a Vector3D object with coordinates (1,0,0).

@@ -1,4 +1,3 @@
-// @ts-ignore: require for webpack
 import assembly from "@awayjs/assembly";
 
 /**

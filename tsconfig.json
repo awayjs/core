@@ -9,6 +9,7 @@
     "importHelpers": true,
     "declaration": true,
     "declarationMap": true,
+    "experimentalDecorators": true,
     "outDir": "./dist"
   },
   "exclude": [

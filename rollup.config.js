@@ -5,6 +5,9 @@ module.exports = {
 	sourceMap: true,
 	format: 'umd',
 	moduleName: 'AwayjsCore',
+	globals: {
+		'@awayjs/assembly': 'AwayjsAssembly',
+	},
 	targets: [
 		{ dest: './bundle/awayjs-core.umd.js'}
 	],

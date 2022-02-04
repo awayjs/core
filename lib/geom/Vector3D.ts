@@ -27,6 +27,9 @@ import assembly from "@awayjs/assembly";
  * matrix notation:</p>
  */
 export class Vector3D {
+	private _ptr: number = 0;
+
+	/** Raw data for the float data. */
 	public _rawData: Float32Array;
 
 	/**
@@ -118,7 +121,7 @@ export class Vector3D {
 	 * one.
 	 */
 	public get length(): number {
-		return Math.sqrt(this.lengthSquared);
+		return assembly.exports.Vector3D_length(this._ptr);
 	}
 
 	/**
@@ -129,8 +132,7 @@ export class Vector3D {
 	 * <code>Vector3D.length()</code> method.
 	 */
 	public get lengthSquared(): number {
-		const raw: Float32Array = this._rawData;
-		return raw[0] * raw[0] + raw[1] * raw[1] + raw[2] * raw[2];
+		return assembly.exports.Vector3D_lengthSquared(this._ptr);
 	}
 
 	/**
@@ -145,12 +147,9 @@ export class Vector3D {
 	 *          of rotation.
 	 */
 	constructor(x: number = 0, y: number = 0, z: number = 0, w: number = 1) {
-		const raw: Float32Array = this._rawData;
-
-		raw[0] = x;
-		raw[1] = y;
-		raw[2] = z;
-		raw[3] = w;
+		let ptr = assembly.exports.Vector3D_allocate(x, y, z, w);
+		this._ptr = ptr;
+		this._rawData = new Float32Array(assembly.memory.buffer, ptr, 4);
 	}
 
 	/**
@@ -168,10 +167,9 @@ export class Vector3D {
 	 * </p>
 	 */
 	public add(a: Vector3D): Vector3D {
-		const raw: Float32Array = this._rawData;
-		const rawA: Float32Array = a._rawData;
-
-		return new Vector3D(raw[0] + rawA[0], raw[1] + rawA[1], raw[2] + rawA[2]);
+		let result = new Vector3D();
+		assembly.exports.Vector3D_add(this._ptr, a._ptr, result._ptr);
+		return result;
 	}
 
 	/**
@@ -192,7 +190,7 @@ export class Vector3D {
 	 * @returns The angle between two Vector3D objects.
 	 */
 	public static angleBetween(a: Vector3D, b: Vector3D): number {
-		return Math.acos(a.dotProduct(b) / (a.length * b.length));
+		return assembly.exports.Vector3D_angleBetween(a, b);
 	}
 
 	/**
@@ -203,9 +201,9 @@ export class Vector3D {
 	 * Vector3D object.
 	 */
 	public clone(): Vector3D {
-		const raw: Float32Array = this._rawData;
-
-		return new Vector3D(raw[0], raw[1], raw[2], raw[3]);
+		let vec = new Vector3D();
+		assembly.exports.Vector3D_copy(this._ptr, vec._ptr);
+		return vec;
 	}
 
 	public static combine(a: Vector3D, b: Vector3D, ascl: number, bscl: number, target?: Vector3D): Vector3D {
@@ -337,10 +335,7 @@ export class Vector3D {
 	 * @see away.geom.Vector3D#normalize()
 	 */
 	public dotProduct(a: Vector3D): number {
-		const raw: Float32Array = this._rawData;
-		const rawA: Float32Array = a._rawData;
-
-		return raw[0] * rawA[0] + raw[1] * rawA[1] + raw[2] * rawA[2];
+		return assembly.exports.Vector3D_dotProduct(this._ptr, a._ptr);
 	}
 
 	/**

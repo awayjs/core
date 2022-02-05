@@ -6,15 +6,15 @@
   w: f32;
 }
 
-
 /** Initial setup, allocates 1000 vectors up front. */
 let vecpool = [] as Array<Vector3D>;
 
 function allocateVectors(count: i32): void {
-  for (let i = 0; i < 1000; i++) {
+  for (let i = 0; i < count; i++) {
     vecpool.push(new Vector3D());
   }
 }
+allocateVectors(1000);
 
 /** Allocate a Vec3, alternatively allocate a new managed object. */
 export function Vector3D_allocate(x: f32, y: f32, z: f32, w: f32): Vector3D {
@@ -166,14 +166,7 @@ export function Vector3D_length(vec: Vector3D): f32 {
  * @returns The dot product of the two vectors.
  */
 export function Vector3D_dotProduct(left: Vector3D, right: Vector3D): f32 {
-  if (ASC_FEATURE_SIMD) {
-    let leftv128 = v128.load(changetype<usize>(left));
-    let rightv128 = v128.load(changetype<usize>(right));
-    let result = v128.add<f32>(leftv128, rightv128);
-    return v128.extract_lane<f32>(result, 0) + v128.extract_lane<f32>(result, 1) + v128.extract_lane<f32>(result, 2);
-  } else {
-    return left.x * right.x + left.y * right.y + left.z * right.z;
-  }
+  return left.x * right.x + left.y * right.y + left.z * right.z;
 }
 
 /**

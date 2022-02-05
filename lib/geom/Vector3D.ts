@@ -1,5 +1,3 @@
-import assembly from "@awayjs/assembly";
-
 /**
  * The Vector3D export class represents a point or a location in the three-dimensional
  * space using the Cartesian coordinates x, y, and z. As in a two-dimensional
@@ -121,7 +119,7 @@ export class Vector3D {
 	 * one.
 	 */
 	public get length(): number {
-		return assembly.exports.Vector3D_length(this._ptr);
+		return __assembly.Vector3D_length(this._ptr);
 	}
 
 	/**
@@ -132,7 +130,7 @@ export class Vector3D {
 	 * <code>Vector3D.length()</code> method.
 	 */
 	public get lengthSquared(): number {
-		return assembly.exports.Vector3D_lengthSquared(this._ptr);
+		return __assembly.Vector3D_lengthSquared(this._ptr);
 	}
 
 	/**
@@ -147,9 +145,9 @@ export class Vector3D {
 	 *          of rotation.
 	 */
 	constructor(x: number = 0, y: number = 0, z: number = 0, w: number = 1) {
-		let ptr = assembly.exports.Vector3D_allocate(x, y, z, w);
+		let ptr = __assembly.Vector3D_allocate(x, y, z, w);
 		this._ptr = ptr;
-		this._rawData = new Float32Array(assembly.memory.buffer, ptr, 4);
+		this._rawData = new Float32Array(__assembly.memory.buffer, ptr, 4);
 	}
 
 	/**
@@ -168,7 +166,7 @@ export class Vector3D {
 	 */
 	public add(a: Vector3D): Vector3D {
 		let result = new Vector3D();
-		assembly.exports.Vector3D_add(this._ptr, a._ptr, result._ptr);
+		__assembly.Vector3D_add(this._ptr, a._ptr, result._ptr);
 		return result;
 	}
 
@@ -190,7 +188,7 @@ export class Vector3D {
 	 * @returns The angle between two Vector3D objects.
 	 */
 	public static angleBetween(a: Vector3D, b: Vector3D): number {
-		return assembly.exports.Vector3D_angleBetween(a, b);
+		return __assembly.Vector3D_angleBetween(a, b);
 	}
 
 	/**
@@ -202,7 +200,7 @@ export class Vector3D {
 	 */
 	public clone(): Vector3D {
 		let vec = new Vector3D();
-		assembly.exports.Vector3D_copy(this._ptr, vec._ptr);
+		__assembly.Vector3D_copy(this._ptr, vec._ptr);
 		return vec;
 	}
 
@@ -335,7 +333,7 @@ export class Vector3D {
 	 * @see away.geom.Vector3D#normalize()
 	 */
 	public dotProduct(a: Vector3D): number {
-		return assembly.exports.Vector3D_dotProduct(this._ptr, a._ptr);
+		return __assembly.Vector3D_dotProduct(this._ptr, a._ptr);
 	}
 
 	/**

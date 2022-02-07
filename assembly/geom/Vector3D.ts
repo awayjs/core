@@ -195,3 +195,32 @@ export function Vector3D_copy(left: Vector3D, right: Vector3D): void {
     offsetof<Vector3D>(),
   );
 }
+
+/**
+ * Combine two vectors.
+ *
+ * @param left - The lefthand operand of this function.
+ * @param right - The righthand operand of this function.
+ * @param ascl - The scale applied to the left vector (default: 1)
+ * @param bscl - The scale applied to the right vector (default: 1)
+ * @param target - The vector which will store the result.
+ */
+export function Vector3D_combine(left: Vector3D, right: Vector3D, ascl: f32, bscl: f32, target: Vector3D): void {
+
+  if (ASC_FEATURE_SIMD) {
+    let leftv128 = v128.load(changetype<usize>(left));
+    let rightv128 = v128.load(changetype<usize>(right));
+    v128.store(
+      changetype<usize>(target),
+      v128.add<f32>(
+        v128.mul<f32>(leftv128, v128.splat<f32>(ascl)),
+        v128.mul<f32>(rightv128, v128.splat<f32>(bscl)),
+      ),
+    );
+  } else {
+    target.x = left.x * ascl + right.x * bscl;
+    target.y = left.y * ascl + right.y * bscl;
+    target.z = left.z * ascl + right.z * bscl;
+  }
+  target.z = 1;
+}

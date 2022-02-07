@@ -1,3 +1,4 @@
+/// <reference path="../assembly.d.ts" />
 /**
  * The Vector3D export class represents a point or a location in the three-dimensional
  * space using the Cartesian coordinates x, y, and z. As in a two-dimensional
@@ -25,7 +26,7 @@
  * matrix notation:</p>
  */
 export class Vector3D {
-	private _ptr: number = 0;
+	private _ptr: WASMVector3D;
 
 	/** Raw data for the float data. */
 	public _rawData: Float32Array;
@@ -147,7 +148,12 @@ export class Vector3D {
 	constructor(x: number = 0, y: number = 0, z: number = 0, w: number = 1) {
 		let ptr = __assembly.Vector3D_allocate(x, y, z, w);
 		this._ptr = ptr;
-		this._rawData = new Float32Array(__assembly.memory.buffer, ptr, 4);
+		this._rawData = new Float32Array(
+			__assembly.memory.buffer,
+			// This cast converts what would otherwise be a fake type to it's real type which is a pointer
+			ptr as unknown as number,
+			4,
+		);
 	}
 
 	/**
@@ -188,7 +194,7 @@ export class Vector3D {
 	 * @returns The angle between two Vector3D objects.
 	 */
 	public static angleBetween(a: Vector3D, b: Vector3D): number {
-		return __assembly.Vector3D_angleBetween(a, b);
+		return __assembly.Vector3D_angleBetween(a._ptr, b._ptr);
 	}
 
 	/**
@@ -205,14 +211,10 @@ export class Vector3D {
 	}
 
 	public static combine(a: Vector3D, b: Vector3D, ascl: number, bscl: number, target?: Vector3D): Vector3D {
-		const rawA: Float32Array = a._rawData;
-		const rawB: Float32Array = b._rawData;
+
 
 		target = target || new Vector3D();
-		target.setTo(
-			rawA[0] * ascl + rawB[0] * bscl,
-			rawA[1] * ascl + rawB[1] * bscl,
-			rawA[2] * ascl + rawB[2] * bscl, 1);
+		__assembly.Vector3D_combine(a._ptr, b._ptr, ascl, bscl, target._ptr);
 
 		return target;
 	}
@@ -224,13 +226,7 @@ export class Vector3D {
 	 * @param src The Vector3D object from which to copy the data.
 	 */
 	public copyFrom(src: Vector3D): void {
-		const raw: Float32Array = this._rawData;
-		const rawSrc: Float32Array = src._rawData;
-
-		raw[0] = rawSrc[0];
-		raw[1] = rawSrc[1];
-		raw[2] = rawSrc[2];
-		raw[3] = rawSrc[3];
+		__assembly.Vector3D_copy(src._ptr, this._ptr);
 	}
 
 	/**

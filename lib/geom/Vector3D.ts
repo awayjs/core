@@ -1,4 +1,9 @@
 /// <reference path="../assembly.d.ts" />
+
+let registry = new FinalizationRegistry<WASMVector3D>(id => {
+	__assembly.Vector3D_free(id);
+});
+
 /**
  * The Vector3D export class represents a point or a location in the three-dimensional
  * space using the Cartesian coordinates x, y, and z. As in a two-dimensional
@@ -154,6 +159,7 @@ export class Vector3D {
 			ptr as unknown as number,
 			4,
 		);
+		registry.register(this, ptr);
 	}
 
 	/**
@@ -206,7 +212,7 @@ export class Vector3D {
 	 */
 	public clone(): Vector3D {
 		let vec = new Vector3D();
-		__assembly.Vector3D_copy(this._ptr, vec._ptr);
+		__assembly.Vector3D_copy(vec._ptr, this._ptr);
 		return vec;
 	}
 
@@ -226,7 +232,7 @@ export class Vector3D {
 	 * @param src The Vector3D object from which to copy the data.
 	 */
 	public copyFrom(src: Vector3D): void {
-		__assembly.Vector3D_copy(src._ptr, this._ptr);
+		__assembly.Vector3D_copy(this._ptr, src._ptr);
 	}
 
 	/**
@@ -250,13 +256,7 @@ export class Vector3D {
 		if (t == null)
 			t = new Vector3D();
 
-		const raw: Float32Array = this._rawData;
-		const rawA: Float32Array = a._rawData;
-		const rawT: Float32Array = t._rawData;
-
-		rawT[0] = raw[1] * rawA[2] - raw[2] * rawA[1];
-		rawT[1] = raw[2] * rawA[0] - raw[0] * rawA[2];
-		rawT[2] = raw[0] * rawA[1] - raw[1] * rawA[0];
+		__assembly.Vector3d_crossProduct(this._ptr, a._ptr, t._ptr);
 
 		return t;
 	}
@@ -273,12 +273,7 @@ export class Vector3D {
 	 *          the current Vector3D object.
 	 */
 	public decrementBy(a: Vector3D): void {
-		const raw: Float32Array = this._rawData;
-		const rawA: Float32Array = a._rawData;
-
-		raw[0] -= rawA[0];
-		raw[1] -= rawA[1];
-		raw[2] -= rawA[2];
+		__assembly.Vector3D_sub(this._ptr, a._ptr, this._ptr);
 	}
 
 	/**
@@ -292,13 +287,7 @@ export class Vector3D {
 	 * @returns The distance between two Vector3D objects.
 	 */
 	public static distance(pt1: Vector3D, pt2: Vector3D): number {
-		const rawPt1: Float32Array = pt1._rawData;
-		const rawPt2: Float32Array = pt2._rawData;
-
-		const x: number = rawPt1[0] - rawPt2[0];
-		const y: number = rawPt1[1] - rawPt2[1];
-		const z: number = rawPt1[2] - rawPt2[2];
-		return Math.sqrt(x * x + y * y + z * z);
+		return __assembly.Vector3D_distance(pt1._ptr, pt2._ptr);
 	}
 
 	/**
@@ -349,25 +338,14 @@ export class Vector3D {
 	 *          to the current Vector3D object; false if it is not equal.
 	 */
 	public equals(toCompare: Vector3D, allFour: boolean = false): boolean {
-		const raw: Float32Array = this._rawData;
-		const rawToCompare: Float32Array = toCompare._rawData;
-
-		return (raw[0] == rawToCompare[0] &&
-				raw[1] == rawToCompare[1] &&
-				raw[2] == rawToCompare[2] &&
-				(!allFour || raw[3] == rawToCompare[3]));
+		return Boolean(__assembly.Vector3D_equals(this._ptr, toCompare._ptr, allFour ? 1 : 0));
 	}
 
 	/**
 	 * Converts the current vector to an identity or unit vector.
 	 */
 	public identity(): void {
-		const raw: Float32Array = this._rawData;
-
-		raw[0] = 0;
-		raw[1] = 0;
-		raw[2] = 0;
-		raw[3] = 1;
+		__assembly.Vector3D_identity(this._ptr);
 	}
 
 	/**
@@ -381,12 +359,7 @@ export class Vector3D {
 	 *          object.
 	 */
 	public incrementBy(a: Vector3D): void {
-		const raw: Float32Array = this._rawData;
-		const rawA: Float32Array = a._rawData;
-
-		raw[0] += rawA[0];
-		raw[1] += rawA[1];
-		raw[2] += rawA[2];
+		__assembly.Vector3D_add(this._ptr, a._ptr, this._ptr);
 	}
 
 	/**
@@ -420,13 +393,7 @@ export class Vector3D {
 	 * @see away.geom.Vector3D#equals()
 	 */
 	public nearEquals(toCompare: Vector3D, tolerance: number, allFour: boolean = true): boolean {
-		const raw: Float32Array = this._rawData;
-		const rawToCompare: Float32Array = toCompare._rawData;
-
-		return ((Math.abs(raw[0] - rawToCompare[0]) < tolerance) &&
-				(Math.abs(raw[1] - rawToCompare[1]) < tolerance) &&
-				(Math.abs(raw[2] - rawToCompare[2]) < tolerance) &&
-				(!allFour || Math.abs(raw[3] - rawToCompare[3]) < tolerance));
+		return __assembly.Vector3D_nearEquals(this._ptr, toCompare._ptr, tolerance, allFour ? 1 : 0) === 1;
 	}
 
 	/**
@@ -436,11 +403,7 @@ export class Vector3D {
 	 * to -x, -y, and -z.
 	 */
 	public negate(): void {
-		const raw: Float32Array = this._rawData;
-
-		raw[0] = -raw[0];
-		raw[1] = -raw[1];
-		raw[2] = -raw[2];
+		__assembly.Vector3D_negate(this._ptr);
 	}
 
 	/**

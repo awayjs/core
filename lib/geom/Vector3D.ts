@@ -415,17 +415,7 @@ export class Vector3D {
 	 *                  1, the point returned is at(0,0.6,0.8).
 	 */
 	public normalize(thickness: number = 1): number {
-		const len: number = this.length;
-
-		if (len) {
-			const raw: Float32Array = this._rawData;
-			const invLength = thickness / len;
-			raw[0] *= invLength;
-			raw[1] *= invLength;
-			raw[2] *= invLength;
-		}
-
-		return len;
+		return __assembly.Vector3D_normalize(this._ptr, thickness);
 	}
 
 	/**
@@ -441,11 +431,7 @@ export class Vector3D {
 	 * property to create a projection Matrix3D object.</p>
 	 */
 	public project(): void {
-		const raw: Float32Array = this._rawData;
-
-		raw[0] /= raw[3];
-		raw[1] /= raw[3];
-		raw[2] /= raw[3];
+		__assembly.Vector3D_project(this._ptr);
 	}
 
 	/**
@@ -497,10 +483,9 @@ export class Vector3D {
 	 * @see away.geom.Vector3D#decrementBy()
 	 */
 	public subtract(a: Vector3D): Vector3D {
-		const raw: Float32Array = this._rawData;
-		const rawA: Float32Array = a._rawData;
-
-		return new Vector3D(raw[0] - rawA[0], raw[1] - rawA[1], raw[2] - rawA[2]);
+		let result = new Vector3D();
+		__assembly.Vector3D_sub(this._ptr, a._ptr, result._ptr);
+		return result;
 	}
 
 	/**

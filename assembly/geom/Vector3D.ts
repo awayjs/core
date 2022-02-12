@@ -425,19 +425,63 @@ export function Vector3D_negate(vec: Vector3D): void {
 
 
 /**
- * Calculate the given vector.
+ * Normalize the given vector.
  *
  * @param vec - The vector.
  */
- export function Vector3D_normalize(vec: Vector3D, thickness: f32): void {
+export function Vector3D_normalize(vec: Vector3D, thickness: f32): f32 {
   if (ASC_FEATURE_SIMD) {
     let simd = v128.load(changetype<usize>(vec));
     let squared = v128.mul<f32>(simd, simd);
     let length = sqrt<f32>(v128.extract_lane<f32>(squared, 0) + v128.extract_lane<f32>(squared, 1) + v128.extract_lane<f32>(squared, 2));
-    let ratio = thickness / length;
-    // TODO: Multiply original vector by ratio
+    if (length) {
+      let ratio = thickness / length;
+      // f32x4(ratio, ratio, ratio, 1)
+      let ratioSimd = v128.add<f32>(
+        v128.mul<f32>(
+          v128.splat<f32>(ratio),
+          f32x4(1, 1, 1, 0),
+        ),
+        f32x4(0, 0, 0, 1),
+      );
+      v128.store(
+        changetype<usize>(vec),
+        v128.mul<f32>(simd, ratioSimd),
+      );
+    }
+    return length;
   } else {
     let length = sqrt<f32>(vec.x * vec.x + vec.y * vec.y + vec.z * vec.z);
-    // TODO: perform normalization calculation
+    if (length) {
+      let ratio = thickness / length;
+      vec.x *= ratio;
+      vec.y *= ratio;
+      vec.z *= ratio;
+    }
+    return length;
+  }
+}
+
+export function Vector3D_project(vec: Vector3D): void {
+  if (ASC_FEATURE_SIMD) {
+    let ratio = v128.add(
+      v128.mul<f32>(
+        v128.splat<f32>(vec.w),
+        f32x4(1, 1, 1, 0),
+      ),
+      f32x4(0, 0, 0, 1),
+    );
+    v128.store(
+      changetype<usize>(vec),
+      v128.div<f32>(
+        v128.load(changetype<usize>(vec)),
+        ratio,
+      ),
+    );
+  } else {
+    let w = vec.w;
+    vec.x /= w;
+    vec.y /= w;
+    vec.z /= w;
   }
 }

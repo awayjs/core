@@ -445,11 +445,7 @@ export class Vector3D {
 	 * @param s A multiplier (scalar) used to scale a Vector3D object.
 	 */
 	public scaleBy(s: number): void {
-		const raw: Float32Array = this._rawData;
-
-		raw[0] *= s;
-		raw[1] *= s;
-		raw[2] *= s;
+		__assembly.Vector3D_scaleBy(this._ptr, s);
 	}
 
 	/**

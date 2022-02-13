@@ -23,6 +23,7 @@ interface ICoreExports {
     Vector3D_negate(vec: WASMVector3D): void;
     Vector3D_normalize(vec: WASMVector3D, thickness: number): number;
     Vector3D_project(vec: WASMVector3D): void;
+    Vector3D_scaleBy(vec: WASMVector3D, scale: number): void;
     Vector3D_sub(left: WASMVector3D, right: WASMVector3D, set: WASMVector3D): void;
     memory: WebAssembly.Memory;
 }

@@ -56,7 +56,6 @@ export function Vector3D_add(left: Vector3D, right: Vector3D, set: Vector3D): vo
     set.x = left.x + right.x;
     set.y = left.y + right.y;
     set.z = left.z + right.z;
-    set.w = left.w + right.w;
   }
 }
 
@@ -80,7 +79,6 @@ export function Vector3D_sub(left: Vector3D, right: Vector3D, set: Vector3D): vo
     set.x = left.x - right.x;
     set.y = left.y - right.y;
     set.z = left.z - right.z;
-    set.w = left.w - right.w;
   }
 }
 
@@ -104,7 +102,6 @@ export function Vector3D_mul(left: Vector3D, right: Vector3D, set: Vector3D): vo
     set.x = left.x * right.x;
     set.y = left.y * right.y;
     set.z = left.z * right.z;
-    set.w = left.w * right.w;
   }
 }
 
@@ -128,7 +125,6 @@ export function Vector3D_div(left: Vector3D, right: Vector3D, set: Vector3D): vo
     set.x = left.x / right.x;
     set.y = left.y / right.y;
     set.z = left.z / right.z;
-    set.w = left.w / right.w;
   }
 }
 
@@ -226,7 +222,7 @@ export function Vector3D_combine(left: Vector3D, right: Vector3D, ascl: f32, bsc
     target.y = left.y * ascl + right.y * bscl;
     target.z = left.z * ascl + right.z * bscl;
   }
-  target.z = 1;
+  target.w = 1;
 }
 
 /**
@@ -313,14 +309,12 @@ export function Vector3D_distance(left: Vector3D, right: Vector3D): f32 {
   }
 }
 
-// @ts-ignore: decorator is valid here
-@lazy const sizeofXYZ = offsetof<Vector3D>() - sizeof<f32>();
 
 // @ts-ignore: decorator is valid here
-@lazy let identity = v128(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15);
+@lazy let identitySwizzle = v128(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15);
 
 // @ts-ignore: decorator is valid here
-@lazy let vectorIdentity = v128(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 0, 1, 2, 3);
+@lazy let vectorIdentitySwizzle = v128(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 0, 1, 2, 3);
 
 /**
  * Compare two vectors to see if they are equal.
@@ -333,7 +327,7 @@ export function Vector3D_distance(left: Vector3D, right: Vector3D): f32 {
 export function Vector3D_equals(left: Vector3D, right: Vector3D, allFour: bool = false): bool {
   if (ASC_FEATURE_SIMD) {
     // only considder x y and z if allFour is false
-    let loadIdentity = select<v128>(identity, vectorIdentity, allFour);
+    let loadIdentity = select<v128>(identitySwizzle, vectorIdentitySwizzle, allFour);
     // load both vectors
     let leftSimd = v128.swizzle(
       v128.load(changetype<usize>(left)),
@@ -383,7 +377,7 @@ export function Vector3D_identity(vec: Vector3D): void {
 export function Vector3D_nearEquals(left: Vector3D, right: Vector3D, tolerance: f32, allFour: bool): bool {
   if (ASC_FEATURE_SIMD) {
     // only considder x y and z if allFour is false
-    let loadIdentity = select<v128>(identity, vectorIdentity, allFour);
+    let loadIdentity = select<v128>(identitySwizzle, vectorIdentitySwizzle, allFour);
     // load both vectors
     let leftSimd = v128.swizzle(
       v128.load(changetype<usize>(left)),
@@ -425,9 +419,11 @@ export function Vector3D_negate(vec: Vector3D): void {
 
 
 /**
- * Normalize the given vector.
+ * Normalize the given vector to a given thickness.
  *
  * @param vec - The vector.
+ * @param thickness - The thickness to normalize the vector to.
+ * @returns The length of the vector previously.
  */
 export function Vector3D_normalize(vec: Vector3D, thickness: f32): f32 {
   if (ASC_FEATURE_SIMD) {
@@ -462,6 +458,20 @@ export function Vector3D_normalize(vec: Vector3D, thickness: f32): f32 {
   }
 }
 
+/**
+ * Divides the value of the <code>x</code>, <code>y</code>, and
+ * <code>z</code> properties of the current Vector3D object by the
+ * value of its <code>w</code> property.
+ *
+ * <p>If the current Vector3D object is the result of multiplying a
+ * Vector3D object by a projection Matrix3D object, the w property can
+ * hold the transform value. The <code>project()</code> method then can
+ * complete the projection by dividing the elements by the
+ * <code>w</code> property. Use the <code>Matrix3D.rawData</code>
+ * property to create a projection Matrix3D object.</p>
+ *
+ * @param {Vector3D} vec - The vector to prokect.
+ */
 export function Vector3D_project(vec: Vector3D): void {
   if (ASC_FEATURE_SIMD) {
     let ratio = v128.add(
@@ -483,5 +493,34 @@ export function Vector3D_project(vec: Vector3D): void {
     vec.x /= w;
     vec.y /= w;
     vec.z /= w;
+  }
+}
+
+/**
+ * Scale a given vector by a scalar value.
+ *
+ * @param {Vector3D} vec - The given vector to scale.
+ * @param {f32} scale - The scalar value to scale the vector by.
+ */
+export function Vector3D_scaleBy(vec: Vector3D, scale: f32): void {
+  if (ASC_FEATURE_SIMD) {
+    let scaleSimd = v128.add(
+      v128.mul(
+        v128.splat<f32>(scale),
+        f32x4(1, 1, 1, 0)
+      ),
+      f32x4(0, 0, 0, 1),
+    );
+    v128.store(
+      changetype<usize>(vec),
+      v128.mul<f32>(
+        v128.load(changetype<usize>(vec)),
+        scaleSimd,
+      ),
+    );
+  } else {
+    vec.x *= scale;
+    vec.y *= scale;
+    vec.z *= scale;
   }
 }

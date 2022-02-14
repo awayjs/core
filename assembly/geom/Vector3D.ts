@@ -46,12 +46,14 @@ export function Vector3D_free(vec: Vector3D): void {
  */
 export function Vector3D_add(left: Vector3D, right: Vector3D, set: Vector3D): void {
   if (ASC_FEATURE_SIMD) {
+    let w = set.w;
     let leftv128 = v128.load(changetype<usize>(left));
     let rightv128 = v128.load(changetype<usize>(right));
     v128.store(
       changetype<usize>(set),
       v128.add<f32>(leftv128, rightv128),
     );
+    set.w = w;
   } else {
     set.x = left.x + right.x;
     set.y = left.y + right.y;
@@ -69,12 +71,14 @@ export function Vector3D_add(left: Vector3D, right: Vector3D, set: Vector3D): vo
  */
 export function Vector3D_sub(left: Vector3D, right: Vector3D, set: Vector3D): void {
   if (ASC_FEATURE_SIMD) {
+    let w = set.w;
     let leftv128 = v128.load(changetype<usize>(left));
     let rightv128 = v128.load(changetype<usize>(right));
     v128.store(
       changetype<usize>(set),
       v128.sub<f32>(leftv128, rightv128),
     );
+    set.w = w;
   } else {
     set.x = left.x - right.x;
     set.y = left.y - right.y;
@@ -92,12 +96,14 @@ export function Vector3D_sub(left: Vector3D, right: Vector3D, set: Vector3D): vo
  */
 export function Vector3D_mul(left: Vector3D, right: Vector3D, set: Vector3D): void {
   if (ASC_FEATURE_SIMD) {
+    let w = set.w;
     let leftv128 = v128.load(changetype<usize>(left));
     let rightv128 = v128.load(changetype<usize>(right));
     v128.store(
       changetype<usize>(set),
       v128.mul<f32>(leftv128, rightv128),
     );
+    set.w = w;
   } else {
     set.x = left.x * right.x;
     set.y = left.y * right.y;
@@ -115,12 +121,14 @@ export function Vector3D_mul(left: Vector3D, right: Vector3D, set: Vector3D): vo
  */
 export function Vector3D_div(left: Vector3D, right: Vector3D, set: Vector3D): void {
   if (ASC_FEATURE_SIMD) {
+    let w = set.w;
     let leftv128 = v128.load(changetype<usize>(left));
     let rightv128 = v128.load(changetype<usize>(right));
     v128.store(
       changetype<usize>(set),
       v128.div<f32>(leftv128, rightv128),
     );
+    set.w = w;
   } else {
     set.x = left.x / right.x;
     set.y = left.y / right.y;
@@ -262,6 +270,7 @@ export function Vector3d_crossProduct(left: Vector3D, right: Vector3D, store: Ve
   if (ASC_FEATURE_SIMD) {
     let leftSimd = v128.load(changetype<usize>(left));
     let rightSimd = v128.load(changetype<usize>(right));
+    let w = store.w;
     v128.store(
       changetype<usize>(store),
       v128.sub<f32>(
@@ -275,6 +284,7 @@ export function Vector3d_crossProduct(left: Vector3D, right: Vector3D, store: Ve
         ),
       ),
     );
+    store.w = w;
   } else {
     store.x = left.y * right.z - left.z * right.y;
     store.y = left.z * right.x - left.x * right.z;
@@ -427,23 +437,17 @@ export function Vector3D_negate(vec: Vector3D): void {
  */
 export function Vector3D_normalize(vec: Vector3D, thickness: f32): f32 {
   if (ASC_FEATURE_SIMD) {
+    let w = vec.w;
     let simd = v128.load(changetype<usize>(vec));
     let squared = v128.mul<f32>(simd, simd);
     let length = sqrt<f32>(v128.extract_lane<f32>(squared, 0) + v128.extract_lane<f32>(squared, 1) + v128.extract_lane<f32>(squared, 2));
     if (length) {
       let ratio = thickness / length;
-      // f32x4(ratio, ratio, ratio, 1)
-      let ratioSimd = v128.add<f32>(
-        v128.mul<f32>(
-          v128.splat<f32>(ratio),
-          f32x4(1, 1, 1, 0),
-        ),
-        f32x4(0, 0, 0, 1),
-      );
       v128.store(
         changetype<usize>(vec),
-        v128.mul<f32>(simd, ratioSimd),
+        v128.mul<f32>(simd, v128.splat<f32>(ratio)),
       );
+      vec.w = w;
     }
     return length;
   } else {
@@ -474,20 +478,15 @@ export function Vector3D_normalize(vec: Vector3D, thickness: f32): f32 {
  */
 export function Vector3D_project(vec: Vector3D): void {
   if (ASC_FEATURE_SIMD) {
-    let ratio = v128.add(
-      v128.mul<f32>(
-        v128.splat<f32>(vec.w),
-        f32x4(1, 1, 1, 0),
-      ),
-      f32x4(0, 0, 0, 1),
-    );
+    let w = vec.w;
     v128.store(
       changetype<usize>(vec),
       v128.div<f32>(
         v128.load(changetype<usize>(vec)),
-        ratio,
+        v128.splat<f32>(w),
       ),
     );
+    vec.w = w;
   } else {
     let w = vec.w;
     vec.x /= w;
@@ -504,20 +503,15 @@ export function Vector3D_project(vec: Vector3D): void {
  */
 export function Vector3D_scaleBy(vec: Vector3D, scale: f32): void {
   if (ASC_FEATURE_SIMD) {
-    let scaleSimd = v128.add(
-      v128.mul(
-        v128.splat<f32>(scale),
-        f32x4(1, 1, 1, 0)
-      ),
-      f32x4(0, 0, 0, 1),
-    );
+    let w = vec.w;
     v128.store(
       changetype<usize>(vec),
       v128.mul<f32>(
         v128.load(changetype<usize>(vec)),
-        scaleSimd,
+        v128.splat<f32>(scale),
       ),
     );
+    vec.w = w;
   } else {
     vec.x *= scale;
     vec.y *= scale;

@@ -3,6 +3,10 @@ import { ArgumentError } from '../errors/ArgumentError';
 import { Point } from './Point';
 import { Vector3D } from './Vector3D';
 
+let registry = new FinalizationRegistry<WASMMatrix>(held => {
+	__assembly.Matrix_free(held);
+});
+
 /**
  * The Matrix export class represents a transformation matrix that determines how to
  * map points from one coordinate space to another. You can perform various
@@ -59,7 +63,7 @@ import { Vector3D } from './Vector3D';
  * before you can call the methods of the Matrix object.</p>
  */
 export class Matrix {
-	public rawData: Float32Array = new Float32Array(6);
+	public rawData: Float32Array; // = new Float32Array(6);
 
 	/**
 	 * The value that affects the positioning of pixels along the <i>x</i> axis
@@ -163,16 +167,22 @@ export class Matrix {
 		tx: number = 0,
 		ty: number = 0) {
 		if (a instanceof Float32Array) {
+			let mat = __assembly.Matrix_allocateUnset();
+			this.rawData = new Float32Array(
+				__assembly.memory.buffer,
+				mat as unknown as number,
+				6,
+			);
 			this.copyRawDataFrom(a);
+			registry.register(this, mat);
 		} else {
-			const raw: Float32Array = this.rawData;
-
-			raw[0] = Number(a);
-			raw[1] = b;
-			raw[2] = c;
-			raw[3] = d;
-			raw[4] = tx;
-			raw[5] = ty;
+			let mat = __assembly.Matrix_allocate(a, b, c, d, tx, ty);
+			this.rawData = new Float32Array(
+				__assembly.memory.buffer,
+				mat as unknown as number,
+				6,
+			);
+			registry.register(this, mat);
 		}
 	}
 

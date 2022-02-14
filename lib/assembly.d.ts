@@ -5,7 +5,14 @@ interface WASMVector3D {
     type: "WASMVector3D";
 }
 
+interface WASMMatrix {
+    type: "WASMMatrix";
+}
+
 interface ICoreExports {
+    Matrix_allocate(a: f32, b: f32, c: f32, d: f32, tx: f32, ty: f32): WASMMatrix;
+    Matrix_allocateUnset(): WASMMatrix;
+    Matrix_free(matrix: WASMMatrix): void;
     Vector3D_add(left: WASMVector3D, right: WASMVector3D, set: WASMVector3D): void;
     Vector3D_allocate(x: f32, y: f32, z: f32, w: f32): WASMVector3D;
     Vector3D_angleBetween(left: WASMVector3D, right: WASMVector3D): number;

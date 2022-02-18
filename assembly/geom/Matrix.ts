@@ -109,15 +109,12 @@ export function concat(m: Matrix, n: Matrix): void {
             );
             txty = v128.add<f32>(
                 txty,
-                v128.mul<f32>(
-                    v128.add<f32>(
-                        v128.mul<f32>(
-                            mtxty,
-                            v128.swizzle(nv128, cbzzSwizzle),
-                        ),
-                        ntxty,
+                v128.add<f32>(
+                    v128.mul<f32>(
+                        mtxty,
+                        v128.swizzle(nv128, cbzzSwizzle),
                     ),
-                    f32x4(1, 1, 0, 0)
+                    ntxty,
                 ),
             )
         }

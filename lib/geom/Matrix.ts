@@ -65,6 +65,8 @@ let registry = new FinalizationRegistry<WASMMatrix>(held => {
 export class Matrix {
 	public rawData: Float32Array; // = new Float32Array(6);
 
+	public _ptr: WASMMatrix;
+
 	/**
 	 * The value that affects the positioning of pixels along the <i>x</i> axis
 	 * when scaling or rotating an image.
@@ -168,6 +170,7 @@ export class Matrix {
 		ty: number = 0) {
 		if (a instanceof Float32Array) {
 			let mat = __assembly.Matrix_allocateUnset();
+			this._ptr = mat;
 			this.rawData = new Float32Array(
 				__assembly.memory.buffer,
 				mat as unknown as number,
@@ -177,6 +180,7 @@ export class Matrix {
 			registry.register(this, mat);
 		} else {
 			let mat = __assembly.Matrix_allocate(a, b, c, d, tx, ty);
+			this._ptr = mat;
 			this.rawData = new Float32Array(
 				__assembly.memory.buffer,
 				mat as unknown as number,
@@ -228,30 +232,7 @@ export class Matrix {
 	 * @param matrix The matrix to be concatenated to the source matrix.
 	 */
 	public concat(matrix: Matrix): void {
-		const m: Float32Array = this.rawData;
-		const n: Float32Array = matrix.rawData;
-		let a =  m[0] * n[0];
-		let b =  0.0;
-		let c =  0.0;
-		let d =  m[3] * n[3];
-		let tx = m[4] * n[0] + n[4];
-		let ty = m[5] * n[3] + n[5];
-
-		if (m[1] !== 0.0 || m[2] !== 0.0 || n[1] !== 0.0 || n[2] !== 0.0) {
-			a  += m[1] * n[2];
-			d  += m[2] * n[1];
-			b  += m[0] * n[1] + m[1] * n[3];
-			c  += m[2] * n[0] + m[3] * n[2];
-			tx += m[5] * n[2];
-			ty += m[4] * n[1];
-		}
-
-		m[0] = a;
-		m[1] = b;
-		m[2] = c;
-		m[3] = d;
-		m[4] = tx;
-		m[5] = ty;
+		__assembly.Matrix_concat(this._ptr, matrix._ptr);
 	}
 
 	/**

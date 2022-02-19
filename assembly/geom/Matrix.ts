@@ -62,7 +62,7 @@ export function Matrix_free(matrix: Matrix): void {
 // @ts-ignore
 @lazy const cbzzSwizzle: v128 = v128(8, 9, 10, 11, 4, 5, 6, 7, 0, 0, 0, 0, 0, 0, 0, 0);
 
-export function concat(m: Matrix, n: Matrix): void {
+export function Matrix_concat(m: Matrix, n: Matrix): void {
     if (ASC_FEATURE_SIMD) {
         let mv128 = v128.load(changetype<usize>(m));
         let nv128 = v128.load(changetype<usize>(n));
@@ -146,4 +146,46 @@ export function concat(m: Matrix, n: Matrix): void {
         m.tx = tx;
         m.ty = ty;
     }
+}
+
+export function Matrix_copy(dst: Matrix, src: Matrix): void {
+    if (ASC_FEATURE_SIMD) {
+        v128.store(
+            changetype<usize>(dst),
+            v128.load(changetype<usize>(src)),
+        );
+    } else {
+        store<u64>(
+            changetype<usize>(dst),
+            load<u64>(changetype<usize>(src)),
+        );
+        store<u64>(
+            changetype<usize>(dst),
+            load<u64>(changetype<usize>(src), offsetof<Matrix>("c")),
+            offsetof<Matrix>("c"),
+        );
+    }
+    store<u64>(
+        changetype<usize>(dst),
+        load<u64>(changetype<usize>(src), offsetof<Matrix>("tx")),
+        offsetof<Matrix>("tx"),
+    );
+}
+
+export function Matrix_createBox(mat: Matrix, scaleX: f32, scaleY: f32, rotation: f32, tx: f32, ty: f32): void {
+    const u = NativeMathf.cos(rotation);
+    const v = NativeMathf.sin(rotation);
+    if (rotation != 0) {
+        mat.a =  u * scaleX;
+        mat.b =  v * scaleY;
+        mat.c = -v * scaleX;
+        mat.d =  u * scaleY;
+    } else {
+        mat.a = scaleX;
+        mat.b = 0;
+        mat.c = 0;
+        mat.d = scaleY;
+    }
+    mat.tx = tx;
+    mat.ty = ty;
 }

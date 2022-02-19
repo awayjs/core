@@ -295,15 +295,7 @@ export class Matrix {
 	 * @param sourceMatrix The Matrix object from which to copy the data.
 	 */
 	public copyFrom(sourceMatrix: Matrix): void {
-		const raw: Float32Array = this.rawData;
-		const sourceRaw: Float32Array = sourceMatrix.rawData;
-
-		raw[0] = sourceRaw[0];
-		raw[1] = sourceRaw[1];
-		raw[2] = sourceRaw[2];
-		raw[3] = sourceRaw[3];
-		raw[4] = sourceRaw[4];
-		raw[5] = sourceRaw[5];
+		__assembly.Matrix_copy(this._ptr, sourceMatrix._ptr);
 	}
 
 	/**
@@ -376,24 +368,7 @@ export class Matrix {
 	 *                 <i>y</i> axis.
 	 */
 	public createBox(scaleX: number, scaleY: number, rotation: number = 0, tx: number = 0, ty: number = 0): void {
-		const raw: Float32Array = this.rawData;
-
-		if (rotation !== 0) {
-			const u = Math.cos(rotation);
-			const v = Math.sin(rotation);
-			raw[0] =  u * scaleX;
-			raw[1] =  v * scaleY;
-			raw[2] = -v * scaleX;
-			raw[3] =  u * scaleY;
-		} else {
-			raw[0] = scaleX;
-			raw[1] = 0;
-			raw[2] = 0;
-			raw[3] = scaleY;
-		}
-
-		raw[4] = tx;
-		raw[5] = ty;
+		__assembly.Matrix_createBox(this._ptr, scaleX, scaleY, rotation, tx, ty);
 	}
 
 	/**

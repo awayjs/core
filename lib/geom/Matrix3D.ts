@@ -688,9 +688,9 @@ export class Matrix3D {
 					(colY.z - colZ.y) * (colY.z - colZ.y) +
 					(colZ.x - colX.z) * (colZ.x - colX.z) +
 					(colX.y - colY.x) * (colX.y - colY.x));
-				rot.x = len? (colY.z - colZ.y) / len : 0;
-				rot.y = len? (colZ.x - colX.z) / len : 0;
-				rot.z = len? (colX.y - colY.x) / len : 0;
+				rot.x = len ? (colY.z - colZ.y) / len : 0;
+				rot.y = len ? (colZ.x - colX.z) / len : 0;
+				rot.z = len ? (colX.y - colY.x) / len : 0;
 
 				break;
 			}

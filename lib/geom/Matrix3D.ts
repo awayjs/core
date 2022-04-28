@@ -638,7 +638,9 @@ export class Matrix3D {
 
 		//compute X scale factor and normalise colX
 		scale.x = colX.length;
-		colX.scaleBy(1 / scale.x);
+
+		if (scale.x)
+			colX.scaleBy(1 / scale.x);
 
 		//compute XY shear factor and make colY orthogonal to colX
 		skew.x = colX.dotProduct(colY);
@@ -646,8 +648,11 @@ export class Matrix3D {
 
 		//compute Y scale factor and normalise colY
 		scale.y = colY.length;
-		colY.scaleBy(1 / scale.y);
-		skew.x /= scale.y;
+
+		if (scale.y) {
+			colY.scaleBy(1 / scale.y);
+			skew.x /= scale.y;
+		}
 
 		//compute XZ and YZ shears and make colZ orthogonal to colX and colY
 		skew.y = colX.dotProduct(colZ);
@@ -657,9 +662,12 @@ export class Matrix3D {
 
 		//compute Z scale and normalise colZ
 		scale.z = colZ.length;
-		colZ.scaleBy(1 / scale.z);
-		skew.y /= scale.z;
-		skew.z /= scale.z;
+
+		if (scale.z) {
+			colZ.scaleBy(1 / scale.z);
+			skew.y /= scale.z;
+			skew.z /= scale.z;
+		}
 
 		//at this point, the matrix (in cols) is orthonormal
 		//check for a coordinate system flip. If the determinant is -1, negate the z scaling factor
@@ -680,9 +688,9 @@ export class Matrix3D {
 					(colY.z - colZ.y) * (colY.z - colZ.y) +
 					(colZ.x - colX.z) * (colZ.x - colX.z) +
 					(colX.y - colY.x) * (colX.y - colY.x));
-				rot.x = (colY.z - colZ.y) / len;
-				rot.y = (colZ.x - colX.z) / len;
-				rot.z = (colX.y - colY.x) / len;
+				rot.x = len ? (colY.z - colZ.y) / len : 0;
+				rot.y = len ? (colZ.x - colX.z) / len : 0;
+				rot.z = len ? (colX.y - colY.x) / len : 0;
 
 				break;
 			}

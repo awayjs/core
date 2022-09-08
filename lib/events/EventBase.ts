@@ -4,14 +4,21 @@ export class EventBase {
 	 * @property type
 	 * @type String
 	 */
-	public type: string = undefined;
+	public type: string;
 
 	/**
 	 * Reference to target object
 	 * @property target
 	 * @type Object
 	 */
-	public target: any = undefined;
+	public target: any;
+
+	/**
+	 * Reference to currentTarget object
+	 * @property currentTarget
+	 * @type Object
+	 */
+	 public currentTarget: any;
 
 	constructor(type: string) {
 		this.type = type;

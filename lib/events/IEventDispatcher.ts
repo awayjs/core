@@ -29,7 +29,7 @@ export interface IEventDispatcher
 	 * @method dispatchEvent
 	 * @param {Event} event to dispatch
 	 */
-	dispatchEvent(event: EventBase);
+	dispatchEvent(event: EventBase, target?: any);
 
 	/**
 	 * check if an object has an event listener assigned to it

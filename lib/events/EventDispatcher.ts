@@ -51,11 +51,12 @@ export class EventDispatcher {
 	 * @method dispatchEvent
 	 * @param {Event} event to dispatch
 	 */
-	public dispatchEvent(event: EventBase): void {
+	public dispatchEvent(event: EventBase, target: any = null): void {
 		const l: ListenerObject = this._listenerObjects[event.type];
 
 		if (l) {
-			event.target = this._t;
+			event.target = target || this._t;
+			event.currentTarget = this._t;
 			l.dispatchEvent(event);
 		}
 	}

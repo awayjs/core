@@ -1,7 +1,10 @@
 import { WaveAudio } from '../audio/WaveAudio';
+import { IEventDispatcher } from '../events/IEventDispatcher';
 
-export interface IAudioChannel
+export interface IAudioChannel extends IEventDispatcher
 {
+	stopped: boolean;
+
 	duration: number;
 
 	currentTime: number;

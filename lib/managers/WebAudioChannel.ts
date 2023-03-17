@@ -1,7 +1,8 @@
 import { IWaveAudioMeta } from '../audio/WaveAudio';
 import { BaseAudioChannel } from './BaseAudioChannel';
+import { IAudioChannel } from './IAudioChannel';
 
-export class WebAudioChannel extends BaseAudioChannel {
+export class WebAudioChannel extends BaseAudioChannel implements IAudioChannel {
 	public static maxChannels: number = 64; // for icycle: 128;
 	public static _channels: Array<WebAudioChannel> = new Array<WebAudioChannel>();
 	public static _decodeCache: Record<string, AudioBuffer> = {};

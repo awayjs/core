@@ -1,6 +1,7 @@
 import { BaseAudioChannel } from './BaseAudioChannel';
+import { IAudioChannel } from './IAudioChannel';
 
-export class StreamingAudioChannel extends BaseAudioChannel {
+export class StreamingAudioChannel extends BaseAudioChannel implements IAudioChannel {
 	public static maxChannels: number = 4;
 
 	public static _channels: Array<StreamingAudioChannel> = new Array<StreamingAudioChannel>();

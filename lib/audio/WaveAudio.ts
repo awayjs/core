@@ -3,18 +3,19 @@ import { AudioManager } from '../managers/AudioManager';
 import { ByteArray } from '../utils/ByteArray';
 import { BaseAudioChannel } from '../managers/BaseAudioChannel';
 import { EventBase } from '../events/EventBase';
+import { IAudioChannel } from '../managers/IAudioChannel';
 
 // TODO: Audio should probably be an interface containing play/stop/seek functionality
 export class WaveAudio extends AssetBase {
 	public static assetType: string = '[asset WaveAudio]';
 
-	private _audioChannel: BaseAudioChannel;
+	private _audioChannel: IAudioChannel;
 	private _volume: number = 1;
 	private _pan: number = 0;
 	private _data: WaveAudioData;
 	private _channelGroup: number;
 	private _onSoundComplete: Function;
-	private _audioChannels: BaseAudioChannel[] = [];
+	private _audioChannels: IAudioChannel[] = [];
 	private _isPlaying: boolean = false;
 	private _channelsPlaying: number = 0;
 
@@ -33,7 +34,7 @@ export class WaveAudio extends AssetBase {
 		return WaveAudio.assetType;
 	}
 
-	private detachChannel(channel: BaseAudioChannel) {
+	private detachChannel(channel: IAudioChannel) {
 		if (!channel) {
 			return;
 		}
@@ -44,7 +45,7 @@ export class WaveAudio extends AssetBase {
 		channel.removeEventListener(BaseAudioChannel.ERROR, this.onChannelCompleteStopError);
 	}
 
-	private attachChannel(channel: BaseAudioChannel) {
+	private attachChannel(channel: IAudioChannel) {
 		if (!channel) {
 			return;
 		}
@@ -56,7 +57,7 @@ export class WaveAudio extends AssetBase {
 	}
 
 	private onChannelCompleteStopError(e: EventBase): void {
-		const channel = <BaseAudioChannel> e.target;
+		const channel = <IAudioChannel> e.target;
 		const index = this._audioChannels.indexOf(channel);
 
 		if (index >= 0) {
@@ -154,10 +155,10 @@ export class WaveAudio extends AssetBase {
 		this.stop();
 	}
 
-	public play(offset: number, loop: boolean | number = false): BaseAudioChannel {
+	public play(offset: number, loop: boolean | number = false): IAudioChannel {
 		this._isPlaying = true;
 
-		this._audioChannel = <BaseAudioChannel> AudioManager.getChannel(this._data.size, this.channelGroup);
+		this._audioChannel = <IAudioChannel> AudioManager.getChannel(this._data.size, this.channelGroup);
 
 		if (this._audioChannel) {
 			this._channelsPlaying++;
@@ -228,7 +229,7 @@ export class WaveAudioData {
 		return this._blob.size;
 	}
 
-	public play(audioChannel: BaseAudioChannel, offset: number, loop: boolean | number, id: number): void {
+	public play(audioChannel: IAudioChannel, offset: number, loop: boolean | number, id: number): void {
 		if (this._buffer) {
 			audioChannel.play(this._buffer, offset, loop, id, this.meta);
 		} else if (!this._loading) {
@@ -253,7 +254,7 @@ export class WaveAudioData {
 		this.meta = meta;
 	}
 
-	private _blobConverted(event, audioChannel: BaseAudioChannel, offset: number, loop: boolean | number, id: number) {
+	private _blobConverted(event, audioChannel: IAudioChannel, offset: number, loop: boolean | number, id: number) {
 		this._buffer = event.target.result;
 
 		audioChannel.play(this._buffer, offset, loop, id, this.meta);

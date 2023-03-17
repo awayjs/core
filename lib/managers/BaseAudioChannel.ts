@@ -3,7 +3,7 @@ import { EventDispatcher } from '../events/EventDispatcher';
 import { EventBase } from '../events/EventBase';
 import { WaveAudio } from '../audio/WaveAudio';
 
-export abstract class BaseAudioChannel extends EventDispatcher implements IAudioChannel {
+export abstract class BaseAudioChannel extends EventDispatcher {
 	public static COMPLETE = 'complete';
 	public static RESTART = 'restart';
 	public static STOP = 'stop';
@@ -14,13 +14,6 @@ export abstract class BaseAudioChannel extends EventDispatcher implements IAudio
 	protected static STOP_EVENT = new EventBase(BaseAudioChannel.STOP);
 	protected static ERROR_EVENT = new EventBase(BaseAudioChannel.ERROR);
 
-	public currentTime: number;
-	public duration: number;
-	public groupID: number;
-	public groupPan: number;
-	public groupVolume: number;
-	public pan: number;
-	public volume: number;
 	public owner: WaveAudio;
 
 	public get stopped() {

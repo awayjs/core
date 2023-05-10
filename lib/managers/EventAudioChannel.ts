@@ -156,7 +156,7 @@ export class EventAudioChannel extends BaseAudioChannel implements IAudioChannel
 		super.play(buffer, offset, loop, id);
 
 		this._isPlaying = true;
-		this._isLooping = this.loops > 0;
+		this._isLooping = this._loops > 0;
 
 		this._audio.src = EventAudioChannel._base64Cache[id]
 						|| (EventAudioChannel._base64Cache[id] = ParserUtils.arrayBufferToBase64(buffer, 'audio/mp3'));

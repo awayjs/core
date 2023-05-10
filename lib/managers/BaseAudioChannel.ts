@@ -1,4 +1,3 @@
-import { IAudioChannel } from './IAudioChannel';
 import { EventDispatcher } from '../events/EventDispatcher';
 import { EventBase } from '../events/EventBase';
 import { WaveAudio } from '../audio/WaveAudio';
@@ -32,18 +31,6 @@ export abstract class BaseAudioChannel extends EventDispatcher {
 
 	protected _isDecoding: boolean = false;
 
-	/**
-	 * @deprecated This is deprecated, use a `addEventListener`
-	 * @param v
-	 */
-	public set onSoundComplete(v: (e?: EventBase) => void) {
-		if (!v) {
-			return;
-		}
-
-		this.addEventListener(BaseAudioChannel.COMPLETE, v);
-	}
-
 	public isLooping() {
 		return this._isLooping;
 	}
@@ -63,22 +50,13 @@ export abstract class BaseAudioChannel extends EventDispatcher {
 		id?: number,
 		meta?: any
 	): void {
-		this.loops = loop;
+		this._loops = typeof loop === 'number' ? loop : loop ? 1000 : 0;
 		this._id = id || -1;
-		this._isLooping = this.loops > 0;
 	}
 
 	public abstract stop(): void;
 
 	protected abstract restart(): boolean;
-
-	protected set loops (v: number | boolean) {
-		this._loops = typeof v === 'number' ? v : v ? 1000 : 0;
-	}
-
-	protected get loops() {
-		return this._loops;
-	}
 
 	protected dispatchRestart(): void {
 		this.dispatchEvent(BaseAudioChannel.RESTART_EVENT);

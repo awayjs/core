@@ -156,8 +156,8 @@ export class StreamingAudioChannel extends BaseAudioChannel implements IAudioCha
 		super.play(buffer, offset, loop, 0);
 		this._isPlaying = true;
 
-		if (this._isLooping || this._isLooping != this.loops > 0) {
-			this._isLooping = this.loops > 0;
+		if (this._isLooping || this._isLooping != this._loops > 0) {
+			this._isLooping = this._loops > 0;
 			this._sourceDirty = true;
 		}
 

@@ -213,6 +213,7 @@ export class WebAudioChannel extends BaseAudioChannel implements IAudioChannel {
 
 		super.play(buffer, offset, loop, id, meta);
 
+		this._isLooping = this._loops > 0;
 		this._isPlaying = true;
 		this._currentTime = offset;
 		this._isDecoding = true;

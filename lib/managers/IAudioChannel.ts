@@ -19,8 +19,6 @@ export interface IAudioChannel extends IEventDispatcher
 
 	groupID: number;
 
-	onSoundComplete: Function;
-
 	owner: WaveAudio;
 
 	isPlaying(): boolean;

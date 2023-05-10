@@ -14,7 +14,6 @@ export class WaveAudio extends AssetBase {
 	private _pan: number = 0;
 	private _data: WaveAudioData;
 	private _channelGroup: number;
-	private _onSoundComplete: Function;
 	private _audioChannels: IAudioChannel[] = [];
 	private _isPlaying: boolean = false;
 	private _channelsPlaying: number = 0;
@@ -39,7 +38,6 @@ export class WaveAudio extends AssetBase {
 			return;
 		}
 
-		channel.owner = null;
 		channel.removeEventListener(BaseAudioChannel.COMPLETE, this.onChannelCompleteStopError);
 		channel.removeEventListener(BaseAudioChannel.STOP, this.onChannelCompleteStopError);
 		channel.removeEventListener(BaseAudioChannel.ERROR, this.onChannelCompleteStopError);
@@ -72,8 +70,6 @@ export class WaveAudio extends AssetBase {
 
 		// we stop channels
 		this.stopInternal(false);
-		// emit complete when ALL channels is stopped
-		this._onSoundComplete && this._onSoundComplete();
 	}
 
 	public get pan(): number {
@@ -171,10 +167,6 @@ export class WaveAudio extends AssetBase {
 		}
 
 		return  this._audioChannel;
-	}
-
-	public set onSoundComplete(value: Function) {
-		this._onSoundComplete = value;
 	}
 
 	private stopInternal(stopChannels = false) {

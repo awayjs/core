@@ -1,4 +1,4 @@
-import { AbstractionBase } from './AbstractionBase';
+import { IAbstraction } from './IAbstraction';
 import { IAbstractionPool } from './IAbstractionPool';
 import { IAsset } from './IAsset';
 
@@ -13,5 +13,5 @@ export interface IAbstractionClass
 	/**
 	 *
 	 */
-	new(asset: IAsset, pool: IAbstractionPool): AbstractionBase;
+	new(asset: IAsset, pool: IAbstractionPool): IAbstraction;
 }

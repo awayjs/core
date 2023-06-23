@@ -3,6 +3,7 @@ import { AbstractMethodError } from '../errors/AbstractMethodError';
 import { AssetEvent } from '../events/AssetEvent';
 import { EventDispatcher } from '../events/EventDispatcher';
 import { AbstractionBase } from './AbstractionBase';
+import { IAbstraction } from './IAbstraction';
 import { IAbstractionPool } from './IAbstractionPool';
 
 import { IAsset } from './IAsset';
@@ -18,7 +19,7 @@ export class AssetBase extends EventDispatcher implements IAsset, IAssetAdapter 
 	private _namespace: string;
 	private _name: string;
 	private _full_path: Array<string>;
-	private _abstractionPool: Record<number, AbstractionBase> = {};
+	private _abstractionPool: Record<number, IAbstraction> = {};
 
 	public static DEFAULT_NAMESPACE: string = 'default';
 

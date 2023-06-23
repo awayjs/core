@@ -51,7 +51,8 @@ export { ConflictPrecedence }				from './lib/library/ConflictPrecedence';
 export { ConflictStrategy }					from './lib/library/ConflictStrategy';
 export { ConflictStrategyBase }				from './lib/library/ConflictStrategyBase';
 export { ErrorConflictStrategy }			from './lib/library/ErrorConflictStrategy';
-export { IAbstractionClass }              	from './lib/library/IAbstractionClass';
+export { IAbstraction }						from './lib/library/IAbstraction';
+export { IAbstractionClass }				from './lib/library/IAbstractionClass';
 export { IAbstractionPool }					from './lib/library/IAbstractionPool';
 export { IAsset }							from './lib/library/IAsset';
 export { IAssetAdapter }					from './lib/library/IAssetAdapter';
@@ -61,7 +62,7 @@ export { IgnoreConflictStrategy }			from './lib/library/IgnoreConflictStrategy';
 export { Loader }							from './lib/library/Loader';
 export { LoaderContext }					from './lib/library/LoaderContext';
 export { NumSuffixConflictStrategy }		from './lib/library/NumSuffixConflictStrategy';
-export { UUID }		                    	from './lib/library/UUID';
+export { UUID }								from './lib/library/UUID';
 
 export { AudioManager }						from './lib/managers/AudioManager';
 export { IAudioChannel }					from './lib/managers/IAudioChannel';

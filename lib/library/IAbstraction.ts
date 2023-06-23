@@ -1,6 +1,5 @@
-import { AssetEvent } from "../events/AssetEvent";
-import { IAsset } from "./IAsset";
-
+import { AssetEvent } from '../events/AssetEvent';
+import { IAsset } from './IAsset';
 
 export interface IAbstraction extends IAsset
 {

@@ -42,8 +42,7 @@
     "url": "https://github.com/awayjs/core/issues"
   },
   "homepage": "https://github.com/awayjs/core#readme",
-  "dependencies": {
-    "fs": "0.0.1-security",
+  "peerDependencies": {
     "tslib": "^2.3.0"
   },
   "devDependencies": {
@@ -53,7 +52,7 @@
     "rimraf": "^2.5.2",
     "rollup": "^0.36.3",
     "rollup-plugin-includepaths": "^0.2.1",
-    "tslib": "^1.9.0",
+    "tslib": "^2.3.0",
     "typescript": "^3.7.3",
     "uglify-js": "^3.0.15"
   }

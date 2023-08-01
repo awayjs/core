@@ -67,6 +67,7 @@ export { UUID }								from './lib/library/UUID';
 export { AudioManager }						from './lib/managers/AudioManager';
 export { IAudioChannel }					from './lib/managers/IAudioChannel';
 export { IAudioChannelClass }				from './lib/managers/IAudioChannelClass';
+export { BaseAudioChannel }			        from './lib/managers/BaseAudioChannel';
 export { StreamingAudioChannel }			from './lib/managers/StreamingAudioChannel';
 export { WebAudioChannel }					from './lib/managers/WebAudioChannel';
 

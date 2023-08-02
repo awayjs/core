@@ -14,7 +14,6 @@
   "scripts": {
     "rimraf": "rimraf",
     "rollup": "rollup -c",
-    "uglifyjs": "uglifyjs ./bundle/awayjs-core.umd.js -o ./bundle/awayjs-core.umd.min.js --source-map \"content='./bundle/awayjs-core.umd.js.map'\" --mangle",
     "tsc": "tsc",
     "tsc:build": "npm run tsc || exit 0",
     "clean": "npm cache clean && npm run rimraf -- node_modules dist bundle",
@@ -24,7 +23,7 @@
     "watch": "npm run tsc -- --w",
     "gitdiff": "git diff --quiet && git diff --cached --quiet",
     "prebuild": "npm run clean:dist",
-    "build": "npm run tsc:build && npm run rollup && npm run uglifyjs",
+    "build": "npm run tsc:build && npm run rollup",
     "copyVersionToIndex": "node ./copyVersionToIndex && git add ./index.ts && git commit -m \"update version number in index.ts\"",
     "preversion": "npm run gitdiff && npm run eslint:commit || exit 0",
     "version": "npm run copyVersionToIndex && npm run build",
@@ -46,14 +45,15 @@
     "tslib": "^2.3.0"
   },
   "devDependencies": {
+    "@rollup/plugin-commonjs": "^18.0.0",
+    "@rollup/plugin-terser": "^0.4.3",
+    "@rollup/plugin-node-resolve": "^11.2.1",
     "@typescript-eslint/eslint-plugin": "^4.4.1",
     "@typescript-eslint/parser": "^4.4.1",
     "eslint": "^7.11.0",
     "rimraf": "^2.5.2",
-    "rollup": "^0.36.3",
-    "rollup-plugin-includepaths": "^0.2.1",
+    "rollup": "^2.79.1",
     "tslib": "^2.3.0",
-    "typescript": "^3.7.3",
-    "uglify-js": "^3.0.15"
+    "typescript": "^4.9.5"
   }
 }

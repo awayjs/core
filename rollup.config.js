@@ -1,17 +1,18 @@
-var includePaths = require('rollup-plugin-includepaths');
+import nodeResolve from '@rollup/plugin-node-resolve';
+import commonjs from '@rollup/plugin-commonjs';
+import terser from '@rollup/plugin-terser';
 
-module.exports = {
-	entry: './dist/index.js',
-	sourceMap: true,
-	format: 'umd',
-	moduleName: 'AwayjsCore',
-	targets: [
-		{ dest: './bundle/awayjs-core.umd.js'}
-	],
+export default {
+	input: './dist/index.js',
+	output: {
+		name: 'AwayjsCore',
+		sourcemap: true,
+		format: 'umd',
+		file: './bundle/awayjs-core.umd.js'
+	},
 	plugins: [
-		includePaths({
-			include : {
-				"tslib": "./node_modules/tslib/tslib.es6.js"
-			}
-		}) ]
+		nodeResolve(),
+		commonjs(),
+		terser(),
+	]
 };

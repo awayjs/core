@@ -4,7 +4,6 @@ import { IAbstraction } from './IAbstraction';
 
 import { IAbstractionPool } from './IAbstractionPool';
 import { IAsset } from './IAsset';
-import { UUID } from './UUID';
 
 /**
  *
@@ -19,14 +18,6 @@ export class AbstractionBase extends AssetBase implements IAbstraction {
 	protected _asset: IAsset;
 
 	protected _invalid: boolean = true;
-
-	public static get ID_COUNT() {
-		return UUID.Next();
-	}
-
-	public static set ID_COUNT(v: number) {
-		// nothing
-	}
 
 	constructor(asset: IAsset, pool: IAbstractionPool) {
 		super();

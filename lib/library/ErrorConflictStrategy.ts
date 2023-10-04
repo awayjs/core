@@ -13,7 +13,7 @@ export class ErrorConflictStrategy extends ConflictStrategyBase {
 		assetsDictionary: Object,
 		precedence: string): void {
 		throw new ErrorBase('Asset name collision while AssetLibrary.namingStrategy ' +
-							'set to AssetLibrary.THROW_ERROR. Asset path: ' + changedAsset.adaptee.assetNamespace + "." + changedAsset.adaptee.name);
+							'set to AssetLibrary.THROW_ERROR. Asset path: ' + changedAsset.adaptee.assetNamespace + '.' + changedAsset.adaptee.name);
 	}
 
 	public create(): ConflictStrategyBase {

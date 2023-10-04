@@ -15,10 +15,8 @@ export class AssetBase extends EventDispatcher implements IAsset, IAssetAdapter 
 
 	public _symbol: any;
 	public _adapter: IAssetAdapter;
-	private _originalName: string;
 	private _namespace: string;
 	private _name: string;
-	private _full_path: Array<string>;
 	private _abstractionPool: Record<number, IAbstraction> = {};
 
 	public static DEFAULT_NAMESPACE: string = 'default';
@@ -28,18 +26,10 @@ export class AssetBase extends EventDispatcher implements IAsset, IAssetAdapter 
 	 */
 	public readonly id: number;
 
-	constructor(name: string = null) {
+	constructor() {
 		super();
 
 		this.id = UUID.Next();
-
-		if (name == null)
-			name = 'null';
-
-		this._name = name;
-		this._originalName = name;
-
-		this.updateFullPath();
 	}
 
 	public get adaptee(): AssetBase {
@@ -65,15 +55,6 @@ export class AssetBase extends EventDispatcher implements IAsset, IAssetAdapter 
 		throw new AbstractMethodError();
 	}
 
-	/**
-	 * The original name used for this asset in the resource (e.g. file) in which
-	 * it was found. This may not be the same as <code>name</code>, which may
-	 * have changed due to of a name conflict.
-	 */
-	public get originalName(): string {
-		return this._originalName;
-	}
-
 	public get name(): string {
 		return this._name;
 	}
@@ -84,8 +65,6 @@ export class AssetBase extends EventDispatcher implements IAsset, IAssetAdapter 
 
 		if (this._name == null)
 			this._name = 'null';
-
-		this.updateFullPath();
 
 		this.dispatchEvent(new AssetEvent(AssetEvent.RENAME, this, prev));
 	}
@@ -118,11 +97,6 @@ export class AssetBase extends EventDispatcher implements IAsset, IAssetAdapter 
 
 	public set assetNamespace(value: string) {
 		this._namespace = value ? value : AssetBase.DEFAULT_NAMESPACE;
-		this.updateFullPath();
-	}
-
-	public get assetFullPath(): Array<string> {
-		return this._full_path;
 	}
 
 	public assetPathEquals(name: string, ns: string): boolean {
@@ -133,19 +107,10 @@ export class AssetBase extends EventDispatcher implements IAsset, IAssetAdapter 
 		return this.assetType == assetClass.assetType;
 	}
 
-	public resetAssetPath(name: string, ns: string = null, overrideOriginal: boolean = true): void {
+	public resetAssetPath(name: string, ns: string = null): void {
 
 		this._name = name ? name : 'null';
 		this._namespace = ns ? ns : AssetBase.DEFAULT_NAMESPACE;
-
-		if (overrideOriginal)
-			this._originalName = this._name;
-
-		this.updateFullPath();
-	}
-
-	public updateFullPath(): void {
-		this._full_path = [this._namespace, this._name];
 	}
 
 	public getAbstraction <T extends AbstractionBase>(pool: IAbstractionPool): T {

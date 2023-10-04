@@ -30,11 +30,6 @@ export interface IAsset extends IEventDispatcher
 
 	/**
 	 *
-	 */
-	assetFullPath: Array<string>;
-
-	/**
-	 *
 	 * @param name
 	 * @param ns
 	 */

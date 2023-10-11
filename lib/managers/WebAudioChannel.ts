@@ -414,10 +414,14 @@ if (audioCtx && audioCtx.state === 'suspended') {
 
 		setTimeout(() => {
 			if (audioCtx.state === 'running') {
-				document.removeEventListener('mousedown', resume, false);
+				document.removeEventListener('touchstart', resume, false);
+				document.removeEventListener('touchend', resume, false);
 			}
 		}, 0);
 	};
 
-	document.addEventListener('mousedown', resume, false);
+	// iOS 6-8
+	document.addEventListener('touchstart', resume, false);
+	// iOS 9
+	document.addEventListener('touchend', resume, false);
 }

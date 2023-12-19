@@ -32,20 +32,19 @@ export class WaveAudioParser extends ParserBase {
 		return filetype ? true : false;
 	}
 
-	public _pStartParsing(frameLimit: number): void {
+	protected startParsing(frameLimit: number): void {
 		//clear content
-		delete this._pContent;
-		this._pContent = null;
+		delete this._content;
+		this._content = null;
 
-		super._pStartParsing(frameLimit);
+		super.startParsing(frameLimit);
 	}
 
-	public _pProceedParsing(): boolean {
-		this._pContent = new WaveAudio(new WaveAudioData(this.data));
-		this._pFinalizeAsset(this._pContent, this._iFileName);
+	protected proceedParsing(): void {
+		this._content = new WaveAudio(new WaveAudioData(this.data));
+		this.finalizeAsset(this._content, this.fileName);
 
-		return ParserBase.PARSING_DONE;
-
+		this.finishParsing();
 	}
 
 	private static parseFileType(ba: ByteArray): string {

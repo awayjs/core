@@ -86,9 +86,12 @@ export class RequestAnimationFrame {
 		this._argsArray[0] = this._dt;
 		this._callback.apply(this._callbackContext, this._argsArray);
 
-		window.requestAnimationFrame(this._rafUpdateFunction);
+		//check to see if callback has stopped RAF
+		if (this._active) {
+			window.requestAnimationFrame(this._rafUpdateFunction);
 
-		this._prevTime = this._currentTime;
+			this._prevTime = this._currentTime;
+		}
 	}
 
 }

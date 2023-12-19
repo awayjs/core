@@ -135,7 +135,7 @@ export class ResourceDependency {
 	 */
 	public resolve(): void {
 		if (this._parentParser)
-			this._parentParser._iResolveDependency(this);
+			this._parentParser.resolveDependency(this);
 	}
 
 	/**
@@ -143,7 +143,7 @@ export class ResourceDependency {
 	 */
 	public resolveFailure(): void {
 		if (this._parentParser)
-			this._parentParser._iResolveDependencyFailure(this);
+			this._parentParser.resolveDependencyFailure(this);
 	}
 
 	/**
@@ -151,7 +151,7 @@ export class ResourceDependency {
 	 */
 	public resolveName(asset: IAsset): string {
 		if (this._parentParser)
-			return this._parentParser._iResolveDependencyName(this, asset);
+			return this._parentParser.resolveDependencyName(this, asset);
 
 		return asset.name;
 	}

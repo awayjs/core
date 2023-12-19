@@ -217,7 +217,7 @@ export class Loader extends EventDispatcher {
 
 		} else if (this._currentDependency.parser && this._currentDependency.parser.parsingPaused) {
 
-			this._currentDependency.parser._iResumeParsing();
+			this._currentDependency.parser.resumeParsing();
 
 		} else if (this._stack && this._stack.length) {
 
@@ -291,7 +291,7 @@ export class Loader extends EventDispatcher {
 			this._addEventListeners(dependency.loader);
 
 			// Resolve URL and start loading
-			dependency.request.url = this._resolveDependencyUrl(dependency);
+			dependency.request.url = this.resolveDependencyUrl(dependency);
 
 			if (dependency.retrieveAsRawData) {
 				// Always use binary for raw data loading
@@ -332,7 +332,7 @@ export class Loader extends EventDispatcher {
 
 	}
 
-	private _resolveDependencyUrl(dependency: ResourceDependency): string {
+	private resolveDependencyUrl(dependency: ResourceDependency): string {
 		const url: string = dependency.request.url;
 
 		// Has the user re-mapped this URL?
@@ -446,9 +446,6 @@ export class Loader extends EventDispatcher {
 	 * @param event
 	 */
 	private _onParseError(event: ParserEvent): void {
-		//this.removeEventListeners(event.target); TODO: do we need this here?
-		//makes no sense to me
-
 		if (this.hasEventListener(ParserEvent.PARSE_ERROR)) {
 			//pass on the error event for processing
 			this.dispatchEvent(event);
@@ -476,7 +473,7 @@ export class Loader extends EventDispatcher {
 
 	private _onReadyForDependencies(event: ParserEvent): void {
 		if (this._context && !this._context.includeDependencies)
-			(<ParserBase> event.target)._iResumeParsing();
+			(<ParserBase> event.target).resumeParsing();
 		else
 			this._retrieveParserDependencies();
 	}
@@ -598,7 +595,7 @@ export class Loader extends EventDispatcher {
 			parser.addEventListener(AssetEvent.ASSET_COMPLETE, this._onAssetCompleteDelegate);
 
 			if (dependency.request && dependency.request.url)
-				parser._iFileName = dependency.request.url;
+				parser.fileName = dependency.request.url;
 
 			parser.materialMode = this._materialMode;
 

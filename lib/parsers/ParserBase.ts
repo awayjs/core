@@ -8,7 +8,6 @@ import { TimerEvent } from '../events/TimerEvent';
 import { ParserUtils } from '../parsers/ParserUtils';
 import { ResourceDependency } from '../parsers/ResourceDependency';
 import { ByteArray } from '../utils/ByteArray';
-import { Timer } from '../utils/Timer';
 import { getTimer } from '../utils/getTimer';
 import { RequestAnimationFrame } from '../utils/RequestAnimationFrame';
 
@@ -39,8 +38,6 @@ export class ParserBase extends EventDispatcher {
 	private _data: any;
 	private _frameLimit: number;
 	private _onIntervalDelegate: (event: TimerEvent) => void;
-	private _hasTimeDelegate: () => boolean;
-	private _finishParsingDelegate: () => void;
 	private static _lastFrameTime: number = 0;
 
 	protected _content: IAsset;

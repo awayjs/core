@@ -391,8 +391,6 @@ export class Loader extends EventDispatcher {
 		// that the same dependency isn't retrieved more than once.
 		parserDependancies.length = 0;
 
-		this._stack.push(this._currentDependency);
-
 		this._retrieveNext();
 	}
 

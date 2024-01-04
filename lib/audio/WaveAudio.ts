@@ -15,14 +15,10 @@ export class WaveAudio extends AssetBase {
 	private _data: WaveAudioData;
 	private _channelGroup: number;
 	private _audioChannels: IAudioChannel[] = [];
-	private _isPlaying: boolean = false;
 	private _channelsPlaying: number = 0;
 
 	public get isPlaying(): boolean {
-		if (!this._audioChannel)
-			return false;
-
-		return this._audioChannel.isPlaying();
+		return (this._channelsPlaying > 0);
 	}
 
 	/**
@@ -147,13 +143,10 @@ export class WaveAudio extends AssetBase {
 	}
 
 	public dispose(): void {
-		this._isPlaying = false;
 		this.stop();
 	}
 
 	public play(offset: number, loop: boolean | number = false): IAudioChannel {
-		this._isPlaying = true;
-
 		this._audioChannel = <IAudioChannel> AudioManager.getChannel(this._data.size, this.channelGroup);
 
 		if (this._audioChannel) {
@@ -170,8 +163,6 @@ export class WaveAudio extends AssetBase {
 	}
 
 	private stopInternal(stopChannels = false) {
-		this._isPlaying = false;
-
 		// we not unlink channels for case when it can be restarted
 		for (const channel of this._audioChannels) {
 

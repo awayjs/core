@@ -3,7 +3,7 @@ import { BaseAudioChannel } from './BaseAudioChannel';
 import { IAudioChannel } from './IAudioChannel';
 
 export class WebAudioChannel extends BaseAudioChannel implements IAudioChannel {
-	public static maxChannels: number = 64; // for icycle: 128;
+	public static maxChannels: number = 128;
 	public static _channels: Array<WebAudioChannel> = new Array<WebAudioChannel>();
 	public static _decodeCache: Record<string, AudioBuffer> = {};
 	public static _errorCache: Record<string, any> = {};

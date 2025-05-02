@@ -9,12 +9,13 @@ import { Sphere } from './Sphere';
 import { Vector3D } from './Vector3D';
 
 export class Matrix3D {
+	private static _identityData: Float32Array = new Float32Array([1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]);
+	private static _tempMatrix: Matrix3D = new Matrix3D();
+
 	/**
 	 * A reference to a Matrix3D to be used as a temporary data container, preventing object creation.
 	 */
 	public static CALCULATION_MATRIX: Matrix3D = new Matrix3D();
-
-	private static _tempMatrix: Matrix3D = new Matrix3D();
 
 	static getAxisRotationMatrix(x: number, y: number, z: number, degrees: number, target: Matrix3D = null): Matrix3D {
 		if (target == null)
@@ -434,37 +435,25 @@ export class Matrix3D {
 	public copyFrom(source: Matrix3D, transpose: boolean = false): void {
 		const sourceData = source._rawData, targetData = this._rawData;
 
-		targetData[0] = sourceData[0];
-		targetData[5] = sourceData[5];
-		targetData[10] = sourceData[10];
-		targetData[15] = sourceData[15];
-
 		if (transpose) {
+			targetData[0] = sourceData[0];
 			targetData[1] = sourceData[4];
 			targetData[2] = sourceData[8];
 			targetData[3] = sourceData[12];
 			targetData[4] = sourceData[1];
+			targetData[5] = sourceData[5];
 			targetData[6] = sourceData[9];
 			targetData[7] = sourceData[13];
 			targetData[8] = sourceData[2];
 			targetData[9] = sourceData[6];
+			targetData[10] = sourceData[10];
 			targetData[11] = sourceData[14];
 			targetData[12] = sourceData[3];
 			targetData[13] = sourceData[7];
 			targetData[14] = sourceData[11];
+			targetData[15] = sourceData[15];
 		} else {
-			targetData[1] = sourceData[1];
-			targetData[2] = sourceData[2];
-			targetData[3] = sourceData[3];
-			targetData[4] = sourceData[4];
-			targetData[6] = sourceData[6];
-			targetData[7] = sourceData[7];
-			targetData[8] = sourceData[8];
-			targetData[9] = sourceData[9];
-			targetData[11] = sourceData[11];
-			targetData[12] = sourceData[12];
-			targetData[13] = sourceData[13];
-			targetData[14] = sourceData[14];
+			targetData.set(sourceData);
 		}
 	}
 
@@ -478,74 +467,50 @@ export class Matrix3D {
 	public copyRawDataFrom(sourceData: Float32Array, offset: number = 0, transpose: boolean = false): void {
 		const targetData = this._rawData;
 
-		targetData[0] = sourceData[offset + 0];
-		targetData[5] = sourceData[offset + 5];
-		targetData[10] = sourceData[offset + 10];
-		targetData[15] = sourceData[offset + 15];
-
 		if (transpose) {
-			targetData[offset + 1] = sourceData[4];
-			targetData[offset + 2] = sourceData[8];
-			targetData[offset + 3] = sourceData[12];
-			targetData[offset + 4] = sourceData[1];
-			targetData[offset + 6] = sourceData[9];
-			targetData[offset + 7] = sourceData[13];
-			targetData[offset + 8] = sourceData[2];
-			targetData[offset + 9] = sourceData[6];
-			targetData[offset + 11] = sourceData[14];
-			targetData[offset + 12] = sourceData[3];
-			targetData[offset + 13] = sourceData[7];
-			targetData[offset + 14] = sourceData[11];
+			targetData[0] = sourceData[offset + 0];
+			targetData[1] = sourceData[offset + 4];
+			targetData[2] = sourceData[offset + 8];
+			targetData[3] = sourceData[offset + 12];
+			targetData[4] = sourceData[offset + 1];
+			targetData[5] = sourceData[offset + 5];
+			targetData[6] = sourceData[offset + 9];
+			targetData[7] = sourceData[offset + 13];
+			targetData[8] = sourceData[offset + 2];
+			targetData[9] = sourceData[offset + 6];
+			targetData[10] = sourceData[offset + 10];
+			targetData[11] = sourceData[offset + 14];
+			targetData[12] = sourceData[offset + 3];
+			targetData[13] = sourceData[offset + 7];
+			targetData[14] = sourceData[offset + 11];
+			targetData[15] = sourceData[offset + 15];
 		} else {
-			targetData[1] = sourceData[offset + 1];
-			targetData[2] = sourceData[offset + 2];
-			targetData[3] = sourceData[offset + 3];
-			targetData[4] = sourceData[offset + 4];
-			targetData[6] = sourceData[offset + 6];
-			targetData[7] = sourceData[offset + 7];
-			targetData[8] = sourceData[offset + 8];
-			targetData[9] = sourceData[offset + 9];
-			targetData[11] = sourceData[offset + 11];
-			targetData[12] = sourceData[offset + 12];
-			targetData[13] = sourceData[offset + 13];
-			targetData[14] = sourceData[offset + 14];
+			targetData.set(sourceData.subarray(offset, offset + 16));
 		}
 	}
 
 	public copyRawDataTo(targetData: Float32Array, offset: number = 0, transpose: boolean = false): void {
 		const sourceData = this._rawData;
 
-		targetData[offset] = sourceData[0];
-		targetData[offset + 5] = sourceData[5];
-		targetData[offset + 10] = sourceData[10];
-		targetData[offset + 15] = sourceData[15];
-
 		if (transpose) {
+			targetData[offset] = sourceData[0];
 			targetData[offset + 1] = sourceData[4];
 			targetData[offset + 2] = sourceData[8];
 			targetData[offset + 3] = sourceData[12];
 			targetData[offset + 4] = sourceData[1];
+			targetData[offset + 5] = sourceData[5];
 			targetData[offset + 6] = sourceData[9];
 			targetData[offset + 7] = sourceData[13];
 			targetData[offset + 8] = sourceData[2];
 			targetData[offset + 9] = sourceData[6];
+			targetData[offset + 10] = sourceData[10];
 			targetData[offset + 11] = sourceData[14];
 			targetData[offset + 12] = sourceData[3];
 			targetData[offset + 13] = sourceData[7];
 			targetData[offset + 14] = sourceData[11];
+			targetData[offset + 15] = sourceData[15];
 		} else {
-			targetData[offset + 1] = sourceData[1];
-			targetData[offset + 2] = sourceData[2];
-			targetData[offset + 3] = sourceData[3];
-			targetData[offset + 4] = sourceData[4];
-			targetData[offset + 6] = sourceData[6];
-			targetData[offset + 7] = sourceData[7];
-			targetData[offset + 8] = sourceData[8];
-			targetData[offset + 9] = sourceData[9];
-			targetData[offset + 11] = sourceData[11];
-			targetData[offset + 12] = sourceData[12];
-			targetData[offset + 13] = sourceData[13];
-			targetData[offset + 14] = sourceData[14];
+			targetData.set(sourceData, offset);
 		}
 	}
 
@@ -779,24 +744,7 @@ export class Matrix3D {
 	 * Converts the current matrix to an identity or unit matrix.
 	 */
 	public identity(): void {
-		const raw: Float32Array = this._rawData;
-
-		raw[0] = 1;
-		raw[1] = 0;
-		raw[2] = 0;
-		raw[3] = 0;
-		raw[4] = 0;
-		raw[5] = 1;
-		raw[6] = 0;
-		raw[7] = 0;
-		raw[8] = 0;
-		raw[9] = 0;
-		raw[10] = 1;
-		raw[11] = 0;
-		raw[12] = 0;
-		raw[13] = 0;
-		raw[14] = 0;
-		raw[15] = 1;
+		this._rawData.set(Matrix3D._identityData);
 	}
 
 	/**

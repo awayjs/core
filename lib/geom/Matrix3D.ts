@@ -53,8 +53,6 @@ export class Matrix3D {
 		targetData[14] = 0;
 		targetData[15] = 1;
 
-		target.invalidatePosition();
-
 		return target;
 	}
 
@@ -103,8 +101,6 @@ export class Matrix3D {
 		targetData[13] = upN.dotProduct(pos);
 		targetData[14] = dirN.dotProduct(pos);
 		targetData[15] = 1;
-
-		target.invalidatePosition();
 
 		return target;
 	}
@@ -155,8 +151,6 @@ export class Matrix3D {
 		targetData[14] = 0;
 		targetData[15] = 1;
 
-		target.invalidatePosition();
-
 		return target;
 	}
 
@@ -183,8 +177,7 @@ export class Matrix3D {
 	 */
 	public _rawData: Float32Array;
 
-	private _position: Vector3D = new Vector3D();
-	private _positionDirty: boolean = true;
+	private _position: Vector3D;
 
 	private _components: Array<Vector3D>;
 
@@ -207,12 +200,8 @@ export class Matrix3D {
 	 * transformation's frame of reference.
 	 */
 	public get position(): Vector3D {
-		if (this._positionDirty) {
-			this._positionDirty = false;
-			this._position.x = this._rawData[12];
-			this._position.y = this._rawData[13];
-			this._position.z = this._rawData[14];
-		}
+		if (!this._position) 
+			this._position = new Vector3D(new Float32Array(this._rawData.buffer, 48, 4));
 
 		return this._position;
 	}
@@ -288,8 +277,6 @@ export class Matrix3D {
 		raw[13] = m141 * m212 + m142 * m222 + m143 * m232 + m144 * m242;
 		raw[14] = m141 * m213 + m142 * m223 + m143 * m233 + m144 * m243;
 		raw[15] = m141 * m214 + m142 * m224 + m143 * m234 + m144 * m244;
-
-		this._positionDirty = true;
 	}
 
 	/**
@@ -386,8 +373,6 @@ export class Matrix3D {
 		raw[12] += x * m44;
 		raw[13] += y * m44;
 		raw[14] += z * m44;
-
-		this._positionDirty = true;
 	}
 
 	/**
@@ -416,8 +401,6 @@ export class Matrix3D {
 		targetData[column + 1] = vectorData[1];
 		targetData[column + 2] = vectorData[2];
 		targetData[column + 3] = vectorData[3];
-
-		this._positionDirty = true;
 	}
 
 	/**
@@ -483,8 +466,6 @@ export class Matrix3D {
 			targetData[13] = sourceData[13];
 			targetData[14] = sourceData[14];
 		}
-
-		this._positionDirty = true;
 	}
 
 	/**
@@ -529,8 +510,6 @@ export class Matrix3D {
 			targetData[13] = sourceData[offset + 13];
 			targetData[14] = sourceData[offset + 14];
 		}
-
-		this._positionDirty = true;
 	}
 
 	public copyRawDataTo(targetData: Float32Array, offset: number = 0, transpose: boolean = false): void {
@@ -584,8 +563,6 @@ export class Matrix3D {
 		targetData[row + 4] = vectorData[1];
 		targetData[row + 8] = vectorData[2];
 		targetData[row + 12] = vectorData[3];
-
-		this._positionDirty = true;
 	}
 
 	/**
@@ -820,8 +797,6 @@ export class Matrix3D {
 		raw[13] = 0;
 		raw[14] = 0;
 		raw[15] = 1;
-
-		this._positionDirty = true;
 	}
 
 	/**
@@ -870,8 +845,6 @@ export class Matrix3D {
 			raw[15] = d * (m11 * (m22 * m33 - m32 * m23) - m21 * (m12 * m33 - m32 * m13) + m31 * (m12 * m23 - m22 * m13));
 			/* eslint-enable */
 		}
-
-		this._positionDirty = true;
 
 		return invertable;
 	}
@@ -960,8 +933,6 @@ export class Matrix3D {
 		raw[13] = m141 * m212 + m142 * m222 + m143 * m232 + m144 * m242;
 		raw[14] = m141 * m213 + m142 * m223 + m143 * m233 + m144 * m243;
 		raw[15] = m141 * m214 + m142 * m224 + m143 * m234 + m144 * m244;
-
-		this._positionDirty = true;
 	}
 
 	/**
@@ -1037,10 +1008,11 @@ export class Matrix3D {
 	/**
 	 * Sets the transformation matrix's translation, rotation, and scale settings.
 	 */
-	public recompose(components: Vector3D[]): boolean {
-		const pos: Vector3D = components[0] || this.position;
+	public recompose(components: Vector3D[]): void {
 
+		//reset matrix ready for recompose
 		this.identity();
+
 		const scale: Vector3D = components[3];
 		if (scale && (scale.x != 1 || scale.y != 1 || scale.z != 1))
 			this.appendScale(scale.x, scale.y, scale.z);
@@ -1127,16 +1099,13 @@ export class Matrix3D {
 			}
 		}
 
-		this._rawData[12] = pos.x;
-		this._rawData[13] = pos.y;
-		this._rawData[14] = pos.z;
-
-		if (components[0])
-			this._positionDirty = true;
-
-		this._rawData[15] = 1;
-
-		return true;
+		const pos: Vector3D = components[0];
+		if (pos) {
+			this._rawData[12] = pos.x;
+			this._rawData[13] = pos.y;
+			this._rawData[14] = pos.z;
+			this._rawData[15] = 1;
+		}
 	}
 
 	public reflect(plane: Plane3D): void {
@@ -1163,8 +1132,6 @@ export class Matrix3D {
 		rawData[7] = 0;
 		rawData[11] = 0;
 		rawData[15] = 1;
-
-		this._positionDirty = true;
 	}
 
 	public transformBox(box: Box, target: Box = null): Box {
@@ -1322,12 +1289,6 @@ export class Matrix3D {
 		raw[12] = rawTemp[12];
 		raw[13] = rawTemp[13];
 		raw[14] = rawTemp[14];
-
-		this._positionDirty = true;
-	}
-
-	public invalidatePosition(): void {
-		this._positionDirty = true;
 	}
 
 	public toFixed(decimalPlace: number): string {

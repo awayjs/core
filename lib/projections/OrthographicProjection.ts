@@ -82,8 +82,6 @@ export class OrthographicProjection extends ProjectionBase {
 		raw[14] = -(this._far + this._near) / (this._far - this._near);
 		raw[1] = raw[2] = raw[3] = raw[4] = raw[6] = raw[7] = raw[8] = raw[9] = raw[11] = 0;
 		raw[15] = 1;
-
-		this._frustumMatrix3D.invalidatePosition();
 	}
 
 	protected _updateProperties(): void {

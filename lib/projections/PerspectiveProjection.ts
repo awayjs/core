@@ -106,8 +106,6 @@ export class PerspectiveProjection extends ProjectionBase {
 
 		if (this._coordinateSystem == CoordinateSystem.RIGHT_HANDED)
 			raw[5] = -raw[5];
-
-		this._frustumMatrix3D.invalidatePosition();
 	}
 
 	protected _updateProperties(): void {

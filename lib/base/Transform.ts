@@ -64,24 +64,24 @@ export class Transform extends EventDispatcher {
 	private _backVector: Vector3D;
 	private _colorTransform: ColorTransform;
 	private _components: Array<Vector3D>;
-	private _componentsDirty: boolean;
+	private _componentsDirty: boolean = true;
 	private _downVector: Vector3D;
 	private _forwardVector: Vector3D;
 	private _invalidateColorTransform: TransformEvent;
 	private _invalidateMatrix3D: TransformEvent;
-	private _inverseMatrix3D: Matrix3D = new Matrix3D();
-	private _inverseMatrix3DDirty: boolean;
+	private _inverseMatrix3D: Matrix3D;
+	private _inverseMatrix3DDirty: boolean = true;
 	private _leftVector: Vector3D;
-	private _matrix: Matrix=null;
+	private _matrix: Matrix;
 	private _matrix3D: Matrix3D;
 	private _matrix3DDirty: boolean;
 	private _pixelBounds: Rectangle;
 	private _rawData: Float32Array;
+	private _rawDataComponents: Float32Array;
 	private _rightVector: Vector3D;
-	private _rotation: Vector3D = new Vector3D();
-	private _scale: Vector3D = new Vector3D(1, 1, 1);
-	private _skew: Vector3D = new Vector3D();
-	//temp vector used in global to local
+	private _rotation: Vector3D;
+	private _scale: Vector3D;
+	private _skew: Vector3D;
 	private _upVector: Vector3D;
 
 	/**
@@ -129,6 +129,9 @@ export class Transform extends EventDispatcher {
 	 *
 	 */
 	public get inverseMatrix3D(): Matrix3D {
+		if (!this._inverseMatrix3D)
+			this._inverseMatrix3D = new Matrix3D();
+
 		if (this._inverseMatrix3DDirty) {
 			this._inverseMatrix3DDirty = false;
 			this._inverseMatrix3D.copyFrom(this.matrix3D);
@@ -184,13 +187,8 @@ export class Transform extends EventDispatcher {
 	 * @throws TypeError The matrix is null when being set
 	 */
 	public get matrix(): Matrix {
-		// console.warn("deprecated! matrix3D cannot  be converted to 2D matrix, get matrix3D instead");
-		// return null;
-
-		if (!this._matrix) {
+		if (!this._matrix)
 			this._matrix = new Matrix();
-		}
-
 		if (this._matrix3DDirty)
 			this.updateMatrix3D();
 
@@ -205,12 +203,9 @@ export class Transform extends EventDispatcher {
 	}
 
 	public set matrix(value: Matrix) {
-		if (!value) {
+		if (!value)
 			return;
-		}
 
-		// console.warn("deprecated. 2d matrix can`n convert to 3D matrix, set matrix3D instead");
-		// this._matrix = value;
 		this._matrix3D.identity();
 
 		this._matrix3D._rawData[0] = value.a;
@@ -362,17 +357,6 @@ export class Transform extends EventDispatcher {
 			this._matrix3D.identity();
 			this._colorTransform.clear();
 		}
-
-		// Cached vector of transformation components used when
-		// recomposing the transform matrix in updateTransform()
-		this._components = new Array<Vector3D>(4);
-
-		this._components[0] = Transform._tempVector;
-		this._components[1] = this._rotation;
-		this._components[2] = this._skew;
-		this._components[3] = this._scale;
-
-		this.invalidateComponents();
 	}
 
 	/**
@@ -731,6 +715,29 @@ export class Transform extends EventDispatcher {
 	}
 
 	private _updateComponents(): void {
+		if (!this._components) {
+			// Cached vector of transformation components used when
+			// recomposing the transform matrix in updateTransform()
+			this._components = new Array<Vector3D>(4);
+
+			this._rawDataComponents = new Float32Array(12);
+			this._rawDataComponents[3] = 1;
+			this._rawDataComponents[4] = 1;
+			this._rawDataComponents[5] = 1;
+			this._rawDataComponents[6] = 1;
+			this._rawDataComponents[7] = 1;
+			this._rawDataComponents[11] = 1;
+
+			this._rotation = new Vector3D(new Float32Array(this._rawDataComponents.buffer, 0, 4));
+			this._skew = new Vector3D(new Float32Array(this._rawDataComponents.buffer, 16, 4));
+			this._scale = new Vector3D(new Float32Array(this._rawDataComponents.buffer, 32, 4));
+
+			this._components[0] = Transform._tempVector;
+			this._components[1] = this._rotation;
+			this._components[2] = this._skew;
+			this._components[3] = this._scale;
+		}
+
 		const elements: Array<Vector3D> = this._matrix3D.decompose();
 		let vec: Vector3D;
 

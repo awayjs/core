@@ -25,7 +25,7 @@
  * matrix notation:</p>
  */
 export class Vector3D {
-	public _rawData: Float32Array = new Float32Array(4);
+	public _rawData: Float32Array;
 
 	/**
 	 * The x axis defined as a Vector3D object with coordinates (1,0,0).
@@ -142,13 +142,20 @@ export class Vector3D {
 	 * @param w An optional element for additional data such as the angle
 	 *          of rotation.
 	 */
-	constructor(x: number = 0, y: number = 0, z: number = 0, w: number = 1) {
-		const raw: Float32Array = this._rawData;
+	constructor(rawData: Float32Array);
+	constructor(x?: number, y?: number, z?: number, w?: number);
+	constructor(x: number | Float32Array = 0, y: number = 0, z: number = 0, w: number = 1) {
 
-		raw[0] = x;
-		raw[1] = y;
-		raw[2] = z;
-		raw[3] = w;
+		if (x instanceof Float32Array) {
+			this._rawData = x;
+		} else {
+			const raw: Float32Array = this._rawData = new Float32Array(4);
+
+			raw[0] = x;
+			raw[1] = y;
+			raw[2] = z;
+			raw[3] = w;
+		}
 	}
 
 	/**

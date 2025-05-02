@@ -32,27 +32,47 @@ export class Box {
 	private _size: Vector3D;
 	private _bottomRightBack: Vector3D;
 	private _topLeftFront: Vector3D;
+	
+	public _rawData: Float32Array;
 
 	/**
 	 * The height of the box, in pixels. Changing the <code>height</code> value
 	 * of a Box object has no effect on the <code>x</code>, <code>y</code>,
 	 * <code>z</code>, <code>depth</code> and <code>width</code> properties.
 	 */
-	public height: number;
+	public get height(): number {
+		return this._rawData[4];
+	}
+
+	public set height(value: number) {
+		this._rawData[4] = value;
+	}
 
 	/**
 	 * The width of the box, in pixels. Changing the <code>width</code> value
 	 * of a Box object has no effect on the <code>x</code>, <code>y</code>,
 	 * <code>z</code>, <code>depth</code> and <code>height</code> properties.
 	 */
-	public width: number;
+	public get width(): number {
+		return this._rawData[3];
+	}
+
+	public set width(value: number) {
+		this._rawData[3] = value;
+	}
 
 	/**
 	 * The deoth of the box, in pixels. Changing the <code>depth</code> value
 	 * of a Box object has no effect on the <code>x</code>, <code>y</code>,
 	 * <code>z</code>, <code>width</code> and <code>height</code> properties.
 	 */
-	public depth: number;
+	public get depth(): number {
+		return this._rawData[5];
+	}
+
+	public set depth(value: number) {
+		this._rawData[5] = value;
+	}
 
 	/**
 	 * The <i>x</i> coordinate of the top-left-front corner of the box.
@@ -63,7 +83,13 @@ export class Box {
 	 * <p>The value of the <code>x</code> property is equal to the value of the
 	 * <code>left</code> property.</p>
 	 */
-	public x: number;
+	public get x(): number {
+		return this._rawData[0];
+	}
+
+	public set x(value: number) {
+		this._rawData[0] = value;
+	}
 
 	/**
 	 * The <i>y</i> coordinate of the top-left-front corner of the box.
@@ -74,7 +100,13 @@ export class Box {
 	 * <p>The value of the <code>y</code> property is equal to the value of the
 	 * <code>top</code> property.</p>
 	 */
-	public y: number;
+	public get y(): number {
+		return this._rawData[1];
+	}
+
+	public set y(value: number) {
+		this._rawData[1] = value;
+	}
 
 	/**
 	 * The <i>y</i> coordinate of the top-left-front corner of the box.
@@ -85,7 +117,13 @@ export class Box {
 	 * <p>The value of the <code>z</code> property is equal to the value of the
 	 * <code>front</code> property.</p>
 	 */
-	public z: number
+	public get z(): number {
+		return this._rawData[2];
+	}
+
+	public set z(value: number) {
+		this._rawData[2] = value;
+	}
 
 	/**
 	 * The sum of the <code>z</code> and <code>height</code> properties.
@@ -242,13 +280,22 @@ export class Box {
 	 * @param height The height of the box, in pixels.
 	 * @param depth The depth of the box, in pixels.
 	 */
-	constructor(x: number = 0, y: number = 0, z: number = 0, width: number = 0, height: number = 0, depth: number = 0) {
-		this.x = x;
-		this.y = y;
-		this.z = z;
-		this.width = width;
-		this.height = height;
-		this.depth = depth;
+	constructor(rawData: Float32Array);
+	constructor(x?: number, y?: number, z?: number, width?: number, height?: number, depth?: number);
+	constructor(x: number | Float32Array = 0, y: number = 0, z: number = 0, width: number = 0, height: number = 0, depth: number = 0) {
+
+		if (x instanceof Float32Array) {
+			this._rawData = x;
+		} else {
+			const raw: Float32Array = this._rawData = new Float32Array(6);
+
+			raw[0] = x;
+			raw[1] = y;
+			raw[2] = z;
+			raw[3] = width;
+			raw[4] = height;
+			raw[5] = depth;
+		}
 	}
 
 	/**
@@ -262,7 +309,7 @@ export class Box {
 	 *         original Box object.
 	 */
 	public clone(): Box {
-		return new Box(this.x, this.y, this.z, this.width, this.height, this.depth);
+		return new Box(this._rawData);
 	}
 
 	/**

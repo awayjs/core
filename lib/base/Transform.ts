@@ -58,6 +58,9 @@ import { ColorTransform } from './ColorTransform';
  * perspective projection Matrix3D object.
  */
 export class Transform extends EventDispatcher {
+
+	private static _tempVector: Vector3D = new Vector3D();
+
 	private _backVector: Vector3D;
 	private _colorTransform: ColorTransform;
 	private _components: Array<Vector3D>;
@@ -364,6 +367,7 @@ export class Transform extends EventDispatcher {
 		// recomposing the transform matrix in updateTransform()
 		this._components = new Array<Vector3D>(4);
 
+		this._components[0] = Transform._tempVector;
 		this._components[1] = this._rotation;
 		this._components[2] = this._skew;
 		this._components[3] = this._scale;
@@ -497,7 +501,6 @@ export class Transform extends EventDispatcher {
 	 */
 	public invalidatePosition(): void {
 		this._inverseMatrix3DDirty = true;
-		this._matrix3D.invalidatePosition();
 
 		if (!this._invalidateMatrix3D)
 			this._invalidateMatrix3D = new TransformEvent(TransformEvent.INVALIDATE_MATRIX3D, this);
@@ -711,6 +714,8 @@ export class Transform extends EventDispatcher {
 	 *
 	 */
 	public updateMatrix3D(): void {
+		Transform._tempVector.copyFrom(this._matrix3D.position);
+
 		this._matrix3D.recompose(this._components);
 
 		this._matrix3DDirty = false;

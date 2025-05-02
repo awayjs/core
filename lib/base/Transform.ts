@@ -110,14 +110,7 @@ export class Transform extends EventDispatcher {
 		if (val) {
 			const sourceData: Float32Array = val._rawData, targetData: Float32Array = this._colorTransform._rawData;
 
-			targetData[0] = sourceData[0];
-			targetData[1] = sourceData[1];
-			targetData[2] = sourceData[2];
-			targetData[3] = sourceData[3];
-			targetData[4] = sourceData[4];
-			targetData[5] = sourceData[5];
-			targetData[6] = sourceData[6];
-			targetData[7] = sourceData[7];
+			this._rawData.set(val._rawData, 16);
 		} else {
 			this._colorTransform.clear();
 		}
@@ -242,26 +235,7 @@ export class Transform extends EventDispatcher {
 		if (!val) {
 			this._matrix3D.identity();
 		} else {
-
-			const sourceData = val._rawData;
-			const targetData = this._matrix3D._rawData;
-
-			targetData[0] = sourceData[0];
-			targetData[1] = sourceData[1];
-			targetData[2] = sourceData[2];
-			targetData[3] = sourceData[3];
-			targetData[4] = sourceData[4];
-			targetData[5] = sourceData[5];
-			targetData[6] = sourceData[6];
-			targetData[7] = sourceData[7];
-			targetData[8] = sourceData[8];
-			targetData[9] = sourceData[9];
-			targetData[10] = sourceData[10];
-			targetData[11] = sourceData[11];
-			targetData[12] = sourceData[12];
-			targetData[13] = sourceData[13];
-			targetData[14] = sourceData[14];
-			targetData[15] = sourceData[15];
+			this._rawData.set(val._rawData);
 		}
 
 		this.invalidateComponents();
@@ -405,36 +379,7 @@ export class Transform extends EventDispatcher {
 		if (this._matrix3DDirty)
 			this.updateMatrix3D();
 
-		const targetData = transform._rawData;
-		const sourceData = this._rawData;
-
-		//Matrix3D data
-		targetData[0] = sourceData[0];
-		targetData[1] = sourceData[1];
-		targetData[2] = sourceData[2];
-		targetData[3] = sourceData[3];
-		targetData[4] = sourceData[4];
-		targetData[5] = sourceData[5];
-		targetData[6] = sourceData[6];
-		targetData[7] = sourceData[7];
-		targetData[8] = sourceData[8];
-		targetData[9] = sourceData[9];
-		targetData[10] = sourceData[10];
-		targetData[11] = sourceData[11];
-		targetData[12] = sourceData[12];
-		targetData[13] = sourceData[13];
-		targetData[14] = sourceData[14];
-		targetData[15] = sourceData[15];
-
-		//ColorTransform data
-		targetData[16] = sourceData[16];
-		targetData[17] = sourceData[17];
-		targetData[18] = sourceData[18];
-		targetData[19] = sourceData[19];
-		targetData[20] = sourceData[20];
-		targetData[21] = sourceData[21];
-		targetData[22] = sourceData[22];
-		targetData[23] = sourceData[23];
+		transform._rawData.set(this._rawData);
 
 		this.invalidateComponents();
 
@@ -722,9 +667,6 @@ export class Transform extends EventDispatcher {
 
 			this._rawDataComponents = new Float32Array(12);
 			this._rawDataComponents[3] = 1;
-			this._rawDataComponents[4] = 1;
-			this._rawDataComponents[5] = 1;
-			this._rawDataComponents[6] = 1;
 			this._rawDataComponents[7] = 1;
 			this._rawDataComponents[11] = 1;
 

@@ -2,18 +2,17 @@
   "compilerOptions": {
     "target": "es5",
     "module": "es2015",
-    "lib": ["es6", "ES2015.Symbol","DOM","ScriptHost","ES2015.Iterable"],
+    "lib": ["DOM","ScriptHost", "ESNext"],
     "moduleResolution": "node",
     "noImplicitUseStrict": true,
     "noEmitHelpers": true,
     "importHelpers": true,
     "declaration": true,
     "declarationMap": true,
-    "outDir": "./dist"
+    "outDir": "./dist",
+    "allowSyntheticDefaultImports": true
   },
-  "exclude": [
-    "node_modules",
-    "dist",
-    "tests"
+  "files": [
+    "./index.ts"
   ]
 }

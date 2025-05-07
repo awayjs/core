@@ -1,6 +1,6 @@
-import { AssetBase } from "../library/AssetBase";
+import { AssetBase } from '../library/AssetBase';
 
-const USE_WEAK = ('WeakRef' in self)
+const USE_WEAK = ('WeakRef' in self);
 
 export class WeakAssetSet {
 
@@ -11,13 +11,13 @@ export class WeakAssetSet {
 		return this._numAssets;
 	}
 
-    public add(asset: AssetBase): void {
+	public add(asset: AssetBase): void {
 		if (!asset)
 			return;
 
 		this._assets[asset.id] = USE_WEAK ? new self.WeakRef(asset) : asset;
 		this._numAssets++;
-    }
+	}
 
 	public remove(asset: AssetBase): any {
 		if (!(asset.id in this._assets))

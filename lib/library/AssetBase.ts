@@ -73,7 +73,7 @@ export class AssetBase extends EventDispatcher implements IAsset, IAssetAdapter 
 	 *
 	 */
 	public invalidate(): void {
-		for (var key in this._abstractionPool)
+		for (const key in this._abstractionPool)
 			this._abstractionPool[key].onInvalidate(null);
 	}
 
@@ -89,7 +89,7 @@ export class AssetBase extends EventDispatcher implements IAsset, IAssetAdapter 
 	}
 
 	public clear(): void {
-		for (var key in this._abstractionPool)
+		for (const key in this._abstractionPool)
 			this._abstractionPool[key].onClear(null);
 	}
 

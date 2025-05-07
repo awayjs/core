@@ -201,7 +201,7 @@ export class Matrix3D {
 	 * transformation's frame of reference.
 	 */
 	public get position(): Vector3D {
-		if (!this._position) 
+		if (!this._position)
 			this._position = new Vector3D(new Float32Array(this._rawData.buffer, 48, 4));
 
 		return this._position;

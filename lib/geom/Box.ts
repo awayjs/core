@@ -32,7 +32,7 @@ export class Box {
 	private _size: Vector3D;
 	private _bottomRightBack: Vector3D;
 	private _topLeftFront: Vector3D;
-	
+
 	public _rawData: Float32Array;
 
 	/**

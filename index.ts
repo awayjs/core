@@ -9,6 +9,7 @@ export { WaveAudioData }					from './lib/audio/WaveAudio';
 
 export { ColorTransform }					from './lib/base/ColorTransform';
 export { Transform }						from './lib/base/Transform';
+export { WeakAssetSet }						from './lib/base/WeakAssetSet';
 
 export { AbstractMethodError }				from './lib/errors/AbstractMethodError';
 export { ArgumentError }					from './lib/errors/ArgumentError';

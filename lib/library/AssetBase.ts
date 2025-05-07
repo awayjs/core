@@ -73,7 +73,8 @@ export class AssetBase extends EventDispatcher implements IAsset, IAssetAdapter 
 	 *
 	 */
 	public invalidate(): void {
-		this.dispatchEvent(new AssetEvent(AssetEvent.INVALIDATE, this));
+		for (var key in this._abstractionPool)
+			this._abstractionPool[key].onInvalidate(null);
 	}
 
 	/**
@@ -88,7 +89,8 @@ export class AssetBase extends EventDispatcher implements IAsset, IAssetAdapter 
 	}
 
 	public clear(): void {
-		this.dispatchEvent(new AssetEvent(AssetEvent.CLEAR, this));
+		for (var key in this._abstractionPool)
+			this._abstractionPool[key].onClear(null);
 	}
 
 	public get assetNamespace(): string {

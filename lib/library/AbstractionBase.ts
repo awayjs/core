@@ -10,8 +10,6 @@ import { IAsset } from './IAsset';
  * @export class away.pool.AbstractionBase
  */
 export class AbstractionBase extends AssetBase implements IAbstraction {
-	public _onClearDelegate: (event: AssetEvent) => void;
-	public _onInvalidateDelegate: (event: AssetEvent) => void;
 
 	protected _pool: IAbstractionPool;
 
@@ -25,17 +23,11 @@ export class AbstractionBase extends AssetBase implements IAbstraction {
 
 	constructor() {
 		super();
-
-		this._onClearDelegate = (event: AssetEvent) => this.onClear(event);
-		this._onInvalidateDelegate = (event: AssetEvent) => this.onInvalidate(event);
 	}
 
 	public init(asset: IAsset, pool: IAbstractionPool): void {
 		this._asset = asset;
 		this._pool = pool;
-
-		this._asset.addEventListener(AssetEvent.CLEAR, this._onClearDelegate);
-		this._asset.addEventListener(AssetEvent.INVALIDATE, this._onInvalidateDelegate);
 
 		this._invalid = true;
 	}
@@ -44,8 +36,6 @@ export class AbstractionBase extends AssetBase implements IAbstraction {
 	 *
 	 */
 	public onClear(event: AssetEvent): void {
-		this._asset.removeEventListener(AssetEvent.CLEAR, this._onClearDelegate);
-		this._asset.removeEventListener(AssetEvent.INVALIDATE, this._onInvalidateDelegate);
 
 		this._asset.clearAbstraction(this._pool);
 		this._pool = null;

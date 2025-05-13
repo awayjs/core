@@ -121,6 +121,9 @@ export class AssetBase extends EventDispatcher implements IAsset, IAssetAdapter 
 	}
 
 	public clearAbstraction(pool: IAbstractionPool) {
+		if (!this._abstractionPool[pool.id])
+			return;
+
 		pool.storeAbstraction(this._abstractionPool[pool.id]);
 		delete this._abstractionPool[pool.id];
 	}

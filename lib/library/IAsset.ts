@@ -60,5 +60,6 @@ export interface IAsset extends IEventDispatcher
 	resetAssetPath(name: string, ns: string, overrideOriginal?: boolean): void;
 
 	getAbstraction<T extends AbstractionBase>(abstractionGroup: IAbstractionPool): T;
+
 	clearAbstraction(abstractionGroup: IAbstractionPool);
 }

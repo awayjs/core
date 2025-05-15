@@ -17,7 +17,7 @@ export class AssetBase extends EventDispatcher implements IAsset, IAssetAdapter 
 	public _adapter: IAssetAdapter;
 	private _namespace: string;
 	private _name: string;
-	private _abstractionPool: Record<number, IAbstraction> = {};
+	protected _abstractionPool: Record<number, IAbstraction> = {};
 
 	public static DEFAULT_NAMESPACE: string = 'default';
 
@@ -121,7 +121,7 @@ export class AssetBase extends EventDispatcher implements IAsset, IAssetAdapter 
 	}
 
 	public clearAbstraction(pool: IAbstractionPool) {
-		if (!this._abstractionPool[pool.id])
+		if (!pool || !this._abstractionPool[pool.id])
 			return;
 
 		pool.storeAbstraction(this._abstractionPool[pool.id]);

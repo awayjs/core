@@ -6,7 +6,7 @@ export interface IAbstraction extends IAsset
 {
 	asset: IAsset;
 
-	init(asset: IAsset, pool: IAbstractionPool): void;
+	init(asset: IAsset, pool: IAbstractionPool, useWeak?: boolean): void;
 
 	onClear(event: AssetEvent): void;
 

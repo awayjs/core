@@ -108,8 +108,6 @@ export class Transform extends EventDispatcher {
 
 	public set colorTransform(val: ColorTransform) {
 		if (val) {
-			const sourceData: Float32Array = val._rawData, targetData: Float32Array = this._colorTransform._rawData;
-
 			this._rawData.set(val._rawData, 16);
 		} else {
 			this._colorTransform.clear();

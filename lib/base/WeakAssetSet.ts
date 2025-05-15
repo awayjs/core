@@ -4,11 +4,16 @@ const USE_WEAK = ('WeakRef' in self);
 
 export class WeakAssetSet {
 
+	private _className: string;
 	private _assets: Record<number, WeakRef<IAsset> | IAsset> = {};
-	private _numAssets: number;
+	private _numAssets: number = 0;
 
 	public get numAssets(): number {
 		return this._numAssets;
+	}
+
+	constructor(className: string = "WeakAssetSet") {
+		this._className = className;
 	}
 
 	public add(asset: IAsset): void {
@@ -37,7 +42,7 @@ export class WeakAssetSet {
 				asset = (<WeakRef<IAsset>> asset).deref();
 
 				if (!asset) {
-					console.debug('[WeakAssetSet] asset was deleted by GC:', key);
+					console.debug('[' + this._className + '] asset was deleted by GC:', key);
 					this._numAssets--;
 					delete this._assets[key];
 					continue;

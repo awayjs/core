@@ -12,7 +12,7 @@ export class WeakAssetSet {
 		return this._numAssets;
 	}
 
-	constructor(className: string = "WeakAssetSet") {
+	constructor(className: string = 'WeakAssetSet') {
 		this._className = className;
 	}
 

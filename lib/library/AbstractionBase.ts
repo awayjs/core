@@ -7,7 +7,6 @@ import { IAsset } from './IAsset';
 
 const USE_WEAK = ('WeakRef' in self);
 
-
 const _finalizer: FinalizationRegistry<AbstractionBase>
 	= new FinalizationRegistry((abstraction: AbstractionBase) => {
 		console.debug('[' + abstraction.constructor.name + '] abstraction was deleted by GC:', abstraction.id);

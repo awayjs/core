@@ -61,5 +61,7 @@ export interface IAsset extends IEventDispatcher
 
 	getAbstraction<T extends AbstractionBase>(abstractionGroup: IAbstractionPool): T;
 
-	clearAbstraction(abstractionGroup: IAbstractionPool);
+	checkAbstraction <T extends AbstractionBase>(pool: IAbstractionPool): T;
+
+	clearAbstraction(pool: IAbstractionPool | number);
 }

@@ -110,7 +110,6 @@ export class AssetBase extends EventDispatcher implements IAsset, IAssetAdapter 
 	}
 
 	public resetAssetPath(name: string, ns: string = null): void {
-
 		this._name = name ? name : 'null';
 		this._namespace = ns ? ns : AssetBase.DEFAULT_NAMESPACE;
 	}
@@ -120,9 +119,16 @@ export class AssetBase extends EventDispatcher implements IAsset, IAssetAdapter 
 			|| <T> (this._abstractionPool[pool.id] = this.getNewAbstraction(pool));
 	}
 
-	public clearAbstraction(pool: IAbstractionPool) {
-		if (!pool || !this._abstractionPool[pool.id])
+	public checkAbstraction <T extends AbstractionBase>(pool: IAbstractionPool): T {
+		return <T> this._abstractionPool[pool.id];
+	}
+
+	public clearAbstraction(pool: IAbstractionPool | number) {
+		// in cases where pool has been GC'd, we still need to remove abstraction from _abstractionPool
+		if (typeof pool == 'number') {
+			delete this._abstractionPool[pool];
 			return;
+		}
 
 		pool.storeAbstraction(this._abstractionPool[pool.id]);
 		delete this._abstractionPool[pool.id];

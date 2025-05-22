@@ -10,7 +10,9 @@ const USE_WEAK = ('WeakRef' in self);
 const _finalizer: FinalizationRegistry<AbstractionBase>
 	= new FinalizationRegistry((abstraction: AbstractionBase) => {
 		console.debug('[' + abstraction.constructor.name + '] abstraction was deleted by GC:', abstraction.id);
-		abstraction.onClear(null);
+
+		if (abstraction.asset) // check abstraction hasn't already been cleared
+			abstraction.onClear(null);
 	});
 
 /**
@@ -18,6 +20,8 @@ const _finalizer: FinalizationRegistry<AbstractionBase>
  * @export class away.pool.AbstractionBase
  */
 export class AbstractionBase extends AssetBase implements IAbstraction {
+
+	private _poolId: number;
 
 	protected _pool: WeakRef<IAbstractionPool> | IAbstractionPool;
 
@@ -42,18 +46,23 @@ export class AbstractionBase extends AssetBase implements IAbstraction {
 
 		this._invalid = true;
 
-		if (this._useWeak)
+		if (this._useWeak) {
 			_finalizer.register(pool, this, this);
+			this._poolId = pool.id;
+		}
 	}
 
 	/**
 	 *
 	 */
 	public onClear(event: AssetEvent): void {
-		if (this._useWeak)
+		if (this._useWeak) {
 			_finalizer.unregister(this);
+			this._asset.clearAbstraction((<WeakRef<IAbstractionPool>> this._pool).deref() || this._poolId);
+		} else {
+			this._asset.clearAbstraction(<IAbstractionPool> this._pool);
+		}
 
-		this._asset.clearAbstraction(this._useWeak ? (<WeakRef<IAbstractionPool>> this._pool).deref() : <IAbstractionPool> this._pool);
 		this._pool = null;
 		this._asset = null;
 	}

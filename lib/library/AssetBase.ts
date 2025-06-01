@@ -13,6 +13,7 @@ import { UUID } from './UUID';
 
 export class AssetBase extends EventDispatcher implements IAsset, IAssetAdapter {
 
+	private __finalizer: FinalizationRegistry<number>;
 	public _symbol: any;
 	public _adapter: IAssetAdapter;
 	private _namespace: string;
@@ -20,6 +21,17 @@ export class AssetBase extends EventDispatcher implements IAsset, IAssetAdapter 
 	protected _abstractionPool: Record<number, IAbstraction> = {};
 
 	public static DEFAULT_NAMESPACE: string = 'default';
+
+	public get finalizer(): FinalizationRegistry<number> {
+		return this.__finalizer || (this.__finalizer = new FinalizationRegistry((poolId: number) => {
+			const abstraction = this._abstractionPool[poolId];
+
+			if (abstraction) { // check abstraction hasn't already been cleared
+				console.debug('[' + abstraction.constructor.name + '] abstraction was deleted by GC:', poolId);
+				abstraction.onClear(null);
+			}
+		}));
+	}
 
 	/**
 	 * A unique id for the asset, used to identify assets in an associative array

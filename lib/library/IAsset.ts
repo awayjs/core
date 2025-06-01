@@ -6,6 +6,8 @@ import { IAssetAdapter } from './IAssetAdapter';
 
 export interface IAsset extends IEventDispatcher
 {
+	finalizer: FinalizationRegistry<number>;
+
 	adapter: IAssetAdapter;
 
 	/**

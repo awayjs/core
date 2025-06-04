@@ -601,11 +601,11 @@ export class Matrix {
 
 		if (sx !== 1) {
 			raw[0] *= sx;
-			raw[1] *= sx;
+			raw[2] *= sx;
 			raw[4] *= sx;
 		}
 		if (sy !== 1) {
-			raw[2] *= sy;
+			raw[1] *= sy;
 			raw[3] *= sy;
 			raw[5] *= sy;
 		}

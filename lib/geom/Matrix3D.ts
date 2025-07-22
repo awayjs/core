@@ -575,8 +575,8 @@ export class Matrix3D {
 		const colZ = Matrix3D.COL_Z;
 		colZ.setTo(this._rawData[8], this._rawData[9], this._rawData[10]);
 
-		const scale = this._components[3];
-		const skew = this._components[2];
+		const skew = this._components[3];
+		const scale = this._components[2];
 
 		//compute X scale factor and normalise colX
 		scale.x = colX.length;
@@ -961,13 +961,13 @@ export class Matrix3D {
 		//reset matrix ready for recompose
 		this.identity();
 
-		const scale: Vector3D = components[3];
-		if (scale && (scale.x != 1 || scale.y != 1 || scale.z != 1))
-			this.appendScale(scale.x, scale.y, scale.z);
-
-		const skew: Vector3D = components[2];
+		const skew: Vector3D = components[3];
 		if (skew && (skew.x != 0 || skew.y != 0 || skew.z != 0))
 			this.appendSkew(skew.x, skew.y, skew.z);
+
+		const scale: Vector3D = components[2];
+		if (scale && (scale.x != 1 || scale.y != 1 || scale.z != 1))
+			this.appendScale(scale.x, scale.y, scale.z);
 
 		let sin: number;
 		let cos: number;

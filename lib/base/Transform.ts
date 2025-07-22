@@ -674,8 +674,8 @@ export class Transform extends EventDispatcher {
 
 			this._components[0] = Transform._tempVector;
 			this._components[1] = this._rotation;
-			this._components[2] = this._skew;
-			this._components[3] = this._scale;
+			this._components[2] = this._scale;
+			this._components[3] = this._skew;
 		}
 
 		const elements: Array<Vector3D> = this._matrix3D.decompose();
@@ -689,15 +689,15 @@ export class Transform extends EventDispatcher {
 
 		vec = elements[2];
 
-		this._skew.x = vec.x;
-		this._skew.y = vec.y;
-		this._skew.z = vec.z;
-
-		vec = elements[3];
-
 		this._scale.x = vec.x;
 		this._scale.y = vec.y;
 		this._scale.z = vec.z;
+
+		vec = elements[3];
+
+		this._skew.x = vec.x;
+		this._skew.y = vec.y;
+		this._skew.z = vec.z;
 
 		this._componentsDirty = false;
 	}

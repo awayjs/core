@@ -39,7 +39,7 @@ export class AssetEvent extends EventBase {
 	private _asset: IAsset;
 	private _prevName: string;
 
-/**
+	/**
 	 *
 	 */
 	constructor(type: string, asset: IAsset, prevName: string = null) {

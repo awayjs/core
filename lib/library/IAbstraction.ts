@@ -8,7 +8,7 @@ export interface IAbstraction extends IAsset
 
 	init(asset: IAsset, pool: IAbstractionPool, useWeak?: boolean): void;
 
-	onClear(event: AssetEvent): void;
+	onClear(): void;
 
-	onInvalidate(event: AssetEvent): void;
+	onInvalidate(): void;
 }

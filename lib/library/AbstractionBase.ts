@@ -1,4 +1,3 @@
-import { AssetEvent } from '../events/AssetEvent';
 import { AssetBase } from './AssetBase';
 import { IAbstraction } from './IAbstraction';
 
@@ -13,7 +12,7 @@ const USE_WEAK = ('WeakRef' in self);
  */
 export class AbstractionBase extends AssetBase implements IAbstraction {
 
-	private _poolId: number;
+	protected _poolId: number;
 
 	protected _pool: WeakRef<IAbstractionPool> | IAbstractionPool;
 
@@ -47,7 +46,7 @@ export class AbstractionBase extends AssetBase implements IAbstraction {
 	/**
 	 *
 	 */
-	public onClear(event: AssetEvent): void {
+	public onClear(): void {
 		if (this._useWeak) {
 			this._asset.finalizer.unregister(this);
 			this._asset.clearAbstraction((<WeakRef<IAbstractionPool>> this._pool).deref() || this._poolId);
@@ -62,7 +61,7 @@ export class AbstractionBase extends AssetBase implements IAbstraction {
 	/**
 	 *
 	 */
-	public onInvalidate(event: AssetEvent): void {
+	public onInvalidate(): void {
 		this._invalid = true;
 	}
 }

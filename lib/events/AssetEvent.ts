@@ -7,16 +7,6 @@ import { EventBase } from './EventBase';
  */
 export class AssetEvent extends EventBase {
 	/**
-	 * Dispatched when the content of an asset is invalidated
-	 */
-	public static INVALIDATE: string = 'invalidate';
-
-	/**
-	 * Dispatched when an asset is cleared
-	 */
-	public static CLEAR: string = 'clear';
-
-	/**
 	 *
 	 */
 	public static RENAME: string = 'rename';
@@ -49,7 +39,7 @@ export class AssetEvent extends EventBase {
 	private _asset: IAsset;
 	private _prevName: string;
 
-	/**
+/**
 	 *
 	 */
 	constructor(type: string, asset: IAsset, prevName: string = null) {

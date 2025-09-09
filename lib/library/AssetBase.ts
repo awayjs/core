@@ -28,7 +28,7 @@ export class AssetBase extends EventDispatcher implements IAsset, IAssetAdapter 
 
 			if (abstraction) { // check abstraction hasn't already been cleared
 				console.debug('[' + abstraction.constructor.name + '] abstraction was deleted by GC:', poolId);
-				abstraction.onClear(null);
+				abstraction.onClear();
 			}
 		}));
 	}
@@ -86,7 +86,7 @@ export class AssetBase extends EventDispatcher implements IAsset, IAssetAdapter 
 	 */
 	public invalidate(): void {
 		for (const key in this._abstractionPool)
-			this._abstractionPool[key].onInvalidate(null);
+			this._abstractionPool[key].onInvalidate();
 	}
 
 	/**
@@ -102,7 +102,7 @@ export class AssetBase extends EventDispatcher implements IAsset, IAssetAdapter 
 
 	public clear(): void {
 		for (const key in this._abstractionPool)
-			this._abstractionPool[key].onClear(null);
+			this._abstractionPool[key].onClear();
 	}
 
 	public get assetNamespace(): string {

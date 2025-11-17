@@ -42,7 +42,6 @@ export class WeakAssetSet {
 				asset = (<WeakRef<IAsset>> asset).deref();
 
 				if (!asset) {
-					console.debug('[' + this._className + '] asset was deleted by GC:', key);
 					this._numAssets--;
 					delete this._assets[key];
 					continue;

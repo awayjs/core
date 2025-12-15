@@ -1,13 +1,12 @@
 import { IEventDispatcher } from '../events/IEventDispatcher';
 import { AbstractionBase } from './AbstractionBase';
+import { IAbstraction } from './IAbstraction';
 import { IAbstractionPool } from './IAbstractionPool';
 
 import { IAssetAdapter } from './IAssetAdapter';
 
 export interface IAsset extends IEventDispatcher
 {
-	finalizer: FinalizationRegistry<number>;
-
 	adapter: IAssetAdapter;
 
 	/**
@@ -61,9 +60,7 @@ export interface IAsset extends IEventDispatcher
 	 */
 	resetAssetPath(name: string, ns: string, overrideOriginal?: boolean): void;
 
-	getAbstraction<T extends AbstractionBase>(abstractionGroup: IAbstractionPool): T;
-
-	checkAbstraction <T extends AbstractionBase>(pool: IAbstractionPool): T;
-
-	clearAbstraction(pool: IAbstractionPool | number);
+	addAbstraction(abstraction: IAbstraction): void;
+	
+	removeAbstraction(abstraction: IAbstraction): void;
 }

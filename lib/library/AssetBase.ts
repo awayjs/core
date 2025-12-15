@@ -2,9 +2,7 @@ import { AbstractMethodError } from '../errors/AbstractMethodError';
 
 import { AssetEvent } from '../events/AssetEvent';
 import { EventDispatcher } from '../events/EventDispatcher';
-import { AbstractionBase } from './AbstractionBase';
 import { IAbstraction } from './IAbstraction';
-import { IAbstractionPool } from './IAbstractionPool';
 
 import { IAsset } from './IAsset';
 import { IAssetAdapter } from './IAssetAdapter';
@@ -13,25 +11,15 @@ import { UUID } from './UUID';
 
 export class AssetBase extends EventDispatcher implements IAsset, IAssetAdapter {
 
-	private __finalizer: FinalizationRegistry<number>;
 	public _symbol: any;
 	public _adapter: IAssetAdapter;
 	private _namespace: string;
 	private _name: string;
-	protected _abstractionPool: Record<number, IAbstraction> = {};
+	private _abstractions: Record<number, IAbstraction> = {};
+
+	public static assetType: string = '[asset Asset]';
 
 	public static DEFAULT_NAMESPACE: string = 'default';
-
-	public get finalizer(): FinalizationRegistry<number> {
-		return this.__finalizer || (this.__finalizer = new FinalizationRegistry((poolId: number) => {
-			const abstraction = this._abstractionPool[poolId];
-
-			if (abstraction) { // check abstraction hasn't already been cleared
-				console.debug('[' + abstraction.constructor.name + '] abstraction was deleted by GC:', poolId);
-				abstraction.onClear();
-			}
-		}));
-	}
 
 	/**
 	 * A unique id for the asset, used to identify assets in an associative array
@@ -64,7 +52,7 @@ export class AssetBase extends EventDispatcher implements IAsset, IAssetAdapter 
 	 *
 	 */
 	public get assetType(): string {
-		throw new AbstractMethodError();
+		return AssetBase.assetType;
 	}
 
 	public get name(): string {
@@ -85,8 +73,16 @@ export class AssetBase extends EventDispatcher implements IAsset, IAssetAdapter 
 	 *
 	 */
 	public invalidate(): void {
-		for (const key in this._abstractionPool)
-			this._abstractionPool[key].onInvalidate();
+		for (const key in this._abstractions)
+			this._abstractions[key].onInvalidate();
+	}
+
+	public addAbstraction(abstraction: IAbstraction): void {
+		this._abstractions[abstraction.id] = abstraction;
+	}
+
+	public removeAbstraction(abstraction: IAbstraction): void {
+		delete this._abstractions[abstraction.id];
 	}
 
 	/**
@@ -101,8 +97,8 @@ export class AssetBase extends EventDispatcher implements IAsset, IAssetAdapter 
 	}
 
 	public clear(): void {
-		for (const key in this._abstractionPool)
-			this._abstractionPool[key].onClear();
+		for (const key in this._abstractions)
+			this._abstractions[key].onClear();
 	}
 
 	public get assetNamespace(): string {
@@ -124,31 +120,5 @@ export class AssetBase extends EventDispatcher implements IAsset, IAssetAdapter 
 	public resetAssetPath(name: string, ns: string = null): void {
 		this._name = name ? name : 'null';
 		this._namespace = ns ? ns : AssetBase.DEFAULT_NAMESPACE;
-	}
-
-	public getAbstraction <T extends AbstractionBase>(pool: IAbstractionPool): T {
-		return <T> this._abstractionPool[pool.id]
-			|| <T> (this._abstractionPool[pool.id] = this.getNewAbstraction(pool));
-	}
-
-	public checkAbstraction <T extends AbstractionBase>(pool: IAbstractionPool): T {
-		return <T> this._abstractionPool[pool.id];
-	}
-
-	public clearAbstraction(pool: IAbstractionPool | number) {
-		// in cases where pool has been GC'd, we still need to remove abstraction from _abstractionPool
-		if (typeof pool == 'number') {
-			delete this._abstractionPool[pool];
-			return;
-		}
-
-		pool.storeAbstraction(this._abstractionPool[pool.id]);
-		delete this._abstractionPool[pool.id];
-	}
-
-	public getNewAbstraction(pool: IAbstractionPool): IAbstraction {
-		const abstraction: IAbstraction = pool.requestAbstraction(this);
-		abstraction.init(this, pool);
-		return abstraction;
 	}
 }

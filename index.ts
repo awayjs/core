@@ -7,6 +7,7 @@ import './lib/base/Numbers';
 export { WaveAudio }						from './lib/audio/WaveAudio';
 export { WaveAudioData }					from './lib/audio/WaveAudio';
 
+export { AbstractionSet }					from './lib/base/AbstractionSet';
 export { ColorTransform }					from './lib/base/ColorTransform';
 export { Transform }						from './lib/base/Transform';
 export { WeakAssetSet }						from './lib/base/WeakAssetSet';

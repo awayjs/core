@@ -61,6 +61,6 @@ export interface IAsset extends IEventDispatcher
 	resetAssetPath(name: string, ns: string, overrideOriginal?: boolean): void;
 
 	addAbstraction(abstraction: IAbstraction): void;
-	
+
 	removeAbstraction(abstraction: IAbstraction): void;
 }

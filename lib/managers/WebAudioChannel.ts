@@ -262,7 +262,7 @@ export class WebAudioChannel extends BaseAudioChannel implements IAudioChannel {
 		// with RIGHT sample rate, to increase quality
 		try {
 			if (meta && meta.sampleRate && meta.sampleRate !== this._audioCtx.sampleRate && meta.samplesCount) {
-				ctx = WebAudioChannel.getOfflineContext(2, meta.samplesCount + meta.startOffset, meta.sampleRate);
+				ctx = WebAudioChannel.getOfflineContext(2, meta.samplesCount + (meta.startOffset ?? 0),	meta.sampleRate);
 			}
 		} catch (e) {
 			console.warn('[WebAudioChannel] Error when try create Offline Context:',e.message, meta);

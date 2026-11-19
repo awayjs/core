@@ -252,13 +252,11 @@ export class StreamingAudioChannel extends BaseAudioChannel implements IAudioCha
 
 			this._sourceBuffer.removeEventListener('updateend', this._updateEndDelegate);
 			this._mediaSource.removeSourceBuffer(this._sourceBuffer);
-			delete this._sourceBuffer;
 			this._sourceBuffer = null;
 		}
 
 		this._mediaSource.removeEventListener('sourceopen', this._sourceOpenDelegate);
 		URL.revokeObjectURL(this._urlString);
-		delete this._mediaSource;
 		this._mediaSource = null;
 	}
 }

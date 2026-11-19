@@ -33,8 +33,6 @@ export class WaveAudioParser extends ParserBase {
 	}
 
 	protected startParsing(frameLimit: number): void {
-		//clear content
-		delete this._content;
 		this._content = null;
 
 		super.startParsing(frameLimit);

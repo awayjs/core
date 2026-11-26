@@ -583,40 +583,34 @@ export class Rectangle {
 	 * @return A new Rectangle object that is the union of the two rectangles.
 	 */
 	public union(toUnion: Rectangle, target: Rectangle = null): Rectangle {
-		const raw: Float32Array = this._rawData;
-		const rawUnion: Float32Array = toUnion._rawData;
-
 		if (target == null)
 			target = new Rectangle();
 
+		const raw: Float32Array = this._rawData;
+		const rawUnion: Float32Array = toUnion._rawData;
 		const rawTarget: Float32Array = target._rawData;
 
+		let width: number;
+		let height: number;
+
 		if (raw[0] < rawUnion[0]) {
-			rawTarget[0] = raw[0];
-			rawTarget[2] = rawUnion[0] - raw[0] + rawUnion[2];
-
-			if (rawTarget[2] < raw[2])
-				rawTarget[2] = raw[2];
+			width = rawUnion[0] - raw[0] + rawUnion[2];
+			rawTarget[0] = raw[0];	
+			rawTarget[2] = (width < raw[2]) ? raw[2] : width;
 		} else {
+			width = raw[0] - rawUnion[0] + raw[2];
 			rawTarget[0] = rawUnion[0];
-			rawTarget[2] = raw[0] - rawUnion[0] + raw[2];
-
-			if (rawTarget[2] < rawUnion[2])
-				rawTarget[2] = rawUnion[2];
+			rawTarget[2] = (width < rawUnion[2]) ? rawUnion[2] : width;
 		}
 
 		if (raw[1] < rawUnion[1]) {
+			height = rawUnion[1] - raw[1] + rawUnion[3];
 			rawTarget[1] = raw[1];
-			rawTarget[3] = rawUnion[1] - raw[1] + rawUnion[3];
-
-			if (rawTarget[3] < raw[3])
-				rawTarget[3] = raw[3];
+			rawTarget[3] = (height < raw[3]) ? raw[3] : height;
 		} else {
+			height = raw[1] - rawUnion[1] + raw[3];
 			rawTarget[1] = rawUnion[1];
-			rawTarget[3] = raw[1] - rawUnion[1] + raw[3];
-
-			if (rawTarget[3] < rawUnion[3])
-				rawTarget[3] = rawUnion[3];
+			rawTarget[3] = (rawTarget[3] < rawUnion[3]) ? rawUnion[3] : height;
 		}
 
 		return target;

@@ -106,9 +106,9 @@ export class Transform extends EventDispatcher {
 		return this._colorTransform;
 	}
 
-	public set colorTransform(val: ColorTransform) {
-		if (val) {
-			this._rawData.set(val._rawData, 16);
+	public set colorTransform(value: ColorTransform | undefined) {
+		if (value) {
+			this._rawData.set(value._rawData, 16);
 		} else {
 			this._colorTransform.clear();
 		}
@@ -229,11 +229,11 @@ export class Transform extends EventDispatcher {
 		return this._matrix3D;
 	}
 
-	public set matrix3D(val: Matrix3D) {
-		if (!val) {
-			this._matrix3D.identity();
+	public set matrix3D(value: Matrix3D | undefined) {
+		if (value) {
+			this._rawData.set(value._rawData);
 		} else {
-			this._rawData.set(val._rawData);
+			this._matrix3D.identity();
 		}
 
 		this.invalidateComponents();

@@ -582,11 +582,13 @@ export class Rectangle {
 	 * @param toUnion A Rectangle object to add to this Rectangle object.
 	 * @return A new Rectangle object that is the union of the two rectangles.
 	 */
-	public union(toUnion: Rectangle): Rectangle {
+	public union(toUnion: Rectangle, target: Rectangle = null): Rectangle {
 		const raw: Float32Array = this._rawData;
 		const rawUnion: Float32Array = toUnion._rawData;
 
-		const target: Rectangle = new Rectangle();
+		if (target == null)
+			target = new Rectangle();
+
 		const rawTarget: Float32Array = target._rawData;
 
 		if (raw[0] < rawUnion[0]) {

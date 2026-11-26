@@ -1,7 +1,5 @@
 import { IEventDispatcher } from '../events/IEventDispatcher';
-import { AbstractionBase } from './AbstractionBase';
 import { IAbstraction } from './IAbstraction';
-import { IAbstractionPool } from './IAbstractionPool';
 
 import { IAssetAdapter } from './IAssetAdapter';
 
@@ -17,7 +15,7 @@ export interface IAsset extends IEventDispatcher
 	/**
 	 *
 	 */
-	id: number;
+	readonly id: number;
 
 	/**
 	 *

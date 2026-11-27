@@ -207,8 +207,6 @@ export class Transform extends EventDispatcher {
 		this._matrix3D._rawData[12] = value.tx;
 		this._matrix3D._rawData[13] = value.ty;
 
-		this._matrix3D._isDirty = this._matrix3D._isDirty
-			|| value.a !== 1 || value.b !== 0 || value.c !== 0 || value.d !== 1;
 		this._matrix3D._isPositionDirty = this._matrix3D._isPositionDirty
 			|| value.tx !== 0 || value.ty !== 0;
 
@@ -238,7 +236,6 @@ export class Transform extends EventDispatcher {
 	public set matrix3D(value: Matrix3D | undefined) {
 		if (value) {
 			this._rawData.set(value._rawData);
-			this._matrix3D._isDirty = value._isDirty;
 			this._matrix3D._isPositionDirty = value._isPositionDirty;
 		} else {
 			this._matrix3D.identity();

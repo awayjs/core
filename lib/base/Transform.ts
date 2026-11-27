@@ -343,7 +343,7 @@ export class Transform extends EventDispatcher {
 	 *
 	 */
 	public clearColorTransform(): void {
-		if (!this._colorTransform)
+		if (this._colorTransform.isIdentity())
 			return;
 
 		this._colorTransform.clear();

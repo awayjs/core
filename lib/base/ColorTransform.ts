@@ -43,11 +43,8 @@ import { ColorUtils } from '../utils/ColorUtils';
 export class ColorTransform {
 
 	private _isDirty = false;
-	public get isDirty() {
-		return this._isDirty;
-	}
 
-	public get isIdentity() {
+	public isIdentity() {
 		return !this._isDirty;
 	}
 

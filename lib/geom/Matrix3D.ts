@@ -189,9 +189,11 @@ export class Matrix3D {
 
 	// Same style as ColorTransform._isDirty: set when the value leaves
 	// identity, cleared by identity(). _isDirty is the 3x3 (scale / rotation /
-	// skew); _isPositionDirty is translation only.
-	public _isDirty = false;
-	public _isPositionDirty = false;
+	// skew); _isPositionDirty is translation only. Private; only Matrix3D
+	// mutators may write them. Read via isIdentity() / isComponentsIdentity()
+	// / isPositionIdentity().
+	private _isDirty = false;
+	private _isPositionDirty = false;
 
 	private _position: Vector3D;
 
@@ -843,27 +845,68 @@ export class Matrix3D {
 	}
 
 	public isIdentity(): boolean {
+		return !this._isDirty && !this._isPositionDirty;
+	}
+
+	/**
+	 * True when the 3x3 (scale / rotation / skew) is still identity.
+	 */
+	public isComponentsIdentity(): boolean {
+		return !this._isDirty;
+	}
+
+	/**
+	 * True when the translation is still identity.
+	 */
+	public isPositionIdentity(): boolean {
+		return !this._isPositionDirty;
+	}
+
+	/**
+	 * Sets the translation components and updates the position flag from the
+	 * written values.
+	 */
+	public setPosition(x: number, y: number, z: number): void {
+		this._rawData[12] = x;
+		this._rawData[13] = y;
+		this._rawData[14] = z;
+		this._isPositionDirty = x !== 0 || y !== 0 || z !== 0;
+	}
+
+	/**
+	 * Sets the 2D linear components (a, b, c, d) and updates the 3x3 flag
+	 * from the written values and the rest of the 3x3.
+	 */
+	public setElements2D(a: number, b: number, c: number, d: number): void {
 		const raw: Float32Array = this._rawData;
 
-		if (raw[0] == 1 &&
-			raw[1] == 0 &&
-			raw[2] == 0 &&
-			raw[3] == 0 &&
-			raw[4] == 0 &&
-			raw[5] == 1 &&
-			raw[6] == 0 &&
-			raw[7] == 0 &&
-			raw[8] == 0 &&
-			raw[9] == 0 &&
-			raw[10] == 1 &&
-			raw[11] == 0 &&
-			raw[12] == 0 &&
-			raw[13] == 0 &&
-			raw[14] == 0 &&
-			raw[15] == 1)
-			return true;
+		raw[0] = a;
+		raw[1] = b;
+		raw[4] = c;
+		raw[5] = d;
 
-		return false;
+		this._isDirty = a !== 1 || b !== 0 || c !== 0 || d !== 1
+			|| raw[2] !== 0 || raw[3] !== 0
+			|| raw[6] !== 0 || raw[7] !== 0
+			|| raw[8] !== 0 || raw[9] !== 0
+			|| raw[10] !== 1 || raw[11] !== 0;
+	}
+
+	/**
+	 * Sets the diagonal scale and updates the 3x3 flag from the written
+	 * values and the rest of the 3x3.
+	 */
+	public setScale(x: number, y: number, z: number): void {
+		const raw: Float32Array = this._rawData;
+
+		raw[0] = x;
+		raw[5] = y;
+		raw[10] = z;
+
+		this._isDirty = x !== 1 || y !== 1 || z !== 1
+			|| raw[1] !== 0 || raw[2] !== 0 || raw[3] !== 0
+			|| raw[4] !== 0 || raw[6] !== 0 || raw[7] !== 0
+			|| raw[8] !== 0 || raw[9] !== 0 || raw[11] !== 0;
 	}
 
 	/**

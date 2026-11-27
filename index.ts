@@ -110,6 +110,7 @@ export { XmlUtils }							from './lib/utils/XmlUtils';
 export { AsyncServicesLibrary }				from './lib/utils/AsyncServicesLibrary';
 
 export { ConfigManager }					from './lib/managers/ConfigManager';
+export { Settings }						from './lib/Settings';
 
 import { Loader } 							from './lib/library/Loader';
 import { WaveAudioParser } 					from './lib/parsers/WaveAudioParser';

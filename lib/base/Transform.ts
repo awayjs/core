@@ -7,6 +7,7 @@ import { Rectangle } from '../geom/Rectangle';
 import { Vector3D } from '../geom/Vector3D';
 
 import { ColorTransform } from './ColorTransform';
+import { Settings } from '../Settings';
 
 /**
  * The Transform class provides access to color adjustment properties and two-
@@ -69,6 +70,7 @@ export class Transform extends EventDispatcher {
 	private _forwardVector: Vector3D;
 	private _invalidateColorTransform: TransformEvent;
 	private _invalidateMatrix3D: TransformEvent;
+	private _invalidatePosition: TransformEvent;
 	private _inverseMatrix3D: Matrix3D;
 	private _inverseMatrix3DDirty: boolean = true;
 	private _leftVector: Vector3D;
@@ -198,13 +200,8 @@ export class Transform extends EventDispatcher {
 			return;
 
 		this._matrix3D.identity();
-
-		this._matrix3D._rawData[0] = value.a;
-		this._matrix3D._rawData[1] = value.b;
-		this._matrix3D._rawData[4] = value.c;
-		this._matrix3D._rawData[5] = value.d;
-		this._matrix3D._rawData[12] = value.tx;
-		this._matrix3D._rawData[13] = value.ty;
+		this._matrix3D.setElements2D(value.a, value.b, value.c, value.d);
+		this._matrix3D.setPosition(value.tx, value.ty, 0);
 
 		this.invalidateComponents();
 
@@ -230,11 +227,10 @@ export class Transform extends EventDispatcher {
 	}
 
 	public set matrix3D(value: Matrix3D | undefined) {
-		if (value) {
-			this._rawData.set(value._rawData);
-		} else {
+		if (value)
+			this._matrix3D.copyFrom(value);
+		else
 			this._matrix3D.identity();
-		}
 
 		this.invalidateComponents();
 		this._matrix3DDirty = false;
@@ -354,8 +350,26 @@ export class Transform extends EventDispatcher {
 	 *
 	 */
 	public clearMatrix3D(): void {
-		this._matrix3D.identity();
-		this.invalidateComponents();
+		const matrix = this._matrix3D;
+		if (matrix.isIdentity())
+			return;
+
+		// When only translation has left identity, a full MATRIX3D
+		// invalidation would recache; fire the position event instead.
+		const positionOnly = this.separatePositionInvalidation
+			&& Settings.ENABLE_POSITION_CACHING && matrix.isComponentsIdentity();
+		matrix.identity();
+
+		if (positionOnly) {
+			this._inverseMatrix3DDirty = true;
+			if (!this._invalidatePosition)
+				this._invalidatePosition = new TransformEvent(TransformEvent.INVALIDATE_POSITION, this);
+			this.dispatchEvent(this._invalidatePosition);
+		} else {
+			this._componentsDirty = true;
+			this._inverseMatrix3DDirty = true;
+			this.dispatchInvalidateMatrix3D();
+		}
 	}
 
 	/**
@@ -377,7 +391,8 @@ export class Transform extends EventDispatcher {
 		if (this._matrix3DDirty)
 			this.updateMatrix3D();
 
-		transform._rawData.set(this._rawData);
+		transform._matrix3D.copyFrom(this._matrix3D);
+		transform._colorTransform.copyFrom(this._colorTransform);
 
 		this.invalidateComponents();
 
@@ -400,10 +415,17 @@ export class Transform extends EventDispatcher {
 	}
 
 	public invalidateComponents(): void {
-		this.invalidatePosition();
-
 		this._componentsDirty = true;
+		this._inverseMatrix3DDirty = true;
+		this.dispatchInvalidateMatrix3D();
 	}
+
+	/**
+	 * Opt in to firing INVALIDATE_POSITION from invalidatePosition(), instead of
+	 * INVALIDATE_MATRIX3D. DisplayObject sets this true; other Transform owners
+	 * (e.g. projection) keep the default single-event path.
+	 */
+	public separatePositionInvalidation: boolean = false;
 
 	/**
 	 * Invalidates the 3D transformation matrix, causing it to be updated upon the next request
@@ -417,10 +439,7 @@ export class Transform extends EventDispatcher {
 
 		this._matrix3DDirty = true;
 
-		if (!this._invalidateMatrix3D)
-			this._invalidateMatrix3D = new TransformEvent(TransformEvent.INVALIDATE_MATRIX3D, this);
-
-		this.dispatchEvent(this._invalidateMatrix3D);
+		this.dispatchInvalidateMatrix3D();
 	}
 
 	/**
@@ -429,6 +448,18 @@ export class Transform extends EventDispatcher {
 	public invalidatePosition(): void {
 		this._inverseMatrix3DDirty = true;
 
+		if (this.separatePositionInvalidation && Settings.ENABLE_POSITION_CACHING) {
+			if (!this._invalidatePosition)
+				this._invalidatePosition = new TransformEvent(TransformEvent.INVALIDATE_POSITION, this);
+
+			this.dispatchEvent(this._invalidatePosition);
+			return;
+		}
+
+		this.dispatchInvalidateMatrix3D();
+	}
+
+	private dispatchInvalidateMatrix3D(): void {
 		if (!this._invalidateMatrix3D)
 			this._invalidateMatrix3D = new TransformEvent(TransformEvent.INVALIDATE_MATRIX3D, this);
 
@@ -509,9 +540,7 @@ export class Transform extends EventDispatcher {
 	 */
 
 	public moveTo(dx: number, dy: number, dz: number): void {
-		this._matrix3D._rawData[12] = dx;
-		this._matrix3D._rawData[13] = dy;
-		this._matrix3D._rawData[14] = dz;
+		this._matrix3D.setPosition(dx, dy, dz);
 
 		this.invalidatePosition();
 	}

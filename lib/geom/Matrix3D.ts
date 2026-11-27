@@ -54,6 +54,9 @@ export class Matrix3D {
 		targetData[14] = 0;
 		targetData[15] = 1;
 
+		target._isDirty = true;
+		target._isPositionDirty = false;
+
 		return target;
 	}
 
@@ -102,6 +105,9 @@ export class Matrix3D {
 		targetData[13] = upN.dotProduct(pos);
 		targetData[14] = dirN.dotProduct(pos);
 		targetData[15] = 1;
+
+		target._isDirty = true;
+		target._isPositionDirty = true;
 
 		return target;
 	}
@@ -152,6 +158,9 @@ export class Matrix3D {
 		targetData[14] = 0;
 		targetData[15] = 1;
 
+		target._isDirty = true;
+		target._isPositionDirty = false;
+
 		return target;
 	}
 
@@ -177,6 +186,14 @@ export class Matrix3D {
 	 * create a subexport class of the Matrix3D object.</p>
 	 */
 	public _rawData: Float32Array;
+
+	// Same style as ColorTransform._isDirty: set when the value leaves
+	// identity, cleared by identity(). _isDirty is the 3x3 (scale / rotation /
+	// skew); _isPositionDirty is translation only. Private; only Matrix3D
+	// mutators may write them. Read via isIdentity() / isComponentsIdentity()
+	// / isPositionIdentity().
+	private _isDirty = false;
+	private _isPositionDirty = false;
 
 	private _position: Vector3D;
 
@@ -213,6 +230,8 @@ export class Matrix3D {
 	constructor(rawData: Float32Array = null) {
 		if (rawData != null) {
 			this._rawData = rawData;
+			this._isDirty = true;
+			this._isPositionDirty = true;
 		} else {
 			this._rawData = new Float32Array(16);
 			this.identity();
@@ -278,6 +297,9 @@ export class Matrix3D {
 		raw[13] = m141 * m212 + m142 * m222 + m143 * m232 + m144 * m242;
 		raw[14] = m141 * m213 + m142 * m223 + m143 * m233 + m144 * m243;
 		raw[15] = m141 * m214 + m142 * m224 + m143 * m234 + m144 * m244;
+
+		this._isDirty = this._isDirty || lhs._isDirty;
+		this._isPositionDirty = this._isPositionDirty || lhs._isPositionDirty;
 	}
 
 	/**
@@ -316,6 +338,9 @@ export class Matrix3D {
 		rawData[14] = 0;
 		rawData[15] = 1;
 
+		Matrix3D._tempMatrix._isDirty = true;
+		Matrix3D._tempMatrix._isPositionDirty = false;
+
 		this.append(Matrix3D._tempMatrix);
 	}
 
@@ -348,6 +373,9 @@ export class Matrix3D {
 		rawData[14] = 0;
 		rawData[15] = 1;
 
+		Matrix3D._tempMatrix._isDirty = true;
+		Matrix3D._tempMatrix._isPositionDirty = false;
+
 		this.append(Matrix3D._tempMatrix);
 	}
 
@@ -374,6 +402,8 @@ export class Matrix3D {
 		raw[12] += x * m44;
 		raw[13] += y * m44;
 		raw[14] += z * m44;
+
+		this._isPositionDirty = this._isPositionDirty || x !== 0 || y !== 0 || z !== 0;
 	}
 
 	/**
@@ -402,6 +432,9 @@ export class Matrix3D {
 		targetData[column + 1] = vectorData[1];
 		targetData[column + 2] = vectorData[2];
 		targetData[column + 3] = vectorData[3];
+
+		this._isDirty = true;
+		this._isPositionDirty = true;
 	}
 
 	/**
@@ -455,6 +488,9 @@ export class Matrix3D {
 		} else {
 			targetData.set(sourceData);
 		}
+
+		this._isDirty = source._isDirty;
+		this._isPositionDirty = source._isPositionDirty;
 	}
 
 	/**
@@ -487,6 +523,9 @@ export class Matrix3D {
 		} else {
 			targetData.set(sourceData.subarray(offset, offset + 16));
 		}
+
+		this._isDirty = true;
+		this._isPositionDirty = true;
 	}
 
 	public copyRawDataTo(targetData: Float32Array, offset: number = 0, transpose: boolean = false): void {
@@ -528,6 +567,9 @@ export class Matrix3D {
 		targetData[row + 4] = vectorData[1];
 		targetData[row + 8] = vectorData[2];
 		targetData[row + 12] = vectorData[3];
+
+		this._isDirty = true;
+		this._isPositionDirty = true;
 	}
 
 	/**
@@ -745,6 +787,8 @@ export class Matrix3D {
 	 */
 	public identity(): void {
 		this._rawData.set(Matrix3D._identityData);
+		this._isDirty = false;
+		this._isPositionDirty = false;
 	}
 
 	/**
@@ -792,33 +836,77 @@ export class Matrix3D {
 			raw[14] = -d * (m11 * (m22 * m43 - m42 * m23) - m21 * (m12 * m43 - m42 * m13) + m41 * (m12 * m23 - m22 * m13));
 			raw[15] = d * (m11 * (m22 * m33 - m32 * m23) - m21 * (m12 * m33 - m32 * m13) + m31 * (m12 * m23 - m22 * m13));
 			/* eslint-enable */
+
+			this._isDirty = true;
+			this._isPositionDirty = true;
 		}
 
 		return invertable;
 	}
 
 	public isIdentity(): boolean {
+		return !this._isDirty && !this._isPositionDirty;
+	}
+
+	/**
+	 * True when the 3x3 (scale / rotation / skew) is still identity.
+	 */
+	public isComponentsIdentity(): boolean {
+		return !this._isDirty;
+	}
+
+	/**
+	 * True when the translation is still identity.
+	 */
+	public isPositionIdentity(): boolean {
+		return !this._isPositionDirty;
+	}
+
+	/**
+	 * Sets the translation components and updates the position flag from the
+	 * written values.
+	 */
+	public setPosition(x: number, y: number, z: number): void {
+		this._rawData[12] = x;
+		this._rawData[13] = y;
+		this._rawData[14] = z;
+		this._isPositionDirty = x !== 0 || y !== 0 || z !== 0;
+	}
+
+	/**
+	 * Sets the 2D linear components (a, b, c, d) and updates the 3x3 flag
+	 * from the written values and the rest of the 3x3.
+	 */
+	public setElements2D(a: number, b: number, c: number, d: number): void {
 		const raw: Float32Array = this._rawData;
 
-		if (raw[0] == 1 &&
-			raw[1] == 0 &&
-			raw[2] == 0 &&
-			raw[3] == 0 &&
-			raw[4] == 0 &&
-			raw[5] == 1 &&
-			raw[6] == 0 &&
-			raw[7] == 0 &&
-			raw[8] == 0 &&
-			raw[9] == 0 &&
-			raw[10] == 1 &&
-			raw[11] == 0 &&
-			raw[12] == 0 &&
-			raw[13] == 0 &&
-			raw[14] == 0 &&
-			raw[15] == 1)
-			return true;
+		raw[0] = a;
+		raw[1] = b;
+		raw[4] = c;
+		raw[5] = d;
 
-		return false;
+		this._isDirty = a !== 1 || b !== 0 || c !== 0 || d !== 1
+			|| raw[2] !== 0 || raw[3] !== 0
+			|| raw[6] !== 0 || raw[7] !== 0
+			|| raw[8] !== 0 || raw[9] !== 0
+			|| raw[10] !== 1 || raw[11] !== 0;
+	}
+
+	/**
+	 * Sets the diagonal scale and updates the 3x3 flag from the written
+	 * values and the rest of the 3x3.
+	 */
+	public setScale(x: number, y: number, z: number): void {
+		const raw: Float32Array = this._rawData;
+
+		raw[0] = x;
+		raw[5] = y;
+		raw[10] = z;
+
+		this._isDirty = x !== 1 || y !== 1 || z !== 1
+			|| raw[1] !== 0 || raw[2] !== 0 || raw[3] !== 0
+			|| raw[4] !== 0 || raw[6] !== 0 || raw[7] !== 0
+			|| raw[8] !== 0 || raw[9] !== 0 || raw[11] !== 0;
 	}
 
 	/**
@@ -881,6 +969,9 @@ export class Matrix3D {
 		raw[13] = m141 * m212 + m142 * m222 + m143 * m232 + m144 * m242;
 		raw[14] = m141 * m213 + m142 * m223 + m143 * m233 + m144 * m243;
 		raw[15] = m141 * m214 + m142 * m224 + m143 * m234 + m144 * m244;
+
+		this._isDirty = this._isDirty || rhs._isDirty;
+		this._isPositionDirty = this._isPositionDirty || rhs._isPositionDirty;
 	}
 
 	/**
@@ -920,6 +1011,9 @@ export class Matrix3D {
 		rawData[14] = 0;
 		rawData[15] = 1;
 
+		Matrix3D._tempMatrix._isDirty = true;
+		Matrix3D._tempMatrix._isPositionDirty = false;
+
 		this.prepend(Matrix3D._tempMatrix);
 	}
 
@@ -948,6 +1042,9 @@ export class Matrix3D {
 		rawData[13] = y;
 		rawData[14] = z;
 		rawData[15] = 1;
+
+		Matrix3D._tempMatrix._isDirty = false;
+		Matrix3D._tempMatrix._isPositionDirty = x !== 0 || y !== 0 || z !== 0;
 
 		this.prepend(Matrix3D._tempMatrix);
 	}
@@ -999,6 +1096,8 @@ export class Matrix3D {
 				rawData[10] = cos;
 				rawData[11] = 0;
 
+				Matrix3D._tempMatrix._isDirty = true;
+				Matrix3D._tempMatrix._isPositionDirty = false;
 				this.append(Matrix3D._tempMatrix);
 			}
 			angle = -rotation.y * MathConsts.DEGREES_TO_RADIANS;
@@ -1021,6 +1120,8 @@ export class Matrix3D {
 				rawData[10] = cos;
 				rawData[11] = 0;
 
+				Matrix3D._tempMatrix._isDirty = true;
+				Matrix3D._tempMatrix._isPositionDirty = false;
 				this.append(Matrix3D._tempMatrix);
 			}
 			angle = -rotation.z * MathConsts.DEGREES_TO_RADIANS;
@@ -1043,6 +1144,8 @@ export class Matrix3D {
 				rawData[10] = 1;
 				rawData[11] = 0;
 
+				Matrix3D._tempMatrix._isDirty = true;
+				Matrix3D._tempMatrix._isPositionDirty = false;
 				this.append(Matrix3D._tempMatrix);
 			}
 		}
@@ -1053,6 +1156,7 @@ export class Matrix3D {
 			this._rawData[13] = pos.y;
 			this._rawData[14] = pos.z;
 			this._rawData[15] = 1;
+			this._isPositionDirty = this._isPositionDirty || pos.x !== 0 || pos.y !== 0 || pos.z !== 0;
 		}
 	}
 
@@ -1080,6 +1184,9 @@ export class Matrix3D {
 		rawData[7] = 0;
 		rawData[11] = 0;
 		rawData[15] = 1;
+
+		this._isDirty = true;
+		this._isPositionDirty = true;
 	}
 
 	public transformBox(box: Box, target: Box = null): Box {
@@ -1237,6 +1344,9 @@ export class Matrix3D {
 		raw[12] = rawTemp[12];
 		raw[13] = rawTemp[13];
 		raw[14] = rawTemp[14];
+
+		this._isDirty = true;
+		this._isPositionDirty = true;
 	}
 
 	public toFixed(decimalPlace: number): string {

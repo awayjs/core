@@ -207,6 +207,11 @@ export class Transform extends EventDispatcher {
 		this._matrix3D._rawData[12] = value.tx;
 		this._matrix3D._rawData[13] = value.ty;
 
+		this._matrix3D._isDirty = this._matrix3D._isDirty
+			|| value.a !== 1 || value.b !== 0 || value.c !== 0 || value.d !== 1;
+		this._matrix3D._isPositionDirty = this._matrix3D._isPositionDirty
+			|| value.tx !== 0 || value.ty !== 0;
+
 		this.invalidateComponents();
 
 		this._matrix3DDirty = false;
@@ -233,6 +238,8 @@ export class Transform extends EventDispatcher {
 	public set matrix3D(value: Matrix3D | undefined) {
 		if (value) {
 			this._rawData.set(value._rawData);
+			this._matrix3D._isDirty = value._isDirty;
+			this._matrix3D._isPositionDirty = value._isPositionDirty;
 		} else {
 			this._matrix3D.identity();
 		}
@@ -355,8 +362,25 @@ export class Transform extends EventDispatcher {
 	 *
 	 */
 	public clearMatrix3D(): void {
-		this._matrix3D.identity();
-		this.invalidateComponents();
+		const matrix = this._matrix3D;
+		if (!matrix._isDirty && !matrix._isPositionDirty)
+			return;
+
+		// When only translation has left identity, a full MATRIX3D
+		// invalidation would recache; fire the position event instead.
+		const positionOnly = this.separatePositionInvalidation && !matrix._isDirty;
+		matrix.identity();
+
+		if (positionOnly) {
+			this._inverseMatrix3DDirty = true;
+			if (!this._invalidatePosition)
+				this._invalidatePosition = new TransformEvent(TransformEvent.INVALIDATE_POSITION, this);
+			this.dispatchEvent(this._invalidatePosition);
+		} else {
+			this._componentsDirty = true;
+			this._inverseMatrix3DDirty = true;
+			this.dispatchInvalidateMatrix3D();
+		}
 	}
 
 	/**
@@ -401,6 +425,7 @@ export class Transform extends EventDispatcher {
 	}
 
 	public invalidateComponents(): void {
+		this._matrix3D._isDirty = true;
 		this._componentsDirty = true;
 		this._inverseMatrix3DDirty = true;
 		this.dispatchInvalidateMatrix3D();
@@ -432,6 +457,7 @@ export class Transform extends EventDispatcher {
 	 *
 	 */
 	public invalidatePosition(): void {
+		this._matrix3D._isPositionDirty = true;
 		this._inverseMatrix3DDirty = true;
 
 		if (this.separatePositionInvalidation) {

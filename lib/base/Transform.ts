@@ -70,7 +70,6 @@ export class Transform extends EventDispatcher {
 	private _invalidateColorTransform: TransformEvent;
 	private _invalidateMatrix3D: TransformEvent;
 	private _invalidatePosition: TransformEvent;
-	private _positionInvalidation: boolean = false;
 	private _inverseMatrix3D: Matrix3D;
 	private _inverseMatrix3DDirty: boolean = true;
 	private _leftVector: Vector3D;
@@ -409,12 +408,10 @@ export class Transform extends EventDispatcher {
 
 	/**
 	 * Opt in to firing INVALIDATE_POSITION from invalidatePosition(), instead of
-	 * INVALIDATE_MATRIX3D. Used by DisplayObject; other Transform owners (e.g.
-	 * projection) keep the default single-event path.
+	 * INVALIDATE_MATRIX3D. DisplayObject sets this true; other Transform owners
+	 * (e.g. projection) keep the default single-event path.
 	 */
-	public enablePositionInvalidation(): void {
-		this._positionInvalidation = true;
-	}
+	public separatePositionInvalidation: boolean = false;
 
 	/**
 	 * Invalidates the 3D transformation matrix, causing it to be updated upon the next request
@@ -437,8 +434,11 @@ export class Transform extends EventDispatcher {
 	public invalidatePosition(): void {
 		this._inverseMatrix3DDirty = true;
 
-		if (this._positionInvalidation) {
-			this.dispatchInvalidatePosition();
+		if (this.separatePositionInvalidation) {
+			if (!this._invalidatePosition)
+				this._invalidatePosition = new TransformEvent(TransformEvent.INVALIDATE_POSITION, this);
+
+			this.dispatchEvent(this._invalidatePosition);
 			return;
 		}
 
@@ -450,13 +450,6 @@ export class Transform extends EventDispatcher {
 			this._invalidateMatrix3D = new TransformEvent(TransformEvent.INVALIDATE_MATRIX3D, this);
 
 		this.dispatchEvent(this._invalidateMatrix3D);
-	}
-
-	private dispatchInvalidatePosition(): void {
-		if (!this._invalidatePosition)
-			this._invalidatePosition = new TransformEvent(TransformEvent.INVALIDATE_POSITION, this);
-
-		this.dispatchEvent(this._invalidatePosition);
 	}
 
 	/**

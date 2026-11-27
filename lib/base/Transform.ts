@@ -69,6 +69,8 @@ export class Transform extends EventDispatcher {
 	private _forwardVector: Vector3D;
 	private _invalidateColorTransform: TransformEvent;
 	private _invalidateMatrix3D: TransformEvent;
+	private _invalidatePosition: TransformEvent;
+	private _positionInvalidation: boolean = false;
 	private _inverseMatrix3D: Matrix3D;
 	private _inverseMatrix3DDirty: boolean = true;
 	private _leftVector: Vector3D;
@@ -400,9 +402,18 @@ export class Transform extends EventDispatcher {
 	}
 
 	public invalidateComponents(): void {
-		this.invalidatePosition();
-
 		this._componentsDirty = true;
+		this._inverseMatrix3DDirty = true;
+		this.dispatchInvalidateMatrix3D();
+	}
+
+	/**
+	 * Opt in to firing INVALIDATE_POSITION from invalidatePosition(), instead of
+	 * INVALIDATE_MATRIX3D. Used by DisplayObject; other Transform owners (e.g.
+	 * projection) keep the default single-event path.
+	 */
+	public enablePositionInvalidation(): void {
+		this._positionInvalidation = true;
 	}
 
 	/**
@@ -417,10 +428,7 @@ export class Transform extends EventDispatcher {
 
 		this._matrix3DDirty = true;
 
-		if (!this._invalidateMatrix3D)
-			this._invalidateMatrix3D = new TransformEvent(TransformEvent.INVALIDATE_MATRIX3D, this);
-
-		this.dispatchEvent(this._invalidateMatrix3D);
+		this.dispatchInvalidateMatrix3D();
 	}
 
 	/**
@@ -429,10 +437,26 @@ export class Transform extends EventDispatcher {
 	public invalidatePosition(): void {
 		this._inverseMatrix3DDirty = true;
 
+		if (this._positionInvalidation) {
+			this.dispatchInvalidatePosition();
+			return;
+		}
+
+		this.dispatchInvalidateMatrix3D();
+	}
+
+	private dispatchInvalidateMatrix3D(): void {
 		if (!this._invalidateMatrix3D)
 			this._invalidateMatrix3D = new TransformEvent(TransformEvent.INVALIDATE_MATRIX3D, this);
 
 		this.dispatchEvent(this._invalidateMatrix3D);
+	}
+
+	private dispatchInvalidatePosition(): void {
+		if (!this._invalidatePosition)
+			this._invalidatePosition = new TransformEvent(TransformEvent.INVALIDATE_POSITION, this);
+
+		this.dispatchEvent(this._invalidatePosition);
 	}
 
 	/**

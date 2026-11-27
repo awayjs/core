@@ -13,6 +13,11 @@ export class TransformEvent extends EventBase {
 	/**
 	 *
 	 */
+	public static INVALIDATE_POSITION: string = 'invalidatePosition';
+
+	/**
+	 *
+	 */
 	public static INVALIDATE_COLOR_TRANSFORM: string = 'invalidateColorTransform';
 
 	/**
